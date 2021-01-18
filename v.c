@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ac2c384"
+#define V_COMMIT_HASH "f375418"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "38881e4"
+	#define V_COMMIT_HASH "ac2c384"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ac2c384"
+	#define V_CURRENT_COMMIT_HASH "f375418"
 #endif
 
 // V comptime_defines:
@@ -22204,7 +22204,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("38881e4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ac2c384"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34420,7 +34420,6 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	if (!is_html) {
 		path = tmpl_path;
 	}
-	eprintln(_STR(">>> is_embed_file: %.*s\000 | is_html: %.*s\000 | s: %.*s\000 | n: %.*s\000 | path: %.*s", 5, is_embed_file ? _SLIT("true") : _SLIT("false"), is_html ? _SLIT("true") : _SLIT("false"), s, n, path));
 	if (!os__exists(path)) {
 		if (is_html) {
 			path = os__join_path(dir, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("templates"), array_string_join(fn_path, _SLIT("/"))})));
