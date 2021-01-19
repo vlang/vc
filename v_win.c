@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "15cc1cd"
+#define V_COMMIT_HASH "5067046"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ca70d81"
+	#define V_COMMIT_HASH "15cc1cd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "15cc1cd"
+	#define V_CURRENT_COMMIT_HASH "5067046"
 #endif
 
 // V comptime_defines:
@@ -21955,7 +21955,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ca70d81"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("15cc1cd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37460,18 +37460,27 @@ VV_LOCAL_SYMBOL v__ast__IndexExpr v__parser__Parser_index_expr(v__parser__Parser
 	}
 	v__token__Position pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->tok));
 	v__parser__Parser_check(p, v__token__Kind_rsbr);
-	if (p->tok.kind == v__token__Kind_key_orelse && !p->or_is_handled) {
-		bool was_inside_or_expr = p->inside_or_expr;
-		v__token__Position or_pos = v__token__Token_position(&p->tok);
-		v__parser__Parser_next(p);
-		v__parser__Parser_open_scope(p);
-		array_v__ast__Stmt or_stmts = v__parser__Parser_parse_block_no_scope(p, false);
-		or_pos = v__token__Position_extend(or_pos, v__token__Token_position(&p->prev_tok));
-		v__parser__Parser_close_scope(p);
-		p->inside_or_expr = was_inside_or_expr;
-		return (v__ast__IndexExpr){.pos = pos,.left = left,.index = expr,.or_expr = (v__ast__OrExpr){.stmts = or_stmts,.kind = v__ast__OrKind_block,.pos = or_pos,},.left_type = 0,.is_setter = 0,};
+	v__ast__OrKind or_kind = v__ast__OrKind_absent;
+	array_v__ast__Stmt or_stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
+	v__token__Position or_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.last_line = 0,};
+	if (!p->or_is_handled) {
+		if (p->tok.kind == v__token__Kind_key_orelse) {
+			bool was_inside_or_expr = p->inside_or_expr;
+			or_pos = v__token__Token_position(&p->tok);
+			v__parser__Parser_next(p);
+			v__parser__Parser_open_scope(p);
+			or_stmts = v__parser__Parser_parse_block_no_scope(p, false);
+			or_pos = v__token__Position_extend(or_pos, v__token__Token_position(&p->prev_tok));
+			v__parser__Parser_close_scope(p);
+			p->inside_or_expr = was_inside_or_expr;
+			return (v__ast__IndexExpr){.pos = pos,.left = left,.index = expr,.or_expr = (v__ast__OrExpr){.stmts = or_stmts,.kind = v__ast__OrKind_block,.pos = or_pos,},.left_type = 0,.is_setter = 0,};
+		}
+		if (p->tok.kind == v__token__Kind_question) {
+			v__parser__Parser_next(p);
+			or_kind = v__ast__OrKind_propagate;
+		}
 	}
-	return (v__ast__IndexExpr){.pos = pos,.left = left,.index = expr,.or_expr = (v__ast__OrExpr){.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.kind = v__ast__OrKind_absent,.pos = {0},},.left_type = 0,.is_setter = 0,};
+	return (v__ast__IndexExpr){.pos = pos,.left = left,.index = expr,.or_expr = (v__ast__OrExpr){.stmts = or_stmts,.kind = or_kind,.pos = or_pos,},.left_type = 0,.is_setter = 0,};
 }
 
 VV_LOCAL_SYMBOL void v__parser__Parser_scope_register_it(v__parser__Parser* p) {
@@ -37950,9 +37959,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_48745 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_48745.arg0;
-	array_v__ast__Comment comments2 = mr_48745.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_48981 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_48981.arg0;
+	array_v__ast__Comment comments2 = mr_48981.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1685, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
