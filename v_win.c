@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "071549b"
+#define V_COMMIT_HASH "94b5e47"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d92f5c5"
+	#define V_COMMIT_HASH "071549b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "071549b"
+	#define V_CURRENT_COMMIT_HASH "94b5e47"
 #endif
 
 // V comptime_defines:
@@ -21965,7 +21965,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d92f5c5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("071549b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23124,13 +23124,16 @@ Option_string v__util__mod_path_to_full_name(string mod, string path) {
 			} else {
 				array_string try_path_parts = string_split(try_path, _const_os__path_separator);
 				int last_v_mod = -1;
-				for (int j = try_path_parts.len - 1; j > 0; j--) {
+				for (int j = try_path_parts.len; j > 0; j--) {
 					string parent = array_string_join(array_slice(try_path_parts, 0, j), _const_os__path_separator);
 					{ /* if guard */ 
 					Option_array_string _t828;
 					if (_t828 = os__ls(parent), _t828.ok) {
 						array_string ls = *(array_string*)_t828.data;
-						if ((array_string_contains(ls, _SLIT("v.mod"))) && string_ne((*(string*)/*ee elem_typ */array_get(try_path_parts, j)), _SLIT("v")) && !(array_string_contains(ls, _SLIT("vlib")))) {
+						if (try_path_parts.len <= i) {
+							continue;
+						}
+						if ((array_string_contains(ls, _SLIT("v.mod"))) && string_ne((*(string*)/*ee elem_typ */array_get(try_path_parts, i)), _SLIT("v")) && !(array_string_contains(ls, _SLIT("vlib")))) {
 							last_v_mod = j;
 							continue;
 						}
