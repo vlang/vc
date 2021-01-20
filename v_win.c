@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d92f5c5"
+#define V_COMMIT_HASH "071549b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "158aefc"
+	#define V_COMMIT_HASH "d92f5c5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d92f5c5"
+	#define V_CURRENT_COMMIT_HASH "071549b"
 #endif
 
 // V comptime_defines:
@@ -5700,6 +5700,7 @@ multi_return_string_int v__util__filepath_pos_to_source_and_column(string filepa
 array_string v__util__source_context(string kind, string source, int column, v__token__Position pos);
 void v__util__verror(string kind, string s);
 string v__util__vlines_escape_path(string path, string ccompiler);
+VV_LOCAL_SYMBOL void v__util__trace_mod_path_to_full_name(string line, string mod, string file_path, string res);
 string v__util__qualify_import(v__pref__Preferences* pref, string mod, string file_path);
 string v__util__qualify_module(string mod, string file_path);
 Option_string v__util__mod_path_to_full_name(string mod, string path);
@@ -21964,7 +21965,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("158aefc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d92f5c5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23036,6 +23037,10 @@ string v__util__vlines_escape_path(string path, string ccompiler) {
 	return v__util__cescaped_path(os__real_path(path));
 }
 
+VV_LOCAL_SYMBOL void v__util__trace_mod_path_to_full_name(string line, string mod, string file_path, string res) {
+	eprintln(_STR("> %.*s\000 %.*s\000 mod: %*.*s\000 | file_path: %*.*s\000 | result: %.*s", 5, line, _SLIT("trace_mod_path_to_full_name"), mod, -20, file_path, -30, res));
+}
+
 string v__util__qualify_import(v__pref__Preferences* pref, string mod, string file_path) {
 	array_string mod_paths = array_clone(&pref->lookup_path);
 	_PUSH_MANY(&mod_paths, (os__vmodules_paths()), _t819, array_string);
@@ -23050,6 +23055,10 @@ string v__util__qualify_import(v__pref__Preferences* pref, string mod, string fi
 			Option_string _t822;
 			if (_t822 = v__util__mod_path_to_full_name(mod, try_path), _t822.ok) {
 				string m1 = *(string*)_t822.data;
+				#if defined(CUSTOM_DEFINE_trace_mod_path_to_full_name)
+				{
+				}
+				#endif
 				return m1;
 			}}
 		}
@@ -23058,6 +23067,10 @@ string v__util__qualify_import(v__pref__Preferences* pref, string mod, string fi
 	Option_string _t823;
 	if (_t823 = v__util__mod_path_to_full_name(mod, file_path), _t823.ok) {
 		string m1 = *(string*)_t823.data;
+		#if defined(CUSTOM_DEFINE_trace_mod_path_to_full_name)
+		{
+		}
+		#endif
 		return m1;
 	}}
 	return mod;
@@ -23067,10 +23080,15 @@ string v__util__qualify_module(string mod, string file_path) {
 	if (string_eq(mod, _SLIT("main"))) {
 		return mod;
 	}
+	string clean_file_path = string_all_before_last(file_path, _SLIT("/"));
 	{ /* if guard */ 
 	Option_string _t824;
-	if (_t824 = v__util__mod_path_to_full_name(mod, string_all_before_last(file_path, _SLIT("/"))), _t824.ok) {
+	if (_t824 = v__util__mod_path_to_full_name(mod, clean_file_path), _t824.ok) {
 		string m1 = *(string*)_t824.data;
+		#if defined(CUSTOM_DEFINE_trace_mod_path_to_full_name)
+		{
+		}
+		#endif
 		return m1;
 	}}
 	return mod;
@@ -23106,13 +23124,13 @@ Option_string v__util__mod_path_to_full_name(string mod, string path) {
 			} else {
 				array_string try_path_parts = string_split(try_path, _const_os__path_separator);
 				int last_v_mod = -1;
-				for (int j = try_path_parts.len; j > 0; j--) {
+				for (int j = try_path_parts.len - 1; j > 0; j--) {
 					string parent = array_string_join(array_slice(try_path_parts, 0, j), _const_os__path_separator);
 					{ /* if guard */ 
 					Option_array_string _t828;
 					if (_t828 = os__ls(parent), _t828.ok) {
 						array_string ls = *(array_string*)_t828.data;
-						if ((array_string_contains(ls, _SLIT("v.mod"))) && string_ne((*(string*)/*ee elem_typ */array_get(try_path_parts, i)), _SLIT("v")) && !(array_string_contains(ls, _SLIT("vlib")))) {
+						if ((array_string_contains(ls, _SLIT("v.mod"))) && string_ne((*(string*)/*ee elem_typ */array_get(try_path_parts, j)), _SLIT("v")) && !(array_string_contains(ls, _SLIT("vlib")))) {
 							last_v_mod = j;
 							continue;
 						}
