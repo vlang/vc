@@ -1,7 +1,6 @@
-#define V_COMMIT_HASH "b3a4f74"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "985ef52"
+	#define V_COMMIT_HASH "b3a4f74"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
@@ -12477,7 +12476,7 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	if (!(false)) {
 		VAssertMetaInfo v_assert_meta_info__t33;
 		memset(&v_assert_meta_info__t33, 0, sizeof(VAssertMetaInfo));
-		v_assert_meta_info__t33.fpath = _SLIT("/tmp/gen_vc/v/vlib/builtin/map.v");
+		v_assert_meta_info__t33.fpath = _SLIT("/Users/joe.c/dev/src/v/v/vlib/builtin/map.v");
 		v_assert_meta_info__t33.line_nr = 528;
 		v_assert_meta_info__t33.fn_name = _SLIT("get_and_set_1");
 		v_assert_meta_info__t33.src = _SLIT("false");
@@ -21961,7 +21960,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("985ef52"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b3a4f74"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31135,7 +31134,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 			if (!(!c->inside_unsafe)) {
 				VAssertMetaInfo v_assert_meta_info__t1392;
 				memset(&v_assert_meta_info__t1392, 0, sizeof(VAssertMetaInfo));
-				v_assert_meta_info__t1392.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
+				v_assert_meta_info__t1392.fpath = _SLIT("/Users/joe.c/dev/src/v/v/vlib/v/checker/checker.v");
 				v_assert_meta_info__t1392.line_nr = 2903;
 				v_assert_meta_info__t1392.fn_name = _SLIT("stmt");
 				v_assert_meta_info__t1392.src = _SLIT("!c.inside_unsafe");
@@ -32713,7 +32712,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t1473;
 		memset(&v_assert_meta_info__t1473, 0, sizeof(VAssertMetaInfo));
-		v_assert_meta_info__t1473.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
+		v_assert_meta_info__t1473.fpath = _SLIT("/Users/joe.c/dev/src/v/v/vlib/v/checker/checker.v");
 		v_assert_meta_info__t1473.line_nr = 4273;
 		v_assert_meta_info__t1473.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1473.src = _SLIT("!c.inside_unsafe");
@@ -36914,7 +36913,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 					if (!(false)) {
 						VAssertMetaInfo v_assert_meta_info__t1656;
 						memset(&v_assert_meta_info__t1656, 0, sizeof(VAssertMetaInfo));
-						v_assert_meta_info__t1656.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/parser/parser.v");
+						v_assert_meta_info__t1656.fpath = _SLIT("/Users/joe.c/dev/src/v/v/vlib/v/parser/parser.v");
 						v_assert_meta_info__t1656.line_nr = 668;
 						v_assert_meta_info__t1656.fn_name = _SLIT("stmt");
 						v_assert_meta_info__t1656.src = _SLIT("false");
@@ -43450,7 +43449,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_selector_expr(v__gen__Gen* g, v__ast__SelectorE
 		if (!(string_eq(node.field_name, _SLIT("len")))) {
 			VAssertMetaInfo v_assert_meta_info__t1857;
 			memset(&v_assert_meta_info__t1857, 0, sizeof(VAssertMetaInfo));
-			v_assert_meta_info__t1857.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
+			v_assert_meta_info__t1857.fpath = _SLIT("/Users/joe.c/dev/src/v/v/vlib/v/gen/cgen.v");
 			v_assert_meta_info__t1857.line_nr = 2890;
 			v_assert_meta_info__t1857.fn_name = _SLIT("selector_expr");
 			v_assert_meta_info__t1857.src = _SLIT("node.field_name == 'len'");
