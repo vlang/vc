@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f059a9e"
+#define V_COMMIT_HASH "242c576"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "94b5e47"
+	#define V_COMMIT_HASH "f059a9e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f059a9e"
+	#define V_CURRENT_COMMIT_HASH "242c576"
 #endif
 
 // V comptime_defines:
@@ -11001,16 +11001,23 @@ array array_clone(array* a) {
 	array arr = (array){.element_size = a->element_size,.data = vcalloc(size),.len = a->len,.cap = a->cap,};
 	int size_of_array = ((int)(/*SizeOf*/ sizeof(array)));
 	if (a->element_size == size_of_array) {
+		bool is_elem_array = true;
 		for (int i = 0; i < a->len; ++i) {
 			array ar = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
 			memcpy(&ar, array_get_unsafe(/*rec*/*a, i), size_of_array);
+			if (ar.len > ar.cap || ar.cap <= 0 || ar.element_size <= 0) {
+				is_elem_array = false;
+				break;
+			}
 			array ar_clone = array_clone(&ar);
 			array_set_unsafe(&arr, i, &ar_clone);
 		}
-	} else {
-		if (!isnil(a->data)) {
-			memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
+		if (is_elem_array) {
+			return arr;
 		}
+	}
+	if (!isnil(a->data)) {
+		memcpy(((byteptr)(arr.data)), a->data, a->cap * a->element_size);
 	}
 	return arr;
 }
@@ -21965,7 +21972,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("94b5e47"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f059a9e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
