@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d975436"
+#define V_COMMIT_HASH "0c249fa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "242c576"
+	#define V_COMMIT_HASH "d975436"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d975436"
+	#define V_CURRENT_COMMIT_HASH "0c249fa"
 #endif
 
 // V comptime_defines:
@@ -21972,7 +21972,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("242c576"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d975436"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34978,9 +34978,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		return (v__ast__AnonFn){.decl = (v__ast__FnDecl){.params = __new_array(0, 1, sizeof(v__table__Param)),.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),.next_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.source_file = 0,},.typ = 0,};
 	}
 	v__parser__Parser_open_scope(p);
-	multi_return_array_v__table__Param_bool_bool mr_11961 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_11961.arg0;
-	bool is_variadic = mr_11961.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_11957 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_11957.arg0;
+	bool is_variadic = mr_11957.arg2;
 	// FOR IN array
 	array _t1604 = args;
 	for (int _t1605 = 0; _t1605 < _t1604.len; ++_t1605) {
@@ -35025,7 +35025,6 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	func.name = name;
 	int idx = v__table__Table_find_or_register_fn_type(p->table, p->mod, func, true, false);
 	v__table__Type typ = v__table__new_type(idx);
-	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
 	return (v__ast__AnonFn){.decl = (v__ast__FnDecl){
 		.name = name,
 		.mod = p->mod,
@@ -35045,7 +35044,7 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		.language = 0,
 		.no_body = no_body,
 		.is_builtin = 0,
-		.pos = pos,
+		.pos = v__token__Position_extend(pos, v__token__Token_position(&p->prev_tok)),
 		.body_pos = {0},
 		.file = p->file_name,
 		.is_generic = 0,
