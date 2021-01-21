@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f413c92"
+#define V_COMMIT_HASH "29b3077"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4045ec1"
+	#define V_COMMIT_HASH "f413c92"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f413c92"
+	#define V_CURRENT_COMMIT_HASH "29b3077"
 #endif
 
 // V comptime_defines:
@@ -5913,7 +5913,7 @@ VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_obj_definition(v__c
 VV_LOCAL_SYMBOL Option_bool v__checker__Checker_has_return(v__checker__Checker* c, array_v__ast__Stmt stmts);
 v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__PostfixExpr* node);
 v__table__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__PrefixExpr* node);
-VV_LOCAL_SYMBOL void v__checker__Checker_check_index_type(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__table__Type index_type, v__token__Position pos);
+VV_LOCAL_SYMBOL void v__checker__Checker_check_index(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__ast__Expr index, v__table__Type index_type, v__token__Position pos);
 v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__IndexExpr* node);
 v__table__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVal* node);
 v__table__Type v__checker__Checker_chan_init(v__checker__Checker* c, v__ast__ChanInit* node);
@@ -22254,7 +22254,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4045ec1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f413c92"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33704,12 +33704,20 @@ v__table__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__P
 	return right_type;
 }
 
-VV_LOCAL_SYMBOL void v__checker__Checker_check_index_type(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__table__Type index_type, v__token__Position pos) {
+VV_LOCAL_SYMBOL void v__checker__Checker_check_index(v__checker__Checker* c, v__table__TypeSymbol* typ_sym, v__ast__Expr index, v__table__Type index_type, v__token__Position pos) {
 	v__table__TypeSymbol* index_type_sym = v__table__Table_get_type_symbol(c->table, index_type);
 	if ((typ_sym->kind == v__table__Kind_array || typ_sym->kind == v__table__Kind_array_fixed || typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_ustring)) {
 		if (!(v__table__Type_is_number(index_type) || index_type_sym->kind == v__table__Kind_enum_)) {
 			string type_str = ((typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_ustring) ? (_STR("non-integer string index `%.*s\000`", 2, index_type_sym->name)) : (_STR("non-integer index `%.*s\000` (array type `%.*s\000`)", 3, index_type_sym->name, typ_sym->name)));
 			v__checker__Checker_error(c, _STR("%.*s", 1, type_str), pos);
+		}
+		if ((index).typ == 221 /* v.ast.PrefixExpr */) {
+			if ((*index._v__ast__PrefixExpr).op == v__token__Kind_minus && ((*index._v__ast__PrefixExpr).right).typ == 212 /* v.ast.IntegerLiteral */) {
+				string val = (/* as */ *(v__ast__IntegerLiteral*)__as_cast(((*index._v__ast__PrefixExpr).right)._v__ast__IntegerLiteral, ((*index._v__ast__PrefixExpr).right).typ, /*expected:*/212)).val;
+				if (string_int(val) > 0) {
+					v__checker__Checker_error(c, _STR("invalid index `-%.*s\000` (index must be non-negative)", 2, val), (*index._v__ast__PrefixExpr).pos);
+				}
+			}
 		}
 		if (v__table__Type_has_flag(index_type, v__table__TypeFlag_optional)) {
 			string type_str = ((typ_sym->kind == v__table__Kind_string || typ_sym->kind == v__table__Kind_ustring) ? (_STR("(type `%.*s\000`)", 2, typ_sym->name)) : (_STR("(array type `%.*s\000`)", 2, typ_sym->name)));
@@ -33743,11 +33751,11 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 	if ((node->index).typ == 222 /* v.ast.RangeExpr */) {
 		if ((*node->index._v__ast__RangeExpr).has_low) {
 			v__table__Type index_type = v__checker__Checker_expr(c, (*node->index._v__ast__RangeExpr).low);
-			v__checker__Checker_check_index_type(c, typ_sym, index_type, node->pos);
+			v__checker__Checker_check_index(c, typ_sym, (*node->index._v__ast__RangeExpr).low, index_type, node->pos);
 		}
 		if ((*node->index._v__ast__RangeExpr).has_high) {
 			v__table__Type index_type = v__checker__Checker_expr(c, (*node->index._v__ast__RangeExpr).high);
-			v__checker__Checker_check_index_type(c, typ_sym, index_type, node->pos);
+			v__checker__Checker_check_index(c, typ_sym, (*node->index._v__ast__RangeExpr).high, index_type, node->pos);
 		}
 		if (typ_sym->kind == v__table__Kind_array_fixed) {
 			v__table__Type elem_type = v__table__Table_value_type(c->table, typ);
@@ -33765,7 +33773,7 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 				v__checker__Checker_error(c, _STR("invalid key: %.*s", 1, err), node->pos);
 			}
 		} else {
-			v__checker__Checker_check_index_type(c, typ_sym, index_type, node->pos);
+			v__checker__Checker_check_index(c, typ_sym, node->index, index_type, node->pos);
 		}
 		v__table__Type value_type = v__table__Table_value_type(c->table, typ);
 		if (value_type != _const_v__table__void_type) {
@@ -34250,10 +34258,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1569 = 0; _t1569 < _t1568.len; ++_t1569) {
 			v__table__Fn m = ((v__table__Fn*)_t1568.data)[_t1569];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_174158 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_174158.arg0;
-				int nroute_attributes = mr_174158.arg1;
-				int nargs = mr_174158.arg2;
+				multi_return_bool_int_int mr_174461 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_174461.arg0;
+				int nroute_attributes = mr_174461.arg1;
+				int nargs = mr_174461.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
