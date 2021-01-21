@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4045ec1"
+#define V_COMMIT_HASH "f413c92"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0c249fa"
+	#define V_COMMIT_HASH "4045ec1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4045ec1"
+	#define V_CURRENT_COMMIT_HASH "f413c92"
 #endif
 
 // V comptime_defines:
@@ -22254,7 +22254,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0c249fa"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4045ec1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23433,18 +23433,15 @@ Option_string v__util__mod_path_to_full_name(string mod, string path) {
 					Option_array_string _t845;
 					if (_t845 = os__ls(parent), _t845.ok) {
 						array_string ls = *(array_string*)_t845.data;
-						if (try_path_parts.len <= i) {
-							continue;
-						}
-						if ((array_string_contains(ls, _SLIT("v.mod"))) && string_ne((*(string*)/*ee elem_typ */array_get(try_path_parts, i)), _SLIT("v")) && !(array_string_contains(ls, _SLIT("vlib")))) {
+						if ((array_string_contains(ls, _SLIT("v.mod"))) && (try_path_parts.len > i && string_ne((*(string*)/*ee elem_typ */array_get(try_path_parts, i)), _SLIT("v")) && !(array_string_contains(ls, _SLIT("vlib"))))) {
 							last_v_mod = j;
-							continue;
 						}
+						continue;
 					}}
 					break;
 				}
 				if (last_v_mod > -1) {
-					string mod_full_name = array_string_join(array_slice(try_path_parts, last_v_mod - 1, try_path_parts.len), _SLIT("."));
+					string mod_full_name = array_string_join(array_slice(try_path_parts, last_v_mod, try_path_parts.len), _SLIT("."));
 					Option_string _t846;
 					opt_ok2(&(string[]) { mod_full_name }, (OptionBase*)(&_t846), sizeof(string));
 					return _t846;
