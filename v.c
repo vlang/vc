@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "72168cd"
+#define V_COMMIT_HASH "5815d96"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1b09954"
+	#define V_COMMIT_HASH "72168cd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "72168cd"
+	#define V_CURRENT_COMMIT_HASH "5815d96"
 #endif
 
 // V comptime_defines:
@@ -4722,8 +4722,8 @@ VV_LOCAL_SYMBOL string string_add(string s, string a);
 array_string string_split(string s, string delim);
 array_string string_split_nth(string s, string delim, int nth);
 array_string string_split_into_lines(string s);
-string string_left(string s, int n);
-string string_right(string s, int n);
+VV_LOCAL_SYMBOL string string_left(string s, int n);
+VV_LOCAL_SYMBOL string string_right(string s, int n);
 VV_LOCAL_SYMBOL string string_substr2(string s, int start, int _end, bool end_max);
 string string_substr(string s, int start, int end);
 VV_LOCAL_SYMBOL int string_index_(string s, string p);
@@ -13519,14 +13519,14 @@ array_string string_split_into_lines(string s) {
 	return res;
 }
 
-string string_left(string s, int n) {
+VV_LOCAL_SYMBOL string string_left(string s, int n) {
 	if (n >= s.len) {
 		return s;
 	}
 	return string_substr(s, 0, n);
 }
 
-string string_right(string s, int n) {
+VV_LOCAL_SYMBOL string string_right(string s, int n) {
 	if (n >= s.len) {
 		return _SLIT("");
 	}
@@ -22258,7 +22258,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1b09954"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("72168cd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
