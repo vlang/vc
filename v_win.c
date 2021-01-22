@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "46cdf4f"
+#define V_COMMIT_HASH "b10b76b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "43d56cb"
+	#define V_COMMIT_HASH "46cdf4f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "46cdf4f"
+	#define V_CURRENT_COMMIT_HASH "b10b76b"
 #endif
 
 // V comptime_defines:
@@ -21961,7 +21961,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("43d56cb"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("46cdf4f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36018,9 +36018,6 @@ v__table__Type v__parser__Parser_parse_map_type(v__parser__Parser* p) {
 		v__parser__Parser_error_with_pos(p, _STR("maps only support string, integer, rune or voidptr keys for now (not `%.*s\000`)", 2, s), v__token__Token_position(&p->tok));
 		return 0;
 	}
-	if (key_type != _const_v__table__string_type_idx) {
-		v__parser__Parser_warn_with_pos(p, _SLIT("non-string keys are work in progress"), v__token__Token_position(&p->tok));
-	}
 	v__parser__Parser_check(p, v__token__Kind_rsbr);
 	v__table__Type value_type = v__parser__Parser_parse_type(p);
 	if (v__table__Type_idx(value_type) == 0) {
@@ -36067,9 +36064,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Param_bool_bool mr_3701 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_3701.arg0;
-	bool is_variadic = mr_3701.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_3582 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_3582.arg0;
+	bool is_variadic = mr_3582.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
