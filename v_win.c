@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5815d96"
+#define V_COMMIT_HASH "216fea1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "72168cd"
+	#define V_COMMIT_HASH "5815d96"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5815d96"
+	#define V_CURRENT_COMMIT_HASH "216fea1"
 #endif
 
 // V comptime_defines:
@@ -4825,8 +4825,6 @@ VV_LOCAL_SYMBOL string string_add(string s, string a);
 array_string string_split(string s, string delim);
 array_string string_split_nth(string s, string delim, int nth);
 array_string string_split_into_lines(string s);
-VV_LOCAL_SYMBOL string string_left(string s, int n);
-VV_LOCAL_SYMBOL string string_right(string s, int n);
 VV_LOCAL_SYMBOL string string_substr2(string s, int start, int _end, bool end_max);
 string string_substr(string s, int start, int end);
 VV_LOCAL_SYMBOL int string_index_(string s, string p);
@@ -13522,7 +13520,7 @@ array_string string_split_nth(string s, string delim, int nth) {
 		for (int _t37 = 0; _t37 < s.len; ++_t37) {
 			byte ch = s.str[_t37];
 			if (nth > 0 && i >= nth) {
-				array_push(&res, _MOV((string[]){ string_right(s, i) }));
+				array_push(&res, _MOV((string[]){ string_substr(s, i, s.len) }));
 				break;
 			}
 			array_push(&res, _MOV((string[]){ byte_ascii_str(ch) }));
@@ -13548,7 +13546,7 @@ array_string string_split_nth(string s, string delim, int nth) {
 		}
 	}
 	if (nth < 1 || res.len < nth) {
-		array_push(&res, _MOV((string[]){ string_right(s, start) }));
+		array_push(&res, _MOV((string[]){ string_substr(s, start, s.len) }));
 	}
 	return res;
 }
@@ -13577,20 +13575,6 @@ array_string string_split_into_lines(string s) {
 		}
 	}
 	return res;
-}
-
-VV_LOCAL_SYMBOL string string_left(string s, int n) {
-	if (n >= s.len) {
-		return s;
-	}
-	return string_substr(s, 0, n);
-}
-
-VV_LOCAL_SYMBOL string string_right(string s, int n) {
-	if (n >= s.len) {
-		return _SLIT("");
-	}
-	return string_substr(s, n, s.len);
 }
 
 VV_LOCAL_SYMBOL string string_substr2(string s, int start, int _end, bool end_max) {
@@ -13951,12 +13935,12 @@ string string_find_between(string s, string start, string end) {
 	if (start_pos == -1) {
 		return _SLIT("");
 	}
-	string val = string_right(s, start_pos + start.len);
+	string val = string_substr(s, start_pos + start.len, s.len);
 	int end_pos = string_index_(val, end);
 	if (end_pos == -1) {
 		return val;
 	}
-	return string_left(val, end_pos);
+	return string_substr(val, 0, end_pos);
 }
 
 bool byte_is_space(byte c) {
@@ -14003,7 +13987,7 @@ string string_trim_left(string s, string cutset) {
 		if (!(pos < s.len && (array_byte_contains(cs_arr, string_at(s, pos))))) break;
 		pos++;
 	}
-	return string_right(s, pos);
+	return string_substr(s, pos, s.len);
 }
 
 string string_trim_right(string s, string cutset) {
@@ -14016,7 +14000,7 @@ string string_trim_right(string s, string cutset) {
 		if (!(pos >= 0 && (array_byte_contains(cs_arr, string_at(s, pos))))) break;
 		pos--;
 	}
-	return (pos < 0 ? (_SLIT("")) : (string_left(s, pos + 1)));
+	return (pos < 0 ? (_SLIT("")) : (string_substr(s, 0, pos + 1)));
 }
 
 string string_trim_prefix(string s, string str) {
@@ -14318,7 +14302,7 @@ string string_all_before(string s, string dot) {
 	if (pos == -1) {
 		return s;
 	}
-	return string_left(s, pos);
+	return string_substr(s, 0, pos);
 }
 
 string string_all_before_last(string s, string dot) {
@@ -14326,7 +14310,7 @@ string string_all_before_last(string s, string dot) {
 	if (pos == -1) {
 		return s;
 	}
-	return string_left(s, pos);
+	return string_substr(s, 0, pos);
 }
 
 string string_all_after(string s, string dot) {
@@ -14334,7 +14318,7 @@ string string_all_after(string s, string dot) {
 	if (pos == -1) {
 		return s;
 	}
-	return string_right(s, pos + dot.len);
+	return string_substr(s, pos + dot.len, s.len);
 }
 
 string string_all_after_last(string s, string dot) {
@@ -14342,7 +14326,7 @@ string string_all_after_last(string s, string dot) {
 	if (pos == -1) {
 		return s;
 	}
-	return string_right(s, pos + dot.len);
+	return string_substr(s, pos + dot.len, s.len);
 }
 
 string string_after(string s, string dot) {
@@ -14361,7 +14345,7 @@ string string_after_char(string s, byte dot) {
 	if (pos == 0) {
 		return s;
 	}
-	return string_right(s, pos + 1);
+	return string_substr(s, pos + 1, s.len);
 }
 
 string array_string_join(array_string a, string del) {
@@ -21977,7 +21961,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("72168cd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5815d96"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
