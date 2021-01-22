@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c7df37"
+#define V_COMMIT_HASH "dbf8452"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "981b421"
+	#define V_COMMIT_HASH "7c7df37"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c7df37"
+	#define V_CURRENT_COMMIT_HASH "dbf8452"
 #endif
 
 // V comptime_defines:
@@ -17828,17 +17828,7 @@ time__Time time__new_time(time__Time t) {
 		.tm_sec = t.second,
 	};
 	u64 utime = ((u64)(time__make_unix_time(tt)));
-	return // assoc
-	(time__Time){
-		.year = t.year,
-		.month = t.month,
-		.day = t.day,
-		.hour = t.hour,
-		.minute = t.minute,
-		.second = t.second,
-		.microsecond = t.microsecond,
-		.v_unix = utime, 
-	};
+	return (time__Time){t.year,t.month,t.day,t.hour,t.minute,t.second,t.microsecond,.v_unix = utime,};
 }
 
 // Attr: [inline]
@@ -18340,13 +18330,7 @@ string v__token__Position_str(v__token__Position pos) {
 }
 
 v__token__Position v__token__Position_extend(v__token__Position pos, v__token__Position end) {
-	return // assoc
-	(v__token__Position){
-		.len = end.pos - pos.pos + end.len, 
-		.line_nr = pos.line_nr,
-		.pos = pos.pos,
-		.last_line = end.last_line, 
-	};
+	return (v__token__Position){.len = end.pos - pos.pos + end.len,pos.line_nr,pos.pos,.last_line = end.last_line,};
 }
 
 v__token__Position v__token__Position_extend_with_last_line(v__token__Position pos, v__token__Position end, int last_line) {
@@ -22011,7 +21995,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("981b421"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7c7df37"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24460,35 +24444,13 @@ inline int v__table__Table_register_type_symbol(v__table__Table* t, v__table__Ty
 		v__table__TypeSymbol ex_type = (*(v__table__TypeSymbol*)/*ee elem_typ */array_get(t->types, existing_idx));
 		v__table__Kind _t949 = ex_type.kind; 
 		if (_t949 == v__table__Kind_placeholder) {
-			(*(v__table__TypeSymbol*)/*ee elem_typ */array_get(t->types, existing_idx)) = // assoc
-			(v__table__TypeSymbol){
-				.parent_idx = typ.parent_idx,
-				.info = typ.info,
-				.kind = typ.kind,
-				.name = typ.name,
-				.cname = typ.cname,
-				.methods = ex_type.methods, 
-				.mod = typ.mod,
-				.is_public = typ.is_public,
-				.language = typ.language,
-			};
+			(*(v__table__TypeSymbol*)/*ee elem_typ */array_get(t->types, existing_idx)) = (v__table__TypeSymbol){typ.parent_idx,typ.info,typ.kind,typ.name,typ.cname,.methods = ex_type.methods,typ.mod,typ.is_public,typ.language,};
 			return existing_idx;
 		}
 		else {
 			if (existing_idx >= _const_v__table__string_type_idx && existing_idx <= _const_v__table__map_type_idx) {
 				if (existing_idx == _const_v__table__string_type_idx) {
-					(*(v__table__TypeSymbol*)/*ee elem_typ */array_get(t->types, existing_idx)) = // assoc
-					(v__table__TypeSymbol){
-						.parent_idx = typ.parent_idx,
-						.info = typ.info,
-						.kind = ex_type.kind, 
-						.name = typ.name,
-						.cname = typ.cname,
-						.methods = typ.methods,
-						.mod = typ.mod,
-						.is_public = typ.is_public,
-						.language = typ.language,
-					};
+					(*(v__table__TypeSymbol*)/*ee elem_typ */array_get(t->types, existing_idx)) = (v__table__TypeSymbol){typ.parent_idx,typ.info,.kind = ex_type.kind,typ.name,typ.cname,typ.methods,typ.mod,typ.is_public,typ.language,};
 				} else {
 					(*(v__table__TypeSymbol*)/*ee elem_typ */array_get(t->types, existing_idx)) = typ;
 				}
@@ -25625,13 +25587,13 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner*
 	rune first_wrong_digit = L'\0';
 	int start_pos = s->pos;
 	s->pos += 2;
-	if (string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
+	if (s->pos < s->text.len && string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
 		v__scanner__Scanner_error(s, _SLIT("separator `_` is only valid between digits in a numeric literal"));
 	}
 	for (;;) {
 		if (!(s->pos < s->text.len)) break;
 		byte c = string_at(s->text, s->pos);
-		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
 			v__scanner__Scanner_error(s, _SLIT("cannot use `_` consecutively"));
 		}
 		if (!byte_is_bin_digit(c) && c != _const_v__scanner__num_sep) {
@@ -25646,6 +25608,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner*
 		s->pos++;
 	}
 	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _SLIT("cannot use `_` at the end of a numeric literal"));
 	} else if (start_pos + 2 == s->pos) {
 		s->pos--;
@@ -25668,13 +25631,13 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner*
 		return _SLIT("0x");
 	}
 	s->pos += 2;
-	if (string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
+	if (s->pos < s->text.len && string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
 		v__scanner__Scanner_error(s, _SLIT("separator `_` is only valid between digits in a numeric literal"));
 	}
 	for (;;) {
 		if (!(s->pos < s->text.len)) break;
 		byte c = string_at(s->text, s->pos);
-		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
 			v__scanner__Scanner_error(s, _SLIT("cannot use `_` consecutively"));
 		}
 		if (!byte_is_hex_digit(c) && c != _const_v__scanner__num_sep) {
@@ -25689,6 +25652,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner*
 		s->pos++;
 	}
 	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _SLIT("cannot use `_` at the end of a numeric literal"));
 	} else if (start_pos + 2 == s->pos) {
 		s->pos--;
@@ -25708,13 +25672,13 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner*
 	rune first_wrong_digit = L'\0';
 	int start_pos = s->pos;
 	s->pos += 2;
-	if (string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
+	if (s->pos < s->text.len && string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
 		v__scanner__Scanner_error(s, _SLIT("separator `_` is only valid between digits in a numeric literal"));
 	}
 	for (;;) {
 		if (!(s->pos < s->text.len)) break;
 		byte c = string_at(s->text, s->pos);
-		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
 			v__scanner__Scanner_error(s, _SLIT("cannot use `_` consecutively"));
 		}
 		if (!byte_is_oct_digit(c) && c != _const_v__scanner__num_sep) {
@@ -25729,6 +25693,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner*
 		s->pos++;
 	}
 	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _SLIT("cannot use `_` at the end of a numeric literal"));
 	} else if (start_pos + 2 == s->pos) {
 		s->pos--;
@@ -25750,7 +25715,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 	for (;;) {
 		if (!(s->pos < s->text.len)) break;
 		byte c = string_at(s->text, s->pos);
-		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos + 1) == _const_v__scanner__num_sep) {
+		if (c == _const_v__scanner__num_sep && string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
 			v__scanner__Scanner_error(s, _SLIT("cannot use `_` consecutively"));
 		}
 		if (!byte_is_digit(c) && c != _const_v__scanner__num_sep) {
@@ -25765,6 +25730,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 		s->pos++;
 	}
 	if (string_at(s->text, s->pos - 1) == _const_v__scanner__num_sep) {
+		s->pos--;
 		v__scanner__Scanner_error(s, _SLIT("cannot use `_` at the end of a numeric literal"));
 	}
 	bool call_method = false;
@@ -25943,11 +25909,11 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 		} else {
 			s->is_started = true;
 		}
-		if (s->pos >= s->text.len) {
-			return v__scanner__Scanner_end_of_file(s);
-		}
 		if (!s->is_inside_string) {
 			v__scanner__Scanner_skip_whitespace(s);
+		}
+		if (s->pos >= s->text.len) {
+			return v__scanner__Scanner_end_of_file(s);
 		}
 		if (s->is_inter_end) {
 			if (string_at(s->text, s->pos) == s->quote) {
@@ -32259,83 +32225,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_comptime_call(v__checker__Che
 		return v__table__Table_find_type_idx(c->table, _SLIT("v.embed_file.EmbedFileData"));
 	}
 	if (node->is_vweb) {
-		v__pref__Preferences pref = *c->pref;
-		v__pref__Preferences pref2 = // assoc
-		(v__pref__Preferences){
-			.os = pref.os,
-			.backend = pref.backend,
-			.build_mode = pref.build_mode,
-			.output_mode = pref.output_mode,
-			.is_verbose = pref.is_verbose,
-			.is_test = pref.is_test,
-			.is_script = pref.is_script,
-			.is_vsh = pref.is_vsh,
-			.is_livemain = pref.is_livemain,
-			.is_liveshared = pref.is_liveshared,
-			.is_shared = pref.is_shared,
-			.is_prof = pref.is_prof,
-			.profile_file = pref.profile_file,
-			.profile_no_inline = pref.profile_no_inline,
-			.translated = pref.translated,
-			.is_prod = pref.is_prod,
-			.obfuscate = pref.obfuscate,
-			.is_repl = pref.is_repl,
-			.is_run = pref.is_run,
-			.sanitize = pref.sanitize,
-			.is_debug = pref.is_debug,
-			.is_vlines = pref.is_vlines,
-			.show_cc = pref.show_cc,
-			.show_c_output = pref.show_c_output,
-			.use_cache = pref.use_cache,
-			.retry_compilation = pref.retry_compilation,
-			.is_stats = pref.is_stats,
-			.cflags = pref.cflags,
-			.m64 = pref.m64,
-			.ccompiler = pref.ccompiler,
-			.ccompiler_type = pref.ccompiler_type,
-			.third_party_option = pref.third_party_option,
-			.building_v = pref.building_v,
-			.autofree = pref.autofree,
-			.compress = pref.compress,
-			.enable_globals = pref.enable_globals,
-			.is_fmt = pref.is_fmt,
-			.is_vet = pref.is_vet,
-			.is_bare = pref.is_bare,
-			.no_preludes = pref.no_preludes,
-			.custom_prelude = pref.custom_prelude,
-			.lookup_path = pref.lookup_path,
-			.output_cross_c = pref.output_cross_c,
-			.prealloc = pref.prealloc,
-			.vroot = pref.vroot,
-			.out_name_c = pref.out_name_c,
-			.out_name = pref.out_name,
-			.display_name = pref.display_name,
-			.bundle_id = pref.bundle_id,
-			.path = pref.path,
-			.compile_defines = pref.compile_defines,
-			.compile_defines_all = pref.compile_defines_all,
-			.run_args = pref.run_args,
-			.printfn_list = pref.printfn_list,
-			.print_v_files = pref.print_v_files,
-			.skip_running = pref.skip_running,
-			.skip_warnings = pref.skip_warnings,
-			.warn_impure_v = pref.warn_impure_v,
-			.warns_are_errors = pref.warns_are_errors,
-			.fatal_errors = pref.fatal_errors,
-			.reuse_tmpc = pref.reuse_tmpc,
-			.use_color = pref.use_color,
-			.is_parallel = pref.is_parallel,
-			.error_limit = pref.error_limit,
-			.is_vweb = true, 
-			.only_check_syntax = pref.only_check_syntax,
-			.experimental = pref.experimental,
-			.show_timings = pref.show_timings,
-			.is_ios_simulator = pref.is_ios_simulator,
-			.is_apk = pref.is_apk,
-			.cleanup_files = pref.cleanup_files,
-			.build_options = pref.build_options,
-			.cache_manager = pref.cache_manager,
-		};
+		v__pref__Preferences pref_ = *c->pref;
+		v__pref__Preferences pref2 = (v__pref__Preferences){pref_.os,pref_.backend,pref_.build_mode,pref_.output_mode,pref_.is_verbose,pref_.is_test,pref_.is_script,pref_.is_vsh,pref_.is_livemain,pref_.is_liveshared,pref_.is_shared,pref_.is_prof,pref_.profile_file,pref_.profile_no_inline,pref_.translated,pref_.is_prod,pref_.obfuscate,pref_.is_repl,pref_.is_run,pref_.sanitize,pref_.is_debug,pref_.is_vlines,pref_.show_cc,pref_.show_c_output,pref_.use_cache,pref_.retry_compilation,pref_.is_stats,pref_.cflags,pref_.m64,pref_.ccompiler,pref_.ccompiler_type,pref_.third_party_option,pref_.building_v,pref_.autofree,pref_.compress,pref_.enable_globals,pref_.is_fmt,pref_.is_vet,pref_.is_bare,pref_.no_preludes,pref_.custom_prelude,pref_.lookup_path,pref_.output_cross_c,pref_.prealloc,pref_.vroot,pref_.out_name_c,pref_.out_name,pref_.display_name,pref_.bundle_id,pref_.path,pref_.compile_defines,pref_.compile_defines_all,pref_.run_args,pref_.printfn_list,pref_.print_v_files,pref_.skip_running,pref_.skip_warnings,pref_.warn_impure_v,pref_.warns_are_errors,pref_.fatal_errors,pref_.reuse_tmpc,pref_.use_color,pref_.is_parallel,pref_.error_limit,.is_vweb = true,pref_.only_check_syntax,pref_.experimental,pref_.show_timings,pref_.is_ios_simulator,pref_.is_apk,pref_.cleanup_files,pref_.build_options,pref_.cache_manager,};
 		v__checker__Checker c2 = v__checker__new_checker(c->table, (voidptr)&/*qq*/pref2);
 		v__checker__Checker_check(&c2, (voidptr)&/*qq*/node->vweb_tmpl);
 		int i = 0;
@@ -32396,8 +32287,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1459 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_123320 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_123320.arg1;
+		multi_return_string_int mr_123339 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_123339.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1459 == v__token__AtKind_vhash) {
@@ -33527,8 +33418,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_156994 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_156994.arg0;
+		multi_return_string_v__token__Position mr_157013 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_157013.arg0;
 	}
 	return typ;
 }
@@ -34162,10 +34053,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1575 = 0; _t1575 < _t1574.len; ++_t1575) {
 			v__table__Fn m = ((v__table__Fn*)_t1574.data)[_t1575];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_177401 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_177401.arg0;
-				int nroute_attributes = mr_177401.arg1;
-				int nargs = mr_177401.arg2;
+				multi_return_bool_int_int mr_177420 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_177420.arg0;
+				int nroute_attributes = mr_177420.arg1;
+				int nargs = mr_177420.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -39189,13 +39080,7 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, 
 	int precedence = v__token__Token_precedence(p->tok);
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	if (v__ast__Expr_position(left).line_nr < pos.line_nr) {
-		pos = // assoc
-		(v__token__Position){
-			.len = pos.len,
-			.line_nr = v__ast__Expr_position(left).line_nr, 
-			.pos = pos.pos,
-			.last_line = pos.last_line,
-		};
+		pos = (v__token__Position){pos.len,.line_nr = v__ast__Expr_position(left).line_nr,pos.pos,pos.last_line,};
 	}
 	v__parser__Parser_next(p);
 	v__ast__Expr right = (v__ast__Expr){
