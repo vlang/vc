@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ae1c7de"
+#define V_COMMIT_HASH "79b4b0e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b04b8d4"
+	#define V_COMMIT_HASH "ae1c7de"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ae1c7de"
+	#define V_CURRENT_COMMIT_HASH "79b4b0e"
 #endif
 
 // V comptime_defines:
@@ -22028,7 +22028,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b04b8d4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ae1c7de"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36383,6 +36383,10 @@ v__table__Type v__parser__Parser_parse_map_type(v__parser__Parser* p) {
 	if (v__table__Type_idx(value_type) == 0) {
 		return 0;
 	}
+	if (v__table__Type_idx(value_type) == _const_v__table__void_type_idx) {
+		v__parser__Parser_error_with_pos(p, _SLIT("map value type cannot be void"), v__token__Token_position(&p->tok));
+		return 0;
+	}
 	int idx = v__table__Table_find_or_register_map(p->table, key_type, value_type);
 	return v__table__new_type(idx);
 }
@@ -36427,9 +36431,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_array_v__table__Param_bool_bool mr_3662 = v__parser__Parser_fn_args(p);
-	array_v__table__Param args = mr_3662.arg0;
-	bool is_variadic = mr_3662.arg2;
+	multi_return_array_v__table__Param_bool_bool mr_3792 = v__parser__Parser_fn_args(p);
+	array_v__table__Param args = mr_3792.arg0;
+	bool is_variadic = mr_3792.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
@@ -37836,9 +37840,13 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 	p->expr_mod = _SLIT("");
 	if (string_eq(p->tok.lit, _SLIT("map")) && p->peek_tok.kind == v__token__Kind_lsbr) {
 		v__table__Type map_type = v__parser__Parser_parse_map_type(p);
-		if (p->tok.kind == v__token__Kind_lcbr && p->peek_tok.kind == v__token__Kind_rcbr) {
+		if (p->tok.kind == v__token__Kind_lcbr) {
 			v__parser__Parser_next(p);
-			v__parser__Parser_next(p);
+			if (p->tok.kind == v__token__Kind_rcbr) {
+				v__parser__Parser_next(p);
+			} else {
+				v__parser__Parser_error(p, _SLIT("`}` expected; explicit `map` initialization does not support parameters"));
+			}
 		}
 		return /* sum type cast 4 */ (v__ast__Expr){._v__ast__MapInit = memdup(&(v__ast__MapInit[]){(v__ast__MapInit){.pos = v__token__Token_position(&p->tok),.keys = __new_array(0, 1, sizeof(v__ast__Expr)),.vals = __new_array(0, 1, sizeof(v__ast__Expr)),.typ = map_type,.key_type = 0,.value_type = 0,}}, sizeof(v__ast__MapInit)), .typ = 241 /* v.ast.MapInit */};
 	}
@@ -38568,9 +38576,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49313 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_49313.arg0;
-	array_v__ast__Comment comments2 = mr_49313.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49418 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_49418.arg0;
+	array_v__ast__Comment comments2 = mr_49418.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1767, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
