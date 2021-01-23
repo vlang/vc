@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8b61891"
+#define V_COMMIT_HASH "a390841"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "325731e"
+	#define V_COMMIT_HASH "8b61891"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8b61891"
+	#define V_CURRENT_COMMIT_HASH "a390841"
 #endif
 
 // V comptime_defines:
@@ -22300,7 +22300,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("325731e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8b61891"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23038,7 +23038,10 @@ array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Prefere
 		if (prefs->backend == v__pref__Backend_js && !v__pref__Preferences_should_compile_js(prefs, file)) {
 			continue;
 		}
-		if (prefs->compile_defines_all.len > 0 && string_contains(file, _SLIT("_d_"))) {
+		if (string_contains(file, _SLIT("_d_"))) {
+			if (prefs->compile_defines_all.len == 0) {
+				continue;
+			}
 			bool allowed = false;
 			// FOR IN array
 			array _t805 = prefs->compile_defines;
