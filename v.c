@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a390841"
+#define V_COMMIT_HASH "d991712"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8b61891"
+	#define V_COMMIT_HASH "a390841"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a390841"
+	#define V_CURRENT_COMMIT_HASH "d991712"
 #endif
 
 // V comptime_defines:
@@ -22300,7 +22300,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8b61891"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a390841"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -38847,8 +38847,8 @@ VV_LOCAL_SYMBOL v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser
 		}
 		v__token__Position pos = v__token__Token_position(&p->tok);
 		string name = v__parser__Parser_check_name(p);
-		if (v__util__contains_capital(name)) {
-			v__parser__Parser_warn_with_pos(p, _SLIT("const names cannot contain uppercase letters, use snake_case instead"), pos);
+		if (false && v__util__contains_capital(name)) {
+			v__parser__Parser_warn_with_pos(p, _STR("%.*s\000 const names cannot contain uppercase letters, use snake_case instead", 2, p->file_name_dir), pos);
 		}
 		string full_name = v__parser__Parser_prepend_mod(p, name);
 		v__parser__Parser_check(p, v__token__Kind_assign);
@@ -38879,9 +38879,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49261 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_49261.arg0;
-	array_v__ast__Comment comments2 = mr_49261.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49287 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_49287.arg0;
+	array_v__ast__Comment comments2 = mr_49287.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1784, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
@@ -53303,11 +53303,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	if (v->pref->os == v__pref__OS_macos) {
 		array_push(&ccoptions.post_args, _MOV((string[]){ string_clone(_SLIT("-mmacosx-version-min=10.7")) }));
-	}
-	if (v->pref->os == v__pref__OS_ios) {
+	} else if (v->pref->os == v__pref__OS_ios) {
 		array_push(&ccoptions.post_args, _MOV((string[]){ string_clone(_SLIT("-miphoneos-version-min=10.0")) }));
-	}
-	if (v->pref->os == v__pref__OS_windows) {
+	} else if (v->pref->os == v__pref__OS_windows) {
 		array_push(&ccoptions.post_args, _MOV((string[]){ string_clone(_SLIT("-municode")) }));
 	}
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
