@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "74115fe"
+#define V_COMMIT_HASH "4065a03"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bce6a35"
+	#define V_COMMIT_HASH "74115fe"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "74115fe"
+	#define V_CURRENT_COMMIT_HASH "4065a03"
 #endif
 
 // V comptime_defines:
@@ -22028,7 +22028,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bce6a35"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("74115fe"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -41446,11 +41446,15 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_str_for_union_sum_type(v__gen__Gen* g, v__t
 		string typ_str = v__gen__Gen_typ(g, typ);
 		string func_name = (_IN_MAP(ADDR(string, typ_str), ADDR(map, gen_fn_names)) ? ((*(string*)map_get_1(ADDR(map, gen_fn_names), &(string[]){typ_str}, &(string[]){ (string){.str=(byteptr)""} }))) : (v__gen__Gen_gen_str_for_type(g, typ)));
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
-		if (sym->kind == v__table__Kind_struct_) {
+		multi_return_bool_bool_int mr_26145 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_26145.arg0;
+		bool str_method_expects_ptr = mr_26145.arg1;
+		string deref = (sym_has_str_method && str_method_expects_ptr ? (_SLIT(" ")) : (_SLIT("*")));
+		if (sym->kind == v__table__Kind_struct_ && !sym_has_str_method) {
 			func_name = _STR("indent_%.*s", 1, func_name);
 		}
-		strings__Builder_write(&g->auto_str_funcs, _STR("\t\tcase %"PRId32"\000: return _STR(\"%.*s\000(%.*s\000)\", 2, %.*s\000(*(%.*s\000*)x._%.*s", 6, typ, clean_sum_type_v_type_name, value_fmt, func_name, typ_str, sym->cname));
-		if (sym->kind == v__table__Kind_struct_) {
+		strings__Builder_write(&g->auto_str_funcs, _STR("\t\tcase %"PRId32"\000: return _STR(\"%.*s\000(%.*s\000)\", 2, %.*s\000(%.*s\000(%.*s\000*)x._%.*s", 7, typ, clean_sum_type_v_type_name, value_fmt, func_name, deref, typ_str, sym->cname));
+		if (sym->kind == v__table__Kind_struct_ && !sym_has_str_method) {
 			strings__Builder_write(&g->auto_str_funcs, _SLIT(", indent_count"));
 		}
 		strings__Builder_writeln(&g->auto_str_funcs, _SLIT("));"));
