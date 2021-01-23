@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "749d613"
+#define V_COMMIT_HASH "bce6a35"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ba2a15c"
+	#define V_COMMIT_HASH "749d613"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "749d613"
+	#define V_CURRENT_COMMIT_HASH "bce6a35"
 #endif
 
 // V comptime_defines:
@@ -22309,7 +22309,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ba2a15c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("749d613"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34048,7 +34048,7 @@ v__table__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__In
 		if ((node->left).typ == 207 /* v.ast.Ident */) {
 			if (((*node->left._v__ast__Ident).obj).typ == 260 /* v.ast.Var */) {
 				v__ast__Var v = /* as */ *(v__ast__Var*)__as_cast(((*node->left._v__ast__Ident).obj)._v__ast__Var, ((*node->left._v__ast__Ident).obj).typ, /*expected:*/260);
-				is_ok = v.is_mut && v.is_arg && !v__table__Type_is_ptr(v__table__Type_deref(typ));
+				is_ok = ((v.is_mut && v.is_arg) || v.share == v__table__ShareType_shared_t) && !v__table__Type_is_ptr(v__table__Type_deref(typ));
 			}
 		}
 		if (!is_ok && !c->pref->translated) {
@@ -34566,10 +34566,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1625 = 0; _t1625 < _t1624.len; ++_t1625) {
 			v__table__Fn m = ((v__table__Fn*)_t1624.data)[_t1625];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_177832 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_177832.arg0;
-				int nroute_attributes = mr_177832.arg1;
-				int nargs = mr_177832.arg2;
+				multi_return_bool_int_int mr_177860 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_177860.arg0;
+				int nroute_attributes = mr_177860.arg1;
+				int nargs = mr_177860.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -35232,7 +35232,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 }
 
 VV_LOCAL_SYMBOL v__ast__MapInit v__parser__Parser_map_init(v__parser__Parser* p) {
-	v__token__Position pos = v__token__Token_position(&p->tok);
+	v__token__Position first_pos = v__token__Token_position(&p->prev_tok);
 	array_v__ast__Expr keys = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	array_v__ast__Expr vals = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	for (;;) {
@@ -35249,8 +35249,7 @@ VV_LOCAL_SYMBOL v__ast__MapInit v__parser__Parser_map_init(v__parser__Parser* p)
 			v__parser__Parser_next(p);
 		}
 	}
-	v__token__Position_update_last_line(&pos, p->tok.line_nr);
-	return (v__ast__MapInit){.pos = pos,.keys = keys,.vals = vals,.typ = 0,.key_type = 0,.value_type = 0,};
+	return (v__ast__MapInit){.pos = v__token__Position_extend_with_last_line(first_pos, v__token__Token_position(&p->tok), p->tok.line_nr),.keys = keys,.vals = vals,.typ = 0,.key_type = 0,.value_type = 0,};
 }
 
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__table__Language language, string mod) {
