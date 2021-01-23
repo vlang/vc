@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d991712"
+#define V_COMMIT_HASH "c21f57f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a390841"
+	#define V_COMMIT_HASH "d991712"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d991712"
+	#define V_CURRENT_COMMIT_HASH "c21f57f"
 #endif
 
 // V comptime_defines:
@@ -22019,7 +22019,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a390841"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d991712"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -38524,7 +38524,7 @@ VV_LOCAL_SYMBOL v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser
 		}
 		v__token__Position pos = v__token__Token_position(&p->tok);
 		string name = v__parser__Parser_check_name(p);
-		if (false && v__util__contains_capital(name)) {
+		if (v__util__contains_capital(name)) {
 			v__parser__Parser_warn_with_pos(p, _STR("%.*s\000 const names cannot contain uppercase letters, use snake_case instead", 2, p->file_name_dir), pos);
 		}
 		string full_name = v__parser__Parser_prepend_mod(p, name);
@@ -38556,9 +38556,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49287 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_49287.arg0;
-	array_v__ast__Comment comments2 = mr_49287.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49278 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_49278.arg0;
+	array_v__ast__Comment comments2 = mr_49278.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1764, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
