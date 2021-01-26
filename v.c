@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5f2b2df"
+#define V_COMMIT_HASH "97103f6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3959ba5"
+	#define V_COMMIT_HASH "5f2b2df"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5f2b2df"
+	#define V_CURRENT_COMMIT_HASH "97103f6"
 #endif
 
 // V comptime_defines:
@@ -5207,6 +5207,13 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph);
+u64 _const_rand__util__lower_mask; // inited later
+#define _const_rand__util__max_u32 0xFFFFFFFF
+#define _const_rand__util__max_u64 0xFFFFFFFFFFFFFFFF
+f32 _const_rand__util__max_u32_as_f32; // inited later
+f64 _const_rand__util__max_u64_as_f64; // inited later
+u32 _const_rand__util__u31_mask; // inited later
+u64 _const_rand__util__u63_mask; // inited later
 string flag__Flag_str(flag__Flag f);
 string array_flag__Flag_str(array_flag__Flag af);
 string _const_flag__space; // a string literal, inited later
@@ -5410,17 +5417,10 @@ string array_v__cflag__CFlag_c_options_before_target(array_v__cflag__CFlag cflag
 string array_v__cflag__CFlag_c_options_after_target(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_without_object_files(array_v__cflag__CFlag cflags);
 string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag cflags);
-u64 _const_rand__util__lower_mask; // inited later
-#define _const_rand__util__max_u32 0xFFFFFFFF
-#define _const_rand__util__max_u64 0xFFFFFFFFFFFFFFFF
-f32 _const_rand__util__max_u32_as_f32; // inited later
-f64 _const_rand__util__max_u64_as_f64; // inited later
-u32 _const_rand__util__u31_mask; // inited later
-u64 _const_rand__util__u63_mask; // inited later
-VV_LOCAL_SYMBOL u32 rand__util__nr_next(u32 prev);
-array_u32 rand__util__time_seed_array(int count);
-u32 rand__util__time_seed_32();
-u64 rand__util__time_seed_64();
+VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev);
+array_u32 rand__seed__time_seed_array(int count);
+u32 rand__seed__time_seed_32();
+u64 rand__seed__time_seed_64();
 VV_LOCAL_SYMBOL Option_string v__pkgconfig__desc(string mod);
 Option_v__pkgconfig__Main_ptr v__pkgconfig__main(array_string args);
 Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m);
@@ -21024,30 +21024,30 @@ string array_v__cflag__CFlag_c_options_only_object_files(array_v__cflag__CFlag c
 }
 
 // Attr: [inline]
-inline VV_LOCAL_SYMBOL u32 rand__util__nr_next(u32 prev) {
+inline VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev) {
 	return prev * 1664525 + 1013904223;
 }
 
 // Attr: [inline]
-inline array_u32 rand__util__time_seed_array(int count) {
+inline array_u32 rand__seed__time_seed_array(int count) {
 	time__Time ctime = time__now();
 	u32 seed = ((u32)((time__Time_unix_time(ctime) ^ ctime.microsecond)));
 	array_u32 seed_data = __new_array_with_default(0, count, sizeof(u32), 0);
 	for (int _t618 = 0; _t618 < count; ++_t618) {
-		seed = rand__util__nr_next(seed);
-		array_push(&seed_data, _MOV((u32[]){ rand__util__nr_next(seed) }));
+		seed = rand__seed__nr_next(seed);
+		array_push(&seed_data, _MOV((u32[]){ rand__seed__nr_next(seed) }));
 	}
 	return seed_data;
 }
 
 // Attr: [inline]
-inline u32 rand__util__time_seed_32() {
-	return (*(u32*)/*ee elem_typ */array_get(rand__util__time_seed_array(1), 0));
+inline u32 rand__seed__time_seed_32() {
+	return (*(u32*)/*ee elem_typ */array_get(rand__seed__time_seed_array(1), 0));
 }
 
 // Attr: [inline]
-inline u64 rand__util__time_seed_64() {
-	array_u32 seed_data = rand__util__time_seed_array(2);
+inline u64 rand__seed__time_seed_64() {
+	array_u32 seed_data = rand__seed__time_seed_array(2);
 	u64 lower = ((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 0))));
 	u64 upper = ((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 1))));
 	return (lower | (upper << 32));
@@ -22081,11 +22081,11 @@ inline f64 rand__wyrand__WyRandRNG_f64_in_range(rand__wyrand__WyRandRNG* rng, f6
 }
 
 VV_LOCAL_SYMBOL void rand__init() {
-	default_rng = rand__new_default((rand__PRNGConfigStruct){.seed = rand__util__time_seed_array(2),});
+	default_rng = rand__new_default((rand__PRNGConfigStruct){.seed = rand__seed__time_seed_array(2),});
 }
 
 rand__wyrand__WyRandRNG* rand__new_default(rand__PRNGConfigStruct config) {
-	rand__wyrand__WyRandRNG* rng = (rand__wyrand__WyRandRNG*)memdup(&(rand__wyrand__WyRandRNG){.state = rand__util__time_seed_64(),.has_extra = 0,.extra = 0,}, sizeof(rand__wyrand__WyRandRNG));
+	rand__wyrand__WyRandRNG* rng = (rand__wyrand__WyRandRNG*)memdup(&(rand__wyrand__WyRandRNG){.state = rand__seed__time_seed_64(),.has_extra = 0,.extra = 0,}, sizeof(rand__wyrand__WyRandRNG));
 	rand__wyrand__WyRandRNG_seed(rng, config.seed);
 	return rng;
 }
@@ -22337,7 +22337,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3959ba5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5f2b2df"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -55074,6 +55074,12 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__token__keywords = v__token__build_keys();
 	_const_v__token__precedences = v__token__build_precedences();
 	// Initializations for module v.depgraph :
+	// Initializations for module rand.util :
+	_const_rand__util__lower_mask = ((u64)(0x00000000FFFFFFFFU));
+	_const_rand__util__max_u32_as_f32 = ((f32)(_const_rand__util__max_u32)) + 1;
+	_const_rand__util__max_u64_as_f64 = ((f64)(_const_rand__util__max_u64)) + 1;
+	_const_rand__util__u31_mask = ((u32)(0x7FFFFFFFU));
+	_const_rand__util__u63_mask = ((u64)(0x7FFFFFFFFFFFFFFFU));
 	// Initializations for module flag :
 	// Initializations for module semver :
 	_const_semver__versions = new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_semver__ver_major, _const_semver__ver_minor, _const_semver__ver_patch}));
@@ -55084,12 +55090,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__vmod__private_file_cacher = v__vmod__new_mod_file_cacher();
 	// Initializations for module v.util.recompilation :
 	// Initializations for module v.cflag :
-	// Initializations for module rand.util :
-	_const_rand__util__lower_mask = ((u64)(0x00000000FFFFFFFFU));
-	_const_rand__util__max_u32_as_f32 = ((f32)(_const_rand__util__max_u32)) + 1;
-	_const_rand__util__max_u64_as_f64 = ((f64)(_const_rand__util__max_u64)) + 1;
-	_const_rand__util__u31_mask = ((u32)(0x7FFFFFFFU));
-	_const_rand__util__u63_mask = ((u64)(0x7FFFFFFFFFFFFFFFU));
+	// Initializations for module rand.seed :
 	// Initializations for module v.errors :
 	// Initializations for module v.pkgconfig :
 	_const_v__pkgconfig__default_paths = new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig")}));
