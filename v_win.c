@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "69c3740"
+#define V_COMMIT_HASH "7bb9c0e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dbaccd4"
+	#define V_COMMIT_HASH "69c3740"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "69c3740"
+	#define V_CURRENT_COMMIT_HASH "7bb9c0e"
 #endif
 
 // V comptime_defines:
@@ -22029,7 +22029,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dbaccd4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("69c3740"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28633,12 +28633,12 @@ void v__checker__Checker_infer_fn_types(v__checker__Checker* c, v__table__Fn f, 
 				break;
 			}
 			v__ast__CallArg arg = (i != 0 && call_expr->is_method ? ((*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, i - 1))) : ((*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, i))));
-			if (v__table__Type_has_flag(param.typ, v__table__TypeFlag_generic)) {
+			v__table__TypeSymbol* param_type_sym = v__table__Table_get_type_symbol(c->table, param.typ);
+			if (v__table__Type_has_flag(param.typ, v__table__TypeFlag_generic) && string_eq(param_type_sym->name, gt_name)) {
 				typ = arg.typ;
 				break;
 			}
 			v__table__TypeSymbol* arg_sym = v__table__Table_get_type_symbol(c->table, arg.typ);
-			v__table__TypeSymbol* param_type_sym = v__table__Table_get_type_symbol(c->table, param.typ);
 			if (arg_sym->kind == v__table__Kind_array && param_type_sym->kind == v__table__Kind_array) {
 				v__table__Array arg_elem_info = /* as */ *(v__table__Array*)__as_cast((arg_sym->info)._v__table__Array, (arg_sym->info).typ, /*expected:*/373);
 				v__table__Array param_elem_info = /* as */ *(v__table__Array*)__as_cast((param_type_sym->info)._v__table__Array, (param_type_sym->info).typ, /*expected:*/373);
