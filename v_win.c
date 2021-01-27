@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8162396"
+#define V_COMMIT_HASH "242d7d0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f4baa3f"
+	#define V_COMMIT_HASH "8162396"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8162396"
+	#define V_CURRENT_COMMIT_HASH "242d7d0"
 #endif
 
 // V comptime_defines:
@@ -22092,7 +22092,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f4baa3f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8162396"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23711,6 +23711,9 @@ void v__util__launch_tool(bool is_verbose, string tool_name, array_string args) 
 			};
 		}
 		string compilation_command = _STR("\"%.*s\000\" ", 2, vexe);
+		if ((string_eq(tool_name, _SLIT("vself")) || string_eq(tool_name, _SLIT("vup")) || string_eq(tool_name, _SLIT("vdoctor")) || string_eq(tool_name, _SLIT("vsymlink")))) {
+			compilation_command = /*f*/string_add(compilation_command, _SLIT(" -g "));
+		}
 		compilation_command = /*f*/string_add(compilation_command, _STR("\"%.*s\000\"", 2, tool_source));
 		if (is_verbose) {
 			println(_STR("Compiling %.*s\000 with: \"%.*s\000\"", 3, tool_name, compilation_command));
@@ -24028,9 +24031,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_14512 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_14512.arg0;
-	string tool_exe = mr_14512.arg1;
+	multi_return_string_string mr_14925 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_14925.arg0;
+	string tool_exe = mr_14925.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep_ms(1001);
 		v__util__recompile_file(vexe, stool);
