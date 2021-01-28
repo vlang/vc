@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a29719"
+#define V_COMMIT_HASH "079fbff"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "75d8540"
+	#define V_COMMIT_HASH "1a29719"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a29719"
+	#define V_CURRENT_COMMIT_HASH "079fbff"
 #endif
 
 // V comptime_defines:
@@ -2327,6 +2327,7 @@ struct v__table__FnSignatureOpts {
 
 struct v__scanner__Scanner {
 	string file_path;
+	string file_base;
 	string text;
 	int pos;
 	int line_nr;
@@ -5831,6 +5832,7 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg);
 VV_LOCAL_SYMBOL void v__scanner__Scanner_vet_error(v__scanner__Scanner* s, string msg, v__vet__FixKind fix);
 void v__scanner__verror(string s);
 void v__scanner__Scanner_codegen(v__scanner__Scanner* s, string newtext);
+VV_LOCAL_SYMBOL void v__scanner__Scanner_trace(v__scanner__Scanner* s, string fbase, string message);
 v__ast__Ident v__ast__SelectorExpr_root_ident(v__ast__SelectorExpr* e);
 v__ast__IdentVar v__ast__Ident_var_info(v__ast__Ident* i);
 bool v__ast__Expr_is_blank_ident(v__ast__Expr expr);
@@ -22396,7 +22398,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("75d8540"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1a29719"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -25989,6 +25991,7 @@ v__scanner__Scanner* v__scanner__new_vet_scanner_file(string file_path, v__scann
  	string raw_text = *(string*) _t1068.data;
 	v__scanner__Scanner* s = v__scanner__new_vet_scanner(raw_text, comments_mode, pref);
 	s->file_path = file_path;
+	s->file_base = os__base(file_path);
 	return s;
 }
 
@@ -25998,6 +26001,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 
 v__scanner__Scanner* v__scanner__new_vet_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref) {
 	return (v__scanner__Scanner*)memdup(&(v__scanner__Scanner){.file_path = _SLIT("internal_memory"),
+		.file_base = _SLIT("internal_memory"),
 		.text = text,
 		.pos = 0,
 		.line_nr = 0,
@@ -27070,6 +27074,12 @@ void v__scanner__Scanner_codegen(v__scanner__Scanner* s, string newtext) {
 			eprintln(_STR("scanner.codegen:\n %.*s", 1, newtext));
 		}
 		#endif
+	}
+}
+
+VV_LOCAL_SYMBOL void v__scanner__Scanner_trace(v__scanner__Scanner* s, string fbase, string message) {
+	if (string_eq(s->file_base, fbase)) {
+		println(_STR("> s.trace | %*.*s\000 | %.*s", 2, fbase, -10, message));
 	}
 }
 
@@ -34533,7 +34543,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			v__checker__Checker_error(c, _SLIT("method overrides built-in sum type method"), node->pos);
 		}
 		if (sym->name.len == 1) {
-			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), node->pos);
+			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), node->receiver_pos);
 			return;
 		}
 		(*(v__table__Fn*)/*ee elem_typ */array_get(sym->methods, node->method_idx)).source_fn = ((voidptr)(node));
@@ -34673,10 +34683,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1652 = 0; _t1652 < _t1651.len; ++_t1652) {
 			v__table__Fn m = ((v__table__Fn*)_t1651.data)[_t1652];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_176985 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_176985.arg0;
-				int nroute_attributes = mr_176985.arg1;
-				int nargs = mr_176985.arg2;
+				multi_return_bool_int_int mr_176994 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_176994.arg0;
+				int nroute_attributes = mr_176994.arg1;
+				int nargs = mr_176994.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
