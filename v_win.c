@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "36e75e5"
+#define V_COMMIT_HASH "68dab10"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5a1f3cd"
+	#define V_COMMIT_HASH "36e75e5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "36e75e5"
+	#define V_CURRENT_COMMIT_HASH "68dab10"
 #endif
 
 // V comptime_defines:
@@ -22092,7 +22092,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5a1f3cd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("36e75e5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34201,6 +34201,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 		} else if (sym->kind == v__table__Kind_sum_type && string_eq(node->name, _SLIT("type_name"))) {
 			v__checker__Checker_error(c, _SLIT("method overrides built-in sum type method"), node->pos);
 		}
+		if (sym->name.len == 1) {
+			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), node->pos);
+			return;
+		}
 		(*(v__table__Fn*)/*ee elem_typ */array_get(sym->methods, node->method_idx)).source_fn = ((voidptr)(node));
 	}
 	if (node->language == v__table__Language_v) {
@@ -34338,10 +34342,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1633 = 0; _t1633 < _t1632.len; ++_t1633) {
 			v__table__Fn m = ((v__table__Fn*)_t1632.data)[_t1633];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_176842 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_176842.arg0;
-				int nroute_attributes = mr_176842.arg1;
-				int nargs = mr_176842.arg2;
+				multi_return_bool_int_int mr_176980 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_176980.arg0;
+				int nroute_attributes = mr_176980.arg1;
+				int nargs = mr_176980.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
