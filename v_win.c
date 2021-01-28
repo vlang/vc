@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "684d2e6"
+#define V_COMMIT_HASH "1be7cc1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4fcd8d8"
+	#define V_COMMIT_HASH "684d2e6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "684d2e6"
+	#define V_CURRENT_COMMIT_HASH "1be7cc1"
 #endif
 
 // V comptime_defines:
@@ -17488,9 +17488,9 @@ string time__Time_get_fmt_time_str(time__Time t, time__FormatTime fmt_time) {
 		return _SLIT("");
 	}
 	string tp = (t.hour > 11 ? (_SLIT("p.m.")) : (_SLIT("a.m.")));
-	int hour = (t.hour > 12 ? (t.hour - 12) : t.hour == 0 ? (12) : (t.hour));
+	int hour_ = (t.hour > 12 ? (t.hour - 12) : t.hour == 0 ? (12) : (t.hour));
 	time__FormatTime _t332 = fmt_time; 
-		return ((_t332 == time__FormatTime_hhmm12) ? (_STR("%"PRId32"\000:%02"PRId32"\000 %.*s", 3, hour, t.minute, tp)) : (_t332 == time__FormatTime_hhmm24) ? (_STR("%02"PRId32"\000:%02"PRId32"", 2, t.hour, t.minute)) : (_t332 == time__FormatTime_hhmmss12) ? (_STR("%"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 %.*s", 4, hour, t.minute, t.second, tp)) : (_t332 == time__FormatTime_hhmmss24) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"", 3, t.hour, t.minute, t.second)) : (_t332 == time__FormatTime_hhmmss24_milli) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%03"PRId32"", 4, t.hour, t.minute, t.second, (t.microsecond / 1000))) : (_t332 == time__FormatTime_hhmmss24_micro) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%06"PRId32"", 4, t.hour, t.minute, t.second, t.microsecond)) : (_STR("unknown enumeration %.*s", 1, time__FormatTime_str(fmt_time))));
+		return ((_t332 == time__FormatTime_hhmm12) ? (_STR("%"PRId32"\000:%02"PRId32"\000 %.*s", 3, hour_, t.minute, tp)) : (_t332 == time__FormatTime_hhmm24) ? (_STR("%02"PRId32"\000:%02"PRId32"", 2, t.hour, t.minute)) : (_t332 == time__FormatTime_hhmmss12) ? (_STR("%"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 %.*s", 4, hour_, t.minute, t.second, tp)) : (_t332 == time__FormatTime_hhmmss24) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"", 3, t.hour, t.minute, t.second)) : (_t332 == time__FormatTime_hhmmss24_milli) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%03"PRId32"", 4, t.hour, t.minute, t.second, (t.microsecond / 1000))) : (_t332 == time__FormatTime_hhmmss24_micro) ? (_STR("%02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000.%06"PRId32"", 4, t.hour, t.minute, t.second, t.microsecond)) : (_STR("unknown enumeration %.*s", 1, time__FormatTime_str(fmt_time))));
 }
 
 string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr, time__FormatDate fmt_date) {
@@ -17598,16 +17598,16 @@ Option_time__Time time__parse(string s) {
 	}
 	string shms = string_substr(s, pos, s.len);
 	array_string hms = string_split(shms, _SLIT(":"));
-	string hour = string_substr((*(string*)/*ee elem_typ */array_get(hms, 0)), 1, (*(string*)/*ee elem_typ */array_get(hms, 0)).len);
-	string minute = (*(string*)/*ee elem_typ */array_get(hms, 1));
-	string second = (*(string*)/*ee elem_typ */array_get(hms, 2));
+	string hour_ = string_substr((*(string*)/*ee elem_typ */array_get(hms, 0)), 1, (*(string*)/*ee elem_typ */array_get(hms, 0)).len);
+	string minute_ = (*(string*)/*ee elem_typ */array_get(hms, 1));
+	string second_ = (*(string*)/*ee elem_typ */array_get(hms, 2));
 	time__Time res = time__new_time((time__Time){
 		.year = string_int((*(string*)/*ee elem_typ */array_get(ymd, 0))),
 		.month = string_int((*(string*)/*ee elem_typ */array_get(ymd, 1))),
 		.day = string_int((*(string*)/*ee elem_typ */array_get(ymd, 2))),
-		.hour = string_int(hour),
-		.minute = string_int(minute),
-		.second = string_int(second),
+		.hour = string_int(hour_),
+		.minute = string_int(minute_),
+		.second = string_int(second_),
 		.microsecond = 0,
 		.v_unix = 0,
 	});
@@ -17661,16 +17661,16 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int time__parse_iso8601_date(string 
 }
 
 VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601_time(string s) {
-	int hour = 0;
-	int minute = 0;
-	int second = 0;
-	int microsecond = 0;
+	int hour_ = 0;
+	int minute_ = 0;
+	int second_ = 0;
+	int microsecond_ = 0;
 	rune plus_min_z = L'a';
 	int offset_hour = 0;
 	int offset_minute = 0;
-	int count = sscanf(((charptr)(s.str)), "%2d:%2d:%2d.%6d%c%2d:%2d", &hour, &minute, &second, &microsecond, ((charptr)(&plus_min_z)), &offset_hour, &offset_minute);
+	int count = sscanf(((charptr)(s.str)), "%2d:%2d:%2d.%6d%c%2d:%2d", &hour_, &minute_, &second_, &microsecond_, ((charptr)(&plus_min_z)), &offset_hour, &offset_minute);
 	if (count < 4) {
-		count = sscanf(((charptr)(s.str)), "%2d:%2d:%2d%c%2d:%2d", &hour, &minute, &second, ((charptr)(&plus_min_z)), &offset_hour, &offset_minute);
+		count = sscanf(((charptr)(s.str)), "%2d:%2d:%2d%c%2d:%2d", &hour_, &minute_, &second_, ((charptr)(&plus_min_z)), &offset_hour, &offset_minute);
 		count++;
 	}
 	if (count < 4) {
@@ -17704,7 +17704,7 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601
 		unix_offset *= -1;
 	}
 	Option_multi_return_int_int_int_int_i64_bool _t355;
-	opt_ok2(&(multi_return_int_int_int_int_i64_bool/*X*/[]) { (multi_return_int_int_int_int_i64_bool){.arg0=hour, .arg1=minute, .arg2=second, .arg3=microsecond, .arg4=unix_offset, .arg5=is_local_time} }, (OptionBase*)(&_t355), sizeof(multi_return_int_int_int_int_i64_bool));
+	opt_ok2(&(multi_return_int_int_int_int_i64_bool/*X*/[]) { (multi_return_int_int_int_int_i64_bool){.arg0=hour_, .arg1=minute_, .arg2=second_, .arg3=microsecond_, .arg4=unix_offset, .arg5=is_local_time} }, (OptionBase*)(&_t355), sizeof(multi_return_int_int_int_int_i64_bool));
 	return _t355;
 }
 
@@ -17729,14 +17729,14 @@ Option_time__Time time__parse_iso8601(string s) {
 		memcpy(&_t360, &_t359, sizeof(Option));
 		return _t360;
 	}
- 	Option_multi_return_int_int_int mr_3488 =  _t359;
-	int year = (*(multi_return_int_int_int*)mr_3488.data).arg0;
-	int month = (*(multi_return_int_int_int*)mr_3488.data).arg1;
-	int day = (*(multi_return_int_int_int*)mr_3488.data).arg2;
-	int hour = 0;
-	int minute = 0;
-	int second = 0;
-	int microsecond = 0;
+ 	Option_multi_return_int_int_int mr_3509 =  _t359;
+	int year = (*(multi_return_int_int_int*)mr_3509.data).arg0;
+	int month = (*(multi_return_int_int_int*)mr_3509.data).arg1;
+	int day = (*(multi_return_int_int_int*)mr_3509.data).arg2;
+	int hour_ = 0;
+	int minute_ = 0;
+	int second_ = 0;
+	int microsecond_ = 0;
 	i64 unix_offset = ((i64)(0));
 	bool is_local_time = true;
 	if (parts.len == 2) {
@@ -17746,22 +17746,22 @@ Option_time__Time time__parse_iso8601(string s) {
 			memcpy(&_t362, &_t361, sizeof(Option));
 			return _t362;
 		}
- 		Option_multi_return_int_int_int_int_i64_bool mr_3722 =  _t361;
-		hour = (*(multi_return_int_int_int_int_i64_bool*)mr_3722.data).arg0;
-		minute = (*(multi_return_int_int_int_int_i64_bool*)mr_3722.data).arg1;
-		second = (*(multi_return_int_int_int_int_i64_bool*)mr_3722.data).arg2;
-		microsecond = (*(multi_return_int_int_int_int_i64_bool*)mr_3722.data).arg3;
-		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3722.data).arg4;
-		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3722.data).arg5;
+ 		Option_multi_return_int_int_int_int_i64_bool mr_3751 =  _t361;
+		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg0;
+		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg1;
+		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg2;
+		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg3;
+		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg4;
+		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg5;
 	}
 	time__Time t = time__new_time((time__Time){
 		.year = year,
 		.month = month,
 		.day = day,
-		.hour = hour,
-		.minute = minute,
-		.second = second,
-		.microsecond = microsecond,
+		.hour = hour_,
+		.minute = minute_,
+		.second = second_,
+		.microsecond = microsecond_,
 		.v_unix = 0,
 	});
 	if (is_local_time) {
@@ -22094,7 +22094,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4fcd8d8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("684d2e6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24756,8 +24756,8 @@ int v__table__Table_find_or_register_array(v__table__Table* t, v__table__Type el
 	if (existing_idx > 0) {
 		return existing_idx;
 	}
-	v__table__TypeSymbol array_type = (v__table__TypeSymbol){.parent_idx = _const_v__table__array_type_idx,.info = /* sum type cast 4 */ (v__table__TypeInfo){._v__table__Array = memdup(&(v__table__Array[]){(v__table__Array){.nr_dims = 0,.elem_type = elem_type,}}, sizeof(v__table__Array)), .typ = 373 /* v.table.Array */},.kind = v__table__Kind_array,.name = name,.cname = cname,.methods = __new_array(0, 1, sizeof(v__table__Fn)),.mod = (string){.str=(byteptr)""},.is_public = 0,.language = 0,};
-	return v__table__Table_register_type_symbol(t, array_type);
+	v__table__TypeSymbol array_type_ = (v__table__TypeSymbol){.parent_idx = _const_v__table__array_type_idx,.info = /* sum type cast 4 */ (v__table__TypeInfo){._v__table__Array = memdup(&(v__table__Array[]){(v__table__Array){.nr_dims = 0,.elem_type = elem_type,}}, sizeof(v__table__Array)), .typ = 373 /* v.table.Array */},.kind = v__table__Kind_array,.name = name,.cname = cname,.methods = __new_array(0, 1, sizeof(v__table__Fn)),.mod = (string){.str=(byteptr)""},.is_public = 0,.language = 0,};
+	return v__table__Table_register_type_symbol(t, array_type_);
 }
 
 int v__table__Table_find_or_register_array_with_dims(v__table__Table* t, v__table__Type elem_type, int nr_dims) {
@@ -31287,14 +31287,14 @@ void v__checker__Checker_assign_stmt(v__checker__Checker* c, v__ast__AssignStmt*
 					else {
 					};
 				}
-				if (false && is_decl) {
+				if (is_decl) {
 					string full_name = _STR("%.*s\000.%.*s", 2, (*left._v__ast__Ident).mod, (*left._v__ast__Ident).name);
 					{ /* if guard */ 
 					Option_v__ast__ScopeObject _t1462;
 					if (_t1462 = v__ast__Scope_find(c->file->global_scope, full_name), _t1462.ok) {
 						v__ast__ScopeObject obj = *(v__ast__ScopeObject*)_t1462.data;
 						if ((obj).typ == 284 /* v.ast.ConstField */) {
-							v__checker__Checker_warn(c, _STR("duplicate of a const name `%.*s", 1, full_name), (*left._v__ast__Ident).pos);
+							v__checker__Checker_warn(c, _STR("duplicate of a const name `%.*s\000`", 2, full_name), (*left._v__ast__Ident).pos);
 						}
 					}}
 				}
@@ -32576,8 +32576,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1515 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_122579 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_122579.arg1;
+		multi_return_string_int mr_122571 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_122571.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1515 == v__token__AtKind_vhash) {
@@ -33706,8 +33706,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_156346 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_156346.arg0;
+		multi_return_string_v__token__Position mr_156338 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_156338.arg0;
 	}
 	return typ;
 }
@@ -34352,10 +34352,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1633 = 0; _t1633 < _t1632.len; ++_t1633) {
 			v__table__Fn m = ((v__table__Fn*)_t1632.data)[_t1633];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_176994 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_176994.arg0;
-				int nroute_attributes = mr_176994.arg1;
-				int nargs = mr_176994.arg2;
+				multi_return_bool_int_int mr_176986 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_176986.arg0;
+				int nroute_attributes = mr_176986.arg1;
+				int nargs = mr_176986.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
