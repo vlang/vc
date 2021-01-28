@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "079fbff"
+#define V_COMMIT_HASH "4fcd8d8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1a29719"
+	#define V_COMMIT_HASH "079fbff"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "079fbff"
+	#define V_CURRENT_COMMIT_HASH "4fcd8d8"
 #endif
 
 // V comptime_defines:
@@ -22398,7 +22398,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1a29719"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("079fbff"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26859,8 +26859,8 @@ VV_LOCAL_SYMBOL int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner*
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 	byte q = string_at(s->text, s->pos);
 	bool is_quote = q == _const_v__scanner__single_quote || q == _const_v__scanner__double_quote;
-	bool is_raw = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == L'r';
-	bool is_cstr = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == L'c';
+	bool is_raw = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == L'r' && !s->is_inside_string;
+	bool is_cstr = is_quote && s->pos > 0 && string_at(s->text, s->pos - 1) == L'c' && !s->is_inside_string;
 	if (is_quote) {
 		if (s->is_inside_string || s->is_enclosed_inter || s->is_inter_start) {
 			s->inter_quote = q;
