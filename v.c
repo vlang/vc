@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2326a3a"
+#define V_COMMIT_HASH "9f31829"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4d18017"
+	#define V_COMMIT_HASH "2326a3a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2326a3a"
+	#define V_CURRENT_COMMIT_HASH "9f31829"
 #endif
 
 // V comptime_defines:
@@ -22426,7 +22426,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4d18017"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2326a3a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53515,12 +53515,12 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	if (v->pref->os == v__pref__OS_macos || v->pref->os == v__pref__OS_ios) {
 		if (!ccoptions.is_cc_tcc) {
-			array_push(&ccoptions.post_args, _MOV((string[]){ string_clone(_SLIT("-x objective-c")) }));
+			array_push(&ccoptions.source_args, _MOV((string[]){ string_clone(_SLIT("-x objective-c")) }));
 		}
 	}
 	array_push(&ccoptions.source_args, _MOV((string[]){ string_clone(_STR("\"%.*s\000\"", 2, v->out_name_c)) }));
 	if (v->pref->os == v__pref__OS_macos) {
-		array_push(&ccoptions.post_args, _MOV((string[]){ string_clone(_SLIT("-x none")) }));
+		array_push(&ccoptions.source_args, _MOV((string[]){ string_clone(_SLIT("-x none")) }));
 	}
 	if (v->pref->os == v__pref__OS_macos) {
 		array_push(&ccoptions.post_args, _MOV((string[]){ string_clone(_SLIT("-mmacosx-version-min=10.7")) }));
@@ -53531,10 +53531,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	_PUSH_MANY(&ccoptions.o_args, (array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t2390, array_string);
-	multi_return_array_string_array_string_array_string mr_10028 = array_v__cflag__CFlag_defines_others_libs(cflags);
-	array_string defines = mr_10028.arg0;
-	array_string others = mr_10028.arg1;
-	array_string libs = mr_10028.arg2;
+	multi_return_array_string_array_string_array_string mr_10032 = array_v__cflag__CFlag_defines_others_libs(cflags);
+	array_string defines = mr_10032.arg0;
+	array_string others = mr_10032.arg1;
+	array_string libs = mr_10032.arg2;
 	_PUSH_MANY(&ccoptions.args, (defines), _t2391, array_string);
 	_PUSH_MANY(&ccoptions.args, (others), _t2392, array_string);
 	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t2393, array_string);
@@ -53967,10 +53967,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string_add(b->out_name_c, _SLIT(".o"));
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_array_string_array_string_array_string mr_24126 = array_v__cflag__CFlag_defines_others_libs(cflags);
-	array_string defines = mr_24126.arg0;
-	array_string others = mr_24126.arg1;
-	array_string libs = mr_24126.arg2;
+	multi_return_array_string_array_string_array_string mr_24130 = array_v__cflag__CFlag_defines_others_libs(cflags);
+	array_string defines = mr_24130.arg0;
+	array_string others = mr_24130.arg1;
+	array_string libs = mr_24130.arg2;
 	array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
