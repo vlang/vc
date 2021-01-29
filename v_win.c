@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e47c139"
+#define V_COMMIT_HASH "d7d069a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "afddcda"
+	#define V_COMMIT_HASH "e47c139"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e47c139"
+	#define V_CURRENT_COMMIT_HASH "d7d069a"
 #endif
 
 // V comptime_defines:
@@ -22094,7 +22094,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("afddcda"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e47c139"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40537,14 +40537,15 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr
 	}
 	if ((compare_fn).len == 0) {
 		string tmp_name = v__gen__Gen_new_tmp_var(g);
-		compare_fn = string_add(_STR("compare_%.*s\000_", 2, tmp_name), v__gen__Gen_typ(g, typ));
+		string styp = string_trim(v__gen__Gen_typ(g, typ), _SLIT("*"));
+		compare_fn = _STR("compare_%.*s\000_%.*s", 2, tmp_name, styp);
 		if (is_reverse) {
 			compare_fn = /*f*/string_add(compare_fn, _SLIT("_reverse"));
 		}
 		v__table__Table_register_fn(g->table, (v__table__Fn){.params = __new_array(0, 1, sizeof(v__table__Param)),.return_type = _const_v__table__int_type,.is_variadic = 0,.language = 0,.generic_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.no_body = 0,.mod = (string){.str=(byteptr)""},.ctdefine = (string){.str=(byteptr)""},.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.name = compare_fn,.source_fn = 0,});
 		v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast(((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr)._v__ast__InfixExpr, ((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr).typ, /*expected:*/237);
-		string styp = v__gen__Gen_typ(g, typ);
-		strings__Builder_writeln(&g->definitions, _STR("int %.*s\000 (%.*s\000* a, %.*s\000* b) {", 4, compare_fn, styp, styp));
+		string styp_arg = v__gen__Gen_typ(g, typ);
+		strings__Builder_writeln(&g->definitions, _STR("int %.*s\000 (%.*s\000* a, %.*s\000* b) {", 4, compare_fn, styp_arg, styp_arg));
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		if (!is_reverse && v__table__TypeSymbol_has_method(sym, _SLIT("<")) && v__ast__Expr_str(infix_expr.left).len == 1) {
 			strings__Builder_writeln(&g->definitions, _STR("\tif (%.*s\000__lt(*a, *b)) { return -1; } else { return 1; }}", 2, styp));
@@ -40554,6 +40555,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr
 			string field_type = v__gen__Gen_typ(g, infix_expr.left_type);
 			string left_expr_str = v__gen__Gen_write_expr_to_string(g, infix_expr.left);
 			string right_expr_str = v__gen__Gen_write_expr_to_string(g, infix_expr.right);
+			if (v__table__Type_is_ptr(typ)) {
+				left_expr_str = string_replace_once(left_expr_str, _SLIT("a"), _SLIT("(*a)"));
+				right_expr_str = string_replace_once(right_expr_str, _SLIT("b"), _SLIT("(*b)"));
+			}
 			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 a_ = %.*s\000;", 3, field_type, left_expr_str));
 			strings__Builder_writeln(&g->definitions, _STR("%.*s\000 b_ = %.*s\000;", 3, field_type, right_expr_str));
 			string op1 = _SLIT("");
