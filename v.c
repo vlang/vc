@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d370e4d"
+#define V_COMMIT_HASH "4a955d9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "93acc92"
+	#define V_COMMIT_HASH "d370e4d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d370e4d"
+	#define V_CURRENT_COMMIT_HASH "4a955d9"
 #endif
 
 // V comptime_defines:
@@ -6259,6 +6259,7 @@ string v__gen__get_guarded_include_text(string iname, string imessage);
 VV_LOCAL_SYMBOL void v__gen__Gen_trace(v__gen__Gen* g, string fbase, string message);
 string _const_v__gen__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c_current_commit_hash_default; // a string literal, inited later
+string _const_v__gen__c_concurrency_helpers; // a string literal, inited later
 string _const_v__gen__c_common_macros; // a string literal, inited later
 string _const_v__gen__c_headers; // inited later
 string _const_v__gen__c_builtin_types; // a string literal, inited later
@@ -6905,6 +6906,7 @@ void vinit_string_literals(){
 	_const_v__util__map_prefix = _SLIT("map[string]");
 	_const_v__gen__c_commit_hash_default = _SLIT("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
 	_const_v__gen__c_current_commit_hash_default = _SLIT("\n#ifndef V_CURRENT_COMMIT_HASH\n	#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
+	_const_v__gen__c_concurrency_helpers = _SLIT("\ntypedef struct __shared_map __shared_map; \nstruct __shared_map { map val; sync__RwMutex mtx; };\nstatic inline voidptr __dup_shared_map(voidptr src, int sz) {\n	__shared_map* dest = memdup(src, sz);\n	sync__RwMutex_init(&dest->mtx);\n	return dest;\n}\ntypedef struct __shared_array __shared_array;\nstruct __shared_array { array val; sync__RwMutex mtx; };\nstatic inline voidptr __dup_shared_array(voidptr src, int sz) {\n	__shared_array* dest = memdup(src, sz);\n	sync__RwMutex_init(&dest->mtx);\n	return dest;\n}\n");
 	_const_v__gen__c_common_macros = _SLIT("\n#define EMPTY_VARG_INITIALIZATION 0\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION 0\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#if defined(__x86_64__)\n#define __V_amd64  1\n#endif\n#if defined(__aarch64__) || defined(__arm64__)\n#define __V_aarch64  1\n#endif\n\n// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:\n#ifdef __GNUC__\n	#define __V_GCC__\n#endif\n#ifdef __TINYC__\n	#undef __V_GCC__\n#endif\n#ifdef __cplusplus\n	#undef __V_GCC__\n#endif\n#ifdef __clang__\n	#undef __V_GCC__\n#endif\n#ifdef _MSC_VER\n	#undef __V_GCC__\n#endif\n\n#ifdef __TINYC__\n	#undef EMPTY_STRUCT_DECLARATION\n	#undef EMPTY_STRUCT_INITIALIZATION\n	#define EMPTY_STRUCT_DECLARATION char _dummy\n	#define EMPTY_STRUCT_INITIALIZATION 0\n	#undef EMPTY_ARRAY_OF_ELEMS\n	#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n	#undef __NOINLINE\n	#undef __IRQHANDLER\n	// tcc does not support inlining at all\n	#define __NOINLINE\n	#define __IRQHANDLER\n	#undef TCCSKIP\n	#define TCCSKIP(x)\n	// #include <byteswap.h>\n	#ifndef _WIN32\n		#include <execinfo.h>\n		int tcc_backtrace(const char *fmt, ...);\n	#endif\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n	#define __offsetof(s,memb) ((size_t)((char *)&((s *)0)->memb - (char *)0))\n#endif\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n	#ifdef PRIx64\n		#define V64_PRINTFORMAT \"0x%\"PRIx64\n	#elif defined(__WIN32__)\n		#define V64_PRINTFORMAT \"0x%I64x\"\n	#elif defined(__linux__) && defined(__LP64__)\n		#define V64_PRINTFORMAT \"0x%lx\"\n	#else\n		#define V64_PRINTFORMAT \"0x%llx\"\n	#endif\n#endif\n");
 	_const_v__gen__c_builtin_types = _SLIT("\n//================================== builtin types ================================*/\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef float f32;\ntypedef double f64;\ntypedef int64_t int_literal;\ntypedef double float_literal;\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef byte array_fixed_byte_300 [300];\n\ntypedef struct sync__Channel* chan;\n\n#ifndef __cplusplus\n	#ifndef bool\n		typedef int bool;\n		#define true 1\n		#define false 0\n	#endif\n#endif\n\ntypedef u64 (*MapHashFn)(voidptr);\ntypedef bool (*MapEqFn)(voidptr, voidptr);\ntypedef void (*MapCloneFn)(voidptr, voidptr);\ntypedef void (*MapFreeFn)(voidptr);\n");
 	_const_v__gen__posix_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
@@ -22429,7 +22431,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("93acc92"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d370e4d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40631,7 +40633,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 		if (g->is_shared) {
 			v__table__Type shared_typ = v__table__Type_set_flag(it.typ, v__table__TypeFlag_shared_f);
 			shared_styp = v__gen__Gen_typ(g, shared_typ);
-			v__gen__Gen_writeln(g, _STR("(%.*s\000*)memdup(&(%.*s\000){.val = ", 3, shared_styp, shared_styp));
+			v__gen__Gen_writeln(g, _STR("(%.*s\000*)__dup_shared_array(&(%.*s\000){.val = ", 3, shared_styp, shared_styp));
 		} else {
 			v__gen__Gen_write(g, _STR("(%.*s\000*)memdup(ADDR(%.*s\000, ", 3, styp, styp));
 		}
@@ -40712,7 +40714,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 		}
 		if (is_amp) {
 			if (g->is_shared) {
-				v__gen__Gen_write(g, _STR(", .mtx = sync__new_rwmutex()}, sizeof(%.*s\000))", 2, shared_styp));
+				v__gen__Gen_write(g, _STR("}, sizeof(%.*s\000))", 2, shared_styp));
 			} else {
 				v__gen__Gen_write(g, _STR("), sizeof(%.*s\000))", 2, styp));
 			}
@@ -42236,6 +42238,7 @@ string v__gen__cgen(array_v__ast__File files, v__table__Table* table, v__pref__P
 	if (g.shared_types.len > 0) {
 		strings__Builder_writeln(&b, _SLIT("\n// V shared types:"));
 		strings__Builder_write(&b, strings__Builder_str(&g.shared_types));
+		strings__Builder_write(&b, _const_v__gen__c_concurrency_helpers);
 	}
 	if (g.channel_definitions.len > 0) {
 		strings__Builder_writeln(&b, _SLIT("\n// V channel code:"));
@@ -42445,9 +42448,9 @@ VV_LOCAL_SYMBOL string v__gen__Gen_optional_type_text(v__gen__Gen* g, string sty
 }
 
 VV_LOCAL_SYMBOL string v__gen__Gen_register_optional(v__gen__Gen* g, v__table__Type t) {
-	multi_return_string_string mr_20009 = v__gen__Gen_optional_type_name(g, t);
-	string styp = mr_20009.arg0;
-	string base = mr_20009.arg1;
+	multi_return_string_string mr_20042 = v__gen__Gen_optional_type_name(g, t);
+	string styp = mr_20042.arg0;
+	string base = mr_20042.arg1;
 	if (!(array_string_contains(g->optionals, styp))) {
 		string no_ptr = string_replace(base, _SLIT("*"), _SLIT("_ptr"));
 		string typ = (string_eq(base, _SLIT("void")) ? (_SLIT("void*")) : (base));
@@ -42467,7 +42470,12 @@ VV_LOCAL_SYMBOL string v__gen__Gen_find_or_register_shared(v__gen__Gen* g, v__ta
 		return sh_typ;
 	}
 	string mtx_typ = _SLIT("sync__RwMutex");
-	strings__Builder_writeln(&g->shared_types, _STR("struct %.*s\000 { %.*s\000 val; %.*s\000* mtx; };", 4, sh_typ, base, mtx_typ));
+	strings__Builder_writeln(&g->shared_types, _STR("struct %.*s\000 { %.*s\000 val; %.*s\000 mtx; };", 4, sh_typ, base, mtx_typ));
+	strings__Builder_writeln(&g->shared_types, _STR("static inline voidptr __dup%.*s\000(voidptr src, int sz) {", 2, sh_typ));
+	strings__Builder_writeln(&g->shared_types, _STR("\t%.*s\000* dest = memdup(src, sz);", 2, sh_typ));
+	strings__Builder_writeln(&g->shared_types, _SLIT("\tsync__RwMutex_init(&dest->mtx);"));
+	strings__Builder_writeln(&g->shared_types, _SLIT("\treturn dest;"));
+	strings__Builder_writeln(&g->shared_types, _SLIT("}"));
 	strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, sh_typ, sh_typ));
 	array_push(&g->shareds, _MOV((int[]){ t_idx }));
 	return sh_typ;
@@ -44373,11 +44381,11 @@ if (	node.typ == 188 /* v.ast.AnonFn */) {
 		string value_typ_str = v__gen__Gen_typ(g, (*node._v__ast__MapInit).value_type);
 		v__table__TypeSymbol* value_typ = v__table__Table_get_type_symbol(g->table, (*node._v__ast__MapInit).value_type);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, (*node._v__ast__MapInit).key_type);
-		multi_return_string_string_string_string mr_80679 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_80679.arg0;
-		string key_eq_fn = mr_80679.arg1;
-		string clone_fn = mr_80679.arg2;
-		string free_fn = mr_80679.arg3;
+		multi_return_string_string_string_string mr_80992 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_80992.arg0;
+		string key_eq_fn = mr_80992.arg1;
+		string clone_fn = mr_80992.arg2;
+		string free_fn = mr_80992.arg3;
 		int size = (*node._v__ast__MapInit).vals.len;
 		string shared_styp = _SLIT("");
 		string styp = _SLIT("");
@@ -44388,7 +44396,7 @@ if (	node.typ == 188 /* v.ast.AnonFn */) {
 			if (g->is_shared) {
 				v__table__Type shared_typ = v__table__Type_set_flag((*node._v__ast__MapInit).typ, v__table__TypeFlag_shared_f);
 				shared_styp = v__gen__Gen_typ(g, shared_typ);
-				v__gen__Gen_writeln(g, _STR("(%.*s\000*)memdup(&(%.*s\000){.val = ", 3, shared_styp, shared_styp));
+				v__gen__Gen_writeln(g, _STR("(%.*s\000*)__dup_shared_map(&(%.*s\000){.val = ", 3, shared_styp, shared_styp));
 			} else {
 				styp = v__gen__Gen_typ(g, (*node._v__ast__MapInit).typ);
 				v__gen__Gen_write(g, _STR("(%.*s\000*)memdup(ADDR(%.*s\000, ", 3, styp, styp));
@@ -44428,7 +44436,7 @@ if (	node.typ == 188 /* v.ast.AnonFn */) {
 			v__gen__Gen_write(g, _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, key_typ_str, value_typ_str, hash_fn, key_eq_fn, clone_fn, free_fn));
 		}
 		if (g->is_shared) {
-			v__gen__Gen_write(g, _SLIT(", .mtx = sync__new_rwmutex()}"));
+			v__gen__Gen_write(g, _SLIT("}"));
 			if (is_amp) {
 				v__gen__Gen_write(g, _STR(", sizeof(%.*s\000))", 2, shared_styp));
 			}
@@ -44448,7 +44456,7 @@ if (	node.typ == 188 /* v.ast.AnonFn */) {
 	}
 	else if (	node.typ == 220 /* v.ast.PostfixExpr */) {
 		if (((*node._v__ast__PostfixExpr).auto_locked).len != 0) {
-			v__gen__Gen_writeln(g, _STR("sync__RwMutex_w_lock(%.*s\000->mtx);", 2, (*node._v__ast__PostfixExpr).auto_locked));
+			v__gen__Gen_writeln(g, _STR("sync__RwMutex_w_lock(&%.*s\000->mtx);", 2, (*node._v__ast__PostfixExpr).auto_locked));
 		}
 		g->inside_map_postfix = true;
 		v__gen__Gen_expr(g, (*node._v__ast__PostfixExpr).expr);
@@ -44456,7 +44464,7 @@ if (	node.typ == 188 /* v.ast.AnonFn */) {
 		v__gen__Gen_write(g, v__token__Kind_str((*node._v__ast__PostfixExpr).op));
 		if (((*node._v__ast__PostfixExpr).auto_locked).len != 0) {
 			v__gen__Gen_writeln(g, _SLIT(";"));
-			v__gen__Gen_write(g, _STR("sync__RwMutex_w_unlock(%.*s\000->mtx)", 2, (*node._v__ast__PostfixExpr).auto_locked));
+			v__gen__Gen_write(g, _STR("sync__RwMutex_w_unlock(&%.*s\000->mtx)", 2, (*node._v__ast__PostfixExpr).auto_locked));
 		}
 	}
 	else if (	node.typ == 221 /* v.ast.PrefixExpr */) {
@@ -44597,7 +44605,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_selector_expr(v__gen__Gen* g, v__ast__SelectorE
 		if (!(string_eq(node.field_name, _SLIT("len")))) {
 			VAssertMetaInfo v_assert_meta_info__t1897 = {0};
 			v_assert_meta_info__t1897.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/gen/cgen.v");
-			v_assert_meta_info__t1897.line_nr = 2928;
+			v_assert_meta_info__t1897.line_nr = 2934;
 			v_assert_meta_info__t1897.fn_name = _SLIT("selector_expr");
 			v_assert_meta_info__t1897.src = _SLIT("node.field_name == 'len'");
 			v_assert_meta_info__t1897.op = _SLIT("==");
@@ -44703,7 +44711,7 @@ if (	node.typ == 204 /* v.ast.EnumVal */) {
 
 VV_LOCAL_SYMBOL void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr node) {
 	if ((node.auto_locked).len != 0) {
-		v__gen__Gen_writeln(g, _STR("sync__RwMutex_w_lock(%.*s\000->mtx);", 2, node.auto_locked));
+		v__gen__Gen_writeln(g, _STR("sync__RwMutex_w_lock(&%.*s\000->mtx);", 2, node.auto_locked));
 	}
 	v__table__Type left_type = v__gen__Gen_unwrap_generic(g, node.left_type);
 	v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(g->table, left_type);
@@ -44996,7 +45004,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_infix_expr(v__gen__Gen* g, v__ast__InfixExpr no
 	}
 	if ((node.auto_locked).len != 0) {
 		v__gen__Gen_writeln(g, _SLIT(";"));
-		v__gen__Gen_write(g, _STR("sync__RwMutex_w_unlock(%.*s\000->mtx)", 2, node.auto_locked));
+		v__gen__Gen_write(g, _STR("sync__RwMutex_w_unlock(&%.*s\000->mtx)", 2, node.auto_locked));
 	}
 }
 
@@ -45010,7 +45018,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_lock_expr(v__gen__Gen* g, v__ast__LockExpr node
 		string deref = (id.is_mut ? (_SLIT("->")) : (_SLIT(".")));
 		rune lock_prefix = (node.is_rlock ? (L'r') : (L'w'));
 		array_push(&lock_prefixes, _MOV((byte[]){ lock_prefix }));
-		v__gen__Gen_writeln(g, _STR("sync__RwMutex_%c\000_lock(%.*s\000%.*s\000mtx);", 4, lock_prefix, name, deref));
+		v__gen__Gen_writeln(g, _STR("sync__RwMutex_%c\000_lock(&%.*s\000%.*s\000mtx);", 4, lock_prefix, name, deref));
 	}
 	v__gen__Gen_stmts(g, node.stmts);
 	for (int i = node.lockeds.len - 1; i >= 0; i--) {
@@ -45018,7 +45026,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_lock_expr(v__gen__Gen* g, v__ast__LockExpr node
 		byte lock_prefix = (*(byte*)/*ee elem_typ */array_get(lock_prefixes, i));
 		string name = id.name;
 		string deref = (id.is_mut ? (_SLIT("->")) : (_SLIT(".")));
-		v__gen__Gen_writeln(g, _STR("sync__RwMutex_%c\000_unlock(%.*s\000%.*s\000mtx);", 4, lock_prefix, name, deref));
+		v__gen__Gen_writeln(g, _STR("sync__RwMutex_%c\000_unlock(&%.*s\000%.*s\000mtx);", 4, lock_prefix, name, deref));
 	}
 }
 
@@ -46220,7 +46228,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit 
 		if (g->is_shared) {
 			v__table__Type shared_typ = v__table__Type_set_flag(struct_init.typ, v__table__TypeFlag_shared_f);
 			shared_styp = v__gen__Gen_typ(g, shared_typ);
-			v__gen__Gen_writeln(g, _STR("(%.*s\000*)memdup(&(%.*s\000){.val = (%.*s\000){", 4, shared_styp, shared_styp, styp));
+			v__gen__Gen_writeln(g, _STR("(%.*s\000*)__dup%.*s\000(&(%.*s\000){.val = (%.*s\000){", 5, shared_styp, shared_styp, shared_styp, styp));
 		} else {
 			v__gen__Gen_write(g, _STR("(%.*s\000*)memdup(&(%.*s\000){", 3, styp, styp));
 		}
@@ -46397,7 +46405,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_struct_init(v__gen__Gen* g, v__ast__StructInit 
 	}
 	v__gen__Gen_write(g, _SLIT("}"));
 	if (g->is_shared) {
-		v__gen__Gen_write(g, _SLIT(", .mtx = sync__new_rwmutex()}"));
+		v__gen__Gen_write(g, _SLIT("}"));
 		if (is_amp) {
 			v__gen__Gen_write(g, _STR(", sizeof(%.*s\000))", 2, shared_styp));
 		}
@@ -46585,9 +46593,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__Typ
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_148543 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_148543.arg0;
-						string base = mr_148543.arg1;
+						multi_return_string_string mr_148876 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_148876.arg0;
+						string base = mr_148876.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -46804,11 +46812,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_155687 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_155687.arg0;
-				string pafile = mr_155687.arg1;
-				string pamod = mr_155687.arg2;
-				string pafn = mr_155687.arg3;
+				multi_return_int_string_string_string mr_156020 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_156020.arg0;
+				string pafile = mr_156020.arg1;
+				string pamod = mr_156020.arg2;
+				string pafn = mr_156020.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -47089,11 +47097,11 @@ VV_LOCAL_SYMBOL string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type t
 	if (sym->kind == v__table__Kind_map) {
 		v__table__Map info = v__table__TypeSymbol_map_info(sym);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_160061 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_160061.arg0;
-		string key_eq_fn = mr_160061.arg1;
-		string clone_fn = mr_160061.arg2;
-		string free_fn = mr_160061.arg3;
+		multi_return_string_string_string_string mr_160394 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_160394.arg0;
+		string key_eq_fn = mr_160394.arg1;
+		string clone_fn = mr_160394.arg2;
+		string free_fn = mr_160394.arg3;
 		return _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__Gen_typ(g, info.key_type), v__gen__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
 	}
 	if (sym->kind == v__table__Kind_struct_) {
