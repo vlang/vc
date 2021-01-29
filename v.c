@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4d18017"
+#define V_COMMIT_HASH "2326a3a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "26c06a5"
+	#define V_COMMIT_HASH "4d18017"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4d18017"
+	#define V_CURRENT_COMMIT_HASH "2326a3a"
 #endif
 
 // V comptime_defines:
@@ -6507,7 +6507,6 @@ string _const_v__builder__c_verror_message_marker; // a string literal, inited l
 string _const_v__builder__c_error_info; // a string literal, inited later
 string _const_v__builder__no_compiler_error; // a string literal, inited later
 string _const_v__builder__mingw_cc; // a string literal, inited later
-VV_LOCAL_SYMBOL void v__builder__todo();
 VV_LOCAL_SYMBOL Option_void v__builder__Builder_find_win_cc(v__builder__Builder* v);
 VV_LOCAL_SYMBOL void v__builder__Builder_show_c_compiler_output(v__builder__Builder* v, os__Result res);
 VV_LOCAL_SYMBOL void v__builder__Builder_post_process_c_compiler_output(v__builder__Builder* v, os__Result res);
@@ -22427,7 +22426,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("26c06a5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4d18017"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53251,9 +53250,6 @@ void v__builder__Builder_compile_c(v__builder__Builder* b) {
 	v__builder__Builder_cc(b);
 }
 
-VV_LOCAL_SYMBOL void v__builder__todo() {
-}
-
 VV_LOCAL_SYMBOL Option_void v__builder__Builder_find_win_cc(v__builder__Builder* v) {
 	#if !defined(_WIN32)
 	{
@@ -53535,10 +53531,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	_PUSH_MANY(&ccoptions.o_args, (array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t2390, array_string);
-	multi_return_array_string_array_string_array_string mr_10043 = array_v__cflag__CFlag_defines_others_libs(cflags);
-	array_string defines = mr_10043.arg0;
-	array_string others = mr_10043.arg1;
-	array_string libs = mr_10043.arg2;
+	multi_return_array_string_array_string_array_string mr_10028 = array_v__cflag__CFlag_defines_others_libs(cflags);
+	array_string defines = mr_10028.arg0;
+	array_string others = mr_10028.arg1;
+	array_string libs = mr_10028.arg2;
 	_PUSH_MANY(&ccoptions.args, (defines), _t2391, array_string);
 	_PUSH_MANY(&ccoptions.args, (others), _t2392, array_string);
 	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t2393, array_string);
@@ -53849,7 +53845,6 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 			}
 		}
 		#endif
-		v__builder__todo();
 		os__chdir(vdir);
 		string cmd = _STR("%.*s\000 @%.*s", 2, ccompiler, response_file);
 		array_push(&tried_compilation_commands, _MOV((string[]){ string_clone(cmd) }));
@@ -53972,10 +53967,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string_add(b->out_name_c, _SLIT(".o"));
 	array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_array_string_array_string_array_string mr_24150 = array_v__cflag__CFlag_defines_others_libs(cflags);
-	array_string defines = mr_24150.arg0;
-	array_string others = mr_24150.arg1;
-	array_string libs = mr_24150.arg2;
+	multi_return_array_string_array_string_array_string mr_24126 = array_v__cflag__CFlag_defines_others_libs(cflags);
+	array_string defines = mr_24126.arg0;
+	array_string others = mr_24126.arg1;
+	array_string libs = mr_24126.arg2;
 	array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
@@ -53987,6 +53982,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	array_push(&cc_args, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000\"", 2, obj_file)) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_STR("-c \"%.*s\000\"", 2, b->out_name_c)) }));
 	_PUSH_MANY(&cc_args, (libs), _t2454, array_string);
+	v__builder__Builder_dump_c_options(b, cc_args);
 	string cc_cmd = string_add(_SLIT("cc "), array_string_join(cc_args, _SLIT(" ")));
 	if (b->pref->show_cc) {
 		println(cc_cmd);
@@ -54006,6 +54002,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	array_string linker_args = new_array_from_c_array(12, 12, sizeof(string), _MOV((string[12]){
 			_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s", 1, sysroot), _SLIT("-v"), _STR("-o %.*s", 1, b->pref->out_name), _SLIT("-m elf_x86_64"), _SLIT("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o %.*s", 3, sysroot, sysroot, obj_file), _SLIT("-lc"), _SLIT("-lcrypto"), _SLIT("-lssl"), _SLIT("-lpthread"), _STR("%.*s\000/crtn.o", 2, sysroot)}));
 	_PUSH_MANY(&linker_args, (array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t2456, array_string);
+	v__builder__Builder_dump_c_options(b, linker_args);
 	string linker_cmd = string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), array_string_join(linker_args, _SLIT(" ")));
 	if (b->pref->show_cc) {
 		println(linker_cmd);
