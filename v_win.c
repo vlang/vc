@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d012f27"
+#define V_COMMIT_HASH "c5a1881"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "608a4cc"
+	#define V_COMMIT_HASH "d012f27"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d012f27"
+	#define V_CURRENT_COMMIT_HASH "c5a1881"
 #endif
 
 // V comptime_defines:
@@ -5374,13 +5374,13 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph);
-u64 _const_rand__util__lower_mask; // inited later
-#define _const_rand__util__max_u32 0xFFFFFFFF
-#define _const_rand__util__max_u64 0xFFFFFFFFFFFFFFFF
-f32 _const_rand__util__max_u32_as_f32; // inited later
-f64 _const_rand__util__max_u64_as_f64; // inited later
-u32 _const_rand__util__u31_mask; // inited later
-u64 _const_rand__util__u63_mask; // inited later
+u64 _const_rand__constants__lower_mask; // inited later
+#define _const_rand__constants__max_u32 0xFFFFFFFF
+#define _const_rand__constants__max_u64 0xFFFFFFFFFFFFFFFF
+f32 _const_rand__constants__max_u32_as_f32; // inited later
+f64 _const_rand__constants__max_u64_as_f64; // inited later
+u32 _const_rand__constants__u31_mask; // inited later
+u64 _const_rand__constants__u63_mask; // inited later
 string flag__Flag_str(flag__Flag f);
 string array_flag__Flag_str(array_flag__Flag af);
 string _const_flag__space; // a string literal, inited later
@@ -21646,7 +21646,7 @@ inline u32 rand__wyrand__WyRandRNG_u32(rand__wyrand__WyRandRNG* rng) {
 		return rng->extra;
 	}
 	u64 full_value = rand__wyrand__WyRandRNG_u64(rng);
-	u32 lower = ((u32)((full_value & _const_rand__util__lower_mask)));
+	u32 lower = ((u32)((full_value & _const_rand__constants__lower_mask)));
 	u32 upper = ((u32)(full_value >> 32));
 	rng->extra = upper;
 	rng->has_extra = true;
@@ -21746,12 +21746,12 @@ inline i64 rand__wyrand__WyRandRNG_i64(rand__wyrand__WyRandRNG* rng) {
 
 // Attr: [inline]
 inline int rand__wyrand__WyRandRNG_int31(rand__wyrand__WyRandRNG* rng) {
-	return ((int)((rand__wyrand__WyRandRNG_u32(rng) & _const_rand__util__u31_mask)));
+	return ((int)((rand__wyrand__WyRandRNG_u32(rng) & _const_rand__constants__u31_mask)));
 }
 
 // Attr: [inline]
 inline i64 rand__wyrand__WyRandRNG_int63(rand__wyrand__WyRandRNG* rng) {
-	return ((i64)((rand__wyrand__WyRandRNG_u64(rng) & _const_rand__util__u63_mask)));
+	return ((i64)((rand__wyrand__WyRandRNG_u64(rng) & _const_rand__constants__u63_mask)));
 }
 
 // Attr: [inline]
@@ -21792,12 +21792,12 @@ inline i64 rand__wyrand__WyRandRNG_i64_in_range(rand__wyrand__WyRandRNG* rng, i6
 
 // Attr: [inline]
 inline f32 rand__wyrand__WyRandRNG_f32(rand__wyrand__WyRandRNG* rng) {
-	return ((f32)(rand__wyrand__WyRandRNG_u32(rng))) / _const_rand__util__max_u32_as_f32;
+	return ((f32)(rand__wyrand__WyRandRNG_u32(rng))) / _const_rand__constants__max_u32_as_f32;
 }
 
 // Attr: [inline]
 inline f64 rand__wyrand__WyRandRNG_f64(rand__wyrand__WyRandRNG* rng) {
-	return ((f64)(rand__wyrand__WyRandRNG_u64(rng))) / _const_rand__util__max_u64_as_f64;
+	return ((f64)(rand__wyrand__WyRandRNG_u64(rng))) / _const_rand__constants__max_u64_as_f64;
 }
 
 // Attr: [inline]
@@ -22094,7 +22094,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("608a4cc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d012f27"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -54922,12 +54922,12 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__token__keywords = v__token__build_keys();
 	_const_v__token__precedences = v__token__build_precedences();
 	// Initializations for module v.depgraph :
-	// Initializations for module rand.util :
-	_const_rand__util__lower_mask = ((u64)(0x00000000FFFFFFFFU));
-	_const_rand__util__max_u32_as_f32 = ((f32)(_const_rand__util__max_u32)) + 1;
-	_const_rand__util__max_u64_as_f64 = ((f64)(_const_rand__util__max_u64)) + 1;
-	_const_rand__util__u31_mask = ((u32)(0x7FFFFFFFU));
-	_const_rand__util__u63_mask = ((u64)(0x7FFFFFFFFFFFFFFFU));
+	// Initializations for module rand.constants :
+	_const_rand__constants__lower_mask = ((u64)(0x00000000FFFFFFFFU));
+	_const_rand__constants__max_u32_as_f32 = ((f32)(_const_rand__constants__max_u32)) + 1;
+	_const_rand__constants__max_u64_as_f64 = ((f64)(_const_rand__constants__max_u64)) + 1;
+	_const_rand__constants__u31_mask = ((u32)(0x7FFFFFFFU));
+	_const_rand__constants__u63_mask = ((u64)(0x7FFFFFFFFFFFFFFFU));
 	// Initializations for module flag :
 	// Initializations for module semver :
 	_const_semver__versions = new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_semver__ver_major, _const_semver__ver_minor, _const_semver__ver_patch}));
