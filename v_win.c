@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8c70920"
+#define V_COMMIT_HASH "7e3b3a9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "97cb768"
+	#define V_COMMIT_HASH "8c70920"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8c70920"
+	#define V_CURRENT_COMMIT_HASH "7e3b3a9"
 #endif
 
 // V comptime_defines:
@@ -21936,7 +21936,7 @@ int rand__intn(int max) {
 }
 
 byte rand__byte() {
-	return ((byte)(rand__wyrand__WyRandRNG_intn(default_rng, 256)));
+	return ((byte)((rand__wyrand__WyRandRNG_u32(default_rng) & 0xff)));
 }
 
 int rand__int_in_range(int min, int max) {
@@ -22146,7 +22146,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("97cb768"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8c70920"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
