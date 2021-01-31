@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "effa318"
+#define V_COMMIT_HASH "778b83a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4f4e3e9"
+	#define V_COMMIT_HASH "effa318"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "effa318"
+	#define V_CURRENT_COMMIT_HASH "778b83a"
 #endif
 
 // V comptime_defines:
@@ -22487,7 +22487,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4f4e3e9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("effa318"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -47858,21 +47858,27 @@ VV_LOCAL_SYMBOL string v__gen__Gen_interface_table(v__gen__Gen* g) {
 				if (!v__table__Type_is_ptr((*(v__table__Param*)/*ee elem_typ */array_get(method.params, 0)).typ)) {
 					strings__Builder_write(&methods_wrapper, _STR("static inline %.*s", 1, v__gen__Gen_typ(g, method.return_type)));
 					strings__Builder_write(&methods_wrapper, _STR(" %.*s\000_method_wrapper(", 2, method_call));
-					strings__Builder_write(&methods_wrapper, _STR("%.*s\000* %.*s", 2, cctype, (*(v__table__Param*)/*ee elem_typ */array_get(method.params, 0)).name));
-					for (int j = 1; j < method.params.len; ++j) {
-						v__table__Param arg = (*(v__table__Param*)/*ee elem_typ */array_get(method.params, j));
-						strings__Builder_write(&methods_wrapper, _STR(", %.*s\000 %.*s", 2, v__gen__Gen_typ(g, arg.typ), arg.name));
-					}
+					int params_start_pos = g->out.len;
+					array_v__table__Param params = array_clone(&method.params);
+					v__table__Param first_param = (*(v__table__Param*)/*ee elem_typ */array_get(params, 0));
+					array_set(&params, 0, &(v__table__Param[]) { // assoc
+					(v__table__Param){
+						.pos = first_param.pos,
+						.name = first_param.name,
+						.is_mut = first_param.is_mut,
+						.typ = v__table__Type_set_nr_muls((*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1), 
+						.type_pos = first_param.type_pos,
+						.is_hidden = first_param.is_hidden,
+					} });
+					multi_return_array_string_array_string mr_176519 = v__gen__Gen_fn_args(g, params, false);
+					array_string fargs = mr_176519.arg0;
+					strings__Builder_write(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write(&methods_wrapper, _SLIT("\t"));
 					if (method.return_type != _const_v__table__void_type) {
 						strings__Builder_write(&methods_wrapper, _SLIT("return "));
 					}
-					strings__Builder_write(&methods_wrapper, _STR("%.*s\000(*%.*s", 2, method_call, (*(v__table__Param*)/*ee elem_typ */array_get(method.params, 0)).name));
-					for (int j = 1; j < method.params.len; ++j) {
-						strings__Builder_write(&methods_wrapper, _STR(", %.*s", 1, (*(v__table__Param*)/*ee elem_typ */array_get(method.params, j)).name));
-					}
-					strings__Builder_writeln(&methods_wrapper, _SLIT(");"));
+					strings__Builder_writeln(&methods_wrapper, _STR("%.*s\000(*%.*s\000);", 3, method_call, array_string_join(fargs, _SLIT(", "))));
 					strings__Builder_writeln(&methods_wrapper, _SLIT("}"));
 					method_call = /*f*/string_add(method_call, _SLIT("_method_wrapper"));
 				}
