@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7eb7d04"
+#define V_COMMIT_HASH "09c6516"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5746ac4"
+	#define V_COMMIT_HASH "7eb7d04"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7eb7d04"
+	#define V_CURRENT_COMMIT_HASH "09c6516"
 #endif
 
 // V comptime_defines:
@@ -22486,7 +22486,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5746ac4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7eb7d04"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -46705,9 +46705,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_init_function(v__gen__Gen* g) {
 	if (g->pref->printfn_list.len > 0 && (array_string_contains(g->pref->printfn_list, _SLIT("_vinit")))) {
 		println(strings__Builder_after(&g->out, fn_vinit_start_pos));
 	}
+	int fn_vcleanup_start_pos = g->out.len;
+	v__gen__Gen_writeln(g, _SLIT("void _vcleanup() {"));
 	if (g->is_autofree) {
-		int fn_vcleanup_start_pos = g->out.len;
-		v__gen__Gen_writeln(g, _SLIT("void _vcleanup() {"));
 		array_string reversed_table_modules = array_reverse(g->table->modules);
 		// FOR IN array
 		array_string _t1969 = reversed_table_modules;
@@ -46717,10 +46717,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_init_function(v__gen__Gen* g) {
 			v__gen__Gen_writeln(g, strings__Builder_str(&(*(strings__Builder*)map_get_1(ADDR(map, g->cleanups), &(string[]){mod_name}, &(strings__Builder[]){ (strings__Builder){.buf = __new_array(0, 1, sizeof(byte)),.initial_size = 1,} }))));
 		}
 		v__gen__Gen_writeln(g, _SLIT("\tarray_free(&as_cast_type_indexes);"));
-		v__gen__Gen_writeln(g, _SLIT("}"));
-		if (g->pref->printfn_list.len > 0 && (array_string_contains(g->pref->printfn_list, _SLIT("_vcleanup")))) {
-			println(strings__Builder_after(&g->out, fn_vcleanup_start_pos));
-		}
+	}
+	v__gen__Gen_writeln(g, _SLIT("}"));
+	if (g->pref->printfn_list.len > 0 && (array_string_contains(g->pref->printfn_list, _SLIT("_vcleanup")))) {
+		println(strings__Builder_after(&g->out, fn_vcleanup_start_pos));
 	}
 	bool needs_constructor = g->pref->is_shared && g->pref->os != v__pref__OS_windows;
 	if (needs_constructor) {
@@ -46728,6 +46728,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_init_function(v__gen__Gen* g) {
 		v__gen__Gen_writeln(g, _SLIT("void _vinit_caller() {"));
 		v__gen__Gen_writeln(g, _SLIT("\tstatic bool once = false; if (once) {return;} once = true;"));
 		v__gen__Gen_writeln(g, _SLIT("\t_vinit(0,0);"));
+		v__gen__Gen_writeln(g, _SLIT("}"));
+		v__gen__Gen_writeln(g, _SLIT("__attribute__ ((destructor))"));
+		v__gen__Gen_writeln(g, _SLIT("void _vcleanup_caller() {"));
+		v__gen__Gen_writeln(g, _SLIT("\tstatic bool once = false; if (once) {return;} once = true;"));
+		v__gen__Gen_writeln(g, _SLIT("\t_vcleanup();"));
 		v__gen__Gen_writeln(g, _SLIT("}"));
 	}
 }
@@ -46790,9 +46795,9 @@ VV_LOCAL_SYMBOL void v__gen__Gen_write_types(v__gen__Gen* g, array_v__table__Typ
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
 						string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 						strings__Builder_go_back_to(&g->type_definitions, start_pos);
-						multi_return_string_string mr_149502 = v__gen__Gen_optional_type_name(g, field.typ);
-						string styp = mr_149502.arg0;
-						string base = mr_149502.arg1;
+						multi_return_string_string mr_149767 = v__gen__Gen_optional_type_name(g, field.typ);
+						string styp = mr_149767.arg0;
+						string base = mr_149767.arg1;
 						array_push(&g->optionals, _MOV((string[]){ string_clone(styp) }));
 						strings__Builder_writeln(&g->typedefs2, _STR("typedef struct %.*s\000 %.*s\000;", 3, styp, styp));
 						strings__Builder_writeln(&g->type_definitions, _STR("%.*s\000;", 2, v__gen__Gen_optional_type_text(g, styp, base)));
@@ -47002,11 +47007,11 @@ VV_LOCAL_SYMBOL void v__gen__Gen_or_block(v__gen__Gen* g, string var_name, v__as
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_156440 = v__gen__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_156440.arg0;
-				string pafile = mr_156440.arg1;
-				string pamod = mr_156440.arg2;
-				string pafn = mr_156440.arg3;
+				multi_return_int_string_string_string mr_156705 = v__gen__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_156705.arg0;
+				string pafile = mr_156705.arg1;
+				string pamod = mr_156705.arg2;
+				string pafn = mr_156705.arg3;
 				v__gen__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -47291,11 +47296,11 @@ VV_LOCAL_SYMBOL string v__gen__Gen_type_default(v__gen__Gen* g, v__table__Type t
 	if (sym->kind == v__table__Kind_map) {
 		v__table__Map info = v__table__TypeSymbol_map_info(sym);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_160912 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_160912.arg0;
-		string key_eq_fn = mr_160912.arg1;
-		string clone_fn = mr_160912.arg2;
-		string free_fn = mr_160912.arg3;
+		multi_return_string_string_string_string mr_161177 = v__gen__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_161177.arg0;
+		string key_eq_fn = mr_161177.arg1;
+		string clone_fn = mr_161177.arg2;
+		string free_fn = mr_161177.arg3;
 		return _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__Gen_typ(g, info.key_type), v__gen__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
 	}
 	if (sym->kind == v__table__Kind_struct_) {
@@ -47910,9 +47915,7 @@ VV_LOCAL_SYMBOL void v__gen__Gen_gen_c_main_header(v__gen__Gen* g) {
 }
 
 void v__gen__Gen_gen_c_main_footer(v__gen__Gen* g) {
-	if (g->is_autofree) {
-		v__gen__Gen_writeln(g, _SLIT("\t_vcleanup();"));
-	}
+	v__gen__Gen_writeln(g, _SLIT("\t_vcleanup();"));
 	v__gen__Gen_writeln(g, _SLIT("\treturn 0;"));
 	v__gen__Gen_writeln(g, _SLIT("}"));
 }
@@ -47962,9 +47965,7 @@ void v__gen__Gen_gen_c_main_for_tests(v__gen__Gen* g) {
 	if (g->pref->is_stats) {
 		v__gen__Gen_writeln(g, _SLIT("\tmain__BenchedTests_end_testing(&bt);"));
 	}
-	if (g->is_autofree) {
-		v__gen__Gen_writeln(g, _SLIT("\t_vcleanup();"));
-	}
+	v__gen__Gen_writeln(g, _SLIT("\t_vcleanup();"));
 	v__gen__Gen_writeln(g, _SLIT("\treturn g_test_fails > 0;"));
 	v__gen__Gen_writeln(g, _SLIT("}"));
 	if (g->pref->printfn_list.len > 0 && (array_string_contains(g->pref->printfn_list, _SLIT("main")))) {
@@ -55779,10 +55780,13 @@ void _vinit(int ___argc, voidptr ___argv) {
 		_SLIT("fmt"), _SLIT("up"), _SLIT("vet"), _SLIT("self"), _SLIT("tracev"), _SLIT("symlink"), _SLIT("bin2v"), _SLIT("test"), _SLIT("test-all"), _SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-self"), _SLIT("test-fixed"), _SLIT("test-compiler"), _SLIT("test-compiler-full"), _SLIT("test-cleancode"), _SLIT("repl"), _SLIT("complete"), _SLIT("build-tools"), _SLIT("build-examples"), _SLIT("build-vbinaries"), _SLIT("setup-freetype"), _SLIT("wipe-cache"), _SLIT("doc"), _SLIT("doctor")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("cc"), _SLIT("d"), _SLIT("define"), _SLIT("cf"), _SLIT("cflags")}));
 }
+void _vcleanup() {
+}
 
 int main(int ___argc, char** ___argv){
 	_vinit(___argc, (voidptr)___argv);
 	main__main();
+	_vcleanup();
 	return 0;
 }
 
