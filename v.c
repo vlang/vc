@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8b0401a"
+#define V_COMMIT_HASH "4367633"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "778b83a"
+	#define V_COMMIT_HASH "8b0401a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8b0401a"
+	#define V_CURRENT_COMMIT_HASH "4367633"
 #endif
 
 // V comptime_defines:
@@ -5911,7 +5911,7 @@ string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(array_v__ast__CallArg args);
 string v__ast__BranchStmt_str(v__ast__BranchStmt* node);
 string v__ast__Stmt_str(v__ast__Stmt node);
-VV_LOCAL_SYMBOL string anon_8601_261_18(v__ast__ConstField f);
+VV_LOCAL_SYMBOL string anon_8686_261_18(v__ast__ConstField f);
 string v__ast__CompForKind_str(v__ast__CompForKind e);
 Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, v__table__Type got, v__table__Type expected_);
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got, v__table__Type expected);
@@ -7631,7 +7631,7 @@ static bool array_v__ast__EmbeddedFile_contains(array_v__ast__EmbeddedFile a, v_
 	return false;
 }
 
-VV_LOCAL_SYMBOL string anon_8601_261_18(v__ast__ConstField f) {
+VV_LOCAL_SYMBOL string anon_8686_261_18(v__ast__ConstField f) {
 			return _STR("%.*s\000 = %.*s", 2, string_trim_prefix(f.name, string_add(f.mod, _SLIT("."))), v__ast__Expr_str(f.expr));
 		}
 		
@@ -22487,7 +22487,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("778b83a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8b0401a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28567,6 +28567,10 @@ if (			sub_expr.typ == 209 /* v.ast.Ident */) {
 				break;
 			}
 			else if (			sub_expr.typ == 227 /* v.ast.SelectorExpr */) {
+				if (string_at((*sub_expr._v__ast__SelectorExpr).field_name, 0) == L'@') {
+					needs_braces = true;
+					break;
+				}
 				sub_expr = (*sub_expr._v__ast__SelectorExpr).expr;
 				continue;
 			}
@@ -28707,9 +28711,9 @@ if (	x.typ == 192 /* v.ast.ArrayInit */) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ string_clone(_SLIT("$")) }));
-			multi_return_string_bool mr_7038 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
-			string fspec_str = mr_7038.arg0;
-			bool needs_braces = mr_7038.arg1;
+			multi_return_string_bool mr_7123 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
+			string fspec_str = mr_7123.arg0;
+			bool needs_braces = mr_7123.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ string_clone(_SLIT("{")) }));
 				array_push(&res, _MOV((string[]){ string_clone(v__ast__Expr_str((*(v__ast__Expr*)/*ee elem_typ */array_get((*x._v__ast__StringInterLiteral).exprs, i)))) }));
@@ -28811,7 +28815,7 @@ if (	node.typ == 237 /* v.ast.AssertStmt */) {
 
 		for (int _t1249 = 0; _t1249 < _t1248_len; ++_t1249) {
 			v__ast__ConstField it = ((v__ast__ConstField*) _t1248_orig.data)[_t1249];
-			string ti = 		anon_8601_261_18(it);
+			string ti = 		anon_8686_261_18(it);
 			array_push(&_t1248, &ti);
 		}
 		
