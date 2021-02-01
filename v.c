@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6804fda"
+#define V_COMMIT_HASH "1e07173"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c537578"
+	#define V_COMMIT_HASH "6804fda"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6804fda"
+	#define V_CURRENT_COMMIT_HASH "1e07173"
 #endif
 
 // V comptime_defines:
@@ -6144,7 +6144,7 @@ VV_LOCAL_SYMBOL Option_bool v__parser__Parser_check_sql_keyword(v__parser__Parse
 VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax);
 VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p);
-VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it);
+VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit node);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_array_map(v__gen__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_array_sort(v__gen__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__Gen_gen_array_filter(v__gen__Gen* g, v__ast__CallExpr node);
@@ -22490,7 +22490,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c537578"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6804fda"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40970,16 +40970,16 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 	};
 }
 
-VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it) {
-	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, it.typ);
-	string styp = v__gen__Gen_typ(g, it.typ);
+VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit node) {
+	v__table__TypeSymbol* type_sym = v__table__Table_get_type_symbol(g->table, node.typ);
+	string styp = v__gen__Gen_typ(g, node.typ);
 	string shared_styp = _SLIT("");
 	bool is_amp = g->is_amp;
 	g->is_amp = false;
 	if (is_amp) {
 		strings__Builder_go_back(&g->out, 1);
 		if (g->is_shared) {
-			v__table__Type shared_typ = v__table__Type_set_flag(it.typ, v__table__TypeFlag_shared_f);
+			v__table__Type shared_typ = v__table__Type_set_flag(node.typ, v__table__TypeFlag_shared_f);
 			shared_styp = v__gen__Gen_typ(g, shared_typ);
 			v__gen__Gen_writeln(g, _STR("(%.*s\000*)__dup_shared_array(&(%.*s\000){.val = ", 3, shared_styp, shared_styp));
 		} else {
@@ -40992,22 +40992,22 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 	}
 	if (type_sym->kind == v__table__Kind_array_fixed) {
 		v__gen__Gen_write(g, _SLIT("{"));
-		if (it.has_val) {
+		if (node.has_val) {
 			// FOR IN array
-			array_v__ast__Expr _t1805 = it.exprs;
+			array_v__ast__Expr _t1805 = node.exprs;
 			for (int i = 0; i < _t1805.len; ++i) {
 				v__ast__Expr expr = ((v__ast__Expr*)_t1805.data)[i];
 				v__gen__Gen_expr(g, expr);
-				if (i != it.exprs.len - 1) {
+				if (i != node.exprs.len - 1) {
 					v__gen__Gen_write(g, _SLIT(", "));
 				}
 			}
-		} else if (it.has_default) {
-			v__gen__Gen_expr(g, it.default_expr);
+		} else if (node.has_default) {
+			v__gen__Gen_expr(g, node.default_expr);
 			v__table__ArrayFixed info = /* as */ *(v__table__ArrayFixed*)__as_cast((type_sym->info)._v__table__ArrayFixed,(type_sym->info).typ, 351) /*expected idx: 351, name: v.table.ArrayFixed */ ;
 			for (int _t1806 = 1; _t1806 < info.size; ++_t1806) {
 				v__gen__Gen_write(g, _SLIT(", "));
-				v__gen__Gen_expr(g, it.default_expr);
+				v__gen__Gen_expr(g, node.default_expr);
 			}
 		} else {
 			v__gen__Gen_write(g, _SLIT("0"));
@@ -41015,23 +41015,23 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 		v__gen__Gen_write(g, _SLIT("}"));
 		return;
 	}
-	string elem_type_str = v__gen__Gen_typ(g, it.elem_type);
-	if (it.exprs.len == 0) {
-		v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, it.elem_type);
-		bool is_default_array = elem_sym->kind == v__table__Kind_array && it.has_default;
+	string elem_type_str = v__gen__Gen_typ(g, node.elem_type);
+	if (node.exprs.len == 0) {
+		v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, node.elem_type);
+		bool is_default_array = elem_sym->kind == v__table__Kind_array && node.has_default;
 		if (is_default_array) {
 			v__gen__Gen_write(g, _SLIT("__new_array_with_array_default("));
 		} else {
 			v__gen__Gen_write(g, _SLIT("__new_array_with_default("));
 		}
-		if (it.has_len) {
-			v__gen__Gen_expr(g, it.len_expr);
+		if (node.has_len) {
+			v__gen__Gen_expr(g, node.len_expr);
 			v__gen__Gen_write(g, _SLIT(", "));
 		} else {
 			v__gen__Gen_write(g, _SLIT("0, "));
 		}
-		if (it.has_cap) {
-			v__gen__Gen_expr(g, it.cap_expr);
+		if (node.has_cap) {
+			v__gen__Gen_expr(g, node.cap_expr);
 			v__gen__Gen_write(g, _SLIT(", "));
 		} else {
 			v__gen__Gen_write(g, _SLIT("0, "));
@@ -41043,19 +41043,19 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 		}
 		if (is_default_array) {
 			v__gen__Gen_write(g, _STR("(%.*s\000[]){", 2, elem_type_str));
-			v__gen__Gen_expr(g, it.default_expr);
+			v__gen__Gen_expr(g, node.default_expr);
 			v__gen__Gen_write(g, _SLIT("}[0])"));
-		} else if (it.has_default) {
+		} else if (node.has_default) {
 			v__gen__Gen_write(g, _STR("&(%.*s\000[]){", 2, elem_type_str));
-			v__gen__Gen_expr(g, it.default_expr);
+			v__gen__Gen_expr(g, node.default_expr);
 			v__gen__Gen_write(g, _SLIT("})"));
-		} else if (it.has_len && it.elem_type == _const_v__table__string_type) {
+		} else if (node.has_len && node.elem_type == _const_v__table__string_type) {
 			v__gen__Gen_write(g, _STR("&(%.*s\000[]){", 2, elem_type_str));
 			v__gen__Gen_write(g, _SLIT("_SLIT(\"\")"));
 			v__gen__Gen_write(g, _SLIT("})"));
-		} else if (it.has_len && (elem_sym->kind == v__table__Kind_array || elem_sym->kind == v__table__Kind_map)) {
+		} else if (node.has_len && (elem_sym->kind == v__table__Kind_array || elem_sym->kind == v__table__Kind_map)) {
 			v__gen__Gen_write(g, _STR("(voidptr)&(%.*s\000[]){", 2, elem_type_str));
-			v__gen__Gen_write(g, v__gen__Gen_type_default(g, it.elem_type));
+			v__gen__Gen_write(g, v__gen__Gen_type_default(g, node.elem_type));
 			v__gen__Gen_write(g, _SLIT("}[0])"));
 		} else {
 			v__gen__Gen_write(g, _SLIT("0)"));
@@ -41069,8 +41069,8 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 		}
 		return;
 	}
-	int len = it.exprs.len;
-	v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, it.elem_type);
+	int len = node.exprs.len;
+	v__table__TypeSymbol* elem_sym = v__table__Table_get_type_symbol(g->table, node.elem_type);
 	if (elem_sym->kind == v__table__Kind_function) {
 		v__gen__Gen_write(g, _STR("new_array_from_c_array(%"PRId32"\000, %"PRId32"\000, sizeof(voidptr), _MOV((voidptr[%"PRId32"\000]){", 4, len, len, len));
 	} else {
@@ -41081,10 +41081,10 @@ VV_LOCAL_SYMBOL void v__gen__Gen_array_init(v__gen__Gen* g, v__ast__ArrayInit it
 		v__gen__Gen_write(g, _SLIT("\t\t"));
 	}
 	// FOR IN array
-	array_v__ast__Expr _t1807 = it.exprs;
+	array_v__ast__Expr _t1807 = node.exprs;
 	for (int i = 0; i < _t1807.len; ++i) {
 		v__ast__Expr expr = ((v__ast__Expr*)_t1807.data)[i];
-		v__gen__Gen_expr_with_cast(g, expr, (*(v__table__Type*)/*ee elem_typ */array_get(it.expr_types, i)), it.elem_type);
+		v__gen__Gen_expr_with_cast(g, expr, (*(v__table__Type*)/*ee elem_typ */array_get(node.expr_types, i)), node.elem_type);
 		if (i != len - 1) {
 			v__gen__Gen_write(g, _SLIT(", "));
 		}
