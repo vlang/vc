@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "44ec9e3"
+#define V_COMMIT_HASH "8755f40"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5b9a7bf"
+	#define V_COMMIT_HASH "44ec9e3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "44ec9e3"
+	#define V_CURRENT_COMMIT_HASH "8755f40"
 #endif
 
 // V comptime_defines:
@@ -3118,6 +3118,7 @@ struct v__ast__Import {
 	v__token__Position mod_pos;
 	v__token__Position alias_pos;
 	array_v__ast__ImportSymbol syms;
+	array_v__ast__Comment comments;
 };
 
 struct v__ast__InterfaceDecl {
@@ -22489,7 +22490,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5b9a7bf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("44ec9e3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37060,7 +37061,7 @@ VV_LOCAL_SYMBOL void v__parser__Parser_register_auto_import(v__parser__Parser* p
 	if (!_IN_MAP(ADDR(string, alias), ADDR(map, p->imports))) {
 		map_set_1(&p->imports, &(string[]){alias}, &(string[]) { alias });
 		array_push(&p->table->imports, _MOV((string[]){ string_clone(alias) }));
-		v__ast__Import node = (v__ast__Import){.mod = alias,.alias = alias,.pos = v__token__Token_position(&p->tok),.mod_pos = {0},.alias_pos = {0},.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),};
+		v__ast__Import node = (v__ast__Import){.mod = alias,.alias = alias,.pos = v__token__Token_position(&p->tok),.mod_pos = {0},.alias_pos = {0},.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 		array_push(&p->ast_imports, _MOV((v__ast__Import[]){ node }));
 	}
 	if (!(array_string_contains(p->auto_imports, alias))) {
@@ -39213,7 +39214,7 @@ VV_LOCAL_SYMBOL v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* 
 	v__token__Position import_pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind_key_import);
 	v__token__Position pos = v__token__Token_position(&p->tok);
-	v__ast__Import import_node = (v__ast__Import){.mod = (string){.str=(byteptr)""},.alias = (string){.str=(byteptr)""},.pos = v__token__Position_extend(import_pos, pos),.mod_pos = {0},.alias_pos = {0},.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),};
+	v__ast__Import import_node = (v__ast__Import){.mod = (string){.str=(byteptr)""},.alias = (string){.str=(byteptr)""},.pos = v__token__Position_extend(import_pos, pos),.mod_pos = {0},.alias_pos = {0},.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 	if (p->tok.kind == v__token__Kind_lpar) {
 		v__parser__Parser_error_with_pos(p, _SLIT("`import()` has been deprecated, use `import x` instead"), pos);
 		return import_node;
@@ -39225,7 +39226,7 @@ VV_LOCAL_SYMBOL v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* 
 		return import_node;
 	}
 	string mod_alias = (*(string*)/*ee elem_typ */array_get(mod_name_arr, 0));
-	import_node = (v__ast__Import){.mod = (string){.str=(byteptr)""},.alias = (string){.str=(byteptr)""},.pos = v__token__Position_extend(import_pos, pos),.mod_pos = pos,.alias_pos = pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),};
+	import_node = (v__ast__Import){.mod = (string){.str=(byteptr)""},.alias = (string){.str=(byteptr)""},.pos = v__token__Position_extend(import_pos, pos),.mod_pos = pos,.alias_pos = pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 	for (;;) {
 		if (!(p->tok.kind == v__token__Kind_dot)) break;
 		v__parser__Parser_next(p);
@@ -39242,10 +39243,10 @@ VV_LOCAL_SYMBOL v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* 
 		array_push(&mod_name_arr, _MOV((string[]){ string_clone(submod_name) }));
 		mod_alias = submod_name;
 		pos = v__token__Position_extend(pos, submod_pos);
-		import_node = (v__ast__Import){.mod = v__util__qualify_import(p->pref, array_string_join(mod_name_arr, _SLIT(".")), p->file_name),.alias = mod_alias,.pos = v__token__Position_extend(import_pos, pos),.mod_pos = pos,.alias_pos = submod_pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),};
+		import_node = (v__ast__Import){.mod = v__util__qualify_import(p->pref, array_string_join(mod_name_arr, _SLIT(".")), p->file_name),.alias = mod_alias,.pos = v__token__Position_extend(import_pos, pos),.mod_pos = pos,.alias_pos = submod_pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 	}
 	if (mod_name_arr.len == 1) {
-		import_node = (v__ast__Import){.mod = v__util__qualify_import(p->pref, (*(string*)/*ee elem_typ */array_get(mod_name_arr, 0)), p->file_name),.alias = mod_alias,.pos = import_node.pos,.mod_pos = import_node.mod_pos,.alias_pos = import_node.alias_pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),};
+		import_node = (v__ast__Import){.mod = v__util__qualify_import(p->pref, (*(string*)/*ee elem_typ */array_get(mod_name_arr, 0)), p->file_name),.alias = mod_alias,.pos = import_node.pos,.mod_pos = import_node.mod_pos,.alias_pos = import_node.alias_pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 	}
 	string mod_name = import_node.mod;
 	if (p->tok.kind == v__token__Kind_key_as) {
@@ -39256,7 +39257,7 @@ VV_LOCAL_SYMBOL v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* 
 			v__parser__Parser_error_with_pos(p, _STR("import alias `%.*s\000 as %.*s\000` is redundant", 3, mod_name, mod_alias), v__token__Token_position(&p->prev_tok));
 			return import_node;
 		}
-		import_node = (v__ast__Import){.mod = import_node.mod,.alias = mod_alias,.pos = v__token__Position_extend(import_node.pos, alias_pos),.mod_pos = import_node.mod_pos,.alias_pos = alias_pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),};
+		import_node = (v__ast__Import){.mod = import_node.mod,.alias = mod_alias,.pos = v__token__Position_extend(import_node.pos, alias_pos),.mod_pos = import_node.mod_pos,.alias_pos = alias_pos,.syms = __new_array(0, 1, sizeof(v__ast__ImportSymbol)),.comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 	}
 	if (p->tok.kind == v__token__Kind_lcbr) {
 		v__parser__Parser_import_syms(p, (voidptr)&/*qq*/import_node);
@@ -39269,6 +39270,7 @@ VV_LOCAL_SYMBOL v__ast__Import v__parser__Parser_import_stmt(v__parser__Parser* 
 			return import_node;
 		}
 	}
+	import_node.comments = v__parser__Parser_eat_line_end_comments(p);
 	map_set_1(&p->imports, &(string[]){mod_alias}, &(string[]) { mod_name });
 	array_push(&p->table->imports, _MOV((string[]){ string_clone(mod_name) }));
 	array_push(&p->ast_imports, _MOV((v__ast__Import[]){ import_node }));
@@ -39366,9 +39368,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49812 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_49812.arg0;
-	array_v__ast__Comment comments2 = mr_49812.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49862 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_49862.arg0;
+	array_v__ast__Comment comments2 = mr_49862.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1759, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
