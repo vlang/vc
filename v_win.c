@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "49a6f9f"
+#define V_COMMIT_HASH "b40252b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e30e794"
+	#define V_COMMIT_HASH "49a6f9f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "49a6f9f"
+	#define V_CURRENT_COMMIT_HASH "b40252b"
 #endif
 
 // V comptime_defines:
@@ -22193,7 +22193,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e30e794"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("49a6f9f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35478,7 +35478,9 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		}
 	}
 	if (exprs.len == 0 && p->tok.kind != v__token__Kind_lcbr && has_type) {
-		v__parser__Parser_warn_with_pos(p, _SLIT("use `x := []Type{}` instead of `x := []Type`"), v__token__Position_extend(first_pos, last_pos));
+		if (!p->pref->is_fmt) {
+			v__parser__Parser_warn_with_pos(p, _SLIT("use `x := []Type{}` instead of `x := []Type`"), v__token__Position_extend(first_pos, last_pos));
+		}
 	}
 	bool has_len = false;
 	bool has_cap = false;
@@ -36201,7 +36203,9 @@ VV_LOCAL_SYMBOL multi_return_array_v__table__Param_bool_bool v__parser__Parser_f
 				array_push(&type_pos, _MOV((v__token__Position[]){ v__token__Token_position(&p->tok) }));
 			}
 			if (p->tok.kind == v__token__Kind_key_mut) {
-				v__parser__Parser_warn_with_pos(p, _SLIT("use `mut f Foo` instead of `f mut Foo`"), v__token__Token_position(&p->tok));
+				if (!p->pref->is_fmt) {
+					v__parser__Parser_warn_with_pos(p, _SLIT("use `mut f Foo` instead of `f mut Foo`"), v__token__Token_position(&p->tok));
+				}
 				is_mut = true;
 			}
 			if (p->tok.kind == v__token__Kind_ellipsis) {
