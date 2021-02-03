@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3ef4885"
+#define V_COMMIT_HASH "e30e794"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "df0520b"
+	#define V_COMMIT_HASH "3ef4885"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3ef4885"
+	#define V_CURRENT_COMMIT_HASH "e30e794"
 #endif
 
 // V comptime_defines:
@@ -22505,7 +22505,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("df0520b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3ef4885"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33506,6 +33506,9 @@ if (			obj.typ == 262 /* v.ast.GlobalField */) {
 		if (_t1506 = v__ast__Scope_find(c->file->global_scope, name), _t1506.ok) {
 			v__ast__ScopeObject obj = *(v__ast__ScopeObject*)_t1506.data;
 if (			obj.typ == 261 /* v.ast.ConstField */) {
+				if (!((*obj._v__ast__ConstField).is_pub || string_eq((*obj._v__ast__ConstField).mod, c->mod) || c->pref->is_test)) {
+					v__checker__Checker_error(c, _STR("constant `%.*s\000` is private", 2, (*obj._v__ast__ConstField).name), ident->pos);
+				}
 				v__table__Type typ = (*obj._v__ast__ConstField).typ;
 				if (typ == 0) {
 					c->inside_const = true;
@@ -34040,7 +34043,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t1548 = {0};
 		v_assert_meta_info__t1548.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1548.line_nr = 4571;
+		v_assert_meta_info__t1548.line_nr = 4574;
 		v_assert_meta_info__t1548.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1548.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1548);
@@ -34518,8 +34521,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_164825 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_164825.arg0;
+		multi_return_string_v__token__Position mr_164954 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_164954.arg0;
 	}
 	return typ;
 }
@@ -35201,10 +35204,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1615 = 0; _t1615 < _t1614.len; ++_t1615) {
 			v__table__Fn m = ((v__table__Fn*)_t1614.data)[_t1615];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_186438 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_186438.arg0;
-				int nroute_attributes = mr_186438.arg1;
-				int nargs = mr_186438.arg2;
+				multi_return_bool_int_int mr_186567 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_186567.arg0;
+				int nroute_attributes = mr_186567.arg1;
+				int nargs = mr_186567.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -39549,7 +39552,15 @@ VV_LOCAL_SYMBOL v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser
 			return (v__ast__ConstDecl){.is_pub = 0,.pos = {0},.fields = __new_array(0, 1, sizeof(v__ast__ConstField)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.is_block = 0,};
 		}
 		v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-		v__ast__ConstField field = (v__ast__ConstField){.mod = p->mod,.name = full_name,.expr = expr,.is_pub = 0,.pos = pos,.typ = 0,.comments = comments,};
+		v__ast__ConstField field = (v__ast__ConstField){
+			.mod = p->mod,
+			.name = full_name,
+			.expr = expr,
+			.is_pub = is_pub,
+			.pos = pos,
+			.typ = 0,
+			.comments = comments,
+		};
 		array_push(&fields, _MOV((v__ast__ConstField[]){ field }));
 		v__ast__Scope_register(p->global_scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__ConstField = memdup(&(v__ast__ConstField[]){field}, sizeof(v__ast__ConstField)), .typ = 261 /* v.ast.ConstField */});
 		comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
@@ -39571,9 +39582,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49862 = v__parser__Parser_expr_list(p);
-	array_v__ast__Expr exprs = mr_49862.arg0;
-	array_v__ast__Comment comments2 = mr_49862.arg1;
+	multi_return_array_v__ast__Expr_array_v__ast__Comment mr_49880 = v__parser__Parser_expr_list(p);
+	array_v__ast__Expr exprs = mr_49880.arg0;
+	array_v__ast__Comment comments2 = mr_49880.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1767, array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
