@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f013e65"
+#define V_COMMIT_HASH "112c652"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cee00a3"
+	#define V_COMMIT_HASH "f013e65"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f013e65"
+	#define V_CURRENT_COMMIT_HASH "112c652"
 #endif
 
 // V comptime_defines:
@@ -22169,7 +22169,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cee00a3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f013e65"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -47557,6 +47557,10 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__table__
 	}
 	else {
 	};
+	if (sym->kind == v__table__Kind_chan) {
+		string elemtypstr = v__gen__c__Gen_typ(g, v__table__TypeSymbol_chan_info(sym).elem_type);
+		return _STR("sync__new_channel_st(0, sizeof(%.*s\000))", 2, elemtypstr);
+	}
 	v__table__Kind _t2071 = sym->kind; 
 		return ((_t2071 == v__table__Kind_interface_ || _t2071 == v__table__Kind_sum_type || _t2071 == v__table__Kind_array_fixed || _t2071 == v__table__Kind_multi_return) ? (_SLIT("{0}")) : (_t2071 == v__table__Kind_alias) ? (v__gen__c__Gen_type_default(g, (/* as */ *(v__table__Alias*)__as_cast((sym->info)._v__table__Alias,(sym->info).typ, 374) /*expected idx: 374, name: v.table.Alias */ ).parent_type)) : (_SLIT("0")));
 }
@@ -48003,8 +48007,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 						.type_pos = first_param.type_pos,
 						.is_hidden = first_param.is_hidden,
 					} });
-					multi_return_array_string_array_string mr_181456 = v__gen__c__Gen_fn_args(g, params, false);
-					array_string fargs = mr_181456.arg0;
+					multi_return_array_string_array_string mr_181588 = v__gen__c__Gen_fn_args(g, params, false);
+					array_string fargs = mr_181588.arg0;
 					strings__Builder_write(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write(&methods_wrapper, _SLIT("\t"));
