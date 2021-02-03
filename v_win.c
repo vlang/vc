@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b99d6a"
+#define V_COMMIT_HASH "a73c209"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b40252b"
+	#define V_COMMIT_HASH "4b99d6a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b99d6a"
+	#define V_CURRENT_COMMIT_HASH "a73c209"
 #endif
 
 // V comptime_defines:
@@ -22194,7 +22194,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b40252b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4b99d6a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28641,72 +28641,44 @@ Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, 
 }
 
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got, v__table__Type expected) {
-	if (v__table__Type_alias_eq(got, expected)) {
+	v__table__Type got_ = v__table__Table_unalias_num_type(c->table, got);
+	v__table__Type exp_ = v__table__Table_unalias_num_type(c->table, expected);
+	if (v__table__Type_idx(got_) == v__table__Type_idx(exp_)) {
 		return true;
 	}
-	v__table__Table* t = c->table;
-	int got_idx = v__table__Type_idx(v__table__Table_unalias_num_type(t, got));
-	int exp_idx = v__table__Type_idx(v__table__Table_unalias_num_type(t, expected));
-	if (got_idx == exp_idx) {
+	if ((v__table__Type_is_pointer(exp_) || v__table__Type_is_number(exp_)) && (v__table__Type_is_pointer(got_) || v__table__Type_is_number(got_))) {
 		return true;
 	}
-	if (got_idx == _const_v__table__none_type_idx && v__table__Type_has_flag(expected, v__table__TypeFlag_optional)) {
-		return false;
-	}
-	bool exp_is_ptr = v__table__Type_is_ptr(expected);
-	if (exp_is_ptr && got_idx == _const_v__table__int_type_idx) {
+	if (v__table__Type_is_ptr(expected) && v__table__Type_idx(got_) == _const_v__table__int_type_idx) {
 		return true;
 	}
-	if (exp_idx == _const_v__table__voidptr_type_idx || got_idx == _const_v__table__voidptr_type_idx) {
+	if (v__table__Type_idx(expected) == _const_v__table__array_type_idx || v__table__Type_idx(got) == _const_v__table__array_type_idx) {
 		return true;
 	}
-	if (exp_idx == _const_v__table__any_type_idx || got_idx == _const_v__table__any_type_idx) {
-		return true;
-	}
-	if (((array_int_contains(_const_v__table__pointer_type_idxs, exp_idx)) || (array_int_contains(_const_v__table__number_type_idxs, exp_idx))) && ((array_int_contains(_const_v__table__pointer_type_idxs, got_idx)) || (array_int_contains(_const_v__table__number_type_idxs, got_idx)))) {
-		return true;
-	}
-	if ((got_idx == _const_v__table__byte_type_idx && exp_idx == _const_v__table__byteptr_type_idx) || (exp_idx == _const_v__table__byte_type_idx && got_idx == _const_v__table__byteptr_type_idx)) {
-		return true;
-	}
-	if ((got_idx == _const_v__table__char_type_idx && exp_idx == _const_v__table__charptr_type_idx) || (exp_idx == _const_v__table__char_type_idx && got_idx == _const_v__table__charptr_type_idx)) {
-		return true;
-	}
-	v__table__TypeSymbol* got_type_sym = v__table__Table_get_type_symbol(t, got);
-	v__table__TypeSymbol* exp_type_sym = v__table__Table_get_type_symbol(t, expected);
-	if (exp_type_sym->kind == v__table__Kind_function && got_type_sym->kind == v__table__Kind_int) {
-		return true;
-	}
-	if ((got_type_sym->kind == v__table__Kind_array || got_type_sym->kind == v__table__Kind_map) && exp_type_sym->kind == got_type_sym->kind) {
+	v__table__TypeSymbol* got_sym = v__table__Table_get_type_symbol(c->table, got);
+	v__table__TypeSymbol* exp_sym = v__table__Table_get_type_symbol(c->table, expected);
+	if ((got_sym->kind == v__table__Kind_array || got_sym->kind == v__table__Kind_map || got_sym->kind == v__table__Kind_array_fixed) && exp_sym->kind == got_sym->kind) {
 		if (string_eq(v__table__Table_type_to_str(c->table, got), string_trim(v__table__Table_type_to_str(c->table, expected), _SLIT("&")))) {
 			return true;
 		}
 	}
-	if (got_type_sym->kind == v__table__Kind_array_fixed && exp_type_sym->kind == v__table__Kind_array_fixed) {
-		if (string_eq(v__table__Table_type_to_str(c->table, got), string_trim(v__table__Table_type_to_str(c->table, expected), _SLIT("&")))) {
+	if (got_sym->kind == v__table__Kind_array_fixed) {
+		v__table__ArrayFixed info = /* as */ *(v__table__ArrayFixed*)__as_cast((got_sym->info)._v__table__ArrayFixed,(got_sym->info).typ, 377) /*expected idx: 377, name: v.table.ArrayFixed */ ;
+		if (string_eq(v__table__Table_type_to_str(c->table, info.elem_type), string_trim(v__table__Table_type_to_str(c->table, expected), _SLIT("ptr")))) {
 			return true;
 		}
 	}
-	if (got_type_sym->kind == v__table__Kind_array_fixed && exp_type_sym->kind == v__table__Kind_byteptr) {
-		v__table__ArrayFixed info = /* as */ *(v__table__ArrayFixed*)__as_cast((got_type_sym->info)._v__table__ArrayFixed,(got_type_sym->info).typ, 377) /*expected idx: 377, name: v.table.ArrayFixed */ ;
-		if (v__table__Type_idx(info.elem_type) == _const_v__table__byte_type_idx) {
-			return true;
-		}
-	}
-	if (got_idx == _const_v__table__array_type_idx || exp_idx == _const_v__table__array_type_idx) {
-		return true;
-	}
-	if (got_type_sym->kind == v__table__Kind_array && exp_type_sym->kind == v__table__Kind_array && string_eq(got_type_sym->name, _SLIT("array_void"))) {
-		return true;
-	}
-	if ((got_type_sym->kind == v__table__Kind_alias && got_type_sym->parent_idx == exp_idx) || (exp_type_sym->kind == v__table__Kind_alias && exp_type_sym->parent_idx == got_idx)) {
+	if ((exp_sym->kind == v__table__Kind_voidptr || exp_sym->kind == v__table__Kind_any) || (got_sym->kind == v__table__Kind_voidptr || got_sym->kind == v__table__Kind_any)) {
 		return true;
 	}
 	if (v__table__Table_sumtype_has_variant(c->table, expected, v__table__Table_mktyp(c->table, got))) {
 		return true;
 	}
-	if (got_type_sym->kind == v__table__Kind_function && exp_type_sym->kind == v__table__Kind_function) {
-		return v__checker__Checker_check_matching_function_symbols(c, got_type_sym, exp_type_sym);
+	if ((got_sym->kind == v__table__Kind_alias && got_sym->parent_idx == v__table__Type_idx(expected)) || (exp_sym->kind == v__table__Kind_alias && exp_sym->parent_idx == v__table__Type_idx(got))) {
+		return true;
+	}
+	if (got_sym->kind == v__table__Kind_function && exp_sym->kind == v__table__Kind_function) {
+		return v__checker__Checker_check_matching_function_symbols(c, got_sym, exp_sym);
 	}
 	return false;
 }
@@ -28792,10 +28764,10 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_7391 = type_hi;
-		v__table__Type _var_7400 = type_lo;
-		type_hi = _var_7400;
-		type_lo = _var_7391;
+		v__table__Type _var_5559 = type_hi;
+		v__table__Type _var_5568 = type_lo;
+		type_hi = _var_5568;
+		type_lo = _var_5559;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
