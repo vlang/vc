@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "27239db"
+#define V_COMMIT_HASH "162c42d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "112c652"
+	#define V_COMMIT_HASH "27239db"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "27239db"
+	#define V_CURRENT_COMMIT_HASH "162c42d"
 #endif
 
 // V comptime_defines:
@@ -22170,7 +22170,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("112c652"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("27239db"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27088,6 +27088,12 @@ if (	expr.typ == 235 /* v.ast.Ident */) {
 	}
 	else if (	expr.typ == 253 /* v.ast.SelectorExpr */) {
 		return v__ast__Expr_is_lvalue((*expr._v__ast__SelectorExpr).expr);
+	}
+	else if (	expr.typ == 248 /* v.ast.ParExpr */) {
+		return v__ast__Expr_is_lvalue((*expr._v__ast__ParExpr).expr);
+	}
+	else if (	expr.typ == 250 /* v.ast.PrefixExpr */) {
+		return v__ast__Expr_is_lvalue((*expr._v__ast__PrefixExpr).right);
 	}
 	else {
 	};
