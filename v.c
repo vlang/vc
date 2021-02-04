@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "97c0ef3"
+#define V_COMMIT_HASH "5eef730"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "856246c"
+	#define V_COMMIT_HASH "97c0ef3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "97c0ef3"
+	#define V_CURRENT_COMMIT_HASH "5eef730"
 #endif
 
 // V comptime_defines:
@@ -8002,9 +8002,7 @@ string strings__Builder_str(strings__Builder* b) {
 		v_panic(_SLIT("builder.str() should be called just once.\nIf you want to reuse a builder, call b.free() first."));
 	}
 	array_push(&b->buf, _MOV((byte[]){ L'\0' }));
-	string s = tos(b->buf.data, b->len);
-	int bis = b->initial_size;
-	b->buf = __new_array_with_default(0, bis, sizeof(byte), 0);
+	string s = byteptr_vstring_with_len(((byteptr)(memdup(b->buf.data, b->len))), b->len);
 	b->len = 0;
 	return s;
 }
@@ -22479,7 +22477,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("856246c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("97c0ef3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42306,9 +42304,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_array_fixed(v__gen__c__Gen* g, v
 	}
 	string field_styp = v__gen__c__Gen_typ(g, typ);
 	bool is_elem_ptr = v__table__Type_is_ptr(typ);
-	multi_return_bool_bool_int mr_11040 = v__table__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_11040.arg0;
-	bool str_method_expects_ptr = mr_11040.arg1;
+	multi_return_bool_bool_int mr_10972 = v__table__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_10972.arg0;
+	bool str_method_expects_ptr = mr_10972.arg1;
 	string elem_str_fn_name = _SLIT("");
 	if (sym_has_str_method) {
 		elem_str_fn_name = (is_elem_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
@@ -42351,7 +42349,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_array_fixed(v__gen__c__Gen* g, v
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_write(&sb, _SLIT(\"]\"));"));
-	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstring res = strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_free(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\treturn res;"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("}"));
 }
 
@@ -42417,7 +42417,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_map(v__gen__c__Gen* g, v__table_
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t}"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_write(&sb, _SLIT(\"}\"));"));
-	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstring res = strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_free(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\treturn res;"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("}"));
 }
 
@@ -42442,9 +42444,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_multi_return(v__gen__c__Gen* g, 
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
 		string field_styp = v__gen__c__Gen_typ(g, typ);
 		bool is_arg_ptr = v__table__Type_is_ptr(typ);
-		multi_return_bool_bool_int mr_17842 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_17842.arg0;
-		bool str_method_expects_ptr = mr_17842.arg1;
+		multi_return_bool_bool_int mr_17990 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_17990.arg0;
+		bool str_method_expects_ptr = mr_17990.arg1;
 		string arg_str_fn_name = _SLIT("");
 		if (sym_has_str_method) {
 			arg_str_fn_name = (is_arg_ptr ? (string_add(string_replace(field_styp, _SLIT("*"), _SLIT("")), _SLIT("_str"))) : (string_add(field_styp, _SLIT("_str"))));
@@ -42473,7 +42475,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_multi_return(v__gen__c__Gen* g, 
 		}
 	}
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_write(&sb, _SLIT(\")\"));"));
-	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\treturn strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstring res = strings__Builder_str(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_free(&sb);"));
+	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\treturn res;"));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("}"));
 }
 
@@ -42647,9 +42651,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_union_sum_type(v__gen__c__Gen* g
 		string typ_str = v__gen__c__Gen_typ(g, typ);
 		string func_name = (_IN_MAP(ADDR(string, typ_str), ADDR(map, gen_fn_names)) ? ((*(string*)map_get_1(ADDR(map, gen_fn_names), &(string[]){typ_str}, &(string[]){ (string){.str=(byteptr)""} }))) : (v__gen__c__Gen_gen_str_for_type(g, typ)));
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
-		multi_return_bool_bool_int mr_26535 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_26535.arg0;
-		bool str_method_expects_ptr = mr_26535.arg1;
+		multi_return_bool_bool_int mr_26791 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_26791.arg0;
+		bool str_method_expects_ptr = mr_26791.arg1;
 		string deref = (sym_has_str_method && str_method_expects_ptr ? (_SLIT(" ")) : (_SLIT("*")));
 		if (sym->kind == v__table__Kind_struct_ && !sym_has_str_method) {
 			func_name = _STR("indent_%.*s", 1, func_name);
@@ -55976,7 +55980,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		int errcode = _t2669.ecode;
 		v__builder__verror(_STR("Unable to write response file to \"%.*s\000\"", 2, out_name_cmd_line));
 	};
-	string cmd = _STR("\"%.*s\000\" @%.*s", 2, r.full_cl_exe_path, out_name_cmd_line);
+	string cmd = _STR("\"%.*s\000\" \"@%.*s\000\"", 3, r.full_cl_exe_path, out_name_cmd_line);
 	v__builder__Builder_show_cc(v, cmd, out_name_cmd_line, args);
 	v__builder__Builder_timing_start(v, _SLIT("C msvc"));
 	Option_os__Result _t2670 = os__exec(cmd);
