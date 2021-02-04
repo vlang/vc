@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "112c652"
+#define V_COMMIT_HASH "27239db"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f013e65"
+	#define V_COMMIT_HASH "112c652"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "112c652"
+	#define V_CURRENT_COMMIT_HASH "27239db"
 #endif
 
 // V comptime_defines:
@@ -6537,6 +6537,7 @@ VV_LOCAL_SYMBOL string v__builder__module_path(string mod);
 Option_string v__builder__Builder_find_module_path(v__builder__Builder* b, string mod, string fpath);
 VV_LOCAL_SYMBOL void v__builder__Builder_show_total_warns_and_errors_stats(v__builder__Builder* b);
 VV_LOCAL_SYMBOL void v__builder__Builder_print_warnings_and_errors(v__builder__Builder* b);
+VV_LOCAL_SYMBOL void v__builder__error_with_pos(string s, string fpath, v__token__Position pos);
 VV_LOCAL_SYMBOL void v__builder__verror(string s);
 void v__builder__Builder_timing_start(v__builder__Builder* b, string label);
 void v__builder__Builder_timing_measure(v__builder__Builder* b, string label);
@@ -22481,7 +22482,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f013e65"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("112c652"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53742,7 +53743,7 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			v__ast__Import imp = ((v__ast__Import*)_t2352.data)[_t2353];
 			string mod = imp.mod;
 			if (string_eq(mod, _SLIT("builtin"))) {
-				v__builder__verror(_SLIT("cannot import module \"builtin\""));
+				v__builder__error_with_pos(_SLIT("cannot import module \"builtin\""), ast_file.path, imp.pos);
 				break;
 			}
 			if ((array_string_contains(done_imports, mod))) {
@@ -53752,13 +53753,13 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			if (!_t2354.ok) {
 				string err = _t2354.v_error;
 				int errcode = _t2354.ecode;
-				v__builder__verror(_STR("cannot import module \"%.*s\000\" (not found)", 2, mod));
+				v__builder__error_with_pos(_STR("cannot import module \"%.*s\000\" (not found)", 2, mod), ast_file.path, imp.pos);
 				break;
 			}
  			string import_path =  *(string*)_t2354.data;
 			array_string v_files = v__builder__Builder_v_files_from_dir(/*rec*/*b, import_path);
 			if (v_files.len == 0) {
-				v__builder__verror(_STR("cannot import module \"%.*s\000\" (no .v files in \"%.*s\000\")", 3, mod, import_path));
+				v__builder__error_with_pos(_STR("cannot import module \"%.*s\000\" (no .v files in \"%.*s\000\")", 3, mod, import_path), ast_file.path, imp.pos);
 			}
 			array_v__ast__File parsed_files = v__parser__parse_files(v_files, b->table, b->pref, b->global_scope);
 			// FOR IN array
@@ -53766,7 +53767,7 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			for (int _t2356 = 0; _t2356 < _t2355.len; ++_t2356) {
 				v__ast__File file = ((v__ast__File*)_t2355.data)[_t2356];
 				if (string_ne(file.mod.name, mod)) {
-					v__builder__verror(_STR("bad module definition: %.*s\000 imports module \"%.*s\000\" but %.*s\000 is defined as module `%.*s\000`", 5, ast_file.path, mod, file.path, file.mod.name));
+					v__builder__error_with_pos(_STR("bad module definition: %.*s\000 imports module \"%.*s\000\" but %.*s\000 is defined as module `%.*s\000`", 5, ast_file.path, mod, file.path, file.mod.name), ast_file.path, imp.pos);
 				}
 			}
 			_PUSH_MANY(&b->parsed_files, (parsed_files), _t2357, array_v__ast__File);
@@ -54059,6 +54060,12 @@ VV_LOCAL_SYMBOL void v__builder__Builder_print_warnings_and_errors(v__builder__B
 // Defer begin
 v__builder__Builder_show_total_warns_and_errors_stats(b);
 // Defer end
+}
+
+VV_LOCAL_SYMBOL void v__builder__error_with_pos(string s, string fpath, v__token__Position pos) {
+	string ferror = v__util__formatted_error(_SLIT("builder error:"), s, fpath, pos);
+	eprintln(ferror);
+	v_exit(1);
 }
 
 VV_LOCAL_SYMBOL void v__builder__verror(string s) {
