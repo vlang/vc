@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d30f945"
+#define V_COMMIT_HASH "25a3873"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8f160ee"
+	#define V_COMMIT_HASH "d30f945"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d30f945"
+	#define V_CURRENT_COMMIT_HASH "25a3873"
 #endif
 
 // V comptime_defines:
@@ -1052,14 +1052,15 @@ typedef enum {
 typedef enum {
 	v__token__AtKind_unknown, // 
 	v__token__AtKind_fn_name, // +1
-	v__token__AtKind_mod_name, // +2
-	v__token__AtKind_struct_name, // +3
-	v__token__AtKind_vexe_path, // +4
-	v__token__AtKind_file_path, // +5
-	v__token__AtKind_line_nr, // +6
-	v__token__AtKind_column_nr, // +7
-	v__token__AtKind_vhash, // +8
-	v__token__AtKind_vmod_file, // +9
+	v__token__AtKind_method_name, // +2
+	v__token__AtKind_mod_name, // +3
+	v__token__AtKind_struct_name, // +4
+	v__token__AtKind_vexe_path, // +5
+	v__token__AtKind_file_path, // +6
+	v__token__AtKind_line_nr, // +7
+	v__token__AtKind_column_nr, // +8
+	v__token__AtKind_vhash, // +9
+	v__token__AtKind_vmod_file, // +10
 } v__token__AtKind;
 
 typedef enum {
@@ -22190,7 +22191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8f160ee"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d30f945"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -29095,7 +29096,7 @@ VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p)
 
 VV_LOCAL_SYMBOL v__ast__AtExpr v__parser__Parser_at(v__parser__Parser* p) {
 	string name = p->tok.lit;
-	v__token__AtKind kind = ((string_eq(name, _SLIT("@FN"))) ? (v__token__AtKind_fn_name) : (string_eq(name, _SLIT("@MOD"))) ? (v__token__AtKind_mod_name) : (string_eq(name, _SLIT("@STRUCT"))) ? (v__token__AtKind_struct_name) : (string_eq(name, _SLIT("@VEXE"))) ? (v__token__AtKind_vexe_path) : (string_eq(name, _SLIT("@FILE"))) ? (v__token__AtKind_file_path) : (string_eq(name, _SLIT("@LINE"))) ? (v__token__AtKind_line_nr) : (string_eq(name, _SLIT("@COLUMN"))) ? (v__token__AtKind_column_nr) : (string_eq(name, _SLIT("@VHASH"))) ? (v__token__AtKind_vhash) : (string_eq(name, _SLIT("@VMOD_FILE"))) ? (v__token__AtKind_vmod_file) : (v__token__AtKind_unknown));
+	v__token__AtKind kind = ((string_eq(name, _SLIT("@FN"))) ? (v__token__AtKind_fn_name) : (string_eq(name, _SLIT("@METHOD"))) ? (v__token__AtKind_method_name) : (string_eq(name, _SLIT("@MOD"))) ? (v__token__AtKind_mod_name) : (string_eq(name, _SLIT("@STRUCT"))) ? (v__token__AtKind_struct_name) : (string_eq(name, _SLIT("@VEXE"))) ? (v__token__AtKind_vexe_path) : (string_eq(name, _SLIT("@FILE"))) ? (v__token__AtKind_file_path) : (string_eq(name, _SLIT("@LINE"))) ? (v__token__AtKind_line_nr) : (string_eq(name, _SLIT("@COLUMN"))) ? (v__token__AtKind_column_nr) : (string_eq(name, _SLIT("@VHASH"))) ? (v__token__AtKind_vhash) : (string_eq(name, _SLIT("@VMOD_FILE"))) ? (v__token__AtKind_vmod_file) : (v__token__AtKind_unknown));
 	v__parser__Parser_next(p);
 	return (v__ast__AtExpr){.name = name,.pos = v__token__Token_position(&p->tok),.kind = kind,.val = (string){.str=(byteptr)""},};
 }
@@ -51649,6 +51650,14 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 	if (_t2235 == v__token__AtKind_fn_name) {
 		node->val = string_all_after_last(c->cur_fn->name, _SLIT("."));
 	}
+	else if (_t2235 == v__token__AtKind_method_name) {
+		string fname = string_all_after_last(c->cur_fn->name, _SLIT("."));
+		if (c->cur_fn->is_method) {
+			node->val = string_add(string_add(string_all_after_last(v__table__Table_type_to_str(c->table, c->cur_fn->receiver.typ), _SLIT(".")), _SLIT(".")), fname);
+		} else {
+			node->val = fname;
+		}
+	}
 	else if (_t2235 == v__token__AtKind_mod_name) {
 		node->val = c->cur_fn->mod;
 	}
@@ -51669,8 +51678,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t2235 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_131882 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_131882.arg1;
+		multi_return_string_int mr_132111 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_132111.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t2235 == v__token__AtKind_vhash) {
@@ -52341,7 +52350,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t2281 = {0};
 		v_assert_meta_info__t2281.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t2281.line_nr = 4617;
+		v_assert_meta_info__t2281.line_nr = 4626;
 		v_assert_meta_info__t2281.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t2281.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t2281);
@@ -52819,8 +52828,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_166422 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_166422.arg0;
+		multi_return_string_v__token__Position mr_166651 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_166651.arg0;
 	}
 	return typ;
 }
@@ -53585,10 +53594,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2356 = 0; _t2356 < _t2355.len; ++_t2356) {
 			v__table__Fn m = ((v__table__Fn*)_t2355.data)[_t2356];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_189590 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_189590.arg0;
-				int nroute_attributes = mr_189590.arg1;
-				int nargs = mr_189590.arg2;
+				multi_return_bool_int_int mr_189819 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_189819.arg0;
+				int nroute_attributes = mr_189819.arg1;
+				int nargs = mr_189819.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -56289,8 +56298,8 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__token__assign_tokens = new_array_from_c_array(11, 11, sizeof(v__token__Kind), _MOV((v__token__Kind[11]){
 		v__token__Kind_assign, v__token__Kind_plus_assign, v__token__Kind_minus_assign, v__token__Kind_mult_assign, v__token__Kind_div_assign, v__token__Kind_xor_assign, v__token__Kind_mod_assign, v__token__Kind_or_assign, v__token__Kind_and_assign, v__token__Kind_right_shift_assign, v__token__Kind_left_shift_assign}));
 	_const_v__token__nr_tokens = ((int)(v__token__Kind__end_));
-	_const_v__token__valid_at_tokens = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
-		_SLIT("@FN"), _SLIT("@MOD"), _SLIT("@STRUCT"), _SLIT("@VEXE"), _SLIT("@FILE"), _SLIT("@LINE"), _SLIT("@COLUMN"), _SLIT("@VHASH"), _SLIT("@VMOD_FILE")}));
+	_const_v__token__valid_at_tokens = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
+		_SLIT("@FN"), _SLIT("@METHOD"), _SLIT("@MOD"), _SLIT("@STRUCT"), _SLIT("@VEXE"), _SLIT("@FILE"), _SLIT("@LINE"), _SLIT("@COLUMN"), _SLIT("@VHASH"), _SLIT("@VMOD_FILE")}));
 	_const_v__token__token_str = v__token__build_token_str();
 	_const_v__token__keywords = v__token__build_keys();
 	_const_v__token__precedences = v__token__build_precedences();
