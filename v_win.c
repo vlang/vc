@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6b776e6"
+#define V_COMMIT_HASH "a6ecc19"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a94228b"
+	#define V_COMMIT_HASH "6b776e6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6b776e6"
+	#define V_CURRENT_COMMIT_HASH "a6ecc19"
 #endif
 
 // V comptime_defines:
@@ -22194,7 +22194,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a94228b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6b776e6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53652,7 +53652,18 @@ VV_LOCAL_SYMBOL void v__checker__Checker_mark_used(v__checker__Checker* c, array
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("panic")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("eprintln")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_mac")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_linux")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_freebsd")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_windows")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_mingw")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_msvc")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("print_backtrace_skipping_top_frames_tcc")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("is_atty")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("add_unhandled_exception_handler")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("add_vectored_exception_handler")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("unhandled_exception_handler")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("restore_codepage")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("new_array_from_c_array")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("__new_array_with_default")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("__new_array")}, &(bool[]) { true });
