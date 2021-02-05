@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a94228b"
+#define V_COMMIT_HASH "6b776e6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "81789ee"
+	#define V_COMMIT_HASH "a94228b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a94228b"
+	#define V_CURRENT_COMMIT_HASH "6b776e6"
 #endif
 
 // V comptime_defines:
@@ -22506,7 +22506,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("81789ee"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a94228b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34112,9 +34112,6 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, 
 	}
 	int precedence = v__token__Token_precedence(p->tok);
 	v__token__Position pos = v__token__Token_position(&p->tok);
-	if (v__ast__Expr_position(left).line_nr < pos.line_nr) {
-		pos = (v__token__Position){pos.len,.line_nr = v__ast__Expr_position(left).line_nr,pos.pos,pos.last_line,};
-	}
 	v__parser__Parser_next(p);
 	v__ast__Expr right = (v__ast__Expr){
 #ifndef __cplusplus
