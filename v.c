@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8f160ee"
+#define V_COMMIT_HASH "d30f945"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "40fff7b"
+	#define V_COMMIT_HASH "8f160ee"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8f160ee"
+	#define V_CURRENT_COMMIT_HASH "d30f945"
 #endif
 
 // V comptime_defines:
@@ -22502,7 +22502,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("40fff7b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8f160ee"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -48242,6 +48242,9 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 			v__checker__Checker_error(c, _SLIT("a _test.v file should have *at least* one `test_` function"), (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.last_line = 0,});
 		}
 	}
+	if (c->pref->skip_unused) {
+		v__checker__Checker_mark_used(c, ast_files);
+	}
 	if (c->pref->build_mode == v__pref__BuildMode_build_module || c->pref->is_test) {
 		return;
 	}
@@ -48252,9 +48255,6 @@ void v__checker__Checker_check_files(v__checker__Checker* c, array_v__ast__File 
 		v__checker__Checker_error(c, _SLIT("project must include a `main` module or be a shared library (compile with `v -shared`)"), (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.last_line = 0,});
 	} else if (!has_main_fn) {
 		v__checker__Checker_error(c, _SLIT("function `main` must be declared in the main module"), (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.last_line = 0,});
-	}
-	if (c->pref->skip_unused) {
-		v__checker__Checker_mark_used(c, ast_files);
 	}
 }
 
@@ -54034,6 +54034,15 @@ VV_LOCAL_SYMBOL void v__checker__Checker_mark_used(v__checker__Checker* c, array
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("main.main")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("builtin_init")}, &(bool[]) { true });
 	map_set_1(&c->table->used_fns, &(string[]){_SLIT("memdup")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("vstring")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("vstring_with_len")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("string")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("os.getwd")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("os.init_os_args")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("term.can_show_color_on_stdin")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("term.can_show_color_on_stdout")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("term.can_show_color_on_stderr")}, &(bool[]) { true });
+	map_set_1(&c->table->used_fns, &(string[]){_SLIT("main.can_use_relative_paths")}, &(bool[]) { true });
 }
 
 v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
