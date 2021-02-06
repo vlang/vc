@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5343f13"
+#define V_COMMIT_HASH "cf23064"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fe9d062"
+	#define V_COMMIT_HASH "5343f13"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5343f13"
+	#define V_CURRENT_COMMIT_HASH "cf23064"
 #endif
 
 // V comptime_defines:
@@ -5954,7 +5954,7 @@ string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(array_v__ast__CallArg args);
 string v__ast__BranchStmt_str(v__ast__BranchStmt* node);
 string v__ast__Stmt_str(v__ast__Stmt node);
-VV_LOCAL_SYMBOL string anon_8686_261_18(v__ast__ConstField f);
+VV_LOCAL_SYMBOL string anon_8733_261_18(v__ast__ConstField f);
 string v__ast__CompForKind_str(v__ast__CompForKind e);
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p);
 VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, array_v__ast__Expr exprs, v__ast__Expr val);
@@ -7691,7 +7691,7 @@ static bool array_i64_contains(array_i64 a, i64 v) {
 	return false;
 }
 
-VV_LOCAL_SYMBOL string anon_8686_261_18(v__ast__ConstField f) {
+VV_LOCAL_SYMBOL string anon_8733_261_18(v__ast__ConstField f) {
 			return _STR("%.*s\000 = %.*s", 2, string_trim_prefix(f.name, string_add(f.mod, _SLIT("."))), v__ast__Expr_str(f.expr));
 		}
 		
@@ -22539,7 +22539,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fe9d062"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5343f13"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -25994,6 +25994,10 @@ string v__table__Table_type_to_str_using_aliases(v__table__Table* mytable, v__ta
 		res = v__table__Table_shorten_user_defined_typenames(/*rec*/*mytable, res, import_aliases);
 	};
 	int nr_muls = v__table__Type_nr_muls(t);
+	if (v__table__Type_has_flag(t, v__table__TypeFlag_shared_f)) {
+		nr_muls--;
+		res = string_add(_SLIT("shared "), res);
+	}
 	if (nr_muls > 0) {
 		res = string_add(strings__repeat(L'&', nr_muls), res);
 	}
@@ -28598,7 +28602,7 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string
 	}
 	string receiver = _SLIT("");
 	if (node->is_method) {
-		string styp = v__util__no_cur_mod(v__table__Table_type_to_code(t, node->receiver.typ), cur_mod);
+		string styp = v__util__no_cur_mod(v__table__Table_type_to_code(t, v__table__Type_clear_flag(node->receiver.typ, v__table__TypeFlag_shared_f)), cur_mod);
 		string m = (node->rec_mut ? (string_add(v__table__ShareType_str(v__table__Type_share(node->receiver.typ)), _SLIT(" "))) : (_SLIT("")));
 		if (node->rec_mut) {
 			styp = string_substr(styp, 1, styp.len);
@@ -28646,7 +28650,7 @@ string v__ast__FnDecl_stringify(v__ast__FnDecl* node, v__table__Table* t, string
 			strings__Builder_write(&f, string_add(v__table__ShareType_str(v__table__Type_share(arg.typ)), _SLIT(" ")));
 		}
 		strings__Builder_write(&f, arg.name);
-		string s = v__table__Table_type_to_str(t, arg.typ);
+		string s = v__table__Table_type_to_str(t, v__table__Type_clear_flag(arg.typ, v__table__TypeFlag_shared_f));
 		if (arg.is_mut) {
 			if (string_starts_with(s, _SLIT("&"))) {
 				s = string_substr(s, 1, s.len);
@@ -28867,9 +28871,9 @@ if (	x.typ == 192 /* v.ast.ArrayInit */) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ string_clone(_SLIT("$")) }));
-			multi_return_string_bool mr_7123 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
-			string fspec_str = mr_7123.arg0;
-			bool needs_braces = mr_7123.arg1;
+			multi_return_string_bool mr_7170 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
+			string fspec_str = mr_7170.arg0;
+			bool needs_braces = mr_7170.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ string_clone(_SLIT("{")) }));
 				array_push(&res, _MOV((string[]){ string_clone(v__ast__Expr_str((*(v__ast__Expr*)/*ee elem_typ */array_get((*x._v__ast__StringInterLiteral).exprs, i)))) }));
@@ -28971,7 +28975,7 @@ if (	node.typ == 237 /* v.ast.AssertStmt */) {
 
 		for (int _t1256 = 0; _t1256 < _t1255_len; ++_t1256) {
 			v__ast__ConstField it = ((v__ast__ConstField*) _t1255_orig.data)[_t1256];
-			string ti = 		anon_8686_261_18(it);
+			string ti = 		anon_8733_261_18(it);
 			array_push(&_t1255, &ti);
 		}
 		
