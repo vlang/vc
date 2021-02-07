@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "32cd284"
+#define V_COMMIT_HASH "a81ee0e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9f59b04"
+	#define V_COMMIT_HASH "32cd284"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "32cd284"
+	#define V_CURRENT_COMMIT_HASH "a81ee0e"
 #endif
 
 // V comptime_defines:
@@ -5004,6 +5004,7 @@ bool byte_is_oct_digit(byte c);
 bool byte_is_bin_digit(byte c);
 bool byte_is_letter(byte c);
 void string_free(string* s);
+string string_before(string s, string dot);
 string string_all_before(string s, string dot);
 string string_all_before_last(string s, string dot);
 string string_all_after(string s, string dot);
@@ -14541,6 +14542,14 @@ void string_free(string* s) {
 	s->is_lit = -98761234;
 }
 
+string string_before(string s, string dot) {
+	int pos = string_index_(s, dot);
+	if (pos == -1) {
+		return s;
+	}
+	return string_substr(s, 0, pos);
+}
+
 string string_all_before(string s, string dot) {
 	int pos = string_index_(s, dot);
 	if (pos == -1) {
@@ -22282,7 +22291,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9f59b04"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("32cd284"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
