@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d77bb2f"
+#define V_COMMIT_HASH "b92f980"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "26121d5"
+	#define V_COMMIT_HASH "d77bb2f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d77bb2f"
+	#define V_CURRENT_COMMIT_HASH "b92f980"
 #endif
 
 // V comptime_defines:
@@ -18714,7 +18714,16 @@ string v__token__Kind_str(v__token__Kind t) {
 }
 
 string v__token__Token_str(v__token__Token t) {
-	return _STR("%.*s\000 \"%.*s\000\"", 3, v__token__Kind_str(t.kind), t.lit);
+	string s = v__token__Kind_str(t.kind);
+	if (s.len == 0) {
+		eprintln(_SLIT("missing token kind string"));
+	} else if (!byte_is_letter(string_at(s, 0))) {
+		return _STR("`%.*s\000`", 2, s);
+	}
+	if ((t.lit).len != 0) {
+		s = /*f*/string_add(s, _STR(" `%.*s\000`", 2, t.lit));
+	}
+	return s;
 }
 
 array_v__token__Precedence v__token__build_precedences() {
@@ -22273,7 +22282,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("26121d5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d77bb2f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33815,15 +33824,14 @@ v__ast__Expr v__parser__Parser_expr(v__parser__Parser* p, int precedence) {
 				node = /* sum type cast 4 */ (v__ast__Expr){._v__ast__StructInit = memdup(&(v__ast__StructInit[]){v__parser__Parser_struct_init(p, true)}, sizeof(v__ast__StructInit)), .typ = 258 /* v.ast.StructInit */};
 			} else if (p->tok.kind == v__token__Kind_name) {
 				v__parser__Parser_next(p);
-				string s = ((p->tok.lit).len != 0 ? (_STR("`%.*s\000`", 2, p->tok.lit)) : (v__token__Kind_str(p->tok.kind)));
-				v__parser__Parser_error_with_pos(p, _STR("unexpected %.*s\000, expecting `:`", 2, s), v__token__Token_position(&p->tok));
+				v__parser__Parser_error_with_pos(p, _STR("unexpected %.*s\000, expecting `:` after struct field name", 2, v__token__Token_str(p->tok)), v__token__Token_position(&p->tok));
 				return (v__ast__Expr){
 #ifndef __cplusplus
 0
 #endif
 };
 			} else {
-				v__parser__Parser_error_with_pos(p, _STR("unexpected `%.*s\000`, expecting struct key", 2, p->tok.lit), v__token__Token_position(&p->tok));
+				v__parser__Parser_error_with_pos(p, _STR("unexpected %.*s\000, expecting struct field name", 2, v__token__Token_str(p->tok)), v__token__Token_position(&p->tok));
 				return (v__ast__Expr){
 #ifndef __cplusplus
 0
