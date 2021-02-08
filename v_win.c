@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e2ff2a5"
+#define V_COMMIT_HASH "e2ff26a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9e751f7"
+	#define V_COMMIT_HASH "e2ff2a5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e2ff2a5"
+	#define V_CURRENT_COMMIT_HASH "e2ff26a"
 #endif
 
 // V comptime_defines:
@@ -22291,7 +22291,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9e751f7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e2ff2a5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -29673,7 +29673,7 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		}
 		v__parser__Parser_next(p);
 	} else if ((p->tok.kind == v__token__Kind_ne || p->tok.kind == v__token__Kind_gt || p->tok.kind == v__token__Kind_ge || p->tok.kind == v__token__Kind_le) && p->peek_tok.kind == v__token__Kind_lpar) {
-		v__parser__Parser_error_with_pos(p, _SLIT("cannot overload `!=`, `>`, `<=` and `>=` as they are auto generated with `==` and`<`"), v__token__Token_position(&p->tok));
+		v__parser__Parser_error_with_pos(p, _SLIT("cannot overload `!=`, `>`, `<=` and `>=` as they are auto generated from `==` and`<`"), v__token__Token_position(&p->tok));
 	} else {
 		v__token__Position pos = v__token__Token_position(&p->tok);
 		v__parser__Parser_error_with_pos(p, _SLIT("expecting method name"), pos);
@@ -35085,7 +35085,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort(v__gen__c__Gen* g, v__ast__Ca
 		if (!is_reverse && v__table__TypeSymbol_has_method(sym, _SLIT("<")) && v__ast__Expr_str(infix_expr.left).len == 1) {
 			strings__Builder_writeln(&g->definitions, _STR("\tif (%.*s\000__lt(*a, *b)) { return -1; } else { return 1; }}", 2, styp));
 		} else if (is_reverse && v__table__TypeSymbol_has_method(sym, _SLIT("<")) && v__ast__Expr_str(infix_expr.left).len == 1) {
-			strings__Builder_writeln(&g->definitions, _STR("\tif (!%.*s\000__lt(*a, *b)) { return -1; } else { return 1; }}", 2, styp));
+			strings__Builder_writeln(&g->definitions, _STR("\tif (%.*s\000__lt(*b, *a)) { return -1; } else { return 1; }}", 2, styp));
 		} else {
 			string field_type = v__gen__c__Gen_typ(g, infix_expr.left_type);
 			string left_expr_str = v__gen__c__Gen_write_expr_to_string(g, infix_expr.left);
