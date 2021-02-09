@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5308b63"
+#define V_COMMIT_HASH "0f92485"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d110f0d"
+	#define V_COMMIT_HASH "5308b63"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5308b63"
+	#define V_CURRENT_COMMIT_HASH "0f92485"
 #endif
 
 // V comptime_defines:
@@ -5481,10 +5481,10 @@ string term__h_divider(string divider);
 string term__header(string text, string divider);
 VV_LOCAL_SYMBOL int term__imax(int x, int y);
 VV_LOCAL_SYMBOL bool term__supports_escape_sequences(int fd);
-void term__clear();
 multi_return_int_int term__get_terminal_size();
 term__Coord term__get_cursor_position();
 bool term__set_terminal_title(string title);
+void term__clear();
 Option_v__vmod__Manifest v__vmod__from_file(string vmod_path);
 Option_v__vmod__Manifest v__vmod__decode(string contents);
 VV_LOCAL_SYMBOL void v__vmod__Scanner_tokenize(v__vmod__Scanner* s, v__vmod__TokenKind t_type, string val);
@@ -20683,15 +20683,6 @@ VV_LOCAL_SYMBOL bool term__supports_escape_sequences(int fd) {
 	return 0;
 }
 
-void term__clear() {
-	#if !defined(_WIN32)
-	{
-		print(_SLIT("\x1b[2J"));
-		print(_SLIT("\x1b[H"));
-	}
-	#endif
-}
-
 multi_return_int_int term__get_terminal_size() {
 	if (is_atty(1) <= 0 || string_eq(os__getenv(_SLIT("TERM")), _SLIT("dumb"))) {
 		return (multi_return_int_int){.arg0=_const_term__default_columns_size, .arg1=_const_term__default_rows_size};
@@ -20759,6 +20750,11 @@ bool term__set_terminal_title(string title) {
 	}
 	print(_STR("\033]0;%.*s\000\007", 2, title));
 	return true;
+}
+
+void term__clear() {
+	print(_SLIT("\x1b[2J"));
+	print(_SLIT("\x1b[H"));
 }
 
 Option_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
@@ -22606,7 +22602,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d110f0d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5308b63"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
