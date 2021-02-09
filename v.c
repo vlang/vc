@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d110f0d"
+#define V_COMMIT_HASH "5308b63"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3d2afcf"
+	#define V_COMMIT_HASH "d110f0d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d110f0d"
+	#define V_CURRENT_COMMIT_HASH "5308b63"
 #endif
 
 // V comptime_defines:
@@ -22606,7 +22606,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3d2afcf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d110f0d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42204,7 +42204,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_go_stmt(v__gen__c__Gen* g, v__ast__GoStmt 
 					strings__Builder_writeln(&g->gowrappers, _SLIT("\tret_ptr = thread.ret_ptr;"));
 				}
 			} else {
-				strings__Builder_writeln(&g->gowrappers, _STR("\tint stat = pthread_join(thread, %.*s\000);", 2, c_ret_ptr_ptr));
+				strings__Builder_writeln(&g->gowrappers, _STR("\tint stat = pthread_join(thread, (void **)%.*s\000);", 2, c_ret_ptr_ptr));
 			}
 			strings__Builder_writeln(&g->gowrappers, _SLIT("\tif (stat != 0) { v_panic(_SLIT(\"unable to join thread\")); }"));
 			if (g->pref->os == v__pref__OS_windows) {
@@ -42477,8 +42477,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					array_v__table__Param params = array_clone(&method.params);
 					array_set(&params, 0, &(v__table__Param[]) { (v__table__Param){(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,.typ = v__table__Type_set_nr_muls((*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,} });
-					multi_return_array_string_array_string mr_183824 = v__gen__c__Gen_fn_args(g, params, false);
-					array_string fargs = mr_183824.arg0;
+					multi_return_array_string_array_string mr_183833 = v__gen__c__Gen_fn_args(g, params, false);
+					array_string fargs = mr_183833.arg0;
 					strings__Builder_write(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write(&methods_wrapper, _SLIT("\t"));
