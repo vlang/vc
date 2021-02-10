@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f67e4ab"
+#define V_COMMIT_HASH "035a163"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "db22665"
+	#define V_COMMIT_HASH "f67e4ab"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f67e4ab"
+	#define V_CURRENT_COMMIT_HASH "035a163"
 #endif
 
 // V comptime_defines:
@@ -22311,7 +22311,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("db22665"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f67e4ab"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -43454,7 +43454,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	bool is_json_encode = string_eq(name, _SLIT("json.encode"));
 	bool is_json_encode_pretty = string_eq(name, _SLIT("json.encode_pretty"));
 	bool is_json_decode = string_eq(name, _SLIT("json.decode"));
-	g->is_json_fn = is_json_encode || is_json_decode;
+	g->is_json_fn = is_json_encode || is_json_encode_pretty || is_json_decode;
 	string json_type_str = _SLIT("");
 	string json_obj = _SLIT("");
 	if (g->is_json_fn) {
@@ -43561,11 +43561,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_22808 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_22808.arg0;
-			string pafile = mr_22808.arg1;
-			string pamod = mr_22808.arg2;
-			string pafn = mr_22808.arg3;
+			multi_return_int_string_string_string mr_22833 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_22833.arg0;
+			string pafile = mr_22833.arg1;
+			string pamod = mr_22833.arg2;
+			string pafn = mr_22833.arg3;
 			v__gen__c__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
