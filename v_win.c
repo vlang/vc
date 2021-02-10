@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4305ce1"
+#define V_COMMIT_HASH "de287c0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f2ad6dd"
+	#define V_COMMIT_HASH "4305ce1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4305ce1"
+	#define V_CURRENT_COMMIT_HASH "de287c0"
 #endif
 
 // V comptime_defines:
@@ -22336,7 +22336,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f2ad6dd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4305ce1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -55121,6 +55121,9 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 		v_panic(err);
 	};
 	os__File_close(&f);
+	if (b->pref->is_stats) {
+		println(_STR("generated C source code size: %.*s\000 bytes", 2, v__util__bold(int_str(output2.len))));
+	}
 }
 
 void v__builder__Builder_compile_c(v__builder__Builder* b) {
