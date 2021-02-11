@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d4f6488"
+#define V_COMMIT_HASH "c636a70"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "de287c0"
+	#define V_COMMIT_HASH "d4f6488"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d4f6488"
+	#define V_CURRENT_COMMIT_HASH "c636a70"
 #endif
 
 // V comptime_defines:
@@ -5775,6 +5775,8 @@ string _const_rand__chars; // a string literal, inited later
 string rand__string(int len);
 string _const_rand__hex_chars; // a string literal, inited later
 string rand__hex(int len);
+string _const_rand__ascii_chars; // a string literal, inited later
+string rand__ascii(int len);
 string rand__uuid_v4();
 string _const_rand__ulid_encoding; // a string literal, inited later
 string rand__ulid();
@@ -7204,6 +7206,7 @@ void vinit_string_literals(){
 	_const_vweb__tmpl__str_end = _SLIT("' ) ");
 	_const_rand__chars = _SLIT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	_const_rand__hex_chars = _SLIT("abcdef0123456789");
+	_const_rand__ascii_chars = _SLIT("!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}~");
 	_const_rand__ulid_encoding = _SLIT("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
 	_const_help__unknown_topic = _SLIT("V Error: Unknown help topic provided. Use `v help` for usage information.");
 	_const_v__util__v_version = _SLIT("0.2.2");
@@ -22187,6 +22190,16 @@ string rand__hex(int len) {
 	return byteptr_vstring_with_len(buf, len);
 }
 
+string rand__ascii(int len) {
+	byteptr buf = v_malloc(len);
+	for (int i = 0; i < len; ++i) {
+		{ // Unsafe block
+			buf[i] = string_at(_const_rand__ascii_chars, rand__intn(_const_rand__ascii_chars.len));
+		}
+	}
+	return byteptr_vstring_with_len(buf, len);
+}
+
 string rand__uuid_v4() {
 	int buflen = 36;
 	byteptr buf = v_malloc(37);
@@ -22336,7 +22349,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de287c0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d4f6488"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
