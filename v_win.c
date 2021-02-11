@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c636a70"
+#define V_COMMIT_HASH "93c1c1c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d4f6488"
+	#define V_COMMIT_HASH "c636a70"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c636a70"
+	#define V_CURRENT_COMMIT_HASH "93c1c1c"
 #endif
 
 // V comptime_defines:
@@ -22349,7 +22349,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d4f6488"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c636a70"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -55135,7 +55135,7 @@ void v__builder__Builder_build_c(v__builder__Builder* b, array_string v_files, s
 	};
 	os__File_close(&f);
 	if (b->pref->is_stats) {
-		println(_STR("generated C source code size: %.*s\000 bytes", 2, v__util__bold(int_str(output2.len))));
+		println(_STR("generated C source code size: %.*s\000 lines, %.*s\000 bytes", 3, v__util__bold(int_str((string_count(output2, _SLIT("\n")) + 1))), v__util__bold(int_str(output2.len))));
 	}
 }
 
