@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1675b6f"
+#define V_COMMIT_HASH "c904c91"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5d36a59"
+	#define V_COMMIT_HASH "1675b6f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1675b6f"
+	#define V_CURRENT_COMMIT_HASH "c904c91"
 #endif
 
 // V comptime_defines:
@@ -22374,7 +22374,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5d36a59"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1675b6f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53993,28 +53993,35 @@ v__table__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__P
 	v__table__Type right_type = v__checker__Checker_expr(c, node->right);
 	node->right_type = right_type;
 	if (node->op == v__token__Kind_amp && !v__table__Type_is_ptr(right_type)) {
-		v__ast__Expr right_expr = node->right;
+		v__ast__Expr expr = node->right;
+		for (;;) {
+			if (!((expr).typ == 250 /* v.ast.ParExpr */)) break;
+			expr = (*expr._v__ast__ParExpr).expr;
+		}
 
-		if (right_expr.typ == 224 /* v.ast.BoolLiteral */) {
-			v__checker__Checker_error(c, _SLIT("cannot take the address of a bool literal"), node->pos);
+		if (expr.typ == 224 /* v.ast.BoolLiteral */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
-		else if (right_expr.typ == 226 /* v.ast.CallExpr */) {
-			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(node->right)), node->pos);
+		else if (expr.typ == 226 /* v.ast.CallExpr */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
-		else if (right_expr.typ == 229 /* v.ast.CharLiteral */) {
-			v__checker__Checker_error(c, _SLIT("cannot take the address of a char literal"), node->pos);
+		else if (expr.typ == 229 /* v.ast.CharLiteral */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
-		else if (right_expr.typ == 235 /* v.ast.FloatLiteral */) {
-			v__checker__Checker_error(c, _SLIT("cannot take the address of a float literal"), node->pos);
+		else if (expr.typ == 235 /* v.ast.FloatLiteral */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
-		else if (right_expr.typ == 242 /* v.ast.IntegerLiteral */) {
-			v__checker__Checker_error(c, _SLIT("cannot take the address of an int literal"), node->pos);
+		else if (expr.typ == 242 /* v.ast.IntegerLiteral */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
-		else if (right_expr.typ == 259 /* v.ast.StringLiteral */) {
-			v__checker__Checker_error(c, _SLIT("cannot take the address of a string literal"), node->pos);
+		else if (expr.typ == 241 /* v.ast.InfixExpr */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
-		else if (right_expr.typ == 258 /* v.ast.StringInterLiteral */) {
-			v__checker__Checker_error(c, _SLIT("cannot take the address of a string literal"), node->pos);
+		else if (expr.typ == 259 /* v.ast.StringLiteral */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
+		}
+		else if (expr.typ == 258 /* v.ast.StringInterLiteral */) {
+			v__checker__Checker_error(c, _STR("cannot take the address of %.*s", 1, v__ast__Expr_str(expr)), node->pos);
 		}
 		else {
 		};
@@ -54758,10 +54765,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2365 = 0; _t2365 < _t2364.len; ++_t2365) {
 			v__table__Fn m = ((v__table__Fn*)_t2364.data)[_t2365];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_191450 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_191450.arg0;
-				int nroute_attributes = mr_191450.arg1;
-				int nargs = mr_191450.arg2;
+				multi_return_bool_int_int mr_191166 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_191166.arg0;
+				int nroute_attributes = mr_191166.arg1;
+				int nargs = mr_191166.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
