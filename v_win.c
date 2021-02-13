@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "40066a5"
+#define V_COMMIT_HASH "db609a0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aa548f4"
+	#define V_COMMIT_HASH "40066a5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "40066a5"
+	#define V_CURRENT_COMMIT_HASH "db609a0"
 #endif
 
 // V comptime_defines:
@@ -22375,7 +22375,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("aa548f4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("40066a5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -54671,38 +54671,40 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			}
 		}
 	}
-	v__table__TypeSymbol* return_sym = v__table__Table_get_type_symbol(c->table, node->return_type);
-	if (node->language == v__table__Language_v && (return_sym->kind == v__table__Kind_placeholder || return_sym->kind == v__table__Kind_int_literal || return_sym->kind == v__table__Kind_float_literal) && return_sym->language == v__table__Language_v) {
-		v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, return_sym->name), node->pos);
-	}
-	if (node->language == v__table__Language_v && node->is_method && string_eq(node->name, _SLIT("str"))) {
-		if (!v__table__Type_alias_eq(node->return_type, _const_v__table__string_type)) {
-			v__checker__Checker_error(c, _SLIT(".str() methods should return `string`"), node->pos);
+	if (!v__table__Type_alias_eq(node->return_type, ((v__table__Type)(0)))) {
+		v__table__TypeSymbol* return_sym = v__table__Table_get_type_symbol(c->table, node->return_type);
+		if (node->language == v__table__Language_v && (return_sym->kind == v__table__Kind_placeholder || return_sym->kind == v__table__Kind_int_literal || return_sym->kind == v__table__Kind_float_literal) && return_sym->language == v__table__Language_v) {
+			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, return_sym->name), node->pos);
 		}
-		if (node->params.len != 1) {
-			v__checker__Checker_error(c, _SLIT(".str() methods should have 0 arguments"), node->pos);
+		if (node->language == v__table__Language_v && node->is_method && string_eq(node->name, _SLIT("str"))) {
+			if (!v__table__Type_alias_eq(node->return_type, _const_v__table__string_type)) {
+				v__checker__Checker_error(c, _SLIT(".str() methods should return `string`"), node->pos);
+			}
+			if (node->params.len != 1) {
+				v__checker__Checker_error(c, _SLIT(".str() methods should have 0 arguments"), node->pos);
+			}
 		}
-	}
-	if (node->language == v__table__Language_v && node->is_method && (string_eq(node->name, _SLIT("+")) || string_eq(node->name, _SLIT("-")) || string_eq(node->name, _SLIT("*")) || string_eq(node->name, _SLIT("%")) || string_eq(node->name, _SLIT("/")) || string_eq(node->name, _SLIT("<")) || string_eq(node->name, _SLIT("==")))) {
-		if (node->params.len != 2) {
-			v__checker__Checker_error(c, _SLIT("operator methods should have exactly 1 argument"), node->pos);
-		} else {
-			v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(c->table, node->receiver.typ);
-			v__table__TypeSymbol* param_sym = v__table__Table_get_type_symbol(c->table, (*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).typ);
-			if (!(param_sym->kind == v__table__Kind_struct_ || param_sym->kind == v__table__Kind_alias) || !(receiver_sym->kind == v__table__Kind_struct_ || receiver_sym->kind == v__table__Kind_alias)) {
-				v__checker__Checker_error(c, _SLIT("operator methods are only allowed for struct and type alias"), node->pos);
+		if (node->language == v__table__Language_v && node->is_method && (string_eq(node->name, _SLIT("+")) || string_eq(node->name, _SLIT("-")) || string_eq(node->name, _SLIT("*")) || string_eq(node->name, _SLIT("%")) || string_eq(node->name, _SLIT("/")) || string_eq(node->name, _SLIT("<")) || string_eq(node->name, _SLIT("==")))) {
+			if (node->params.len != 2) {
+				v__checker__Checker_error(c, _SLIT("operator methods should have exactly 1 argument"), node->pos);
 			} else {
-				v__table__TypeSymbol* parent_sym = v__table__Table_get_final_type_symbol(c->table, node->receiver.typ);
-				if (node->rec_mut) {
-					v__checker__Checker_error(c, _SLIT("receiver cannot be `mut` for operator overloading"), node->receiver_pos);
-				} else if ((*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).is_mut) {
-					v__checker__Checker_error(c, _SLIT("argument cannot be `mut` for operator overloading"), node->pos);
-				} else if (!v__table__Type_alias_eq(node->receiver.typ, (*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).typ)) {
-					v__checker__Checker_error(c, _STR("expected `%.*s\000` not `%.*s\000` - both operands must be the same type for operator overloading", 3, receiver_sym->name, param_sym->name), (*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).type_pos);
-				} else if ((string_eq(node->name, _SLIT("<")) || string_eq(node->name, _SLIT("=="))) && !v__table__Type_alias_eq(node->return_type, _const_v__table__bool_type)) {
-					v__checker__Checker_error(c, _SLIT("operator comparison methods should return `bool`"), node->pos);
-				} else if (v__table__TypeSymbol_is_primitive(parent_sym)) {
-					v__checker__Checker_error(c, _STR("cannot define operator methods on type alias for `%.*s\000`", 2, parent_sym->name), node->pos);
+				v__table__TypeSymbol* receiver_sym = v__table__Table_get_type_symbol(c->table, node->receiver.typ);
+				v__table__TypeSymbol* param_sym = v__table__Table_get_type_symbol(c->table, (*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).typ);
+				if (!(param_sym->kind == v__table__Kind_struct_ || param_sym->kind == v__table__Kind_alias) || !(receiver_sym->kind == v__table__Kind_struct_ || receiver_sym->kind == v__table__Kind_alias)) {
+					v__checker__Checker_error(c, _SLIT("operator methods are only allowed for struct and type alias"), node->pos);
+				} else {
+					v__table__TypeSymbol* parent_sym = v__table__Table_get_final_type_symbol(c->table, node->receiver.typ);
+					if (node->rec_mut) {
+						v__checker__Checker_error(c, _SLIT("receiver cannot be `mut` for operator overloading"), node->receiver_pos);
+					} else if ((*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).is_mut) {
+						v__checker__Checker_error(c, _SLIT("argument cannot be `mut` for operator overloading"), node->pos);
+					} else if (!v__table__Type_alias_eq(node->receiver.typ, (*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).typ)) {
+						v__checker__Checker_error(c, _STR("expected `%.*s\000` not `%.*s\000` - both operands must be the same type for operator overloading", 3, receiver_sym->name, param_sym->name), (*(v__table__Param*)/*ee elem_typ */array_get(node->params, 1)).type_pos);
+					} else if ((string_eq(node->name, _SLIT("<")) || string_eq(node->name, _SLIT("=="))) && !v__table__Type_alias_eq(node->return_type, _const_v__table__bool_type)) {
+						v__checker__Checker_error(c, _SLIT("operator comparison methods should return `bool`"), node->pos);
+					} else if (v__table__TypeSymbol_is_primitive(parent_sym)) {
+						v__checker__Checker_error(c, _STR("cannot define operator methods on type alias for `%.*s\000`", 2, parent_sym->name), node->pos);
+					}
 				}
 			}
 		}
@@ -54799,10 +54801,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2367 = 0; _t2367 < _t2366.len; ++_t2367) {
 			v__table__Fn m = ((v__table__Fn*)_t2366.data)[_t2367];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_191937 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_191937.arg0;
-				int nroute_attributes = mr_191937.arg1;
-				int nargs = mr_191937.arg2;
+				multi_return_bool_int_int mr_192023 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_192023.arg0;
+				int nroute_attributes = mr_192023.arg1;
+				int nargs = mr_192023.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
