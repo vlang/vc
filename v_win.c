@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0b60510"
+#define V_COMMIT_HASH "835b3b2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ebb5305"
+	#define V_COMMIT_HASH "0b60510"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0b60510"
+	#define V_CURRENT_COMMIT_HASH "835b3b2"
 #endif
 
 // V comptime_defines:
@@ -16613,20 +16613,21 @@ bool os__is_readable(string path) {
 }
 
 Option_void os__rm(string path) {
+	int rc = 0;
 	#if defined(_WIN32)
 	{
-		int rc = _wremove(string_to_wide(path));
-		if (rc == -1) {
-			Option _t242 = v_error(_STR("Failed to remove \"%.*s\000\"", 2, path));
-			Option_void _t243;
-			memcpy(&_t243, &_t242, sizeof(Option));
-			return _t243;
-		}
+		rc = _wremove(string_to_wide(path));
 	}
 	#else
 	{
 	}
 	#endif
+	if (rc == -1) {
+		Option _t242 = v_error(string_add(_STR("Failed to remove \"%.*s\000\": ", 2, path), os__posix_get_error_msg(errno)));
+		Option_void _t243;
+		memcpy(&_t243, &_t242, sizeof(Option));
+		return _t243;
+	}
 	Option_void _t244 = {.ok = true};
 	return _t244;
 }
@@ -22377,7 +22378,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ebb5305"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0b60510"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
