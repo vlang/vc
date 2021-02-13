@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e809264"
+#define V_COMMIT_HASH "3d29f81"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4ef3a21"
+	#define V_COMMIT_HASH "e809264"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e809264"
+	#define V_CURRENT_COMMIT_HASH "3d29f81"
 #endif
 
 // V comptime_defines:
@@ -22386,7 +22386,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4ef3a21"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e809264"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -56855,6 +56855,9 @@ string v__builder__Builder_gen_js(v__builder__Builder* b, array_string v_files) 
 	v__util__timing_start(_SLIT("CHECK"));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	v__util__timing_measure(_SLIT("CHECK"));
+	if (b->pref->skip_unused) {
+		v__markused__mark_used(b->table, b->pref, b->parsed_files);
+	}
 	v__builder__Builder_print_warnings_and_errors(b);
 	v__util__timing_start(_SLIT("JS GEN"));
 	string res = v__gen__js__gen(b->parsed_files, b->table, b->pref);
@@ -57300,6 +57303,9 @@ void v__builder__Builder_build_x64(v__builder__Builder* b, array_string v_files,
 	v__util__timing_start(_SLIT("CHECK"));
 	v__checker__Checker_check_files(&b->checker, b->parsed_files);
 	v__util__timing_measure(_SLIT("CHECK"));
+	if (b->pref->skip_unused) {
+		v__markused__mark_used(b->table, b->pref, b->parsed_files);
+	}
 	v__util__timing_start(_SLIT("x64 GEN"));
 	v__gen__x64__gen(b->parsed_files, b->table, out_file, b->pref);
 	v__util__timing_measure(_SLIT("x64 GEN"));
