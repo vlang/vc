@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d3bcd5d"
+#define V_COMMIT_HASH "ea80311"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e534b43"
+	#define V_COMMIT_HASH "d3bcd5d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d3bcd5d"
+	#define V_CURRENT_COMMIT_HASH "ea80311"
 #endif
 
 // V comptime_defines:
@@ -11664,12 +11664,10 @@ byteptr v_realloc(byteptr b, int n) {
 	return new_ptr;
 }
 
-// Attr: [unsafe]
 byteptr v_calloc(int n) {
 	return calloc(1, n);
 }
 
-// Attr: [unsafe]
 byteptr vcalloc(int n) {
 	if (n < 0) {
 		v_panic(_SLIT("calloc(<=0)"));
@@ -11689,6 +11687,7 @@ void v_free(voidptr ptr) {
 	free(ptr);
 }
 
+// Attr: [unsafe]
 voidptr memdup(voidptr src, int sz) {
 	if (sz == 0) {
 		return vcalloc(1);
@@ -11882,9 +11881,11 @@ VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 			}
 			array_fixed_byte_1000 buf = {0};
 			string output = _SLIT("");
-			for (;;) {
-				if (!(fgets(((charptr)(buf)), 1000, f) != 0)) break;
-				output = /*f*/string_add(output, tos(((byteptr)(buf)), vstrlen(((byteptr)(buf)))));
+			{ // Unsafe block
+				for (;;) {
+					if (!(fgets(((charptr)(buf)), 1000, f) != 0)) break;
+					output = /*f*/string_add(output, tos(((byteptr)(buf)), vstrlen(((byteptr)(buf)))));
+				}
 			}
 			output = string_add(string_trim_space(output), _SLIT(":"));
 			if (pclose(f) != 0) {
@@ -12353,7 +12354,6 @@ inline VV_LOCAL_SYMBOL bool fast_string_eq(string a, string b) {
 }
 
 // Attr: [inline]
-// Attr: [unsafe]
 inline VV_LOCAL_SYMBOL DenseArray new_dense_array(int key_bytes, int value_bytes) {
 	int slot_bytes = key_bytes + value_bytes;
 	int cap = 8;
@@ -12419,9 +12419,11 @@ VV_LOCAL_SYMBOL void DenseArray_zeros_to_end(DenseArray* d) {
 			count++;
 		}
 	}
-	v_free(tmp_buf);
-	d->deletes = 0;
-	v_free(d->all_deleted);
+	{ // Unsafe block
+		v_free(tmp_buf);
+		d->deletes = 0;
+		v_free(d->all_deleted);
+	}
 	d->len = count;
 	d->cap = (count < 8 ? (8) : (count));
 	{ // Unsafe block
@@ -12622,12 +12624,12 @@ VV_LOCAL_SYMBOL void map_set_1(map* m, voidptr key, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_12067 = map_key_to_index(m, key);
-	u32 index = mr_12067.arg0;
-	u32 meta = mr_12067.arg1;
-	multi_return_u32_u32 mr_12103 = map_meta_less(m, index, meta);
-	index = mr_12103.arg0;
-	meta = mr_12103.arg1;
+	multi_return_u32_u32 mr_12100 = map_key_to_index(m, key);
+	u32 index = mr_12100.arg0;
+	u32 meta = mr_12100.arg1;
+	multi_return_u32_u32 mr_12136 = map_meta_less(m, index, meta);
+	index = mr_12136.arg0;
+	meta = mr_12136.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -12677,12 +12679,12 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 			continue;
 		}
 		voidptr pkey = DenseArray_key(&m->key_values, i);
-		multi_return_u32_u32 mr_13705 = map_key_to_index(m, pkey);
-		u32 index = mr_13705.arg0;
-		u32 meta = mr_13705.arg1;
-		multi_return_u32_u32 mr_13743 = map_meta_less(m, index, meta);
-		index = mr_13743.arg0;
-		meta = mr_13743.arg1;
+		multi_return_u32_u32 mr_13738 = map_key_to_index(m, pkey);
+		u32 index = mr_13738.arg0;
+		u32 meta = mr_13738.arg1;
+		multi_return_u32_u32 mr_13776 = map_meta_less(m, index, meta);
+		index = mr_13776.arg0;
+		meta = mr_13776.arg1;
 		map_meta_greater(m, index, meta, ((u32)(i)));
 	}
 }
@@ -12701,9 +12703,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->even_index >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->even_index);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_14531 = map_meta_less(m, index, meta);
-		index = mr_14531.arg0;
-		meta = mr_14531.arg1;
+		multi_return_u32_u32 mr_14564 = map_meta_less(m, index, meta);
+		index = mr_14564.arg0;
+		meta = mr_14564.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -12712,9 +12714,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_14981 = map_key_to_index(m, key);
-		u32 index = mr_14981.arg0;
-		u32 meta = mr_14981.arg1;
+		multi_return_u32_u32 mr_15014 = map_key_to_index(m, key);
+		u32 index = mr_15014.arg0;
+		u32 meta = mr_15014.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				int kv_index = ((int)(m->metas[index + 1]));
@@ -12735,7 +12737,7 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	if (!(false)) {
 		VAssertMetaInfo v_assert_meta_info__t31 = {0};
 		v_assert_meta_info__t31.fpath = _SLIT("/tmp/gen_vc/v/vlib/builtin/map.v");
-		v_assert_meta_info__t31.line_nr = 537;
+		v_assert_meta_info__t31.line_nr = 540;
 		v_assert_meta_info__t31.fn_name = _SLIT("get_and_set_1");
 		v_assert_meta_info__t31.src = _SLIT("false");
 		__print_assert_failure(&v_assert_meta_info__t31);
@@ -12745,9 +12747,9 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_1(map* m, voidptr key, voidptr zero) {
-	multi_return_u32_u32 mr_15698 = map_key_to_index(m, key);
-	u32 index = mr_15698.arg0;
-	u32 meta = mr_15698.arg1;
+	multi_return_u32_u32 mr_15731 = map_key_to_index(m, key);
+	u32 index = mr_15731.arg0;
+	u32 meta = mr_15731.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -12766,9 +12768,9 @@ VV_LOCAL_SYMBOL voidptr map_get_1(map* m, voidptr key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_1_check(map* m, voidptr key) {
-	multi_return_u32_u32 mr_16342 = map_key_to_index(m, key);
-	u32 index = mr_16342.arg0;
-	u32 meta = mr_16342.arg1;
+	multi_return_u32_u32 mr_16375 = map_key_to_index(m, key);
+	u32 index = mr_16375.arg0;
+	u32 meta = mr_16375.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -12787,9 +12789,9 @@ VV_LOCAL_SYMBOL voidptr map_get_1_check(map* m, voidptr key) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists_1(map* m, voidptr key) {
-	multi_return_u32_u32 mr_16831 = map_key_to_index(m, key);
-	u32 index = mr_16831.arg0;
-	u32 meta = mr_16831.arg1;
+	multi_return_u32_u32 mr_16864 = map_key_to_index(m, key);
+	u32 index = mr_16864.arg0;
+	u32 meta = mr_16864.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -12822,13 +12824,14 @@ void map_delete(map* m, string key) {
 	map_delete_1(m, &key);
 }
 
+// Attr: [unsafe]
 void map_delete_1(map* m, voidptr key) {
-	multi_return_u32_u32 mr_17529 = map_key_to_index(m, key);
-	u32 index = mr_17529.arg0;
-	u32 meta = mr_17529.arg1;
-	multi_return_u32_u32 mr_17565 = map_meta_less(m, index, meta);
-	index = mr_17565.arg0;
-	meta = mr_17565.arg1;
+	multi_return_u32_u32 mr_17585 = map_key_to_index(m, key);
+	u32 index = mr_17585.arg0;
+	u32 meta = mr_17585.arg1;
+	multi_return_u32_u32 mr_17621 = map_meta_less(m, index, meta);
+	index = mr_17621.arg0;
+	meta = mr_17621.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -13094,8 +13097,10 @@ VV_LOCAL_SYMBOL void SortedMap_set(SortedMap* m, string key, voidptr value) {
 				j--;
 			}
 			node->keys[j + 1] = key;
-			node->values[j + 1] = v_malloc(m->value_bytes);
-			memcpy(node->values[j + 1], value, m->value_bytes);
+			{ // Unsafe block
+				node->values[j + 1] = v_malloc(m->value_bytes);
+				memcpy(node->values[j + 1], value, m->value_bytes);
+			}
 			node->len++;
 			m->len++;
 			return;
@@ -13122,10 +13127,10 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 			}
 		}
 	}
-	if (isnil(n->children)) {
-		n->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
-	}
 	{ // Unsafe block
+		if (isnil(n->children)) {
+			n->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
+		}
 		n->children[n->len + 1] = n->children[n->len];
 	}
 	for (int j = n->len; j > child_index; j--) {
@@ -13423,7 +13428,6 @@ int vstrlen(byteptr s) {
 	return strlen(((charptr)(s)));
 }
 
-// Attr: [unsafe]
 string tos(byteptr s, int len) {
 	if (s == 0) {
 		v_panic(_SLIT("tos(): nil string"));
@@ -14530,6 +14534,7 @@ bool byte_is_letter(byte c) {
 	return (c >= L'a' && c <= L'z') || (c >= L'A' && c <= L'Z');
 }
 
+// Attr: [unsafe]
 void string_free(string* s) {
 	#if defined(_VPREALLOC)
 	{
@@ -14805,13 +14810,15 @@ array_string string_split_by_whitespace(string s) {
 u16* string_to_wide(string _str) {
 	#if defined(_WIN32)
 	{
-		int num_chars = (MultiByteToWideChar(_const_cp_utf8, 0, ((charptr)(_str.str)), _str.len, 0, 0));
-		u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
-		if (wstr != 0) {
-			MultiByteToWideChar(_const_cp_utf8, 0, ((charptr)(_str.str)), _str.len, wstr, num_chars);
-			memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
+		{ // Unsafe block
+			int num_chars = (MultiByteToWideChar(_const_cp_utf8, 0, ((charptr)(_str.str)), _str.len, 0, 0));
+			u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
+			if (wstr != 0) {
+				MultiByteToWideChar(_const_cp_utf8, 0, ((charptr)(_str.str)), _str.len, wstr, num_chars);
+				memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
+			}
+			return wstr;
 		}
-		return wstr;
 	}
 	#else
 	{
@@ -14824,8 +14831,10 @@ u16* string_to_wide(string _str) {
 string string_from_wide(u16* _wstr) {
 	#if defined(_WIN32)
 	{
-		int wstr_len = wcslen(_wstr);
-		return string_from_wide2(_wstr, wstr_len);
+		{ // Unsafe block
+			int wstr_len = wcslen(_wstr);
+			return string_from_wide2(_wstr, wstr_len);
+		}
 	}
 	#else
 	{
@@ -14838,13 +14847,15 @@ string string_from_wide(u16* _wstr) {
 string string_from_wide2(u16* _wstr, int len) {
 	#if defined(_WIN32)
 	{
-		int num_chars = WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, 0, 0, 0, 0);
-		byteptr str_to = v_malloc(num_chars + 1);
-		if (str_to != 0) {
-			WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, ((charptr)(str_to)), num_chars, 0, 0);
-			memset(str_to + num_chars, 0, 1);
+		{ // Unsafe block
+			int num_chars = WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, 0, 0, 0, 0);
+			byteptr str_to = v_malloc(num_chars + 1);
+			if (str_to != 0) {
+				WideCharToMultiByte(_const_cp_utf8, 0, _wstr, len, ((charptr)(str_to)), num_chars, 0, 0);
+				memset(str_to + num_chars, 0, 1);
+			}
+			return tos2(str_to);
 		}
-		return tos2(str_to);
 	}
 	#else
 	{
@@ -14886,10 +14897,14 @@ int utf8_char_len(byte b) {
 }
 
 string utf32_to_str(u32 code) {
-	byteptr buffer = v_malloc(5);
-	return utf32_to_str_no_malloc(code, buffer);
+	{ // Unsafe block
+		byteptr buffer = v_malloc(5);
+		return utf32_to_str_no_malloc(code, buffer);
+	}
+	return (string){.str=(byteptr)""};
 }
 
+// Attr: [unsafe]
 string utf32_to_str_no_malloc(u32 code, voidptr buf) {
 	int icode = ((int)(code));
 	string res = _SLIT("");
@@ -15052,23 +15067,25 @@ array_string os__args_before(string cut_word) {
 }
 
 string os__getenv(string key) {
-	#if defined(_WIN32)
-	{
-		voidptr s = _wgetenv(string_to_wide(key));
-		if (s == 0) {
-			return _SLIT("");
+	{ // Unsafe block
+		#if defined(_WIN32)
+		{
+			voidptr s = _wgetenv(string_to_wide(key));
+			if (s == 0) {
+				return _SLIT("");
+			}
+			return string_from_wide(s);
 		}
-		return string_from_wide(s);
-	}
-	#else
-	{
-		char* s = getenv(((charptr)(key.str)));
-		if (s == ((voidptr)(0))) {
-			return _SLIT("");
+		#else
+		{
+			char* s = getenv(((charptr)(key.str)));
+			if (s == ((voidptr)(0))) {
+				return _SLIT("");
+			}
+			return cstring_to_vstring(((byteptr)(s)));
 		}
-		return cstring_to_vstring(((byteptr)(s)));
+		#endif
 	}
-	#endif
 	return (string){.str=(byteptr)""};
 }
 
@@ -15179,16 +15196,17 @@ array_string os__fd_slurp(int fd) {
 }
 
 multi_return_string_int os__fd_read(int fd, int maxbytes) {
-	byteptr buf = v_malloc(maxbytes);
-	int nbytes = read(fd, buf, maxbytes);
-	if (nbytes < 0) {
-		v_free(buf);
-		return (multi_return_string_int){.arg0=_SLIT(""), .arg1=nbytes};
-	}
 	{ // Unsafe block
+		byteptr buf = v_malloc(maxbytes);
+		int nbytes = read(fd, buf, maxbytes);
+		if (nbytes < 0) {
+			v_free(buf);
+			return (multi_return_string_int){.arg0=_SLIT(""), .arg1=nbytes};
+		}
 		buf[nbytes] = 0;
+		return (multi_return_string_int){.arg0=tos(buf, nbytes), .arg1=nbytes};
 	}
-	return (multi_return_string_int){.arg0=tos(buf, nbytes), .arg1=nbytes};
+	return (multi_return_string_int){0};
 }
 
 // Attr: [deprecated]
@@ -16238,8 +16256,10 @@ string os__resource_abs_path(string path) {
 	}
 	string fp = os__join_path(base_path, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){path})));
 	string res = os__real_path(fp);
-	string_free(&fp);
-	string_free(&base_path);
+	{ // Unsafe block
+		string_free(&fp);
+		string_free(&base_path);
+	}
 	return res;
 }
 
@@ -17074,23 +17094,27 @@ string os__getwd() {
 	#if defined(_WIN32)
 	{
 		int max = 512;
-		u16* buf = ((u16*)(vcalloc(max * 2)));
-		if (_wgetcwd(buf, max) == 0) {
-			v_free(buf);
-			return _SLIT("");
+		{ // Unsafe block
+			u16* buf = ((u16*)(vcalloc(max * 2)));
+			if (_wgetcwd(buf, max) == 0) {
+				v_free(buf);
+				return _SLIT("");
+			}
+			return string_from_wide(buf);
 		}
-		return string_from_wide(buf);
 	}
 	#else
 	{
 		byteptr buf = vcalloc(512);
-		if (getcwd(((charptr)(buf)), 512) == 0) {
+		{ // Unsafe block
+			if (getcwd(((charptr)(buf)), 512) == 0) {
+				v_free(buf);
+				return _SLIT("");
+			}
+			string res = string_clone(byteptr_vstring(buf));
 			v_free(buf);
-			return _SLIT("");
+			return res;
 		}
-		string res = string_clone(byteptr_vstring(buf));
-		v_free(buf);
-		return res;
 	}
 	#endif
 	return (string){.str=(byteptr)""};
@@ -17273,16 +17297,18 @@ Option_void os__execve(string cmdpath, array_string args, array_string envs) {
 os__Uname os__uname() {
 	os__Uname u = (os__Uname){.sysname = (string){.str=(byteptr)""},.nodename = (string){.str=(byteptr)""},.release = (string){.str=(byteptr)""},.version = (string){.str=(byteptr)""},.machine = (string){.str=(byteptr)""},};
 	u32 utsize = /*SizeOf*/ sizeof(struct utsname);
-	byteptr x = v_malloc(((int)(utsize)));
-	struct utsname* d = ((struct utsname*)(x));
-	if (uname(d) == 0) {
-		u.sysname = cstring_to_vstring(((byteptr)(d->sysname)));
-		u.nodename = cstring_to_vstring(((byteptr)(d->nodename)));
-		u.release = cstring_to_vstring(((byteptr)(d->release)));
-		u.version = cstring_to_vstring(((byteptr)(d->version)));
-		u.machine = cstring_to_vstring(((byteptr)(d->machine)));
+	{ // Unsafe block
+		byteptr x = v_malloc(((int)(utsize)));
+		struct utsname* d = ((struct utsname*)(x));
+		if (uname(d) == 0) {
+			u.sysname = cstring_to_vstring(((byteptr)(d->sysname)));
+			u.nodename = cstring_to_vstring(((byteptr)(d->nodename)));
+			u.release = cstring_to_vstring(((byteptr)(d->release)));
+			u.version = cstring_to_vstring(((byteptr)(d->version)));
+			u.machine = cstring_to_vstring(((byteptr)(d->machine)));
+		}
+		v_free(d);
 	}
-	v_free(d);
 	return u;
 }
 
@@ -17353,10 +17379,12 @@ Option_os__Result os__exec(string cmd) {
 	}
 	array_fixed_byte_4096 buf = {0};
 	strings__Builder res = strings__new_builder(1024);
-	for (;;) {
-		if (!(fgets(((charptr)(buf)), 4096, f) != 0)) break;
-		byteptr bufbp = ((byteptr)(buf));
-		strings__Builder_write_bytes(&res, bufbp, vstrlen(bufbp));
+	{ // Unsafe block
+		for (;;) {
+			if (!(fgets(((charptr)(buf)), 4096, f) != 0)) break;
+			byteptr bufbp = ((byteptr)(buf));
+			strings__Builder_write_bytes(&res, bufbp, vstrlen(bufbp));
+		}
 	}
 	string soutput = strings__Builder_str(&res);
 	int exit_code = os__vpclose(f);
@@ -18115,12 +18143,12 @@ Option_time__Time time__parse_rfc2822(string s) {
 	}
  	int pos =  *(int*)_t343.data;
 	int mm = pos / 3 + 1;
-	byteptr tmstr = ((byteptr)(0));
 	{ // Unsafe block
-		tmstr = v_malloc(s.len * 2);
+		byteptr tmstr = v_malloc(s.len * 2);
+		int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)/*ee elem_typ */array_get(fields, 3)).str, mm, (*(string*)/*ee elem_typ */array_get(fields, 1)).str, (*(string*)/*ee elem_typ */array_get(fields, 4)).str);
+		return time__parse(tos(tmstr, count));
 	}
-	int count = snprintf(((charptr)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)/*ee elem_typ */array_get(fields, 3)).str, mm, (*(string*)/*ee elem_typ */array_get(fields, 1)).str, (*(string*)/*ee elem_typ */array_get(fields, 4)).str);
-	return time__parse(tos(tmstr, count));
+	return (Option_time__Time){0};
 }
 
 VV_LOCAL_SYMBOL Option_multi_return_int_int_int time__parse_iso8601_date(string s) {
@@ -18209,10 +18237,10 @@ Option_time__Time time__parse_iso8601(string s) {
 		memcpy(&_t360, &_t359, sizeof(Option));
 		return _t360;
 	}
- 	Option_multi_return_int_int_int mr_3509 =  _t359;
-	int year = (*(multi_return_int_int_int*)mr_3509.data).arg0;
-	int month = (*(multi_return_int_int_int*)mr_3509.data).arg1;
-	int day = (*(multi_return_int_int_int*)mr_3509.data).arg2;
+ 	Option_multi_return_int_int_int mr_3473 =  _t359;
+	int year = (*(multi_return_int_int_int*)mr_3473.data).arg0;
+	int month = (*(multi_return_int_int_int*)mr_3473.data).arg1;
+	int day = (*(multi_return_int_int_int*)mr_3473.data).arg2;
 	int hour_ = 0;
 	int minute_ = 0;
 	int second_ = 0;
@@ -18226,13 +18254,13 @@ Option_time__Time time__parse_iso8601(string s) {
 			memcpy(&_t362, &_t361, sizeof(Option));
 			return _t362;
 		}
- 		Option_multi_return_int_int_int_int_i64_bool mr_3751 =  _t361;
-		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg0;
-		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg1;
-		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg2;
-		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg3;
-		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg4;
-		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3751.data).arg5;
+ 		Option_multi_return_int_int_int_int_i64_bool mr_3715 =  _t361;
+		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3715.data).arg0;
+		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3715.data).arg1;
+		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3715.data).arg2;
+		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3715.data).arg3;
+		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3715.data).arg4;
+		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3715.data).arg5;
 	}
 	time__Time t = time__new_time((time__Time){
 		.year = year,
@@ -22554,8 +22582,9 @@ string rand__uuid_v4() {
 		buf[23] = L'-';
 		buf[14] = L'4';
 		buf[buflen] = 0;
+		return byteptr_vstring_with_len(buf, buflen);
 	}
-	return byteptr_vstring_with_len(buf, buflen);
+	return (string){.str=(byteptr)""};
 }
 
 string rand__ulid() {
@@ -22596,8 +22625,9 @@ string rand__ulid_at_millisecond(u64 unix_time_milli) {
 	}
 	{ // Unsafe block
 		buf[26] = 0;
+		return byteptr_vstring_with_len(buf, buflen);
 	}
-	return byteptr_vstring_with_len(buf, buflen);
+	return (string){.str=(byteptr)""};
 }
 
 v__pref__Preferences* v__pref__new_preferences() {
@@ -22674,7 +22704,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e534b43"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d3bcd5d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31496,7 +31526,7 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 	if (f.is_deprecated) {
 		v__checker__Checker_warn(c, _STR("function `%.*s\000` has been deprecated", 2, f.name), call_expr->pos);
 	}
-	if (f.is_unsafe && !c->inside_unsafe && f.language == v__table__Language_c && (string_at(f.name, 2) == L'm' || string_at(f.name, 2) == L's') && string_eq(f.mod, _SLIT("builtin"))) {
+	if (f.is_unsafe && !c->inside_unsafe && (f.language != v__table__Language_c || ((string_at(f.name, 2) == L'm' || string_at(f.name, 2) == L's') && string_eq(f.mod, _SLIT("builtin"))))) {
 		v__checker__Checker_warn(c, _STR("function `%.*s\000` must be called from an `unsafe` block", 2, f.name), call_expr->pos);
 	}
 	if (string_ne(f.mod, _SLIT("builtin")) && f.language == v__table__Language_v && f.no_body && !c->pref->translated) {
@@ -31582,9 +31612,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if (call_arg.is_mut) {
-			multi_return_string_v__token__Position mr_70632 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
-			string to_lock = mr_70632.arg0;
-			v__token__Position pos = mr_70632.arg1;
+			multi_return_string_v__token__Position mr_70636 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
+			string to_lock = mr_70636.arg0;
+			v__token__Position pos = mr_70636.arg1;
 			if (!arg.is_mut) {
 				string tok = v__table__ShareType_str(call_arg.share);
 				v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, arg.name, tok, tok), v__ast__Expr_position(call_arg.expr));
@@ -31601,9 +31631,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 				string tok = v__table__ShareType_str(call_arg.share);
 				v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is `%.*s\000`, you need to provide `%.*s\000` e.g. `%.*s\000 arg%"PRId32"\000`", 7, call_expr->name, arg.name, tok, tok, tok, i + 1), v__ast__Expr_position(call_arg.expr));
 			} else {
-				multi_return_string_v__token__Position mr_71363 = v__checker__Checker_needs_rlock(c, call_arg.expr);
-				string to_lock = mr_71363.arg0;
-				v__token__Position pos = mr_71363.arg1;
+				multi_return_string_v__token__Position mr_71367 = v__checker__Checker_needs_rlock(c, call_arg.expr);
+				string to_lock = mr_71367.arg0;
+				v__token__Position pos = mr_71367.arg1;
 				if ((to_lock).len != 0) {
 					v__checker__Checker_error(c, _STR("%.*s\000 is `shared` and must be `rlock`ed or `lock`ed to be passed as non-mut argument", 2, to_lock), pos);
 				}
@@ -33911,8 +33941,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1502 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_135409 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_135409.arg1;
+		multi_return_string_int mr_135413 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_135413.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1502 == v__token__AtKind_vhash) {
@@ -35047,8 +35077,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_168706 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_168706.arg0;
+		multi_return_string_v__token__Position mr_168710 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_168710.arg0;
 	}
 	return typ;
 }
@@ -35834,10 +35864,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1619 = 0; _t1619 < _t1618.len; ++_t1619) {
 			v__table__Fn m = ((v__table__Fn*)_t1618.data)[_t1619];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_191812 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_191812.arg0;
-				int nroute_attributes = mr_191812.arg1;
-				int nargs = mr_191812.arg2;
+				multi_return_bool_int_int mr_191816 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_191816.arg0;
+				int nroute_attributes = mr_191816.arg1;
+				int nargs = mr_191816.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
