@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6781f73"
+#define V_COMMIT_HASH "629d43c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e3649ec"
+	#define V_COMMIT_HASH "6781f73"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6781f73"
+	#define V_CURRENT_COMMIT_HASH "629d43c"
 #endif
 
 // V comptime_defines:
@@ -19400,22 +19400,21 @@ string flag__FlagParser_usage(flag__FlagParser fs) {
 	if (positive_min_arg || positive_max_arg || no_arguments) {
 		if (no_arguments) {
 			use = /*f*/string_add(use, _SLIT("This application does not expect any arguments\n\n"));
-			goto end_of_arguments_handling;
+		} else {
+			array_string s = __new_array_with_default(0, 0, sizeof(string), 0);
+			if (positive_min_arg) {
+				array_push(&s, _MOV((string[]){ string_clone(_STR("at least %"PRId32"", 1, fs.min_free_args)) }));
+			}
+			if (positive_max_arg) {
+				array_push(&s, _MOV((string[]){ string_clone(_STR("at most %"PRId32"", 1, fs.max_free_args)) }));
+			}
+			if (positive_min_arg && positive_max_arg && fs.min_free_args == fs.max_free_args) {
+				s = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("exactly %"PRId32"", 1, fs.min_free_args)}));
+			}
+			string sargs = array_string_join(s, _SLIT(" and "));
+			use = /*f*/string_add(use, _STR("The arguments should be %.*s\000 in number.\n\n", 2, sargs));
 		}
-		array_string s = __new_array_with_default(0, 0, sizeof(string), 0);
-		if (positive_min_arg) {
-			array_push(&s, _MOV((string[]){ string_clone(_STR("at least %"PRId32"", 1, fs.min_free_args)) }));
-		}
-		if (positive_max_arg) {
-			array_push(&s, _MOV((string[]){ string_clone(_STR("at most %"PRId32"", 1, fs.max_free_args)) }));
-		}
-		if (positive_min_arg && positive_max_arg && fs.min_free_args == fs.max_free_args) {
-			s = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("exactly %"PRId32"", 1, fs.min_free_args)}));
-		}
-		string sargs = array_string_join(s, _SLIT(" and "));
-		use = /*f*/string_add(use, _STR("The arguments should be %.*s\000 in number.\n\n", 2, sargs));
 	}
-	end_of_arguments_handling: {}
 	if (fs.flags.len > 0) {
 		use = /*f*/string_add(use, _SLIT("Options:\n"));
 		// FOR IN array
@@ -22423,7 +22422,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e3649ec"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6781f73"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, array_string_str(p->compile_defines_all)), _STR("%.*s", 1, array_string_str(p->compile_defines)), _STR("%.*s", 1, array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32487,6 +32486,9 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 	else if (node.typ == 280 /* v.ast.GotoLabel */) {
 	}
 	else if (node.typ == 281 /* v.ast.GotoStmt */) {
+		if (!c->inside_unsafe) {
+			v__checker__Checker_warn(c, _SLIT("`goto` requires `unsafe` (consider using labelled break/continue)"), (*node._v__ast__GotoStmt).pos);
+		}
 		if (!(array_string_contains(c->cur_fn->label_names, (*node._v__ast__GotoStmt).name))) {
 			v__checker__Checker_error(c, _STR("unknown label `%.*s\000`", 2, (*node._v__ast__GotoStmt).name), (*node._v__ast__GotoStmt).pos);
 		}
@@ -32536,7 +32538,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__B
 		if (!(!c->inside_unsafe)) {
 			VAssertMetaInfo v_assert_meta_info__t1448 = {0};
 			v_assert_meta_info__t1448.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t1448.line_nr = 3229;
+			v_assert_meta_info__t1448.line_nr = 3233;
 			v_assert_meta_info__t1448.fn_name = _SLIT("block");
 			v_assert_meta_info__t1448.src = _SLIT("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t1448);
@@ -33634,8 +33636,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1486 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_135428 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_135428.arg1;
+		multi_return_string_int mr_135553 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_135553.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1486 == v__token__AtKind_vhash) {
@@ -34315,7 +34317,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t1532 = {0};
 		v_assert_meta_info__t1532.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1532.line_nr = 4727;
+		v_assert_meta_info__t1532.line_nr = 4731;
 		v_assert_meta_info__t1532.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1532.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1532);
@@ -34769,8 +34771,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_168725 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_168725.arg0;
+		multi_return_string_v__token__Position mr_168850 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_168850.arg0;
 	}
 	return typ;
 }
@@ -35556,10 +35558,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1603 = 0; _t1603 < _t1602.len; ++_t1603) {
 			v__table__Fn m = ((v__table__Fn*)_t1602.data)[_t1603];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_191831 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_191831.arg0;
-				int nroute_attributes = mr_191831.arg1;
-				int nargs = mr_191831.arg2;
+				multi_return_bool_int_int mr_191956 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_191956.arg0;
+				int nroute_attributes = mr_191956.arg1;
+				int nargs = mr_191956.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -37633,9 +37635,10 @@ VV_LOCAL_SYMBOL v__ast__LockExpr v__parser__Parser_lock_expr(v__parser__Parser* 
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	array_v__ast__Ident lockeds = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
 	array_bool is_rlocked = __new_array_with_default(0, 0, sizeof(bool), 0);
+	outer:
 	for (;;) {
 		if (p->tok.kind == v__token__Kind_lcbr) {
-			goto start_stmts;
+			break;
 		}
 		bool is_rlock = p->tok.kind == v__token__Kind_key_rlock;
 		if (!is_rlock && p->tok.kind != v__token__Kind_key_lock) {
@@ -37660,7 +37663,7 @@ VV_LOCAL_SYMBOL v__ast__LockExpr v__parser__Parser_lock_expr(v__parser__Parser* 
 			array_push(&is_rlocked, _MOV((bool[]){ is_rlock }));
 			v__parser__Parser_next(p);
 			if (p->tok.kind == v__token__Kind_lcbr) {
-				goto start_stmts;
+				goto outer__break;
 			}
 			if (p->tok.kind == v__token__Kind_semicolon) {
 				v__parser__Parser_next(p);
@@ -37668,8 +37671,9 @@ VV_LOCAL_SYMBOL v__ast__LockExpr v__parser__Parser_lock_expr(v__parser__Parser* 
 			}
 			v__parser__Parser_check(p, v__token__Kind_comma);
 		}
+		outer__continue: {}
 	}
-	start_stmts: {}
+	outer__break: {}
 	array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
 	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
 	return (v__ast__LockExpr){.stmts = stmts,.is_rlock = is_rlocked,.pos = pos,.lockeds = lockeds,.is_expr = 0,.typ = 0,};
