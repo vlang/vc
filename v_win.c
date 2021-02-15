@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d08a0b5"
+#define V_COMMIT_HASH "848295c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fe007f9"
+	#define V_COMMIT_HASH "d08a0b5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d08a0b5"
+	#define V_CURRENT_COMMIT_HASH "848295c"
 #endif
 
 // V comptime_defines:
@@ -22461,7 +22461,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fe007f9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d08a0b5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26632,7 +26632,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 					s->is_inside_string = false;
 				}
 			}
-			if (s->is_inter_start && next_char == L'\\' && !(v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'x' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'n' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'r' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'\\' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L't' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'e' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'"')) {
+			if (s->is_inter_start && next_char == L'\\' && !(v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'x' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'n' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'r' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'\\' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L't' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'e' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'"' || v__scanner__Scanner_look_ahead(/*rec*/*s, 2) == L'\'')) {
 				v__scanner__Scanner_warn(s, _STR("unknown escape sequence \\%"PRIu8"", 1, v__scanner__Scanner_look_ahead(/*rec*/*s, 2)));
 			}
 			if (s->is_inter_start && next_char == L'(') {
