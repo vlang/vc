@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a9c2045"
+#define V_COMMIT_HASH "4bdbb0c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "629d43c"
+	#define V_COMMIT_HASH "a9c2045"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a9c2045"
+	#define V_CURRENT_COMMIT_HASH "4bdbb0c"
 #endif
 
 // V comptime_defines:
@@ -1271,6 +1271,13 @@ typedef enum {
 	v__gen__c__SqlExprSide_left, // 
 	v__gen__c__SqlExprSide_right, // +1
 } v__gen__c__SqlExprSide;
+
+typedef enum {
+	v__gen__c__SqlType_sqlite3, // 
+	v__gen__c__SqlType_mysql, // +1
+	v__gen__c__SqlType_psql, // +2
+	v__gen__c__SqlType_unknown, // +3
+} v__gen__c__SqlType;
 
 typedef enum {
 	v__gen__x64__SectionType_null = 0, // 0
@@ -4123,6 +4130,7 @@ static bool Array_v__ast__EmbeddedFile_contains(Array_v__ast__EmbeddedFile a, v_
 static bool v__ast__EmbeddedFile_struct_eq(v__ast__EmbeddedFile a, v__ast__EmbeddedFile b); // auto
 static string v__ast__Type_str(v__ast__Type it); // auto
 static string indent_v__ast__Type_str(v__ast__Type it, int indent_count); // auto
+static string v__gen__c__SqlType_str(v__gen__c__SqlType it); // auto
 static string v__gen__x64__Register_str(v__gen__x64__Register it); // auto
 static string v__errors__Reporter_str(v__errors__Reporter it); // auto
 static string Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a); // auto
@@ -6604,10 +6612,20 @@ void v__gen__c__Gen_gen_vprint_profile_stats(v__gen__c__Gen* g);
 string _const_v__gen__c__dbtype; // a string literal, inited later
 VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_int(v__gen__c__Gen* g, string val);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_string(v__gen__c__Gen* g, string val, string len);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr expr);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_int(v__gen__c__Gen* g, string val, v__gen__c__SqlType typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_string(v__gen__c__Gen* g, string val, string len, v__gen__c__SqlType typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node, v__gen__c__SqlType typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType sql_typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_int(v__gen__c__Gen* g, string val);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_string(v__gen__c__Gen* g, string val, string len);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_bind_int(v__gen__c__Gen* g, string val);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_bind_string(v__gen__c__Gen* g, string val, string len);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr expr, v__gen__c__SqlType typ);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_inc_sql_i(v__gen__c__Gen* g);
+VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* g, v__ast__Expr expr);
+VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_from_type_string(v__gen__c__Gen* g, string name);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_write_str_fn_definitions(v__gen__c__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_string_literal(v__gen__c__Gen* g, v__ast__StringLiteral node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal_sb_optimized(v__gen__c__Gen* g, v__ast__CallExpr call_expr);
@@ -7726,6 +7744,15 @@ static string indent_v__ast__Type_str(v__ast__Type it, int indent_count) {
 		indents, it.typ,
 		indents, v__token__Position_str(it.pos),
 		indents);
+}
+static string v__gen__c__SqlType_str(v__gen__c__SqlType it) { /* gen_str_for_enum */
+	switch(it) {
+		case v__gen__c__SqlType_sqlite3: return _SLIT("sqlite3");
+		case v__gen__c__SqlType_mysql: return _SLIT("mysql");
+		case v__gen__c__SqlType_psql: return _SLIT("psql");
+		case v__gen__c__SqlType_unknown: return _SLIT("unknown");
+		default: return _SLIT("unknown enum value");
+	}
 }
 static string v__gen__x64__Register_str(v__gen__x64__Register it) { /* gen_str_for_enum */
 	switch(it) {
@@ -22422,7 +22449,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("629d43c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a9c2045"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51082,6 +51109,46 @@ void v__gen__c__Gen_gen_vprint_profile_stats(v__gen__c__Gen* g) {
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node) {
+	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, node.db_expr);
+
+	if (typ == v__gen__c__SqlType_sqlite3) {
+		v__gen__c__Gen_sqlite3_stmt(g, node, typ);
+	}
+	else {
+		v__gen__c__verror(_STR("This database type `%.*s\000` is not implemented yet in orm", 2, v__gen__c__SqlType_str(typ)));
+	};
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line) {
+	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, node.db_expr);
+
+	if (typ == v__gen__c__SqlType_sqlite3) {
+		v__gen__c__Gen_sqlite3_select_expr(g, node, sub, line, typ);
+	}
+	else {
+		v__gen__c__verror(_STR("This database type `%.*s\000` is not implemented yet in orm", 2, v__gen__c__SqlType_str(typ)));
+	};
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_int(v__gen__c__Gen* g, string val, v__gen__c__SqlType typ) {
+
+	if (typ == v__gen__c__SqlType_sqlite3) {
+		v__gen__c__Gen_sqlite3_bind_int(g, val);
+	}
+	else {
+	};
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_string(v__gen__c__Gen* g, string val, string len, v__gen__c__SqlType typ) {
+
+	if (typ == v__gen__c__SqlType_sqlite3) {
+		v__gen__c__Gen_sqlite3_bind_string(g, val, len);
+	}
+	else {
+	};
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node, v__gen__c__SqlType typ) {
 	g->sql_i = 0;
 	v__gen__c__Gen_writeln(g, _SLIT("\n\t// sql insert"));
 	string db_name = v__gen__c__Gen_new_tmp_var(g);
@@ -51131,7 +51198,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt 
 		for (int i = 0; i < _t2213.len; ++i) {
 			string col = ((string*)_t2213.data)[i];
 			v__gen__c__Gen_write(g, _STR(" %.*s\000 = ", 2, col));
-			v__gen__c__Gen_expr_to_sql(g, (*(v__ast__Expr*)/*ee elem_typ */array_get(node.update_exprs, i)));
+			v__gen__c__Gen_expr_to_sql(g, (*(v__ast__Expr*)/*ee elem_typ */array_get(node.update_exprs, i)), typ);
 			if (i < node.updated_columns.len - 1) {
 				v__gen__c__Gen_write(g, _SLIT(", "));
 			}
@@ -51141,7 +51208,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt 
 		v__gen__c__Gen_write(g, _SLIT(" WHERE "));
 	}
 	if (node.kind == v__ast__SqlStmtKind_update || node.kind == v__ast__SqlStmtKind_delete) {
-		v__gen__c__Gen_expr_to_sql(g, node.where_expr);
+		v__gen__c__Gen_expr_to_sql(g, node.where_expr, typ);
 	}
 	v__gen__c__Gen_writeln(g, _SLIT("\"));"));
 	if (node.kind == v__ast__SqlStmtKind_insert) {
@@ -51178,7 +51245,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt 
 	v__gen__c__Gen_writeln(g, _STR("\tsqlite3_finalize(%.*s\000);", 2, g->sql_stmt_name));
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line) {
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType sql_typ) {
 	g->sql_i = 0;
 	string cur_line = line;
 	if (!sub) {
@@ -51212,12 +51279,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__S
 	v__gen__c__Gen_write(g, _STR("sqlite3_stmt* %.*s\000 = %.*s\000__DB_init_stmt(%.*s\000, _SLIT(\"", 4, g->sql_stmt_name, _const_v__gen__c__dbtype, db_name));
 	v__gen__c__Gen_write(g, sql_query);
 	if (node.has_where && (node.where_expr).typ == 242 /* v.ast.InfixExpr */) {
-		v__gen__c__Gen_expr_to_sql(g, node.where_expr);
+		v__gen__c__Gen_expr_to_sql(g, node.where_expr, sql_typ);
 	}
 	if (node.has_order) {
 		v__gen__c__Gen_write(g, _SLIT(" ORDER BY "));
 		g->sql_side = v__gen__c__SqlExprSide_left;
-		v__gen__c__Gen_expr_to_sql(g, node.order_expr);
+		v__gen__c__Gen_expr_to_sql(g, node.order_expr, sql_typ);
 		if (node.has_desc) {
 			v__gen__c__Gen_write(g, _SLIT(" DESC "));
 		}
@@ -51227,12 +51294,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__S
 	if (node.has_limit) {
 		v__gen__c__Gen_write(g, _SLIT(" LIMIT "));
 		g->sql_side = v__gen__c__SqlExprSide_right;
-		v__gen__c__Gen_expr_to_sql(g, node.limit_expr);
+		v__gen__c__Gen_expr_to_sql(g, node.limit_expr, sql_typ);
 	}
 	if (node.has_offset) {
 		v__gen__c__Gen_write(g, _SLIT(" OFFSET "));
 		g->sql_side = v__gen__c__SqlExprSide_right;
-		v__gen__c__Gen_expr_to_sql(g, node.offset_expr);
+		v__gen__c__Gen_expr_to_sql(g, node.offset_expr, sql_typ);
 	}
 	v__gen__c__Gen_writeln(g, _SLIT("\"));"));
 	string binds = strings__Builder_str(&g->sql_buf);
@@ -51336,19 +51403,31 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__S
 	}
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_int(v__gen__c__Gen* g, string val) {
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_int(v__gen__c__Gen* g, string val) {
 	strings__Builder_writeln(&g->sql_buf, _STR("sqlite3_bind_int(%.*s\000, %"PRId32"\000, %.*s\000);", 4, g->sql_stmt_name, g->sql_i, val));
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind_string(v__gen__c__Gen* g, string val, string len) {
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_string(v__gen__c__Gen* g, string val, string len) {
 	strings__Builder_writeln(&g->sql_buf, _STR("sqlite3_bind_text(%.*s\000, %"PRId32"\000, %.*s\000, %.*s\000, 0);", 5, g->sql_stmt_name, g->sql_i, val, len));
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr expr) {
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node) {
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line) {
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_bind_int(v__gen__c__Gen* g, string val) {
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_bind_string(v__gen__c__Gen* g, string val, string len) {
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr expr, v__gen__c__SqlType typ) {
 
 	if (expr.typ == 242 /* v.ast.InfixExpr */) {
 		g->sql_side = v__gen__c__SqlExprSide_left;
-		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).left);
+		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).left, typ);
 		v__token__Kind _t2219 = (*expr._v__ast__InfixExpr).op; 
 		
 		if (_t2219 == v__token__Kind_eq) {
@@ -51387,19 +51466,19 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr 
 		else {
 		};
 		g->sql_side = v__gen__c__SqlExprSide_right;
-		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).right);
+		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).right, typ);
 	}
 	else if (expr.typ == 260 /* v.ast.StringLiteral */) {
 		v__gen__c__Gen_inc_sql_i(g);
-		v__gen__c__Gen_sql_bind_string(g, _STR("\"%.*s\000\"", 2, (*expr._v__ast__StringLiteral).val), int_str((*expr._v__ast__StringLiteral).val.len));
+		v__gen__c__Gen_sql_bind_string(g, _STR("\"%.*s\000\"", 2, (*expr._v__ast__StringLiteral).val), int_str((*expr._v__ast__StringLiteral).val.len), typ);
 	}
 	else if (expr.typ == 243 /* v.ast.IntegerLiteral */) {
 		v__gen__c__Gen_inc_sql_i(g);
-		v__gen__c__Gen_sql_bind_int(g, (*expr._v__ast__IntegerLiteral).val);
+		v__gen__c__Gen_sql_bind_int(g, (*expr._v__ast__IntegerLiteral).val, typ);
 	}
 	else if (expr.typ == 225 /* v.ast.BoolLiteral */) {
 		v__gen__c__Gen_inc_sql_i(g);
-		v__gen__c__Gen_sql_bind_int(g, ((*expr._v__ast__BoolLiteral).val ? (_SLIT("1")) : (_SLIT("0"))));
+		v__gen__c__Gen_sql_bind_int(g, ((*expr._v__ast__BoolLiteral).val ? (_SLIT("1")) : (_SLIT("0"))), typ);
 	}
 	else if (expr.typ == 238 /* v.ast.Ident */) {
 		if (g->sql_side == v__gen__c__SqlExprSide_left) {
@@ -51407,13 +51486,13 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr 
 		} else {
 			v__gen__c__Gen_inc_sql_i(g);
 			v__ast__IdentVar info = /* as */ *(v__ast__IdentVar*)__as_cast(((*expr._v__ast__Ident).info)._v__ast__IdentVar,((*expr._v__ast__Ident).info).typ, 342) /*expected idx: 342, name: v.ast.IdentVar */ ;
-			v__table__Type typ = info.typ;
-			if (v__table__Type_alias_eq(typ, _const_v__table__string_type)) {
-				v__gen__c__Gen_sql_bind_string(g, _STR("%.*s\000.str", 2, (*expr._v__ast__Ident).name), _STR("%.*s\000.len", 2, (*expr._v__ast__Ident).name));
-			} else if (v__table__Type_alias_eq(typ, _const_v__table__int_type)) {
-				v__gen__c__Gen_sql_bind_int(g, (*expr._v__ast__Ident).name);
+			v__table__Type ityp = info.typ;
+			if (v__table__Type_alias_eq(ityp, _const_v__table__string_type)) {
+				v__gen__c__Gen_sql_bind_string(g, _STR("%.*s\000.str", 2, (*expr._v__ast__Ident).name), _STR("%.*s\000.len", 2, (*expr._v__ast__Ident).name), typ);
+			} else if (v__table__Type_alias_eq(ityp, _const_v__table__int_type)) {
+				v__gen__c__Gen_sql_bind_int(g, (*expr._v__ast__Ident).name, typ);
 			} else {
-				v__gen__c__verror(_STR("bad sql type=%"PRId32"\000 ident_name=%.*s", 2, typ, (*expr._v__ast__Ident).name));
+				v__gen__c__verror(_STR("bad sql type=%"PRId32"\000 ident_name=%.*s", 2, ityp, (*expr._v__ast__Ident).name));
 			}
 		}
 	}
@@ -51424,7 +51503,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr 
 				v__gen__c__verror(_SLIT("orm selector not ident"));
 			}
 			v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast(((*expr._v__ast__SelectorExpr).expr)._v__ast__Ident,((*expr._v__ast__SelectorExpr).expr).typ, 238) /*expected idx: 238, name: v.ast.Ident */ ;
-			v__gen__c__Gen_sql_bind_int(g, string_add(string_add(ident.name, _SLIT(".")), (*expr._v__ast__SelectorExpr).field_name));
+			v__gen__c__Gen_sql_bind_int(g, string_add(string_add(ident.name, _SLIT(".")), (*expr._v__ast__SelectorExpr).field_name), typ);
 		} else {
 			v__gen__c__verror(_STR("bad sql type=%"PRId32"\000 selector expr=%.*s", 2, (*expr._v__ast__SelectorExpr).typ, (*expr._v__ast__SelectorExpr).field_name));
 		}
@@ -51437,6 +51516,33 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_inc_sql_i(v__gen__c__Gen* g) {
 	g->sql_i++;
 	v__gen__c__Gen_write(g, _STR("?%"PRId32"", 1, g->sql_i));
+}
+
+VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* g, v__ast__Expr expr) {
+
+	if (expr.typ == 238 /* v.ast.Ident */) {
+		if (((*expr._v__ast__Ident).info).typ == 342 /* v.ast.IdentVar */) {
+			return v__gen__c__Gen_parse_db_from_type_string(g, v__table__Table_get_type_name(g->table, (*(*expr._v__ast__Ident).info._v__ast__IdentVar).typ));
+		}
+	}
+	else if (expr.typ == 256 /* v.ast.SelectorExpr */) {
+		return v__gen__c__Gen_parse_db_from_type_string(g, v__table__Table_get_type_name(g->table, (*expr._v__ast__SelectorExpr).typ));
+	}
+	else {
+		return v__gen__c__SqlType_unknown;
+	};
+	return v__gen__c__SqlType_unknown;
+}
+
+VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_from_type_string(v__gen__c__Gen* g, string name) {
+
+	if (string_eq(name, _SLIT("sqlite.DB"))) {
+		return v__gen__c__SqlType_sqlite3;
+	}
+	else {
+		return v__gen__c__SqlType_unknown;
+	};
+	return 0;
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_write_str_fn_definitions(v__gen__c__Gen* g) {
