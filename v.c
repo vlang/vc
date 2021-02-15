@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4bdbb0c"
+#define V_COMMIT_HASH "4a0367a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a9c2045"
+	#define V_COMMIT_HASH "4bdbb0c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4bdbb0c"
+	#define V_CURRENT_COMMIT_HASH "4a0367a"
 #endif
 
 // V comptime_defines:
@@ -8080,6 +8080,7 @@ strings__Builder strings__new_builder(int initial_size) {
 	return (strings__Builder){.buf = __new_array_with_default(0, initial_size, sizeof(byte), 0),.str_calls = 0,.len = 0,.initial_size = initial_size,};
 }
 
+// Attr: [unsafe]
 void strings__Builder_write_bytes(strings__Builder* b, byteptr bytes, int howmany) {
 	array_push_many(&b->buf, bytes, howmany);
 	b->len += howmany;
@@ -8107,8 +8108,7 @@ void strings__Builder_go_back(strings__Builder* b, int n) {
 VV_LOCAL_SYMBOL string strings__bytes2string(Array_byte b) {
 	Array_byte copy = array_clone(&b);
 	array_push(&copy, _MOV((byte[]){ ((byte)(L'\0')) }));
-	string res = tos(copy.data, copy.len - 1);
-	return res;
+	return tos(copy.data, copy.len - 1);
 }
 
 string strings__Builder_cut_last(strings__Builder* b, int n) {
@@ -8155,6 +8155,7 @@ string strings__Builder_str(strings__Builder* b) {
 	return s;
 }
 
+// Attr: [unsafe]
 void strings__Builder_free(strings__Builder* b) {
 	v_free(b->buf.data);
 	b->len = 0;
@@ -13470,6 +13471,7 @@ int vstrlen(byteptr s) {
 	return strlen(((charptr)(s)));
 }
 
+// Attr: [unsafe]
 string tos(byteptr s, int len) {
 	if (s == 0) {
 		v_panic(_SLIT("tos(): nil string"));
@@ -13477,10 +13479,12 @@ string tos(byteptr s, int len) {
 	return (string){.str = s, .len = len};
 }
 
+// Attr: [unsafe]
 string tos_clone(byteptr s) {
 	return string_clone(tos2(s));
 }
 
+// Attr: [unsafe]
 string tos2(byteptr s) {
 	if (s == 0) {
 		v_panic(_SLIT("tos2: nil string"));
@@ -13488,6 +13492,7 @@ string tos2(byteptr s) {
 	return (string){.str = s, .len = vstrlen(s)};
 }
 
+// Attr: [unsafe]
 string tos3(charptr s) {
 	if (s == 0) {
 		v_panic(_SLIT("tos3: nil string"));
@@ -13495,6 +13500,7 @@ string tos3(charptr s) {
 	return (string){.str = ((byteptr)(s)), .len = strlen(s)};
 }
 
+// Attr: [unsafe]
 string tos4(byteptr s) {
 	if (s == 0) {
 		return _SLIT("");
@@ -13502,6 +13508,7 @@ string tos4(byteptr s) {
 	return tos2(s);
 }
 
+// Attr: [unsafe]
 string tos5(charptr s) {
 	if (s == 0) {
 		return _SLIT("");
@@ -14870,6 +14877,7 @@ u16* string_to_wide(string _str) {
 	return 0;
 }
 
+// Attr: [unsafe]
 string string_from_wide(u16* _wstr) {
 	#if defined(_WIN32)
 	{
@@ -14886,6 +14894,7 @@ string string_from_wide(u16* _wstr) {
 	return (string){.str=(byteptr)""};
 }
 
+// Attr: [unsafe]
 string string_from_wide2(u16* _wstr, int len) {
 	#if defined(_WIN32)
 	{
@@ -16719,8 +16728,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_7896 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_7896.arg0;
+		multi_return_int_bool mr_7907 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_7907.arg0;
 		return ret;
 	}
 	#endif
@@ -16765,9 +16774,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_8908 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_8908.arg0;
-		bool is_signaled = mr_8908.arg1;
+		multi_return_int_bool mr_8919 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_8919.arg0;
+		bool is_signaled = mr_8919.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -17382,8 +17391,8 @@ Option_Array_string os__ls(string path) {
 			if (bptr[0] == 0 || (bptr[0] == L'.' && bptr[1] == 0) || (bptr[0] == L'.' && bptr[1] == L'.' && bptr[2] == 0)) {
 				continue;
 			}
+			array_push(&res, _MOV((string[]){ tos_clone(bptr) }));
 		}
-		array_push(&res, _MOV((string[]){ tos_clone(bptr) }));
 	}
 	closedir(dir);
 	Option_Array_string _t286;
@@ -22745,7 +22754,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a9c2045"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4bdbb0c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24263,8 +24272,11 @@ void v__util__Timers_dump_all(v__util__Timers* t) {
 string v__util__vhash() {
 	Array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
-	snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
-	return tos_clone((voidptr)&/*qq*/buf);
+	{ // Unsafe block
+		snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
+		return tos_clone((voidptr)&/*qq*/buf);
+	}
+	return (string){.str=(byteptr)""};
 }
 
 string v__util__full_hash() {
@@ -24325,8 +24337,11 @@ string v__util__githash(bool should_get_from_filesystem) {
 	}
 	Array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
-	snprintf(((charptr)(buf)), 50, "%s", V_CURRENT_COMMIT_HASH);
-	return tos_clone((voidptr)&/*qq*/buf);
+	{ // Unsafe block
+		snprintf(((charptr)(buf)), 50, "%s", V_CURRENT_COMMIT_HASH);
+		return tos_clone((voidptr)&/*qq*/buf);
+	}
+	return (string){.str=(byteptr)""};
 }
 
 void v__util__set_vroot_folder(string vroot_path) {
@@ -24789,9 +24804,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_16238 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_16238.arg0;
-	string tool_exe = mr_16238.arg1;
+	multi_return_string_string mr_16246 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_16246.arg0;
+	string tool_exe = mr_16246.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep_ms(1001);
 		v__util__recompile_file(vexe, stool);
