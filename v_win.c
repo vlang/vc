@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "94429c8"
+#define V_COMMIT_HASH "01aa09d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6813866"
+	#define V_COMMIT_HASH "94429c8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "94429c8"
+	#define V_CURRENT_COMMIT_HASH "01aa09d"
 #endif
 
 // V comptime_defines:
@@ -22472,7 +22472,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6813866"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("94429c8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32139,7 +32139,7 @@ bool v__checker__Checker_assign_stmt_defer_0 = false;
 		if (left_sym->kind == v__table__Kind_array && !c->inside_unsafe && (assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && right_sym->kind == v__table__Kind_array && ((left).typ == 238 /* v.ast.Ident */ && !v__ast__Expr_is_blank_ident(left)) && (right).typ == 238 /* v.ast.Ident */) {
 			v__checker__Checker_error(c, _STR("use `array2 %.*s\000 array1.clone()` instead of `array2 %.*s\000 array1` (or use `unsafe`)", 3, v__token__Kind_str(assign_stmt->op), v__token__Kind_str(assign_stmt->op)), assign_stmt->pos);
 		}
-		if (left_sym->kind == v__table__Kind_map && !c->inside_unsafe && (assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && right_sym->kind == v__table__Kind_map && ((left).typ == 238 /* v.ast.Ident */ && !v__ast__Expr_is_blank_ident(left)) && (right).typ == 238 /* v.ast.Ident */) {
+		if (left_sym->kind == v__table__Kind_map && !c->inside_unsafe && (assign_stmt->op == v__token__Kind_assign || assign_stmt->op == v__token__Kind_decl_assign) && right_sym->kind == v__table__Kind_map && !v__table__Type_is_ptr(right_type) && !v__ast__Expr_is_blank_ident(left) && v__ast__Expr_is_lvalue(right)) {
 			v__checker__Checker_error(c, _SLIT("cannot copy map: call `move` or `clone` method first (or use `unsafe`)"), v__ast__Expr_position(right));
 		}
 		bool left_is_ptr = v__table__Type_is_ptr(left_type) || v__table__TypeSymbol_is_pointer(left_sym);
@@ -35295,7 +35295,7 @@ bool v__checker__Checker_sql_expr_defer_0 = false;
 		(*(v__ast__SqlExpr*)map_get_and_set_1(&sub_structs, &(int[]){((int)(f.typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.fields = __new_array(0, 1, sizeof(v__table__Field)),.sub_structs = new_map_2(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) = n;
 	}
 	node->fields = fields;
-	node->sub_structs = sub_structs;
+	node->sub_structs = map_move(&sub_structs);
 	if (node->has_where) {
 		v__checker__Checker_expr(c, node->where_expr);
 	}
@@ -35361,7 +35361,7 @@ bool v__checker__Checker_sql_stmt_defer_0 = false;
 		(*(v__ast__SqlStmt*)map_get_and_set_1(&sub_structs, &(int[]){((int)(f.typ))}, &(v__ast__SqlStmt[]){ (v__ast__SqlStmt){.updated_columns = __new_array(0, 1, sizeof(string)),.update_exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.fields = __new_array(0, 1, sizeof(v__table__Field)),.sub_structs = new_map_2(sizeof(int), sizeof(v__ast__SqlStmt), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) = n;
 	}
 	node->fields = fields;
-	node->sub_structs = sub_structs;
+	node->sub_structs = map_move(&sub_structs);
 	v__checker__Checker_expr(c, node->db_expr);
 	if (node->kind == v__ast__SqlStmtKind_update) {
 		// FOR IN array
@@ -35603,10 +35603,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1603 = 0; _t1603 < _t1602.len; ++_t1603) {
 			v__table__Fn m = ((v__table__Fn*)_t1602.data)[_t1603];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_191397 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_191397.arg0;
-				int nroute_attributes = mr_191397.arg1;
-				int nargs = mr_191397.arg2;
+				multi_return_bool_int_int mr_191411 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_191411.arg0;
+				int nroute_attributes = mr_191411.arg1;
+				int nargs = mr_191411.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -51923,8 +51923,8 @@ bool v__markused__mark_used_defer_0 = false;
 	{
 	}
 	#endif
-	the_table->used_fns = walker.used_fns;
-	the_table->used_consts = walker.used_consts;
+	the_table->used_fns = map_move(&walker.used_fns);
+	the_table->used_consts = map_move(&walker.used_consts);
 	#if defined(CUSTOM_DEFINE_trace_skip_unused)
 	{
 	}
