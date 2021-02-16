@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0bbc5a5"
+#define V_COMMIT_HASH "6813866"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ad20b38"
+	#define V_COMMIT_HASH "0bbc5a5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0bbc5a5"
+	#define V_CURRENT_COMMIT_HASH "6813866"
 #endif
 
 // V comptime_defines:
@@ -22472,7 +22472,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ad20b38"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0bbc5a5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -41355,7 +41355,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 						return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.global_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 					}
 					v__parser__Parser_next(p);
-					pub_mut_pos = fields.len;
+					pub_mut_pos = ast_fields.len;
 					is_field_pub = true;
 					is_field_mut = true;
 					is_field_global = false;
@@ -41364,7 +41364,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 						v__parser__Parser_error(p, _SLIT("redefinition of `pub` section"));
 						return (v__ast__StructDecl){.pos = {0},.name = (string){.str=(byteptr)""},.gen_types = __new_array(0, 1, sizeof(v__table__Type)),.is_pub = 0,.mut_pos = 0,.pub_pos = 0,.pub_mut_pos = 0,.global_pos = 0,.module_pos = 0,.language = 0,.is_union = 0,.attrs = __new_array(0, 1, sizeof(v__table__Attr)),.end_comments = __new_array(0, 1, sizeof(v__ast__Comment)),.embeds = __new_array(0, 1, sizeof(v__ast__Embed)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),};
 					}
-					pub_pos = fields.len;
+					pub_pos = ast_fields.len;
 					is_field_pub = true;
 					is_field_mut = false;
 					is_field_global = false;
@@ -41377,7 +41377,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				}
 				v__parser__Parser_next(p);
 				v__parser__Parser_check(p, v__token__Kind_colon);
-				mut_pos = fields.len;
+				mut_pos = ast_fields.len;
 				is_field_pub = false;
 				is_field_mut = true;
 				is_field_global = false;
@@ -41388,7 +41388,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				}
 				v__parser__Parser_next(p);
 				v__parser__Parser_check(p, v__token__Kind_colon);
-				global_pos = fields.len;
+				global_pos = ast_fields.len;
 				is_field_pub = true;
 				is_field_mut = true;
 				is_field_global = true;
@@ -41399,7 +41399,7 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 				}
 				v__parser__Parser_next(p);
 				v__parser__Parser_check(p, v__token__Kind_colon);
-				module_pos = fields.len;
+				module_pos = ast_fields.len;
 				is_field_pub = false;
 				is_field_mut = false;
 				is_field_global = false;
@@ -41550,11 +41550,11 @@ VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Pars
 		.name = name,
 		.gen_types = generic_types,
 		.is_pub = is_pub,
-		.mut_pos = mut_pos - embeds.len,
-		.pub_pos = pub_pos - embeds.len,
-		.pub_mut_pos = pub_mut_pos - embeds.len,
-		.global_pos = global_pos - embeds.len,
-		.module_pos = module_pos - embeds.len,
+		.mut_pos = mut_pos,
+		.pub_pos = pub_pos,
+		.pub_mut_pos = pub_mut_pos,
+		.global_pos = global_pos,
+		.module_pos = module_pos,
 		.language = language,
 		.is_union = is_union,
 		.attrs = attrs,
@@ -41706,9 +41706,9 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 				v__parser__Parser_error(p, _SLIT("interface methods cannot contain uppercase letters, use snake_case instead"));
 				return (v__ast__InterfaceDecl){.name = (string){.str=(byteptr)""},.field_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.methods = __new_array(0, 1, sizeof(v__ast__FnDecl)),.fields = __new_array(0, 1, sizeof(v__ast__StructField)),.pos = {0},.pre_comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 			}
-			multi_return_Array_v__table__Param_bool_bool mr_13137 = v__parser__Parser_fn_args(p);
-			Array_v__table__Param args2 = mr_13137.arg0;
-			bool is_variadic = mr_13137.arg2;
+			multi_return_Array_v__table__Param_bool_bool mr_13092 = v__parser__Parser_fn_args(p);
+			Array_v__table__Param args2 = mr_13092.arg0;
+			bool is_variadic = mr_13092.arg2;
 			Array_v__table__Param args = new_array_from_c_array(1, 1, sizeof(v__table__Param), _MOV((v__table__Param[1]){(v__table__Param){.pos = {0},.name = _SLIT("x"),.is_mut = is_mut,.typ = typ,.type_pos = {0},.is_hidden = true,}}));
 			_PUSH_MANY(&args, (args2), _t1807, Array_v__table__Param);
 			v__ast__FnDecl method = (v__ast__FnDecl){
