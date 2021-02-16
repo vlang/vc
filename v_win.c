@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4961d3e"
+#define V_COMMIT_HASH "fb09333"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "843de10"
+	#define V_COMMIT_HASH "4961d3e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4961d3e"
+	#define V_CURRENT_COMMIT_HASH "fb09333"
 #endif
 
 // V comptime_defines:
@@ -22476,7 +22476,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("843de10"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4961d3e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -48945,7 +48945,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					method_call = /*f*/string_add(method_call, _SLIT("_method_wrapper"));
 				}
 				if (g->pref->build_mode != v__pref__BuildMode_build_module) {
-					strings__Builder_writeln(&methods_struct, _STR("\t\t._method_%.*s\000 = %.*s\000,", 3, v__gen__c__c_name(method.name), method_call));
+					strings__Builder_writeln(&methods_struct, _STR("\t\t._method_%.*s\000 = (void*) %.*s\000,", 3, v__gen__c__c_name(method.name), method_call));
 				}
 			}
 			if (g->pref->build_mode != v__pref__BuildMode_build_module) {
