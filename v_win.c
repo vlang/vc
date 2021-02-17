@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "177c8bf"
+#define V_COMMIT_HASH "33d8074"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ab6517c"
+	#define V_COMMIT_HASH "177c8bf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "177c8bf"
+	#define V_CURRENT_COMMIT_HASH "33d8074"
 #endif
 
 // V comptime_defines:
@@ -17133,13 +17133,13 @@ Option_Array_string os__ls(string path) {
 	}
 	string path_files = _STR("%.*s\000\\*", 2, path);
 	voidptr h_find_files = FindFirstFile(string_to_wide(path_files), ((voidptr)(&find_file_data)));
-	string first_filename = string_from_wide(((u16*)(find_file_data.c_file_name)));
+	string first_filename = string_from_wide(&find_file_data.c_file_name[0]);
 	if (string_ne(first_filename, _SLIT(".")) && string_ne(first_filename, _SLIT(".."))) {
 		array_push(&dir_files, _MOV((string[]){ first_filename }));
 	}
 	for (;;) {
 		if (!(FindNextFile(h_find_files, ((voidptr)(&find_file_data))) > 0)) break;
-		string filename = string_from_wide(((u16*)(find_file_data.c_file_name)));
+		string filename = string_from_wide(&find_file_data.c_file_name[0]);
 		if (string_ne(filename, _SLIT(".")) && string_ne(filename, _SLIT(".."))) {
 			array_push(&dir_files, _MOV((string[]){ string_clone(filename) }));
 		}
@@ -22476,7 +22476,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ab6517c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("177c8bf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -23981,7 +23981,7 @@ string v__util__vhash() {
 	Array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
 	{ // Unsafe block
-		snprintf(((charptr)(buf)), 50, "%s", V_COMMIT_HASH);
+		snprintf(((charptr)(&buf[0])), 50, "%s", V_COMMIT_HASH);
 		return tos_clone((voidptr)&/*qq*/buf);
 	}
 	return (string){.str=(byteptr)""};
@@ -24046,7 +24046,7 @@ string v__util__githash(bool should_get_from_filesystem) {
 	Array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
 	{ // Unsafe block
-		snprintf(((charptr)(buf)), 50, "%s", V_CURRENT_COMMIT_HASH);
+		snprintf(((charptr)(&buf[0])), 50, "%s", V_CURRENT_COMMIT_HASH);
 		return tos_clone((voidptr)&/*qq*/buf);
 	}
 	return (string){.str=(byteptr)""};
@@ -24512,9 +24512,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_16246 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_16246.arg0;
-	string tool_exe = mr_16246.arg1;
+	multi_return_string_string mr_16254 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_16254.arg0;
+	string tool_exe = mr_16254.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep_ms(1001);
 		v__util__recompile_file(vexe, stool);
@@ -33578,6 +33578,8 @@ v__table__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__Cas
 		string ft = v__table__Table_type_to_str(c->table, node->expr_type);
 		string tt = v__table__Table_type_to_str(c->table, node->typ);
 		v__checker__Checker_warn(c, _STR("casting `%.*s\000` to `%.*s\000` is only allowed in `unsafe` code", 3, ft, tt), node->pos);
+	} else if (from_type_sym->kind == v__table__Kind_array_fixed && !v__table__Type_is_ptr(node->expr_type)) {
+		v__checker__Checker_warn(c, _SLIT("cannot cast a fixed array (use e.g. `&arr[0]` instead)"), node->pos);
 	}
 	if (node->has_arg) {
 		v__checker__Checker_expr(c, node->arg);
@@ -33721,8 +33723,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1486 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_135606 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_135606.arg1;
+		multi_return_string_int mr_135759 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_135759.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1486 == v__token__AtKind_vhash) {
@@ -34402,7 +34404,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t1532 = {0};
 		v_assert_meta_info__t1532.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1532.line_nr = 4729;
+		v_assert_meta_info__t1532.line_nr = 4731;
 		v_assert_meta_info__t1532.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1532.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1532);
@@ -34856,8 +34858,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_168932 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_168932.arg0;
+		multi_return_string_v__token__Position mr_169085 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_169085.arg0;
 	}
 	return typ;
 }
@@ -35664,10 +35666,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1604 = 0; _t1604 < _t1603.len; ++_t1604) {
 			v__table__Fn m = ((v__table__Fn*)_t1603.data)[_t1604];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_192496 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_192496.arg0;
-				int nroute_attributes = mr_192496.arg1;
-				int nargs = mr_192496.arg2;
+				multi_return_bool_int_int mr_192649 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_192649.arg0;
+				int nroute_attributes = mr_192649.arg1;
+				int nargs = mr_192649.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
