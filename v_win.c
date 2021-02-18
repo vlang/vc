@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2520748"
+#define V_COMMIT_HASH "4878077"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "51dd22b"
+	#define V_COMMIT_HASH "2520748"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2520748"
+	#define V_CURRENT_COMMIT_HASH "4878077"
 #endif
 
 // V comptime_defines:
@@ -22794,7 +22794,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("51dd22b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2520748"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -43476,12 +43476,14 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_struct(v__gen__c__Gen* g, v__tab
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__struct_auto_str_func(v__table__TypeSymbol sym, v__table__Type field_type, string fn_name, string field_name) {
-	bool has_custom_str = v__table__TypeSymbol_has_method(&sym, _SLIT("str"));
+	multi_return_bool_bool_int mr_23225 = v__table__TypeSymbol_str_method_info(&sym);
+	bool has_custom_str = mr_23225.arg0;
+	bool expects_ptr = mr_23225.arg1;
 	if ((sym.kind == v__table__Kind_enum_ || sym.kind == v__table__Kind_interface_)) {
 		return _STR("%.*s\000(it.%.*s\000)", 3, fn_name, v__gen__c__c_name(field_name));
 	} else if (sym.kind == v__table__Kind_struct_) {
 		string obj = _STR("it.%.*s", 1, v__gen__c__c_name(field_name));
-		if (v__table__Type_is_ptr(field_type)) {
+		if (v__table__Type_is_ptr(field_type) && !expects_ptr) {
 			obj = _STR("*%.*s", 1, obj);
 		}
 		if (has_custom_str) {
@@ -43499,7 +43501,7 @@ VV_LOCAL_SYMBOL string v__gen__c__struct_auto_str_func(v__table__TypeSymbol sym,
 		string method_str = _STR("it.%.*s", 1, v__gen__c__c_name(field_name));
 		if (sym.kind == v__table__Kind_bool) {
 			method_str = /*f*/string_add(method_str, _SLIT(" ? _SLIT(\"true\") : _SLIT(\"false\")"));
-		} else if ((v__table__Type_is_int(field_type) || v__table__Type_is_float(field_type)) && v__table__Type_is_ptr(field_type)) {
+		} else if ((v__table__Type_is_int(field_type) || v__table__Type_is_float(field_type)) && v__table__Type_is_ptr(field_type) && !expects_ptr) {
 			string fmt = ((sym.kind == v__table__Kind_f32 || sym.kind == v__table__Kind_f64) ? (_SLIT("%g\\000")) : sym.kind == v__table__Kind_u64 ? (_SLIT("%lld\\000")) : (_SLIT("%d\\000")));
 			method_str = _STR("_STR(\"%.*s\000\", 2, *%.*s\000)", 3, fmt, method_str);
 		}
@@ -43571,9 +43573,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_union_sum_type(v__gen__c__Gen* g
 		string typ_str = v__gen__c__Gen_typ(g, typ);
 		string func_name = (_IN_MAP(ADDR(string, typ_str), ADDR(map, gen_fn_names)) ? ((*(string*)map_get_1(ADDR(map, gen_fn_names), &(string[]){typ_str}, &(string[]){ (string){.str=(byteptr)""} }))) : (v__gen__c__Gen_gen_str_for_type(g, typ)));
 		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, typ);
-		multi_return_bool_bool_int mr_26952 = v__table__TypeSymbol_str_method_info(sym);
-		bool sym_has_str_method = mr_26952.arg0;
-		bool str_method_expects_ptr = mr_26952.arg1;
+		multi_return_bool_bool_int mr_27003 = v__table__TypeSymbol_str_method_info(sym);
+		bool sym_has_str_method = mr_27003.arg0;
+		bool str_method_expects_ptr = mr_27003.arg1;
 		string deref = (sym_has_str_method && str_method_expects_ptr ? (_SLIT(" ")) : (_SLIT("*")));
 		if (sym->kind == v__table__Kind_struct_ && !sym_has_str_method) {
 			func_name = _STR("indent_%.*s", 1, func_name);
