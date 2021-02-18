@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a119aff"
+#define V_COMMIT_HASH "b3a26ca"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bf6e9ff"
+	#define V_COMMIT_HASH "a119aff"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a119aff"
+	#define V_CURRENT_COMMIT_HASH "b3a26ca"
 #endif
 
 // V comptime_defines:
@@ -5823,6 +5823,7 @@ Array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args);
 void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
 VV_LOCAL_SYMBOL void v__pref__must_exist(string path);
+VV_LOCAL_SYMBOL bool v__pref__is_source_file(string path);
 Option_v__pref__Backend v__pref__backend_from_string(string s);
 v__pref__CompilerType v__pref__cc_from_string(string cc_str);
 VV_LOCAL_SYMBOL void v__pref__parse_define(v__pref__Preferences* prefs, string define);
@@ -22476,7 +22477,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bf6e9ff"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a119aff"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -22990,7 +22991,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args) 
 			i++;
 		}
 		else {
-			if (string_eq(command, _SLIT("build")) && (string_ends_with(arg, _SLIT(".v")) || os__exists(command))) {
+			if (string_eq(command, _SLIT("build")) && v__pref__is_source_file(arg)) {
 				eprintln(_STR("Use `v %.*s\000` instead.", 2, arg));
 				v_exit(1);
 			}
@@ -23006,6 +23007,9 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args) 
 					if (string_eq(command, _SLIT("run"))) {
 						break;
 					}
+				} else if (v__pref__is_source_file(command) && v__pref__is_source_file(arg)) {
+					eprintln(_SLIT("Too many targets. Specify just one target: <target.v|target_directory>."));
+					v_exit(1);
 				}
 				continue;
 			}
@@ -23026,7 +23030,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args) 
 		eprintln(_SLIT("Cannot save output binary in a .v file."));
 		v_exit(1);
 	}
-	if (string_ends_with(command, _SLIT(".v")) || os__exists(command)) {
+	if (v__pref__is_source_file(command)) {
 		res->path = command;
 	} else if (string_eq(command, _SLIT("run"))) {
 		res->is_run = true;
@@ -23109,6 +23113,11 @@ VV_LOCAL_SYMBOL void v__pref__must_exist(string path) {
 		eprintln(_STR("v expects that `%.*s\000` exists, but it does not", 2, path));
 		v_exit(1);
 	}
+}
+
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL bool v__pref__is_source_file(string path) {
+	return string_ends_with(path, _SLIT(".v")) || os__exists(path);
 }
 
 Option_v__pref__Backend v__pref__backend_from_string(string s) {
