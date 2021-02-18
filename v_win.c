@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ac7feb9"
+#define V_COMMIT_HASH "0142d58"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0d69d97"
+	#define V_COMMIT_HASH "ac7feb9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ac7feb9"
+	#define V_CURRENT_COMMIT_HASH "0142d58"
 #endif
 
 // V comptime_defines:
@@ -5820,7 +5820,7 @@ Option_v__pref__OS v__pref__os_from_string(string os_str);
 string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os();
 Array_string _const_v__pref__list_of_flags_with_param; // inited later
-multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args);
+multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args);
 void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
 VV_LOCAL_SYMBOL void v__pref__must_exist(string path);
 VV_LOCAL_SYMBOL bool v__pref__is_source_file(string path);
@@ -6892,7 +6892,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file_with_msvc(v__
 v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag cflags);
 void v__builder__Builder_build_x64(v__builder__Builder* b, Array_string v_files, string out_file);
 void v__builder__Builder_compile_x64(v__builder__Builder* b);
-Array_string _const_main__simple_cmd; // inited later
+Array_string _const_main__external_tools; // inited later
 Array_string _const_main__list_of_flags_that_allow_duplicates; // inited later
 VV_LOCAL_SYMBOL void main__main();
 VV_LOCAL_SYMBOL void main__invoke_help_and_exit(Array_string remaining);
@@ -22477,7 +22477,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0d69d97"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ac7feb9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -22723,7 +22723,7 @@ v__pref__OS v__pref__get_host_os() {
 	return 0;
 }
 
-multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args) {
+multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args) {
 	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)""},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)""},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)""},.m64 = 0,.ccompiler = (string){.str=(byteptr)""},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)""},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)""},.lookup_path = __new_array(0, 1, sizeof(string)),.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)""},.out_name_c = (string){.str=(byteptr)""},.out_name = (string){.str=(byteptr)""},.display_name = (string){.str=(byteptr)""},.bundle_id = (string){.str=(byteptr)""},.path = (string){.str=(byteptr)""},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map_2(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},}, sizeof(v__pref__Preferences));
 	#if defined(TARGET_IS_64BIT)
 	{
@@ -23007,7 +23007,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string args) 
 					if (string_eq(command, _SLIT("run"))) {
 						break;
 					}
-				} else if (v__pref__is_source_file(command) && v__pref__is_source_file(arg)) {
+				} else if (v__pref__is_source_file(command) && v__pref__is_source_file(arg) && !(Array_string_contains(known_external_commands, command))) {
 					eprintln(_SLIT("Too many targets. Specify just one target: <target.v|target_directory>."));
 					v_exit(1);
 				}
@@ -57699,7 +57699,7 @@ bool main__main_defer_0 = false;
 			} else {
 				Array_string args_and_flags = array_clone_static(array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len));
 				_PUSH_MANY(&args_and_flags, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("run"), _SLIT("-")}))), _t2737, Array_string);
-				v__pref__parse_args(args_and_flags);
+				v__pref__parse_args(_const_main__external_tools, args_and_flags);
 			}
 		}
 		v__util__launch_tool(false, _SLIT("vrepl"), array_slice(_const_os__args, 1, _const_os__args.len));
@@ -57711,9 +57711,9 @@ bool main__main_defer_0 = false;
 		return;
 	}
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1759 = v__pref__parse_args(args_and_flags);
-	v__pref__Preferences* prefs = mr_1759.arg0;
-	string command = mr_1759.arg1;
+	multi_return_v__pref__Preferences_string mr_1775 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
+	v__pref__Preferences* prefs = mr_1775.arg0;
+	string command = mr_1775.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (prefs->use_cache && string_eq(os__user_os(), _SLIT("windows"))) {
@@ -57737,7 +57737,7 @@ bool main__main_defer_0 = false;
 		// Defer end
 		return;
 	}
-	if ((Array_string_contains(_const_main__simple_cmd, command))) {
+	if ((Array_string_contains(_const_main__external_tools, command))) {
 		v__util__launch_tool(prefs->is_verbose, string_add(_SLIT("v"), command), array_slice(_const_os__args, 1, _const_os__args.len));
 		// Defer begin
 		if (main__main_defer_0 == true) {
@@ -58159,7 +58159,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__simple_cmd = new_array_from_c_array(26, 26, sizeof(string), _MOV((string[26]){
+	_const_main__external_tools = new_array_from_c_array(26, 26, sizeof(string), _MOV((string[26]){
 		_SLIT("fmt"), _SLIT("up"), _SLIT("vet"), _SLIT("self"), _SLIT("tracev"), _SLIT("symlink"), _SLIT("bin2v"), _SLIT("test"), _SLIT("test-all"), _SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-self"), _SLIT("test-fixed"), _SLIT("test-compiler"), _SLIT("test-compiler-full"), _SLIT("test-cleancode"), _SLIT("check-md"), _SLIT("repl"), _SLIT("complete"), _SLIT("build-tools"), _SLIT("build-examples"), _SLIT("build-vbinaries"), _SLIT("setup-freetype"), _SLIT("wipe-cache"), _SLIT("doc"), _SLIT("doctor")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("cc"), _SLIT("d"), _SLIT("define"), _SLIT("cf"), _SLIT("cflags")}));
 }
