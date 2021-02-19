@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "10de905"
+#define V_COMMIT_HASH "745b40c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4878077"
+	#define V_COMMIT_HASH "10de905"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "10de905"
+	#define V_CURRENT_COMMIT_HASH "745b40c"
 #endif
 
 // V comptime_defines:
@@ -5827,11 +5827,12 @@ f32 rand__f32n(f32 max);
 f64 rand__f64n(f64 max);
 f32 rand__f32_in_range(f32 min, f32 max);
 f64 rand__f64_in_range(f64 min, f64 max);
-string _const_rand__chars; // a string literal, inited later
-string rand__string(int len);
+string _const_rand__english_letters; // a string literal, inited later
 string _const_rand__hex_chars; // a string literal, inited later
-string rand__hex(int len);
 string _const_rand__ascii_chars; // a string literal, inited later
+string rand__string_from_set(string charset, int len);
+string rand__string(int len);
+string rand__hex(int len);
 string rand__ascii(int len);
 string rand__uuid_v4();
 string _const_rand__ulid_encoding; // a string literal, inited later
@@ -7279,7 +7280,7 @@ void vinit_string_literals(){
 	_const_v__pkgconfig__version = _SLIT("0.3.0");
 	_const_vweb__tmpl__str_start = _SLIT("sb.write('");
 	_const_vweb__tmpl__str_end = _SLIT("' ) ");
-	_const_rand__chars = _SLIT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	_const_rand__english_letters = _SLIT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	_const_rand__hex_chars = _SLIT("abcdef0123456789");
 	_const_rand__ascii_chars = _SLIT("!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}~");
 	_const_rand__ulid_encoding = _SLIT("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
@@ -22612,34 +22613,29 @@ f64 rand__f64_in_range(f64 min, f64 max) {
 	return rand__wyrand__WyRandRNG_f64_in_range(default_rng, min, max);
 }
 
-string rand__string(int len) {
+string rand__string_from_set(string charset, int len) {
+	if (len == 0) {
+		return _SLIT("");
+	}
 	byteptr buf = v_malloc(len);
 	for (int i = 0; i < len; ++i) {
 		{ // Unsafe block
-			buf[i] = string_at(_const_rand__chars, rand__intn(_const_rand__chars.len));
+			buf[i] = string_at(charset, rand__intn(charset.len));
 		}
 	}
 	return byteptr_vstring_with_len(buf, len);
+}
+
+string rand__string(int len) {
+	return rand__string_from_set(_const_rand__english_letters, len);
 }
 
 string rand__hex(int len) {
-	byteptr buf = v_malloc(len);
-	for (int i = 0; i < len; ++i) {
-		{ // Unsafe block
-			buf[i] = string_at(_const_rand__hex_chars, rand__intn(_const_rand__hex_chars.len));
-		}
-	}
-	return byteptr_vstring_with_len(buf, len);
+	return rand__string_from_set(_const_rand__hex_chars, len);
 }
 
 string rand__ascii(int len) {
-	byteptr buf = v_malloc(len);
-	for (int i = 0; i < len; ++i) {
-		{ // Unsafe block
-			buf[i] = string_at(_const_rand__ascii_chars, rand__intn(_const_rand__ascii_chars.len));
-		}
-	}
-	return byteptr_vstring_with_len(buf, len);
+	return rand__string_from_set(_const_rand__ascii_chars, len);
 }
 
 string rand__uuid_v4() {
@@ -22794,7 +22790,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4878077"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("10de905"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
