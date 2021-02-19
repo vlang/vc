@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a153ec5"
+#define V_COMMIT_HASH "bcb35e1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3f3bec4"
+	#define V_COMMIT_HASH "a153ec5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a153ec5"
+	#define V_CURRENT_COMMIT_HASH "bcb35e1"
 #endif
 
 // V comptime_defines:
@@ -22805,7 +22805,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3f3bec4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a153ec5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -29404,7 +29404,7 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got,
 	if ((v__table__Type_is_pointer(exp_) || v__table__Type_is_number(exp_)) && (v__table__Type_is_pointer(got_) || v__table__Type_is_number(got_))) {
 		return true;
 	}
-	if (v__table__Type_is_ptr(expected) && v__table__Type_idx(got_) == _const_v__table__int_type_idx) {
+	if (v__table__Type_is_ptr(expected) && v__table__Type_alias_eq(got_, _const_v__table__int_literal_type)) {
 		return true;
 	}
 	if (v__table__Type_idx(expected) == _const_v__table__array_type_idx || v__table__Type_idx(got) == _const_v__table__array_type_idx) {
@@ -29519,10 +29519,10 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_5559 = type_hi;
-		v__table__Type _var_5568 = type_lo;
-		type_hi = _var_5568;
-		type_lo = _var_5559;
+		v__table__Type _var_5557 = type_hi;
+		v__table__Type _var_5566 = type_lo;
+		type_hi = _var_5566;
+		type_lo = _var_5557;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
@@ -35439,7 +35439,7 @@ v__table__Type v__checker__Checker_offset_of(v__checker__Checker* c, v__ast__Off
 		v__checker__Checker_error(c, _SLIT("first argument of __offsetof must be struct"), node.pos);
 		return _const_v__table__u32_type;
 	}
-	if (!v__table__Table_struct_has_field(c->table, (voidptr)&/*qq*/node.struct_type, node.field)) {
+	if (!v__table__Table_struct_has_field(c->table, sym, node.field)) {
 		v__checker__Checker_error(c, _STR("struct `%.*s\000` has no field called `%.*s\000`", 3, sym->name, node.field), node.pos);
 	}
 	return _const_v__table__u32_type;
@@ -36006,10 +36006,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1618 = 0; _t1618 < _t1617.len; ++_t1618) {
 			v__table__Fn m = ((v__table__Fn*)_t1617.data)[_t1618];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_189713 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_189713.arg0;
-				int nroute_attributes = mr_189713.arg1;
-				int nargs = mr_189713.arg2;
+				multi_return_bool_int_int mr_189700 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_189700.arg0;
+				int nroute_attributes = mr_189700.arg1;
+				int nargs = mr_189700.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
