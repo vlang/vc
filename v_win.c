@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "859d382"
+#define V_COMMIT_HASH "5e1159e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3a65ccd"
+	#define V_COMMIT_HASH "859d382"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "859d382"
+	#define V_CURRENT_COMMIT_HASH "5e1159e"
 #endif
 
 // V comptime_defines:
@@ -22805,7 +22805,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3a65ccd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("859d382"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32782,7 +32782,7 @@ v__table__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Ar
 					fixed_size = cint;
 				}}
 			} else {
-				v__checker__Checker_error(c, _STR("non existent integer const %.*s\000 while initializing the size of a static array", 2, (*init_expr._v__ast__Ident).name), array_init->pos);
+				v__checker__Checker_error(c, _STR("non-constant array bound `%.*s\000`", 2, (*init_expr._v__ast__Ident).name), (*init_expr._v__ast__Ident).pos);
 			}
 		}
 		else {
@@ -32958,7 +32958,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__B
 		if (!(!c->inside_unsafe)) {
 			VAssertMetaInfo v_assert_meta_info__t1458 = {0};
 			v_assert_meta_info__t1458.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t1458.line_nr = 3162;
+			v_assert_meta_info__t1458.line_nr = 3161;
 			v_assert_meta_info__t1458.fn_name = _SLIT("block");
 			v_assert_meta_info__t1458.src = _SLIT("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t1458);
@@ -34058,8 +34058,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (_t1496 == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_133305 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_133305.arg1;
+		multi_return_string_int mr_133252 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_133252.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (_t1496 == v__token__AtKind_vhash) {
@@ -34742,7 +34742,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t1543 = {0};
 		v_assert_meta_info__t1543.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1543.line_nr = 4660;
+		v_assert_meta_info__t1543.line_nr = 4659;
 		v_assert_meta_info__t1543.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1543.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1543);
@@ -35196,8 +35196,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_166645 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_166645.arg0;
+		multi_return_string_v__token__Position mr_166592 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_166592.arg0;
 	}
 	return typ;
 }
@@ -36006,10 +36006,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1618 = 0; _t1618 < _t1617.len; ++_t1618) {
 			v__table__Fn m = ((v__table__Fn*)_t1617.data)[_t1618];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_189700 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_189700.arg0;
-				int nroute_attributes = mr_189700.arg1;
-				int nargs = mr_189700.arg2;
+				multi_return_bool_int_int mr_189647 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_189647.arg0;
+				int nroute_attributes = mr_189647.arg1;
+				int nargs = mr_189647.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -38267,12 +38267,12 @@ v__table__Type v__parser__Parser_parse_array_type(v__parser__Parser* p) {
 				if ((const_field->expr).typ == 242 /* v.ast.IntegerLiteral */) {
 					fixed_size = string_int((*const_field->expr._v__ast__IntegerLiteral).val);
 				} else {
-					v__parser__Parser_error_with_pos(p, _STR("non existent integer const %.*s\000 while initializing the size of a static array", 2, (*size_expr._v__ast__Ident).name), (*size_expr._v__ast__Ident).pos);
+					v__parser__Parser_error_with_pos(p, _STR("non-constant array bound `%.*s\000`", 2, (*size_expr._v__ast__Ident).name), (*size_expr._v__ast__Ident).pos);
 				}
 			} else {
 				string err = _t1739.v_error;
 				int errcode = _t1739.ecode;
-				v__parser__Parser_error_with_pos(p, _STR("non existent integer const %.*s\000 while initializing the size of a static array", 2, (*size_expr._v__ast__Ident).name), (*size_expr._v__ast__Ident).pos);
+				v__parser__Parser_error_with_pos(p, _STR("non-constant array bound `%.*s\000`", 2, (*size_expr._v__ast__Ident).name), (*size_expr._v__ast__Ident).pos);
 			}}
 		}
 		else {
@@ -38379,9 +38379,9 @@ v__table__Type v__parser__Parser_parse_multi_return_type(v__parser__Parser* p) {
 v__table__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) {
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	int line_nr = p->tok.line_nr;
-	multi_return_Array_v__table__Param_bool_bool mr_4138 = v__parser__Parser_fn_args(p);
-	Array_v__table__Param args = mr_4138.arg0;
-	bool is_variadic = mr_4138.arg2;
+	multi_return_Array_v__table__Param_bool_bool mr_4040 = v__parser__Parser_fn_args(p);
+	Array_v__table__Param args = mr_4040.arg0;
+	bool is_variadic = mr_4040.arg2;
 	v__table__Type return_type = _const_v__table__void_type;
 	if (p->tok.line_nr == line_nr && v__token__Kind_is_start_of_type(p->tok.kind)) {
 		return_type = v__parser__Parser_parse_type(p);
