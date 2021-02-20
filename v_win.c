@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c190b6a"
+#define V_COMMIT_HASH "8f486cb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "30ed201"
+	#define V_COMMIT_HASH "c190b6a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c190b6a"
+	#define V_CURRENT_COMMIT_HASH "8f486cb"
 #endif
 
 // V comptime_defines:
@@ -6173,13 +6173,13 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr);
 bool v__ast__Expr_is_lvalue(v__ast__Expr expr);
 bool v__ast__Expr_is_expr(v__ast__Expr expr);
 bool v__ast__Expr_is_lit(v__ast__Expr expr);
+bool v__ast__Expr_is_mut_ident(v__ast__Expr expr);
 Option_void v__ast__Stmt_check_c_expr(v__ast__Stmt stmt);
 v__token__Position v__ast__Stmt_position(v__ast__Stmt stmt);
 v__token__Position v__ast__Node_position(v__ast__Node node);
 Array_v__ast__Node v__ast__Node_children(v__ast__Node node);
 v__ast__Expr v__ast__fe2ex(v__table__FExpr x);
 v__table__FExpr v__ast__ex2fe(v__ast__Expr x);
-bool v__ast__Expr_is_mut_ident(v__ast__Expr expr);
 void v__ast__IndexExpr_recursive_mapset_is_setter(v__ast__IndexExpr* lx, bool val);
 v__ast__Expr v__ast__resolve_init(v__ast__StructInit node, v__table__Type typ, v__table__Table* t);
 v__ast__Scope* v__ast__new_scope(v__ast__Scope* parent, int start_pos);
@@ -22728,7 +22728,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("30ed201"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c190b6a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27569,6 +27569,9 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	if (expr.typ == 218 /* v.ast.AnonFn */) {
 		return (*expr._v__ast__AnonFn).decl.pos;
 	}
+	else if (expr.typ == 219 /* v.ast.ArrayDecompose */) {
+		return (*expr._v__ast__ArrayDecompose).pos;
+	}
 	else if (expr.typ == 220 /* v.ast.ArrayInit */) {
 		return (*expr._v__ast__ArrayInit).pos;
 	}
@@ -27686,9 +27689,6 @@ v__token__Position v__ast__Expr_position(v__ast__Expr expr) {
 	else if (expr.typ == 263 /* v.ast.UnsafeExpr */) {
 		return (*expr._v__ast__UnsafeExpr).pos;
 	}
-	else if (expr.typ == 219 /* v.ast.ArrayDecompose */) {
-		return (*expr._v__ast__ArrayDecompose).pos;
-	}
 	else if (expr.typ == 239 /* v.ast.IfGuardExpr */) {
 		return v__ast__Expr_position((*expr._v__ast__IfGuardExpr).expr);
 	}
@@ -27749,6 +27749,25 @@ bool v__ast__Expr_is_expr(v__ast__Expr expr) {
 
 bool v__ast__Expr_is_lit(v__ast__Expr expr) {
 	return ((expr.typ == 224 /* v.ast.BoolLiteral */) ? (true) : (expr.typ == 259 /* v.ast.StringLiteral */) ? (true) : (expr.typ == 242 /* v.ast.IntegerLiteral */) ? (true) : (false));
+}
+
+bool v__ast__Expr_is_mut_ident(v__ast__Expr expr) {
+
+	if (expr.typ == 237 /* v.ast.Ident */) {
+		if (((*expr._v__ast__Ident).obj).typ == 291 /* v.ast.Var */) {
+			if ((*(*expr._v__ast__Ident).obj._v__ast__Var).is_auto_deref) {
+				return true;
+			}
+		}
+	}
+	else if (expr.typ == 252 /* v.ast.PrefixExpr */) {
+		if ((*expr._v__ast__PrefixExpr).op == v__token__Kind_amp && v__ast__Expr_is_mut_ident((*expr._v__ast__PrefixExpr).right)) {
+			return true;
+		}
+	}
+	else {
+	};
+	return false;
 }
 
 Option_void v__ast__Stmt_check_c_expr(v__ast__Stmt stmt) {
@@ -28492,25 +28511,6 @@ v__table__FExpr v__ast__ex2fe(v__ast__Expr x) {
 };
 	memcpy(&res, &x, /*SizeOf*/ sizeof(v__table__FExpr));
 	return res;
-}
-
-bool v__ast__Expr_is_mut_ident(v__ast__Expr expr) {
-
-	if (expr.typ == 237 /* v.ast.Ident */) {
-		if (((*expr._v__ast__Ident).obj).typ == 291 /* v.ast.Var */) {
-			if ((*(*expr._v__ast__Ident).obj._v__ast__Var).is_auto_deref) {
-				return true;
-			}
-		}
-	}
-	else if (expr.typ == 252 /* v.ast.PrefixExpr */) {
-		if ((*expr._v__ast__PrefixExpr).op == v__token__Kind_amp && v__ast__Expr_is_mut_ident((*expr._v__ast__PrefixExpr).right)) {
-			return true;
-		}
-	}
-	else {
-	};
-	return false;
 }
 
 void v__ast__IndexExpr_recursive_mapset_is_setter(v__ast__IndexExpr* lx, bool val) {
