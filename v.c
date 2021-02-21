@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "07df2d3"
+#define V_COMMIT_HASH "ac47910"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "772baa7"
+	#define V_COMMIT_HASH "07df2d3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "07df2d3"
+	#define V_CURRENT_COMMIT_HASH "ac47910"
 #endif
 
 // V comptime_defines:
@@ -5285,6 +5285,7 @@ time__Time time__win_now();
 time__Time time__win_utc();
 struct timespec time__Duration_timespec(time__Duration d);
 struct timespec time__zero_timespec();
+void time__wait(time__Duration duration);
 time__Time time__unix(int abs);
 time__Time time__unix2(int abs, int microsecond);
 VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
@@ -5594,12 +5595,6 @@ string _const_vweb__tmpl__str_start; // a string literal, inited later
 string _const_vweb__tmpl__str_end; // a string literal, inited later
 string vweb__tmpl__compile_file(string path, string fn_name);
 string vweb__tmpl__compile_template(string html_, string fn_name);
-int runtime__nr_jobs();
-bool runtime__is_32bit();
-bool runtime__is_64bit();
-bool runtime__is_little_endian();
-bool runtime__is_big_endian();
-int runtime__nr_cpus();
 u64 _const_rand__wyrand__wyp0; // inited later
 u64 _const_rand__wyrand__wyp1; // inited later
 void rand__wyrand__WyRandRNG_seed(rand__wyrand__WyRandRNG* rng, Array_u32 seed_data);
@@ -18630,41 +18625,19 @@ i64 time__ticks() {
 	return 0;
 }
 
+// Attr: [deprecated]
 void time__sleep(int seconds) {
-	#if defined(_WIN32)
-	{
-		Sleep(seconds * 1000);
-	}
-	#else
-	{
-		sleep(seconds);
-	}
-	#endif
+	time__wait(seconds * _const_time__second);
 }
 
+// Attr: [deprecated]
 void time__sleep_ms(int milliseconds) {
-	#if defined(_WIN32)
-	{
-		Sleep(milliseconds);
-	}
-	#else
-	{
-		usleep(milliseconds * 1000);
-	}
-	#endif
+	time__wait(milliseconds * _const_time__millisecond);
 }
 
+// Attr: [deprecated]
 void time__usleep(int microseconds) {
-	#if defined(_WIN32)
-	{
-		int milliseconds = microseconds / 1000;
-		Sleep(milliseconds);
-	}
-	#else
-	{
-		usleep(microseconds);
-	}
-	#endif
+	time__wait(microseconds * _const_time__microsecond);
 }
 
 bool time__is_leap_year(int year) {
@@ -18831,6 +18804,11 @@ struct timespec time__Duration_timespec(time__Duration d) {
 struct timespec time__zero_timespec() {
 	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
 	return ts;
+}
+
+void time__wait(time__Duration duration) {
+	struct timespec* ts = (struct timespec*)memdup(&(struct timespec){.tv_sec = duration / _const_time__second,.tv_nsec = duration % _const_time__second,}, sizeof(struct timespec));
+	nanosleep(ts, NULL);
 }
 
 time__Time time__unix(int abs) {
@@ -22538,70 +22516,6 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 	return strings__Builder_str(&s);
 }
 
-int runtime__nr_jobs() {
-	int cpus = runtime__nr_cpus();
-	int vjobs = string_int(os__getenv(_SLIT("VJOBS")));
-	if (vjobs > 0) {
-		cpus = vjobs;
-	}
-	return cpus;
-}
-
-bool runtime__is_32bit() {
-	#if defined(TARGET_IS_32BIT)
-	{
-		return true;
-	}
-	#endif
-	return false;
-}
-
-bool runtime__is_64bit() {
-	#if defined(TARGET_IS_64BIT)
-	{
-		return true;
-	}
-	#endif
-	return false;
-}
-
-bool runtime__is_little_endian() {
-	#if defined(TARGET_ORDER_IS_LITTLE)
-	{
-		return true;
-	}
-	#endif
-	return false;
-}
-
-bool runtime__is_big_endian() {
-	#if defined(TARGET_ORDER_IS_BIG)
-	{
-		return true;
-	}
-	#endif
-	return false;
-}
-
-int runtime__nr_cpus() {
-	#if defined(__linux__)
-	{
-		return ((int)(sysconf(_SC_NPROCESSORS_ONLN)));
-	}
-	#endif
-	#if defined(__APPLE__)
-	{
-		return ((int)(sysconf(_SC_NPROCESSORS_ONLN)));
-	}
-	#endif
-	#if defined(__sun)
-	{
-		return ((int)(sysconf(_SC_NPROCESSORS_ONLN)));
-	}
-	#endif
-	return 1;
-}
-
 void rand__wyrand__WyRandRNG_seed(rand__wyrand__WyRandRNG* rng, Array_u32 seed_data) {
 	if (seed_data.len != 2) {
 		eprintln(_SLIT("WyRandRNG needs 2 32-bit unsigned integers as the seed."));
@@ -23086,7 +23000,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("772baa7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("07df2d3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -25148,7 +25062,7 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string tool_name = mr_16254.arg0;
 	string tool_exe = mr_16254.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
-		time__sleep_ms(1001);
+		time__wait(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
 	}
 }
@@ -39435,10 +39349,6 @@ Array_v__ast__File v__parser__parse_files(Array_string paths, v__table__Table* t
 	{
 	}
 	#endif
-	if (false) {
-		time__sleep_ms(1);
-		println(int_str(runtime__nr_cpus()));
-	}
 	Array_v__ast__File files = __new_array_with_default(0, 0, sizeof(v__ast__File), 0);
 	// FOR IN array
 	Array_string _t1731 = paths;
@@ -39787,7 +39697,7 @@ v__ast__Stmt v__parser__Parser_stmt(v__parser__Parser* p, bool is_top_level) {
 					if (!(false)) {
 						VAssertMetaInfo v_assert_meta_info__t1739 = {0};
 						v_assert_meta_info__t1739.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/parser/parser.v");
-						v_assert_meta_info__t1739.line_nr = 681;
+						v_assert_meta_info__t1739.line_nr = 674;
 						v_assert_meta_info__t1739.fn_name = _SLIT("stmt");
 						v_assert_meta_info__t1739.src = _SLIT("false");
 						__print_assert_failure(&v_assert_meta_info__t1739);
@@ -40070,9 +39980,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string msg, int line, v__
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
 	v__token__Position pos = v__token__Token_position(&tok);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_24883 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_24883.arg0;
-	Array_v__ast__Comment left_comments = mr_24883.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_24713 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_24713.arg0;
+	Array_v__ast__Comment left_comments = mr_24713.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)/*ee elem_typ */array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, _SLIT("expecting `:=` (e.g. `mut x :=`)"));
@@ -40950,9 +40860,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_50670 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_50670.arg0;
-	Array_v__ast__Comment comments2 = mr_50670.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_50500 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_50500.arg0;
+	Array_v__ast__Comment comments2 = mr_50500.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1768, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
@@ -58940,7 +58850,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__pkgconfig__default_paths = new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig")}));
 	// Initializations for module vweb.tmpl :
 	// Initializations for module v.vet :
-	// Initializations for module runtime :
 	// Initializations for module rand.wyrand :
 	_const_rand__wyrand__wyp0 = ((u64)(0xa0761d6478bd642fU));
 	_const_rand__wyrand__wyp1 = ((u64)(0xe7037ed1a0b428dbU));
