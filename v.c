@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7a35131"
+#define V_COMMIT_HASH "f18adf7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0ccd9f9"
+	#define V_COMMIT_HASH "7a35131"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7a35131"
+	#define V_CURRENT_COMMIT_HASH "f18adf7"
 #endif
 
 // V comptime_defines:
@@ -2688,6 +2688,7 @@ struct v__ast__ArrayInit {
 	v__token__Position elem_type_pos;
 	Array_v__ast__Expr exprs;
 	Array_Array_v__ast__Comment ecmnts;
+	Array_v__ast__Comment pre_cmnts;
 	bool is_fixed;
 	bool has_val;
 	string mod;
@@ -23000,7 +23001,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0ccd9f9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7a35131"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28865,6 +28866,7 @@ v__ast__Expr v__ast__resolve_init(v__ast__StructInit node, v__table__Type typ, v
 			.elem_type_pos = {0},
 			.exprs = exprs,
 			.ecmnts = __new_array(0, 1, sizeof(Array_v__ast__Comment)),
+			.pre_cmnts = __new_array(0, 1, sizeof(v__ast__Comment)),
 			.is_fixed = 0,
 			.has_val = 0,
 			.mod = (string){.str=(byteptr)""},
@@ -36857,6 +36859,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 	v__token__Position elem_type_pos = first_pos;
 	Array_v__ast__Expr exprs = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
 	Array_Array_v__ast__Comment ecmnts = __new_array_with_default(0, 0, sizeof(Array_v__ast__Comment), 0);
+	Array_v__ast__Comment pre_cmnts = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	bool is_fixed = false;
 	bool has_val = false;
 	bool has_type = false;
@@ -36879,6 +36882,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		}
 		last_pos = v__token__Token_position(&p->tok);
 	} else {
+		pre_cmnts = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,});
 		for (int i = 0; !(p->tok.kind == v__token__Kind_rsbr || p->tok.kind == v__token__Kind_eof); i++) {
 			array_push(&exprs, _MOV((v__ast__Expr[]){ v__parser__Parser_expr(p, 0) }));
 			array_push(&ecmnts, _MOV((Array_v__ast__Comment[]){ v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,}) }));
@@ -36907,7 +36911,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 					string n = v__parser__Parser_check_name(p);
 					if (string_ne(n, _SLIT("init"))) {
 						v__parser__Parser_error_with_pos(p, _STR("expected `init:`, not `%.*s\000`", 2, n), pos);
-						return (v__ast__ArrayInit){.pos = {0},.elem_type_pos = {0},.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 1, sizeof(Array_v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)""},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.expr_types = __new_array(0, 1, sizeof(v__table__Type)),.elem_type = 0,.typ = 0,};
+						return (v__ast__ArrayInit){.pos = {0},.elem_type_pos = {0},.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 1, sizeof(Array_v__ast__Comment)),.pre_cmnts = __new_array(0, 1, sizeof(v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)""},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.expr_types = __new_array(0, 1, sizeof(v__table__Type)),.elem_type = 0,.typ = 0,};
 					}
 					v__parser__Parser_check(p, v__token__Kind_colon);
 					has_default = true;
@@ -36970,7 +36974,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 			}
 			else {
 				v__parser__Parser_error(p, _STR("wrong field `%.*s\000`, expecting `len`, `cap`, or `init`", 2, key));
-				return (v__ast__ArrayInit){.pos = {0},.elem_type_pos = {0},.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 1, sizeof(Array_v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)""},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.expr_types = __new_array(0, 1, sizeof(v__table__Type)),.elem_type = 0,.typ = 0,};
+				return (v__ast__ArrayInit){.pos = {0},.elem_type_pos = {0},.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 1, sizeof(Array_v__ast__Comment)),.pre_cmnts = __new_array(0, 1, sizeof(v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)""},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.expr_types = __new_array(0, 1, sizeof(v__table__Type)),.elem_type = 0,.typ = 0,};
 			};
 			if (p->tok.kind != v__token__Kind_rcbr) {
 				v__parser__Parser_check(p, v__token__Kind_comma);
@@ -36984,6 +36988,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		.elem_type_pos = elem_type_pos,
 		.exprs = exprs,
 		.ecmnts = ecmnts,
+		.pre_cmnts = pre_cmnts,
 		.is_fixed = is_fixed,
 		.has_val = has_val,
 		.mod = p->mod,
