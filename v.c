@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fb028ab"
+#define V_COMMIT_HASH "7f6c4ca"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fba28d2"
+	#define V_COMMIT_HASH "fb028ab"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fb028ab"
+	#define V_CURRENT_COMMIT_HASH "7f6c4ca"
 #endif
 
 // V comptime_defines:
@@ -6039,7 +6039,7 @@ string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(Array_v__ast__CallArg args);
 string v__ast__BranchStmt_str(v__ast__BranchStmt* node);
 string v__ast__Stmt_str(v__ast__Stmt node);
-VV_LOCAL_SYMBOL string anon_fn_struct__string_9029(v__ast__ConstField f);
+VV_LOCAL_SYMBOL string anon_fn_struct__string_9033(v__ast__ConstField f);
 string v__ast__CompForKind_str(v__ast__CompForKind e);
 Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, v__table__Type got, v__table__Type expected_);
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got, v__table__Type expected);
@@ -7838,7 +7838,7 @@ static bool Array_v__ast__EmbeddedFile_contains(Array_v__ast__EmbeddedFile a, v_
 	return false;
 }
 
-VV_LOCAL_SYMBOL string anon_fn_struct__string_9029(v__ast__ConstField f) {
+VV_LOCAL_SYMBOL string anon_fn_struct__string_9033(v__ast__ConstField f) {
 			return _STR("%.*s\000 = %.*s", 2, string_trim_prefix(f.name, string_add(f.mod, _SLIT("."))), v__ast__Expr_str(f.expr));
 		}
 		
@@ -23026,7 +23026,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fba28d2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fb028ab"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -29397,7 +29397,7 @@ string v__ast__Expr_str(v__ast__Expr x) {
 			return _STR("/* %"PRId32"\000 lines comment */", 2, lines.len);
 		} else {
 			string text = string_trim_space(string_trim((*x._v__ast__Comment).text, _SLIT("\x01")));
-			return _STR("// %.*s", 1, text);
+			return _STR("´// %.*s\000´", 2, text);
 		}
 	}
 	else if (x.typ == 205 /* v.ast.ComptimeSelector */) {
@@ -29469,9 +29469,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ string_clone(_SLIT("$")) }));
-			multi_return_string_bool mr_7530 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
-			string fspec_str = mr_7530.arg0;
-			bool needs_braces = mr_7530.arg1;
+			multi_return_string_bool mr_7534 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
+			string fspec_str = mr_7534.arg0;
+			bool needs_braces = mr_7534.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ string_clone(_SLIT("{")) }));
 				array_push(&res, _MOV((string[]){ string_clone(v__ast__Expr_str((*(v__ast__Expr*)/*ee elem_typ */array_get((*x._v__ast__StringInterLiteral).exprs, i)))) }));
@@ -29574,7 +29574,7 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 
 		for (int _t1240 = 0; _t1240 < _t1239_len; ++_t1240) {
 			v__ast__ConstField it = ((v__ast__ConstField*) _t1239_orig.data)[_t1240];
-			string ti = 		anon_fn_struct__string_9029(it);
+			string ti = 		anon_fn_struct__string_9033(it);
 			array_push(&_t1239, &ti);
 		}
 		
