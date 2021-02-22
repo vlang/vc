@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d78c947"
+#define V_COMMIT_HASH "79edff5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "68972fc"
+	#define V_COMMIT_HASH "d78c947"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d78c947"
+	#define V_CURRENT_COMMIT_HASH "79edff5"
 #endif
 
 // V comptime_defines:
@@ -23070,7 +23070,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("68972fc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d78c947"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51409,6 +51409,13 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		if (!v__table__Type_has_flag(node.left_type, v__table__TypeFlag_shared_f)) {
 			v__gen__c__Gen_write(g, _SLIT("/*rec*/*"));
 		}
+	} else if (!is_range_slice && node.from_embed_type == 0 && string_ne(node.name, _SLIT("str"))) {
+		int diff = v__table__Type_nr_muls(node.left_type) - v__table__Type_nr_muls(node.receiver_type);
+		if (diff < 0) {
+		} else if (diff > 0) {
+			v__gen__c__Gen_write(g, _STR("/*diff=%"PRId32"\000*/", 2, diff));
+			v__gen__c__Gen_write(g, Array_byte_bytestr(__new_array_with_default(diff, 0, sizeof(byte), &(byte[]){L'*'})));
+		}
 	}
 	if (g->is_autofree && node.free_receiver && !g->inside_lambda && !g->is_builtin_mod) {
 		string fn_name = string_replace(node.name, _SLIT("."), _SLIT("_"));
@@ -51562,11 +51569,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_25602 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_25602.arg0;
-			string pafile = mr_25602.arg1;
-			string pamod = mr_25602.arg2;
-			string pafn = mr_25602.arg3;
+			multi_return_int_string_string_string mr_26037 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_26037.arg0;
+			string pafile = mr_26037.arg1;
+			string pamod = mr_26037.arg2;
+			string pafn = mr_26037.arg3;
 			v__gen__c__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
