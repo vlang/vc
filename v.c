@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "59446d7"
+#define V_COMMIT_HASH "15daeae"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f54c1a5"
+	#define V_COMMIT_HASH "59446d7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "59446d7"
+	#define V_CURRENT_COMMIT_HASH "15daeae"
 #endif
 
 // V comptime_defines:
@@ -4697,6 +4697,7 @@ void v_free(voidptr ptr);
 voidptr memdup(voidptr src, int sz);
 VV_LOCAL_SYMBOL void v_ptr_free(voidptr ptr);
 int is_atty(int fd);
+VV_LOCAL_SYMBOL int v_fixed_index(int i, int len);
 byteptr g_m2_buf; // global
 byteptr g_m2_ptr; // global
 bool isnil(voidptr v);
@@ -9937,7 +9938,7 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 			sgn = 1;
 			i++;
 		} else if (c >= L'0' && c <= L'9') {
-			b[i1++] = c;
+			b[v_fixed_index(i1++, 26)] = c;
 			i++;
 		} else if (c == L'.') {
 			if (sgn > 0) {
@@ -9953,7 +9954,7 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 			return _SLIT("[Float conversion error!!]");
 		}
 	}
-	b[i1] = 0;
+	b[v_fixed_index(i1, 26)] = 0;
 	if (string_at(s, i) == L'-') {
 		exp_sgn = -1;
 		i++;
@@ -9977,8 +9978,8 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 	i = 0;
 	if (exp_sgn >= 0) {
 		for (;;) {
-			if (!(b[i] != 0)) break;
-			array_set(&res, r_i++, &(byte[]) { b[i] });
+			if (!(b[v_fixed_index(i, 26)] != 0)) break;
+			array_set(&res, r_i++, &(byte[]) { b[v_fixed_index(i, 26)] });
 			i++;
 			if (i >= d_pos && exp >= 0) {
 				if (exp == 0) {
@@ -10006,8 +10007,8 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 			}
 		}
 		for (;;) {
-			if (!(b[i] != 0)) break;
-			array_set(&res, r_i++, &(byte[]) { b[i] });
+			if (!(b[v_fixed_index(i, 26)] != 0)) break;
+			array_set(&res, r_i++, &(byte[]) { b[v_fixed_index(i, 26)] });
 			i++;
 		}
 	}
@@ -10886,7 +10887,7 @@ string strconv__f64_to_str_l(f64 f) {
 			sgn = 1;
 			i++;
 		} else if (c >= L'0' && c <= L'9') {
-			b[i1++] = c;
+			b[v_fixed_index(i1++, 26)] = c;
 			i++;
 		} else if (c == L'.') {
 			if (sgn > 0) {
@@ -10902,7 +10903,7 @@ string strconv__f64_to_str_l(f64 f) {
 			return _SLIT("Float conversion error!!");
 		}
 	}
-	b[i1] = 0;
+	b[v_fixed_index(i1, 26)] = 0;
 	if (string_at(s, i) == L'-') {
 		exp_sgn = -1;
 		i++;
@@ -10926,8 +10927,8 @@ string strconv__f64_to_str_l(f64 f) {
 	i = 0;
 	if (exp_sgn >= 0) {
 		for (;;) {
-			if (!(b[i] != 0)) break;
-			array_set(&res, r_i++, &(byte[]) { b[i] });
+			if (!(b[v_fixed_index(i, 26)] != 0)) break;
+			array_set(&res, r_i++, &(byte[]) { b[v_fixed_index(i, 26)] });
 			i++;
 			if (i >= d_pos && exp >= 0) {
 				if (exp == 0) {
@@ -10953,8 +10954,8 @@ string strconv__f64_to_str_l(f64 f) {
 			}
 		}
 		for (;;) {
-			if (!(b[i] != 0)) break;
-			array_set(&res, r_i++, &(byte[]) { b[i] });
+			if (!(b[v_fixed_index(i, 26)] != 0)) break;
+			array_set(&res, r_i++, &(byte[]) { b[v_fixed_index(i, 26)] });
 			i++;
 		}
 	}
@@ -11823,6 +11824,19 @@ int is_atty(int fd) {
 	return 0;
 }
 
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL int v_fixed_index(int i, int len) {
+	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
+	{
+		if (i < 0 || i >= len) {
+			string s = _STR("fixed array index out of range (index: %"PRId32"\000, len: %"PRId32"\000)", 3, i, len);
+			v_panic(s);
+		}
+	}
+	#endif
+	return i;
+}
+
 bool isnil(voidptr v) {
 	return v == 0;
 }
@@ -11906,7 +11920,7 @@ VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames_mac(int skipframes) {
 			eprintln(_SLIT("C.backtrace returned less than 2 frames"));
 			return false;
 		}
-		backtrace_symbols_fd(&buffer[skipframes], nr_ptrs - skipframes, 2);
+		backtrace_symbols_fd(&buffer[v_fixed_index(skipframes, 100)], nr_ptrs - skipframes, 2);
 	}
 	#endif
 	return true;
@@ -11921,7 +11935,7 @@ VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames_freebsd(int skipframes)
 			eprintln(_SLIT("C.backtrace returned less than 2 frames"));
 			return false;
 		}
-		backtrace_symbols_fd(&buffer[skipframes], nr_ptrs - skipframes, 2);
+		backtrace_symbols_fd(&buffer[v_fixed_index(skipframes, 100)], nr_ptrs - skipframes, 2);
 	}
 	#endif
 	return true;
@@ -11961,7 +11975,7 @@ VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames_linux(int skipframes) {
 		}
 		int nr_actual_frames = nr_ptrs - skipframes;
 		Array_string sframes = __new_array_with_default(0, 0, sizeof(string), 0);
-		charptr* csymbols = backtrace_symbols(((voidptr)(&buffer[skipframes])), nr_actual_frames);
+		charptr* csymbols = backtrace_symbols(((voidptr)(&buffer[v_fixed_index(skipframes, 100)])), nr_actual_frames);
 		for (int i = 0; i < nr_actual_frames; ++i) {
 			array_push(&sframes, _MOV((string[]){ tos2(((byteptr)(csymbols[i]))) }));
 		}
@@ -12336,12 +12350,12 @@ string bool_str(bool b) {
 inline VV_LOCAL_SYMBOL string u64_to_hex(u64 nn, byte len) {
 	u64 n = nn;
 	Array_fixed_byte_256 buf = {0};
-	buf[len] = L'\0';
+	buf[v_fixed_index(len, 256)] = L'\0';
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xF)));
 		rune x = (d < 10 ? (d + L'0') : (d + 87));
-		buf[i] = x;
+		buf[v_fixed_index(i, 256)] = x;
 		n = n >> 4;
 	}
 	return (string){.str = memdup((voidptr)&/*qq*/buf, len + 1), .len = len};
@@ -12351,19 +12365,19 @@ inline VV_LOCAL_SYMBOL string u64_to_hex(u64 nn, byte len) {
 inline VV_LOCAL_SYMBOL string u64_to_hex_no_leading_zeros(u64 nn, byte len) {
 	u64 n = nn;
 	Array_fixed_byte_256 buf = {0};
-	buf[len] = L'\0';
+	buf[v_fixed_index(len, 256)] = L'\0';
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xF)));
 		rune x = (d < 10 ? (d + L'0') : (d + 87));
-		buf[i] = x;
+		buf[v_fixed_index(i, 256)] = x;
 		n = n >> 4;
 		if (n == 0) {
 			break;
 		}
 	}
 	int res_len = len - i;
-	return (string){.str = memdup(&buf[i], res_len + 1), .len = res_len};
+	return (string){.str = memdup(&buf[v_fixed_index(i, 256)], res_len + 1), .len = res_len};
 }
 
 string byte_hex(byte nn) {
@@ -13206,11 +13220,11 @@ VV_LOCAL_SYMBOL void SortedMap_set(SortedMap* m, string key, voidptr value) {
 				m->root = parent;
 			}
 			mapnode_split_child(parent, child_index, node);
-			if (string_eq(key, parent->keys[child_index])) {
-				memcpy(parent->values[child_index], value, m->value_bytes);
+			if (string_eq(key, parent->keys[v_fixed_index(child_index, 11)])) {
+				memcpy(parent->values[v_fixed_index(child_index, 11)], value, m->value_bytes);
 				return;
 			}
-			if (string_lt(key, parent->keys[child_index])) {
+			if (string_lt(key, parent->keys[v_fixed_index(child_index, 11)])) {
 				node = ((mapnode*)(parent->children[child_index]));
 			} else {
 				node = ((mapnode*)(parent->children[child_index + 1]));
@@ -13218,25 +13232,25 @@ VV_LOCAL_SYMBOL void SortedMap_set(SortedMap* m, string key, voidptr value) {
 		}
 		int i = 0;
 		for (;;) {
-			if (!(i < node->len && string_gt(key, node->keys[i]))) break;
+			if (!(i < node->len && string_gt(key, node->keys[v_fixed_index(i, 11)]))) break;
 			i++;
 		}
-		if (i != node->len && string_eq(key, node->keys[i])) {
-			memcpy(node->values[i], value, m->value_bytes);
+		if (i != node->len && string_eq(key, node->keys[v_fixed_index(i, 11)])) {
+			memcpy(node->values[v_fixed_index(i, 11)], value, m->value_bytes);
 			return;
 		}
 		if (isnil(node->children)) {
 			int j = node->len - 1;
 			for (;;) {
-				if (!(j >= 0 && string_lt(key, node->keys[j]))) break;
-				node->keys[j + 1] = node->keys[j];
-				node->values[j + 1] = node->values[j];
+				if (!(j >= 0 && string_lt(key, node->keys[v_fixed_index(j, 11)]))) break;
+				node->keys[v_fixed_index(j + 1, 11)] = node->keys[v_fixed_index(j, 11)];
+				node->values[v_fixed_index(j + 1, 11)] = node->values[v_fixed_index(j, 11)];
 				j--;
 			}
-			node->keys[j + 1] = key;
+			node->keys[v_fixed_index(j + 1, 11)] = key;
 			{ // Unsafe block
-				node->values[j + 1] = v_malloc(m->value_bytes);
-				memcpy(node->values[j + 1], value, m->value_bytes);
+				node->values[v_fixed_index(j + 1, 11)] = v_malloc(m->value_bytes);
+				memcpy(node->values[v_fixed_index(j + 1, 11)], value, m->value_bytes);
 			}
 			node->len++;
 			m->len++;
@@ -13253,8 +13267,8 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 	z->len = _const_mid_index;
 	y->len = _const_mid_index;
 	for (int j = _const_mid_index - 1; j >= 0; j--) {
-		z->keys[j] = y->keys[j + _const_degree];
-		z->values[j] = y->values[j + _const_degree];
+		z->keys[v_fixed_index(j, 11)] = y->keys[v_fixed_index(j + _const_degree, 11)];
+		z->values[v_fixed_index(j, 11)] = y->values[v_fixed_index(j + _const_degree, 11)];
 	}
 	if (!isnil(y->children)) {
 		z->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
@@ -13271,14 +13285,14 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 		n->children[n->len + 1] = n->children[n->len];
 	}
 	for (int j = n->len; j > child_index; j--) {
-		n->keys[j] = n->keys[j - 1];
-		n->values[j] = n->values[j - 1];
+		n->keys[v_fixed_index(j, 11)] = n->keys[v_fixed_index(j - 1, 11)];
+		n->values[v_fixed_index(j, 11)] = n->values[v_fixed_index(j - 1, 11)];
 		{ // Unsafe block
 			n->children[j] = n->children[j - 1];
 		}
 	}
-	n->keys[child_index] = y->keys[_const_mid_index];
-	n->values[child_index] = y->values[_const_mid_index];
+	n->keys[v_fixed_index(child_index, 11)] = y->keys[v_fixed_index(_const_mid_index, 11)];
+	n->values[v_fixed_index(child_index, 11)] = y->values[v_fixed_index(_const_mid_index, 11)];
 	{ // Unsafe block
 		n->children[child_index] = ((voidptr)(y));
 		n->children[child_index + 1] = ((voidptr)(z));
@@ -13291,11 +13305,11 @@ VV_LOCAL_SYMBOL bool SortedMap_get(SortedMap m, string key, voidptr out) {
 	for (;;) {
 		int i = node->len - 1;
 		for (;;) {
-			if (!(i >= 0 && string_lt(key, node->keys[i]))) break;
+			if (!(i >= 0 && string_lt(key, node->keys[v_fixed_index(i, 11)]))) break;
 			i--;
 		}
-		if (i != -1 && string_eq(key, node->keys[i])) {
-			memcpy(out, node->values[i], m.value_bytes);
+		if (i != -1 && string_eq(key, node->keys[v_fixed_index(i, 11)])) {
+			memcpy(out, node->values[v_fixed_index(i, 11)], m.value_bytes);
 			return true;
 		}
 		if (isnil(node->children)) {
@@ -13314,10 +13328,10 @@ VV_LOCAL_SYMBOL bool SortedMap_exists(SortedMap m, string key) {
 	for (;;) {
 		int i = node->len - 1;
 		for (;;) {
-			if (!(i >= 0 && string_lt(key, node->keys[i]))) break;
+			if (!(i >= 0 && string_lt(key, node->keys[v_fixed_index(i, 11)]))) break;
 			i--;
 		}
-		if (i != -1 && string_eq(key, node->keys[i])) {
+		if (i != -1 && string_eq(key, node->keys[v_fixed_index(i, 11)])) {
 			return true;
 		}
 		if (isnil(node->children)) {
@@ -13331,7 +13345,7 @@ VV_LOCAL_SYMBOL bool SortedMap_exists(SortedMap m, string key) {
 VV_LOCAL_SYMBOL int mapnode_find_key(mapnode* n, string k) {
 	int idx = 0;
 	for (;;) {
-		if (!(idx < n->len && string_lt(n->keys[idx], k))) break;
+		if (!(idx < n->len && string_lt(n->keys[v_fixed_index(idx, 11)], k))) break;
 		idx++;
 	}
 	return idx;
@@ -13339,7 +13353,7 @@ VV_LOCAL_SYMBOL int mapnode_find_key(mapnode* n, string k) {
 
 VV_LOCAL_SYMBOL bool mapnode_remove_key(mapnode* n, string k) {
 	int idx = mapnode_find_key(n, k);
-	if (idx < n->len && string_eq(n->keys[idx], k)) {
+	if (idx < n->len && string_eq(n->keys[v_fixed_index(idx, 11)], k)) {
 		if (isnil(n->children)) {
 			mapnode_remove_from_leaf(n, idx);
 		} else {
@@ -13367,23 +13381,23 @@ VV_LOCAL_SYMBOL bool mapnode_remove_key(mapnode* n, string k) {
 
 VV_LOCAL_SYMBOL void mapnode_remove_from_leaf(mapnode* n, int idx) {
 	for (int i = idx + 1; i < n->len; i++) {
-		n->keys[i - 1] = n->keys[i];
-		n->values[i - 1] = n->values[i];
+		n->keys[v_fixed_index(i - 1, 11)] = n->keys[v_fixed_index(i, 11)];
+		n->values[v_fixed_index(i - 1, 11)] = n->values[v_fixed_index(i, 11)];
 	}
 	n->len--;
 }
 
 VV_LOCAL_SYMBOL void mapnode_remove_from_non_leaf(mapnode* n, int idx) {
-	string k = n->keys[idx];
+	string k = n->keys[v_fixed_index(idx, 11)];
 	if (((mapnode*)(n->children[idx]))->len >= _const_degree) {
 		mapnode* current = ((mapnode*)(n->children[idx]));
 		for (;;) {
 			if (!(!isnil(current->children))) break;
 			current = ((mapnode*)(current->children[current->len]));
 		}
-		string predecessor = current->keys[current->len - 1];
-		n->keys[idx] = predecessor;
-		n->values[idx] = current->values[current->len - 1];
+		string predecessor = current->keys[v_fixed_index(current->len - 1, 11)];
+		n->keys[v_fixed_index(idx, 11)] = predecessor;
+		n->values[v_fixed_index(idx, 11)] = current->values[v_fixed_index(current->len - 1, 11)];
 		mapnode* node = ((mapnode*)(n->children[idx]));
 		mapnode_remove_key(node, predecessor);
 	} else if (((mapnode*)(n->children[idx + 1]))->len >= _const_degree) {
@@ -13393,8 +13407,8 @@ VV_LOCAL_SYMBOL void mapnode_remove_from_non_leaf(mapnode* n, int idx) {
 			current = ((mapnode*)(current->children[0]));
 		}
 		string successor = current->keys[0];
-		n->keys[idx] = successor;
-		n->values[idx] = current->values[0];
+		n->keys[v_fixed_index(idx, 11)] = successor;
+		n->values[v_fixed_index(idx, 11)] = current->values[0];
 		mapnode* node = ((mapnode*)(n->children[idx + 1]));
 		mapnode_remove_key(node, successor);
 	} else {
@@ -13420,8 +13434,8 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_prev(mapnode* n, int idx) {
 	mapnode* child = ((mapnode*)(n->children[idx]));
 	mapnode* sibling = ((mapnode*)(n->children[idx - 1]));
 	for (int i = child->len - 1; i >= 0; i--) {
-		child->keys[i + 1] = child->keys[i];
-		child->values[i + 1] = child->values[i];
+		child->keys[v_fixed_index(i + 1, 11)] = child->keys[v_fixed_index(i, 11)];
+		child->values[v_fixed_index(i + 1, 11)] = child->values[v_fixed_index(i, 11)];
 	}
 	if (!isnil(child->children)) {
 		for (int i = child->len; i >= 0; i--) {
@@ -13430,15 +13444,15 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_prev(mapnode* n, int idx) {
 			}
 		}
 	}
-	child->keys[0] = n->keys[idx - 1];
-	child->values[0] = n->values[idx - 1];
+	child->keys[0] = n->keys[v_fixed_index(idx - 1, 11)];
+	child->values[0] = n->values[v_fixed_index(idx - 1, 11)];
 	if (!isnil(child->children)) {
 		{ // Unsafe block
 			child->children[0] = sibling->children[sibling->len];
 		}
 	}
-	n->keys[idx - 1] = sibling->keys[sibling->len - 1];
-	n->values[idx - 1] = sibling->values[sibling->len - 1];
+	n->keys[v_fixed_index(idx - 1, 11)] = sibling->keys[v_fixed_index(sibling->len - 1, 11)];
+	n->values[v_fixed_index(idx - 1, 11)] = sibling->values[v_fixed_index(sibling->len - 1, 11)];
 	child->len++;
 	sibling->len--;
 }
@@ -13446,18 +13460,18 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_prev(mapnode* n, int idx) {
 VV_LOCAL_SYMBOL void mapnode_borrow_from_next(mapnode* n, int idx) {
 	mapnode* child = ((mapnode*)(n->children[idx]));
 	mapnode* sibling = ((mapnode*)(n->children[idx + 1]));
-	child->keys[child->len] = n->keys[idx];
-	child->values[child->len] = n->values[idx];
+	child->keys[v_fixed_index(child->len, 11)] = n->keys[v_fixed_index(idx, 11)];
+	child->values[v_fixed_index(child->len, 11)] = n->values[v_fixed_index(idx, 11)];
 	if (!isnil(child->children)) {
 		{ // Unsafe block
 			child->children[child->len + 1] = sibling->children[0];
 		}
 	}
-	n->keys[idx] = sibling->keys[0];
-	n->values[idx] = sibling->values[0];
+	n->keys[v_fixed_index(idx, 11)] = sibling->keys[0];
+	n->values[v_fixed_index(idx, 11)] = sibling->values[0];
 	for (int i = 1; i < sibling->len; i++) {
-		sibling->keys[i - 1] = sibling->keys[i];
-		sibling->values[i - 1] = sibling->values[i];
+		sibling->keys[v_fixed_index(i - 1, 11)] = sibling->keys[v_fixed_index(i, 11)];
+		sibling->values[v_fixed_index(i - 1, 11)] = sibling->values[v_fixed_index(i, 11)];
 	}
 	if (!isnil(sibling->children)) {
 		for (int i = 1; i <= sibling->len; i++) {
@@ -13473,11 +13487,11 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_next(mapnode* n, int idx) {
 VV_LOCAL_SYMBOL void mapnode_merge(mapnode* n, int idx) {
 	mapnode* child = ((mapnode*)(n->children[idx]));
 	mapnode* sibling = ((mapnode*)(n->children[idx + 1]));
-	child->keys[_const_mid_index] = n->keys[idx];
-	child->values[_const_mid_index] = n->values[idx];
+	child->keys[v_fixed_index(_const_mid_index, 11)] = n->keys[v_fixed_index(idx, 11)];
+	child->values[v_fixed_index(_const_mid_index, 11)] = n->values[v_fixed_index(idx, 11)];
 	for (int i = 0; i < sibling->len; ++i) {
-		child->keys[i + _const_degree] = sibling->keys[i];
-		child->values[i + _const_degree] = sibling->values[i];
+		child->keys[v_fixed_index(i + _const_degree, 11)] = sibling->keys[v_fixed_index(i, 11)];
+		child->values[v_fixed_index(i + _const_degree, 11)] = sibling->values[v_fixed_index(i, 11)];
 	}
 	if (!isnil(child->children)) {
 		for (int i = 0; i <= sibling->len; i++) {
@@ -13487,8 +13501,8 @@ VV_LOCAL_SYMBOL void mapnode_merge(mapnode* n, int idx) {
 		}
 	}
 	for (int i = idx + 1; i < n->len; i++) {
-		n->keys[i - 1] = n->keys[i];
-		n->values[i - 1] = n->values[i];
+		n->keys[v_fixed_index(i - 1, 11)] = n->keys[v_fixed_index(i, 11)];
+		n->values[v_fixed_index(i - 1, 11)] = n->values[v_fixed_index(i, 11)];
 	}
 	for (int i = idx + 2; i <= n->len; i++) {
 		{ // Unsafe block
@@ -13522,14 +13536,14 @@ VV_LOCAL_SYMBOL int mapnode_subkeys(mapnode* n, Array_string* keys, int at) {
 		for (int i = 0; i < n->len; ++i) {
 			mapnode* child = ((mapnode*)(n->children[i]));
 			position += mapnode_subkeys(child, keys, position);
-			array_set(keys, position, &(string[]) { n->keys[i] });
+			array_set(keys, position, &(string[]) { n->keys[v_fixed_index(i, 11)] });
 			position++;
 		}
 		mapnode* child = ((mapnode*)(n->children[n->len]));
 		position += mapnode_subkeys(child, keys, position);
 	} else {
 		for (int i = 0; i < n->len; ++i) {
-			array_set(keys, position + i, &(string[]) { n->keys[i] });
+			array_set(keys, position + i, &(string[]) { n->keys[v_fixed_index(i, 11)] });
 		}
 		position += n->len;
 	}
@@ -23009,7 +23023,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f54c1a5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("59446d7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -48037,7 +48051,14 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_index_expr(v__gen__c__Gen* g, v__ast__IndexE
 				v__gen__c__Gen_expr(g, node.left);
 			}
 			v__gen__c__Gen_write(g, _SLIT("["));
-			v__gen__c__Gen_expr(g, node.index);
+			bool direct = g->fn_decl != 0 && g->fn_decl->is_direct_arr;
+			if (direct || (node.index).typ == 215 /* v.ast.IntegerLiteral */) {
+				v__gen__c__Gen_expr(g, node.index);
+			} else {
+				v__gen__c__Gen_write(g, _SLIT("v_fixed_index("));
+				v__gen__c__Gen_expr(g, node.index);
+				v__gen__c__Gen_write(g, _STR(", %"PRId32"\000)", 2, info.size));
+			}
 			v__gen__c__Gen_write(g, _SLIT("]"));
 			if (is_fn_index_call) {
 				v__gen__c__Gen_write(g, _SLIT(")"));
@@ -48898,9 +48919,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__tabl
 				for (int _t2011 = 0; _t2011 < _t2010.len; ++_t2011) {
 					v__table__Field field = ((v__table__Field*)_t2010.data)[_t2011];
 					if (v__table__Type_has_flag(field.typ, v__table__TypeFlag_optional)) {
-						multi_return_string_string mr_155620 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_155620.arg0;
-						string base = mr_155620.arg1;
+						multi_return_string_string mr_155869 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_155869.arg0;
+						string base = mr_155869.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -49131,11 +49152,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || string_eq(g->fn_decl->name, _SLIT("main.main")))) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_163204 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_163204.arg0;
-				string pafile = mr_163204.arg1;
-				string pamod = mr_163204.arg2;
-				string pafn = mr_163204.arg3;
+				multi_return_int_string_string_string mr_163453 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_163453.arg0;
+				string pafile = mr_163453.arg1;
+				string pamod = mr_163453.arg2;
+				string pafn = mr_163453.arg3;
 				v__gen__c__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), %.*s\000.v_error );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__c__Gen_writeln(g, _STR("\tv_panic(_STR(\"optional not set (%%.*s\\000)\", 2, %.*s\000.v_error));", 2, cvar_name));
@@ -49224,11 +49245,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__table__
 	if (sym->kind == v__table__Kind_map) {
 		v__table__Map info = v__table__TypeSymbol_map_info(sym);
 		v__table__TypeSymbol* key_typ = v__table__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_165746 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_165746.arg0;
-		string key_eq_fn = mr_165746.arg1;
-		string clone_fn = mr_165746.arg2;
-		string free_fn = mr_165746.arg3;
+		multi_return_string_string_string_string mr_165995 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_165995.arg0;
+		string key_eq_fn = mr_165995.arg1;
+		string clone_fn = mr_165995.arg2;
+		string free_fn = mr_165995.arg3;
 		return _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__c__Gen_typ(g, info.key_type), v__gen__c__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
 	}
 	if (sym->kind == v__table__Kind_struct_) {
@@ -49726,8 +49747,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__table__Param params = array_clone(&method.params);
 					array_set(&params, 0, &(v__table__Param[]) { (v__table__Param){(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,.typ = v__table__Type_set_nr_muls((*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__table__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,} });
-					multi_return_Array_string_Array_string mr_182713 = v__gen__c__Gen_fn_args(g, params, false);
-					Array_string fargs = mr_182713.arg0;
+					multi_return_Array_string_Array_string mr_182962 = v__gen__c__Gen_fn_args(g, params, false);
+					Array_string fargs = mr_182962.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -52741,8 +52762,8 @@ bool v__markused__mark_used_defer_0 = false;
 	Map_string_v__ast__ConstField all_consts = mr_441.arg1;
 	v__util__timing_start(_SLIT("mark_used"));
 	v__markused__mark_used_defer_0 = true;
-	Array_string all_fn_root_names = new_array_from_c_array(72, 72, sizeof(string), _MOV((string[72]){
-			_SLIT("main.main"), _SLIT("__new_array"), _SLIT("__new_array_with_default"), _SLIT("__new_array_with_array_default"), _SLIT("new_array_from_c_array"), _SLIT("memdup"), _SLIT("vstrlen"), _SLIT("__as_cast"), _SLIT("tos"), _SLIT("tos2"), _SLIT("tos3"), _SLIT("isnil"), _SLIT("opt_ok2"), _SLIT("utf8_str_visible_length"), _SLIT("compare_ints"), _SLIT("compare_u64s"), _SLIT("compare_strings"), _SLIT("compare_ints_reverse"), _SLIT("compare_u64s_reverse"), _SLIT("compare_strings_reverse"), _SLIT("builtin_init"), _SLIT("3.vstring"), _SLIT("3.vstring_with_len"), _SLIT("4.vstring"), _SLIT("4.vstring_with_len"), _SLIT("9.str_escaped"), _SLIT("18.add"), _SLIT("18.trim_space"), _SLIT("18.replace"), _SLIT("18.clone"), _SLIT("18.clone_static"), _SLIT("18.trim"), _SLIT("18.substr"), _SLIT("18.at"), _SLIT("18.index_kmp"), _SLIT("18.eq"), _SLIT("18.ne"), _SLIT("18.lt"), _SLIT("18.gt"), _SLIT("18.le"), _SLIT("18.ge"), _SLIT("19.eq"), _SLIT("19.ne"), _SLIT("19.lt"), _SLIT("19.gt"), _SLIT("19.le"), _SLIT("19.ge"), _SLIT("19.add"), _SLIT("21.get"), _SLIT("21.set"), _SLIT("21.get_unsafe"), _SLIT("21.set_unsafe"), _SLIT("21.clone_static"), _SLIT("21.first"), _SLIT("21.last"), _SLIT("21.reverse"), _SLIT("21.repeat"), _SLIT("21.slice"), _SLIT("21.slice2"), _SLIT("59.get"), _SLIT("59.set"), _SLIT("65557.last"), _SLIT("65557.pop"), _SLIT("65557.push"), _SLIT("65557.insert_many"), _SLIT("65557.prepend_many"), _SLIT("65557.reverse"), _SLIT("65557.set"), _SLIT("65557.set_unsafe"), _SLIT("os.getwd"), _SLIT("os.init_os_args"), _SLIT("os.init_os_args_wide")}));
+	Array_string all_fn_root_names = new_array_from_c_array(73, 73, sizeof(string), _MOV((string[73]){
+			_SLIT("main.main"), _SLIT("__new_array"), _SLIT("__new_array_with_default"), _SLIT("__new_array_with_array_default"), _SLIT("new_array_from_c_array"), _SLIT("v_fixed_index"), _SLIT("memdup"), _SLIT("vstrlen"), _SLIT("__as_cast"), _SLIT("tos"), _SLIT("tos2"), _SLIT("tos3"), _SLIT("isnil"), _SLIT("opt_ok2"), _SLIT("utf8_str_visible_length"), _SLIT("compare_ints"), _SLIT("compare_u64s"), _SLIT("compare_strings"), _SLIT("compare_ints_reverse"), _SLIT("compare_u64s_reverse"), _SLIT("compare_strings_reverse"), _SLIT("builtin_init"), _SLIT("3.vstring"), _SLIT("3.vstring_with_len"), _SLIT("4.vstring"), _SLIT("4.vstring_with_len"), _SLIT("9.str_escaped"), _SLIT("18.add"), _SLIT("18.trim_space"), _SLIT("18.replace"), _SLIT("18.clone"), _SLIT("18.clone_static"), _SLIT("18.trim"), _SLIT("18.substr"), _SLIT("18.at"), _SLIT("18.index_kmp"), _SLIT("18.eq"), _SLIT("18.ne"), _SLIT("18.lt"), _SLIT("18.gt"), _SLIT("18.le"), _SLIT("18.ge"), _SLIT("19.eq"), _SLIT("19.ne"), _SLIT("19.lt"), _SLIT("19.gt"), _SLIT("19.le"), _SLIT("19.ge"), _SLIT("19.add"), _SLIT("21.get"), _SLIT("21.set"), _SLIT("21.get_unsafe"), _SLIT("21.set_unsafe"), _SLIT("21.clone_static"), _SLIT("21.first"), _SLIT("21.last"), _SLIT("21.reverse"), _SLIT("21.repeat"), _SLIT("21.slice"), _SLIT("21.slice2"), _SLIT("59.get"), _SLIT("59.set"), _SLIT("65557.last"), _SLIT("65557.pop"), _SLIT("65557.push"), _SLIT("65557.insert_many"), _SLIT("65557.prepend_many"), _SLIT("65557.reverse"), _SLIT("65557.set"), _SLIT("65557.set_unsafe"), _SLIT("os.getwd"), _SLIT("os.init_os_args"), _SLIT("os.init_os_args_wide")}));
 	string sb_mut_type = _SLIT("");
 	{ /* if guard */ 
 	Option_v__table__Fn _t2215;
