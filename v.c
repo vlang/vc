@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "639061b"
+#define V_COMMIT_HASH "c03798e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c7587c0"
+	#define V_COMMIT_HASH "639061b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "639061b"
+	#define V_CURRENT_COMMIT_HASH "c03798e"
 #endif
 
 // V comptime_defines:
@@ -23103,7 +23103,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c7587c0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("639061b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24685,8 +24685,9 @@ string v__util__vhash(void) {
 	Array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
 	{ // Unsafe block
-		snprintf(((charptr)(&buf[0])), 50, "%s", V_COMMIT_HASH);
-		return tos_clone((voidptr)&/*qq*/buf);
+		byte* bp = &buf[0];
+		snprintf(((charptr)(bp)), 50, "%s", V_COMMIT_HASH);
+		return tos_clone(bp);
 	}
 	return (string){.str=(byteptr)""};
 }
@@ -24750,8 +24751,9 @@ string v__util__githash(bool should_get_from_filesystem) {
 	Array_fixed_byte_50 buf = {0};
 	buf[0] = 0;
 	{ // Unsafe block
-		snprintf(((charptr)(&buf[0])), 50, "%s", V_CURRENT_COMMIT_HASH);
-		return tos_clone((voidptr)&/*qq*/buf);
+		byte* bp = &buf[0];
+		snprintf(((charptr)(bp)), 50, "%s", V_CURRENT_COMMIT_HASH);
+		return tos_clone(bp);
 	}
 	return (string){.str=(byteptr)""};
 }
@@ -25216,9 +25218,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_16254 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_16254.arg0;
-	string tool_exe = mr_16254.arg1;
+	multi_return_string_string mr_16274 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_16274.arg0;
+	string tool_exe = mr_16274.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__wait(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
@@ -29876,12 +29878,6 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got,
 			return true;
 		}
 	}
-	if (got_sym->kind == v__table__Kind_array_fixed) {
-		v__table__ArrayFixed info = /* as */ *(v__table__ArrayFixed*)__as_cast((got_sym->info)._v__table__ArrayFixed,(got_sym->info).typ, 360) /*expected idx: 360, name: v.table.ArrayFixed */ ;
-		if (string_eq(v__table__Table_type_to_str(c->table, info.elem_type), string_trim(v__table__Table_type_to_str(c->table, expected), _SLIT("ptr")))) {
-			return true;
-		}
-	}
 	if ((exp_sym->kind == v__table__Kind_voidptr || exp_sym->kind == v__table__Kind_any) || (got_sym->kind == v__table__Kind_voidptr || got_sym->kind == v__table__Kind_any)) {
 		return true;
 	}
@@ -29978,10 +29974,10 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_promote_num(v__checker__Check
 	v__table__Type type_hi = left_type;
 	v__table__Type type_lo = right_type;
 	if (v__table__Type_idx(type_hi) < v__table__Type_idx(type_lo)) {
-		v__table__Type _var_5557 = type_hi;
-		v__table__Type _var_5566 = type_lo;
-		type_hi = _var_5566;
-		type_lo = _var_5557;
+		v__table__Type _var_5338 = type_hi;
+		v__table__Type _var_5347 = type_lo;
+		type_hi = _var_5347;
+		type_lo = _var_5338;
 	}
 	int idx_hi = v__table__Type_idx(type_hi);
 	int idx_lo = v__table__Type_idx(type_lo);
