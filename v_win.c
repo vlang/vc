@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3362d7e"
+#define V_COMMIT_HASH "77b3440"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7e27920"
+	#define V_COMMIT_HASH "3362d7e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3362d7e"
+	#define V_CURRENT_COMMIT_HASH "77b3440"
 #endif
 
 // V comptime_defines:
@@ -22817,7 +22817,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7e27920"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3362d7e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -57333,10 +57333,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		if (!_t2529.ok) {
 			string err = _t2529.v_error;
 			int errcode = _t2529.ecode;
-			println(_SLIT("C compilation failed."));
-			os__chdir(original_pwd);
-			v__builder__verror(err);
-			return;
+			*(os__Result*) _t2529.data = (os__Result){.exit_code = 111,.output = _STR("C compilation failed.\n%.*s", 1, err),};
 		}
  		os__Result res =  *(os__Result*)_t2529.data;
 		v__util__timing_measure(ccompiler_label);
@@ -57448,10 +57445,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string_add(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_24629 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_24629.arg0;
-	Array_string others = mr_24629.arg1;
-	Array_string libs = mr_24629.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24622 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24622.arg0;
+	Array_string others = mr_24622.arg1;
+	Array_string libs = mr_24622.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
