@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2c60941"
+#define V_COMMIT_HASH "89c82ff"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8dff168"
+	#define V_COMMIT_HASH "2c60941"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2c60941"
+	#define V_CURRENT_COMMIT_HASH "89c82ff"
 #endif
 
 // V comptime_defines:
@@ -23104,7 +23104,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8dff168"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2c60941"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40392,7 +40392,11 @@ v__ast__Ident v__parser__Parser_parse_ident(v__parser__Parser* p, v__table__Lang
 
 VV_LOCAL_SYMBOL bool v__parser__Parser_is_generic_call(v__parser__Parser* p) {
 	bool lit0_is_capital = (p->tok.kind != v__token__Kind_eof && p->tok.lit.len > 0 ? (byte_is_capital(string_at(p->tok.lit, 0))) : (false));
-	return !lit0_is_capital && p->peek_tok.kind == v__token__Kind_lt && (((v__parser__Parser_peek_token(p, 2).kind == v__token__Kind_name) ? ((v__parser__Parser_peek_token(p, 2).kind == v__token__Kind_name && (v__parser__Parser_peek_token(p, 3).kind == v__token__Kind_gt || v__parser__Parser_peek_token(p, 3).kind == v__token__Kind_comma)) || (string_eq(v__parser__Parser_peek_token(p, 2).lit, _SLIT("map")) && v__parser__Parser_peek_token(p, 3).kind == v__token__Kind_lsbr)) : (v__parser__Parser_peek_token(p, 2).kind == v__token__Kind_lsbr) ? (v__parser__Parser_peek_token(p, 3).kind == v__token__Kind_rsbr) : (false)));
+	v__token__Token tok2 = v__parser__Parser_peek_token(p, 2);
+	v__token__Token tok3 = v__parser__Parser_peek_token(p, 3);
+	v__token__Token tok4 = v__parser__Parser_peek_token(p, 4);
+	v__token__Token tok5 = v__parser__Parser_peek_token(p, 5);
+	return !lit0_is_capital && p->peek_tok.kind == v__token__Kind_lt && (((tok2.kind == v__token__Kind_name) ? ((tok3.kind == v__token__Kind_gt || tok3.kind == v__token__Kind_comma) || (tok3.kind == v__token__Kind_dot && tok4.kind == v__token__Kind_name && (tok5.kind == v__token__Kind_gt || tok5.kind == v__token__Kind_comma)) || (string_eq(tok2.lit, _SLIT("map")) && tok3.kind == v__token__Kind_lsbr)) : (tok2.kind == v__token__Kind_lsbr) ? (tok3.kind == v__token__Kind_rsbr) : (false)));
 }
 
 v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
@@ -41178,9 +41182,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 	if (p->tok.kind == v__token__Kind_rcbr) {
 		return (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_50681 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_50681.arg0;
-	Array_v__ast__Comment comments2 = mr_50681.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_50801 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_50801.arg0;
+	Array_v__ast__Comment comments2 = mr_50801.arg1;
 	_PUSH_MANY(&comments, (comments2), _t1775, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	return (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
