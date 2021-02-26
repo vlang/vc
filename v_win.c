@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a8ff9d"
+#define V_COMMIT_HASH "4ad95cf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "995bd66"
+	#define V_COMMIT_HASH "1a8ff9d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a8ff9d"
+	#define V_CURRENT_COMMIT_HASH "4ad95cf"
 #endif
 
 // V comptime_defines:
@@ -22819,7 +22819,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("995bd66"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1a8ff9d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33048,11 +33048,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 		v__checker__Checker_branch_stmt(c, (*node._v__ast__BranchStmt));
 	}
 	else if (node.typ == 272 /* v.ast.CompFor */) {
-		if ((*node._v__ast__CompFor).typ > _const_v__table__void_type) {
-			v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, (*node._v__ast__CompFor).typ);
-			if (sym->kind == v__table__Kind_placeholder) {
-				v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), (*node._v__ast__CompFor).typ_pos);
-			}
+		v__table__Type typ = v__checker__Checker_unwrap_generic(c, (*node._v__ast__CompFor).typ);
+		v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, typ);
+		if (sym->kind == v__table__Kind_placeholder || v__table__Type_has_flag(typ, v__table__TypeFlag_generic)) {
+			v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), (*node._v__ast__CompFor).typ_pos);
 		}
 		v__checker__Checker_stmts(c, (*node._v__ast__CompFor).stmts);
 	}
@@ -33149,7 +33148,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__B
 		if (!(!c->inside_unsafe)) {
 			VAssertMetaInfo v_assert_meta_info__t1437 = {0};
 			v_assert_meta_info__t1437.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t1437.line_nr = 3214;
+			v_assert_meta_info__t1437.line_nr = 3213;
 			v_assert_meta_info__t1437.fn_name = _SLIT("block");
 			v_assert_meta_info__t1437.src = _SLIT("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t1437);
@@ -34249,8 +34248,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (node->kind == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_135336 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_135336.arg1;
+		multi_return_string_int mr_135350 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_135350.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (node->kind == v__token__AtKind_vhash) {
@@ -34937,7 +34936,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t1518 = {0};
 		v_assert_meta_info__t1518.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t1518.line_nr = 4715;
+		v_assert_meta_info__t1518.line_nr = 4714;
 		v_assert_meta_info__t1518.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t1518.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t1518);
@@ -35035,7 +35034,11 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 			if ((branch.cond).typ == 244 /* v.ast.InfixExpr */) {
 				if ((*branch.cond._v__ast__InfixExpr).op == v__token__Kind_key_is) {
 					v__ast__Expr left = (*branch.cond._v__ast__InfixExpr).left;
-					v__table__Type got_type = (/* as */ *(v__ast__Type*)__as_cast(((*branch.cond._v__ast__InfixExpr).right)._v__ast__Type,((*branch.cond._v__ast__InfixExpr).right).typ, 264) /*expected idx: 264, name: v.ast.Type */ ).typ;
+					v__table__Type got_type = v__checker__Checker_unwrap_generic(c, (/* as */ *(v__ast__Type*)__as_cast(((*branch.cond._v__ast__InfixExpr).right)._v__ast__Type,((*branch.cond._v__ast__InfixExpr).right).typ, 264) /*expected idx: 264, name: v.ast.Type */ ).typ);
+					v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, got_type);
+					if (sym->kind == v__table__Kind_placeholder || v__table__Type_has_flag(got_type, v__table__TypeFlag_generic)) {
+						v__checker__Checker_error(c, _STR("unknown type `%.*s\000`", 2, sym->name), v__ast__Expr_position((*branch.cond._v__ast__InfixExpr).right));
+					}
 					if ((left).typ == 258 /* v.ast.SelectorExpr */) {
 						comptime_field_name = v__ast__Expr_str((*left._v__ast__SelectorExpr).expr);
 						map_set_1(&c->comptime_fields_type, &(string[]){comptime_field_name}, &(v__table__Type[]) { got_type });
@@ -35388,8 +35391,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_168723 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_168723.arg0;
+		multi_return_string_v__token__Position mr_168946 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_168946.arg0;
 	}
 	return typ;
 }
@@ -36204,10 +36207,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t1589 = 0; _t1589 < _t1588.len; ++_t1589) {
 			v__table__Fn m = ((v__table__Fn*)_t1588.data)[_t1589];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_192093 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_192093.arg0;
-				int nroute_attributes = mr_192093.arg1;
-				int nargs = mr_192093.arg2;
+				multi_return_bool_int_int mr_192316 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_192316.arg0;
+				int nroute_attributes = mr_192316.arg1;
+				int nargs = mr_192316.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -36745,6 +36748,7 @@ VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p)
 	v__parser__Parser_check(p, v__token__Kind_dot);
 	string for_val = v__parser__Parser_check_name(p);
 	v__ast__CompForKind kind = v__ast__CompForKind_methods;
+	v__parser__Parser_open_scope(p);
 	if (string_eq(for_val, _SLIT("methods"))) {
 		v__ast__Scope_register(p->scope, /* sum type cast 4 */ (v__ast__ScopeObject){._v__ast__Var = memdup(&(v__ast__Var[]){(v__ast__Var){.name = val_var,.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.is_auto_deref = 0,.typ = v__table__Table_find_type_idx(p->table, _SLIT("FunctionData")),.orig_type = 0,.sum_type_casts = __new_array(0, 1, sizeof(v__table__Type)),.pos = var_pos,.is_used = 0,.is_changed = 0,.is_or = 0,.is_tmp = 0,}}, sizeof(v__ast__Var)), .typ = 294 /* v.ast.Var */});
 	} else if (string_eq(for_val, _SLIT("fields"))) {
@@ -36756,6 +36760,7 @@ VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p)
 	}
 	v__token__Position spos = v__token__Token_position(&p->tok);
 	Array_v__ast__Stmt stmts = v__parser__Parser_parse_block(p);
+	v__parser__Parser_close_scope(p);
 	return (v__ast__CompFor){
 		.val_var = val_var,
 		.stmts = stmts,
