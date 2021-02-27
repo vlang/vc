@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "be4a2e1"
+#define V_COMMIT_HASH "e6b4f9f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d39866d"
+	#define V_COMMIT_HASH "be4a2e1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "be4a2e1"
+	#define V_CURRENT_COMMIT_HASH "e6b4f9f"
 #endif
 
 // V comptime_defines:
@@ -5450,7 +5450,6 @@ int time__Time_day_of_week(time__Time t);
 string time__Time_weekday_str(time__Time t);
 string time__Time_long_weekday_str(time__Time t);
 i64 time__ticks();
-void time__sleep(int seconds);
 void time__sleep_ms(int milliseconds);
 void time__usleep(int microseconds);
 bool time__is_leap_year(int year);
@@ -5491,6 +5490,7 @@ time__Time time__darwin_utc();
 time__Time time__linux_utc();
 time__Time time__solaris_utc();
 void time__wait(time__Duration duration);
+void time__sleep(time__Duration duration);
 time__Time time__unix(int abs);
 time__Time time__unix2(int abs, int microsecond);
 VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
@@ -18694,11 +18694,6 @@ i64 time__ticks(void) {
 }
 
 // Attr: [deprecated]
-void time__sleep(int seconds) {
-	time__wait(seconds * _const_time__second);
-}
-
-// Attr: [deprecated]
 void time__sleep_ms(int milliseconds) {
 	time__wait(milliseconds * _const_time__millisecond);
 }
@@ -18969,7 +18964,12 @@ time__Time time__solaris_utc(void) {
 	return _t489;
 }
 
+// Attr: [deprecated]
 void time__wait(time__Duration duration) {
+	Sleep(((int)(duration / _const_time__millisecond)));
+}
+
+void time__sleep(time__Duration duration) {
 	Sleep(((int)(duration / _const_time__millisecond)));
 }
 
@@ -23654,7 +23654,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d39866d"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("be4a2e1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -25970,7 +25970,7 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string tool_name = mr_16274.arg0;
 	string tool_exe = mr_16274.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
-		time__wait(1001 * _const_time__millisecond);
+		time__sleep(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
 	}
 }
@@ -42821,9 +42821,9 @@ void v__parser__Parser_vet_error(v__parser__Parser* p, string msg, int line, v__
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parser* p, bool is_top_level) {
 	v__token__Token tok = p->tok;
 	v__token__Position pos = v__token__Token_position(&tok);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_24842 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_24842.arg0;
-	Array_v__ast__Comment left_comments = mr_24842.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_24843 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_24843.arg0;
+	Array_v__ast__Comment left_comments = mr_24843.arg1;
 	v__ast__Expr left0 = (*(v__ast__Expr*)/*ee elem_typ */array_get(left, 0));
 	if (tok.kind == v__token__Kind_key_mut && p->tok.kind != v__token__Kind_decl_assign) {
 		v__parser__Parser_error(p, _SLIT("expecting `:=` (e.g. `mut x :=`)"));
@@ -43833,9 +43833,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		;
 		return _t3026;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_51548 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_51548.arg0;
-	Array_v__ast__Comment comments2 = mr_51548.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_51549 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_51549.arg0;
+	Array_v__ast__Comment comments2 = mr_51549.arg1;
 	_PUSH_MANY(&comments, (comments2), _t3027, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3028 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),}; // free tmp exprs + all vars before return
