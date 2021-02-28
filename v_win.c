@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e564269"
+#define V_COMMIT_HASH "4076e8e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4125bfe"
+	#define V_COMMIT_HASH "e564269"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e564269"
+	#define V_CURRENT_COMMIT_HASH "4076e8e"
 #endif
 
 // V comptime_defines:
@@ -5801,7 +5801,7 @@ Array_string v__pkgconfig__list();
 string _const_vweb__tmpl__str_start; // a string literal, inited later
 string _const_vweb__tmpl__str_end; // a string literal, inited later
 string vweb__tmpl__compile_file(string path, string fn_name);
-string vweb__tmpl__compile_template(string html_, string fn_name);
+string vweb__tmpl__compile_template(string basepath, string html_, string fn_name);
 u64 _const_rand__wyrand__wyp0; // inited later
 u64 _const_rand__wyrand__wyp1; // inited later
 void rand__wyrand__WyRandRNG_seed(rand__wyrand__WyRandRNG* rng, Array_u32 seed_data);
@@ -22933,6 +22933,7 @@ Array_string v__pkgconfig__list(void) {
 }
 
 string vweb__tmpl__compile_file(string path, string fn_name) {
+	string basepath = os__dir(path);
 	Option_string _t1046 = os__read_file(path);
 	if (!_t1046.ok) { /*or block*/ 
 		string err = _t1046.v_error;
@@ -22940,12 +22941,12 @@ string vweb__tmpl__compile_file(string path, string fn_name) {
 		v_panic(_SLIT("html failed"));
 	}
  	string html =  *(string*)_t1046.data;
-	string _t1047 = vweb__tmpl__compile_template(html, fn_name); // free tmp exprs + all vars before return
+	string _t1047 = vweb__tmpl__compile_template(basepath, html, fn_name); // free tmp exprs + all vars before return
 	;
 	return _t1047;
 }
 
-string vweb__tmpl__compile_template(string html_, string fn_name) {
+string vweb__tmpl__compile_template(string basepath, string html_, string fn_name) {
 	string html = string_trim_space(html_);
 	string header = _SLIT("");
 	string footer = _SLIT("");
@@ -22997,12 +22998,12 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 				file_ext = _SLIT(".html");
 			}
 			file_name = string_replace(file_name, file_ext, _SLIT(""));
-			string templates_folder = _SLIT("templates");
+			string templates_folder = os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("templates")})));
 			if (string_contains(file_name, _SLIT("/"))) {
 				if (string_starts_with(file_name, _SLIT("/"))) {
 					templates_folder = _SLIT("");
 				} else {
-					templates_folder = _SLIT("./");
+					templates_folder = os__real_path(basepath);
 				}
 			}
 			string file_path = os__real_path(os__join_path(templates_folder, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("%.*s\000%.*s", 2, file_name, file_ext)}))));
@@ -23695,7 +23696,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4125bfe"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e564269"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
