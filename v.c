@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4125bfe"
+#define V_COMMIT_HASH "e564269"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bdce35f"
+	#define V_COMMIT_HASH "4125bfe"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4125bfe"
+	#define V_CURRENT_COMMIT_HASH "e564269"
 #endif
 
 // V comptime_defines:
@@ -23300,7 +23300,25 @@ string vweb__tmpl__compile_template(string html_, string fn_name) {
 		if (string_contains(line, _SLIT("@include "))) {
 			array_delete(&lines, i);
 			string file_name = (*(string*)/*ee elem_typ */array_get(string_split(line, _SLIT("'")), 1));
-			string file_path = os__join_path(_SLIT("templates"), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("%.*s\000.html", 2, file_name)})));
+			string file_ext = os__file_ext(file_name);
+			if ((file_ext).len == 0) {
+				file_ext = _SLIT(".html");
+			}
+			file_name = string_replace(file_name, file_ext, _SLIT(""));
+			string templates_folder = _SLIT("templates");
+			if (string_contains(file_name, _SLIT("/"))) {
+				if (string_starts_with(file_name, _SLIT("/"))) {
+					templates_folder = _SLIT("");
+				} else {
+					templates_folder = _SLIT("./");
+				}
+			}
+			string file_path = os__real_path(os__join_path(templates_folder, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("%.*s\000%.*s", 2, file_name, file_ext)}))));
+			#if defined(CUSTOM_DEFINE_trace_tmpl)
+			{
+				eprintln(_STR(">>> @include line: \"%.*s\000\" , file_name: \"%.*s\000\" , file_ext: \"%.*s\000\" , templates_folder: \"%.*s\000\" , file_path: \"%.*s\000\"", 6, line, file_name, file_ext, templates_folder, file_path));
+			}
+			#endif
 			Option_string _t1081 = os__read_file(file_path);
 			if (!_t1081.ok) { /*or block*/ 
 				string err = _t1081.v_error;
@@ -23989,7 +24007,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bdce35f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4125bfe"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
