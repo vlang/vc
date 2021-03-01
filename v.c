@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b712af5"
+#define V_COMMIT_HASH "15896be"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e937d62"
+	#define V_COMMIT_HASH "b712af5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b712af5"
+	#define V_CURRENT_COMMIT_HASH "15896be"
 #endif
 
 // V comptime_defines:
@@ -23572,7 +23572,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e937d62"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b712af5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -53548,7 +53548,8 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_comp_if_cond(v__gen__c__Gen* g, v__ast__Expr
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor node) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(g->table, v__gen__c__Gen_unwrap_generic(g, node.typ));
-	v__gen__c__Gen_writeln(g, _STR("{ // 2comptime: $for %.*s\000 in %.*s\000(%.*s\000) {", 4, node.val_var, sym->name, v__ast__CompForKind_str(node.kind)));
+	v__gen__c__Gen_writeln(g, _STR("/* $for %.*s\000 in %.*s\000(%.*s\000) */ {", 4, node.val_var, sym->name, v__ast__CompForKind_str(node.kind)));
+	g->indent++;
 	int i = 0;
 	if (node.kind == v__ast__CompForKind_methods) {
 	Array_v__table__Fn _t3506_orig = sym->methods;
@@ -53577,14 +53578,14 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor 
 		Array_v__table__Fn methods_with_attrs = _t3508;
 		_PUSH_MANY(&methods, (methods_with_attrs), _t3510, Array_v__table__Fn);
 		if (methods.len > 0) {
-			v__gen__c__Gen_writeln(g, _STR("\tFunctionData %.*s\000 = {0};", 2, node.val_var));
+			v__gen__c__Gen_writeln(g, _STR("FunctionData %.*s\000 = {0};", 2, node.val_var));
 		}
 		// FOR IN array
 		Array_v__table__Fn _t3511 = methods;
 		for (int _t3512 = 0; _t3512 < _t3511.len; ++_t3512) {
 			v__table__Fn method = ((v__table__Fn*)_t3511.data)[_t3512];
 			g->comp_for_method = method.name;
-			v__gen__c__Gen_writeln(g, _STR("\t// method %"PRId32"", 1, i));
+			v__gen__c__Gen_writeln(g, _STR("/* method %"PRId32"\000 */ {", 2, i));
 			v__gen__c__Gen_writeln(g, _STR("\t%.*s\000.name = _SLIT(\"%.*s\000\");", 3, node.val_var, method.name));
 			if (method.attrs.len == 0) {
 				v__gen__c__Gen_writeln(g, _STR("\t%.*s\000.attrs = __new_array_with_default(0, 0, sizeof(string), 0);", 2, node.val_var));
@@ -53630,7 +53631,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor 
 			map_set_1(&g->comptime_var_type_map, &(string[]){_STR("%.*s\000.typ", 2, node.val_var)}, &(v__table__Type[]) { styp });
 			v__gen__c__Gen_stmts(g, node.stmts);
 			i++;
-			v__gen__c__Gen_writeln(g, _SLIT(""));
+			v__gen__c__Gen_writeln(g, _SLIT("}"));
 			// FOR IN map
 			Map_string_v__table__Type _t3516 = g->comptime_var_type_map;
 			for (int _t3515 = 0; _t3515 < _t3516.key_values.len; ++_t3515) {
@@ -53678,7 +53679,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor 
 				v__table__Field field = ((v__table__Field*)_t3522.data)[_t3523];
 				g->comp_for_field_var = node.val_var;
 				g->comp_for_field_value = field;
-				v__gen__c__Gen_writeln(g, _STR("\t// field %"PRId32"", 1, i));
+				v__gen__c__Gen_writeln(g, _STR("/* field %"PRId32"\000 */ {", 2, i));
 				v__gen__c__Gen_writeln(g, _STR("\t%.*s\000.name = _SLIT(\"%.*s\000\");", 3, node.val_var, field.name));
 				if (field.attrs.len == 0) {
 					v__gen__c__Gen_writeln(g, _STR("\t%.*s\000.attrs = __new_array_with_default(0, 0, sizeof(string), 0);", 2, node.val_var));
@@ -53693,12 +53694,13 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor 
 				map_set_1(&g->comptime_var_type_map, &(string[]){_STR("%.*s\000.typ", 2, node.val_var)}, &(v__table__Type[]) { styp });
 				v__gen__c__Gen_stmts(g, node.stmts);
 				i++;
-				v__gen__c__Gen_writeln(g, _SLIT(""));
+				v__gen__c__Gen_writeln(g, _SLIT("}"));
 			}
 			map_delete(&g->comptime_var_type_map, node.val_var);
 		}
 	}
-	v__gen__c__Gen_writeln(g, _SLIT("} // } comptime for"));
+	g->indent--;
+	v__gen__c__Gen_writeln(g, _SLIT("}// $for"));
 }
 
 VV_LOCAL_SYMBOL Option2_string v__gen__c__Gen_comp_if_to_ifdef(v__gen__c__Gen* g, string name, bool is_comptime_optional) {
