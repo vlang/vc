@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "15896be"
+#define V_COMMIT_HASH "506041a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b712af5"
+	#define V_COMMIT_HASH "15896be"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "15896be"
+	#define V_CURRENT_COMMIT_HASH "506041a"
 #endif
 
 // V comptime_defines:
@@ -22829,21 +22829,21 @@ string vweb__tmpl__compile_template(string basepath, string html_, string fn_nam
 	string html = string_trim_space(html_);
 	string header = _SLIT("");
 	string footer = _SLIT("");
-	if (os__exists(_SLIT("templates/header.html")) && string_contains(html, _SLIT("@header"))) {
-		Option2_string _t1061 = os__read_file(_SLIT("templates/header.html"));
+	if (os__exists(os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("header.html")})))) && string_contains(html, _SLIT("@header"))) {
+		Option2_string _t1061 = os__read_file(os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("header.html")}))));
 		if (_t1061.state != 0) { /*or block*/ 
 			Error err = _t1061.err;
-			v_panic(_SLIT("reading file templates/header.html failed"));
+			v_panic(_STR("reading file %.*s\000 failed", 2, os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("header.html")})))));
 		}
  		string h =  *(string*)_t1061.data;
 		header = string_replace(string_trim_space(h), _SLIT("'"), _SLIT("\""));
 		html = string_add(header, html);
 	}
-	if (os__exists(_SLIT("templates/footer.html")) && string_contains(html, _SLIT("@footer"))) {
-		Option2_string _t1062 = os__read_file(_SLIT("templates/footer.html"));
+	if (os__exists(os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("footer.html")})))) && string_contains(html, _SLIT("@footer"))) {
+		Option2_string _t1062 = os__read_file(os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("footer.html")}))));
 		if (_t1062.state != 0) { /*or block*/ 
 			Error err = _t1062.err;
-			v_panic(_SLIT("reading file templates/footer.html failed"));
+			v_panic(_STR("reading file %.*s\000 failed", 2, os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("footer.html")})))));
 		}
  		string f =  *(string*)_t1062.data;
 		footer = string_replace(string_trim_space(f), _SLIT("'"), _SLIT("\""));
@@ -22875,13 +22875,9 @@ string vweb__tmpl__compile_template(string basepath, string html_, string fn_nam
 				file_ext = _SLIT(".html");
 			}
 			file_name = string_replace(file_name, file_ext, _SLIT(""));
-			string templates_folder = os__join_path(basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("templates")})));
-			if (string_contains(file_name, _SLIT("/"))) {
-				if (string_starts_with(file_name, _SLIT("/"))) {
-					templates_folder = _SLIT("");
-				} else {
-					templates_folder = os__real_path(basepath);
-				}
+			string templates_folder = os__real_path(basepath);
+			if (string_contains(file_name, _SLIT("/")) && string_starts_with(file_name, _SLIT("/"))) {
+				templates_folder = _SLIT("");
 			}
 			string file_path = os__real_path(os__join_path(templates_folder, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("%.*s\000%.*s", 2, file_name, file_ext)}))));
 			#if defined(CUSTOM_DEFINE_trace_tmpl)
@@ -22892,7 +22888,7 @@ string vweb__tmpl__compile_template(string basepath, string html_, string fn_nam
 			Option2_string _t1063 = os__read_file(file_path);
 			if (_t1063.state != 0) { /*or block*/ 
 				Error err = _t1063.err;
-				v_panic(_STR("Vweb: Reading file %.*s\000 failed.", 2, file_name));
+				v_panic(_STR("Vweb: reading file %.*s\000 from path: %.*s\000 failed.", 3, file_name, file_path));
 			}
  			string file_content =  *(string*)_t1063.data;
 			Array_string file_splitted = array_reverse(string_split_into_lines(file_content));
@@ -22934,10 +22930,12 @@ string vweb__tmpl__compile_template(string basepath, string html_, string fn_nam
 			strings__Builder_writeln(&s, string_add(string_add(_SLIT("if "), string_substr(line, pos + 4, line.len)), _SLIT("{")));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (string_contains(line, _SLIT("@end"))) {
+			strings__Builder_go_back(&s, 1);
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
 			strings__Builder_writeln(&s, _SLIT("}"));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
 		} else if (string_contains(line, _SLIT("@else"))) {
+			strings__Builder_go_back(&s, 1);
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
 			strings__Builder_writeln(&s, _SLIT(" } else { "));
 			strings__Builder_writeln(&s, _const_vweb__tmpl__str_start);
@@ -22969,7 +22967,7 @@ string vweb__tmpl__compile_template(string basepath, string html_, string fn_nam
 				strings__Builder_writeln(&s, _SLIT("</div>"));
 			}
 		} else {
-			strings__Builder_writeln(&s, string_replace(string_replace(line, _SLIT("@"), _SLIT("$")), _SLIT("'"), _SLIT("\"")));
+			strings__Builder_writeln(&s, string_replace(string_replace(string_replace(line, _SLIT("@"), _SLIT("$")), _SLIT("$$"), _SLIT("@")), _SLIT("'"), _SLIT("\\'")));
 		}
 	}
 	strings__Builder_writeln(&s, _const_vweb__tmpl__str_end);
@@ -23572,7 +23570,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b712af5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("15896be"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -39023,13 +39021,14 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	}
 	v__parser__Parser_check(p, v__token__Kind_lpar);
 	v__token__Position spos = v__token__Token_position(&p->tok);
-	string s = (is_html ? (_SLIT("")) : (p->tok.lit));
+	string literal_string_param = (is_html ? (_SLIT("")) : (p->tok.lit));
+	string path_of_literal_string_param = string_replace(literal_string_param, _SLIT("/"), _const_os__path_separator);
 	if (!is_html) {
 		v__parser__Parser_check(p, v__token__Kind_string);
 	}
 	v__parser__Parser_check(p, v__token__Kind_rpar);
 	if (is_embed_file) {
-		string epath = s;
+		string epath = path_of_literal_string_param;
 		if ((epath).len == 0) {
 			v__parser__Parser_error_with_pos(p, _SLIT("supply a valid relative or absolute file path to the file to embed"), spos);
 			return err_node;
@@ -39054,14 +39053,16 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			}
 		}
 		v__parser__Parser_register_auto_import(p, _SLIT("v.embed_file"));
-		v__ast__ComptimeCall _t2736 = (v__ast__ComptimeCall){.has_parens = 0,.method_name = (string){.str=(byteptr)""},.method_pos = {0},.scope = 0,.left = {0},.args_var = (string){.str=(byteptr)""},.is_vweb = 0,.vweb_tmpl = (v__ast__File){.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.imports = __new_array(0, 1, sizeof(v__ast__Import)),.auto_imports = __new_array(0, 1, sizeof(string)),.embedded_files = __new_array(0, 1, sizeof(v__ast__EmbeddedFile)),.imported_symbols = new_map_2(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.generic_fns = __new_array(0, 1, sizeof(v__ast__FnDecl*)),},.is_embed = true,.embed_file = (v__ast__EmbeddedFile){.rpath = s,.apath = epath,},.is_env = 0,.env_pos = {0},.sym = (v__table__TypeSymbol){.methods = __new_array(0, 1, sizeof(v__table__Fn)),},.result_type = 0,.env_value = (string){.str=(byteptr)""},}; // free tmp exprs + all vars before return
+		v__ast__ComptimeCall _t2736 = (v__ast__ComptimeCall){.has_parens = 0,.method_name = (string){.str=(byteptr)""},.method_pos = {0},.scope = 0,.left = {0},.args_var = (string){.str=(byteptr)""},.is_vweb = 0,.vweb_tmpl = (v__ast__File){.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.imports = __new_array(0, 1, sizeof(v__ast__Import)),.auto_imports = __new_array(0, 1, sizeof(string)),.embedded_files = __new_array(0, 1, sizeof(v__ast__EmbeddedFile)),.imported_symbols = new_map_2(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.generic_fns = __new_array(0, 1, sizeof(v__ast__FnDecl*)),},.is_embed = true,.embed_file = (v__ast__EmbeddedFile){.rpath = literal_string_param,.apath = epath,},.is_env = 0,.env_pos = {0},.sym = (v__table__TypeSymbol){.methods = __new_array(0, 1, sizeof(v__table__Fn)),},.result_type = 0,.env_value = (string){.str=(byteptr)""},}; // free tmp exprs + all vars before return
 		;
 		return _t2736;
 	}
 	Array_string fn_path = string_split(p->cur_fn_name, _SLIT("_"));
-	string tmpl_path = (is_html ? (_STR("%.*s\000.html", 2, (*(string*)array_last(fn_path)))) : (s));
-	string dir = os__dir(string_replace(p->scanner->file_path, _SLIT("/"), _const_os__path_separator));
-	string path = os__join_path(dir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){Array_string_join(fn_path, _const_os__path_separator)})));
+	string fn_path_joined = Array_string_join(fn_path, _const_os__path_separator);
+	string compiled_vfile_path = os__real_path(string_replace(p->scanner->file_path, _SLIT("/"), _const_os__path_separator));
+	string tmpl_path = (is_html ? (_STR("%.*s\000.html", 2, (*(string*)array_last(fn_path)))) : (path_of_literal_string_param));
+	string dir = os__dir(compiled_vfile_path);
+	string path = os__join_path(dir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){fn_path_joined})));
 	path = /*f*/string_add(path, _SLIT(".html"));
 	path = os__real_path(path);
 	if (!is_html) {
@@ -39069,7 +39070,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	}
 	if (!os__exists(path)) {
 		if (is_html) {
-			path = os__join_path(dir, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("templates"), Array_string_join(fn_path, _SLIT("/"))})));
+			path = os__join_path(dir, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("templates"), fn_path_joined})));
 			path = /*f*/string_add(path, _SLIT(".html"));
 		}
 		if (!os__exists(path)) {
@@ -39082,10 +39083,12 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			;
 		}
 	}
-	if (p->pref->is_verbose) {
-		println(_STR(">>> compiling comptime template file \"%.*s\000\"", 2, path));
-	}
 	string tmp_fn_name = string_replace(p->cur_fn_name, _SLIT("."), _SLIT("__"));
+	#if defined(CUSTOM_DEFINE_trace_comptime)
+	{
+		println(_STR(">>> compiling comptime template file \"%.*s\000\" for %.*s", 2, path, tmp_fn_name));
+	}
+	#endif
 	string v_code = vweb__tmpl__compile_file(path, tmp_fn_name);
 	#if defined(CUSTOM_DEFINE_print_vweb_template_expansions)
 	{
@@ -39099,13 +39102,15 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	}
 	#endif
 	v__ast__Scope* scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map_2(sizeof(string), sizeof(v__ast__ScopeObject), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.struct_fields = __new_array(0, 1, sizeof(v__ast__ScopeStructField)),.parent = p->global_scope,.detached_from_parent = 0,.children = __new_array(0, 1, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope));
-	if (p->pref->is_verbose) {
-		println(_SLIT("\n\n"));
+	#if defined(CUSTOM_DEFINE_trace_comptime)
+	{
+		println(_SLIT(""));
 		println(_STR(">>> vweb template for %.*s\000:", 2, path));
 		println(v_code);
 		println(_SLIT(">>> end of vweb template END"));
-		println(_SLIT("\n\n"));
+		println(_SLIT(""));
 	}
+	#endif
 	v__ast__File file = v__parser__parse_comptime(v_code, p->table, p->pref, scope, p->global_scope);
 	file = (v__ast__File){.path = tmpl_path,file.path_base,file.mod,file.global_scope,file.scope,file.stmts,file.imports,file.auto_imports,file.embedded_files,file.imported_symbols,file.errors,file.warnings,file.generic_fns,};
 	// FOR IN array
@@ -39131,7 +39136,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			}
 		}
 	}
-	v__ast__ComptimeCall _t2742 = (v__ast__ComptimeCall){.has_parens = 0,.method_name = n,.method_pos = {0},.scope = 0,.left = {0},.args_var = s,.is_vweb = true,.vweb_tmpl = file,.is_embed = 0,.embed_file = {0},.is_env = 0,.env_pos = {0},.sym = (v__table__TypeSymbol){.methods = __new_array(0, 1, sizeof(v__table__Fn)),},.result_type = 0,.env_value = (string){.str=(byteptr)""},}; // free tmp exprs + all vars before return
+	v__ast__ComptimeCall _t2742 = (v__ast__ComptimeCall){.has_parens = 0,.method_name = n,.method_pos = {0},.scope = 0,.left = {0},.args_var = literal_string_param,.is_vweb = true,.vweb_tmpl = file,.is_embed = 0,.embed_file = {0},.is_env = 0,.env_pos = {0},.sym = (v__table__TypeSymbol){.methods = __new_array(0, 1, sizeof(v__table__Fn)),},.result_type = 0,.env_value = (string){.str=(byteptr)""},}; // free tmp exprs + all vars before return
 	;
 	return _t2742;
 }
