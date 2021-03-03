@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c74fa9e"
+#define V_COMMIT_HASH "dad7c40"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b89c6d7"
+	#define V_COMMIT_HASH "c74fa9e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c74fa9e"
+	#define V_CURRENT_COMMIT_HASH "dad7c40"
 #endif
 
 // V comptime_defines:
@@ -23218,7 +23218,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b89c6d7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c74fa9e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33079,14 +33079,7 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 		if (string_eq(method_name, _SLIT("map"))) {
 			v__checker__Checker_check_map_and_filter(c, true, elem_typ, *call_expr);
 			v__table__TypeSymbol* arg_sym = v__table__Table_get_type_symbol(c->table, arg_type);
-			int ret_type = 0;
-
-			if (arg_sym->info.typ == 361 /* v.table.FnType */) {
-				ret_type = (*arg_sym->info._v__table__FnType).func.return_type;
-			}
-			else {
-				ret_type = arg_type;
-			};
+			v__table__Type ret_type = ((arg_sym->info.typ == 361 /* v.table.FnType */) ? ((*arg_sym->info._v__table__FnType).func.return_type) : (arg_type));
 			call_expr->return_type = v__table__Table_find_or_register_array(c->table, ret_type);
 		} else if (string_eq(method_name, _SLIT("filter"))) {
 			v__checker__Checker_check_map_and_filter(c, false, elem_typ, *call_expr);
@@ -33210,9 +33203,9 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__table__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_53349 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_53349.arg0;
-			v__token__Position pos = mr_53349.arg1;
+			multi_return_string_v__token__Position mr_53275 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_53275.arg0;
+			v__token__Position pos = mr_53275.arg1;
 			if ((to_lock).len != 0 && rec_share != v__table__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("%.*s\000 is `shared` and must be `lock`ed to be passed as `mut`", 2, to_lock), pos);
 			}
@@ -33271,9 +33264,9 @@ v__table__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__C
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg.pos);
 			}
 			if (arg.is_mut) {
-				multi_return_string_v__token__Position mr_56553 = v__checker__Checker_fail_if_immutable(c, arg.expr);
-				string to_lock = mr_56553.arg0;
-				v__token__Position pos = mr_56553.arg1;
+				multi_return_string_v__token__Position mr_56479 = v__checker__Checker_fail_if_immutable(c, arg.expr);
+				string to_lock = mr_56479.arg0;
+				v__token__Position pos = mr_56479.arg1;
 				if (!param.is_mut) {
 					string tok = v__table__ShareType_str(arg.share);
 					v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, param.name, tok, tok), v__ast__Expr_position(arg.expr));
@@ -33692,9 +33685,9 @@ v__table__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallE
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg.pos);
 		}
 		if (call_arg.is_mut) {
-			multi_return_string_v__token__Position mr_70572 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
-			string to_lock = mr_70572.arg0;
-			v__token__Position pos = mr_70572.arg1;
+			multi_return_string_v__token__Position mr_70498 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
+			string to_lock = mr_70498.arg0;
+			v__token__Position pos = mr_70498.arg1;
 			if (!arg.is_mut) {
 				string tok = v__table__ShareType_str(call_arg.share);
 				v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, arg.name, tok, tok), v__ast__Expr_position(call_arg.expr));
@@ -34977,7 +34970,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__B
 		if (!(!c->inside_unsafe)) {
 			VAssertMetaInfo v_assert_meta_info__t2427 = {0};
 			v_assert_meta_info__t2427.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t2427.line_nr = 3257;
+			v_assert_meta_info__t2427.line_nr = 3255;
 			v_assert_meta_info__t2427.fn_name = _SLIT("block");
 			v_assert_meta_info__t2427.src = _SLIT("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t2427);
@@ -36173,8 +36166,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (node->kind == v__token__AtKind_column_nr) {
-		multi_return_string_int mr_137346 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_137346.arg1;
+		multi_return_string_int mr_137272 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_137272.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (node->kind == v__token__AtKind_vhash) {
@@ -36896,7 +36889,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t2549 = {0};
 		v_assert_meta_info__t2549.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t2549.line_nr = 4782;
+		v_assert_meta_info__t2549.line_nr = 4780;
 		v_assert_meta_info__t2549.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t2549.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t2549);
@@ -37416,8 +37409,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_172019 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_172019.arg0;
+		multi_return_string_v__token__Position mr_171945 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_171945.arg0;
 	}
 	return typ;
 	;
@@ -38303,10 +38296,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2668 = 0; _t2668 < _t2667.len; ++_t2668) {
 			v__table__Fn m = ((v__table__Fn*)_t2667.data)[_t2668];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_196024 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_196024.arg0;
-				int nroute_attributes = mr_196024.arg1;
-				int nargs = mr_196024.arg2;
+				multi_return_bool_int_int mr_195950 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_195950.arg0;
+				int nroute_attributes = mr_195950.arg1;
+				int nargs = mr_195950.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
