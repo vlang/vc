@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d08f994"
+#define V_COMMIT_HASH "2b9ffbd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2bfa6df"
+	#define V_COMMIT_HASH "d08f994"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d08f994"
+	#define V_CURRENT_COMMIT_HASH "2b9ffbd"
 #endif
 
 // V comptime_defines:
@@ -22627,7 +22627,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2bfa6df"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d08f994"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -43709,8 +43709,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort(v__gen__c__Gen* g, v__ast__Ca
 		is_default = true;
 	} else {
 		v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast(((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr)._v__ast__InfixExpr,((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr).typ, 244) /*expected idx: 244, name: v.ast.InfixExpr */ ;
-		is_default = (string_eq(_STR("%.*s", 1, v__ast__Expr_str(infix_expr.left)), _SLIT("a")) || string_eq(_STR("%.*s", 1, v__ast__Expr_str(infix_expr.left)), _SLIT("b"))) && (string_eq(_STR("%.*s", 1, v__ast__Expr_str(infix_expr.right)), _SLIT("a")) || string_eq(_STR("%.*s", 1, v__ast__Expr_str(infix_expr.right)), _SLIT("b")));
-		is_reverse = infix_expr.op == v__token__Kind_gt;
+		string left_name = _STR("%.*s", 1, v__ast__Expr_str(infix_expr.left));
+		is_default = (string_eq(left_name, _SLIT("a")) || string_eq(left_name, _SLIT("b"))) && (string_eq(_STR("%.*s", 1, v__ast__Expr_str(infix_expr.right)), _SLIT("a")) || string_eq(_STR("%.*s", 1, v__ast__Expr_str(infix_expr.right)), _SLIT("b")));
+		is_reverse = (string_starts_with(left_name, _SLIT("a")) && infix_expr.op == v__token__Kind_gt) || (string_starts_with(left_name, _SLIT("b")) && infix_expr.op == v__token__Kind_lt);
 	}
 	if (is_default) {
 		compare_fn = ((typ == _const_v__table__int_type || typ == v__table__Type_to_ptr(_const_v__table__int_type)) ? (_SLIT("compare_ints")) : (typ == _const_v__table__u64_type || typ == v__table__Type_to_ptr(_const_v__table__u64_type)) ? (_SLIT("compare_u64s")) : (typ == _const_v__table__string_type || typ == v__table__Type_to_ptr(_const_v__table__string_type)) ? (_SLIT("compare_strings")) : (typ == _const_v__table__f64_type || typ == v__table__Type_to_ptr(_const_v__table__f64_type)) ? (_SLIT("compare_floats")) : (_SLIT("")));
