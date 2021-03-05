@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "12f8b1b"
+#define V_COMMIT_HASH "07a1a9b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fa53068"
+	#define V_COMMIT_HASH "12f8b1b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "12f8b1b"
+	#define V_CURRENT_COMMIT_HASH "07a1a9b"
 #endif
 
 // V comptime_defines:
@@ -11706,28 +11706,49 @@ void v_panic(string s) {
 void eprintln(string s) {
 	fflush(stdout);
 	fflush(stderr);
-	if (s.str == 0) {
-		write(2, "eprintln(NIL)\n", 14);
-	} else {
-		write(2, s.str, s.len);
-		write(2, "\n", 1);
+	#if defined(__ANDROID__)
+	{
 	}
+	#else
+	{
+		if (s.str == 0) {
+			write(2, "eprintln(NIL)\n", 14);
+		} else {
+			write(2, s.str, s.len);
+			write(2, "\n", 1);
+		}
+	}
+	#endif
 	fflush(stderr);
 }
 
 void eprint(string s) {
 	fflush(stdout);
 	fflush(stderr);
-	if (s.str == 0) {
-		write(2, "eprint(NIL)\n", 12);
-	} else {
-		write(2, s.str, s.len);
+	#if defined(__ANDROID__)
+	{
 	}
+	#else
+	{
+		if (s.str == 0) {
+			write(2, "eprint(NIL)", 11);
+		} else {
+			write(2, s.str, s.len);
+		}
+	}
+	#endif
 	fflush(stderr);
 }
 
 void print(string s) {
-	write(1, s.str, s.len);
+	#if defined(__ANDROID__)
+	{
+	}
+	#else
+	{
+		write(1, s.str, s.len);
+	}
+	#endif
 }
 
 void println(string s) {
@@ -22726,7 +22747,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fa53068"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("12f8b1b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
