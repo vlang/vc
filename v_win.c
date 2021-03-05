@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "845e8de"
+#define V_COMMIT_HASH "fa53068"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "818be80"
+	#define V_COMMIT_HASH "845e8de"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "845e8de"
+	#define V_CURRENT_COMMIT_HASH "fa53068"
 #endif
 
 // V comptime_defines:
@@ -6887,14 +6887,14 @@ VV_LOCAL_SYMBOL void v__gen__x64__Gen_fn_decl(v__gen__x64__Gen* g, v__ast__FnDec
 VV_LOCAL_SYMBOL void v__gen__x64__Gen_postfix_expr(v__gen__x64__Gen* g, v__ast__PostfixExpr node);
 VV_LOCAL_SYMBOL void v__gen__x64__verror(string s);
 void v__gen__x64__Gen_error_with_pos(v__gen__x64__Gen* g, string s, v__token__Position pos);
-#define _const_v__gen__x64__S_ATTR_SOME_INSTRUCTIONS 0x00000400
-#define _const_v__gen__x64__S_ATTR_PURE_INSTRUCTIONS 0x80000000
-#define _const_v__gen__x64__S_ATTR_EXT_RELOC 0x00000200
-#define _const_v__gen__x64__S_ATTR_LOC_RELOC 0x00000100
-#define _const_v__gen__x64__MACHO_SYMCMD_SIZE 0x18
-#define _const_v__gen__x64__MACHO_D_SIZE 0x50
-#define _const_v__gen__x64__LC_SYMTAB 0x2
-#define _const_v__gen__x64__LC_DYMSYMTAB 0xB
+#define _const_v__gen__x64__s_attr_some_instructions 0x00000400
+#define _const_v__gen__x64__s_attr_pure_instructions 0x80000000
+#define _const_v__gen__x64__s_attr_ext_reloc 0x00000200
+#define _const_v__gen__x64__s_attr_loc_reloc 0x00000100
+#define _const_v__gen__x64__macho_symcmd_size 0x18
+#define _const_v__gen__x64__macho_d_size 0x50
+#define _const_v__gen__x64__lc_symtab 0x2
+#define _const_v__gen__x64__lc_dymsymtab 0xB
 void v__gen__x64__Gen_generate_macho_header(v__gen__x64__Gen* g);
 void v__gen__x64__Gen_generate_macho_footer(v__gen__x64__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__x64__Gen_sym_table_command(v__gen__x64__Gen* g);
@@ -22726,7 +22726,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("818be80"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("845e8de"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -57640,7 +57640,7 @@ void v__gen__x64__Gen_generate_macho_header(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write32(g, 0x4);
 	v__gen__x64__Gen_write32(g, 0x160);
 	v__gen__x64__Gen_write32(g, 0x1);
-	v__gen__x64__Gen_write32(g, (_const_v__gen__x64__S_ATTR_SOME_INSTRUCTIONS | _const_v__gen__x64__S_ATTR_PURE_INSTRUCTIONS));
+	v__gen__x64__Gen_write32(g, (_const_v__gen__x64__s_attr_some_instructions | _const_v__gen__x64__s_attr_pure_instructions));
 	v__gen__x64__Gen_write32(g, 0);
 	v__gen__x64__Gen_write32(g, 0);
 	v__gen__x64__Gen_write32(g, 0);
@@ -57651,8 +57651,8 @@ void v__gen__x64__Gen_generate_macho_header(v__gen__x64__Gen* g) {
 	v__gen__x64__Gen_write32(g, 0);
 	v__gen__x64__Gen_write32(g, 0);
 	v__gen__x64__Gen_sym_table_command(g);
-	v__gen__x64__Gen_write32(g, _const_v__gen__x64__LC_DYMSYMTAB);
-	v__gen__x64__Gen_write32(g, _const_v__gen__x64__MACHO_D_SIZE);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__lc_dymsymtab);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__macho_d_size);
 	v__gen__x64__Gen_write32(g, 0);
 	v__gen__x64__Gen_write32(g, 2);
 	v__gen__x64__Gen_write32(g, 2);
@@ -57727,8 +57727,8 @@ VV_LOCAL_SYMBOL void v__gen__x64__Gen_sym_table_command(v__gen__x64__Gen* g) {
 		.name = _SLIT("ltmp1"),
 		.is_ext = false,
 	} }));
-	v__gen__x64__Gen_write32(g, _const_v__gen__x64__LC_SYMTAB);
-	v__gen__x64__Gen_write32(g, _const_v__gen__x64__MACHO_SYMCMD_SIZE);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__lc_symtab);
+	v__gen__x64__Gen_write32(g, _const_v__gen__x64__macho_symcmd_size);
 	int sym_table_offset = 0x168;
 	v__gen__x64__Gen_write32(g, sym_table_offset);
 	int g_syms_len = 4;
@@ -57746,8 +57746,6 @@ void v__gen__x64__Gen_zeroes(v__gen__x64__Gen* g, int n) {
 }
 
 VV_LOCAL_SYMBOL void v__gen__x64__Gen_mov_arm(v__gen__x64__Gen* g, v__gen__x64__Register2 reg, u64 val) {
-	u64 m = ((u64)(0xffffU));
-	u64 x = ((u64)(val));
 	int r = ((int)(reg));
 	if (r == 0 && val == 1) {
 		v__gen__x64__Gen_write32(g, 0xd2800020);
