@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ce92bf8"
+#define V_COMMIT_HASH "043c29c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7f7f9dc"
+	#define V_COMMIT_HASH "ce92bf8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ce92bf8"
+	#define V_CURRENT_COMMIT_HASH "043c29c"
 #endif
 
 // V comptime_defines:
@@ -6068,7 +6068,7 @@ string v__ast__CallArg_str(v__ast__CallArg a);
 string v__ast__args2str(Array_v__ast__CallArg args);
 string v__ast__BranchStmt_str(v__ast__BranchStmt* node);
 string v__ast__Stmt_str(v__ast__Stmt node);
-VV_LOCAL_SYMBOL string anon_fn_struct__string_9033(v__ast__ConstField f);
+VV_LOCAL_SYMBOL string anon_fn_struct__string_9102(v__ast__ConstField f);
 string v__ast__CompForKind_str(v__ast__CompForKind e);
 Option2_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, v__table__Type got, v__table__Type expected_, v__table__Language language);
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__table__Type got, v__table__Type expected);
@@ -7769,7 +7769,7 @@ static bool v__ast__FloatLiteral_struct_eq(v__ast__FloatLiteral a, v__ast__Float
 	return true;
 }
 
-VV_LOCAL_SYMBOL string anon_fn_struct__string_9033(v__ast__ConstField f) {
+VV_LOCAL_SYMBOL string anon_fn_struct__string_9102(v__ast__ConstField f) {
 			string _t2016 = _STR("%.*s\000 = %.*s", 2, string_trim_prefix(f.name, string_add(f.mod, _SLIT("."))), v__ast__Expr_str(f.expr));
 			return _t2016;
 		}
@@ -23078,7 +23078,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7f7f9dc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ce92bf8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -30081,6 +30081,8 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 				} else if (((*sub_expr._v__ast__CallExpr).left).typ == 202 /* v.ast.CallExpr */) {
 					sub_expr = (*sub_expr._v__ast__CallExpr).left;
 					continue;
+				} else if (((*sub_expr._v__ast__CallExpr).left).typ == 203 /* v.ast.CastExpr */) {
+					needs_braces = true;
 				}
 				break;
 			}
@@ -30269,9 +30271,9 @@ string v__ast__Expr_str(v__ast__Expr x) {
 				break;
 			}
 			array_push(&res, _MOV((string[]){ string_clone(_SLIT("$")) }));
-			multi_return_string_bool mr_7534 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
-			string fspec_str = mr_7534.arg0;
-			bool needs_braces = mr_7534.arg1;
+			multi_return_string_bool mr_7603 = v__ast__StringInterLiteral_get_fspec_braces(&(*x._v__ast__StringInterLiteral), i);
+			string fspec_str = mr_7603.arg0;
+			bool needs_braces = mr_7603.arg1;
 			if (needs_braces) {
 				array_push(&res, _MOV((string[]){ string_clone(_SLIT("{")) }));
 				array_push(&res, _MOV((string[]){ string_clone(v__ast__Expr_str((*(v__ast__Expr*)/*ee elem_typ */array_get((*x._v__ast__StringInterLiteral).exprs, i)))) }));
@@ -30385,7 +30387,7 @@ string v__ast__Stmt_str(v__ast__Stmt node) {
 
 		for (int _t2015 = 0; _t2015 < _t2014_len; ++_t2015) {
 			v__ast__ConstField it = ((v__ast__ConstField*) _t2014_orig.data)[_t2015];
-			string ti = 		anon_fn_struct__string_9033(it);
+			string ti = 		anon_fn_struct__string_9102(it);
 			array_push(&_t2014, &ti);
 		}
 		
