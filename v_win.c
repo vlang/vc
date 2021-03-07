@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1b47e29"
+#define V_COMMIT_HASH "a1e0f2b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f1c4e96"
+	#define V_COMMIT_HASH "1b47e29"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1b47e29"
+	#define V_CURRENT_COMMIT_HASH "a1e0f2b"
 #endif
 
 // V comptime_defines:
@@ -1931,6 +1931,7 @@ struct VAssertMetaInfo {
 
 struct MethodArgs {
 	int typ;
+	string name;
 };
 
 struct FunctionData {
@@ -22776,7 +22777,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f1c4e96"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1b47e29"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51284,7 +51285,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor 
 				for (int j = 0; j < _t3152.len; ++j) {
 					v__table__Param arg = ((v__table__Param*)_t3152.data)[j];
 					int typ = v__table__Type_idx(arg.typ);
-					v__gen__c__Gen_write(g, int_str(typ));
+					v__gen__c__Gen_write(g, _STR("{%.*s\000, _SLIT(\"%.*s\000\")}", 3, int_str(typ), arg.name));
 					if (j < len - 1) {
 						v__gen__c__Gen_write(g, _SLIT(", "));
 					}
