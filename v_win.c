@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4d24cb0"
+#define V_COMMIT_HASH "8f0ede3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b64d781"
+	#define V_COMMIT_HASH "4d24cb0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4d24cb0"
+	#define V_CURRENT_COMMIT_HASH "8f0ede3"
 #endif
 
 // V comptime_defines:
@@ -22778,7 +22778,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b64d781"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4d24cb0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -60237,11 +60237,6 @@ bool main__main_defer_0 = false;
 	multi_return_v__pref__Preferences_string mr_1775 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
 	v__pref__Preferences* prefs = mr_1775.arg0;
 	string command = mr_1775.arg1;
-	if (prefs->is_help) {
-		main__invoke_help_and_exit(args);
-	}
-	if (prefs->is_verbose) {
-	}
 	if (prefs->use_cache && string_eq(os__user_os(), _SLIT("windows"))) {
 		eprintln(_SLIT("-usecache is currently disabled on windows"));
 		v_exit(1);
@@ -60329,6 +60324,9 @@ bool main__main_defer_0 = false;
 		}
 		// Defer end
 		return;
+	}
+	if (prefs->is_help) {
+		main__invoke_help_and_exit(args);
 	}
 	eprintln(_STR("v %.*s\000: unknown command\nRun \"v help\" for usage.", 2, command));
 	v_exit(1);
