@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f280a5c"
+#define V_COMMIT_HASH "6a7ef4f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "791dec7"
+	#define V_COMMIT_HASH "f280a5c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f280a5c"
+	#define V_CURRENT_COMMIT_HASH "6a7ef4f"
 #endif
 
 // V comptime_defines:
@@ -23327,7 +23327,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("791dec7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f280a5c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28367,7 +28367,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t1583;
 			}
 			string hash = string_trim_space(string_substr(s->text, start, s->pos));
-			v__token__Token _t1584 = v__scanner__Scanner_new_token(s, v__token__Kind_hash, hash, hash.len);
+			v__token__Token _t1584 = v__scanner__Scanner_new_token(s, v__token__Kind_hash, hash, hash.len + 2);
 			return _t1584;
 		}
 		else if (c == L'>') {
