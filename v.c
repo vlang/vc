@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6a7ef4f"
+#define V_COMMIT_HASH "5a23132"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f280a5c"
+	#define V_COMMIT_HASH "6a7ef4f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6a7ef4f"
+	#define V_CURRENT_COMMIT_HASH "5a23132"
 #endif
 
 // V comptime_defines:
@@ -23642,7 +23642,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f280a5c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6a7ef4f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42923,13 +42923,13 @@ VV_LOCAL_SYMBOL v__ast__Module v__parser__Parser_module_decl(v__parser__Parser* 
 			;
 		}
 		v__token__Position n_pos = v__token__Token_position(&p->tok);
-		if (module_pos.line_nr == n_pos.line_nr && p->tok.kind != v__token__Kind_comment) {
-			if (p->tok.kind != v__token__Kind_name) {
-				v__parser__Parser_error_with_pos(p, _SLIT("`module x` syntax error"), n_pos);
+		if (module_pos.line_nr == n_pos.line_nr && p->tok.kind != v__token__Kind_comment && p->tok.kind != v__token__Kind_eof) {
+			if (p->tok.kind == v__token__Kind_name) {
+				v__parser__Parser_error_with_pos(p, _STR("`module %.*s\000`, you can only declare one module, unexpected `%.*s\000`", 3, name, p->tok.lit), n_pos);
 				return mod_node;
 				;
 			} else {
-				v__parser__Parser_error_with_pos(p, _SLIT("`module x` can only declare one module"), n_pos);
+				v__parser__Parser_error_with_pos(p, _STR("`module %.*s\000`, unexpected `%.*s\000` after module name", 3, name, v__token__Kind_str(p->tok.kind)), n_pos);
 				return mod_node;
 				;
 			}
@@ -43144,9 +43144,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t2864 = (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 		return _t2864;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_51502 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_51502.arg0;
-	Array_v__ast__Comment comments2 = mr_51502.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_51603 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_51603.arg0;
+	Array_v__ast__Comment comments2 = mr_51603.arg1;
 	_PUSH_MANY(&comments, (comments2), _t2865, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t2866 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
