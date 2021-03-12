@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "be409b5"
+#define V_COMMIT_HASH "0c33656"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c474106"
+	#define V_COMMIT_HASH "be409b5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "be409b5"
+	#define V_CURRENT_COMMIT_HASH "0c33656"
 #endif
 
 // V comptime_defines:
@@ -13777,7 +13777,7 @@ string Option2_str(Option2 o) {
 	if (o.state == 1) {
 		return _SLIT("Option{ none }");
 	}
-	return _STR("Option{ err: \"%.*s\000\" }", 2, Error_str(o.err));
+	return _STR("Option{ error: \"%.*s\000\" }", 2, Error_str(o.err));
 }
 
 Option2 error2(string message) {
@@ -23727,7 +23727,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c474106"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("be409b5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
