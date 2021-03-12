@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cfbb783"
+#define V_COMMIT_HASH "504b87b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2fbacd0"
+	#define V_COMMIT_HASH "cfbb783"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cfbb783"
+	#define V_CURRENT_COMMIT_HASH "504b87b"
 #endif
 
 // V comptime_defines:
@@ -23364,7 +23364,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2fbacd0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cfbb783"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36522,69 +36522,14 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 				}
 			}
 		}
-		if (!node->is_comptime && (branch.cond)._typ == 248 /* v.ast.InfixExpr */) {
-			v__ast__InfixExpr infix = /* as */ *(v__ast__InfixExpr*)__as_cast((branch.cond)._v__ast__InfixExpr,(branch.cond)._typ, 248) /*expected idx: 248, name: v.ast.InfixExpr */ ;
-			if (infix.op == v__token__Kind_key_is) {
-				v__ast__Type right_expr = /* as */ *(v__ast__Type*)__as_cast((infix.right)._v__ast__Type,(infix.right)._typ, 268) /*expected idx: 268, name: v.ast.Type */ ;
-				v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(c->table, infix.left_type);
-				v__table__Type expr_type = v__checker__Checker_expr(c, infix.left);
-				if (left_sym->kind == v__table__Kind_interface_) {
-					v__checker__Checker_type_implements(c, right_expr.typ, expr_type, v__ast__Expr_position(branch.cond));
-				} else if (!v__checker__Checker_check_types(c, right_expr.typ, expr_type)) {
-					string expect_str = v__table__Table_type_to_str(c->table, right_expr.typ);
-					string expr_str = v__table__Table_type_to_str(c->table, expr_type);
-					v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000`", 3, expect_str, expr_str), branch.pos);
-				}
-				if (((infix.left)._typ == 244 /* v.ast.Ident */ || (infix.left)._typ == 262 /* v.ast.SelectorExpr */) && (infix.right)._typ == 268 /* v.ast.Type */) {
-					bool is_variable = ((infix.left)._typ == 244 /* v.ast.Ident */ ? ((*infix.left._v__ast__Ident).kind == v__ast__IdentKind_variable) : (true));
-					if (is_variable) {
-						if ((left_sym->kind == v__table__Kind_interface_ || left_sym->kind == v__table__Kind_sum_type)) {
-							if ((infix.left)._typ == 244 /* v.ast.Ident */ && left_sym->kind == v__table__Kind_interface_) {
-								v__ast__Ident left = /* as */ *(v__ast__Ident*)__as_cast((infix.left)._v__ast__Ident,(infix.left)._typ, 244) /*expected idx: 244, name: v.ast.Ident */ ;
-								bool is_mut = false;
-								Array_v__table__Type sum_type_casts = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
-								;
-								{ /* if guard */ 
-								Option2_v__ast__Var_ptr _t2320;
-								if (_t2320 = v__ast__Scope_find_var(branch.scope, left.name), _t2320.state == 0) {
-									v__ast__Var* v = *(v__ast__Var**)_t2320.data;
-									is_mut = v->is_mut;
-									_PUSH_MANY(&sum_type_casts, (v->sum_type_casts), _t2321, Array_v__table__Type);
-								}}
-								v__ast__Scope_register(branch.scope, v__ast__Var_to_sumtype_v__ast__ScopeObject(ADDR(v__ast__Var, ((v__ast__Var){
-									.name = left.name,
-									.expr = {0},
-									.share = 0,
-									.is_mut = is_mut,
-									.is_autofree_tmp = 0,
-									.is_arg = 0,
-									.is_auto_deref = 0,
-									.typ = v__table__Type_to_ptr(right_expr.typ),
-									.orig_type = 0,
-									.sum_type_casts = sum_type_casts,
-									.pos = left.pos,
-									.is_used = true,
-									.is_changed = 0,
-									.is_or = 0,
-									.is_tmp = 0,
-								}))));
-								(*(v__ast__IfBranch*)/*ee elem_typ */array_get(node->branches, i)).smartcast = true;
-							} else {
-								v__checker__Checker_smartcast_sumtype(/*rec*/*c, infix.left, infix.left_type, right_expr.typ, branch.scope);
-							}
-						}
-					}
-				}
-			}
-		}
 		if (node->is_comptime) {
 			string comptime_field_name = _SLIT("");
 			if ((branch.cond)._typ == 248 /* v.ast.InfixExpr */) {
 				if ((*branch.cond._v__ast__InfixExpr).op == v__token__Kind_key_is) {
 					if (((*branch.cond._v__ast__InfixExpr).right)._typ != 268 /* v.ast.Type */) {
 						v__checker__Checker_error(c, _SLIT("invalid `$if` condition: expected a type"), v__ast__Expr_position((*branch.cond._v__ast__InfixExpr).right));
-						v__table__Type _t2322 = 0;
-						return _t2322;
+						v__table__Type _t2320 = 0;
+						return _t2320;
 					}
 					v__table__Type got_type = v__checker__Checker_unwrap_generic(c, (/* as */ *(v__ast__Type*)__as_cast(((*branch.cond._v__ast__InfixExpr).right)._v__ast__Type,((*branch.cond._v__ast__InfixExpr).right)._typ, 268) /*expected idx: 268, name: v.ast.Type */ ).typ);
 					v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(c->table, got_type);
@@ -36624,6 +36569,61 @@ v__table__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExp
 			}
 			c->skip_flags = cur_skip_flags;
 		} else {
+			v__token__Position pos = v__ast__Expr_position(branch.cond);
+			if ((branch.cond)._typ == 248 /* v.ast.InfixExpr */) {
+				if ((*branch.cond._v__ast__InfixExpr).op == v__token__Kind_key_is) {
+					v__ast__Type right_expr = /* as */ *(v__ast__Type*)__as_cast(((*branch.cond._v__ast__InfixExpr).right)._v__ast__Type,((*branch.cond._v__ast__InfixExpr).right)._typ, 268) /*expected idx: 268, name: v.ast.Type */ ;
+					v__table__TypeSymbol* left_sym = v__table__Table_get_type_symbol(c->table, (*branch.cond._v__ast__InfixExpr).left_type);
+					v__table__Type expr_type = v__checker__Checker_expr(c, (*branch.cond._v__ast__InfixExpr).left);
+					if (left_sym->kind == v__table__Kind_interface_) {
+						v__checker__Checker_type_implements(c, right_expr.typ, expr_type, pos);
+					} else if (!v__checker__Checker_check_types(c, right_expr.typ, expr_type)) {
+						string expect_str = v__table__Table_type_to_str(c->table, right_expr.typ);
+						string expr_str = v__table__Table_type_to_str(c->table, expr_type);
+						v__checker__Checker_error(c, _STR("cannot use type `%.*s\000` as type `%.*s\000`", 3, expect_str, expr_str), pos);
+					}
+					if ((((*branch.cond._v__ast__InfixExpr).left)._typ == 244 /* v.ast.Ident */ || ((*branch.cond._v__ast__InfixExpr).left)._typ == 262 /* v.ast.SelectorExpr */) && ((*branch.cond._v__ast__InfixExpr).right)._typ == 268 /* v.ast.Type */) {
+						bool is_variable = (((*branch.cond._v__ast__InfixExpr).left)._typ == 244 /* v.ast.Ident */ ? ((*(*branch.cond._v__ast__InfixExpr).left._v__ast__Ident).kind == v__ast__IdentKind_variable) : (true));
+						if (is_variable) {
+							if ((left_sym->kind == v__table__Kind_interface_ || left_sym->kind == v__table__Kind_sum_type)) {
+								if (((*branch.cond._v__ast__InfixExpr).left)._typ == 244 /* v.ast.Ident */ && left_sym->kind == v__table__Kind_interface_) {
+									v__ast__Ident left = /* as */ *(v__ast__Ident*)__as_cast(((*branch.cond._v__ast__InfixExpr).left)._v__ast__Ident,((*branch.cond._v__ast__InfixExpr).left)._typ, 244) /*expected idx: 244, name: v.ast.Ident */ ;
+									bool is_mut = false;
+									Array_v__table__Type sum_type_casts = __new_array_with_default(0, 0, sizeof(v__table__Type), 0);
+									;
+									{ /* if guard */ 
+									Option2_v__ast__Var_ptr _t2321;
+									if (_t2321 = v__ast__Scope_find_var(branch.scope, left.name), _t2321.state == 0) {
+										v__ast__Var* v = *(v__ast__Var**)_t2321.data;
+										is_mut = v->is_mut;
+										_PUSH_MANY(&sum_type_casts, (v->sum_type_casts), _t2322, Array_v__table__Type);
+									}}
+									v__ast__Scope_register(branch.scope, v__ast__Var_to_sumtype_v__ast__ScopeObject(ADDR(v__ast__Var, ((v__ast__Var){
+										.name = left.name,
+										.expr = {0},
+										.share = 0,
+										.is_mut = is_mut,
+										.is_autofree_tmp = 0,
+										.is_arg = 0,
+										.is_auto_deref = 0,
+										.typ = v__table__Type_to_ptr(right_expr.typ),
+										.orig_type = 0,
+										.sum_type_casts = sum_type_casts,
+										.pos = left.pos,
+										.is_used = true,
+										.is_changed = 0,
+										.is_or = 0,
+										.is_tmp = 0,
+									}))));
+									(*(v__ast__IfBranch*)/*ee elem_typ */array_get(node->branches, i)).smartcast = true;
+								} else {
+									v__checker__Checker_smartcast_sumtype(/*rec*/*c, (*branch.cond._v__ast__InfixExpr).left, (*branch.cond._v__ast__InfixExpr).left_type, right_expr.typ, branch.scope);
+								}
+							}
+						}
+					}
+				}
+			}
 			v__checker__Checker_stmts(c, branch.stmts);
 		}
 		if (expr_required) {
@@ -36975,8 +36975,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_173544 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_173544.arg0;
+		multi_return_string_v__token__Position mr_173617 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_173617.arg0;
 	}
 	return typ;
 	;
@@ -37839,10 +37839,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2431 = 0; _t2431 < sym_app->methods.len; ++_t2431) {
 			v__table__Fn m = ((v__table__Fn*)sym_app->methods.data)[_t2431];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_197623 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_197623.arg0;
-				int nroute_attributes = mr_197623.arg1;
-				int nargs = mr_197623.arg2;
+				multi_return_bool_int_int mr_197696 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_197696.arg0;
+				int nroute_attributes = mr_197696.arg1;
+				int nargs = mr_197696.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
