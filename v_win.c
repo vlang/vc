@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "db15286"
+#define V_COMMIT_HASH "b6d089b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c0779e8"
+	#define V_COMMIT_HASH "db15286"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "db15286"
+	#define V_CURRENT_COMMIT_HASH "b6d089b"
 #endif
 
 // V comptime_defines:
@@ -12435,7 +12435,7 @@ byteptr realloc_data(byteptr old_data, int old_size, int new_size) {
 	#endif
 	byteptr nptr = realloc(old_data, new_size);
 	if (nptr == 0) {
-		v_panic(_STR("realloc_data(%"PRId32"\000) failed", 2, new_size));
+		v_panic(_STR("realloc_data(%p\000, %"PRId32"\000, %"PRId32"\000) failed", 4, old_data, old_size, new_size));
 	}
 	return nptr;
 }
@@ -19558,7 +19558,7 @@ void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, 
 }
 
 void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
-	Array_string d = (*(Array_string*)map_get_1(ADDR(map, o->data), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) }));
+	Array_string d = v__depgraph__OrderedDepMap_get(o, name);
 	// FOR IN array
 	for (int _t354 = 0; _t354 < deps.len; ++_t354) {
 		string dep = ((string*)deps.data)[_t354];
@@ -19571,8 +19571,20 @@ void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, 
 }
 
 Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, string name) {
-	Array_string _t356 = (*(Array_string*)map_get_1(ADDR(map, o->data), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) }));
-	return _t356;
+	Array_string* _t357 = (Array_string*)/*ee elem_ptr_typ */(map_get_1_check(ADDR(map, o->data), &(string[]){name}));
+	Option_Array_string _t356 = {0};
+	if (_t357) {
+		*((Array_string*)&_t356.data) = *((Array_string*)_t357);
+	} else {
+		_t356.state = 2; _t356.err = v_error(_SLIT("array index out of range"));
+	}
+	;
+	if (_t356.state != 0) { /*or block*/ 
+		IError err = _t356.err;
+		*(Array_string*) _t356.data = __new_array_with_default(0, 0, sizeof(string), 0);
+	}
+	Array_string res = *(Array_string*)_t356.data;
+	return res;
 }
 
 void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name) {
@@ -19591,10 +19603,10 @@ void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string nam
 
 void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
 	Array_string diff = __new_array_with_default(0, 0, sizeof(string), 0);
+	Array_string deps_of_name = v__depgraph__OrderedDepMap_get(o, name);
 	// FOR IN array
-	Array_string _t357 = (*(Array_string*)map_get_1(ADDR(map, o->data), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) }));
-	for (int _t358 = 0; _t358 < _t357.len; ++_t358) {
-		string dep = ((string*)_t357.data)[_t358];
+	for (int _t358 = 0; _t358 < deps_of_name.len; ++_t358) {
+		string dep = ((string*)deps_of_name.data)[_t358];
 		if (!(Array_string_contains(deps, dep))) {
 			array_push(&diff, _MOV((string[]){ string_clone(dep) }));
 		}
@@ -19608,12 +19620,13 @@ int v__depgraph__OrderedDepMap_size(v__depgraph__OrderedDepMap* o) {
 }
 
 v__depgraph__DepGraph* v__depgraph__new_dep_graph(void) {
-	v__depgraph__DepGraph* _t361 = (v__depgraph__DepGraph*)memdup(&(v__depgraph__DepGraph){.acyclic = true,.nodes = __new_array(0, 1, sizeof(v__depgraph__DepGraphNode)),}, sizeof(v__depgraph__DepGraph));
+	v__depgraph__DepGraph* _t361 = (v__depgraph__DepGraph*)memdup(&(v__depgraph__DepGraph){.acyclic = true,.nodes = __new_array_with_default(0, 1024, sizeof(v__depgraph__DepGraphNode), 0),}, sizeof(v__depgraph__DepGraph));
 	return _t361;
 }
 
 void v__depgraph__DepGraph_add(v__depgraph__DepGraph* graph, string mod, Array_string deps) {
-	array_push(&graph->nodes, _MOV((v__depgraph__DepGraphNode[]){ (v__depgraph__DepGraphNode){.name = mod,.deps = array_clone(&deps),} }));
+	v__depgraph__DepGraphNode new_node = (v__depgraph__DepGraphNode){.name = mod,.deps = array_clone(&deps),};
+	array_push(&graph->nodes, _MOV((v__depgraph__DepGraphNode[]){ new_node }));
 }
 
 v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* graph) {
@@ -19632,7 +19645,7 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 		// FOR IN array
 		for (int _t364 = 0; _t364 < node_deps.keys.len; ++_t364) {
 			string name = ((string*)node_deps.keys.data)[_t364];
-			Array_string deps = (*(Array_string*)map_get_1(ADDR(map, node_deps.data), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) }));
+			Array_string deps = v__depgraph__OrderedDepMap_get(&node_deps, name);
 			if (deps.len == 0) {
 				array_push(&ready_set, _MOV((string[]){ string_clone(name) }));
 			}
@@ -19643,7 +19656,7 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 			// FOR IN array
 			for (int _t366 = 0; _t366 < node_deps.keys.len; ++_t366) {
 				string name = ((string*)node_deps.keys.data)[_t366];
-				v__depgraph__DepGraph_add(g, name, (*(Array_string*)map_get_1(ADDR(map, node_names.data), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) })));
+				v__depgraph__DepGraph_add(g, name, v__depgraph__OrderedDepMap_get(&node_names, name));
 			}
 			return g;
 		}
@@ -19651,7 +19664,8 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 		for (int _t367 = 0; _t367 < ready_set.len; ++_t367) {
 			string name = ((string*)ready_set.data)[_t367];
 			v__depgraph__OrderedDepMap_delete(&node_deps, name);
-			v__depgraph__DepGraph_add(resolved, name, (*(Array_string*)map_get_1(ADDR(map, node_names.data), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) })));
+			Array_string resolved_deps = v__depgraph__OrderedDepMap_get(&node_names, name);
+			v__depgraph__DepGraph_add(resolved, name, resolved_deps);
 		}
 		// FOR IN array
 		for (int _t368 = 0; _t368 < node_deps.keys.len; ++_t368) {
@@ -22999,7 +23013,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c0779e8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("db15286"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
