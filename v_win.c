@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c0779e8"
+#define V_COMMIT_HASH "db15286"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ddbe57e"
+	#define V_COMMIT_HASH "c0779e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c0779e8"
+	#define V_CURRENT_COMMIT_HASH "db15286"
 #endif
 
 // V comptime_defines:
@@ -5525,7 +5525,7 @@ time__Time time__unix2(int abs, int microsecond);
 VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
 VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
 int math__mathutil__min_T_int(int a, int b);
-int_literal math__mathutil__max_T_int_literal(int_literal a, int_literal b);
+int math__mathutil__max_T_int(int a, int b);
 string v__token__Position_str(v__token__Position pos);
 v__token__Position v__token__Position_extend(v__token__Position pos, v__token__Position end);
 v__token__Position v__token__Position_extend_with_last_line(v__token__Position pos, v__token__Position end, int last_line);
@@ -19256,7 +19256,7 @@ inline int math__mathutil__min_T_int(int a, int b) {
 }
 
 // Attr: [inline]
-inline int_literal math__mathutil__max_T_int_literal(int_literal a, int_literal b) {
+inline int math__mathutil__max_T_int(int a, int b) {
 	if (a > b) {
 		return a;
 	} else {
@@ -22999,7 +22999,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ddbe57e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c0779e8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -24069,7 +24069,7 @@ string v__util__formatted_error(string kind, string omsg, string filepath, v__to
 	multi_return_string_int mr_2240 = v__util__filepath_pos_to_source_and_column(filepath, pos);
 	string source = mr_2240.arg0;
 	int column = mr_2240.arg1;
-	string position = _STR("%.*s\000:%"PRId32"\000:%"PRId32"\000:", 4, path, pos.line_nr + 1, math__mathutil__max_T_int_literal(1, column + 1));
+	string position = _STR("%.*s\000:%"PRId32"\000:%"PRId32"\000:", 4, path, pos.line_nr + 1, math__mathutil__max_T_int(1, column + 1));
 	string scontext = Array_string_join(v__util__source_context(kind, source, column, pos), _SLIT("\n"));
 	string final_position = v__util__bold(position);
 	string final_kind = v__util__bold(v__util__color(kind, kind));
@@ -24086,7 +24086,7 @@ multi_return_string_int v__util__filepath_pos_to_source_and_column(string filepa
 		*(string*) _t900.data = _SLIT("");
 	}
  	string source =  *(string*)_t900.data;
-	int p = math__mathutil__max_T_int_literal(0, math__mathutil__min_T_int(source.len - 1, pos.pos));
+	int p = math__mathutil__max_T_int(0, math__mathutil__min_T_int(source.len - 1, pos.pos));
 	if (source.len > 0) {
 		for (; p >= 0; p--) {
 			if (string_at(source, p) == L'\n' || string_at(source, p) == L'\r') {
@@ -24094,7 +24094,7 @@ multi_return_string_int v__util__filepath_pos_to_source_and_column(string filepa
 			}
 		}
 	}
-	int column = math__mathutil__max_T_int_literal(0, pos.pos - p - 1);
+	int column = math__mathutil__max_T_int(0, pos.pos - p - 1);
 	return (multi_return_string_int){.arg0=source, .arg1=column};
 }
 
@@ -24104,13 +24104,13 @@ Array_string v__util__source_context(string kind, string source, int column, v__
 		return clines;
 	}
 	Array_string source_lines = string_split_into_lines(source);
-	int bline = math__mathutil__max_T_int_literal(0, pos.line_nr - _const_v__util__error_context_before);
-	int aline = math__mathutil__max_T_int_literal(0, math__mathutil__min_T_int(source_lines.len - 1, pos.line_nr + _const_v__util__error_context_after));
+	int bline = math__mathutil__max_T_int(0, pos.line_nr - _const_v__util__error_context_before);
+	int aline = math__mathutil__max_T_int(0, math__mathutil__min_T_int(source_lines.len - 1, pos.line_nr + _const_v__util__error_context_after));
 	string tab_spaces = _SLIT("    ");
 	for (int iline = bline; iline <= aline; iline++) {
 		string sline = (*(string*)/*ee elem_typ */array_get(source_lines, iline));
-		int start_column = math__mathutil__max_T_int_literal(0, math__mathutil__min_T_int(column, sline.len));
-		int end_column = math__mathutil__max_T_int_literal(0, math__mathutil__min_T_int(column + math__mathutil__max_T_int_literal(0, pos.len), sline.len));
+		int start_column = math__mathutil__max_T_int(0, math__mathutil__min_T_int(column, sline.len));
+		int end_column = math__mathutil__max_T_int(0, math__mathutil__min_T_int(column + math__mathutil__max_T_int(0, pos.len), sline.len));
 		string cline = (iline == pos.line_nr ? (string_add(string_add(string_substr(sline, 0, start_column), v__util__color(kind, string_substr(sline, start_column, end_column))), string_substr(sline, end_column, sline.len))) : (sline));
 		array_push(&clines, _MOV((string[]){ string_clone(string_add(_STR("%5"PRId32"\000 | ", 2, iline + 1), string_replace(cline, _SLIT("\t"), tab_spaces))) }));
 		if (iline == pos.line_nr) {
@@ -30461,7 +30461,7 @@ void v__checker__Checker_infer_fn_types(v__checker__Checker* c, v__table__Fn f, 
 			v__ast__CallArg arg = (*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, arg_i));
 			v__table__TypeSymbol* param_type_sym = v__table__Table_get_type_symbol(c->table, param.typ);
 			if (v__table__Type_has_flag(param.typ, v__table__TypeFlag_generic) && string_eq(param_type_sym->name, gt_name)) {
-				typ = arg.typ;
+				typ = v__table__Table_mktyp(c->table, arg.typ);
 				break;
 			}
 			v__table__TypeSymbol* arg_sym = v__table__Table_get_type_symbol(c->table, arg.typ);
