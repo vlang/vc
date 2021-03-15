@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "25c07c2"
+#define V_COMMIT_HASH "3951c35"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ef10c60"
+	#define V_COMMIT_HASH "25c07c2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "25c07c2"
+	#define V_CURRENT_COMMIT_HASH "3951c35"
 #endif
 
 // V comptime_defines:
@@ -5219,16 +5219,16 @@ Option_bool os__is_writable_folder(string folder);
 int os__getpid();
 void os__posix_set_permission_bit(string path_s, u32 mode, bool enable);
 os__Process* os__new_process(string filename);
-os__Process* os__Process_set_args(os__Process* p, Array_string pargs);
-os__Process* os__Process_set_environment(os__Process* p, Map_string_string envs);
-os__Process* os__Process_run(os__Process* p);
-os__Process* os__Process_signal_kill(os__Process* p);
-os__Process* os__Process_signal_stop(os__Process* p);
-os__Process* os__Process_signal_continue(os__Process* p);
-os__Process* os__Process_wait(os__Process* p);
+void os__Process_set_args(os__Process* p, Array_string pargs);
+void os__Process_set_environment(os__Process* p, Map_string_string envs);
+void os__Process_run(os__Process* p);
+void os__Process_signal_kill(os__Process* p);
+void os__Process_signal_stop(os__Process* p);
+void os__Process_signal_continue(os__Process* p);
+void os__Process_wait(os__Process* p);
 VV_LOCAL_SYMBOL int os__Process__spawn(os__Process* p);
 bool os__Process_is_alive(os__Process* p);
-os__Process* os__Process_set_redirect_stdio(os__Process* p);
+void os__Process_set_redirect_stdio(os__Process* p);
 void os__Process_stdin_write(os__Process* p, string s);
 string os__Process_stdout_slurp(os__Process* p);
 string os__Process_stderr_slurp(os__Process* p);
@@ -18150,17 +18150,17 @@ os__Process* os__new_process(string filename) {
 	return (os__Process*)memdup(&(os__Process){.filename = filename,.pid = 0,.code = -1,.status = os__ProcessState_not_started,.err = (string){.str=(byteptr)""},.args = __new_array(0, 1, sizeof(string)),.env_is_custom = 0,.env = __new_array(0, 1, sizeof(string)),.use_stdio_ctl = 0,.stdio_fd = {0},}, sizeof(os__Process));
 }
 
-os__Process* os__Process_set_args(os__Process* p, Array_string pargs) {
+void os__Process_set_args(os__Process* p, Array_string pargs) {
 	if (p->status != os__ProcessState_not_started) {
-		return &(*p);
+		return;
 	}
 	p->args = pargs;
-	return &(*p);
+	return;
 }
 
-os__Process* os__Process_set_environment(os__Process* p, Map_string_string envs) {
+void os__Process_set_environment(os__Process* p, Map_string_string envs) {
 	if (p->status != os__ProcessState_not_started) {
-		return &(*p);
+		return;
 	}
 	p->env_is_custom = true;
 	p->env = __new_array_with_default(0, 0, sizeof(string), 0);
@@ -18172,53 +18172,53 @@ os__Process* os__Process_set_environment(os__Process* p, Map_string_string envs)
 		string v = (*(string*)DenseArray_value(&envs.key_values, _t213));
 		array_push(&p->env, _MOV((string[]){ _STR("%.*s\000=%.*s", 2, k, v) }));
 	}
-	return &(*p);
+	return;
 }
 
-os__Process* os__Process_run(os__Process* p) {
+void os__Process_run(os__Process* p) {
 	if (p->status != os__ProcessState_not_started) {
-		return &(*p);
+		return;
 	}
 	os__Process__spawn(p);
-	return &(*p);
+	return;
 }
 
-os__Process* os__Process_signal_kill(os__Process* p) {
+void os__Process_signal_kill(os__Process* p) {
 	if (!(p->status == os__ProcessState_running || p->status == os__ProcessState_stopped)) {
-		return &(*p);
+		return;
 	}
 	os__Process__signal_kill(p);
 	p->status = os__ProcessState_aborted;
-	return &(*p);
+	return;
 }
 
-os__Process* os__Process_signal_stop(os__Process* p) {
+void os__Process_signal_stop(os__Process* p) {
 	if (p->status != os__ProcessState_running) {
-		return &(*p);
+		return;
 	}
 	os__Process__signal_stop(p);
 	p->status = os__ProcessState_stopped;
-	return &(*p);
+	return;
 }
 
-os__Process* os__Process_signal_continue(os__Process* p) {
+void os__Process_signal_continue(os__Process* p) {
 	if (p->status != os__ProcessState_stopped) {
-		return &(*p);
+		return;
 	}
 	os__Process__signal_continue(p);
 	p->status = os__ProcessState_running;
-	return &(*p);
+	return;
 }
 
-os__Process* os__Process_wait(os__Process* p) {
+void os__Process_wait(os__Process* p) {
 	if (p->status == os__ProcessState_not_started) {
 		os__Process__spawn(p);
 	}
 	if (!(p->status == os__ProcessState_running || p->status == os__ProcessState_stopped)) {
-		return &(*p);
+		return;
 	}
 	os__Process__wait(p);
-	return &(*p);
+	return;
 }
 
 VV_LOCAL_SYMBOL int os__Process__spawn(os__Process* p) {
@@ -18256,9 +18256,9 @@ bool os__Process_is_alive(os__Process* p) {
 	return false;
 }
 
-os__Process* os__Process_set_redirect_stdio(os__Process* p) {
+void os__Process_set_redirect_stdio(os__Process* p) {
 	p->use_stdio_ctl = true;
-	return &(*p);
+	return;
 }
 
 void os__Process_stdin_write(os__Process* p, string s) {
@@ -18278,15 +18278,15 @@ string os__Process_stderr_slurp(os__Process* p) {
 
 string os__Process_stdout_read(os__Process* p) {
 	os__Process__check_redirection_call(p, _SLIT("stdout_read"));
-	multi_return_string_int mr_4814 = os__fd_read(p->stdio_fd[1], 4096);
-	string s = mr_4814.arg0;
+	multi_return_string_int mr_4712 = os__fd_read(p->stdio_fd[1], 4096);
+	string s = mr_4712.arg0;
 	return s;
 }
 
 string os__Process_stderr_read(os__Process* p) {
 	os__Process__check_redirection_call(p, _SLIT("stderr_read"));
-	multi_return_string_int mr_4953 = os__fd_read(p->stdio_fd[2], 4096);
-	string s = mr_4953.arg0;
+	multi_return_string_int mr_4851 = os__fd_read(p->stdio_fd[2], 4096);
+	string s = mr_4851.arg0;
 	return s;
 }
 
@@ -23340,7 +23340,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ef10c60"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("25c07c2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
