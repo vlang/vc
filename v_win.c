@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e554415"
+#define V_COMMIT_HASH "d30750d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d92f9e7"
+	#define V_COMMIT_HASH "e554415"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e554415"
+	#define V_CURRENT_COMMIT_HASH "d30750d"
 #endif
 
 // V comptime_defines:
@@ -12261,8 +12261,7 @@ VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn
 	eprintln(_STR("   module: %.*s", 1, mod));
 	eprintln(_STR(" function: %.*s\000()", 2, fn_name));
 	eprintln(_STR("  message: %.*s", 1, s));
-	eprintln(_STR("     file: %.*s", 1, file));
-	eprintln(string_add(_SLIT("     line: "), int_str(line_no)));
+	eprintln(_STR("     file: %.*s\000:%"PRId32"", 2, file, line_no));
 	eprintln(_SLIT("========================================="));
 	#if defined(CUSTOM_DEFINE_exit_after_panic_message)
 	{
@@ -22892,7 +22891,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d92f9e7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e554415"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -58430,7 +58429,7 @@ VV_LOCAL_SYMBOL string v__builder__Builder_rebuild_cached_module(v__builder__Bui
 		Option_string _t3136 = v__vcache__CacheManager_exists(&v->pref->cache_manager, _SLIT(".o"), imp_path);
 		if (_t3136.state != 0) { /*or block*/ 
 			err = _t3136.err;
-			v_panic(_STR("could not rebuild cache module for %.*s\000, error: %.*s", 2, imp_path, IError_str(err)));
+			v_panic(_STR("could not rebuild cache module for %.*s\000, error: %.*s", 2, imp_path, (*(err.msg))));
 		}
  		string rebuilded_o =  *(string*)_t3136.data;
 		os__chdir(pwd);
@@ -58575,10 +58574,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	_PUSH_MANY(&ccoptions.o_args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t3166, Array_string);
-	multi_return_Array_string_Array_string_Array_string mr_10439 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_10439.arg0;
-	Array_string others = mr_10439.arg1;
-	Array_string libs = mr_10439.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_10443 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_10443.arg0;
+	Array_string others = mr_10443.arg1;
+	Array_string libs = mr_10443.arg2;
 	_PUSH_MANY(&ccoptions.pre_args, (defines), _t3167, Array_string);
 	_PUSH_MANY(&ccoptions.pre_args, (others), _t3168, Array_string);
 	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t3169, Array_string);
@@ -58982,10 +58981,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string_add(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_23997 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_23997.arg0;
-	Array_string others = mr_23997.arg1;
-	Array_string libs = mr_23997.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24001 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24001.arg0;
+	Array_string others = mr_24001.arg1;
+	Array_string libs = mr_24001.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
