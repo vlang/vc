@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6cfc2c2"
+#define V_COMMIT_HASH "8809712"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "49eeddc"
+	#define V_COMMIT_HASH "6cfc2c2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6cfc2c2"
+	#define V_CURRENT_COMMIT_HASH "8809712"
 #endif
 
 // V comptime_defines:
@@ -23633,7 +23633,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("49eeddc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6cfc2c2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34425,11 +34425,6 @@ bool v__checker__Checker_assign_stmt_defer_0 = false;
 				v__checker__Checker_error(c, _STR("operator `%.*s\000` not defined on left operand type `%.*s\000`", 3, v__token__Kind_str(assign_stmt->op), left_sym->name), v__ast__Expr_position(left));
 			} else if (!v__table__TypeSymbol_is_number(right_sym) && !(left_sym->kind == v__table__Kind_byteptr || left_sym->kind == v__table__Kind_charptr || left_sym->kind == v__table__Kind_struct_ || left_sym->kind == v__table__Kind_alias)) {
 				v__checker__Checker_error(c, _STR("invalid right operand: %.*s\000 %.*s\000 %.*s", 3, left_sym->name, v__token__Kind_str(assign_stmt->op), right_sym->name), v__ast__Expr_position(right));
-			} else if ((right)._typ == 221 /* v.ast.IntegerLiteral */) {
-				if (string_eq((*right._v__ast__IntegerLiteral).val, _SLIT("1"))) {
-					v__token__Kind op = (assign_stmt->op == v__token__Kind_plus_assign ? (v__token__Kind_inc) : (v__token__Kind_dec));
-					v__checker__Checker_error(c, _STR("use `%.*s\000` instead of `%.*s\000 1`", 3, v__token__Kind_str(op), v__token__Kind_str(assign_stmt->op)), assign_stmt->pos);
-				}
 			}
 		}
 		else if (assign_stmt->op == (v__token__Kind_mult_assign) || assign_stmt->op == (v__token__Kind_div_assign)) {
@@ -34926,7 +34921,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__B
 		if (!(!c->inside_unsafe)) {
 			VAssertMetaInfo v_assert_meta_info__t1990 = {0};
 			v_assert_meta_info__t1990.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t1990.line_nr = 3365;
+			v_assert_meta_info__t1990.line_nr = 3356;
 			v_assert_meta_info__t1990.fn_name = _SLIT("block");
 			v_assert_meta_info__t1990.src = _SLIT("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t1990);
@@ -36195,8 +36190,8 @@ VV_LOCAL_SYMBOL v__table__Type v__checker__Checker_at_expr(v__checker__Checker* 
 		node->val = int_str((node->pos.line_nr + 1));
 	}
 	else if (node->kind == (v__token__AtKind_column_nr)) {
-		multi_return_string_int mr_144735 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
-		int column = mr_144735.arg1;
+		multi_return_string_int mr_144467 = v__util__filepath_pos_to_source_and_column(c->file->path, node->pos);
+		int column = mr_144467.arg1;
 		node->val = int_str((column + 1));
 	}
 	else if (node->kind == (v__token__AtKind_vhash)) {
@@ -36869,7 +36864,7 @@ v__table__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__U
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t2106 = {0};
 		v_assert_meta_info__t2106.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t2106.line_nr = 5046;
+		v_assert_meta_info__t2106.line_nr = 5037;
 		v_assert_meta_info__t2106.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t2106.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t2106);
@@ -37344,8 +37339,8 @@ v__table__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__
 	if (!(v__table__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_179684 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_179684.arg0;
+		multi_return_string_v__token__Position mr_179416 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_179416.arg0;
 	}
 	return typ;
 }
@@ -38192,10 +38187,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2204 = 0; _t2204 < sym_app->methods.len; ++_t2204) {
 			v__table__Fn m = ((v__table__Fn*)sym_app->methods.data)[_t2204];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_203764 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_203764.arg0;
-				int nroute_attributes = mr_203764.arg1;
-				int nargs = mr_203764.arg2;
+				multi_return_bool_int_int mr_203496 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_203496.arg0;
+				int nroute_attributes = mr_203496.arg1;
+				int nargs = mr_203496.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
