@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0a06a83"
+#define V_COMMIT_HASH "49eeddc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c2b5743"
+	#define V_COMMIT_HASH "0a06a83"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0a06a83"
+	#define V_CURRENT_COMMIT_HASH "49eeddc"
 #endif
 
 // V comptime_defines:
@@ -23633,7 +23633,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c2b5743"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0a06a83"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -44897,13 +44897,12 @@ VV_LOCAL_SYMBOL v__ast__StructInit v__parser__Parser_struct_init(v__parser__Pars
 			array_push(&fields, _MOV((v__ast__StructInitField[]){ (v__ast__StructInitField){.expr = expr,.pos = field_pos,.comments = comments,.next_comments = nline_comments,.name = field_name,.typ = 0,.expected_type = 0,} }));
 		}
 	}
-	v__token__Position last_pos = v__token__Token_position(&p->tok);
 	if (!short_syntax) {
 		v__parser__Parser_check(p, v__token__Kind_rcbr);
 	}
 	p->is_amp = saved_is_amp;
 	v__ast__StructInit _t2690 = (v__ast__StructInit){
-		.pos = v__token__Position_extend_with_last_line(first_pos, last_pos, p->tok.line_nr),
+		.pos = v__token__Position_extend(first_pos, v__token__Token_position(&p->prev_tok)),
 		.is_short = no_keys,
 		.unresolved = v__table__Type_has_flag(typ, v__table__TypeFlag_generic),
 		.pre_comments = pre_comments,
@@ -44986,9 +44985,9 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 				v__ast__InterfaceDecl _t2695 = (v__ast__InterfaceDecl){.name = (string){.str=(byteptr)""},.field_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.methods = __new_array(0, 1, sizeof(v__ast__FnDecl)),.mut_pos = 0,.fields = __new_array(0, 1, sizeof(v__ast__StructField)),.pos = {0},.pre_comments = __new_array(0, 1, sizeof(v__ast__Comment)),};
 				return _t2695;
 			}
-			multi_return_Array_v__table__Param_bool_bool mr_13163 = v__parser__Parser_fn_args(p);
-			Array_v__table__Param args2 = mr_13163.arg0;
-			bool is_variadic = mr_13163.arg2;
+			multi_return_Array_v__table__Param_bool_bool mr_13116 = v__parser__Parser_fn_args(p);
+			Array_v__table__Param args2 = mr_13116.arg0;
+			bool is_variadic = mr_13116.arg2;
 			Array_v__table__Param args = new_array_from_c_array(1, 1, sizeof(v__table__Param), _MOV((v__table__Param[1]){(v__table__Param){.pos = {0},.name = _SLIT("x"),.is_mut = is_mut,.is_auto_rec = 0,.typ = typ,.type_pos = {0},.is_hidden = true,}}));
 			_PUSH_MANY(&args, (args2), _t2696, Array_v__table__Param);
 			v__ast__FnDecl method = (v__ast__FnDecl){
