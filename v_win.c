@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "eccf707"
+#define V_COMMIT_HASH "a6c2c5b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7bbcf02"
+	#define V_COMMIT_HASH "eccf707"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "eccf707"
+	#define V_CURRENT_COMMIT_HASH "a6c2c5b"
 #endif
 
 // V comptime_defines:
@@ -23308,7 +23308,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7bbcf02"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("eccf707"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -38735,22 +38735,22 @@ Array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p) {
 			v__parser__Parser_next(p);
 			array_decompose = true;
 		}
-		v__ast__Expr e = (v__ast__Expr){0};
+		v__ast__Expr expr = (v__ast__Expr){0};
 		if (p->tok.kind == v__token__Kind_name && p->peek_tok.kind == v__token__Kind_colon) {
-			e = v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, (v__parser__Parser_struct_init(p, true))));
+			expr = v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, (v__parser__Parser_struct_init(p, true))));
 		} else {
-			e = v__parser__Parser_expr(p, 0);
+			expr = v__parser__Parser_expr(p, 0);
 		}
 		if (array_decompose) {
-			e = v__ast__ArrayDecompose_to_sumtype_v__ast__Expr(ADDR(v__ast__ArrayDecompose, ((v__ast__ArrayDecompose){.expr = e,.pos = v__token__Token_position(&p->tok),.expr_type = 0,.arg_type = 0,})));
+			expr = v__ast__ArrayDecompose_to_sumtype_v__ast__Expr(ADDR(v__ast__ArrayDecompose, ((v__ast__ArrayDecompose){.expr = expr,.pos = v__token__Token_position(&p->tok),.expr_type = 0,.arg_type = 0,})));
 		}
-		if ((e)._typ == 269 /* v.ast.StructInit */) {
-			_PUSH_MANY(&(*e._v__ast__StructInit).pre_comments, (comments), _t2250, Array_v__ast__Comment);
+		if ((expr)._typ == 269 /* v.ast.StructInit */) {
+			_PUSH_MANY(&(*expr._v__ast__StructInit).pre_comments, (comments), _t2250, Array_v__ast__Comment);
 			comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 		}
 		v__token__Position pos = v__token__Position_extend(arg_start_pos, v__token__Token_position(&p->prev_tok));
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t2251, Array_v__ast__Comment);
-		array_push(&args, _MOV((v__ast__CallArg[]){ (v__ast__CallArg){.is_mut = is_mut,.share = v__table__sharetype_from_flags(is_shared, is_atomic),.expr = e,.comments = comments,.typ = 0,.is_tmp_autofree = 0,.pos = pos,} }));
+		array_push(&args, _MOV((v__ast__CallArg[]){ (v__ast__CallArg){.is_mut = is_mut,.share = v__table__sharetype_from_flags(is_shared, is_atomic),.expr = expr,.comments = comments,.typ = 0,.is_tmp_autofree = 0,.pos = pos,} }));
 		if (p->tok.kind != v__token__Kind_rpar) {
 			v__parser__Parser_check(p, v__token__Kind_comma);
 		}
@@ -38764,9 +38764,9 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	bool is_manualfree = p->is_manualfree || Array_v__table__Attr_contains(p->attrs, _SLIT("manualfree"));
 	bool is_deprecated = Array_v__table__Attr_contains(p->attrs, _SLIT("deprecated"));
 	bool is_direct_arr = Array_v__table__Attr_contains(p->attrs, _SLIT("direct_array_access"));
-	multi_return_bool_string mr_4599 = Array_v__table__Attr_has_comptime_define(p->attrs);
-	bool is_conditional = mr_4599.arg0;
-	string conditional_ctdefine = mr_4599.arg1;
+	multi_return_bool_string mr_4623 = Array_v__table__Attr_has_comptime_define(p->attrs);
+	bool is_conditional = mr_4623.arg0;
+	string conditional_ctdefine = mr_4623.arg1;
 	bool is_unsafe = Array_v__table__Attr_contains(p->attrs, _SLIT("unsafe"));
 	bool is_pub = p->tok.kind == v__token__Kind_key_pub;
 	if (is_pub) {
@@ -38842,10 +38842,10 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		return _t2258;
 	}
 	Array_v__ast__GenericParam generic_params = v__parser__Parser_parse_generic_params(p);
-	multi_return_Array_v__table__Param_bool_bool mr_7430 = v__parser__Parser_fn_args(p);
-	Array_v__table__Param args2 = mr_7430.arg0;
-	bool are_args_type_only = mr_7430.arg1;
-	bool is_variadic = mr_7430.arg2;
+	multi_return_Array_v__table__Param_bool_bool mr_7454 = v__parser__Parser_fn_args(p);
+	Array_v__table__Param args2 = mr_7454.arg0;
+	bool are_args_type_only = mr_7454.arg1;
+	bool is_variadic = mr_7454.arg2;
 	_PUSH_MANY(&params, (args2), _t2259, Array_v__table__Param);
 	if (!are_args_type_only) {
 		// FOR IN array
@@ -39153,9 +39153,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	}
 	v__parser__Parser_open_scope(p);
 	p->scope->detached_from_parent = true;
-	multi_return_Array_v__table__Param_bool_bool mr_15634 = v__parser__Parser_fn_args(p);
-	Array_v__table__Param args = mr_15634.arg0;
-	bool is_variadic = mr_15634.arg2;
+	multi_return_Array_v__table__Param_bool_bool mr_15658 = v__parser__Parser_fn_args(p);
+	Array_v__table__Param args = mr_15658.arg0;
+	bool is_variadic = mr_15658.arg2;
 	// FOR IN array
 	for (int _t2277 = 0; _t2277 < args.len; ++_t2277) {
 		v__table__Param arg = ((v__table__Param*)args.data)[_t2277];
