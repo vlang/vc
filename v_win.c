@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "00651c8"
+#define V_COMMIT_HASH "8fa7e67"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d4e16b6"
+	#define V_COMMIT_HASH "00651c8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "00651c8"
+	#define V_CURRENT_COMMIT_HASH "8fa7e67"
 #endif
 
 // V comptime_defines:
@@ -14781,11 +14781,11 @@ VV_LOCAL_SYMBOL void Array_RepIndex_sort2(Array_RepIndex* a) {
 
 string string_replace_each(string s, Array_string vals) {
 	if (s.len == 0 || vals.len == 0) {
-		return s;
+		return string_clone(s);
 	}
 	if (vals.len % 2 != 0) {
 		println(_SLIT("string.replace_each(): odd number of strings"));
-		return s;
+		return string_clone(s);
 	}
 	int new_len = s.len;
 	Array_RepIndex idxs = __new_array_with_default(0, 0, sizeof(RepIndex), 0);
@@ -14804,7 +14804,7 @@ string string_replace_each(string s, Array_string vals) {
 		}
 	}
 	if (idxs.len == 0) {
-		return s;
+		return string_clone(s);
 	}
 	Array_RepIndex_sort2(&idxs);
 	byteptr b = v_malloc(new_len + 1);
@@ -15417,7 +15417,7 @@ string string_trim_space(string s) {
 
 string string_trim(string s, string cutset) {
 	if (s.len < 1 || cutset.len < 1) {
-		return s;
+		return string_clone(s);
 	}
 	int pos_left = 0;
 	int pos_right = s.len - 1;
@@ -15450,7 +15450,7 @@ string string_trim(string s, string cutset) {
 
 string string_trim_left(string s, string cutset) {
 	if (s.len < 1 || cutset.len < 1) {
-		return s;
+		return string_clone(s);
 	}
 	int pos = 0;
 	for (;;) {
@@ -15473,7 +15473,7 @@ string string_trim_left(string s, string cutset) {
 
 string string_trim_right(string s, string cutset) {
 	if (s.len < 1 || cutset.len < 1) {
-		return s;
+		return string_clone(s);
 	}
 	int pos = s.len - 1;
 	for (;;) {
@@ -15497,14 +15497,14 @@ string string_trim_prefix(string s, string str) {
 	if (string_starts_with(s, str)) {
 		return string_substr(s, str.len, s.len);
 	}
-	return s;
+	return string_clone(s);
 }
 
 string string_trim_suffix(string s, string str) {
 	if (string_ends_with(s, str)) {
 		return string_substr(s, 0, s.len - str.len);
 	}
-	return s;
+	return string_clone(s);
 }
 
 int compare_strings(string* a, string* b) {
@@ -15556,7 +15556,7 @@ void Array_string_sort_by_len(Array_string* s) {
 }
 
 string string_str(string s) {
-	return s;
+	return string_clone(s);
 }
 
 string ustring_str(ustring s) {
@@ -15791,7 +15791,7 @@ void string_free(string* s) {
 string string_before(string s, string dot) {
 	int pos = string_index_(s, dot);
 	if (pos == -1) {
-		return s;
+		return string_clone(s);
 	}
 	return string_substr(s, 0, pos);
 }
@@ -15799,7 +15799,7 @@ string string_before(string s, string dot) {
 string string_all_before(string s, string dot) {
 	int pos = string_index_(s, dot);
 	if (pos == -1) {
-		return s;
+		return string_clone(s);
 	}
 	return string_substr(s, 0, pos);
 }
@@ -15807,7 +15807,7 @@ string string_all_before(string s, string dot) {
 string string_all_before_last(string s, string dot) {
 	int pos = string_last_index_(s, dot);
 	if (pos == -1) {
-		return s;
+		return string_clone(s);
 	}
 	return string_substr(s, 0, pos);
 }
@@ -15815,7 +15815,7 @@ string string_all_before_last(string s, string dot) {
 string string_all_after(string s, string dot) {
 	int pos = string_index_(s, dot);
 	if (pos == -1) {
-		return s;
+		return string_clone(s);
 	}
 	return string_substr(s, pos + dot.len, s.len);
 }
@@ -15823,7 +15823,7 @@ string string_all_after(string s, string dot) {
 string string_all_after_last(string s, string dot) {
 	int pos = string_last_index_(s, dot);
 	if (pos == -1) {
-		return s;
+		return string_clone(s);
 	}
 	return string_substr(s, pos + dot.len, s.len);
 }
@@ -15842,7 +15842,7 @@ string string_after_char(string s, byte dot) {
 		}
 	}
 	if (pos == 0) {
-		return s;
+		return string_clone(s);
 	}
 	return string_substr(s, pos + 1, s.len);
 }
@@ -15892,7 +15892,7 @@ string Array_string_join_lines(Array_string s) {
 
 string string_reverse(string s) {
 	if (s.len == 0 || s.len == 1) {
-		return s;
+		return string_clone(s);
 	}
 	string res = (string){.str = v_malloc(s.len), .len = s.len};
 	for (int i = s.len - 1; i >= 0; i--) {
@@ -15906,7 +15906,7 @@ string string_reverse(string s) {
 string string_limit(string s, int max) {
 	ustring u = string_ustring(s);
 	if (u.len <= max) {
-		return s;
+		return string_clone(s);
 	}
 	return ustring_substr(u, 0, max);
 }
@@ -15937,7 +15937,7 @@ string string_repeat(string s, int count) {
 	} else if (count == 0) {
 		return _SLIT("");
 	} else if (count == 1) {
-		return s;
+		return string_clone(s);
 	}
 	byteptr ret = v_malloc(s.len * count + 1);
 	for (int i = 0; i < count; ++i) {
@@ -23333,7 +23333,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d4e16b6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("00651c8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
