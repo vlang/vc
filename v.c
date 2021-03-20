@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ead0dff"
+#define V_COMMIT_HASH "e3c0f30"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "59f9517"
+	#define V_COMMIT_HASH "ead0dff"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ead0dff"
+	#define V_CURRENT_COMMIT_HASH "e3c0f30"
 #endif
 
 // V comptime_defines:
@@ -4626,7 +4626,8 @@ string _STR(const char*, int, ...);
 string _STR_TMP(const char*, ...);
 // end of definitions #endif
 strings__Builder strings__new_builder(int initial_size);
-void strings__Builder_write_bytes(strings__Builder* b, byteptr bytes, int howmany);
+void strings__Builder_write_bytes(strings__Builder* b, byteptr bytes, int len);
+void strings__Builder_write_ptr(strings__Builder* b, byteptr ptr, int len);
 void strings__Builder_write_b(strings__Builder* b, byte data);
 Option_int strings__Builder_write(strings__Builder* b, Array_byte data);
 void strings__Builder_write_string(strings__Builder* b, string s);
@@ -5233,6 +5234,8 @@ Option_int os__File_write_string(os__File* f, string s);
 Option_int os__File_write_to(os__File* f, int pos, Array_byte buf);
 int os__File_write_bytes(os__File* f, voidptr data, int size);
 int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos);
+int os__File_write_ptr(os__File* f, voidptr data, int size);
+int os__File_write_ptr_at(os__File* f, voidptr data, int size, int pos);
 Array_byte os__File_read_bytes(os__File* f, int size);
 Array_byte os__File_read_bytes_at(os__File* f, int size, int pos);
 Option_int os__File_read_bytes_into(os__File* f, int pos, Array_byte* buf);
@@ -9022,10 +9025,16 @@ strings__Builder strings__new_builder(int initial_size) {
 	return (strings__Builder){.buf = __new_array_with_default(0, initial_size, sizeof(byte), 0),.len = 0,.initial_size = initial_size,};
 }
 
+// Attr: [deprecated]
 // Attr: [unsafe]
-void strings__Builder_write_bytes(strings__Builder* b, byteptr bytes, int howmany) {
-	array_push_many(&b->buf, bytes, howmany);
-	b->len += howmany;
+void strings__Builder_write_bytes(strings__Builder* b, byteptr bytes, int len) {
+	strings__Builder_write_ptr(b, bytes, len);
+}
+
+// Attr: [unsafe]
+void strings__Builder_write_ptr(strings__Builder* b, byteptr ptr, int len) {
+	array_push_many(&b->buf, ptr, len);
+	b->len += len;
 }
 
 void strings__Builder_write_b(strings__Builder* b, byte data) {
@@ -16596,13 +16605,25 @@ Option_int os__File_write_to(os__File* f, int pos, Array_byte buf) {
 	return _t121;
 }
 
+// Attr: [deprecated]
 // Attr: [unsafe]
 int os__File_write_bytes(os__File* f, voidptr data, int size) {
+	return os__File_write_ptr(f, data, size);
+}
+
+// Attr: [deprecated]
+// Attr: [unsafe]
+int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos) {
+	return os__File_write_ptr_at(f, data, size, pos);
+}
+
+// Attr: [unsafe]
+int os__File_write_ptr(os__File* f, voidptr data, int size) {
 	return ((int)(fwrite(data, 1, size, f->cfile)));
 }
 
 // Attr: [unsafe]
-int os__File_write_bytes_at(os__File* f, voidptr data, int size, int pos) {
+int os__File_write_ptr_at(os__File* f, voidptr data, int size, int pos) {
 	fseek(f->cfile, pos, SEEK_SET);
 	int res = ((int)(fwrite(data, 1, size, f->cfile)));
 	fseek(f->cfile, 0, SEEK_END);
@@ -17209,7 +17230,7 @@ Option_void os__write_file_array(string path, array buffer) {
 		return _t174;
 	}
  	os__File f =  *(os__File*)_t173.data;
-	os__File_write_bytes_at(&f, buffer.data, (buffer.len * buffer.element_size), 0);
+	os__File_write_ptr_at(&f, buffer.data, (buffer.len * buffer.element_size), 0);
 	os__File_close(&f);
 	return (Option_void){0};
 }
@@ -18467,7 +18488,7 @@ os__Result os__execute(string cmd) {
 		byte* bufbp = &buf[0];
 		for (;;) {
 			if (!(fgets(((charptr)(bufbp)), 4096, f) != 0)) break;
-			strings__Builder_write_bytes(&res, bufbp, vstrlen(bufbp));
+			strings__Builder_write_ptr(&res, bufbp, vstrlen(bufbp));
 		}
 	}
 	string soutput = strings__Builder_str(&res);
@@ -18494,11 +18515,11 @@ string os__Command_read_line(os__Command* c) {
 			int len = vstrlen(bufbp);
 			for (int i = 0; i < len; ++i) {
 				if (bufbp[i] == L'\n') {
-					strings__Builder_write_bytes(&res, bufbp, i);
+					strings__Builder_write_ptr(&res, bufbp, i);
 					return strings__Builder_str(&res);
 				}
 			}
-			strings__Builder_write_bytes(&res, bufbp, len);
+			strings__Builder_write_ptr(&res, bufbp, len);
 		}
 	}
 	c->eof = true;
@@ -23647,7 +23668,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("59f9517"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ead0dff"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -59125,7 +59146,7 @@ void v__gen__x64__Gen_generate_elf_footer(v__gen__x64__Gen* g) {
 	}
  	os__File f =  *(os__File*)_t3232.data;
 	os__chmod(g->out_name, 0775);
-	os__File_write_bytes(&f, g->buf.data, g->buf.len);
+	os__File_write_ptr(&f, g->buf.data, g->buf.len);
 	os__File_close(&f);
 	println(_SLIT("\nx64 elf binary has been successfully generated"));
 }
@@ -60021,7 +60042,7 @@ void v__gen__x64__Gen_generate_macho_footer(v__gen__x64__Gen* g) {
 	}
  	os__File f =  *(os__File*)_t3264.data;
 	os__chmod(g->out_name, 0775);
-	os__File_write_bytes(&f, g->buf.data, g->buf.len);
+	os__File_write_ptr(&f, g->buf.data, g->buf.len);
 	os__File_close(&f);
 }
 
