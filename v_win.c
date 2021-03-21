@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0e80e57"
+#define V_COMMIT_HASH "dfd5829"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c4e6ef4"
+	#define V_COMMIT_HASH "0e80e57"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0e80e57"
+	#define V_CURRENT_COMMIT_HASH "dfd5829"
 #endif
 
 // V comptime_defines:
@@ -23397,7 +23397,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c4e6ef4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0e80e57"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42421,7 +42421,7 @@ VV_LOCAL_SYMBOL bool v__parser__Parser_is_generic_call(v__parser__Parser* p) {
 		}
 		bool _t2519;
 		
-		if (kind3 == (v__token__Kind_gt)) {
+		if (kind3 == (v__token__Kind_gt) || kind3 == (v__token__Kind_lt)) {
 			_t2519 = true;
 		}
 		else if (kind3 == (v__token__Kind_comma)) {
@@ -43201,9 +43201,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t2563 = (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 1, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
 		return _t2563;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_66113 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_66113.arg0;
-	Array_v__ast__Comment comments2 = mr_66113.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_66153 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_66153.arg0;
+	Array_v__ast__Comment comments2 = mr_66153.arg1;
 	_PUSH_MANY(&comments, (comments2), _t2564, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t2565 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 1, sizeof(v__table__Type)),};
