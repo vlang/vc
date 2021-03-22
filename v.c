@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "400b402"
+#define V_COMMIT_HASH "320cd00"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1eb3ed9"
+	#define V_COMMIT_HASH "400b402"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "400b402"
+	#define V_CURRENT_COMMIT_HASH "320cd00"
 #endif
 
 // V comptime_defines:
@@ -14837,13 +14837,19 @@ string string_replace_each(string s, Array_string vals) {
 	int new_len = s.len;
 	Array_RepIndex idxs = __new_array_with_default(0, 0, sizeof(RepIndex), 0);
 	int idx = 0;
+	string s_ = string_clone(s);
 	for (int rep_i = 0; rep_i < vals.len; rep_i += 2) {
 		string rep = (*(string*)/*ee elem_typ */array_get(vals, rep_i));
 		string with = (*(string*)/*ee elem_typ */array_get(vals, rep_i + 1));
 		for (;;) {
-			idx = string_index_after(s, rep, idx);
+			idx = string_index_after(s_, rep, idx);
 			if (idx == -1) {
 				break;
+			}
+			for (int i = 0; i < rep.len; ++i) {
+				{ // Unsafe block
+					s_.str[idx + i] = 127;
+				}
 			}
 			array_push(&idxs, _MOV((RepIndex[]){ (RepIndex){.idx = idx,.val_idx = rep_i,} }));
 			idx += rep.len;
@@ -23741,7 +23747,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1eb3ed9"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("400b402"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
