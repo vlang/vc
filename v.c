@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9ae64e7"
+#define V_COMMIT_HASH "a4690e4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "35c60cf"
+	#define V_COMMIT_HASH "9ae64e7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9ae64e7"
+	#define V_CURRENT_COMMIT_HASH "a4690e4"
 #endif
 
 // V comptime_defines:
@@ -26239,6 +26239,8 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		if ((base).len == 0) {
 			base = filename;
 		}
+		string target_dir = (os__is_dir(rpath) ? (rpath) : (os__dir(rpath)));
+		p->out_name = os__join_path(target_dir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){base})));
 		p->out_name = os__join_path(os__getwd(), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){base})));
 		if (string_eq(rpath, _STR("%.*s\000/cmd/v", 2, p->vroot)) && os__is_dir(_SLIT("vlib/compiler"))) {
 			println(_SLIT("Saving the resulting V executable in `./v2`"));
@@ -26270,7 +26272,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("35c60cf"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9ae64e7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26323,20 +26325,20 @@ string v__pref__default_tcc_compiler(void) {
 	string vroot = os__dir(vexe);
 	string vtccexe = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("thirdparty"), _SLIT("tcc"), _SLIT("tcc.exe")})));
 	if (os__exists(vtccexe)) {
-		// autofree_scope_vars(pos=4403 line_nr=153 scope.pos=4400 scope.end_pos=4420)
+		// autofree_scope_vars(pos=4464 line_nr=155 scope.pos=4461 scope.end_pos=4481)
 		// af parent scope:
-		// var "vexe" var.pos=4270 var.line_nr=149
-		// var "vroot" var.pos=4291 var.line_nr=150
-		// var "vtccexe" var.pos=4314 var.line_nr=151
+		// var "vexe" var.pos=4331 var.line_nr=151
+		// var "vroot" var.pos=4352 var.line_nr=152
+		// var "vtccexe" var.pos=4375 var.line_nr=153
 		// af parent scope:
 		// af parent scope:
 		return vtccexe;
 	}
 	/*tmp return var*/ string _t798 = _SLIT("");
-	// autofree_scope_vars(pos=4422 line_nr=155 scope.pos=4237 scope.end_pos=4433)
-	// var "vexe" var.pos=4270 var.line_nr=149
-	// var "vroot" var.pos=4291 var.line_nr=150
-	// var "vtccexe" var.pos=4314 var.line_nr=151
+	// autofree_scope_vars(pos=4483 line_nr=157 scope.pos=4298 scope.end_pos=4494)
+	// var "vexe" var.pos=4331 var.line_nr=151
+	// var "vroot" var.pos=4352 var.line_nr=152
+	// var "vtccexe" var.pos=4375 var.line_nr=153
 	// af parent scope:
 	// af parent scope:
 	return _t798;
@@ -26346,7 +26348,7 @@ string v__pref__default_c_compiler(void) {
 	#if defined(_WIN32)
 	{
 		/*tmp return var*/ string _t799 = _SLIT("gcc");
-		// autofree_scope_vars(pos=4639 line_nr=165 scope.pos=4636 scope.end_pos=4654)
+		// autofree_scope_vars(pos=4700 line_nr=167 scope.pos=4697 scope.end_pos=4715)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -26354,7 +26356,7 @@ string v__pref__default_c_compiler(void) {
 	}
 	#endif
 	/*tmp return var*/ string _t800 = _SLIT("cc");
-	// autofree_scope_vars(pos=4656 line_nr=167 scope.pos=4443 scope.end_pos=4669)
+	// autofree_scope_vars(pos=4717 line_nr=169 scope.pos=4504 scope.end_pos=4730)
 	// af parent scope:
 	// af parent scope:
 	return _t800;
@@ -26363,19 +26365,19 @@ string v__pref__default_c_compiler(void) {
 string v__pref__vexe_path(void) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	if ((vexe).len != 0) {
-		// autofree_scope_vars(pos=4745 line_nr=173 scope.pos=4742 scope.end_pos=4759)
+		// autofree_scope_vars(pos=4806 line_nr=175 scope.pos=4803 scope.end_pos=4820)
 		// af parent scope:
-		// var "vexe" var.pos=4701 var.line_nr=171
-		// var "real_vexe_path" var.pos=4762 var.line_nr=175
+		// var "vexe" var.pos=4762 var.line_nr=173
+		// var "real_vexe_path" var.pos=4823 var.line_nr=177
 		// af parent scope:
 		// af parent scope:
 		return vexe;
 	}
 	string real_vexe_path = os__real_path(os__executable());
 	os__setenv(_SLIT("VEXE"), real_vexe_path, true);
-	// autofree_scope_vars(pos=4851 line_nr=177 scope.pos=4679 scope.end_pos=4874)
-	// var "vexe" var.pos=4701 var.line_nr=171
-	// var "real_vexe_path" var.pos=4762 var.line_nr=175
+	// autofree_scope_vars(pos=4912 line_nr=179 scope.pos=4740 scope.end_pos=4935)
+	// var "vexe" var.pos=4762 var.line_nr=173
+	// var "real_vexe_path" var.pos=4823 var.line_nr=177
 	// af parent scope:
 	// af parent scope:
 	return real_vexe_path;
