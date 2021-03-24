@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5b2cec6"
+#define V_COMMIT_HASH "522d70b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "49c770e"
+	#define V_COMMIT_HASH "5b2cec6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5b2cec6"
+	#define V_CURRENT_COMMIT_HASH "522d70b"
 #endif
 
 // V comptime_defines:
@@ -52,6 +52,7 @@ typedef struct multi_return_int_string_string_string multi_return_int_string_str
 typedef struct multi_return_Array_string_Array_string multi_return_Array_string_Array_string;
 typedef struct multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField;
 typedef struct multi_return_Array_string_Array_string_Array_string multi_return_Array_string_Array_string_Array_string;
+typedef struct multi_return_int_literal_int multi_return_int_literal_int;
 // END_multi_return_typedefs
 
 typedef struct strings__Builder strings__Builder;
@@ -4367,6 +4368,11 @@ struct multi_return_Array_string_Array_string_Array_string {
 	Array_string arg0;
 	Array_string arg1;
 	Array_string arg2;
+};
+
+struct multi_return_int_literal_int {
+	int_literal arg0;
+	int arg1;
 };
 
 // END_multi_return_structs
@@ -13935,6 +13941,19 @@ inline VV_LOCAL_SYMBOL bool fast_string_eq(string a, string b) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL DenseArray new_dense_array(int key_bytes, int value_bytes) {
 	int slot_bytes = key_bytes + value_bytes;
+	#if defined(_VGCBOEHM)
+	{
+		#if defined(TARGET_IS_64BIT)
+		multi_return_int_literal_int mr_4668 = (multi_return_int_literal_int){.arg0=7,.arg1=((int)(0xfffffff8))};
+		#else
+		multi_return_int_literal_int mr_4668 = (multi_return_int_literal_int){.arg0=3,.arg1=((int)(0xfffffffc))};
+		#endif
+		;
+		int align = mr_4668.arg0;
+		int mask = mr_4668.arg1;
+		slot_bytes = ((slot_bytes + align) & mask);
+	}
+	#endif
 	int cap = 8;
 	return (DenseArray){
 		.key_bytes = key_bytes,
@@ -14200,12 +14219,12 @@ VV_LOCAL_SYMBOL void map_set_1(map* m, voidptr key, voidptr value) {
 	if (load_factor > _const_max_load_factor) {
 		map_expand(m);
 	}
-	multi_return_u32_u32 mr_12338 = map_key_to_index(m, key);
-	u32 index = mr_12338.arg0;
-	u32 meta = mr_12338.arg1;
-	multi_return_u32_u32 mr_12374 = map_meta_less(m, index, meta);
-	index = mr_12374.arg0;
-	meta = mr_12374.arg1;
+	multi_return_u32_u32 mr_12482 = map_key_to_index(m, key);
+	u32 index = mr_12482.arg0;
+	u32 meta = mr_12482.arg1;
+	multi_return_u32_u32 mr_12518 = map_meta_less(m, index, meta);
+	index = mr_12518.arg0;
+	meta = mr_12518.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -14255,12 +14274,12 @@ VV_LOCAL_SYMBOL void map_rehash(map* m) {
 			continue;
 		}
 		voidptr pkey = DenseArray_key(&m->key_values, i);
-		multi_return_u32_u32 mr_14013 = map_key_to_index(m, pkey);
-		u32 index = mr_14013.arg0;
-		u32 meta = mr_14013.arg1;
-		multi_return_u32_u32 mr_14051 = map_meta_less(m, index, meta);
-		index = mr_14051.arg0;
-		meta = mr_14051.arg1;
+		multi_return_u32_u32 mr_14157 = map_key_to_index(m, pkey);
+		u32 index = mr_14157.arg0;
+		u32 meta = mr_14157.arg1;
+		multi_return_u32_u32 mr_14195 = map_meta_less(m, index, meta);
+		index = mr_14195.arg0;
+		meta = mr_14195.arg1;
 		map_meta_greater(m, index, meta, ((u32)(i)));
 	}
 }
@@ -14279,9 +14298,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 old_index = ((i - old_probe_count) & (m->even_index >> 1));
 		u32 index = (((old_index | (old_meta << m->shift))) & m->even_index);
 		u32 meta = (((old_meta & _const_hash_mask)) | _const_probe_inc);
-		multi_return_u32_u32 mr_14839 = map_meta_less(m, index, meta);
-		index = mr_14839.arg0;
-		meta = mr_14839.arg1;
+		multi_return_u32_u32 mr_14983 = map_meta_less(m, index, meta);
+		index = mr_14983.arg0;
+		meta = mr_14983.arg1;
 		u32 kv_index = old_metas[i + 1];
 		map_meta_greater(m, index, meta, kv_index);
 	}
@@ -14290,9 +14309,9 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	for (;;) {
-		multi_return_u32_u32 mr_15289 = map_key_to_index(m, key);
-		u32 index = mr_15289.arg0;
-		u32 meta = mr_15289.arg1;
+		multi_return_u32_u32 mr_15433 = map_key_to_index(m, key);
+		u32 index = mr_15433.arg0;
+		u32 meta = mr_15433.arg1;
 		for (;;) {
 			if (meta == m->metas[index]) {
 				int kv_index = ((int)(m->metas[index + 1]));
@@ -14313,7 +14332,7 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 	if (!(false)) {
 		VAssertMetaInfo v_assert_meta_info__t69 = {0};
 		v_assert_meta_info__t69.fpath = _SLIT("/tmp/gen_vc/v/vlib/builtin/map.v");
-		v_assert_meta_info__t69.line_nr = 546;
+		v_assert_meta_info__t69.line_nr = 550;
 		v_assert_meta_info__t69.fn_name = _SLIT("get_and_set_1");
 		v_assert_meta_info__t69.src = _SLIT("false");
 		__print_assert_failure(&v_assert_meta_info__t69);
@@ -14323,9 +14342,9 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set_1(map* m, voidptr key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_1(map* m, voidptr key, voidptr zero) {
-	multi_return_u32_u32 mr_16006 = map_key_to_index(m, key);
-	u32 index = mr_16006.arg0;
-	u32 meta = mr_16006.arg1;
+	multi_return_u32_u32 mr_16150 = map_key_to_index(m, key);
+	u32 index = mr_16150.arg0;
+	u32 meta = mr_16150.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -14344,9 +14363,9 @@ VV_LOCAL_SYMBOL voidptr map_get_1(map* m, voidptr key, voidptr zero) {
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_1_check(map* m, voidptr key) {
-	multi_return_u32_u32 mr_16650 = map_key_to_index(m, key);
-	u32 index = mr_16650.arg0;
-	u32 meta = mr_16650.arg1;
+	multi_return_u32_u32 mr_16794 = map_key_to_index(m, key);
+	u32 index = mr_16794.arg0;
+	u32 meta = mr_16794.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -14365,9 +14384,9 @@ VV_LOCAL_SYMBOL voidptr map_get_1_check(map* m, voidptr key) {
 }
 
 VV_LOCAL_SYMBOL bool map_exists_1(map* m, voidptr key) {
-	multi_return_u32_u32 mr_17139 = map_key_to_index(m, key);
-	u32 index = mr_17139.arg0;
-	u32 meta = mr_17139.arg1;
+	multi_return_u32_u32 mr_17283 = map_key_to_index(m, key);
+	u32 index = mr_17283.arg0;
+	u32 meta = mr_17283.arg1;
 	for (;;) {
 		if (meta == m->metas[index]) {
 			int kv_index = ((int)(m->metas[index + 1]));
@@ -14402,12 +14421,12 @@ void map_delete(map* m, string key) {
 
 // Attr: [unsafe]
 void map_delete_1(map* m, voidptr key) {
-	multi_return_u32_u32 mr_17860 = map_key_to_index(m, key);
-	u32 index = mr_17860.arg0;
-	u32 meta = mr_17860.arg1;
-	multi_return_u32_u32 mr_17896 = map_meta_less(m, index, meta);
-	index = mr_17896.arg0;
-	meta = mr_17896.arg1;
+	multi_return_u32_u32 mr_18004 = map_key_to_index(m, key);
+	u32 index = mr_18004.arg0;
+	u32 meta = mr_18004.arg1;
+	multi_return_u32_u32 mr_18040 = map_meta_less(m, index, meta);
+	index = mr_18040.arg0;
+	meta = mr_18040.arg1;
 	for (;;) {
 		if (!(meta == m->metas[index])) break;
 		int kv_index = ((int)(m->metas[index + 1]));
@@ -26527,7 +26546,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("49c770e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5b2cec6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -69826,6 +69845,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_c_main_function_header(v__gen__c__Gen* g
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_c_main_header(v__gen__c__Gen* g) {
 	v__gen__c__Gen_gen_c_main_function_header(g);
+	if (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm) {
+		v__gen__c__Gen_writeln(g, _SLIT("#if defined(_VGCBOEHM)"));
+		v__gen__c__Gen_writeln(g, _SLIT("\tGC_INIT();"));
+		v__gen__c__Gen_writeln(g, _SLIT("#endif"));
+	}
 	v__gen__c__Gen_writeln(g, _SLIT("\t_vinit(___argc, (voidptr)___argv);"));
 	if (g->pref->is_prof) {
 		v__gen__c__Gen_writeln(g, _SLIT(""));
@@ -69863,11 +69887,11 @@ void v__gen__c__Gen_write_tests_definitions(v__gen__c__Gen* g) {
 }
 
 void v__gen__c__Gen_gen_failing_error_propagation_for_test_fn(v__gen__c__Gen* g, v__ast__OrExpr or_block, string cvar_name) {
-	multi_return_int_string_string_string mr_4262 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-	int paline = mr_4262.arg0;
-	string pafile = mr_4262.arg1;
-	string pamod = mr_4262.arg2;
-	string pafn = mr_4262.arg3;
+	multi_return_int_string_string_string mr_4384 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+	int paline = mr_4384.arg0;
+	string pafile = mr_4384.arg1;
+	string pamod = mr_4384.arg2;
+	string pafn = mr_4384.arg3;
 	v__gen__c__Gen_writeln(g, _STR("\tmain__cb_propagate_test_error(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), *(%.*s\000.err.msg) );", 6, paline, pafile, pamod, pafn, cvar_name));
 	v__gen__c__Gen_writeln(g, _SLIT("\tg_test_fails++;"));
 	v__gen__c__Gen_writeln(g, _SLIT("\tlongjmp(g_jump_buffer, 1);"));
@@ -69877,6 +69901,11 @@ void v__gen__c__Gen_gen_c_main_for_tests(v__gen__c__Gen* g) {
 	int main_fn_start_pos = g->out.len;
 	v__gen__c__Gen_writeln(g, _SLIT(""));
 	v__gen__c__Gen_gen_c_main_function_header(g);
+	if (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm) {
+		v__gen__c__Gen_writeln(g, _SLIT("#if defined(_VGCBOEHM)"));
+		v__gen__c__Gen_writeln(g, _SLIT("\tGC_INIT();"));
+		v__gen__c__Gen_writeln(g, _SLIT("#endif"));
+	}
 	v__gen__c__Gen_writeln(g, _SLIT("\t_vinit(___argc, (voidptr)___argv);"));
 	Array_string all_tfuncs = v__gen__c__Gen_get_all_test_function_names(g);
 	if (g->pref->is_stats) {
