@@ -9347,7 +9347,7 @@ string strings__repeat_string(string s, int n) {
 
 // Attr: [inline]
 inline u64 hash__wyhash_c(byteptr key, u64 len, u64 seed) {
-	/*tmp return var*/ u64 _t9 = wyhash(key, len, seed);
+	/*tmp return var*/ u64 _t9 = wyhash(key, len, seed, _wyp);
 	// autofree_scope_vars(pos=198 line_nr=9 scope.pos=151 scope.end_pos=231)
 	// var "key" var.pos=160 var.line_nr=8
 	// var "len" var.pos=173 var.line_nr=8
