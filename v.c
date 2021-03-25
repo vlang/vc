@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1590783"
+#define V_COMMIT_HASH "b0878d3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8b7085e"
+	#define V_COMMIT_HASH "1590783"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1590783"
+	#define V_CURRENT_COMMIT_HASH "b0878d3"
 #endif
 
 // V comptime_defines:
@@ -7350,7 +7350,7 @@ void vinit_string_literals(){
 	_const_semver__comparator_set_sep = _SLIT(" || ");
 	_const_semver__hyphen_range_sep = _SLIT(" - ");
 	_const_semver__x_range_symbols = _SLIT("Xx*");
-	_const_v__pkgconfig__version = _SLIT("0.3.0");
+	_const_v__pkgconfig__version = _SLIT("0.3.1");
 	_const_rand__english_letters = _SLIT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	_const_rand__hex_chars = _SLIT("abcdef0123456789");
 	_const_rand__ascii_chars = _SLIT("!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}~");
@@ -25278,9 +25278,9 @@ VV_LOCAL_SYMBOL v__pkgconfig__MainOptions* v__pkgconfig__parse_options(flag__Fla
 
 VV_LOCAL_SYMBOL Array_string v__pkgconfig__PkgConfig_parse_list_no_comma(v__pkgconfig__PkgConfig* pc, string s) {
 	/*tmp return var*/ Array_string _t704 = v__pkgconfig__PkgConfig_parse_list(pc, string_replace(s, _SLIT(","), _SLIT(" ")));
-	// autofree_scope_vars(pos=1017 line_nr=47 scope.pos=957 scope.end_pos=1060)
-	// var "pc" var.pos=962 var.line_nr=46
-	// var "s" var.pos=996 var.line_nr=46
+	// autofree_scope_vars(pos=1050 line_nr=48 scope.pos=990 scope.end_pos=1093)
+	// var "pc" var.pos=995 var.line_nr=47
+	// var "s" var.pos=1029 var.line_nr=47
 	// af parent scope:
 	// af parent scope:
 	return _t704;
@@ -25303,13 +25303,13 @@ VV_LOCAL_SYMBOL Array_string v__pkgconfig__PkgConfig_parse_list(v__pkgconfig__Pk
 			array_push(&res, _MOV((string[]){ string_clone(b) }));
 		}
 	}
-	// autofree_scope_vars(pos=1422 line_nr=65 scope.pos=1066 scope.end_pos=1434)
-	// var "pc" var.pos=1071 var.line_nr=50
-	// var "s" var.pos=1096 var.line_nr=50
-	// var "operators" var.pos=1118 var.line_nr=51
-	// var "r" var.pos=1160 var.line_nr=52
-	// var "res" var.pos=1236 var.line_nr=53
-	// var "skip" var.pos=1259 var.line_nr=54
+	// autofree_scope_vars(pos=1455 line_nr=66 scope.pos=1099 scope.end_pos=1467)
+	// var "pc" var.pos=1104 var.line_nr=51
+	// var "s" var.pos=1129 var.line_nr=51
+	// var "operators" var.pos=1151 var.line_nr=52
+	// var "r" var.pos=1193 var.line_nr=53
+	// var "res" var.pos=1269 var.line_nr=54
+	// var "skip" var.pos=1292 var.line_nr=55
 	// af parent scope:
 	// af parent scope:
 	return res;
@@ -25336,10 +25336,10 @@ VV_LOCAL_SYMBOL string v__pkgconfig__PkgConfig_parse_line(v__pkgconfig__PkgConfi
 		r = string_replace(r, _STR("${%.*s\000}", 2, v), (*(string*)map_get_1(ADDR(map, pc->vars), &(string[]){v}, &(string[]){ (string){.str=(byteptr)"", .is_lit=1} })));
 	}
 	/*tmp return var*/ string _t709 = string_trim_space(r);
-	// autofree_scope_vars(pos=1706 line_nr=77 scope.pos=1440 scope.end_pos=1729)
-	// var "pc" var.pos=1445 var.line_nr=68
-	// var "s" var.pos=1470 var.line_nr=68
-	// var "r" var.pos=1494 var.line_nr=69
+	// autofree_scope_vars(pos=1739 line_nr=78 scope.pos=1473 scope.end_pos=1762)
+	// var "pc" var.pos=1478 var.line_nr=69
+	// var "s" var.pos=1503 var.line_nr=69
+	// var "r" var.pos=1527 var.line_nr=70
 	// af parent scope:
 	// af parent scope:
 	return _t709;
@@ -25359,13 +25359,13 @@ VV_LOCAL_SYMBOL bool v__pkgconfig__PkgConfig_parse(v__pkgconfig__PkgConfig* pc, 
 	if (_t710.state != 0) { /*or block*/ 
 		IError err = _t710.err;
 		/*tmp return var*/ bool _t711 = false;
-		// autofree_scope_vars(pos=1989 line_nr=90 scope.pos=1988 scope.end_pos=2003)
-		// var "err" var.pos=1988 var.line_nr=90
+		// autofree_scope_vars(pos=2022 line_nr=91 scope.pos=2021 scope.end_pos=2036)
+		// var "err" var.pos=2021 var.line_nr=91
 		// af parent scope:
-		// var "pc" var.pos=1917 var.line_nr=89
-		// var "file" var.pos=1937 var.line_nr=89
-		// var "data" var.pos=1958 var.line_nr=90
-		// var "lines" var.pos=2049 var.line_nr=94
+		// var "pc" var.pos=1950 var.line_nr=90
+		// var "file" var.pos=1970 var.line_nr=90
+		// var "data" var.pos=1991 var.line_nr=91
+		// var "lines" var.pos=2082 var.line_nr=95
 		// af parent scope:
 		// af parent scope:
 		return _t711;
@@ -25418,11 +25418,11 @@ VV_LOCAL_SYMBOL bool v__pkgconfig__PkgConfig_parse(v__pkgconfig__PkgConfig* pc, 
 		}
 	}
 	/*tmp return var*/ bool _t714 = true;
-	// autofree_scope_vars(pos=3382 line_nr=134 scope.pos=1912 scope.end_pos=3395)
-	// var "pc" var.pos=1917 var.line_nr=89
-	// var "file" var.pos=1937 var.line_nr=89
-	// var "data" var.pos=1958 var.line_nr=90
-	// var "lines" var.pos=2049 var.line_nr=94
+	// autofree_scope_vars(pos=3415 line_nr=135 scope.pos=1945 scope.end_pos=3428)
+	// var "pc" var.pos=1950 var.line_nr=90
+	// var "file" var.pos=1970 var.line_nr=90
+	// var "data" var.pos=1991 var.line_nr=91
+	// var "lines" var.pos=2082 var.line_nr=95
 	// af parent scope:
 	// af parent scope:
 	return _t714;
@@ -25458,12 +25458,12 @@ bool v__pkgconfig__atleast(string v) {
 	if (_t719.state != 0) { /*or block*/ 
 		IError err = _t719.err;
 		/*tmp return var*/ bool _t720 = false;
-		// autofree_scope_vars(pos=3833 line_nr=157 scope.pos=3832 scope.end_pos=3847)
-		// var "err" var.pos=3832 var.line_nr=157
+		// autofree_scope_vars(pos=3866 line_nr=158 scope.pos=3865 scope.end_pos=3880)
+		// var "err" var.pos=3865 var.line_nr=158
 		// af parent scope:
-		// var "v" var.pos=3774 var.line_nr=156
-		// var "v0" var.pos=3792 var.line_nr=157
-		// var "v1" var.pos=3850 var.line_nr=158
+		// var "v" var.pos=3807 var.line_nr=157
+		// var "v0" var.pos=3825 var.line_nr=158
+		// var "v1" var.pos=3883 var.line_nr=159
 		// af parent scope:
 		// af parent scope:
 		return _t720;
@@ -25473,22 +25473,22 @@ bool v__pkgconfig__atleast(string v) {
 	if (_t721.state != 0) { /*or block*/ 
 		IError err = _t721.err;
 		/*tmp return var*/ bool _t722 = false;
-		// autofree_scope_vars(pos=3875 line_nr=158 scope.pos=3874 scope.end_pos=3889)
-		// var "err" var.pos=3874 var.line_nr=158
+		// autofree_scope_vars(pos=3908 line_nr=159 scope.pos=3907 scope.end_pos=3922)
+		// var "err" var.pos=3907 var.line_nr=159
 		// af parent scope:
-		// var "v" var.pos=3774 var.line_nr=156
-		// var "v0" var.pos=3792 var.line_nr=157
-		// var "v1" var.pos=3850 var.line_nr=158
+		// var "v" var.pos=3807 var.line_nr=157
+		// var "v0" var.pos=3825 var.line_nr=158
+		// var "v1" var.pos=3883 var.line_nr=159
 		// af parent scope:
 		// af parent scope:
 		return _t722;
 	}
  	semver__Version v1 =  *(semver__Version*)_t721.data;
 	/*tmp return var*/ bool _t723 = semver__Version_gt(v0, v1);
-	// autofree_scope_vars(pos=3891 line_nr=159 scope.pos=3766 scope.end_pos=3909)
-	// var "v" var.pos=3774 var.line_nr=156
-	// var "v0" var.pos=3792 var.line_nr=157
-	// var "v1" var.pos=3850 var.line_nr=158
+	// autofree_scope_vars(pos=3924 line_nr=160 scope.pos=3799 scope.end_pos=3942)
+	// var "v" var.pos=3807 var.line_nr=157
+	// var "v0" var.pos=3825 var.line_nr=158
+	// var "v1" var.pos=3883 var.line_nr=159
 	// af parent scope:
 	// af parent scope:
 	return _t723;
@@ -25499,13 +25499,13 @@ bool v__pkgconfig__PkgConfig_atleast(v__pkgconfig__PkgConfig* pc, string v) {
 	if (_t724.state != 0) { /*or block*/ 
 		IError err = _t724.err;
 		/*tmp return var*/ bool _t725 = false;
-		// autofree_scope_vars(pos=3998 line_nr=163 scope.pos=3997 scope.end_pos=4012)
-		// var "err" var.pos=3997 var.line_nr=163
+		// autofree_scope_vars(pos=4031 line_nr=164 scope.pos=4030 scope.end_pos=4045)
+		// var "err" var.pos=4030 var.line_nr=164
 		// af parent scope:
-		// var "pc" var.pos=3924 var.line_nr=162
-		// var "v" var.pos=3946 var.line_nr=162
-		// var "v0" var.pos=3964 var.line_nr=163
-		// var "v1" var.pos=4015 var.line_nr=164
+		// var "pc" var.pos=3957 var.line_nr=163
+		// var "v" var.pos=3979 var.line_nr=163
+		// var "v0" var.pos=3997 var.line_nr=164
+		// var "v1" var.pos=4048 var.line_nr=165
 		// af parent scope:
 		// af parent scope:
 		return _t725;
@@ -25515,24 +25515,24 @@ bool v__pkgconfig__PkgConfig_atleast(v__pkgconfig__PkgConfig* pc, string v) {
 	if (_t726.state != 0) { /*or block*/ 
 		IError err = _t726.err;
 		/*tmp return var*/ bool _t727 = false;
-		// autofree_scope_vars(pos=4040 line_nr=164 scope.pos=4039 scope.end_pos=4054)
-		// var "err" var.pos=4039 var.line_nr=164
+		// autofree_scope_vars(pos=4073 line_nr=165 scope.pos=4072 scope.end_pos=4087)
+		// var "err" var.pos=4072 var.line_nr=165
 		// af parent scope:
-		// var "pc" var.pos=3924 var.line_nr=162
-		// var "v" var.pos=3946 var.line_nr=162
-		// var "v0" var.pos=3964 var.line_nr=163
-		// var "v1" var.pos=4015 var.line_nr=164
+		// var "pc" var.pos=3957 var.line_nr=163
+		// var "v" var.pos=3979 var.line_nr=163
+		// var "v0" var.pos=3997 var.line_nr=164
+		// var "v1" var.pos=4048 var.line_nr=165
 		// af parent scope:
 		// af parent scope:
 		return _t727;
 	}
  	semver__Version v1 =  *(semver__Version*)_t726.data;
 	/*tmp return var*/ bool _t728 = semver__Version_gt(v0, v1);
-	// autofree_scope_vars(pos=4056 line_nr=165 scope.pos=3919 scope.end_pos=4074)
-	// var "pc" var.pos=3924 var.line_nr=162
-	// var "v" var.pos=3946 var.line_nr=162
-	// var "v0" var.pos=3964 var.line_nr=163
-	// var "v1" var.pos=4015 var.line_nr=164
+	// autofree_scope_vars(pos=4089 line_nr=166 scope.pos=3952 scope.end_pos=4107)
+	// var "pc" var.pos=3957 var.line_nr=163
+	// var "v" var.pos=3979 var.line_nr=163
+	// var "v0" var.pos=3997 var.line_nr=164
+	// var "v1" var.pos=4048 var.line_nr=165
 	// af parent scope:
 	// af parent scope:
 	return _t728;
@@ -25700,9 +25700,9 @@ Array_string v__pkgconfig__list(void) {
 			}
 		}
 	}
-	// autofree_scope_vars(pos=6225 line_nr=274 scope.pos=5891 scope.end_pos=6241)
-	// var "pc" var.pos=5914 var.line_nr=258
-	// var "modules" var.pos=5978 var.line_nr=262
+	// autofree_scope_vars(pos=6258 line_nr=275 scope.pos=5924 scope.end_pos=6274)
+	// var "pc" var.pos=5947 var.line_nr=259
+	// var "modules" var.pos=6011 var.line_nr=263
 	// af parent scope:
 	// af parent scope:
 	return modules;
@@ -26548,7 +26548,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8b7085e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1590783"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -80485,7 +80485,8 @@ void _vinit(int ___argc, voidptr ___argv) {
 	// Initializations for module rand.seed :
 	// Initializations for module v.errors :
 	// Initializations for module v.pkgconfig :
-	_const_v__pkgconfig__default_paths = new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig")}));
+	_const_v__pkgconfig__default_paths = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
+		_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig"), _SLIT("/opt/homebrew/lib/pkgconfig")}));
 	// Initializations for module v.vet :
 	// Initializations for module rand.wyrand :
 	_const_rand__wyrand__wyp0 = ((u64)(0xa0761d6478bd642fU));
