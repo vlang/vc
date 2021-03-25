@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1bf7d96"
+#define V_COMMIT_HASH "f29ca6b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "03d5686"
+	#define V_COMMIT_HASH "1bf7d96"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1bf7d96"
+	#define V_CURRENT_COMMIT_HASH "f29ca6b"
 #endif
 
 // V comptime_defines:
@@ -26101,7 +26101,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("03d5686"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1bf7d96"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -70399,6 +70399,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_process_fn_decl(v__gen__c__Gen* g, v__ast__F
 	if (!v__gen__c__Gen_is_used_by_main(g, node)) {
 		return;
 	}
+	if (g->is_builtin_mod && g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak && string_eq(node.name, _SLIT("malloc"))) {
+		strings__Builder_write_string(&g->definitions, _SLIT("#define v_malloc GC_MALLOC\n"));
+		return;
+	}
 	v__gen__c__Gen_gen_attrs(g, node.attrs);
 	bool skip = false;
 	int pos = g->out.buf.len;
@@ -70583,9 +70587,9 @@ bool v__gen__c__Gen_gen_fn_decl_defer_2 = false;
 		v__gen__c__Gen_write(g, fn_header);
 	}
 	int arg_start_pos = g->out.len;
-	multi_return_Array_string_Array_string mr_7555 = v__gen__c__Gen_fn_args(g, node.params, node.is_variadic);
-	Array_string fargs = mr_7555.arg0;
-	Array_string fargtypes = mr_7555.arg1;
+	multi_return_Array_string_Array_string mr_7709 = v__gen__c__Gen_fn_args(g, node.params, node.is_variadic);
+	Array_string fargs = mr_7709.arg0;
+	Array_string fargtypes = mr_7709.arg1;
 	string arg_str = strings__Builder_after(&g->out, arg_start_pos);
 	if (node.no_body || ((g->pref->use_cache && g->pref->build_mode != v__pref__BuildMode_build_module) && node.is_builtin && !g->is_test) || skip) {
 		strings__Builder_writeln(&g->definitions, _SLIT(");"));
@@ -70694,9 +70698,9 @@ if (v__gen__c__Gen_gen_fn_decl_defer_2 == true) {
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_defer_flag_var(v__gen__c__Gen* g, v__ast__DeferStmt* stmt) {
 	/*tmp return var*/ string _t3056 = _STR("%.*s\000_defer_%"PRId32"", 2, g->last_fn_c_name, stmt->idx_in_fn);
-	// autofree_scope_vars(pos=10902 line_nr=335 scope.pos=10848 scope.end_pos=10954)
-	// var "g" var.pos=10849 var.line_nr=334
-	// var "stmt" var.pos=10872 var.line_nr=334
+	// autofree_scope_vars(pos=11056 line_nr=339 scope.pos=11002 scope.end_pos=11108)
+	// var "g" var.pos=11003 var.line_nr=338
+	// var "stmt" var.pos=11026 var.line_nr=338
 	// af parent scope:
 	// af parent scope:
 	return _t3056;
@@ -70821,26 +70825,26 @@ v__table__Type v__gen__c__Gen_unwrap_generic(v__gen__c__Gen* g, v__table__Type t
 			v__ast__GenericParam generic_param = ((v__ast__GenericParam*)g->cur_fn.generic_params.data)[i];
 			if (string_eq(generic_param.name, sym->name)) {
 				/*tmp return var*/ v__table__Type _t3062 = v__table__Type_clear_flag(v__table__Type_derive((*(v__table__Type*)/*ee elem_typ */array_get(g->cur_generic_types, i)), typ), v__table__TypeFlag_generic);
-				// autofree_scope_vars(pos=14653 line_nr=465 scope.pos=14648 scope.end_pos=14720)
+				// autofree_scope_vars(pos=14807 line_nr=469 scope.pos=14802 scope.end_pos=14874)
 				// af parent scope:
-				// var "i" var.pos=14565 var.line_nr=463
+				// var "i" var.pos=14719 var.line_nr=467
 				// skipping tmp var "i"
-				// var "generic_param" var.pos=14568 var.line_nr=463
+				// var "generic_param" var.pos=14722 var.line_nr=467
 				// skipping tmp var "generic_param"
 				// af parent scope:
-				// var "sym" var.pos=14523 var.line_nr=462
+				// var "sym" var.pos=14677 var.line_nr=466
 				// af parent scope:
-				// var "g" var.pos=14440 var.line_nr=460
-				// var "typ" var.pos=14463 var.line_nr=460
+				// var "g" var.pos=14594 var.line_nr=464
+				// var "typ" var.pos=14617 var.line_nr=464
 				// af parent scope:
 				// af parent scope:
 				return _t3062;
 			}
 		}
 	}
-	// autofree_scope_vars(pos=14729 line_nr=469 scope.pos=14439 scope.end_pos=14741)
-	// var "g" var.pos=14440 var.line_nr=460
-	// var "typ" var.pos=14463 var.line_nr=460
+	// autofree_scope_vars(pos=14883 line_nr=473 scope.pos=14593 scope.end_pos=14895)
+	// var "g" var.pos=14594 var.line_nr=464
+	// var "typ" var.pos=14617 var.line_nr=464
 	// af parent scope:
 	// af parent scope:
 	return typ;
@@ -71176,11 +71180,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string_eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_26078 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_26078.arg0;
-			string pafile = mr_26078.arg1;
-			string pamod = mr_26078.arg2;
-			string pafn = mr_26078.arg3;
+			multi_return_int_string_string_string mr_26232 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_26232.arg0;
+			string pafile = mr_26232.arg1;
+			string pamod = mr_26232.arg2;
+			string pafn = mr_26232.arg3;
 			v__gen__c__Gen_write(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"),  ", 5, paline, pafile, pamod, pafn));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
@@ -71417,10 +71421,10 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_is_gui_app(v__gen__c__Gen* g) {
 	{
 		if (g->force_main_console) {
 			/*tmp return var*/ bool _t3075 = false;
-			// autofree_scope_vars(pos=34998 line_nr=1141 scope.pos=34994 scope.end_pos=35014)
+			// autofree_scope_vars(pos=35152 line_nr=1145 scope.pos=35148 scope.end_pos=35168)
 			// af parent scope:
 			// af parent scope:
-			// var "g" var.pos=34926 var.line_nr=1138
+			// var "g" var.pos=35080 var.line_nr=1142
 			// af parent scope:
 			// af parent scope:
 			return _t3075;
@@ -71430,13 +71434,13 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_is_gui_app(v__gen__c__Gen* g) {
 			v__cflag__CFlag cf = ((v__cflag__CFlag*)g->table->cflags.data)[_t3076];
 			if (string_eq(cf.value, _SLIT("gdi32"))) {
 				/*tmp return var*/ bool _t3077 = true;
-				// autofree_scope_vars(pos=35076 line_nr=1145 scope.pos=35071 scope.end_pos=35092)
+				// autofree_scope_vars(pos=35230 line_nr=1149 scope.pos=35225 scope.end_pos=35246)
 				// af parent scope:
-				// var "cf" var.pos=35022 var.line_nr=1143
+				// var "cf" var.pos=35176 var.line_nr=1147
 				// skipping tmp var "cf"
 				// af parent scope:
 				// af parent scope:
-				// var "g" var.pos=34926 var.line_nr=1138
+				// var "g" var.pos=35080 var.line_nr=1142
 				// af parent scope:
 				// af parent scope:
 				return _t3077;
@@ -71445,8 +71449,8 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_is_gui_app(v__gen__c__Gen* g) {
 	}
 	#endif
 	/*tmp return var*/ bool _t3078 = false;
-	// autofree_scope_vars(pos=35101 line_nr=1149 scope.pos=34921 scope.end_pos=35115)
-	// var "g" var.pos=34926 var.line_nr=1138
+	// autofree_scope_vars(pos=35255 line_nr=1153 scope.pos=35075 scope.end_pos=35269)
+	// var "g" var.pos=35080 var.line_nr=1142
 	// af parent scope:
 	// af parent scope:
 	return _t3078;
@@ -71454,9 +71458,9 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_is_gui_app(v__gen__c__Gen* g) {
 
 VV_LOCAL_SYMBOL bool v__gen__c__Gen_fileis(v__gen__c__Gen* g, string s) {
 	/*tmp return var*/ bool _t3079 = string_contains(g->file.path, s);
-	// autofree_scope_vars(pos=35154 line_nr=1153 scope.pos=35121 scope.end_pos=35186)
-	// var "g" var.pos=35122 var.line_nr=1152
-	// var "s" var.pos=35137 var.line_nr=1152
+	// autofree_scope_vars(pos=35308 line_nr=1157 scope.pos=35275 scope.end_pos=35340)
+	// var "g" var.pos=35276 var.line_nr=1156
+	// var "s" var.pos=35291 var.line_nr=1156
 	// af parent scope:
 	// af parent scope:
 	return _t3079;
@@ -71507,10 +71511,10 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_write_fn_attrs(v__gen__c__Gen* g, Array_v_
 		else {
 		};
 	}
-	// autofree_scope_vars(pos=38182 line_nr=1227 scope.pos=35192 scope.end_pos=38201)
-	// var "g" var.pos=35197 var.line_nr=1156
-	// var "attrs" var.pos=35219 var.line_nr=1156
-	// var "msvc_attrs" var.pos=35253 var.line_nr=1157
+	// autofree_scope_vars(pos=38336 line_nr=1231 scope.pos=35346 scope.end_pos=38355)
+	// var "g" var.pos=35351 var.line_nr=1160
+	// var "attrs" var.pos=35373 var.line_nr=1160
+	// var "msvc_attrs" var.pos=35407 var.line_nr=1161
 	// str literal
 	// af parent scope:
 	// af parent scope:
