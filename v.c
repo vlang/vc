@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "52a14e8"
+#define V_COMMIT_HASH "87494fa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1e9d527"
+	#define V_COMMIT_HASH "52a14e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "52a14e8"
+	#define V_CURRENT_COMMIT_HASH "87494fa"
 #endif
 
 // V comptime_defines:
@@ -26705,7 +26705,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1e9d527"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("52a14e8"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51540,9 +51540,18 @@ VV_LOCAL_SYMBOL multi_return_Array_v__table__Param_bool_bool v__parser__Parser_f
 
 VV_LOCAL_SYMBOL void v__parser__Parser_check_fn_mutable_arguments(v__parser__Parser* p, v__table__Type typ, v__token__Position pos) {
 	v__table__TypeSymbol* sym = v__table__Table_get_type_symbol(p->table, typ);
-	if (!(sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_interface_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_sum_type) && !v__table__Type_is_ptr(typ) && !v__table__Type_is_pointer(typ)) {
-		v__parser__Parser_error_with_pos(p, string_add(_SLIT("mutable arguments are only allowed for arrays, interfaces, maps, pointers and structs\n"), _STR("return values instead: `fn foo(mut n %.*s\000) {` => `fn foo(n %.*s\000) %.*s\000 {`", 4, sym->name, sym->name, sym->name)), pos);
+	if ((sym->kind == v__table__Kind_array || sym->kind == v__table__Kind_array_fixed || sym->kind == v__table__Kind_interface_ || sym->kind == v__table__Kind_map || sym->kind == v__table__Kind_placeholder || sym->kind == v__table__Kind_struct_ || sym->kind == v__table__Kind_sum_type)) {
+		return;
 	}
+	if (v__table__Type_is_ptr(typ) || v__table__Type_is_pointer(typ)) {
+		return;
+	}
+	if (sym->kind == v__table__Kind_alias) {
+		v__table__Type atyp = (/* as */ *(v__table__Alias*)__as_cast((sym->info)._v__table__Alias,(sym->info)._typ, 379) /*expected idx: 379, name: v.table.Alias */ ).parent_type;
+		v__parser__Parser_check_fn_mutable_arguments(p, atyp, pos);
+		return;
+	}
+	v__parser__Parser_error_with_pos(p, string_add(_SLIT("mutable arguments are only allowed for arrays, interfaces, maps, pointers, structs or their aliases\n"), _STR("return values instead: `fn foo(mut n %.*s\000) {` => `fn foo(n %.*s\000) %.*s\000 {`", 4, sym->name, sym->name, sym->name)), pos);
 }
 
 VV_LOCAL_SYMBOL void v__parser__Parser_check_fn_shared_arguments(v__parser__Parser* p, v__table__Type typ, v__token__Position pos) {
@@ -51566,14 +51575,14 @@ VV_LOCAL_SYMBOL bool v__parser__have_fn_main(Array_v__ast__Stmt stmts) {
 		if ((stmt)._typ == 147 /* v.ast.FnDecl */) {
 			if (string_eq((*stmt._v__ast__FnDecl).name, _SLIT("main.main")) && string_eq((*stmt._v__ast__FnDecl).mod, _SLIT("main"))) {
 				/*tmp return var*/ bool _t2356 = true;
-				// autofree_scope_vars(pos=24123 line_nr=856 scope.pos=24118 scope.end_pos=24139)
+				// autofree_scope_vars(pos=24279 line_nr=864 scope.pos=24274 scope.end_pos=24295)
 				// af parent scope:
-				// var "stmt" var.pos=24044 var.line_nr=854
+				// var "stmt" var.pos=24200 var.line_nr=862
 				// af parent scope:
-				// var "stmt" var.pos=24023 var.line_nr=853
+				// var "stmt" var.pos=24179 var.line_nr=861
 				// skipping tmp var "stmt"
 				// af parent scope:
-				// var "stmts" var.pos=23993 var.line_nr=852
+				// var "stmts" var.pos=24149 var.line_nr=860
 				// af parent scope:
 				// af parent scope:
 				return _t2356;
@@ -51581,8 +51590,8 @@ VV_LOCAL_SYMBOL bool v__parser__have_fn_main(Array_v__ast__Stmt stmts) {
 		}
 	}
 	/*tmp return var*/ bool _t2357 = false;
-	// autofree_scope_vars(pos=24148 line_nr=860 scope.pos=23980 scope.end_pos=24162)
-	// var "stmts" var.pos=23993 var.line_nr=852
+	// autofree_scope_vars(pos=24304 line_nr=868 scope.pos=24136 scope.end_pos=24318)
+	// var "stmts" var.pos=24149 var.line_nr=860
 	// af parent scope:
 	// af parent scope:
 	return _t2357;
