@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d9240bd"
+#define V_COMMIT_HASH "1b7fd2c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cd74273"
+	#define V_COMMIT_HASH "d9240bd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d9240bd"
+	#define V_CURRENT_COMMIT_HASH "1b7fd2c"
 #endif
 
 // V comptime_defines:
@@ -20668,10 +20668,10 @@ time__Time time__Time_local(time__Time t) {
 		.hour = st_local.hour,
 		.minute = st_local.minute,
 		.second = st_local.second,
-		.microsecond = t.microsecond,
-		.v_unix = t.v_unix,
+		.microsecond = st_local.millisecond * 1000,
+		.v_unix = ((u64)(time__SystemTime_unix_time(st_local))),
 	};
-	// autofree_scope_vars(pos=2745 line_nr=119 scope.pos=2247 scope.end_pos=2761)
+	// autofree_scope_vars(pos=2778 line_nr=119 scope.pos=2247 scope.end_pos=2794)
 	// var "t" var.pos=2248 var.line_nr=98
 	// var "st_utc" var.pos=2272 var.line_nr=99
 	// var "st_local" var.pos=2426 var.line_nr=107
@@ -20698,11 +20698,11 @@ VV_LOCAL_SYMBOL time__Time time__win_now(void) {
 		.microsecond = st_local.millisecond * 1000,
 		.v_unix = ((u64)(time__SystemTime_unix_time(st_local))),
 	};
-	// autofree_scope_vars(pos=3488 line_nr=142 scope.pos=3019 scope.end_pos=3498)
-	// var "ft_utc" var.pos=3037 var.line_nr=126
-	// var "st_utc" var.pos=3098 var.line_nr=128
-	// var "st_local" var.pos=3164 var.line_nr=130
-	// var "t" var.pos=3257 var.line_nr=132
+	// autofree_scope_vars(pos=3521 line_nr=142 scope.pos=3052 scope.end_pos=3531)
+	// var "ft_utc" var.pos=3070 var.line_nr=126
+	// var "st_utc" var.pos=3131 var.line_nr=128
+	// var "st_local" var.pos=3197 var.line_nr=130
+	// var "t" var.pos=3290 var.line_nr=132
 	// af parent scope:
 	// af parent scope:
 	return t;
@@ -20723,10 +20723,10 @@ VV_LOCAL_SYMBOL time__Time time__win_utc(void) {
 		.microsecond = st_utc.millisecond * 1000,
 		.v_unix = ((u64)(time__SystemTime_unix_time(st_utc))),
 	};
-	// autofree_scope_vars(pos=4087 line_nr=163 scope.pos=3727 scope.end_pos=4097)
-	// var "ft_utc" var.pos=3745 var.line_nr=149
-	// var "st_utc" var.pos=3806 var.line_nr=151
-	// var "t" var.pos=3872 var.line_nr=153
+	// autofree_scope_vars(pos=4120 line_nr=163 scope.pos=3760 scope.end_pos=4130)
+	// var "ft_utc" var.pos=3778 var.line_nr=149
+	// var "st_utc" var.pos=3839 var.line_nr=151
+	// var "t" var.pos=3905 var.line_nr=153
 	// af parent scope:
 	// af parent scope:
 	return t;
@@ -20742,9 +20742,9 @@ int time__SystemTime_unix_time(time__SystemTime st) {
 		.tm_sec = st.second,
 	};
 	/*tmp return var*/ int _t337 = time__make_unix_time(tt);
-	// autofree_scope_vars(pos=4315 line_nr=176 scope.pos=4139 scope.end_pos=4342)
-	// var "st" var.pos=4140 var.line_nr=167
-	// var "tt" var.pos=4174 var.line_nr=168
+	// autofree_scope_vars(pos=4348 line_nr=176 scope.pos=4172 scope.end_pos=4375)
+	// var "st" var.pos=4173 var.line_nr=167
+	// var "tt" var.pos=4207 var.line_nr=168
 	// af parent scope:
 	// af parent scope:
 	return _t337;
@@ -20752,7 +20752,7 @@ int time__SystemTime_unix_time(time__SystemTime st) {
 
 time__Time time__darwin_now(void) {
 	/*tmp return var*/ time__Time _t338 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-	// autofree_scope_vars(pos=4411 line_nr=181 scope.pos=4391 scope.end_pos=4426)
+	// autofree_scope_vars(pos=4444 line_nr=181 scope.pos=4424 scope.end_pos=4459)
 	// af parent scope:
 	// af parent scope:
 	return _t338;
@@ -20760,7 +20760,7 @@ time__Time time__darwin_now(void) {
 
 time__Time time__linux_now(void) {
 	/*tmp return var*/ time__Time _t339 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-	// autofree_scope_vars(pos=4494 line_nr=186 scope.pos=4475 scope.end_pos=4509)
+	// autofree_scope_vars(pos=4527 line_nr=186 scope.pos=4508 scope.end_pos=4542)
 	// af parent scope:
 	// af parent scope:
 	return _t339;
@@ -20768,7 +20768,7 @@ time__Time time__linux_now(void) {
 
 time__Time time__solaris_now(void) {
 	/*tmp return var*/ time__Time _t340 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-	// autofree_scope_vars(pos=4579 line_nr=191 scope.pos=4558 scope.end_pos=4594)
+	// autofree_scope_vars(pos=4612 line_nr=191 scope.pos=4591 scope.end_pos=4627)
 	// af parent scope:
 	// af parent scope:
 	return _t340;
@@ -20776,7 +20776,7 @@ time__Time time__solaris_now(void) {
 
 time__Time time__darwin_utc(void) {
 	/*tmp return var*/ time__Time _t341 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-	// autofree_scope_vars(pos=4663 line_nr=196 scope.pos=4643 scope.end_pos=4678)
+	// autofree_scope_vars(pos=4696 line_nr=196 scope.pos=4676 scope.end_pos=4711)
 	// af parent scope:
 	// af parent scope:
 	return _t341;
@@ -20784,7 +20784,7 @@ time__Time time__darwin_utc(void) {
 
 time__Time time__linux_utc(void) {
 	/*tmp return var*/ time__Time _t342 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-	// autofree_scope_vars(pos=4746 line_nr=201 scope.pos=4727 scope.end_pos=4761)
+	// autofree_scope_vars(pos=4779 line_nr=201 scope.pos=4760 scope.end_pos=4794)
 	// af parent scope:
 	// af parent scope:
 	return _t342;
@@ -20792,7 +20792,7 @@ time__Time time__linux_utc(void) {
 
 time__Time time__solaris_utc(void) {
 	/*tmp return var*/ time__Time _t343 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
-	// autofree_scope_vars(pos=4831 line_nr=206 scope.pos=4810 scope.end_pos=4846)
+	// autofree_scope_vars(pos=4864 line_nr=206 scope.pos=4843 scope.end_pos=4879)
 	// af parent scope:
 	// af parent scope:
 	return _t343;
@@ -26212,7 +26212,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cd74273"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d9240bd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
