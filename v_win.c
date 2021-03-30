@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "28018c6"
+#define V_COMMIT_HASH "205fb88"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5c21c74"
+	#define V_COMMIT_HASH "28018c6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "28018c6"
+	#define V_CURRENT_COMMIT_HASH "205fb88"
 #endif
 
 // V comptime_defines:
@@ -110,6 +110,10 @@ typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
 typedef struct v__depgraph__DepGraph v__depgraph__DepGraph;
 typedef struct v__depgraph__OrderedDepMap v__depgraph__OrderedDepMap;
 typedef struct flag__Flag flag__Flag;
+typedef struct flag__UnkownFlagError flag__UnkownFlagError;
+typedef struct flag__MinimumArgsCountError flag__MinimumArgsCountError;
+typedef struct flag__MaximumArgsCountError flag__MaximumArgsCountError;
+typedef struct flag__NoArgsExpectedError flag__NoArgsExpectedError;
 typedef struct flag__FlagParser flag__FlagParser;
 typedef struct semver__RawVersion semver__RawVersion;
 typedef struct semver__Comparator semver__Comparator;
@@ -2810,6 +2814,26 @@ struct flag__Flag {
 	byte abbr;
 	string usage;
 	string val_desc;
+};
+
+struct flag__UnkownFlagError {
+	string msg;
+	int code;
+};
+
+struct flag__MinimumArgsCountError {
+	string msg;
+	int code;
+};
+
+struct flag__MaximumArgsCountError {
+	string msg;
+	int code;
+};
+
+struct flag__NoArgsExpectedError {
+	string msg;
+	int code;
 };
 
 struct semver__Version {
@@ -7383,13 +7407,21 @@ static IError I_None___to_Interface_IError(None__* x);
 int _IError_None___index = 0;
 static IError I_Error_to_Interface_IError(Error* x);
 int _IError_Error_index = 1;
+static IError I_flag__UnkownFlagError_to_Interface_IError(flag__UnkownFlagError* x);
+int _IError_flag__UnkownFlagError_index = 2;
+static IError I_flag__MinimumArgsCountError_to_Interface_IError(flag__MinimumArgsCountError* x);
+int _IError_flag__MinimumArgsCountError_index = 3;
+static IError I_flag__MaximumArgsCountError_to_Interface_IError(flag__MaximumArgsCountError* x);
+int _IError_flag__MaximumArgsCountError_index = 4;
+static IError I_flag__NoArgsExpectedError_to_Interface_IError(flag__NoArgsExpectedError* x);
+int _IError_flag__NoArgsExpectedError_index = 5;
 static IError I_semver__InvalidComparatorFormatError_to_Interface_IError(semver__InvalidComparatorFormatError* x);
-int _IError_semver__InvalidComparatorFormatError_index = 2;
+int _IError_semver__InvalidComparatorFormatError_index = 6;
 static IError I_semver__EmptyInputError_to_Interface_IError(semver__EmptyInputError* x);
-int _IError_semver__EmptyInputError_index = 3;
+int _IError_semver__EmptyInputError_index = 7;
 static IError I_semver__InvalidVersionFormatError_to_Interface_IError(semver__InvalidVersionFormatError* x);
-int _IError_semver__InvalidVersionFormatError_index = 4;
-// ^^^ number of types for interface IError: 5
+int _IError_semver__InvalidVersionFormatError_index = 8;
+// ^^^ number of types for interface IError: 9
 
 
 // Casting functions for converting "None__" to interface "IError"
@@ -7409,6 +7441,46 @@ static inline IError I_Error_to_Interface_IError(Error* x) {
 		._interface_idx = _IError_Error_index,
 		.msg = (string*)((char*)x + __offsetof_ptr(x, Error, msg)),
 		.code = (int*)((char*)x + __offsetof_ptr(x, Error, code)),
+	};
+}
+
+// Casting functions for converting "flag__UnkownFlagError" to interface "IError"
+static inline IError I_flag__UnkownFlagError_to_Interface_IError(flag__UnkownFlagError* x) {
+	return (IError) {
+		._object = (void*) (x),
+		._interface_idx = _IError_flag__UnkownFlagError_index,
+		.msg = (string*)((char*)x + __offsetof_ptr(x, flag__UnkownFlagError, msg)),
+		.code = (int*)((char*)x + __offsetof_ptr(x, flag__UnkownFlagError, code)),
+	};
+}
+
+// Casting functions for converting "flag__MinimumArgsCountError" to interface "IError"
+static inline IError I_flag__MinimumArgsCountError_to_Interface_IError(flag__MinimumArgsCountError* x) {
+	return (IError) {
+		._object = (void*) (x),
+		._interface_idx = _IError_flag__MinimumArgsCountError_index,
+		.msg = (string*)((char*)x + __offsetof_ptr(x, flag__MinimumArgsCountError, msg)),
+		.code = (int*)((char*)x + __offsetof_ptr(x, flag__MinimumArgsCountError, code)),
+	};
+}
+
+// Casting functions for converting "flag__MaximumArgsCountError" to interface "IError"
+static inline IError I_flag__MaximumArgsCountError_to_Interface_IError(flag__MaximumArgsCountError* x) {
+	return (IError) {
+		._object = (void*) (x),
+		._interface_idx = _IError_flag__MaximumArgsCountError_index,
+		.msg = (string*)((char*)x + __offsetof_ptr(x, flag__MaximumArgsCountError, msg)),
+		.code = (int*)((char*)x + __offsetof_ptr(x, flag__MaximumArgsCountError, code)),
+	};
+}
+
+// Casting functions for converting "flag__NoArgsExpectedError" to interface "IError"
+static inline IError I_flag__NoArgsExpectedError_to_Interface_IError(flag__NoArgsExpectedError* x) {
+	return (IError) {
+		._object = (void*) (x),
+		._interface_idx = _IError_flag__NoArgsExpectedError_index,
+		.msg = (string*)((char*)x + __offsetof_ptr(x, flag__NoArgsExpectedError, msg)),
+		.code = (int*)((char*)x + __offsetof_ptr(x, flag__NoArgsExpectedError, code)),
 	};
 }
 
@@ -9078,6 +9150,10 @@ static bool v__ast__FloatLiteral_struct_eq(v__ast__FloatLiteral a, v__ast__Float
 static char * v_typeof_interface_IError(int sidx) { /* IError */ 
 	if (sidx == _IError_None___index) return "None__";
 	if (sidx == _IError_Error_index) return "Error";
+	if (sidx == _IError_flag__UnkownFlagError_index) return "flag.UnkownFlagError";
+	if (sidx == _IError_flag__MinimumArgsCountError_index) return "flag.MinimumArgsCountError";
+	if (sidx == _IError_flag__MaximumArgsCountError_index) return "flag.MaximumArgsCountError";
+	if (sidx == _IError_flag__NoArgsExpectedError_index) return "flag.NoArgsExpectedError";
 	if (sidx == _IError_semver__InvalidComparatorFormatError_index) return "semver.InvalidComparatorFormatError";
 	if (sidx == _IError_semver__EmptyInputError_index) return "semver.EmptyInputError";
 	if (sidx == _IError_semver__InvalidVersionFormatError_index) return "semver.InvalidVersionFormatError";
@@ -21738,8 +21814,8 @@ VV_LOCAL_SYMBOL void flag__Flag_free(flag__Flag* f) {
 
 string flag__Flag_str(flag__Flag f) {
 	/*tmp return var*/ string _t388 = string_add(string_add(string_add(string_add(string_add(_SLIT(""), _SLIT("    flag:\n")), _STR("            name: %.*s\000\n", 2, f.name)), _STR("            abbr: %"PRIu8"\000\n", 2, f.abbr)), _STR("            usag: %.*s\000\n", 2, f.usage)), _STR("            desc: %.*s", 1, f.val_desc));
-	// autofree_scope_vars(pos=471 line_nr=22 scope.pos=447 scope.end_pos=631)
-	// var "f" var.pos=448 var.line_nr=21
+	// autofree_scope_vars(pos=691 line_nr=42 scope.pos=667 scope.end_pos=851)
+	// var "f" var.pos=668 var.line_nr=41
 	// af parent scope:
 	// af parent scope:
 	return _t388;
@@ -21755,9 +21831,9 @@ string Array_flag__Flag_str(Array_flag__Flag af) {
 	}
 	array_push(&res, _MOV((string[]){ string_clone(_SLIT("  ]")) }));
 	/*tmp return var*/ string _t393 = Array_string_join(res, _SLIT("\n"));
-	// autofree_scope_vars(pos=765 line_nr=33 scope.pos=641 scope.end_pos=788)
-	// var "af" var.pos=642 var.line_nr=26
-	// var "res" var.pos=673 var.line_nr=27
+	// autofree_scope_vars(pos=985 line_nr=53 scope.pos=861 scope.end_pos=1008)
+	// var "af" var.pos=862 var.line_nr=46
+	// var "res" var.pos=893 var.line_nr=47
 	// af parent scope:
 	// af parent scope:
 	return _t393;
@@ -21787,8 +21863,8 @@ VV_LOCAL_SYMBOL void flag__FlagParser_free(flag__FlagParser* f) {
 
 flag__FlagParser* flag__new_flag_parser(Array_string args) {
 	/*tmp return var*/ flag__FlagParser* _t396 = (flag__FlagParser*)memdup(&(flag__FlagParser){.args = array_clone(&args),.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 1, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},}, sizeof(flag__FlagParser));
-	// autofree_scope_vars(pos=1768 line_nr=79 scope.pos=1723 scope.end_pos=1851)
-	// var "args" var.pos=1739 var.line_nr=78
+	// autofree_scope_vars(pos=1988 line_nr=99 scope.pos=1943 scope.end_pos=2071)
+	// var "args" var.pos=1959 var.line_nr=98
 	// af parent scope:
 	// af parent scope:
 	return _t396;
@@ -21850,22 +21926,22 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 				}
 				// Defer end
 				/*tmp return var*/ Array_string _t398 = __new_array_with_default(0, 0, sizeof(string), 0);
-				// autofree_scope_vars(pos=3530 line_nr=150 scope.pos=3525 scope.end_pos=3544)
+				// autofree_scope_vars(pos=3750 line_nr=170 scope.pos=3745 scope.end_pos=3764)
 				// af parent scope:
-				// var "nextarg" var.pos=3549 var.line_nr=152
+				// var "nextarg" var.pos=3769 var.line_nr=172
 				// af parent scope:
-				// var "i" var.pos=3229 var.line_nr=136
+				// var "i" var.pos=3449 var.line_nr=156
 				// skipping tmp var "i"
-				// var "arg" var.pos=3232 var.line_nr=136
+				// var "arg" var.pos=3452 var.line_nr=156
 				// skipping tmp var "arg"
 				// af parent scope:
-				// var "fs" var.pos=2962 var.line_nr=125
-				// var "longhand" var.pos=2989 var.line_nr=125
-				// var "shorthand" var.pos=3006 var.line_nr=125
-				// var "full" var.pos=3034 var.line_nr=126
-				// var "found_entries" var.pos=3098 var.line_nr=130
-				// var "to_delete" var.pos=3131 var.line_nr=131
-				// var "should_skip_one" var.pos=3199 var.line_nr=135
+				// var "fs" var.pos=3182 var.line_nr=145
+				// var "longhand" var.pos=3209 var.line_nr=145
+				// var "shorthand" var.pos=3226 var.line_nr=145
+				// var "full" var.pos=3254 var.line_nr=146
+				// var "found_entries" var.pos=3318 var.line_nr=150
+				// var "to_delete" var.pos=3351 var.line_nr=151
+				// var "should_skip_one" var.pos=3419 var.line_nr=155
 				// af parent scope:
 				// af parent scope:
 				return _t398;
@@ -21886,24 +21962,24 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 					}
 					// Defer end
 					/*tmp return var*/ Array_string _t399 = __new_array_with_default(0, 0, sizeof(string), 0);
-					// autofree_scope_vars(pos=3802 line_nr=159 scope.pos=3660 scope.end_pos=3817)
+					// autofree_scope_vars(pos=4022 line_nr=179 scope.pos=3880 scope.end_pos=4037)
 					// af parent scope:
-					// var "nextarg_rest" var.pos=3603 var.line_nr=154
+					// var "nextarg_rest" var.pos=3823 var.line_nr=174
 					// af parent scope:
-					// var "nextarg" var.pos=3549 var.line_nr=152
+					// var "nextarg" var.pos=3769 var.line_nr=172
 					// af parent scope:
-					// var "i" var.pos=3229 var.line_nr=136
+					// var "i" var.pos=3449 var.line_nr=156
 					// skipping tmp var "i"
-					// var "arg" var.pos=3232 var.line_nr=136
+					// var "arg" var.pos=3452 var.line_nr=156
 					// skipping tmp var "arg"
 					// af parent scope:
-					// var "fs" var.pos=2962 var.line_nr=125
-					// var "longhand" var.pos=2989 var.line_nr=125
-					// var "shorthand" var.pos=3006 var.line_nr=125
-					// var "full" var.pos=3034 var.line_nr=126
-					// var "found_entries" var.pos=3098 var.line_nr=130
-					// var "to_delete" var.pos=3131 var.line_nr=131
-					// var "should_skip_one" var.pos=3199 var.line_nr=135
+					// var "fs" var.pos=3182 var.line_nr=145
+					// var "longhand" var.pos=3209 var.line_nr=145
+					// var "shorthand" var.pos=3226 var.line_nr=145
+					// var "full" var.pos=3254 var.line_nr=146
+					// var "found_entries" var.pos=3318 var.line_nr=150
+					// var "to_delete" var.pos=3351 var.line_nr=151
+					// var "should_skip_one" var.pos=3419 var.line_nr=155
 					// af parent scope:
 					// af parent scope:
 					return _t399;
@@ -21937,14 +22013,14 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 		string_free(&full);
 	}
 	// Defer end
-	// autofree_scope_vars(pos=4230 line_nr=179 scope.pos=2957 scope.end_pos=4252)
-	// var "fs" var.pos=2962 var.line_nr=125
-	// var "longhand" var.pos=2989 var.line_nr=125
-	// var "shorthand" var.pos=3006 var.line_nr=125
-	// var "full" var.pos=3034 var.line_nr=126
-	// var "found_entries" var.pos=3098 var.line_nr=130
-	// var "to_delete" var.pos=3131 var.line_nr=131
-	// var "should_skip_one" var.pos=3199 var.line_nr=135
+	// autofree_scope_vars(pos=4450 line_nr=199 scope.pos=3177 scope.end_pos=4472)
+	// var "fs" var.pos=3182 var.line_nr=145
+	// var "longhand" var.pos=3209 var.line_nr=145
+	// var "shorthand" var.pos=3226 var.line_nr=145
+	// var "full" var.pos=3254 var.line_nr=146
+	// var "found_entries" var.pos=3318 var.line_nr=150
+	// var "to_delete" var.pos=3351 var.line_nr=151
+	// var "should_skip_one" var.pos=3419 var.line_nr=155
 	// af parent scope:
 	// af parent scope:
 	return found_entries;
@@ -22018,27 +22094,27 @@ bool flag__FlagParser_bool(flag__FlagParser* fs, string name, byte abbr, bool bd
 	Option_bool _t411 = flag__FlagParser_bool_opt(fs, name, abbr, usage);
 	if (_t411.state != 0) { /*or block*/ 
 		IError err = _t411.err;
-		// autofree_scope_vars(pos=6202 line_nr=250 scope.pos=6201 scope.end_pos=6219)
-		// var "err" var.pos=6201 var.line_nr=250
+		// autofree_scope_vars(pos=6422 line_nr=270 scope.pos=6421 scope.end_pos=6439)
+		// var "err" var.pos=6421 var.line_nr=270
 		// af parent scope:
-		// var "fs" var.pos=6077 var.line_nr=249
-		// var "name" var.pos=6097 var.line_nr=249
-		// var "abbr" var.pos=6110 var.line_nr=249
-		// var "bdefault" var.pos=6121 var.line_nr=249
-		// var "usage" var.pos=6136 var.line_nr=249
-		// var "value" var.pos=6158 var.line_nr=250
+		// var "fs" var.pos=6297 var.line_nr=269
+		// var "name" var.pos=6317 var.line_nr=269
+		// var "abbr" var.pos=6330 var.line_nr=269
+		// var "bdefault" var.pos=6341 var.line_nr=269
+		// var "usage" var.pos=6356 var.line_nr=269
+		// var "value" var.pos=6378 var.line_nr=270
 		// af parent scope:
 		// af parent scope:
 		return bdefault;
 	}
  	bool value =  *(bool*)_t411.data;
-	// autofree_scope_vars(pos=6221 line_nr=251 scope.pos=6072 scope.end_pos=6235)
-	// var "fs" var.pos=6077 var.line_nr=249
-	// var "name" var.pos=6097 var.line_nr=249
-	// var "abbr" var.pos=6110 var.line_nr=249
-	// var "bdefault" var.pos=6121 var.line_nr=249
-	// var "usage" var.pos=6136 var.line_nr=249
-	// var "value" var.pos=6158 var.line_nr=250
+	// autofree_scope_vars(pos=6441 line_nr=271 scope.pos=6292 scope.end_pos=6455)
+	// var "fs" var.pos=6297 var.line_nr=269
+	// var "name" var.pos=6317 var.line_nr=269
+	// var "abbr" var.pos=6330 var.line_nr=269
+	// var "bdefault" var.pos=6341 var.line_nr=269
+	// var "usage" var.pos=6356 var.line_nr=269
+	// var "value" var.pos=6378 var.line_nr=270
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -22053,13 +22129,13 @@ Array_int flag__FlagParser_int_multi(flag__FlagParser* fs, string name, byte abb
 		string val = ((string*)parsed.data)[_t412];
 		array_push(&value, _MOV((int[]){ string_int(val) }));
 	}
-	// autofree_scope_vars(pos=6621 line_nr=263 scope.pos=6389 scope.end_pos=6635)
-	// var "fs" var.pos=6394 var.line_nr=256
-	// var "name" var.pos=6419 var.line_nr=256
-	// var "abbr" var.pos=6432 var.line_nr=256
-	// var "usage" var.pos=6443 var.line_nr=256
-	// var "parsed" var.pos=6517 var.line_nr=258
-	// var "value" var.pos=6559 var.line_nr=259
+	// autofree_scope_vars(pos=6841 line_nr=283 scope.pos=6609 scope.end_pos=6855)
+	// var "fs" var.pos=6614 var.line_nr=276
+	// var "name" var.pos=6639 var.line_nr=276
+	// var "abbr" var.pos=6652 var.line_nr=276
+	// var "usage" var.pos=6663 var.line_nr=276
+	// var "parsed" var.pos=6737 var.line_nr=278
+	// var "value" var.pos=6779 var.line_nr=279
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -22085,27 +22161,27 @@ int flag__FlagParser_int(flag__FlagParser* fs, string name, byte abbr, int idefa
 	Option_int _t415 = flag__FlagParser_int_opt(fs, name, abbr, usage);
 	if (_t415.state != 0) { /*or block*/ 
 		IError err = _t415.err;
-		// autofree_scope_vars(pos=7441 line_nr=290 scope.pos=7440 scope.end_pos=7458)
-		// var "err" var.pos=7440 var.line_nr=290
+		// autofree_scope_vars(pos=7661 line_nr=310 scope.pos=7660 scope.end_pos=7678)
+		// var "err" var.pos=7660 var.line_nr=310
 		// af parent scope:
-		// var "fs" var.pos=7320 var.line_nr=289
-		// var "name" var.pos=7339 var.line_nr=289
-		// var "abbr" var.pos=7352 var.line_nr=289
-		// var "idefault" var.pos=7363 var.line_nr=289
-		// var "usage" var.pos=7377 var.line_nr=289
-		// var "value" var.pos=7398 var.line_nr=290
+		// var "fs" var.pos=7540 var.line_nr=309
+		// var "name" var.pos=7559 var.line_nr=309
+		// var "abbr" var.pos=7572 var.line_nr=309
+		// var "idefault" var.pos=7583 var.line_nr=309
+		// var "usage" var.pos=7597 var.line_nr=309
+		// var "value" var.pos=7618 var.line_nr=310
 		// af parent scope:
 		// af parent scope:
 		return idefault;
 	}
  	int value =  *(int*)_t415.data;
-	// autofree_scope_vars(pos=7460 line_nr=291 scope.pos=7315 scope.end_pos=7474)
-	// var "fs" var.pos=7320 var.line_nr=289
-	// var "name" var.pos=7339 var.line_nr=289
-	// var "abbr" var.pos=7352 var.line_nr=289
-	// var "idefault" var.pos=7363 var.line_nr=289
-	// var "usage" var.pos=7377 var.line_nr=289
-	// var "value" var.pos=7398 var.line_nr=290
+	// autofree_scope_vars(pos=7680 line_nr=311 scope.pos=7535 scope.end_pos=7694)
+	// var "fs" var.pos=7540 var.line_nr=309
+	// var "name" var.pos=7559 var.line_nr=309
+	// var "abbr" var.pos=7572 var.line_nr=309
+	// var "idefault" var.pos=7583 var.line_nr=309
+	// var "usage" var.pos=7597 var.line_nr=309
+	// var "value" var.pos=7618 var.line_nr=310
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -22120,13 +22196,13 @@ Array_f64 flag__FlagParser_float_multi(flag__FlagParser* fs, string name, byte a
 		string val = ((string*)parsed.data)[_t416];
 		array_push(&value, _MOV((f64[]){ string_f64(val) }));
 	}
-	// autofree_scope_vars(pos=7866 line_nr=303 scope.pos=7630 scope.end_pos=7880)
-	// var "fs" var.pos=7635 var.line_nr=296
-	// var "name" var.pos=7662 var.line_nr=296
-	// var "abbr" var.pos=7675 var.line_nr=296
-	// var "usage" var.pos=7686 var.line_nr=296
-	// var "parsed" var.pos=7762 var.line_nr=298
-	// var "value" var.pos=7804 var.line_nr=299
+	// autofree_scope_vars(pos=8086 line_nr=323 scope.pos=7850 scope.end_pos=8100)
+	// var "fs" var.pos=7855 var.line_nr=316
+	// var "name" var.pos=7882 var.line_nr=316
+	// var "abbr" var.pos=7895 var.line_nr=316
+	// var "usage" var.pos=7906 var.line_nr=316
+	// var "parsed" var.pos=7982 var.line_nr=318
+	// var "value" var.pos=8024 var.line_nr=319
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -22151,27 +22227,27 @@ f64 flag__FlagParser_float(flag__FlagParser* fs, string name, byte abbr, f64 fde
 	Option_f64 _t419 = flag__FlagParser_float_opt(fs, name, abbr, usage);
 	if (_t419.state != 0) { /*or block*/ 
 		IError err = _t419.err;
-		// autofree_scope_vars(pos=8682 line_nr=329 scope.pos=8681 scope.end_pos=8699)
-		// var "err" var.pos=8681 var.line_nr=329
+		// autofree_scope_vars(pos=8902 line_nr=349 scope.pos=8901 scope.end_pos=8919)
+		// var "err" var.pos=8901 var.line_nr=349
 		// af parent scope:
-		// var "fs" var.pos=8557 var.line_nr=328
-		// var "name" var.pos=8578 var.line_nr=328
-		// var "abbr" var.pos=8591 var.line_nr=328
-		// var "fdefault" var.pos=8602 var.line_nr=328
-		// var "usage" var.pos=8616 var.line_nr=328
-		// var "value" var.pos=8637 var.line_nr=329
+		// var "fs" var.pos=8777 var.line_nr=348
+		// var "name" var.pos=8798 var.line_nr=348
+		// var "abbr" var.pos=8811 var.line_nr=348
+		// var "fdefault" var.pos=8822 var.line_nr=348
+		// var "usage" var.pos=8836 var.line_nr=348
+		// var "value" var.pos=8857 var.line_nr=349
 		// af parent scope:
 		// af parent scope:
 		return fdefault;
 	}
  	f64 value =  *(f64*)_t419.data;
-	// autofree_scope_vars(pos=8701 line_nr=330 scope.pos=8552 scope.end_pos=8715)
-	// var "fs" var.pos=8557 var.line_nr=328
-	// var "name" var.pos=8578 var.line_nr=328
-	// var "abbr" var.pos=8591 var.line_nr=328
-	// var "fdefault" var.pos=8602 var.line_nr=328
-	// var "usage" var.pos=8616 var.line_nr=328
-	// var "value" var.pos=8637 var.line_nr=329
+	// autofree_scope_vars(pos=8921 line_nr=350 scope.pos=8772 scope.end_pos=8935)
+	// var "fs" var.pos=8777 var.line_nr=348
+	// var "name" var.pos=8798 var.line_nr=348
+	// var "abbr" var.pos=8811 var.line_nr=348
+	// var "fdefault" var.pos=8822 var.line_nr=348
+	// var "usage" var.pos=8836 var.line_nr=348
+	// var "value" var.pos=8857 var.line_nr=349
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -22180,11 +22256,11 @@ f64 flag__FlagParser_float(flag__FlagParser* fs, string name, byte abbr, f64 fde
 Array_string flag__FlagParser_string_multi(flag__FlagParser* fs, string name, byte abbr, string usage) {
 	flag__FlagParser_add_flag(fs, name, abbr, usage, _SLIT("<multiple strings>"));
 	/*tmp return var*/ Array_string _t420 = flag__FlagParser_parse_value(fs, name, abbr);
-	// autofree_scope_vars(pos=9008 line_nr=337 scope.pos=8872 scope.end_pos=9043)
-	// var "fs" var.pos=8877 var.line_nr=335
-	// var "name" var.pos=8905 var.line_nr=335
-	// var "abbr" var.pos=8918 var.line_nr=335
-	// var "usage" var.pos=8929 var.line_nr=335
+	// autofree_scope_vars(pos=9228 line_nr=357 scope.pos=9092 scope.end_pos=9263)
+	// var "fs" var.pos=9097 var.line_nr=355
+	// var "name" var.pos=9125 var.line_nr=355
+	// var "abbr" var.pos=9138 var.line_nr=355
+	// var "usage" var.pos=9149 var.line_nr=355
 	// af parent scope:
 	// af parent scope:
 	return _t420;
@@ -22209,27 +22285,27 @@ string flag__FlagParser_string(flag__FlagParser* fs, string name, byte abbr, str
 	Option_string _t422 = flag__FlagParser_string_opt(fs, name, abbr, usage);
 	if (_t422.state != 0) { /*or block*/ 
 		IError err = _t422.err;
-		// autofree_scope_vars(pos=9792 line_nr=362 scope.pos=9791 scope.end_pos=9809)
-		// var "err" var.pos=9791 var.line_nr=362
+		// autofree_scope_vars(pos=10012 line_nr=382 scope.pos=10011 scope.end_pos=10029)
+		// var "err" var.pos=10011 var.line_nr=382
 		// af parent scope:
-		// var "fs" var.pos=9659 var.line_nr=361
-		// var "name" var.pos=9681 var.line_nr=361
-		// var "abbr" var.pos=9694 var.line_nr=361
-		// var "sdefault" var.pos=9705 var.line_nr=361
-		// var "usage" var.pos=9722 var.line_nr=361
-		// var "value" var.pos=9746 var.line_nr=362
+		// var "fs" var.pos=9879 var.line_nr=381
+		// var "name" var.pos=9901 var.line_nr=381
+		// var "abbr" var.pos=9914 var.line_nr=381
+		// var "sdefault" var.pos=9925 var.line_nr=381
+		// var "usage" var.pos=9942 var.line_nr=381
+		// var "value" var.pos=9966 var.line_nr=382
 		// af parent scope:
 		// af parent scope:
 		return sdefault;
 	}
  	string value =  *(string*)_t422.data;
-	// autofree_scope_vars(pos=9811 line_nr=363 scope.pos=9654 scope.end_pos=9825)
-	// var "fs" var.pos=9659 var.line_nr=361
-	// var "name" var.pos=9681 var.line_nr=361
-	// var "abbr" var.pos=9694 var.line_nr=361
-	// var "sdefault" var.pos=9705 var.line_nr=361
-	// var "usage" var.pos=9722 var.line_nr=361
-	// var "value" var.pos=9746 var.line_nr=362
+	// autofree_scope_vars(pos=10031 line_nr=383 scope.pos=9874 scope.end_pos=10045)
+	// var "fs" var.pos=9879 var.line_nr=381
+	// var "name" var.pos=9901 var.line_nr=381
+	// var "abbr" var.pos=9914 var.line_nr=381
+	// var "sdefault" var.pos=9925 var.line_nr=381
+	// var "usage" var.pos=9942 var.line_nr=381
+	// var "value" var.pos=9966 var.line_nr=382
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -22336,13 +22412,13 @@ string flag__FlagParser_usage(flag__FlagParser fs) {
 		}
 	}
 	/*tmp return var*/ string _t442 = string_replace(Array_string_join(use, _SLIT("\n")), _SLIT("- ,"), _SLIT("   "));
-	// autofree_scope_vars(pos=12754 line_nr=468 scope.pos=10914 scope.end_pos=12799)
-	// var "fs" var.pos=10915 var.line_nr=402
-	// var "positive_min_arg" var.pos=10948 var.line_nr=403
-	// var "positive_max_arg" var.pos=10992 var.line_nr=404
-	// var "no_arguments" var.pos=11080 var.line_nr=405
-	// var "adesc" var.pos=11150 var.line_nr=406
-	// var "use" var.pos=11272 var.line_nr=410
+	// autofree_scope_vars(pos=12974 line_nr=488 scope.pos=11134 scope.end_pos=13019)
+	// var "fs" var.pos=11135 var.line_nr=422
+	// var "positive_min_arg" var.pos=11168 var.line_nr=423
+	// var "positive_max_arg" var.pos=11212 var.line_nr=424
+	// var "no_arguments" var.pos=11300 var.line_nr=425
+	// var "adesc" var.pos=11370 var.line_nr=426
+	// var "use" var.pos=11492 var.line_nr=430
 	// af parent scope:
 	// af parent scope:
 	return _t442;
@@ -22353,17 +22429,17 @@ Option_Array_string flag__FlagParser_finalize(flag__FlagParser fs) {
 	for (int _t443 = 0; _t443 < fs.args.len; ++_t443) {
 		string a = ((string*)fs.args.data)[_t443];
 		if ((a.len >= 2 && string_eq(string_substr(a, 0, 2), _SLIT("--"))) || (a.len == 2 && string_at(a, 0) == L'-')) {
-			return (Option_Array_string){.state=2, .err=v_error(_STR("Unknown flag `%.*s\000`", 2, a)) };
+			return (Option_Array_string){.state=2, .err=I_flag__UnkownFlagError_to_Interface_IError((flag__UnkownFlagError*)memdup(&(flag__UnkownFlagError){.msg = _STR("Unknown flag `%.*s\000`", 2, a),.code = 0,}, sizeof(flag__UnkownFlagError))) };
 		}
 	}
 	if (fs.args.len < fs.min_free_args && fs.min_free_args > 0) {
-		return (Option_Array_string){.state=2, .err=v_error(_STR("Expected at least %"PRId32"\000 arguments, but given %"PRId32"", 2, fs.min_free_args, fs.args.len)) };
+		return (Option_Array_string){.state=2, .err=I_flag__MinimumArgsCountError_to_Interface_IError((flag__MinimumArgsCountError*)memdup(&(flag__MinimumArgsCountError){.msg = _STR("Expected at least %"PRId32"\000 arguments, but given %"PRId32"", 2, fs.min_free_args, fs.args.len),.code = 0,}, sizeof(flag__MinimumArgsCountError))) };
 	}
 	if (fs.args.len > fs.max_free_args && fs.max_free_args > 0) {
-		return (Option_Array_string){.state=2, .err=v_error(_STR("Expected at most %"PRId32"\000 arguments, but given %"PRId32"", 2, fs.max_free_args, fs.args.len)) };
+		return (Option_Array_string){.state=2, .err=I_flag__MaximumArgsCountError_to_Interface_IError((flag__MaximumArgsCountError*)memdup(&(flag__MaximumArgsCountError){.msg = _STR("Expected at most %"PRId32"\000 arguments, but given %"PRId32"", 2, fs.max_free_args, fs.args.len),.code = 0,}, sizeof(flag__MaximumArgsCountError))) };
 	}
 	if (fs.args.len > 0 && fs.max_free_args == 0 && fs.min_free_args == 0) {
-		return (Option_Array_string){.state=2, .err=v_error(_STR("Expected no arguments, but given %"PRId32"", 1, fs.args.len)) };
+		return (Option_Array_string){.state=2, .err=I_flag__NoArgsExpectedError_to_Interface_IError((flag__NoArgsExpectedError*)memdup(&(flag__NoArgsExpectedError){.msg = _STR("Expected no arguments, but given %"PRId32"", 1, fs.args.len),.code = 0,}, sizeof(flag__NoArgsExpectedError))) };
 	}
 	Option_Array_string _t444;
 	opt_ok(&(Array_string[]) { fs.args }, (Option*)(&_t444), sizeof(Array_string));
@@ -26328,7 +26404,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5c21c74"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("28018c6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
