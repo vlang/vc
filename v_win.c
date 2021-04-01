@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0d1714c"
+#define V_COMMIT_HASH "043f642"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1a76cb1"
+	#define V_COMMIT_HASH "0d1714c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0d1714c"
+	#define V_CURRENT_COMMIT_HASH "043f642"
 #endif
 
 // V comptime_defines:
@@ -1027,9 +1027,11 @@ typedef enum {
 	time__FormatDate_mmddyyyy, // +3
 	time__FormatDate_mmmd, // +4
 	time__FormatDate_mmmdd, // +5
-	time__FormatDate_mmmddyyyy, // +6
-	time__FormatDate_no_date, // +7
-	time__FormatDate_yyyymmdd, // +8
+	time__FormatDate_mmmddyy, // +6
+	time__FormatDate_mmmddyyyy, // +7
+	time__FormatDate_no_date, // +8
+	time__FormatDate_yyyymmdd, // +9
+	time__FormatDate_yymmdd, // +10
 } time__FormatDate;
 
 typedef enum {
@@ -7743,9 +7745,11 @@ static string time__FormatDate_str(time__FormatDate it) { /* gen_str_for_enum */
 		case time__FormatDate_mmddyyyy: return _SLIT("mmddyyyy");
 		case time__FormatDate_mmmd: return _SLIT("mmmd");
 		case time__FormatDate_mmmdd: return _SLIT("mmmdd");
+		case time__FormatDate_mmmddyy: return _SLIT("mmmddyy");
 		case time__FormatDate_mmmddyyyy: return _SLIT("mmmddyyyy");
 		case time__FormatDate_no_date: return _SLIT("no_date");
 		case time__FormatDate_yyyymmdd: return _SLIT("yyyymmdd");
+		case time__FormatDate_yymmdd: return _SLIT("yymmdd");
 		default: return _SLIT("unknown enum value");
 	}
 }
@@ -19871,24 +19875,24 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 		// var "month" var.pos=3777 var.line_nr=119
 		// var "year" var.pos=3801 var.line_nr=120
 		// var "res" var.pos=3838 var.line_nr=121
-		// var "del" var.pos=4305 var.line_nr=132
+		// var "del" var.pos=4398 var.line_nr=134
 		// af parent scope:
 		// af parent scope:
 		return _t263;
 	}
 	string month = _STR("%.*s", 1, time__Time_smonth(t));
 	string year = _STR("%02"PRId32"", 1, (t.year % 100));
-	string res = ((fmt_date == (time__FormatDate_ddmmyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (fmt_date == (time__FormatDate_ddmmyyyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%04"PRId32"", 3, t.day, t.month, t.year)) : (fmt_date == (time__FormatDate_mmddyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (fmt_date == (time__FormatDate_mmddyyyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%04"PRId32"", 3, t.month, t.day, t.year)) : (fmt_date == (time__FormatDate_mmmd)) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (fmt_date == (time__FormatDate_mmmdd)) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (fmt_date == (time__FormatDate_mmmddyyyy)) ? (_STR("%.*s\000|%02"PRId32"\000|%04"PRId32"", 3, month, t.day, t.year)) : (fmt_date == (time__FormatDate_yyyymmdd)) ? (_STR("%04"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date))));
+	string res = ((fmt_date == (time__FormatDate_ddmmyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.day, t.month, year)) : (fmt_date == (time__FormatDate_ddmmyyyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%04"PRId32"", 3, t.day, t.month, t.year)) : (fmt_date == (time__FormatDate_mmddyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%.*s", 3, t.month, t.day, year)) : (fmt_date == (time__FormatDate_mmddyyyy)) ? (_STR("%02"PRId32"\000|%02"PRId32"\000|%04"PRId32"", 3, t.month, t.day, t.year)) : (fmt_date == (time__FormatDate_mmmd)) ? (_STR("%.*s\000|%"PRId32"", 2, month, t.day)) : (fmt_date == (time__FormatDate_mmmdd)) ? (_STR("%.*s\000|%02"PRId32"", 2, month, t.day)) : (fmt_date == (time__FormatDate_mmmddyy)) ? (_STR("%.*s\000|%02"PRId32"\000|%.*s", 3, month, t.day, year)) : (fmt_date == (time__FormatDate_mmmddyyyy)) ? (_STR("%.*s\000|%02"PRId32"\000|%04"PRId32"", 3, month, t.day, t.year)) : (fmt_date == (time__FormatDate_yyyymmdd)) ? (_STR("%04"PRId32"\000|%02"PRId32"\000|%02"PRId32"", 3, t.year, t.month, t.day)) : (fmt_date == (time__FormatDate_yymmdd)) ? (_STR("%.*s\000|%02"PRId32"\000|%02"PRId32"", 3, year, t.month, t.day)) : (_STR("unknown enumeration %.*s", 1, time__FormatDate_str(fmt_date))));
 	string del = ((fmt_dlmtr == (time__FormatDelimiter_dot)) ? (_SLIT(".")) : (fmt_dlmtr == (time__FormatDelimiter_hyphen)) ? (_SLIT("-")) : (fmt_dlmtr == (time__FormatDelimiter_slash)) ? (_SLIT("/")) : (fmt_dlmtr == (time__FormatDelimiter_space)) ? (_SLIT(" ")) : (_SLIT("")));
 	res = string_replace(res, _SLIT("|"), del);
-	// autofree_scope_vars(pos=4452 line_nr=140 scope.pos=3651 scope.end_pos=4464)
+	// autofree_scope_vars(pos=4545 line_nr=142 scope.pos=3651 scope.end_pos=4557)
 	// var "t" var.pos=3652 var.line_nr=115
 	// var "fmt_dlmtr" var.pos=3677 var.line_nr=115
 	// var "fmt_date" var.pos=3704 var.line_nr=115
 	// var "month" var.pos=3777 var.line_nr=119
 	// var "year" var.pos=3801 var.line_nr=120
 	// var "res" var.pos=3838 var.line_nr=121
-	// var "del" var.pos=4305 var.line_nr=132
+	// var "del" var.pos=4398 var.line_nr=134
 	// af parent scope:
 	// af parent scope:
 	return res;
@@ -19898,25 +19902,25 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 	if (fmt_date == time__FormatDate_no_date) {
 		if (fmt_time == time__FormatTime_no_time) {
 			/*tmp return var*/ string _t264 = _SLIT("");
-			// autofree_scope_vars(pos=4848 line_nr=150 scope.pos=4736 scope.end_pos=4861)
+			// autofree_scope_vars(pos=4941 line_nr=152 scope.pos=4829 scope.end_pos=4954)
 			// af parent scope:
 			// af parent scope:
-			// var "t" var.pos=4585 var.line_nr=145
-			// var "fmt_dlmtr" var.pos=4605 var.line_nr=145
-			// var "fmt_time" var.pos=4632 var.line_nr=145
-			// var "fmt_date" var.pos=4653 var.line_nr=145
+			// var "t" var.pos=4678 var.line_nr=147
+			// var "fmt_dlmtr" var.pos=4698 var.line_nr=147
+			// var "fmt_time" var.pos=4725 var.line_nr=147
+			// var "fmt_date" var.pos=4746 var.line_nr=147
 			// af parent scope:
 			// af parent scope:
 			return _t264;
 		} else {
 			/*tmp return var*/ string _t265 = time__Time_get_fmt_time_str(t, fmt_time);
-			// autofree_scope_vars(pos=4872 line_nr=152 scope.pos=4868 scope.end_pos=4911)
+			// autofree_scope_vars(pos=4965 line_nr=154 scope.pos=4961 scope.end_pos=5004)
 			// af parent scope:
 			// af parent scope:
-			// var "t" var.pos=4585 var.line_nr=145
-			// var "fmt_dlmtr" var.pos=4605 var.line_nr=145
-			// var "fmt_time" var.pos=4632 var.line_nr=145
-			// var "fmt_date" var.pos=4653 var.line_nr=145
+			// var "t" var.pos=4678 var.line_nr=147
+			// var "fmt_dlmtr" var.pos=4698 var.line_nr=147
+			// var "fmt_time" var.pos=4725 var.line_nr=147
+			// var "fmt_date" var.pos=4746 var.line_nr=147
 			// af parent scope:
 			// af parent scope:
 			return _t265;
@@ -19924,25 +19928,25 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 	} else {
 		if (fmt_time != time__FormatTime_no_time) {
 			/*tmp return var*/ string _t266 = string_add(string_add(time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date), _SLIT(" ")), time__Time_get_fmt_time_str(t, fmt_time));
-			// autofree_scope_vars(pos=4953 line_nr=156 scope.pos=4949 scope.end_pos=5040)
+			// autofree_scope_vars(pos=5046 line_nr=158 scope.pos=5042 scope.end_pos=5133)
 			// af parent scope:
 			// af parent scope:
-			// var "t" var.pos=4585 var.line_nr=145
-			// var "fmt_dlmtr" var.pos=4605 var.line_nr=145
-			// var "fmt_time" var.pos=4632 var.line_nr=145
-			// var "fmt_date" var.pos=4653 var.line_nr=145
+			// var "t" var.pos=4678 var.line_nr=147
+			// var "fmt_dlmtr" var.pos=4698 var.line_nr=147
+			// var "fmt_time" var.pos=4725 var.line_nr=147
+			// var "fmt_date" var.pos=4746 var.line_nr=147
 			// af parent scope:
 			// af parent scope:
 			return _t266;
 		} else {
 			/*tmp return var*/ string _t267 = time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date);
-			// autofree_scope_vars(pos=5051 line_nr=158 scope.pos=5047 scope.end_pos=5101)
+			// autofree_scope_vars(pos=5144 line_nr=160 scope.pos=5140 scope.end_pos=5194)
 			// af parent scope:
 			// af parent scope:
-			// var "t" var.pos=4585 var.line_nr=145
-			// var "fmt_dlmtr" var.pos=4605 var.line_nr=145
-			// var "fmt_time" var.pos=4632 var.line_nr=145
-			// var "fmt_date" var.pos=4653 var.line_nr=145
+			// var "t" var.pos=4678 var.line_nr=147
+			// var "fmt_dlmtr" var.pos=4698 var.line_nr=147
+			// var "fmt_time" var.pos=4725 var.line_nr=147
+			// var "fmt_date" var.pos=4746 var.line_nr=147
 			// af parent scope:
 			// af parent scope:
 			return _t267;
@@ -19955,11 +19959,11 @@ string time__Time_utc_string(time__Time t) {
 	string day_str = time__Time_weekday_str(t);
 	string month_str = time__Time_smonth(t);
 	string utc_string = _STR("%.*s\000, %"PRId32"\000 %.*s\000 %"PRId32"\000 %02"PRId32"\000:%02"PRId32"\000:%02"PRId32"\000 UTC", 8, day_str, t.day, month_str, t.year, t.hour, t.minute, t.second);
-	// autofree_scope_vars(pos=5375 line_nr=168 scope.pos=5188 scope.end_pos=5394)
-	// var "t" var.pos=5189 var.line_nr=164
-	// var "day_str" var.pos=5220 var.line_nr=165
-	// var "month_str" var.pos=5248 var.line_nr=166
-	// var "utc_string" var.pos=5273 var.line_nr=167
+	// autofree_scope_vars(pos=5468 line_nr=170 scope.pos=5281 scope.end_pos=5487)
+	// var "t" var.pos=5282 var.line_nr=166
+	// var "day_str" var.pos=5313 var.line_nr=167
+	// var "month_str" var.pos=5341 var.line_nr=168
+	// var "utc_string" var.pos=5366 var.line_nr=169
 	// af parent scope:
 	// af parent scope:
 	return utc_string;
@@ -20265,10 +20269,10 @@ time__Time time__now(void) {
 	#if defined(_WIN32)
 	{
 		/*tmp return var*/ time__Time _t288 = time__win_now();
-		// autofree_scope_vars(pos=2347 line_nr=104 scope.pos=2344 scope.end_pos=2366)
+		// autofree_scope_vars(pos=2364 line_nr=106 scope.pos=2361 scope.end_pos=2383)
 		// af parent scope:
-		// var "t" var.pos=2559 var.line_nr=114
-		// var "now" var.pos=2575 var.line_nr=115
+		// var "t" var.pos=2576 var.line_nr=116
+		// var "now" var.pos=2592 var.line_nr=117
 		// af parent scope:
 		// af parent scope:
 		return _t288;
@@ -20285,9 +20289,9 @@ time__Time time__now(void) {
 	time_t t = time(0);
 	struct tm* now = localtime(&t);
 	/*tmp return var*/ time__Time _t289 = time__convert_ctime(*now, 0);
-	// autofree_scope_vars(pos=2598 line_nr=116 scope.pos=2280 scope.end_pos=2629)
-	// var "t" var.pos=2559 var.line_nr=114
-	// var "now" var.pos=2575 var.line_nr=115
+	// autofree_scope_vars(pos=2615 line_nr=118 scope.pos=2297 scope.end_pos=2646)
+	// var "t" var.pos=2576 var.line_nr=116
+	// var "now" var.pos=2592 var.line_nr=117
 	// af parent scope:
 	// af parent scope:
 	return _t289;
@@ -20301,9 +20305,9 @@ time__Time time__utc(void) {
 	#if defined(_WIN32)
 	{
 		/*tmp return var*/ time__Time _t290 = time__win_utc();
-		// autofree_scope_vars(pos=2743 line_nr=125 scope.pos=2740 scope.end_pos=2762)
+		// autofree_scope_vars(pos=2760 line_nr=127 scope.pos=2757 scope.end_pos=2779)
 		// af parent scope:
-		// var "t" var.pos=2955 var.line_nr=135
+		// var "t" var.pos=2972 var.line_nr=137
 		// af parent scope:
 		// af parent scope:
 		return _t290;
@@ -20320,8 +20324,8 @@ time__Time time__utc(void) {
 	time_t t = time(0);
 	time(&t);
 	/*tmp return var*/ time__Time _t291 = time__unix2(((int)(t)), 0);
-	// autofree_scope_vars(pos=2986 line_nr=137 scope.pos=2676 scope.end_pos=3011)
-	// var "t" var.pos=2955 var.line_nr=135
+	// autofree_scope_vars(pos=3003 line_nr=139 scope.pos=2693 scope.end_pos=3028)
+	// var "t" var.pos=2972 var.line_nr=137
 	// af parent scope:
 	// af parent scope:
 	return _t291;
@@ -20330,19 +20334,19 @@ time__Time time__utc(void) {
 string time__Time_smonth(time__Time t) {
 	if (t.month <= 0 || t.month > 12) {
 		/*tmp return var*/ string _t292 = _SLIT("---");
-		// autofree_scope_vars(pos=3114 line_nr=143 scope.pos=3111 scope.end_pos=3129)
+		// autofree_scope_vars(pos=3131 line_nr=145 scope.pos=3128 scope.end_pos=3146)
 		// af parent scope:
-		// var "t" var.pos=3052 var.line_nr=141
-		// var "i" var.pos=3132 var.line_nr=145
+		// var "t" var.pos=3069 var.line_nr=143
+		// var "i" var.pos=3149 var.line_nr=147
 		// af parent scope:
 		// af parent scope:
 		return _t292;
 	}
 	int i = t.month - 1;
 	/*tmp return var*/ string _t293 = string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
-	// autofree_scope_vars(pos=3149 line_nr=146 scope.pos=3051 scope.end_pos=3196)
-	// var "t" var.pos=3052 var.line_nr=141
-	// var "i" var.pos=3132 var.line_nr=145
+	// autofree_scope_vars(pos=3166 line_nr=148 scope.pos=3068 scope.end_pos=3213)
+	// var "t" var.pos=3069 var.line_nr=143
+	// var "i" var.pos=3149 var.line_nr=147
 	// af parent scope:
 	// af parent scope:
 	return _t293;
@@ -20350,11 +20354,11 @@ string time__Time_smonth(time__Time t) {
 
 time__Time time__new_time(time__Time t) {
 	if (t.v_unix != 0) {
-		// autofree_scope_vars(pos=3310 line_nr=152 scope.pos=3307 scope.end_pos=3321)
+		// autofree_scope_vars(pos=3327 line_nr=154 scope.pos=3324 scope.end_pos=3338)
 		// af parent scope:
-		// var "t" var.pos=3276 var.line_nr=150
-		// var "tt" var.pos=3324 var.line_nr=154
-		// var "utime" var.pos=3460 var.line_nr=162
+		// var "t" var.pos=3293 var.line_nr=152
+		// var "tt" var.pos=3341 var.line_nr=156
+		// var "utime" var.pos=3477 var.line_nr=164
 		// af parent scope:
 		// af parent scope:
 		return t;
@@ -20369,10 +20373,10 @@ time__Time time__new_time(time__Time t) {
 	};
 	u64 utime = ((u64)(time__make_unix_time(tt)));
 	/*tmp return var*/ time__Time _t294 = (time__Time){t.year,t.month,t.day,t.hour,t.minute,t.second,t.microsecond,.v_unix = utime,};
-	// autofree_scope_vars(pos=3493 line_nr=163 scope.pos=3267 scope.end_pos=3531)
-	// var "t" var.pos=3276 var.line_nr=150
-	// var "tt" var.pos=3324 var.line_nr=154
-	// var "utime" var.pos=3460 var.line_nr=162
+	// autofree_scope_vars(pos=3510 line_nr=165 scope.pos=3284 scope.end_pos=3548)
+	// var "t" var.pos=3293 var.line_nr=152
+	// var "tt" var.pos=3341 var.line_nr=156
+	// var "utime" var.pos=3477 var.line_nr=164
 	// af parent scope:
 	// af parent scope:
 	return _t294;
@@ -20381,8 +20385,8 @@ time__Time time__new_time(time__Time t) {
 // Attr: [inline]
 inline int time__Time_unix_time(time__Time t) {
 	/*tmp return var*/ int _t295 = ((int)(t.v_unix));
-	// autofree_scope_vars(pos=3609 line_nr=172 scope.pos=3582 scope.end_pos=3629)
-	// var "t" var.pos=3583 var.line_nr=171
+	// autofree_scope_vars(pos=3626 line_nr=174 scope.pos=3599 scope.end_pos=3646)
+	// var "t" var.pos=3600 var.line_nr=173
 	// af parent scope:
 	// af parent scope:
 	return _t295;
@@ -20391,8 +20395,8 @@ inline int time__Time_unix_time(time__Time t) {
 // Attr: [inline]
 inline u64 time__Time_unix_time_milli(time__Time t) {
 	/*tmp return var*/ u64 _t296 = t.v_unix * 1000 + ((u64)(t.microsecond / 1000));
-	// autofree_scope_vars(pos=3747 line_nr=178 scope.pos=3714 scope.end_pos=3797)
-	// var "t" var.pos=3715 var.line_nr=177
+	// autofree_scope_vars(pos=3764 line_nr=180 scope.pos=3731 scope.end_pos=3814)
+	// var "t" var.pos=3732 var.line_nr=179
 	// af parent scope:
 	// af parent scope:
 	return _t296;
@@ -20403,12 +20407,12 @@ time__Time time__Time_add(time__Time t, time__Duration d) {
 	i64 v_unix = microseconds / (1000 * 1000);
 	i64 micro = microseconds % (1000 * 1000);
 	/*tmp return var*/ time__Time _t297 = time__unix2(((int)(v_unix)), ((int)(micro)));
-	// autofree_scope_vars(pos=4043 line_nr=186 scope.pos=3856 scope.end_pos=4080)
-	// var "t" var.pos=3857 var.line_nr=182
-	// var "d" var.pos=3869 var.line_nr=182
-	// var "microseconds" var.pos=3889 var.line_nr=183
-	// var "unix" var.pos=3967 var.line_nr=184
-	// var "micro" var.pos=4005 var.line_nr=185
+	// autofree_scope_vars(pos=4060 line_nr=188 scope.pos=3873 scope.end_pos=4097)
+	// var "t" var.pos=3874 var.line_nr=184
+	// var "d" var.pos=3886 var.line_nr=184
+	// var "microseconds" var.pos=3906 var.line_nr=185
+	// var "unix" var.pos=3984 var.line_nr=186
+	// var "micro" var.pos=4022 var.line_nr=187
 	// af parent scope:
 	// af parent scope:
 	return _t297;
@@ -20416,9 +20420,9 @@ time__Time time__Time_add(time__Time t, time__Duration d) {
 
 time__Time time__Time_add_seconds(time__Time t, int seconds) {
 	/*tmp return var*/ time__Time _t298 = time__Time_add(t, seconds * _const_time__second);
-	// autofree_scope_vars(pos=4205 line_nr=191 scope.pos=4164 scope.end_pos=4242)
-	// var "t" var.pos=4165 var.line_nr=190
-	// var "seconds" var.pos=4185 var.line_nr=190
+	// autofree_scope_vars(pos=4222 line_nr=193 scope.pos=4181 scope.end_pos=4259)
+	// var "t" var.pos=4182 var.line_nr=192
+	// var "seconds" var.pos=4202 var.line_nr=192
 	// af parent scope:
 	// af parent scope:
 	return _t298;
@@ -20426,9 +20430,9 @@ time__Time time__Time_add_seconds(time__Time t, int seconds) {
 
 time__Time time__Time_add_days(time__Time t, int days) {
 	/*tmp return var*/ time__Time _t299 = time__Time_add(t, days * 24 * _const_time__hour);
-	// autofree_scope_vars(pos=4355 line_nr=196 scope.pos=4320 scope.end_pos=4392)
-	// var "t" var.pos=4321 var.line_nr=195
-	// var "days" var.pos=4338 var.line_nr=195
+	// autofree_scope_vars(pos=4372 line_nr=198 scope.pos=4337 scope.end_pos=4409)
+	// var "t" var.pos=4338 var.line_nr=197
+	// var "days" var.pos=4355 var.line_nr=197
 	// af parent scope:
 	// af parent scope:
 	return _t299;
@@ -20436,8 +20440,8 @@ time__Time time__Time_add_days(time__Time t, int days) {
 
 VV_LOCAL_SYMBOL int time__since(time__Time t) {
 	/*tmp return var*/ int _t300 = 0;
-	// autofree_scope_vars(pos=4529 line_nr=202 scope.pos=4463 scope.end_pos=4539)
-	// var "t" var.pos=4469 var.line_nr=200
+	// autofree_scope_vars(pos=4546 line_nr=204 scope.pos=4480 scope.end_pos=4556)
+	// var "t" var.pos=4486 var.line_nr=202
 	// af parent scope:
 	// af parent scope:
 	return _t300;
@@ -20448,22 +20452,22 @@ string time__Time_relative(time__Time t) {
 	u64 secs = znow.v_unix - t.v_unix;
 	if (secs <= 30) {
 		/*tmp return var*/ string _t301 = _SLIT("now");
-		// autofree_scope_vars(pos=4804 line_nr=213 scope.pos=4733 scope.end_pos=4819)
+		// autofree_scope_vars(pos=4821 line_nr=215 scope.pos=4750 scope.end_pos=4836)
 		// af parent scope:
-		// var "t" var.pos=4647 var.line_nr=207
-		// var "znow" var.pos=4676 var.line_nr=208
-		// var "secs" var.pos=4691 var.line_nr=209
+		// var "t" var.pos=4664 var.line_nr=209
+		// var "znow" var.pos=4693 var.line_nr=210
+		// var "secs" var.pos=4708 var.line_nr=211
 		// af parent scope:
 		// af parent scope:
 		return _t301;
 	}
 	if (secs < 60) {
 		/*tmp return var*/ string _t302 = _SLIT("1m");
-		// autofree_scope_vars(pos=4838 line_nr=216 scope.pos=4835 scope.end_pos=4852)
+		// autofree_scope_vars(pos=4855 line_nr=218 scope.pos=4852 scope.end_pos=4869)
 		// af parent scope:
-		// var "t" var.pos=4647 var.line_nr=207
-		// var "znow" var.pos=4676 var.line_nr=208
-		// var "secs" var.pos=4691 var.line_nr=209
+		// var "t" var.pos=4664 var.line_nr=209
+		// var "znow" var.pos=4693 var.line_nr=210
+		// var "secs" var.pos=4708 var.line_nr=211
 		// af parent scope:
 		// af parent scope:
 		return _t302;
@@ -20472,24 +20476,24 @@ string time__Time_relative(time__Time t) {
 		u64 m = secs / 60;
 		if (m == 1) {
 			/*tmp return var*/ string _t303 = _SLIT("1 minute ago");
-			// autofree_scope_vars(pos=4905 line_nr=221 scope.pos=4901 scope.end_pos=4930)
+			// autofree_scope_vars(pos=4922 line_nr=223 scope.pos=4918 scope.end_pos=4947)
 			// af parent scope:
-			// var "m" var.pos=4874 var.line_nr=219
+			// var "m" var.pos=4891 var.line_nr=221
 			// af parent scope:
-			// var "t" var.pos=4647 var.line_nr=207
-			// var "znow" var.pos=4676 var.line_nr=208
-			// var "secs" var.pos=4691 var.line_nr=209
+			// var "t" var.pos=4664 var.line_nr=209
+			// var "znow" var.pos=4693 var.line_nr=210
+			// var "secs" var.pos=4708 var.line_nr=211
 			// af parent scope:
 			// af parent scope:
 			return _t303;
 		}
 		/*tmp return var*/ string _t304 = _STR("%"PRIu64"\000 minutes ago", 2, m);
-		// autofree_scope_vars(pos=4933 line_nr=223 scope.pos=4870 scope.end_pos=4959)
-		// var "m" var.pos=4874 var.line_nr=219
+		// autofree_scope_vars(pos=4950 line_nr=225 scope.pos=4887 scope.end_pos=4976)
+		// var "m" var.pos=4891 var.line_nr=221
 		// af parent scope:
-		// var "t" var.pos=4647 var.line_nr=207
-		// var "znow" var.pos=4676 var.line_nr=208
-		// var "secs" var.pos=4691 var.line_nr=209
+		// var "t" var.pos=4664 var.line_nr=209
+		// var "znow" var.pos=4693 var.line_nr=210
+		// var "secs" var.pos=4708 var.line_nr=211
 		// af parent scope:
 		// af parent scope:
 		return _t304;
@@ -20498,24 +20502,24 @@ string time__Time_relative(time__Time t) {
 		u64 h = secs / 3600;
 		if (h == 1) {
 			/*tmp return var*/ string _t305 = _SLIT("1 hour ago");
-			// autofree_scope_vars(pos=5019 line_nr=228 scope.pos=5015 scope.end_pos=5042)
+			// autofree_scope_vars(pos=5036 line_nr=230 scope.pos=5032 scope.end_pos=5059)
 			// af parent scope:
-			// var "h" var.pos=4986 var.line_nr=226
+			// var "h" var.pos=5003 var.line_nr=228
 			// af parent scope:
-			// var "t" var.pos=4647 var.line_nr=207
-			// var "znow" var.pos=4676 var.line_nr=208
-			// var "secs" var.pos=4691 var.line_nr=209
+			// var "t" var.pos=4664 var.line_nr=209
+			// var "znow" var.pos=4693 var.line_nr=210
+			// var "secs" var.pos=4708 var.line_nr=211
 			// af parent scope:
 			// af parent scope:
 			return _t305;
 		}
 		/*tmp return var*/ string _t306 = _STR("%"PRIu64"\000 hours ago", 2, h);
-		// autofree_scope_vars(pos=5045 line_nr=230 scope.pos=4982 scope.end_pos=5069)
-		// var "h" var.pos=4986 var.line_nr=226
+		// autofree_scope_vars(pos=5062 line_nr=232 scope.pos=4999 scope.end_pos=5086)
+		// var "h" var.pos=5003 var.line_nr=228
 		// af parent scope:
-		// var "t" var.pos=4647 var.line_nr=207
-		// var "znow" var.pos=4676 var.line_nr=208
-		// var "secs" var.pos=4691 var.line_nr=209
+		// var "t" var.pos=4664 var.line_nr=209
+		// var "znow" var.pos=4693 var.line_nr=210
+		// var "secs" var.pos=4708 var.line_nr=211
 		// af parent scope:
 		// af parent scope:
 		return _t306;
@@ -20524,44 +20528,44 @@ string time__Time_relative(time__Time t) {
 		u64 d = secs / 3600 / 24;
 		if (d == 1) {
 			/*tmp return var*/ string _t307 = _SLIT("1 day ago");
-			// autofree_scope_vars(pos=5138 line_nr=235 scope.pos=5134 scope.end_pos=5160)
+			// autofree_scope_vars(pos=5155 line_nr=237 scope.pos=5151 scope.end_pos=5177)
 			// af parent scope:
-			// var "d" var.pos=5100 var.line_nr=233
+			// var "d" var.pos=5117 var.line_nr=235
 			// af parent scope:
-			// var "t" var.pos=4647 var.line_nr=207
-			// var "znow" var.pos=4676 var.line_nr=208
-			// var "secs" var.pos=4691 var.line_nr=209
+			// var "t" var.pos=4664 var.line_nr=209
+			// var "znow" var.pos=4693 var.line_nr=210
+			// var "secs" var.pos=4708 var.line_nr=211
 			// af parent scope:
 			// af parent scope:
 			return _t307;
 		}
 		/*tmp return var*/ string _t308 = _STR("%"PRIu64"\000 days ago", 2, d);
-		// autofree_scope_vars(pos=5163 line_nr=237 scope.pos=5096 scope.end_pos=5186)
-		// var "d" var.pos=5100 var.line_nr=233
+		// autofree_scope_vars(pos=5180 line_nr=239 scope.pos=5113 scope.end_pos=5203)
+		// var "d" var.pos=5117 var.line_nr=235
 		// af parent scope:
-		// var "t" var.pos=4647 var.line_nr=207
-		// var "znow" var.pos=4676 var.line_nr=208
-		// var "secs" var.pos=4691 var.line_nr=209
+		// var "t" var.pos=4664 var.line_nr=209
+		// var "znow" var.pos=4693 var.line_nr=210
+		// var "secs" var.pos=4708 var.line_nr=211
 		// af parent scope:
 		// af parent scope:
 		return _t308;
 	}
 	if (secs > 3600 * 24 * 10000) {
 		/*tmp return var*/ string _t309 = _SLIT("");
-		// autofree_scope_vars(pos=5220 line_nr=240 scope.pos=5217 scope.end_pos=5232)
+		// autofree_scope_vars(pos=5237 line_nr=242 scope.pos=5234 scope.end_pos=5249)
 		// af parent scope:
-		// var "t" var.pos=4647 var.line_nr=207
-		// var "znow" var.pos=4676 var.line_nr=208
-		// var "secs" var.pos=4691 var.line_nr=209
+		// var "t" var.pos=4664 var.line_nr=209
+		// var "znow" var.pos=4693 var.line_nr=210
+		// var "secs" var.pos=4708 var.line_nr=211
 		// af parent scope:
 		// af parent scope:
 		return _t309;
 	}
 	/*tmp return var*/ string _t310 = time__Time_md(t);
-	// autofree_scope_vars(pos=5234 line_nr=242 scope.pos=4646 scope.end_pos=5249)
-	// var "t" var.pos=4647 var.line_nr=207
-	// var "znow" var.pos=4676 var.line_nr=208
-	// var "secs" var.pos=4691 var.line_nr=209
+	// autofree_scope_vars(pos=5251 line_nr=244 scope.pos=4663 scope.end_pos=5266)
+	// var "t" var.pos=4664 var.line_nr=209
+	// var "znow" var.pos=4693 var.line_nr=210
+	// var "secs" var.pos=4708 var.line_nr=211
 	// af parent scope:
 	// af parent scope:
 	return _t310;
@@ -20572,75 +20576,75 @@ string time__Time_relative_short(time__Time t) {
 	u64 secs = znow.v_unix - t.v_unix;
 	if (secs <= 30) {
 		/*tmp return var*/ string _t311 = _SLIT("now");
-		// autofree_scope_vars(pos=5883 line_nr=264 scope.pos=5812 scope.end_pos=5898)
+		// autofree_scope_vars(pos=5900 line_nr=266 scope.pos=5829 scope.end_pos=5915)
 		// af parent scope:
-		// var "t" var.pos=5720 var.line_nr=258
-		// var "znow" var.pos=5755 var.line_nr=259
-		// var "secs" var.pos=5770 var.line_nr=260
+		// var "t" var.pos=5737 var.line_nr=260
+		// var "znow" var.pos=5772 var.line_nr=261
+		// var "secs" var.pos=5787 var.line_nr=262
 		// af parent scope:
 		// af parent scope:
 		return _t311;
 	}
 	if (secs < 60) {
 		/*tmp return var*/ string _t312 = _SLIT("1m");
-		// autofree_scope_vars(pos=5917 line_nr=267 scope.pos=5914 scope.end_pos=5931)
+		// autofree_scope_vars(pos=5934 line_nr=269 scope.pos=5931 scope.end_pos=5948)
 		// af parent scope:
-		// var "t" var.pos=5720 var.line_nr=258
-		// var "znow" var.pos=5755 var.line_nr=259
-		// var "secs" var.pos=5770 var.line_nr=260
+		// var "t" var.pos=5737 var.line_nr=260
+		// var "znow" var.pos=5772 var.line_nr=261
+		// var "secs" var.pos=5787 var.line_nr=262
 		// af parent scope:
 		// af parent scope:
 		return _t312;
 	}
 	if (secs < 3600) {
 		/*tmp return var*/ string _t313 = _STR("%"PRIu64"\000m", 2, secs / 60);
-		// autofree_scope_vars(pos=5952 line_nr=270 scope.pos=5949 scope.end_pos=5977)
+		// autofree_scope_vars(pos=5969 line_nr=272 scope.pos=5966 scope.end_pos=5994)
 		// af parent scope:
-		// var "t" var.pos=5720 var.line_nr=258
-		// var "znow" var.pos=5755 var.line_nr=259
-		// var "secs" var.pos=5770 var.line_nr=260
+		// var "t" var.pos=5737 var.line_nr=260
+		// var "znow" var.pos=5772 var.line_nr=261
+		// var "secs" var.pos=5787 var.line_nr=262
 		// af parent scope:
 		// af parent scope:
 		return _t313;
 	}
 	if (secs < 3600 * 24) {
 		/*tmp return var*/ string _t314 = _STR("%"PRIu64"\000h", 2, secs / 3600);
-		// autofree_scope_vars(pos=6003 line_nr=273 scope.pos=6000 scope.end_pos=6030)
+		// autofree_scope_vars(pos=6020 line_nr=275 scope.pos=6017 scope.end_pos=6047)
 		// af parent scope:
-		// var "t" var.pos=5720 var.line_nr=258
-		// var "znow" var.pos=5755 var.line_nr=259
-		// var "secs" var.pos=5770 var.line_nr=260
+		// var "t" var.pos=5737 var.line_nr=260
+		// var "znow" var.pos=5772 var.line_nr=261
+		// var "secs" var.pos=5787 var.line_nr=262
 		// af parent scope:
 		// af parent scope:
 		return _t314;
 	}
 	if (secs < 3600 * 24 * 5) {
 		/*tmp return var*/ string _t315 = _STR("%"PRIu64"\000d", 2, secs / 3600 / 24);
-		// autofree_scope_vars(pos=6060 line_nr=276 scope.pos=6057 scope.end_pos=6092)
+		// autofree_scope_vars(pos=6077 line_nr=278 scope.pos=6074 scope.end_pos=6109)
 		// af parent scope:
-		// var "t" var.pos=5720 var.line_nr=258
-		// var "znow" var.pos=5755 var.line_nr=259
-		// var "secs" var.pos=5770 var.line_nr=260
+		// var "t" var.pos=5737 var.line_nr=260
+		// var "znow" var.pos=5772 var.line_nr=261
+		// var "secs" var.pos=5787 var.line_nr=262
 		// af parent scope:
 		// af parent scope:
 		return _t315;
 	}
 	if (secs > 3600 * 24 * 10000) {
 		/*tmp return var*/ string _t316 = _SLIT("");
-		// autofree_scope_vars(pos=6126 line_nr=279 scope.pos=6123 scope.end_pos=6138)
+		// autofree_scope_vars(pos=6143 line_nr=281 scope.pos=6140 scope.end_pos=6155)
 		// af parent scope:
-		// var "t" var.pos=5720 var.line_nr=258
-		// var "znow" var.pos=5755 var.line_nr=259
-		// var "secs" var.pos=5770 var.line_nr=260
+		// var "t" var.pos=5737 var.line_nr=260
+		// var "znow" var.pos=5772 var.line_nr=261
+		// var "secs" var.pos=5787 var.line_nr=262
 		// af parent scope:
 		// af parent scope:
 		return _t316;
 	}
 	/*tmp return var*/ string _t317 = time__Time_md(t);
-	// autofree_scope_vars(pos=6140 line_nr=281 scope.pos=5719 scope.end_pos=6155)
-	// var "t" var.pos=5720 var.line_nr=258
-	// var "znow" var.pos=5755 var.line_nr=259
-	// var "secs" var.pos=5770 var.line_nr=260
+	// autofree_scope_vars(pos=6157 line_nr=283 scope.pos=5736 scope.end_pos=6172)
+	// var "t" var.pos=5737 var.line_nr=260
+	// var "znow" var.pos=5772 var.line_nr=261
+	// var "secs" var.pos=5787 var.line_nr=262
 	// af parent scope:
 	// af parent scope:
 	return _t317;
@@ -20654,12 +20658,12 @@ int time__day_of_week(int y, int m, int d) {
 		sy = sy - 1;
 	}
 	/*tmp return var*/ int _t318 = (sy + sy / 4 - sy / 100 + sy / 400 + (*(int*)/*ee elem_typ */array_get(t, m - 1)) + d - 1) % 7 + 1;
-	// autofree_scope_vars(pos=6464 line_nr=294 scope.pos=6255 scope.end_pos=6535)
-	// var "y" var.pos=6267 var.line_nr=286
-	// var "m" var.pos=6274 var.line_nr=286
-	// var "d" var.pos=6281 var.line_nr=286
-	// var "t" var.pos=6380 var.line_nr=289
-	// var "sy" var.pos=6427 var.line_nr=290
+	// autofree_scope_vars(pos=6481 line_nr=296 scope.pos=6272 scope.end_pos=6552)
+	// var "y" var.pos=6284 var.line_nr=288
+	// var "m" var.pos=6291 var.line_nr=288
+	// var "d" var.pos=6298 var.line_nr=288
+	// var "t" var.pos=6397 var.line_nr=291
+	// var "sy" var.pos=6444 var.line_nr=292
 	// af parent scope:
 	// af parent scope:
 	return _t318;
@@ -20667,8 +20671,8 @@ int time__day_of_week(int y, int m, int d) {
 
 int time__Time_day_of_week(time__Time t) {
 	/*tmp return var*/ int _t319 = time__day_of_week(t.year, t.month, t.day);
-	// autofree_scope_vars(pos=6628 line_nr=299 scope.pos=6599 scope.end_pos=6672)
-	// var "t" var.pos=6600 var.line_nr=298
+	// autofree_scope_vars(pos=6645 line_nr=301 scope.pos=6616 scope.end_pos=6689)
+	// var "t" var.pos=6617 var.line_nr=300
 	// af parent scope:
 	// af parent scope:
 	return _t319;
@@ -20677,9 +20681,9 @@ int time__Time_day_of_week(time__Time t) {
 string time__Time_weekday_str(time__Time t) {
 	int i = time__Time_day_of_week(t) - 1;
 	/*tmp return var*/ string _t320 = string_substr(_const_time__days_string, i * 3, (i + 1) * 3);
-	// autofree_scope_vars(pos=6792 line_nr=305 scope.pos=6734 scope.end_pos=6837)
-	// var "t" var.pos=6735 var.line_nr=303
-	// var "i" var.pos=6767 var.line_nr=304
+	// autofree_scope_vars(pos=6809 line_nr=307 scope.pos=6751 scope.end_pos=6854)
+	// var "t" var.pos=6752 var.line_nr=305
+	// var "i" var.pos=6784 var.line_nr=306
 	// af parent scope:
 	// af parent scope:
 	return _t320;
@@ -20688,9 +20692,9 @@ string time__Time_weekday_str(time__Time t) {
 string time__Time_long_weekday_str(time__Time t) {
 	int i = time__Time_day_of_week(t) - 1;
 	/*tmp return var*/ string _t321 = (*(string*)/*ee elem_typ */array_get(_const_time__long_days, i));
-	// autofree_scope_vars(pos=6962 line_nr=311 scope.pos=6899 scope.end_pos=6988)
-	// var "t" var.pos=6900 var.line_nr=309
-	// var "i" var.pos=6937 var.line_nr=310
+	// autofree_scope_vars(pos=6979 line_nr=313 scope.pos=6916 scope.end_pos=7005)
+	// var "t" var.pos=6917 var.line_nr=311
+	// var "i" var.pos=6954 var.line_nr=312
 	// af parent scope:
 	// af parent scope:
 	return _t321;
@@ -20700,7 +20704,7 @@ i64 time__ticks(void) {
 	#if defined(_WIN32)
 	{
 		/*tmp return var*/ i64 _t322 = GetTickCount();
-		// autofree_scope_vars(pos=7098 line_nr=317 scope.pos=7095 scope.end_pos=7124)
+		// autofree_scope_vars(pos=7115 line_nr=319 scope.pos=7112 scope.end_pos=7141)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -20725,8 +20729,8 @@ void time__usleep(int microseconds) {
 
 bool time__is_leap_year(int year) {
 	/*tmp return var*/ bool _t323 = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
-	// autofree_scope_vars(pos=8124 line_nr=350 scope.pos=8094 scope.end_pos=8188)
-	// var "year" var.pos=8107 var.line_nr=349
+	// autofree_scope_vars(pos=8141 line_nr=352 scope.pos=8111 scope.end_pos=8205)
+	// var "year" var.pos=8124 var.line_nr=351
 	// af parent scope:
 	// af parent scope:
 	return _t323;
@@ -20745,8 +20749,8 @@ Option_int time__days_in_month(int month, int year) {
 
 string time__Time_str(time__Time t) {
 	/*tmp return var*/ string _t325 = time__Time_format_ss(t);
-	// autofree_scope_vars(pos=8696 line_nr=367 scope.pos=8584 scope.end_pos=8718)
-	// var "t" var.pos=8585 var.line_nr=364
+	// autofree_scope_vars(pos=8713 line_nr=369 scope.pos=8601 scope.end_pos=8735)
+	// var "t" var.pos=8602 var.line_nr=366
 	// af parent scope:
 	// af parent scope:
 	return _t325;
@@ -20763,9 +20767,9 @@ VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
 		.microsecond = microsecond,
 		.v_unix = ((u64)(time__make_unix_time(t))),
 	};
-	// autofree_scope_vars(pos=8816 line_nr=372 scope.pos=8770 scope.end_pos=9016)
-	// var "t" var.pos=8784 var.line_nr=371
-	// var "microsecond" var.pos=8792 var.line_nr=371
+	// autofree_scope_vars(pos=8833 line_nr=374 scope.pos=8787 scope.end_pos=9033)
+	// var "t" var.pos=8801 var.line_nr=373
+	// var "microsecond" var.pos=8809 var.line_nr=373
 	// af parent scope:
 	// af parent scope:
 	return _t326;
@@ -20774,8 +20778,8 @@ VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
 // TypeDecl
 i64 time__Duration_nanoseconds(time__Duration d) {
 	/*tmp return var*/ i64 _t327 = ((i64)(d));
-	// autofree_scope_vars(pos=9481 line_nr=399 scope.pos=9448 scope.end_pos=9496)
-	// var "d" var.pos=9449 var.line_nr=398
+	// autofree_scope_vars(pos=9498 line_nr=401 scope.pos=9465 scope.end_pos=9513)
+	// var "d" var.pos=9466 var.line_nr=400
 	// af parent scope:
 	// af parent scope:
 	return _t327;
@@ -20783,8 +20787,8 @@ i64 time__Duration_nanoseconds(time__Duration d) {
 
 i64 time__Duration_microseconds(time__Duration d) {
 	/*tmp return var*/ i64 _t328 = ((i64)(d)) / 1000;
-	// autofree_scope_vars(pos=9615 line_nr=404 scope.pos=9581 scope.end_pos=9637)
-	// var "d" var.pos=9582 var.line_nr=403
+	// autofree_scope_vars(pos=9632 line_nr=406 scope.pos=9598 scope.end_pos=9654)
+	// var "d" var.pos=9599 var.line_nr=405
 	// af parent scope:
 	// af parent scope:
 	return _t328;
@@ -20792,8 +20796,8 @@ i64 time__Duration_microseconds(time__Duration d) {
 
 i64 time__Duration_milliseconds(time__Duration d) {
 	/*tmp return var*/ i64 _t329 = ((i64)(d)) / 1000000;
-	// autofree_scope_vars(pos=9756 line_nr=409 scope.pos=9722 scope.end_pos=9781)
-	// var "d" var.pos=9723 var.line_nr=408
+	// autofree_scope_vars(pos=9773 line_nr=411 scope.pos=9739 scope.end_pos=9798)
+	// var "d" var.pos=9740 var.line_nr=410
 	// af parent scope:
 	// af parent scope:
 	return _t329;
@@ -20803,10 +20807,10 @@ f64 time__Duration_seconds(time__Duration d) {
 	i64 sec = d / _const_time__second;
 	i64 nsec = d % _const_time__second;
 	/*tmp return var*/ f64 _t330 = ((f64)(sec)) + ((f64)(nsec)) / 1e9;
-	// autofree_scope_vars(pos=10065 line_nr=418 scope.pos=9987 scope.end_pos=10100)
-	// var "d" var.pos=9988 var.line_nr=415
-	// var "sec" var.pos=10017 var.line_nr=416
-	// var "nsec" var.pos=10041 var.line_nr=417
+	// autofree_scope_vars(pos=10082 line_nr=420 scope.pos=10004 scope.end_pos=10117)
+	// var "d" var.pos=10005 var.line_nr=417
+	// var "sec" var.pos=10034 var.line_nr=418
+	// var "nsec" var.pos=10058 var.line_nr=419
 	// af parent scope:
 	// af parent scope:
 	return _t330;
@@ -20816,10 +20820,10 @@ f64 time__Duration_minutes(time__Duration d) {
 	i64 min = d / _const_time__minute;
 	i64 nsec = d % _const_time__minute;
 	/*tmp return var*/ f64 _t331 = ((f64)(min)) + ((f64)(nsec)) / (60 * 1e9);
-	// autofree_scope_vars(pos=10259 line_nr=425 scope.pos=10181 scope.end_pos=10301)
-	// var "d" var.pos=10182 var.line_nr=422
-	// var "min" var.pos=10211 var.line_nr=423
-	// var "nsec" var.pos=10235 var.line_nr=424
+	// autofree_scope_vars(pos=10276 line_nr=427 scope.pos=10198 scope.end_pos=10318)
+	// var "d" var.pos=10199 var.line_nr=424
+	// var "min" var.pos=10228 var.line_nr=425
+	// var "nsec" var.pos=10252 var.line_nr=426
 	// af parent scope:
 	// af parent scope:
 	return _t331;
@@ -20829,10 +20833,10 @@ f64 time__Duration_hours(time__Duration d) {
 	i64 hr = d / _const_time__hour;
 	i64 nsec = d % _const_time__hour;
 	/*tmp return var*/ f64 _t332 = ((f64)(hr)) + ((f64)(nsec)) / (60 * 60 * 1e9);
-	// autofree_scope_vars(pos=10449 line_nr=432 scope.pos=10378 scope.end_pos=10495)
-	// var "d" var.pos=10379 var.line_nr=429
-	// var "hr" var.pos=10406 var.line_nr=430
-	// var "nsec" var.pos=10427 var.line_nr=431
+	// autofree_scope_vars(pos=10466 line_nr=434 scope.pos=10395 scope.end_pos=10512)
+	// var "d" var.pos=10396 var.line_nr=431
+	// var "hr" var.pos=10423 var.line_nr=432
+	// var "nsec" var.pos=10444 var.line_nr=433
 	// af parent scope:
 	// af parent scope:
 	return _t332;
@@ -20842,9 +20846,9 @@ int time__offset(void) {
 	time__Time t = time__now();
 	time__Time local = time__Time_local(t);
 	/*tmp return var*/ int _t333 = ((int)(local.v_unix - t.v_unix));
-	// autofree_scope_vars(pos=10603 line_nr=439 scope.pos=10556 scope.end_pos=10636)
-	// var "t" var.pos=10572 var.line_nr=437
-	// var "local" var.pos=10584 var.line_nr=438
+	// autofree_scope_vars(pos=10620 line_nr=441 scope.pos=10573 scope.end_pos=10653)
+	// var "t" var.pos=10589 var.line_nr=439
+	// var "local" var.pos=10601 var.line_nr=440
 	// af parent scope:
 	// af parent scope:
 	return _t333;
@@ -26478,7 +26482,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1a76cb1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0d1714c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
