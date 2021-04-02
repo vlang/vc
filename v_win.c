@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7385f8e"
+#define V_COMMIT_HASH "fb302c6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "043f642"
+	#define V_COMMIT_HASH "7385f8e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7385f8e"
+	#define V_CURRENT_COMMIT_HASH "fb302c6"
 #endif
 
 // V comptime_defines:
@@ -26474,7 +26474,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("043f642"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7385f8e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -41328,6 +41328,13 @@ VV_LOCAL_SYMBOL void v__checker__Checker_check_map_and_filter(v__checker__Checke
 			}
 		}
 	}
+	else if (arg_expr._typ == 234 /* v.ast.CallExpr */) {
+		if (is_map && v__ast__Type_alias_eq((*arg_expr._v__ast__CallExpr).return_type, _const_v__ast__void_type)) {
+			v__checker__Checker_error(c, _STR("type mismatch, `%.*s\000` does not return anything", 2, (*arg_expr._v__ast__CallExpr).name), (*arg_expr._v__ast__CallExpr).pos);
+		} else if (!is_map && !v__ast__Type_alias_eq((*arg_expr._v__ast__CallExpr).return_type, _const_v__ast__bool_type)) {
+			v__checker__Checker_error(c, _STR("type mismatch, `%.*s\000` must return a bool", 2, (*arg_expr._v__ast__CallExpr).name), (*arg_expr._v__ast__CallExpr).pos);
+		}
+	}
 	else {
 	};
 }
@@ -41344,39 +41351,39 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 	string unknown_method_msg = _STR("unknown method: `%.*s\000.%.*s\000`", 3, left_type_sym->name, method_name);
 	if (v__ast__Type_has_flag(left_type, v__ast__TypeFlag_optional)) {
 		v__checker__Checker_error(c, _SLIT("optional type cannot be called directly"), v__ast__Expr_position(call_expr->left));
-		// autofree_scope_vars(pos=50937 line_nr=1429 scope.pos=50854 scope.end_pos=50960)
+		// autofree_scope_vars(pos=51249 line_nr=1436 scope.pos=51166 scope.end_pos=51272)
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
 	}
 	if ((left_type_sym->kind == v__ast__Kind_sum_type || left_type_sym->kind == v__ast__Kind_interface_) && string_eq(method_name, _SLIT("type_name"))) {
-		// autofree_scope_vars(pos=51046 line_nr=1432 scope.pos=51043 scope.end_pos=51071)
+		// autofree_scope_vars(pos=51358 line_nr=1439 scope.pos=51355 scope.end_pos=51383)
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -41402,39 +41409,39 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 	}
 	if (left_type_sym->kind == v__ast__Kind_array && (Array_string_contains(_const_v__checker__array_builtin_methods, method_name))) {
 		/*tmp return var*/ v__ast__Type _t1889 = v__checker__Checker_call_array_builtin_method(c, call_expr, left_type, *left_type_sym);
-		// autofree_scope_vars(pos=51877 line_nr=1455 scope.pos=51874 scope.end_pos=51955)
+		// autofree_scope_vars(pos=52189 line_nr=1462 scope.pos=52186 scope.end_pos=52267)
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _t1889;
 	} else if (left_type_sym->kind == v__ast__Kind_map && (string_eq(method_name, _SLIT("clone")) || string_eq(method_name, _SLIT("keys")) || string_eq(method_name, _SLIT("move")))) {
 		/*tmp return var*/ v__ast__Type _t1890 = v__checker__Checker_call_map_builtin_method(c, call_expr, left_type, *left_type_sym);
-		// autofree_scope_vars(pos=52039 line_nr=1457 scope.pos=52036 scope.end_pos=52115)
+		// autofree_scope_vars(pos=52351 line_nr=1464 scope.pos=52348 scope.end_pos=52427)
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _t1890;
@@ -41453,21 +41460,21 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 		}
 		call_expr->return_type = info.return_type;
 		/*tmp return var*/ v__ast__Type _t1891 = info.return_type;
-		// autofree_scope_vars(pos=52874 line_nr=1476 scope.pos=52679 scope.end_pos=52900)
-		// var "info" var.pos=52683 var.line_nr=1471
+		// autofree_scope_vars(pos=53186 line_nr=1483 scope.pos=52991 scope.end_pos=53212)
+		// var "info" var.pos=52995 var.line_nr=1478
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _t1891;
@@ -41518,9 +41525,9 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_54586 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_54586.arg0;
-			v__token__Position pos = mr_54586.arg1;
+			multi_return_string_v__token__Position mr_54898 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_54898.arg0;
+			v__token__Position pos = mr_54898.arg1;
 			if ((to_lock).len != 0 && rec_share != v__ast__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("%.*s\000 is `shared` and must be `lock`ed to be passed as `mut`", 2, to_lock), pos);
 			}
@@ -41542,26 +41549,26 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 			v__token__Position unexpected_arguments_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(unexpected_arguments, 0)).pos, (*(v__ast__CallArg*)array_last(unexpected_arguments)).pos);
 			v__checker__Checker_error(c, _STR("expected %"PRId32"\000 arguments, but got %"PRId32"", 2, nr_args, call_expr->args.len), unexpected_arguments_pos);
 			/*tmp return var*/ v__ast__Type _t1897 = method.return_type;
-			// autofree_scope_vars(pos=55892 line_nr=1553 scope.pos=55629 scope.end_pos=55921)
-			// var "unexpected_arguments" var.pos=55634 var.line_nr=1550
-			// var "unexpected_arguments_pos" var.pos=55697 var.line_nr=1551
+			// autofree_scope_vars(pos=56204 line_nr=1560 scope.pos=55941 scope.end_pos=56233)
+			// var "unexpected_arguments" var.pos=55946 var.line_nr=1557
+			// var "unexpected_arguments_pos" var.pos=56009 var.line_nr=1558
 			// af parent scope:
-			// var "rec_share" var.pos=54300 var.line_nr=1517
-			// var "nr_args" var.pos=55228 var.line_nr=1540
-			// var "min_required_args" var.pos=55304 var.line_nr=1541
+			// var "rec_share" var.pos=54612 var.line_nr=1524
+			// var "nr_args" var.pos=55540 var.line_nr=1547
+			// var "min_required_args" var.pos=55616 var.line_nr=1548
 			// af parent scope:
-			// var "c" var.pos=50236 var.line_nr=1415
-			// var "call_expr" var.pos=50263 var.line_nr=1415
-			// var "left_type" var.pos=50299 var.line_nr=1416
-			// var "is_generic" var.pos=50365 var.line_nr=1418
-			// var "left_type_sym" var.pos=50637 var.line_nr=1424
-			// var "method_name" var.pos=50708 var.line_nr=1425
-			// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-			// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-			// var "generic_types" var.pos=51150 var.line_nr=1435
-			// var "method" var.pos=52907 var.line_nr=1478
-			// var "has_method" var.pos=52931 var.line_nr=1479
-			// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+			// var "c" var.pos=50548 var.line_nr=1422
+			// var "call_expr" var.pos=50575 var.line_nr=1422
+			// var "left_type" var.pos=50611 var.line_nr=1423
+			// var "is_generic" var.pos=50677 var.line_nr=1425
+			// var "left_type_sym" var.pos=50949 var.line_nr=1431
+			// var "method_name" var.pos=51020 var.line_nr=1432
+			// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+			// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+			// var "generic_types" var.pos=51462 var.line_nr=1442
+			// var "method" var.pos=53219 var.line_nr=1485
+			// var "has_method" var.pos=53243 var.line_nr=1486
+			// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 			// af parent scope:
 			// af parent scope:
 			return _t1897;
@@ -41597,9 +41604,9 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg.pos);
 			}
 			if (arg.is_mut) {
-				multi_return_string_v__token__Position mr_57809 = v__checker__Checker_fail_if_immutable(c, arg.expr);
-				string to_lock = mr_57809.arg0;
-				v__token__Position pos = mr_57809.arg1;
+				multi_return_string_v__token__Position mr_58121 = v__checker__Checker_fail_if_immutable(c, arg.expr);
+				string to_lock = mr_58121.arg0;
+				v__token__Position pos = mr_58121.arg1;
 				if (!param.is_mut) {
 					string tok = v__ast__ShareType_str(arg.share);
 					v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, param.name, tok, tok), v__ast__Expr_position(arg.expr));
@@ -41647,27 +41654,27 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 			if (_t1900 = v__ast__Table_resolve_generic_by_names(c->table, method.return_type, method.generic_names, call_expr->generic_types), _t1900.state == 0) {
 				v__ast__Type typ = *(v__ast__Type*)_t1900.data;
 				call_expr->return_type = typ;
-				// autofree_scope_vars(pos=59995 line_nr=1661 scope.pos=59958 scope.end_pos=60010)
+				// autofree_scope_vars(pos=60307 line_nr=1668 scope.pos=60270 scope.end_pos=60322)
 				// af parent scope:
-				// var "typ" var.pos=59844 var.line_nr=1657
+				// var "typ" var.pos=60156 var.line_nr=1664
 				// af parent scope:
 				// af parent scope:
-				// var "rec_share" var.pos=54300 var.line_nr=1517
-				// var "nr_args" var.pos=55228 var.line_nr=1540
-				// var "min_required_args" var.pos=55304 var.line_nr=1541
+				// var "rec_share" var.pos=54612 var.line_nr=1524
+				// var "nr_args" var.pos=55540 var.line_nr=1547
+				// var "min_required_args" var.pos=55616 var.line_nr=1548
 				// af parent scope:
-				// var "c" var.pos=50236 var.line_nr=1415
-				// var "call_expr" var.pos=50263 var.line_nr=1415
-				// var "left_type" var.pos=50299 var.line_nr=1416
-				// var "is_generic" var.pos=50365 var.line_nr=1418
-				// var "left_type_sym" var.pos=50637 var.line_nr=1424
-				// var "method_name" var.pos=50708 var.line_nr=1425
-				// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-				// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-				// var "generic_types" var.pos=51150 var.line_nr=1435
-				// var "method" var.pos=52907 var.line_nr=1478
-				// var "has_method" var.pos=52931 var.line_nr=1479
-				// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+				// var "c" var.pos=50548 var.line_nr=1422
+				// var "call_expr" var.pos=50575 var.line_nr=1422
+				// var "left_type" var.pos=50611 var.line_nr=1423
+				// var "is_generic" var.pos=50677 var.line_nr=1425
+				// var "left_type_sym" var.pos=50949 var.line_nr=1431
+				// var "method_name" var.pos=51020 var.line_nr=1432
+				// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+				// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+				// var "generic_types" var.pos=51462 var.line_nr=1442
+				// var "method" var.pos=53219 var.line_nr=1485
+				// var "has_method" var.pos=53243 var.line_nr=1486
+				// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 				// af parent scope:
 				// af parent scope:
 				return typ;
@@ -41678,46 +41685,46 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 		}
 		if (method.generic_names.len > 0) {
 			/*tmp return var*/ v__ast__Type _t1901 = call_expr->return_type;
-			// autofree_scope_vars(pos=60221 line_nr=1668 scope.pos=60217 scope.end_pos=60253)
+			// autofree_scope_vars(pos=60533 line_nr=1675 scope.pos=60529 scope.end_pos=60565)
 			// af parent scope:
-			// var "rec_share" var.pos=54300 var.line_nr=1517
-			// var "nr_args" var.pos=55228 var.line_nr=1540
-			// var "min_required_args" var.pos=55304 var.line_nr=1541
+			// var "rec_share" var.pos=54612 var.line_nr=1524
+			// var "nr_args" var.pos=55540 var.line_nr=1547
+			// var "min_required_args" var.pos=55616 var.line_nr=1548
 			// af parent scope:
-			// var "c" var.pos=50236 var.line_nr=1415
-			// var "call_expr" var.pos=50263 var.line_nr=1415
-			// var "left_type" var.pos=50299 var.line_nr=1416
-			// var "is_generic" var.pos=50365 var.line_nr=1418
-			// var "left_type_sym" var.pos=50637 var.line_nr=1424
-			// var "method_name" var.pos=50708 var.line_nr=1425
-			// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-			// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-			// var "generic_types" var.pos=51150 var.line_nr=1435
-			// var "method" var.pos=52907 var.line_nr=1478
-			// var "has_method" var.pos=52931 var.line_nr=1479
-			// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+			// var "c" var.pos=50548 var.line_nr=1422
+			// var "call_expr" var.pos=50575 var.line_nr=1422
+			// var "left_type" var.pos=50611 var.line_nr=1423
+			// var "is_generic" var.pos=50677 var.line_nr=1425
+			// var "left_type_sym" var.pos=50949 var.line_nr=1431
+			// var "method_name" var.pos=51020 var.line_nr=1432
+			// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+			// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+			// var "generic_types" var.pos=51462 var.line_nr=1442
+			// var "method" var.pos=53219 var.line_nr=1485
+			// var "has_method" var.pos=53243 var.line_nr=1486
+			// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 			// af parent scope:
 			// af parent scope:
 			return _t1901;
 		}
 		/*tmp return var*/ v__ast__Type _t1902 = method.return_type;
-		// autofree_scope_vars(pos=60256 line_nr=1670 scope.pos=53957 scope.end_pos=60284)
-		// var "rec_share" var.pos=54300 var.line_nr=1517
-		// var "nr_args" var.pos=55228 var.line_nr=1540
-		// var "min_required_args" var.pos=55304 var.line_nr=1541
+		// autofree_scope_vars(pos=60568 line_nr=1677 scope.pos=54269 scope.end_pos=60596)
+		// var "rec_share" var.pos=54612 var.line_nr=1524
+		// var "nr_args" var.pos=55540 var.line_nr=1547
+		// var "min_required_args" var.pos=55616 var.line_nr=1548
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _t1902;
@@ -41733,20 +41740,20 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT(".str() method calls should have no arguments"), call_expr->pos);
 		}
 		v__checker__Checker_fail_if_unreadable(c, call_expr->left, left_type, _SLIT("receiver"));
-		// autofree_scope_vars(pos=60766 line_nr=1685 scope.pos=60333 scope.end_pos=60791)
+		// autofree_scope_vars(pos=61078 line_nr=1692 scope.pos=60645 scope.end_pos=61103)
 		// af parent scope:
-		// var "c" var.pos=50236 var.line_nr=1415
-		// var "call_expr" var.pos=50263 var.line_nr=1415
-		// var "left_type" var.pos=50299 var.line_nr=1416
-		// var "is_generic" var.pos=50365 var.line_nr=1418
-		// var "left_type_sym" var.pos=50637 var.line_nr=1424
-		// var "method_name" var.pos=50708 var.line_nr=1425
-		// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-		// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-		// var "generic_types" var.pos=51150 var.line_nr=1435
-		// var "method" var.pos=52907 var.line_nr=1478
-		// var "has_method" var.pos=52931 var.line_nr=1479
-		// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+		// var "c" var.pos=50548 var.line_nr=1422
+		// var "call_expr" var.pos=50575 var.line_nr=1422
+		// var "left_type" var.pos=50611 var.line_nr=1423
+		// var "is_generic" var.pos=50677 var.line_nr=1425
+		// var "left_type_sym" var.pos=50949 var.line_nr=1431
+		// var "method_name" var.pos=51020 var.line_nr=1432
+		// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+		// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+		// var "generic_types" var.pos=51462 var.line_nr=1442
+		// var "method" var.pos=53219 var.line_nr=1485
+		// var "has_method" var.pos=53243 var.line_nr=1486
+		// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -41769,26 +41776,26 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 			}
 			call_expr->expected_arg_types = earg_types;
 			/*tmp return var*/ v__ast__Type _t1906 = info.func.return_type;
-			// autofree_scope_vars(pos=61436 line_nr=1703 scope.pos=61052 scope.end_pos=61468)
-			// var "info" var.pos=61120 var.line_nr=1694
-			// var "earg_types" var.pos=61218 var.line_nr=1696
+			// autofree_scope_vars(pos=61748 line_nr=1710 scope.pos=61364 scope.end_pos=61780)
+			// var "info" var.pos=61432 var.line_nr=1701
+			// var "earg_types" var.pos=61530 var.line_nr=1703
 			// af parent scope:
-			// var "field_type_sym" var.pos=60961 var.line_nr=1690
+			// var "field_type_sym" var.pos=61273 var.line_nr=1697
 			// af parent scope:
-			// var "field" var.pos=60901 var.line_nr=1689
+			// var "field" var.pos=61213 var.line_nr=1696
 			// af parent scope:
-			// var "c" var.pos=50236 var.line_nr=1415
-			// var "call_expr" var.pos=50263 var.line_nr=1415
-			// var "left_type" var.pos=50299 var.line_nr=1416
-			// var "is_generic" var.pos=50365 var.line_nr=1418
-			// var "left_type_sym" var.pos=50637 var.line_nr=1424
-			// var "method_name" var.pos=50708 var.line_nr=1425
-			// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-			// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-			// var "generic_types" var.pos=51150 var.line_nr=1435
-			// var "method" var.pos=52907 var.line_nr=1478
-			// var "has_method" var.pos=52931 var.line_nr=1479
-			// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+			// var "c" var.pos=50548 var.line_nr=1422
+			// var "call_expr" var.pos=50575 var.line_nr=1422
+			// var "left_type" var.pos=50611 var.line_nr=1423
+			// var "is_generic" var.pos=50677 var.line_nr=1425
+			// var "left_type_sym" var.pos=50949 var.line_nr=1431
+			// var "method_name" var.pos=51020 var.line_nr=1432
+			// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+			// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+			// var "generic_types" var.pos=51462 var.line_nr=1442
+			// var "method" var.pos=53219 var.line_nr=1485
+			// var "has_method" var.pos=53243 var.line_nr=1486
+			// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 			// af parent scope:
 			// af parent scope:
 			return _t1906;
@@ -41808,19 +41815,19 @@ v__ast__Type v__checker__Checker_call_method(v__checker__Checker* c, v__ast__Cal
 		v__util__Suggestion suggestion = v__util__new_suggestion(method_name, _t1907);
 		v__checker__Checker_error(c, v__util__Suggestion_say(suggestion, unknown_method_msg), call_expr->pos);
 	}
-	// autofree_scope_vars(pos=61655 line_nr=1710 scope.pos=50231 scope.end_pos=61677)
-	// var "c" var.pos=50236 var.line_nr=1415
-	// var "call_expr" var.pos=50263 var.line_nr=1415
-	// var "left_type" var.pos=50299 var.line_nr=1416
-	// var "is_generic" var.pos=50365 var.line_nr=1418
-	// var "left_type_sym" var.pos=50637 var.line_nr=1424
-	// var "method_name" var.pos=50708 var.line_nr=1425
-	// var "unknown_method_msg" var.pos=50743 var.line_nr=1426
-	// var "has_generic_generic" var.pos=51078 var.line_nr=1434
-	// var "generic_types" var.pos=51150 var.line_nr=1435
-	// var "method" var.pos=52907 var.line_nr=1478
-	// var "has_method" var.pos=52931 var.line_nr=1479
-	// var "is_method_from_embed" var.pos=52956 var.line_nr=1480
+	// autofree_scope_vars(pos=61967 line_nr=1717 scope.pos=50543 scope.end_pos=61989)
+	// var "c" var.pos=50548 var.line_nr=1422
+	// var "call_expr" var.pos=50575 var.line_nr=1422
+	// var "left_type" var.pos=50611 var.line_nr=1423
+	// var "is_generic" var.pos=50677 var.line_nr=1425
+	// var "left_type_sym" var.pos=50949 var.line_nr=1431
+	// var "method_name" var.pos=51020 var.line_nr=1432
+	// var "unknown_method_msg" var.pos=51055 var.line_nr=1433
+	// var "has_generic_generic" var.pos=51390 var.line_nr=1441
+	// var "generic_types" var.pos=51462 var.line_nr=1442
+	// var "method" var.pos=53219 var.line_nr=1485
+	// var "has_method" var.pos=53243 var.line_nr=1486
+	// var "is_method_from_embed" var.pos=53268 var.line_nr=1487
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__void_type;
@@ -41850,13 +41857,13 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_call_map_builtin_method(v__chec
 	call_expr->receiver_type = v__ast__Type_to_ptr(left_type);
 	call_expr->return_type = ret_type;
 	/*tmp return var*/ v__ast__Type _t1909 = call_expr->return_type;
-	// autofree_scope_vars(pos=62345 line_nr=1736 scope.pos=61683 scope.end_pos=62375)
-	// var "c" var.pos=61688 var.line_nr=1713
-	// var "call_expr" var.pos=61727 var.line_nr=1713
-	// var "left_type" var.pos=61751 var.line_nr=1713
-	// var "left_type_sym" var.pos=61771 var.line_nr=1713
-	// var "method_name" var.pos=61813 var.line_nr=1714
-	// var "ret_type" var.pos=61848 var.line_nr=1715
+	// autofree_scope_vars(pos=62657 line_nr=1743 scope.pos=61995 scope.end_pos=62687)
+	// var "c" var.pos=62000 var.line_nr=1720
+	// var "call_expr" var.pos=62039 var.line_nr=1720
+	// var "left_type" var.pos=62063 var.line_nr=1720
+	// var "left_type_sym" var.pos=62083 var.line_nr=1720
+	// var "method_name" var.pos=62125 var.line_nr=1721
+	// var "ret_type" var.pos=62160 var.line_nr=1722
 	// af parent scope:
 	// af parent scope:
 	return _t1909;
@@ -41946,15 +41953,15 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_call_array_builtin_method(v__ch
 		}
 	}
 	/*tmp return var*/ v__ast__Type _t1911 = call_expr->return_type;
-	// autofree_scope_vars(pos=66325 line_nr=1836 scope.pos=62381 scope.end_pos=66355)
-	// var "c" var.pos=62386 var.line_nr=1739
-	// var "call_expr" var.pos=62427 var.line_nr=1739
-	// var "left_type" var.pos=62451 var.line_nr=1739
-	// var "left_type_sym" var.pos=62471 var.line_nr=1739
-	// var "method_name" var.pos=62513 var.line_nr=1740
-	// var "elem_typ" var.pos=62548 var.line_nr=1741
-	// var "array_info" var.pos=62714 var.line_nr=1745
-	// var "arg_type" var.pos=64862 var.line_nr=1794
+	// autofree_scope_vars(pos=66637 line_nr=1843 scope.pos=62693 scope.end_pos=66667)
+	// var "c" var.pos=62698 var.line_nr=1746
+	// var "call_expr" var.pos=62739 var.line_nr=1746
+	// var "left_type" var.pos=62763 var.line_nr=1746
+	// var "left_type_sym" var.pos=62783 var.line_nr=1746
+	// var "method_name" var.pos=62825 var.line_nr=1747
+	// var "elem_typ" var.pos=62860 var.line_nr=1748
+	// var "array_info" var.pos=63026 var.line_nr=1752
+	// var "arg_type" var.pos=65174 var.line_nr=1801
 	// af parent scope:
 	// af parent scope:
 	return _t1911;
@@ -41966,16 +41973,16 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 		v__checker__Checker_error(c, _SLIT("the `main` function cannot be called in the program"), call_expr->pos);
 	}
 	if (string_eq(fn_name, _SLIT("typeof"))) {
-		// autofree_scope_vars(pos=66658 line_nr=1846 scope.pos=66586 scope.end_pos=66683)
+		// autofree_scope_vars(pos=66970 line_nr=1853 scope.pos=66898 scope.end_pos=66995)
 		// af parent scope:
-		// var "c" var.pos=66370 var.line_nr=1839
-		// var "call_expr" var.pos=66393 var.line_nr=1839
-		// var "fn_name" var.pos=66429 var.line_nr=1840
-		// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-		// var "generic_types" var.pos=66758 var.line_nr=1849
-		// var "f" var.pos=68157 var.line_nr=1890
-		// var "found" var.pos=68176 var.line_nr=1891
-		// var "found_in_args" var.pos=68196 var.line_nr=1892
+		// var "c" var.pos=66682 var.line_nr=1846
+		// var "call_expr" var.pos=66705 var.line_nr=1846
+		// var "fn_name" var.pos=66741 var.line_nr=1847
+		// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+		// var "generic_types" var.pos=67070 var.line_nr=1856
+		// var "f" var.pos=68469 var.line_nr=1897
+		// var "found" var.pos=68488 var.line_nr=1898
+		// var "found_in_args" var.pos=68508 var.line_nr=1899
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -42003,20 +42010,20 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 	} else if (string_eq(fn_name, _SLIT("json.decode")) && call_expr->args.len > 0) {
 		if (call_expr->args.len != 2) {
 			v__checker__Checker_error(c, _SLIT("json.decode expects 2 arguments, a type and a string (e.g `json.decode(T, '')`)"), call_expr->pos);
-			// autofree_scope_vars(pos=67510 line_nr=1871 scope.pos=67393 scope.end_pos=67534)
+			// autofree_scope_vars(pos=67822 line_nr=1878 scope.pos=67705 scope.end_pos=67846)
 			// af parent scope:
-			// var "expr" var.pos=67538 var.line_nr=1873
-			// var "typ" var.pos=67967 var.line_nr=1884
-			// var "ret_type" var.pos=67997 var.line_nr=1885
+			// var "expr" var.pos=67850 var.line_nr=1880
+			// var "typ" var.pos=68279 var.line_nr=1891
+			// var "ret_type" var.pos=68309 var.line_nr=1892
 			// af parent scope:
-			// var "c" var.pos=66370 var.line_nr=1839
-			// var "call_expr" var.pos=66393 var.line_nr=1839
-			// var "fn_name" var.pos=66429 var.line_nr=1840
-			// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-			// var "generic_types" var.pos=66758 var.line_nr=1849
-			// var "f" var.pos=68157 var.line_nr=1890
-			// var "found" var.pos=68176 var.line_nr=1891
-			// var "found_in_args" var.pos=68196 var.line_nr=1892
+			// var "c" var.pos=66682 var.line_nr=1846
+			// var "call_expr" var.pos=66705 var.line_nr=1846
+			// var "fn_name" var.pos=66741 var.line_nr=1847
+			// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+			// var "generic_types" var.pos=67070 var.line_nr=1856
+			// var "f" var.pos=68469 var.line_nr=1897
+			// var "found" var.pos=68488 var.line_nr=1898
+			// var "found_in_args" var.pos=68508 var.line_nr=1899
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__void_type;
@@ -42025,21 +42032,21 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 		if ((expr)._typ != 272 /* v.ast.TypeNode */) {
 			string typ = tos3( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ));
 			v__checker__Checker_error(c, _STR("json.decode: first argument needs to be a type, got `%.*s\000`", 2, typ), call_expr->pos);
-			// autofree_scope_vars(pos=67715 line_nr=1877 scope.pos=67596 scope.end_pos=67739)
-			// var "typ" var.pos=67601 var.line_nr=1875
+			// autofree_scope_vars(pos=68027 line_nr=1884 scope.pos=67908 scope.end_pos=68051)
+			// var "typ" var.pos=67913 var.line_nr=1882
 			// af parent scope:
-			// var "expr" var.pos=67538 var.line_nr=1873
-			// var "typ" var.pos=67967 var.line_nr=1884
-			// var "ret_type" var.pos=67997 var.line_nr=1885
+			// var "expr" var.pos=67850 var.line_nr=1880
+			// var "typ" var.pos=68279 var.line_nr=1891
+			// var "ret_type" var.pos=68309 var.line_nr=1892
 			// af parent scope:
-			// var "c" var.pos=66370 var.line_nr=1839
-			// var "call_expr" var.pos=66393 var.line_nr=1839
-			// var "fn_name" var.pos=66429 var.line_nr=1840
-			// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-			// var "generic_types" var.pos=66758 var.line_nr=1849
-			// var "f" var.pos=68157 var.line_nr=1890
-			// var "found" var.pos=68176 var.line_nr=1891
-			// var "found_in_args" var.pos=68196 var.line_nr=1892
+			// var "c" var.pos=66682 var.line_nr=1846
+			// var "call_expr" var.pos=66705 var.line_nr=1846
+			// var "fn_name" var.pos=66741 var.line_nr=1847
+			// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+			// var "generic_types" var.pos=67070 var.line_nr=1856
+			// var "f" var.pos=68469 var.line_nr=1897
+			// var "found" var.pos=68488 var.line_nr=1898
+			// var "found_in_args" var.pos=68508 var.line_nr=1899
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__void_type;
@@ -42052,19 +42059,19 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 		v__ast__TypeNode typ = /* as */ *(v__ast__TypeNode*)__as_cast((expr)._v__ast__TypeNode,(expr)._typ, 272) /*expected idx: 272, name: v.ast.TypeNode */ ;
 		v__ast__Type ret_type = v__ast__Type_set_flag(typ.typ, v__ast__TypeFlag_optional);
 		call_expr->return_type = ret_type;
-		// autofree_scope_vars(pos=68073 line_nr=1887 scope.pos=67362 scope.end_pos=68091)
-		// var "expr" var.pos=67538 var.line_nr=1873
-		// var "typ" var.pos=67967 var.line_nr=1884
-		// var "ret_type" var.pos=67997 var.line_nr=1885
+		// autofree_scope_vars(pos=68385 line_nr=1894 scope.pos=67674 scope.end_pos=68403)
+		// var "expr" var.pos=67850 var.line_nr=1880
+		// var "typ" var.pos=68279 var.line_nr=1891
+		// var "ret_type" var.pos=68309 var.line_nr=1892
 		// af parent scope:
-		// var "c" var.pos=66370 var.line_nr=1839
-		// var "call_expr" var.pos=66393 var.line_nr=1839
-		// var "fn_name" var.pos=66429 var.line_nr=1840
-		// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-		// var "generic_types" var.pos=66758 var.line_nr=1849
-		// var "f" var.pos=68157 var.line_nr=1890
-		// var "found" var.pos=68176 var.line_nr=1891
-		// var "found_in_args" var.pos=68196 var.line_nr=1892
+		// var "c" var.pos=66682 var.line_nr=1846
+		// var "call_expr" var.pos=66705 var.line_nr=1846
+		// var "fn_name" var.pos=66741 var.line_nr=1847
+		// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+		// var "generic_types" var.pos=67070 var.line_nr=1856
+		// var "f" var.pos=68469 var.line_nr=1897
+		// var "found" var.pos=68488 var.line_nr=1898
+		// var "found_in_args" var.pos=68508 var.line_nr=1899
 		// af parent scope:
 		// af parent scope:
 		return ret_type;
@@ -42099,22 +42106,22 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 			v__ast__TypeSymbol* elem_typ = v__ast__Table_get_type_symbol(c->table, info.elem_type);
 			if ((elem_typ->info)._typ == 413 /* v.ast.FnType */) {
 				/*tmp return var*/ v__ast__Type _t1916 = (*elem_typ->info._v__ast__FnType).func.return_type;
-				// autofree_scope_vars(pos=69167 line_nr=1920 scope.pos=69162 scope.end_pos=69209)
+				// autofree_scope_vars(pos=69479 line_nr=1927 scope.pos=69474 scope.end_pos=69521)
 				// af parent scope:
-				// var "info" var.pos=69043 var.line_nr=1917
-				// var "elem_typ" var.pos=69076 var.line_nr=1918
+				// var "info" var.pos=69355 var.line_nr=1924
+				// var "elem_typ" var.pos=69388 var.line_nr=1925
 				// af parent scope:
-				// var "expr" var.pos=68925 var.line_nr=1914
-				// var "sym" var.pos=68967 var.line_nr=1915
+				// var "expr" var.pos=69237 var.line_nr=1921
+				// var "sym" var.pos=69279 var.line_nr=1922
 				// af parent scope:
-				// var "c" var.pos=66370 var.line_nr=1839
-				// var "call_expr" var.pos=66393 var.line_nr=1839
-				// var "fn_name" var.pos=66429 var.line_nr=1840
-				// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-				// var "generic_types" var.pos=66758 var.line_nr=1849
-				// var "f" var.pos=68157 var.line_nr=1890
-				// var "found" var.pos=68176 var.line_nr=1891
-				// var "found_in_args" var.pos=68196 var.line_nr=1892
+				// var "c" var.pos=66682 var.line_nr=1846
+				// var "call_expr" var.pos=66705 var.line_nr=1846
+				// var "fn_name" var.pos=66741 var.line_nr=1847
+				// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+				// var "generic_types" var.pos=67070 var.line_nr=1856
+				// var "f" var.pos=68469 var.line_nr=1897
+				// var "found" var.pos=68488 var.line_nr=1898
+				// var "found_in_args" var.pos=68508 var.line_nr=1899
 				// af parent scope:
 				// af parent scope:
 				return _t1916;
@@ -42124,22 +42131,22 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 			v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(c->table, info.value_type);
 			if ((value_typ->info)._typ == 413 /* v.ast.FnType */) {
 				/*tmp return var*/ v__ast__Type _t1917 = (*value_typ->info._v__ast__FnType).func.return_type;
-				// autofree_scope_vars(pos=69370 line_nr=1926 scope.pos=69365 scope.end_pos=69413)
+				// autofree_scope_vars(pos=69682 line_nr=1933 scope.pos=69677 scope.end_pos=69725)
 				// af parent scope:
-				// var "info" var.pos=69245 var.line_nr=1923
-				// var "value_typ" var.pos=69276 var.line_nr=1924
+				// var "info" var.pos=69557 var.line_nr=1930
+				// var "value_typ" var.pos=69588 var.line_nr=1931
 				// af parent scope:
-				// var "expr" var.pos=68925 var.line_nr=1914
-				// var "sym" var.pos=68967 var.line_nr=1915
+				// var "expr" var.pos=69237 var.line_nr=1921
+				// var "sym" var.pos=69279 var.line_nr=1922
 				// af parent scope:
-				// var "c" var.pos=66370 var.line_nr=1839
-				// var "call_expr" var.pos=66393 var.line_nr=1839
-				// var "fn_name" var.pos=66429 var.line_nr=1840
-				// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-				// var "generic_types" var.pos=66758 var.line_nr=1849
-				// var "f" var.pos=68157 var.line_nr=1890
-				// var "found" var.pos=68176 var.line_nr=1891
-				// var "found_in_args" var.pos=68196 var.line_nr=1892
+				// var "c" var.pos=66682 var.line_nr=1846
+				// var "call_expr" var.pos=66705 var.line_nr=1846
+				// var "fn_name" var.pos=66741 var.line_nr=1847
+				// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+				// var "generic_types" var.pos=67070 var.line_nr=1856
+				// var "f" var.pos=68469 var.line_nr=1897
+				// var "found" var.pos=68488 var.line_nr=1898
+				// var "found_in_args" var.pos=68508 var.line_nr=1899
 				// af parent scope:
 				// af parent scope:
 				return _t1917;
@@ -42149,40 +42156,40 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 			v__ast__TypeSymbol* elem_typ = v__ast__Table_get_type_symbol(c->table, info.elem_type);
 			if ((elem_typ->info)._typ == 413 /* v.ast.FnType */) {
 				/*tmp return var*/ v__ast__Type _t1918 = (*elem_typ->info._v__ast__FnType).func.return_type;
-				// autofree_scope_vars(pos=69586 line_nr=1932 scope.pos=69581 scope.end_pos=69628)
+				// autofree_scope_vars(pos=69898 line_nr=1939 scope.pos=69893 scope.end_pos=69940)
 				// af parent scope:
-				// var "info" var.pos=69457 var.line_nr=1929
-				// var "elem_typ" var.pos=69495 var.line_nr=1930
+				// var "info" var.pos=69769 var.line_nr=1936
+				// var "elem_typ" var.pos=69807 var.line_nr=1937
 				// af parent scope:
-				// var "expr" var.pos=68925 var.line_nr=1914
-				// var "sym" var.pos=68967 var.line_nr=1915
+				// var "expr" var.pos=69237 var.line_nr=1921
+				// var "sym" var.pos=69279 var.line_nr=1922
 				// af parent scope:
-				// var "c" var.pos=66370 var.line_nr=1839
-				// var "call_expr" var.pos=66393 var.line_nr=1839
-				// var "fn_name" var.pos=66429 var.line_nr=1840
-				// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-				// var "generic_types" var.pos=66758 var.line_nr=1849
-				// var "f" var.pos=68157 var.line_nr=1890
-				// var "found" var.pos=68176 var.line_nr=1891
-				// var "found_in_args" var.pos=68196 var.line_nr=1892
+				// var "c" var.pos=66682 var.line_nr=1846
+				// var "call_expr" var.pos=66705 var.line_nr=1846
+				// var "fn_name" var.pos=66741 var.line_nr=1847
+				// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+				// var "generic_types" var.pos=67070 var.line_nr=1856
+				// var "f" var.pos=68469 var.line_nr=1897
+				// var "found" var.pos=68488 var.line_nr=1898
+				// var "found_in_args" var.pos=68508 var.line_nr=1899
 				// af parent scope:
 				// af parent scope:
 				return _t1918;
 			}
 		}
 		found = true;
-		// autofree_scope_vars(pos=69650 line_nr=1936 scope.pos=68896 scope.end_pos=69675)
-		// var "expr" var.pos=68925 var.line_nr=1914
-		// var "sym" var.pos=68967 var.line_nr=1915
+		// autofree_scope_vars(pos=69962 line_nr=1943 scope.pos=69208 scope.end_pos=69987)
+		// var "expr" var.pos=69237 var.line_nr=1921
+		// var "sym" var.pos=69279 var.line_nr=1922
 		// af parent scope:
-		// var "c" var.pos=66370 var.line_nr=1839
-		// var "call_expr" var.pos=66393 var.line_nr=1839
-		// var "fn_name" var.pos=66429 var.line_nr=1840
-		// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-		// var "generic_types" var.pos=66758 var.line_nr=1849
-		// var "f" var.pos=68157 var.line_nr=1890
-		// var "found" var.pos=68176 var.line_nr=1891
-		// var "found_in_args" var.pos=68196 var.line_nr=1892
+		// var "c" var.pos=66682 var.line_nr=1846
+		// var "call_expr" var.pos=66705 var.line_nr=1846
+		// var "fn_name" var.pos=66741 var.line_nr=1847
+		// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+		// var "generic_types" var.pos=67070 var.line_nr=1856
+		// var "f" var.pos=68469 var.line_nr=1897
+		// var "found" var.pos=68488 var.line_nr=1898
+		// var "found_in_args" var.pos=68508 var.line_nr=1899
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -42227,16 +42234,16 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 	}
 	if (!found) {
 		v__checker__Checker_error(c, _STR("unknown function: %.*s", 1, fn_name), call_expr->pos);
-		// autofree_scope_vars(pos=70564 line_nr=1974 scope.pos=70506 scope.end_pos=70587)
+		// autofree_scope_vars(pos=70876 line_nr=1981 scope.pos=70818 scope.end_pos=70899)
 		// af parent scope:
-		// var "c" var.pos=66370 var.line_nr=1839
-		// var "call_expr" var.pos=66393 var.line_nr=1839
-		// var "fn_name" var.pos=66429 var.line_nr=1840
-		// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-		// var "generic_types" var.pos=66758 var.line_nr=1849
-		// var "f" var.pos=68157 var.line_nr=1890
-		// var "found" var.pos=68176 var.line_nr=1891
-		// var "found_in_args" var.pos=68196 var.line_nr=1892
+		// var "c" var.pos=66682 var.line_nr=1846
+		// var "call_expr" var.pos=66705 var.line_nr=1846
+		// var "fn_name" var.pos=66741 var.line_nr=1847
+		// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+		// var "generic_types" var.pos=67070 var.line_nr=1856
+		// var "f" var.pos=68469 var.line_nr=1897
+		// var "found" var.pos=68488 var.line_nr=1898
+		// var "found_in_args" var.pos=68508 var.line_nr=1899
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -42316,20 +42323,20 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 			v__token__Position unexpected_arguments_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(unexpected_arguments, 0)).pos, (*(v__ast__CallArg*)array_last(unexpected_arguments)).pos);
 			v__checker__Checker_error(c, _STR("expected %"PRId32"\000 arguments, but got %"PRId32"", 2, min_required_args, call_expr->args.len), unexpected_arguments_pos);
 			/*tmp return var*/ v__ast__Type _t1927 = f.return_type;
-			// autofree_scope_vars(pos=73587 line_nr=2052 scope.pos=73310 scope.end_pos=73611)
-			// var "unexpected_arguments" var.pos=73315 var.line_nr=2048
-			// var "unexpected_arguments_pos" var.pos=73378 var.line_nr=2049
+			// autofree_scope_vars(pos=73899 line_nr=2059 scope.pos=73622 scope.end_pos=73923)
+			// var "unexpected_arguments" var.pos=73627 var.line_nr=2055
+			// var "unexpected_arguments_pos" var.pos=73690 var.line_nr=2056
 			// af parent scope:
-			// var "min_required_args" var.pos=73019 var.line_nr=2043
+			// var "min_required_args" var.pos=73331 var.line_nr=2050
 			// af parent scope:
-			// var "c" var.pos=66370 var.line_nr=1839
-			// var "call_expr" var.pos=66393 var.line_nr=1839
-			// var "fn_name" var.pos=66429 var.line_nr=1840
-			// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-			// var "generic_types" var.pos=66758 var.line_nr=1849
-			// var "f" var.pos=68157 var.line_nr=1890
-			// var "found" var.pos=68176 var.line_nr=1891
-			// var "found_in_args" var.pos=68196 var.line_nr=1892
+			// var "c" var.pos=66682 var.line_nr=1846
+			// var "call_expr" var.pos=66705 var.line_nr=1846
+			// var "fn_name" var.pos=66741 var.line_nr=1847
+			// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+			// var "generic_types" var.pos=67070 var.line_nr=1856
+			// var "f" var.pos=68469 var.line_nr=1897
+			// var "found" var.pos=68488 var.line_nr=1898
+			// var "found_in_args" var.pos=68508 var.line_nr=1899
 			// af parent scope:
 			// af parent scope:
 			return _t1927;
@@ -42345,16 +42352,16 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 		v__checker__Checker_fail_if_unreadable(c, (*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, 0)).expr, (*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, 0)).typ, _SLIT("argument to print"));
 		c->inside_println_arg = false;
 		/*tmp return var*/ v__ast__Type _t1928 = f.return_type;
-		// autofree_scope_vars(pos=74828 line_nr=2078 scope.pos=73759 scope.end_pos=74851)
+		// autofree_scope_vars(pos=75140 line_nr=2085 scope.pos=74071 scope.end_pos=75163)
 		// af parent scope:
-		// var "c" var.pos=66370 var.line_nr=1839
-		// var "call_expr" var.pos=66393 var.line_nr=1839
-		// var "fn_name" var.pos=66429 var.line_nr=1840
-		// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-		// var "generic_types" var.pos=66758 var.line_nr=1849
-		// var "f" var.pos=68157 var.line_nr=1890
-		// var "found" var.pos=68176 var.line_nr=1891
-		// var "found_in_args" var.pos=68196 var.line_nr=1892
+		// var "c" var.pos=66682 var.line_nr=1846
+		// var "call_expr" var.pos=66705 var.line_nr=1846
+		// var "fn_name" var.pos=66741 var.line_nr=1847
+		// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+		// var "generic_types" var.pos=67070 var.line_nr=1856
+		// var "f" var.pos=68469 var.line_nr=1897
+		// var "found" var.pos=68488 var.line_nr=1898
+		// var "found_in_args" var.pos=68508 var.line_nr=1899
 		// af parent scope:
 		// af parent scope:
 		return _t1928;
@@ -42395,9 +42402,9 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg.pos);
 		}
 		if (call_arg.is_mut && f.language == v__ast__Language_v) {
-			multi_return_string_v__token__Position mr_76321 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
-			string to_lock = mr_76321.arg0;
-			v__token__Position pos = mr_76321.arg1;
+			multi_return_string_v__token__Position mr_76633 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
+			string to_lock = mr_76633.arg0;
+			v__token__Position pos = mr_76633.arg1;
 			if (!param.is_mut) {
 				string tok = v__ast__ShareType_str(call_arg.share);
 				v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, param.name, tok, tok), v__ast__Expr_position(call_arg.expr));
@@ -42460,19 +42467,19 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 		if (_t1933 = v__ast__Table_resolve_generic_by_names(c->table, f.return_type, f.generic_names, call_expr->generic_types), _t1933.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1933.data;
 			call_expr->return_type = typ;
-			// autofree_scope_vars(pos=79378 line_nr=2198 scope.pos=79343 scope.end_pos=79392)
+			// autofree_scope_vars(pos=79690 line_nr=2205 scope.pos=79655 scope.end_pos=79704)
 			// af parent scope:
-			// var "typ" var.pos=79246 var.line_nr=2196
+			// var "typ" var.pos=79558 var.line_nr=2203
 			// af parent scope:
 			// af parent scope:
-			// var "c" var.pos=66370 var.line_nr=1839
-			// var "call_expr" var.pos=66393 var.line_nr=1839
-			// var "fn_name" var.pos=66429 var.line_nr=1840
-			// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-			// var "generic_types" var.pos=66758 var.line_nr=1849
-			// var "f" var.pos=68157 var.line_nr=1890
-			// var "found" var.pos=68176 var.line_nr=1891
-			// var "found_in_args" var.pos=68196 var.line_nr=1892
+			// var "c" var.pos=66682 var.line_nr=1846
+			// var "call_expr" var.pos=66705 var.line_nr=1846
+			// var "fn_name" var.pos=66741 var.line_nr=1847
+			// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+			// var "generic_types" var.pos=67070 var.line_nr=1856
+			// var "f" var.pos=68469 var.line_nr=1897
+			// var "found" var.pos=68488 var.line_nr=1898
+			// var "found_in_args" var.pos=68508 var.line_nr=1899
 			// af parent scope:
 			// af parent scope:
 			return typ;
@@ -42483,30 +42490,30 @@ v__ast__Type v__checker__Checker_call_fn(v__checker__Checker* c, v__ast__CallExp
 	}
 	if (f.generic_names.len > 0) {
 		/*tmp return var*/ v__ast__Type _t1934 = call_expr->return_type;
-		// autofree_scope_vars(pos=79587 line_nr=2205 scope.pos=79584 scope.end_pos=79618)
+		// autofree_scope_vars(pos=79899 line_nr=2212 scope.pos=79896 scope.end_pos=79930)
 		// af parent scope:
-		// var "c" var.pos=66370 var.line_nr=1839
-		// var "call_expr" var.pos=66393 var.line_nr=1839
-		// var "fn_name" var.pos=66429 var.line_nr=1840
-		// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-		// var "generic_types" var.pos=66758 var.line_nr=1849
-		// var "f" var.pos=68157 var.line_nr=1890
-		// var "found" var.pos=68176 var.line_nr=1891
-		// var "found_in_args" var.pos=68196 var.line_nr=1892
+		// var "c" var.pos=66682 var.line_nr=1846
+		// var "call_expr" var.pos=66705 var.line_nr=1846
+		// var "fn_name" var.pos=66741 var.line_nr=1847
+		// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+		// var "generic_types" var.pos=67070 var.line_nr=1856
+		// var "f" var.pos=68469 var.line_nr=1897
+		// var "found" var.pos=68488 var.line_nr=1898
+		// var "found_in_args" var.pos=68508 var.line_nr=1899
 		// af parent scope:
 		// af parent scope:
 		return _t1934;
 	}
 	/*tmp return var*/ v__ast__Type _t1935 = f.return_type;
-	// autofree_scope_vars(pos=79620 line_nr=2207 scope.pos=66365 scope.end_pos=79642)
-	// var "c" var.pos=66370 var.line_nr=1839
-	// var "call_expr" var.pos=66393 var.line_nr=1839
-	// var "fn_name" var.pos=66429 var.line_nr=1840
-	// var "has_generic_generic" var.pos=66690 var.line_nr=1848
-	// var "generic_types" var.pos=66758 var.line_nr=1849
-	// var "f" var.pos=68157 var.line_nr=1890
-	// var "found" var.pos=68176 var.line_nr=1891
-	// var "found_in_args" var.pos=68196 var.line_nr=1892
+	// autofree_scope_vars(pos=79932 line_nr=2214 scope.pos=66677 scope.end_pos=79954)
+	// var "c" var.pos=66682 var.line_nr=1846
+	// var "call_expr" var.pos=66705 var.line_nr=1846
+	// var "fn_name" var.pos=66741 var.line_nr=1847
+	// var "has_generic_generic" var.pos=67002 var.line_nr=1855
+	// var "generic_types" var.pos=67070 var.line_nr=1856
+	// var "f" var.pos=68469 var.line_nr=1897
+	// var "found" var.pos=68488 var.line_nr=1898
+	// var "found_in_args" var.pos=68508 var.line_nr=1899
 	// af parent scope:
 	// af parent scope:
 	return _t1935;
@@ -42544,18 +42551,18 @@ VV_LOCAL_SYMBOL void v__checker__Checker_deprecate_fnmethod(v__checker__Checker*
 
 VV_LOCAL_SYMBOL string v__checker__semicolonize(string main, string details) {
 	if ((details).len == 0) {
-		// autofree_scope_vars(pos=80649 line_nr=2240 scope.pos=80646 scope.end_pos=80663)
+		// autofree_scope_vars(pos=80961 line_nr=2247 scope.pos=80958 scope.end_pos=80975)
 		// af parent scope:
-		// var "main" var.pos=80590 var.line_nr=2238
-		// var "details" var.pos=80603 var.line_nr=2238
+		// var "main" var.pos=80902 var.line_nr=2245
+		// var "details" var.pos=80915 var.line_nr=2245
 		// af parent scope:
 		// af parent scope:
 		return main;
 	}
 	/*tmp return var*/ string _t1938 = _STR("%.*s\000; %.*s", 2, main, details);
-	// autofree_scope_vars(pos=80665 line_nr=2242 scope.pos=80577 scope.end_pos=80691)
-	// var "main" var.pos=80590 var.line_nr=2238
-	// var "details" var.pos=80603 var.line_nr=2238
+	// autofree_scope_vars(pos=80977 line_nr=2249 scope.pos=80889 scope.end_pos=81003)
+	// var "main" var.pos=80902 var.line_nr=2245
+	// var "details" var.pos=80915 var.line_nr=2245
 	// af parent scope:
 	// af parent scope:
 	return _t1938;
@@ -42575,21 +42582,21 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_type_implements(v__checker__Checker* c,
 			v__ast__Type t = ((v__ast__Type*)(*inter_sym->info._v__ast__Interface).types.data)[_t1939];
 			if (v__ast__Type_idx(t) == v__ast__Type_idx(utyp)) {
 				/*tmp return var*/ bool _t1940 = true;
-				// autofree_scope_vars(pos=81197 line_nr=2256 scope.pos=81192 scope.end_pos=81213)
+				// autofree_scope_vars(pos=81509 line_nr=2263 scope.pos=81504 scope.end_pos=81525)
 				// af parent scope:
-				// var "t" var.pos=81136 var.line_nr=2254
+				// var "t" var.pos=81448 var.line_nr=2261
 				// skipping tmp var "t"
 				// af parent scope:
 				// af parent scope:
-				// var "c" var.pos=80702 var.line_nr=2245
-				// var "typ" var.pos=80729 var.line_nr=2245
-				// var "inter_typ" var.pos=80743 var.line_nr=2245
-				// var "pos" var.pos=80763 var.line_nr=2245
-				// var "utyp" var.pos=80917 var.line_nr=2249
-				// var "typ_sym" var.pos=80948 var.line_nr=2250
-				// var "inter_sym" var.pos=80994 var.line_nr=2251
-				// var "styp" var.pos=81223 var.line_nr=2260
-				// var "imethods" var.pos=81673 var.line_nr=2273
+				// var "c" var.pos=81014 var.line_nr=2252
+				// var "typ" var.pos=81041 var.line_nr=2252
+				// var "inter_typ" var.pos=81055 var.line_nr=2252
+				// var "pos" var.pos=81075 var.line_nr=2252
+				// var "utyp" var.pos=81229 var.line_nr=2256
+				// var "typ_sym" var.pos=81260 var.line_nr=2257
+				// var "inter_sym" var.pos=81306 var.line_nr=2258
+				// var "styp" var.pos=81535 var.line_nr=2267
+				// var "imethods" var.pos=81985 var.line_nr=2280
 				// af parent scope:
 				// af parent scope:
 				return _t1940;
@@ -42599,34 +42606,34 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_type_implements(v__checker__Checker* c,
 	string styp = v__ast__Table_type_to_str(c->table, utyp);
 	if (v__ast__Type_idx(utyp) == v__ast__Type_idx(inter_typ)) {
 		/*tmp return var*/ bool _t1941 = true;
-		// autofree_scope_vars(pos=81344 line_nr=2263 scope.pos=81291 scope.end_pos=81358)
+		// autofree_scope_vars(pos=81656 line_nr=2270 scope.pos=81603 scope.end_pos=81670)
 		// af parent scope:
-		// var "c" var.pos=80702 var.line_nr=2245
-		// var "typ" var.pos=80729 var.line_nr=2245
-		// var "inter_typ" var.pos=80743 var.line_nr=2245
-		// var "pos" var.pos=80763 var.line_nr=2245
-		// var "utyp" var.pos=80917 var.line_nr=2249
-		// var "typ_sym" var.pos=80948 var.line_nr=2250
-		// var "inter_sym" var.pos=80994 var.line_nr=2251
-		// var "styp" var.pos=81223 var.line_nr=2260
-		// var "imethods" var.pos=81673 var.line_nr=2273
+		// var "c" var.pos=81014 var.line_nr=2252
+		// var "typ" var.pos=81041 var.line_nr=2252
+		// var "inter_typ" var.pos=81055 var.line_nr=2252
+		// var "pos" var.pos=81075 var.line_nr=2252
+		// var "utyp" var.pos=81229 var.line_nr=2256
+		// var "typ_sym" var.pos=81260 var.line_nr=2257
+		// var "inter_sym" var.pos=81306 var.line_nr=2258
+		// var "styp" var.pos=81535 var.line_nr=2267
+		// var "imethods" var.pos=81985 var.line_nr=2280
 		// af parent scope:
 		// af parent scope:
 		return _t1941;
 	}
 	if (v__ast__Type_idx(inter_typ) == _const_v__ast__error_type_idx && v__ast__Type_idx(utyp) == _const_v__ast__none_type_idx) {
 		/*tmp return var*/ bool _t1942 = true;
-		// autofree_scope_vars(pos=81485 line_nr=2267 scope.pos=81437 scope.end_pos=81499)
+		// autofree_scope_vars(pos=81797 line_nr=2274 scope.pos=81749 scope.end_pos=81811)
 		// af parent scope:
-		// var "c" var.pos=80702 var.line_nr=2245
-		// var "typ" var.pos=80729 var.line_nr=2245
-		// var "inter_typ" var.pos=80743 var.line_nr=2245
-		// var "pos" var.pos=80763 var.line_nr=2245
-		// var "utyp" var.pos=80917 var.line_nr=2249
-		// var "typ_sym" var.pos=80948 var.line_nr=2250
-		// var "inter_sym" var.pos=80994 var.line_nr=2251
-		// var "styp" var.pos=81223 var.line_nr=2260
-		// var "imethods" var.pos=81673 var.line_nr=2273
+		// var "c" var.pos=81014 var.line_nr=2252
+		// var "typ" var.pos=81041 var.line_nr=2252
+		// var "inter_typ" var.pos=81055 var.line_nr=2252
+		// var "pos" var.pos=81075 var.line_nr=2252
+		// var "utyp" var.pos=81229 var.line_nr=2256
+		// var "typ_sym" var.pos=81260 var.line_nr=2257
+		// var "inter_sym" var.pos=81306 var.line_nr=2258
+		// var "styp" var.pos=81535 var.line_nr=2267
+		// var "imethods" var.pos=81985 var.line_nr=2280
 		// af parent scope:
 		// af parent scope:
 		return _t1942;
@@ -42647,25 +42654,25 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_type_implements(v__checker__Checker* c,
 				v__checker__Checker_add_error_detail(c, _STR("%.*s\000 has `%.*s\000`", 3, inter_sym->name, sig));
 				v__checker__Checker_error(c, _STR("`%.*s\000` incorrectly implements method `%.*s\000` of interface `%.*s\000`: %.*s", 4, styp, imethod.name, inter_sym->name, msg), pos);
 				/*tmp return var*/ bool _t1945 = false;
-				// autofree_scope_vars(pos=82179 line_nr=2286 scope.pos=81943 scope.end_pos=82196)
-				// var "sig" var.pos=81949 var.line_nr=2282
+				// autofree_scope_vars(pos=82491 line_nr=2293 scope.pos=82255 scope.end_pos=82508)
+				// var "sig" var.pos=82261 var.line_nr=2289
 				// af parent scope:
-				// var "msg" var.pos=81878 var.line_nr=2280
+				// var "msg" var.pos=82190 var.line_nr=2287
 				// af parent scope:
-				// var "method" var.pos=81829 var.line_nr=2279
+				// var "method" var.pos=82141 var.line_nr=2286
 				// af parent scope:
-				// var "imethod" var.pos=81802 var.line_nr=2278
+				// var "imethod" var.pos=82114 var.line_nr=2285
 				// skipping tmp var "imethod"
 				// af parent scope:
-				// var "c" var.pos=80702 var.line_nr=2245
-				// var "typ" var.pos=80729 var.line_nr=2245
-				// var "inter_typ" var.pos=80743 var.line_nr=2245
-				// var "pos" var.pos=80763 var.line_nr=2245
-				// var "utyp" var.pos=80917 var.line_nr=2249
-				// var "typ_sym" var.pos=80948 var.line_nr=2250
-				// var "inter_sym" var.pos=80994 var.line_nr=2251
-				// var "styp" var.pos=81223 var.line_nr=2260
-				// var "imethods" var.pos=81673 var.line_nr=2273
+				// var "c" var.pos=81014 var.line_nr=2252
+				// var "typ" var.pos=81041 var.line_nr=2252
+				// var "inter_typ" var.pos=81055 var.line_nr=2252
+				// var "pos" var.pos=81075 var.line_nr=2252
+				// var "utyp" var.pos=81229 var.line_nr=2256
+				// var "typ_sym" var.pos=81260 var.line_nr=2257
+				// var "inter_sym" var.pos=81306 var.line_nr=2258
+				// var "styp" var.pos=81535 var.line_nr=2267
+				// var "imethods" var.pos=81985 var.line_nr=2280
 				// af parent scope:
 				// af parent scope:
 				return _t1945;
@@ -42686,50 +42693,50 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_type_implements(v__checker__Checker* c,
 					string got = v__ast__Table_type_to_str(c->table, field.typ);
 					v__checker__Checker_error(c, _STR("`%.*s\000` incorrectly implements field `%.*s\000` of interface `%.*s\000`, expected `%.*s\000`, got `%.*s\000`", 6, styp, ifield.name, inter_sym->name, exp, got), pos);
 					/*tmp return var*/ bool _t1948 = false;
-					// autofree_scope_vars(pos=82733 line_nr=2301 scope.pos=82501 scope.end_pos=82751)
-					// var "exp" var.pos=82508 var.line_nr=2297
-					// var "got" var.pos=82552 var.line_nr=2298
+					// autofree_scope_vars(pos=83045 line_nr=2308 scope.pos=82813 scope.end_pos=83063)
+					// var "exp" var.pos=82820 var.line_nr=2304
+					// var "got" var.pos=82864 var.line_nr=2305
 					// af parent scope:
 					// af parent scope:
-					// var "field" var.pos=82406 var.line_nr=2295
+					// var "field" var.pos=82718 var.line_nr=2302
 					// af parent scope:
-					// var "ifield" var.pos=82366 var.line_nr=2294
+					// var "ifield" var.pos=82678 var.line_nr=2301
 					// skipping tmp var "ifield"
 					// af parent scope:
 					// af parent scope:
-					// var "c" var.pos=80702 var.line_nr=2245
-					// var "typ" var.pos=80729 var.line_nr=2245
-					// var "inter_typ" var.pos=80743 var.line_nr=2245
-					// var "pos" var.pos=80763 var.line_nr=2245
-					// var "utyp" var.pos=80917 var.line_nr=2249
-					// var "typ_sym" var.pos=80948 var.line_nr=2250
-					// var "inter_sym" var.pos=80994 var.line_nr=2251
-					// var "styp" var.pos=81223 var.line_nr=2260
-					// var "imethods" var.pos=81673 var.line_nr=2273
+					// var "c" var.pos=81014 var.line_nr=2252
+					// var "typ" var.pos=81041 var.line_nr=2252
+					// var "inter_typ" var.pos=81055 var.line_nr=2252
+					// var "pos" var.pos=81075 var.line_nr=2252
+					// var "utyp" var.pos=81229 var.line_nr=2256
+					// var "typ_sym" var.pos=81260 var.line_nr=2257
+					// var "inter_sym" var.pos=81306 var.line_nr=2258
+					// var "styp" var.pos=81535 var.line_nr=2267
+					// var "imethods" var.pos=81985 var.line_nr=2280
 					// af parent scope:
 					// af parent scope:
 					return _t1948;
 				} else if (ifield.is_mut && !(field.is_mut || field.is_global)) {
 					v__checker__Checker_error(c, _STR("`%.*s\000` incorrectly implements interface `%.*s\000`, field `%.*s\000` must be mutable", 4, styp, inter_sym->name, ifield.name), pos);
 					/*tmp return var*/ bool _t1949 = false;
-					// autofree_scope_vars(pos=82943 line_nr=2305 scope.pos=82813 scope.end_pos=82961)
+					// autofree_scope_vars(pos=83255 line_nr=2312 scope.pos=83125 scope.end_pos=83273)
 					// af parent scope:
 					// af parent scope:
-					// var "field" var.pos=82406 var.line_nr=2295
+					// var "field" var.pos=82718 var.line_nr=2302
 					// af parent scope:
-					// var "ifield" var.pos=82366 var.line_nr=2294
+					// var "ifield" var.pos=82678 var.line_nr=2301
 					// skipping tmp var "ifield"
 					// af parent scope:
 					// af parent scope:
-					// var "c" var.pos=80702 var.line_nr=2245
-					// var "typ" var.pos=80729 var.line_nr=2245
-					// var "inter_typ" var.pos=80743 var.line_nr=2245
-					// var "pos" var.pos=80763 var.line_nr=2245
-					// var "utyp" var.pos=80917 var.line_nr=2249
-					// var "typ_sym" var.pos=80948 var.line_nr=2250
-					// var "inter_sym" var.pos=80994 var.line_nr=2251
-					// var "styp" var.pos=81223 var.line_nr=2260
-					// var "imethods" var.pos=81673 var.line_nr=2273
+					// var "c" var.pos=81014 var.line_nr=2252
+					// var "typ" var.pos=81041 var.line_nr=2252
+					// var "inter_typ" var.pos=81055 var.line_nr=2252
+					// var "pos" var.pos=81075 var.line_nr=2252
+					// var "utyp" var.pos=81229 var.line_nr=2256
+					// var "typ_sym" var.pos=81260 var.line_nr=2257
+					// var "inter_sym" var.pos=81306 var.line_nr=2258
+					// var "styp" var.pos=81535 var.line_nr=2267
+					// var "imethods" var.pos=81985 var.line_nr=2280
 					// af parent scope:
 					// af parent scope:
 					return _t1949;
@@ -42743,16 +42750,16 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_type_implements(v__checker__Checker* c,
 		}
 	}
 	/*tmp return var*/ bool _t1951 = true;
-	// autofree_scope_vars(pos=83193 line_nr=2316 scope.pos=80697 scope.end_pos=83206)
-	// var "c" var.pos=80702 var.line_nr=2245
-	// var "typ" var.pos=80729 var.line_nr=2245
-	// var "inter_typ" var.pos=80743 var.line_nr=2245
-	// var "pos" var.pos=80763 var.line_nr=2245
-	// var "utyp" var.pos=80917 var.line_nr=2249
-	// var "typ_sym" var.pos=80948 var.line_nr=2250
-	// var "inter_sym" var.pos=80994 var.line_nr=2251
-	// var "styp" var.pos=81223 var.line_nr=2260
-	// var "imethods" var.pos=81673 var.line_nr=2273
+	// autofree_scope_vars(pos=83505 line_nr=2323 scope.pos=81009 scope.end_pos=83518)
+	// var "c" var.pos=81014 var.line_nr=2252
+	// var "typ" var.pos=81041 var.line_nr=2252
+	// var "inter_typ" var.pos=81055 var.line_nr=2252
+	// var "pos" var.pos=81075 var.line_nr=2252
+	// var "utyp" var.pos=81229 var.line_nr=2256
+	// var "typ_sym" var.pos=81260 var.line_nr=2257
+	// var "inter_sym" var.pos=81306 var.line_nr=2258
+	// var "styp" var.pos=81535 var.line_nr=2267
+	// var "imethods" var.pos=81985 var.line_nr=2280
 	// af parent scope:
 	// af parent scope:
 	return _t1951;
@@ -42767,13 +42774,13 @@ v__ast__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__
 				v__checker__Checker_check_or_expr(c, (*expr._v__ast__CallExpr).or_block, ret_type, v__ast__Type_clear_flag((*expr._v__ast__CallExpr).return_type, v__ast__TypeFlag_optional));
 			}
 			/*tmp return var*/ v__ast__Type _t1952 = v__ast__Type_clear_flag(ret_type, v__ast__TypeFlag_optional);
-			// autofree_scope_vars(pos=83709 line_nr=2329 scope.pos=83440 scope.end_pos=83750)
+			// autofree_scope_vars(pos=84021 line_nr=2336 scope.pos=83752 scope.end_pos=84062)
 			// af parent scope:
-			// var "expr" var.pos=83375 var.line_nr=2321
+			// var "expr" var.pos=83687 var.line_nr=2328
 			// af parent scope:
-			// var "c" var.pos=83295 var.line_nr=2320
-			// var "expr" var.pos=83326 var.line_nr=2320
-			// var "ret_type" var.pos=83341 var.line_nr=2320
+			// var "c" var.pos=83607 var.line_nr=2327
+			// var "expr" var.pos=83638 var.line_nr=2327
+			// var "ret_type" var.pos=83653 var.line_nr=2327
 			// af parent scope:
 			// af parent scope:
 			return _t1952;
@@ -42787,10 +42794,10 @@ v__ast__Type v__checker__Checker_check_expr_opt_call(v__checker__Checker* c, v__
 			v__checker__Checker_check_or_expr(c, (*expr._v__ast__IndexExpr).or_expr, ret_type, ret_type);
 		}
 	}
-	// autofree_scope_vars(pos=84194 line_nr=2342 scope.pos=83290 scope.end_pos=84211)
-	// var "c" var.pos=83295 var.line_nr=2320
-	// var "expr" var.pos=83326 var.line_nr=2320
-	// var "ret_type" var.pos=83341 var.line_nr=2320
+	// autofree_scope_vars(pos=84506 line_nr=2349 scope.pos=83602 scope.end_pos=84523)
+	// var "c" var.pos=83607 var.line_nr=2327
+	// var "expr" var.pos=83638 var.line_nr=2327
+	// var "ret_type" var.pos=83653 var.line_nr=2327
 	// af parent scope:
 	// af parent scope:
 	return ret_type;
@@ -42868,19 +42875,19 @@ void v__checker__Checker_check_or_expr(v__checker__Checker* c, v__ast__OrExpr or
 VV_LOCAL_SYMBOL bool v__checker__is_expr_panic_or_exit(v__ast__Expr expr) {
 	if (expr._typ == 234 /* v.ast.CallExpr */) {
 		/*tmp return var*/ bool _t1953 = (string_eq((*expr._v__ast__CallExpr).name, _SLIT("panic")) || string_eq((*expr._v__ast__CallExpr).name, _SLIT("exit")));
-		// autofree_scope_vars(pos=86963 line_nr=2429 scope.pos=86949 scope.end_pos=87002)
-		// var "expr" var.pos=86940 var.line_nr=2428
+		// autofree_scope_vars(pos=87275 line_nr=2436 scope.pos=87261 scope.end_pos=87314)
+		// var "expr" var.pos=87252 var.line_nr=2435
 		// af parent scope:
-		// var "expr" var.pos=86911 var.line_nr=2427
+		// var "expr" var.pos=87223 var.line_nr=2434
 		// af parent scope:
 		// af parent scope:
 		return _t1953;
 	}
 	else {
 		/*tmp return var*/ bool _t1954 = false;
-		// autofree_scope_vars(pos=87012 line_nr=2430 scope.pos=87006 scope.end_pos=87026)
+		// autofree_scope_vars(pos=87324 line_nr=2437 scope.pos=87318 scope.end_pos=87338)
 		// af parent scope:
-		// var "expr" var.pos=86911 var.line_nr=2427
+		// var "expr" var.pos=87223 var.line_nr=2434
 		// af parent scope:
 		// af parent scope:
 		return _t1954;
@@ -42924,21 +42931,21 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 			v__checker__Checker_error(c, _STR("invalid field `.%.*s\000` for type `%.*s\000`", 3, selector_expr->field_name, v__ast__Expr_str(selector_expr->expr)), selector_expr->pos);
 		}
 		selector_expr->name_type = name_type;
-		// autofree_scope_vars(pos=88182 line_nr=2468 scope.pos=87984 scope.end_pos=88207)
+		// autofree_scope_vars(pos=88494 line_nr=2475 scope.pos=88296 scope.end_pos=88519)
 		// af parent scope:
-		// var "c" var.pos=87046 var.line_nr=2434
-		// var "selector_expr" var.pos=87075 var.line_nr=2434
-		// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-		// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-		// var "name_type" var.pos=87453 var.line_nr=2445
-		// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-		// var "typ" var.pos=88290 var.line_nr=2473
-		// var "field_name" var.pos=88853 var.line_nr=2487
-		// var "utyp" var.pos=88893 var.line_nr=2488
-		// var "sym" var.pos=88924 var.line_nr=2489
-		// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-		// var "has_field" var.pos=89382 var.line_nr=2501
-		// var "field" var.pos=89406 var.line_nr=2502
+		// var "c" var.pos=87358 var.line_nr=2441
+		// var "selector_expr" var.pos=87387 var.line_nr=2441
+		// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+		// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+		// var "name_type" var.pos=87765 var.line_nr=2452
+		// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+		// var "typ" var.pos=88602 var.line_nr=2480
+		// var "field_name" var.pos=89165 var.line_nr=2494
+		// var "utyp" var.pos=89205 var.line_nr=2495
+		// var "sym" var.pos=89236 var.line_nr=2496
+		// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+		// var "has_field" var.pos=89694 var.line_nr=2508
+		// var "field" var.pos=89718 var.line_nr=2509
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -42950,21 +42957,21 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 	c->using_new_err_struct = using_new_err_struct_save;
 	if (typ == _const_v__ast__void_type_idx) {
 		v__checker__Checker_error(c, _SLIT("unknown selector expression"), selector_expr->pos);
-		// autofree_scope_vars(pos=88516 line_nr=2479 scope.pos=88453 scope.end_pos=88539)
+		// autofree_scope_vars(pos=88828 line_nr=2486 scope.pos=88765 scope.end_pos=88851)
 		// af parent scope:
-		// var "c" var.pos=87046 var.line_nr=2434
-		// var "selector_expr" var.pos=87075 var.line_nr=2434
-		// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-		// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-		// var "name_type" var.pos=87453 var.line_nr=2445
-		// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-		// var "typ" var.pos=88290 var.line_nr=2473
-		// var "field_name" var.pos=88853 var.line_nr=2487
-		// var "utyp" var.pos=88893 var.line_nr=2488
-		// var "sym" var.pos=88924 var.line_nr=2489
-		// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-		// var "has_field" var.pos=89382 var.line_nr=2501
-		// var "field" var.pos=89406 var.line_nr=2502
+		// var "c" var.pos=87358 var.line_nr=2441
+		// var "selector_expr" var.pos=87387 var.line_nr=2441
+		// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+		// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+		// var "name_type" var.pos=87765 var.line_nr=2452
+		// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+		// var "typ" var.pos=88602 var.line_nr=2480
+		// var "field_name" var.pos=89165 var.line_nr=2494
+		// var "utyp" var.pos=89205 var.line_nr=2495
+		// var "sym" var.pos=89236 var.line_nr=2496
+		// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+		// var "has_field" var.pos=89694 var.line_nr=2508
+		// var "field" var.pos=89718 var.line_nr=2509
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -42979,44 +42986,44 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 	if (v__ast__Type_has_flag(typ, v__ast__TypeFlag_variadic) || sym->kind == v__ast__Kind_array_fixed || sym->kind == v__ast__Kind_chan) {
 		if (string_eq(field_name, _SLIT("len")) || (sym->kind == v__ast__Kind_chan && string_eq(field_name, _SLIT("cap")))) {
 			selector_expr->typ = _const_v__ast__int_type;
-			// autofree_scope_vars(pos=89151 line_nr=2493 scope.pos=89111 scope.end_pos=89174)
+			// autofree_scope_vars(pos=89463 line_nr=2500 scope.pos=89423 scope.end_pos=89486)
 			// af parent scope:
 			// af parent scope:
-			// var "c" var.pos=87046 var.line_nr=2434
-			// var "selector_expr" var.pos=87075 var.line_nr=2434
-			// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-			// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-			// var "name_type" var.pos=87453 var.line_nr=2445
-			// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-			// var "typ" var.pos=88290 var.line_nr=2473
-			// var "field_name" var.pos=88853 var.line_nr=2487
-			// var "utyp" var.pos=88893 var.line_nr=2488
-			// var "sym" var.pos=88924 var.line_nr=2489
-			// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-			// var "has_field" var.pos=89382 var.line_nr=2501
-			// var "field" var.pos=89406 var.line_nr=2502
+			// var "c" var.pos=87358 var.line_nr=2441
+			// var "selector_expr" var.pos=87387 var.line_nr=2441
+			// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+			// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+			// var "name_type" var.pos=87765 var.line_nr=2452
+			// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+			// var "typ" var.pos=88602 var.line_nr=2480
+			// var "field_name" var.pos=89165 var.line_nr=2494
+			// var "utyp" var.pos=89205 var.line_nr=2495
+			// var "sym" var.pos=89236 var.line_nr=2496
+			// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+			// var "has_field" var.pos=89694 var.line_nr=2508
+			// var "field" var.pos=89718 var.line_nr=2509
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__int_type;
 		}
 		if (sym->kind == v__ast__Kind_chan && string_eq(field_name, _SLIT("closed"))) {
 			selector_expr->typ = _const_v__ast__bool_type;
-			// autofree_scope_vars(pos=89266 line_nr=2497 scope.pos=89225 scope.end_pos=89290)
+			// autofree_scope_vars(pos=89578 line_nr=2504 scope.pos=89537 scope.end_pos=89602)
 			// af parent scope:
 			// af parent scope:
-			// var "c" var.pos=87046 var.line_nr=2434
-			// var "selector_expr" var.pos=87075 var.line_nr=2434
-			// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-			// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-			// var "name_type" var.pos=87453 var.line_nr=2445
-			// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-			// var "typ" var.pos=88290 var.line_nr=2473
-			// var "field_name" var.pos=88853 var.line_nr=2487
-			// var "utyp" var.pos=88893 var.line_nr=2488
-			// var "sym" var.pos=88924 var.line_nr=2489
-			// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-			// var "has_field" var.pos=89382 var.line_nr=2501
-			// var "field" var.pos=89406 var.line_nr=2502
+			// var "c" var.pos=87358 var.line_nr=2441
+			// var "selector_expr" var.pos=87387 var.line_nr=2441
+			// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+			// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+			// var "name_type" var.pos=87765 var.line_nr=2452
+			// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+			// var "typ" var.pos=88602 var.line_nr=2480
+			// var "field_name" var.pos=89165 var.line_nr=2494
+			// var "utyp" var.pos=89205 var.line_nr=2495
+			// var "sym" var.pos=89236 var.line_nr=2496
+			// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+			// var "has_field" var.pos=89694 var.line_nr=2508
+			// var "field" var.pos=89718 var.line_nr=2509
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__bool_type;
@@ -43033,27 +43040,27 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 			v__ast__TypeSymbol* embed_sym = v__ast__Table_get_type_symbol(c->table, embed);
 			if (string_eq(v__ast__TypeSymbol_embed_name(embed_sym), field_name)) {
 				selector_expr->typ = embed;
-				// autofree_scope_vars(pos=89776 line_nr=2511 scope.pos=89741 scope.end_pos=89793)
+				// autofree_scope_vars(pos=90088 line_nr=2518 scope.pos=90053 scope.end_pos=90105)
 				// af parent scope:
-				// var "embed" var.pos=89624 var.line_nr=2507
+				// var "embed" var.pos=89936 var.line_nr=2514
 				// skipping tmp var "embed"
-				// var "embed_sym" var.pos=89654 var.line_nr=2508
+				// var "embed_sym" var.pos=89966 var.line_nr=2515
 				// af parent scope:
-				// var "sym_info" var.pos=89583 var.line_nr=2506
+				// var "sym_info" var.pos=89895 var.line_nr=2513
 				// af parent scope:
-				// var "c" var.pos=87046 var.line_nr=2434
-				// var "selector_expr" var.pos=87075 var.line_nr=2434
-				// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-				// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-				// var "name_type" var.pos=87453 var.line_nr=2445
-				// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-				// var "typ" var.pos=88290 var.line_nr=2473
-				// var "field_name" var.pos=88853 var.line_nr=2487
-				// var "utyp" var.pos=88893 var.line_nr=2488
-				// var "sym" var.pos=88924 var.line_nr=2489
-				// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-				// var "has_field" var.pos=89382 var.line_nr=2501
-				// var "field" var.pos=89406 var.line_nr=2502
+				// var "c" var.pos=87358 var.line_nr=2441
+				// var "selector_expr" var.pos=87387 var.line_nr=2441
+				// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+				// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+				// var "name_type" var.pos=87765 var.line_nr=2452
+				// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+				// var "typ" var.pos=88602 var.line_nr=2480
+				// var "field_name" var.pos=89165 var.line_nr=2494
+				// var "utyp" var.pos=89205 var.line_nr=2495
+				// var "sym" var.pos=89236 var.line_nr=2496
+				// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+				// var "has_field" var.pos=89694 var.line_nr=2508
+				// var "field" var.pos=89718 var.line_nr=2509
 				// af parent scope:
 				// af parent scope:
 				return embed;
@@ -43112,27 +43119,27 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 				if (_t1963 = v__ast__Scope_find_struct_field(selector_expr->scope, utyp, field_name), _t1963.state == 0) {
 					v__ast__ScopeStructField scope_field = *(v__ast__ScopeStructField*)_t1963.data;
 					/*tmp return var*/ v__ast__Type _t1964 = (*(v__ast__Type*)array_last(scope_field.sum_type_casts));
-					// autofree_scope_vars(pos=91231 line_nr=2559 scope.pos=91225 scope.end_pos=91277)
+					// autofree_scope_vars(pos=91543 line_nr=2566 scope.pos=91537 scope.end_pos=91589)
 					// af parent scope:
-					// var "scope_field" var.pos=91154 var.line_nr=2558
+					// var "scope_field" var.pos=91466 var.line_nr=2565
 					// af parent scope:
 					// af parent scope:
 					// af parent scope:
-					// var "field_sym" var.pos=91022 var.line_nr=2555
+					// var "field_sym" var.pos=91334 var.line_nr=2562
 					// af parent scope:
-					// var "c" var.pos=87046 var.line_nr=2434
-					// var "selector_expr" var.pos=87075 var.line_nr=2434
-					// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-					// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-					// var "name_type" var.pos=87453 var.line_nr=2445
-					// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-					// var "typ" var.pos=88290 var.line_nr=2473
-					// var "field_name" var.pos=88853 var.line_nr=2487
-					// var "utyp" var.pos=88893 var.line_nr=2488
-					// var "sym" var.pos=88924 var.line_nr=2489
-					// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-					// var "has_field" var.pos=89382 var.line_nr=2501
-					// var "field" var.pos=89406 var.line_nr=2502
+					// var "c" var.pos=87358 var.line_nr=2441
+					// var "selector_expr" var.pos=87387 var.line_nr=2441
+					// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+					// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+					// var "name_type" var.pos=87765 var.line_nr=2452
+					// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+					// var "typ" var.pos=88602 var.line_nr=2480
+					// var "field_name" var.pos=89165 var.line_nr=2494
+					// var "utyp" var.pos=89205 var.line_nr=2495
+					// var "sym" var.pos=89236 var.line_nr=2496
+					// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+					// var "has_field" var.pos=89694 var.line_nr=2508
+					// var "field" var.pos=89718 var.line_nr=2509
 					// af parent scope:
 					// af parent scope:
 					return _t1964;
@@ -43141,22 +43148,22 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 		}
 		selector_expr->typ = field.typ;
 		/*tmp return var*/ v__ast__Type _t1965 = field.typ;
-		// autofree_scope_vars(pos=91321 line_nr=2564 scope.pos=90872 scope.end_pos=91340)
-		// var "field_sym" var.pos=91022 var.line_nr=2555
+		// autofree_scope_vars(pos=91633 line_nr=2571 scope.pos=91184 scope.end_pos=91652)
+		// var "field_sym" var.pos=91334 var.line_nr=2562
 		// af parent scope:
-		// var "c" var.pos=87046 var.line_nr=2434
-		// var "selector_expr" var.pos=87075 var.line_nr=2434
-		// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-		// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-		// var "name_type" var.pos=87453 var.line_nr=2445
-		// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-		// var "typ" var.pos=88290 var.line_nr=2473
-		// var "field_name" var.pos=88853 var.line_nr=2487
-		// var "utyp" var.pos=88893 var.line_nr=2488
-		// var "sym" var.pos=88924 var.line_nr=2489
-		// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-		// var "has_field" var.pos=89382 var.line_nr=2501
-		// var "field" var.pos=89406 var.line_nr=2502
+		// var "c" var.pos=87358 var.line_nr=2441
+		// var "selector_expr" var.pos=87387 var.line_nr=2441
+		// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+		// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+		// var "name_type" var.pos=87765 var.line_nr=2452
+		// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+		// var "typ" var.pos=88602 var.line_nr=2480
+		// var "field_name" var.pos=89165 var.line_nr=2494
+		// var "utyp" var.pos=89205 var.line_nr=2495
+		// var "sym" var.pos=89236 var.line_nr=2496
+		// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+		// var "has_field" var.pos=89694 var.line_nr=2508
+		// var "field" var.pos=89718 var.line_nr=2509
 		// af parent scope:
 		// af parent scope:
 		return _t1965;
@@ -43182,20 +43189,20 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 		}
 		v__checker__Checker_error(c, unknown_field_msg, selector_expr->pos);
 	}
-	// autofree_scope_vars(pos=91772 line_nr=2577 scope.pos=87041 scope.end_pos=91794)
-	// var "c" var.pos=87046 var.line_nr=2434
-	// var "selector_expr" var.pos=87075 var.line_nr=2434
-	// var "prevent_sum_type_unwrapping_once" var.pos=87119 var.line_nr=2435
-	// var "using_new_err_struct_save" var.pos=87236 var.line_nr=2438
-	// var "name_type" var.pos=87453 var.line_nr=2445
-	// var "old_selector_expr" var.pos=88214 var.line_nr=2471
-	// var "typ" var.pos=88290 var.line_nr=2473
-	// var "field_name" var.pos=88853 var.line_nr=2487
-	// var "utyp" var.pos=88893 var.line_nr=2488
-	// var "sym" var.pos=88924 var.line_nr=2489
-	// var "unknown_field_msg" var.pos=89300 var.line_nr=2500
-	// var "has_field" var.pos=89382 var.line_nr=2501
-	// var "field" var.pos=89406 var.line_nr=2502
+	// autofree_scope_vars(pos=92084 line_nr=2584 scope.pos=87353 scope.end_pos=92106)
+	// var "c" var.pos=87358 var.line_nr=2441
+	// var "selector_expr" var.pos=87387 var.line_nr=2441
+	// var "prevent_sum_type_unwrapping_once" var.pos=87431 var.line_nr=2442
+	// var "using_new_err_struct_save" var.pos=87548 var.line_nr=2445
+	// var "name_type" var.pos=87765 var.line_nr=2452
+	// var "old_selector_expr" var.pos=88526 var.line_nr=2478
+	// var "typ" var.pos=88602 var.line_nr=2480
+	// var "field_name" var.pos=89165 var.line_nr=2494
+	// var "utyp" var.pos=89205 var.line_nr=2495
+	// var "sym" var.pos=89236 var.line_nr=2496
+	// var "unknown_field_msg" var.pos=89612 var.line_nr=2507
+	// var "has_field" var.pos=89694 var.line_nr=2508
+	// var "field" var.pos=89718 var.line_nr=2509
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__void_type;
@@ -43786,11 +43793,11 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 			IError err = _t1991.err;
 		};
 		/*tmp return var*/ v__ast__Type _t1992 = array_init->typ;
-		// autofree_scope_vars(pos=113810 line_nr=3220 scope.pos=113125 scope.end_pos=113834)
+		// autofree_scope_vars(pos=114122 line_nr=3227 scope.pos=113437 scope.end_pos=114146)
 		// af parent scope:
-		// var "c" var.pos=112889 var.line_nr=3196
-		// var "array_init" var.pos=112915 var.line_nr=3196
-		// var "elem_type" var.pos=113029 var.line_nr=3198
+		// var "c" var.pos=113201 var.line_nr=3203
+		// var "array_init" var.pos=113227 var.line_nr=3203
+		// var "elem_type" var.pos=113341 var.line_nr=3205
 		// af parent scope:
 		// af parent scope:
 		return _t1992;
@@ -43809,14 +43816,14 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 		v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(c->table, c->expected_type);
 		if (type_sym->kind != v__ast__Kind_array) {
 			v__checker__Checker_error(c, _SLIT("array_init: no type specified (maybe: `[]Type{}` instead of `[]`)"), array_init->pos);
-			// autofree_scope_vars(pos=114399 line_nr=3236 scope.pos=114295 scope.end_pos=114423)
+			// autofree_scope_vars(pos=114711 line_nr=3243 scope.pos=114607 scope.end_pos=114735)
 			// af parent scope:
-			// var "type_sym" var.pos=114213 var.line_nr=3232
-			// var "array_info" var.pos=114664 var.line_nr=3243
+			// var "type_sym" var.pos=114525 var.line_nr=3239
+			// var "array_info" var.pos=114976 var.line_nr=3250
 			// af parent scope:
-			// var "c" var.pos=112889 var.line_nr=3196
-			// var "array_init" var.pos=112915 var.line_nr=3196
-			// var "elem_type" var.pos=113029 var.line_nr=3198
+			// var "c" var.pos=113201 var.line_nr=3203
+			// var "array_init" var.pos=113227 var.line_nr=3203
+			// var "elem_type" var.pos=113341 var.line_nr=3205
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__void_type;
@@ -43824,13 +43831,13 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 		v__ast__Array array_info = v__ast__TypeSymbol_array_info(type_sym);
 		array_init->elem_type = array_info.elem_type;
 		/*tmp return var*/ v__ast__Type _t1994 = v__ast__Type_clear_flag(c->expected_type, v__ast__TypeFlag_optional);
-		// autofree_scope_vars(pos=114817 line_nr=3246 scope.pos=114038 scope.end_pos=114864)
-		// var "type_sym" var.pos=114213 var.line_nr=3232
-		// var "array_info" var.pos=114664 var.line_nr=3243
+		// autofree_scope_vars(pos=115129 line_nr=3253 scope.pos=114350 scope.end_pos=115176)
+		// var "type_sym" var.pos=114525 var.line_nr=3239
+		// var "array_info" var.pos=114976 var.line_nr=3250
 		// af parent scope:
-		// var "c" var.pos=112889 var.line_nr=3196
-		// var "array_init" var.pos=112915 var.line_nr=3196
-		// var "elem_type" var.pos=113029 var.line_nr=3198
+		// var "c" var.pos=113201 var.line_nr=3203
+		// var "array_init" var.pos=113227 var.line_nr=3203
+		// var "elem_type" var.pos=113341 var.line_nr=3205
 		// af parent scope:
 		// af parent scope:
 		return _t1994;
@@ -43919,10 +43926,10 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 		}
 	}
 	/*tmp return var*/ v__ast__Type _t1999 = array_init->typ;
-	// autofree_scope_vars(pos=117547 line_nr=3337 scope.pos=112884 scope.end_pos=117570)
-	// var "c" var.pos=112889 var.line_nr=3196
-	// var "array_init" var.pos=112915 var.line_nr=3196
-	// var "elem_type" var.pos=113029 var.line_nr=3198
+	// autofree_scope_vars(pos=117859 line_nr=3344 scope.pos=113196 scope.end_pos=117882)
+	// var "c" var.pos=113201 var.line_nr=3203
+	// var "array_init" var.pos=113227 var.line_nr=3203
+	// var "elem_type" var.pos=113341 var.line_nr=3205
 	// af parent scope:
 	// af parent scope:
 	return _t1999;
@@ -44169,7 +44176,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__B
 		if (!(!c->inside_unsafe)) {
 			VAssertMetaInfo v_assert_meta_info__t2019 = {0};
 			v_assert_meta_info__t2019.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-			v_assert_meta_info__t2019.line_nr = 3528;
+			v_assert_meta_info__t2019.line_nr = 3535;
 			v_assert_meta_info__t2019.fn_name = _SLIT("block");
 			v_assert_meta_info__t2019.src = _SLIT("!c.inside_unsafe");
 			__print_assert_failure(&v_assert_meta_info__t2019);
@@ -44457,12 +44464,12 @@ VV_LOCAL_SYMBOL Array_string v__checker__Checker_asm_ios(v__checker__Checker* c,
 			}
 		}
 	}
-	// autofree_scope_vars(pos=130852 line_nr=3833 scope.pos=130402 scope.end_pos=130868)
-	// var "c" var.pos=130407 var.line_nr=3811
-	// var "ios" var.pos=130426 var.line_nr=3811
-	// var "scope" var.pos=130447 var.line_nr=3811
-	// var "output" var.pos=130464 var.line_nr=3811
-	// var "aliases" var.pos=130493 var.line_nr=3812
+	// autofree_scope_vars(pos=131164 line_nr=3840 scope.pos=130714 scope.end_pos=131180)
+	// var "c" var.pos=130719 var.line_nr=3818
+	// var "ios" var.pos=130738 var.line_nr=3818
+	// var "scope" var.pos=130759 var.line_nr=3818
+	// var "output" var.pos=130776 var.line_nr=3818
+	// var "aliases" var.pos=130805 var.line_nr=3819
 	// af parent scope:
 	// af parent scope:
 	return aliases;
@@ -44638,26 +44645,26 @@ v__ast__Type v__checker__Checker_unwrap_generic(v__checker__Checker* c, v__ast__
 			v__ast__GenericParam generic_param = ((v__ast__GenericParam*)c->cur_fn->generic_params.data)[i];
 			if (string_eq(generic_param.name, sym->name)) {
 				/*tmp return var*/ v__ast__Type _t2047 = v__ast__Type_clear_flag(v__ast__Type_derive((*(v__ast__Type*)/*ee elem_typ */array_get(c->cur_generic_types, i)), typ), v__ast__TypeFlag_generic);
-				// autofree_scope_vars(pos=134714 line_nr=3984 scope.pos=134709 scope.end_pos=134781)
+				// autofree_scope_vars(pos=135026 line_nr=3991 scope.pos=135021 scope.end_pos=135093)
 				// af parent scope:
-				// var "i" var.pos=134626 var.line_nr=3982
+				// var "i" var.pos=134938 var.line_nr=3989
 				// skipping tmp var "i"
-				// var "generic_param" var.pos=134629 var.line_nr=3982
+				// var "generic_param" var.pos=134941 var.line_nr=3989
 				// skipping tmp var "generic_param"
 				// af parent scope:
-				// var "sym" var.pos=134584 var.line_nr=3981
+				// var "sym" var.pos=134896 var.line_nr=3988
 				// af parent scope:
-				// var "c" var.pos=134501 var.line_nr=3979
-				// var "typ" var.pos=134528 var.line_nr=3979
+				// var "c" var.pos=134813 var.line_nr=3986
+				// var "typ" var.pos=134840 var.line_nr=3986
 				// af parent scope:
 				// af parent scope:
 				return _t2047;
 			}
 		}
 	}
-	// autofree_scope_vars(pos=134790 line_nr=3988 scope.pos=134500 scope.end_pos=134802)
-	// var "c" var.pos=134501 var.line_nr=3979
-	// var "typ" var.pos=134528 var.line_nr=3979
+	// autofree_scope_vars(pos=135102 line_nr=3995 scope.pos=134812 scope.end_pos=135114)
+	// var "c" var.pos=134813 var.line_nr=3986
+	// var "typ" var.pos=134840 var.line_nr=3986
 	// af parent scope:
 	// af parent scope:
 	return typ;
@@ -44674,10 +44681,10 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=135031 line_nr=3999 scope.pos=134952 scope.end_pos=135054)
+		// autofree_scope_vars(pos=135343 line_nr=4006 scope.pos=135264 scope.end_pos=135366)
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -44695,11 +44702,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2048 = (*node._v__ast__CTempVar).typ;
-		// autofree_scope_vars(pos=135223 line_nr=4008 scope.pos=135206 scope.end_pos=135242)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=135535 line_nr=4015 scope.pos=135518 scope.end_pos=135554)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2048;
@@ -44718,12 +44725,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2049 = (*node._v__ast__AnonFn).typ;
-		// autofree_scope_vars(pos=135442 line_nr=4018 scope.pos=135246 scope.end_pos=135461)
-		// var "keep_fn" var.pos=135289 var.line_nr=4012
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=135754 line_nr=4025 scope.pos=135558 scope.end_pos=135773)
+		// var "keep_fn" var.pos=135601 var.line_nr=4019
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2049;
@@ -44738,16 +44745,16 @@ bool v__checker__Checker_expr_defer_0 = false;
 				c->expr_level--;
 			}
 			// Defer end
-			// autofree_scope_vars(pos=135671 line_nr=4025 scope.pos=135588 scope.end_pos=135696)
+			// autofree_scope_vars(pos=135983 line_nr=4032 scope.pos=135900 scope.end_pos=136008)
 			// af parent scope:
-			// var "typ" var.pos=135489 var.line_nr=4021
-			// var "type_sym" var.pos=135517 var.line_nr=4022
-			// var "array_info" var.pos=135701 var.line_nr=4027
-			// var "elem_type" var.pos=135745 var.line_nr=4028
-			// var "node" var.pos=135067 var.line_nr=4001
+			// var "typ" var.pos=135801 var.line_nr=4028
+			// var "type_sym" var.pos=135829 var.line_nr=4029
+			// var "array_info" var.pos=136013 var.line_nr=4034
+			// var "elem_type" var.pos=136057 var.line_nr=4035
+			// var "node" var.pos=135379 var.line_nr=4008
 			// af parent scope:
-			// var "c" var.pos=134842 var.line_nr=3992
-			// var "node" var.pos=134858 var.line_nr=3992
+			// var "c" var.pos=135154 var.line_nr=3999
+			// var "node" var.pos=135170 var.line_nr=3999
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__void_type;
@@ -44761,15 +44768,15 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=135854 line_nr=4031 scope.pos=135465 scope.end_pos=135874)
-		// var "typ" var.pos=135489 var.line_nr=4021
-		// var "type_sym" var.pos=135517 var.line_nr=4022
-		// var "array_info" var.pos=135701 var.line_nr=4027
-		// var "elem_type" var.pos=135745 var.line_nr=4028
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=136166 line_nr=4038 scope.pos=135777 scope.end_pos=136186)
+		// var "typ" var.pos=135801 var.line_nr=4028
+		// var "type_sym" var.pos=135829 var.line_nr=4029
+		// var "array_info" var.pos=136013 var.line_nr=4034
+		// var "elem_type" var.pos=136057 var.line_nr=4035
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return elem_type;
@@ -44781,11 +44788,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2050 = v__checker__Checker_array_init(c, (voidptr)&/*qq*/(*node._v__ast__ArrayInit));
-		// autofree_scope_vars(pos=135896 line_nr=4034 scope.pos=135878 scope.end_pos=135929)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=136208 line_nr=4041 scope.pos=136190 scope.end_pos=136241)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2050;
@@ -44816,14 +44823,14 @@ bool v__checker__Checker_expr_defer_0 = false;
 			}
 			// Defer end
 			/*tmp return var*/ v__ast__Type _t2052 = (*node._v__ast__AsCast).typ;
-			// autofree_scope_vars(pos=136670 line_nr=4054 scope.pos=136665 scope.end_pos=136690)
+			// autofree_scope_vars(pos=136982 line_nr=4061 scope.pos=136977 scope.end_pos=137002)
 			// af parent scope:
-			// var "expr_type_sym" var.pos=135987 var.line_nr=4038
-			// var "type_sym" var.pos=136047 var.line_nr=4039
-			// var "node" var.pos=135067 var.line_nr=4001
+			// var "expr_type_sym" var.pos=136299 var.line_nr=4045
+			// var "type_sym" var.pos=136359 var.line_nr=4046
+			// var "node" var.pos=135379 var.line_nr=4008
 			// af parent scope:
-			// var "c" var.pos=134842 var.line_nr=3992
-			// var "node" var.pos=134858 var.line_nr=3992
+			// var "c" var.pos=135154 var.line_nr=3999
+			// var "node" var.pos=135170 var.line_nr=3999
 			// af parent scope:
 			// af parent scope:
 			return _t2052;
@@ -44834,13 +44841,13 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2053 = v__ast__Type_to_ptr((*node._v__ast__AsCast).typ);
-		// autofree_scope_vars(pos=136694 line_nr=4056 scope.pos=135933 scope.end_pos=136722)
-		// var "expr_type_sym" var.pos=135987 var.line_nr=4038
-		// var "type_sym" var.pos=136047 var.line_nr=4039
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=137006 line_nr=4063 scope.pos=136245 scope.end_pos=137034)
+		// var "expr_type_sym" var.pos=136299 var.line_nr=4045
+		// var "type_sym" var.pos=136359 var.line_nr=4046
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2053;
@@ -44863,12 +44870,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2055 = v->typ;
-		// autofree_scope_vars(pos=136881 line_nr=4064 scope.pos=136726 scope.end_pos=136897)
-		// var "v" var.pos=136741 var.line_nr=4059
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=137193 line_nr=4071 scope.pos=137038 scope.end_pos=137209)
+		// var "v" var.pos=137053 var.line_nr=4066
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2055;
@@ -44879,11 +44886,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=136921 line_nr=4067 scope.pos=136901 scope.end_pos=136945)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=137233 line_nr=4074 scope.pos=137213 scope.end_pos=137257)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__bool_type;
@@ -44895,11 +44902,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2056 = v__checker__Checker_cast_expr(c, (voidptr)&/*qq*/(*node._v__ast__CastExpr));
-		// autofree_scope_vars(pos=136966 line_nr=4070 scope.pos=136949 scope.end_pos=136998)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=137278 line_nr=4077 scope.pos=137261 scope.end_pos=137310)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2056;
@@ -44921,12 +44928,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=137546 line_nr=4086 scope.pos=137002 scope.end_pos=137565)
-		// var "ret_type" var.pos=137024 var.line_nr=4073
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=137858 line_nr=4093 scope.pos=137314 scope.end_pos=137877)
+		// var "ret_type" var.pos=137336 var.line_nr=4080
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return ret_type;
@@ -44942,12 +44949,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2057 = v__ast__Table_find_or_register_thread(c->table, ret_type);
-		// autofree_scope_vars(pos=137837 line_nr=4094 scope.pos=137569 scope.end_pos=137889)
-		// var "ret_type" var.pos=137589 var.line_nr=4089
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=138149 line_nr=4101 scope.pos=137881 scope.end_pos=138201)
+		// var "ret_type" var.pos=137901 var.line_nr=4096
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2057;
@@ -44959,11 +44966,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2058 = v__checker__Checker_chan_init(c, (voidptr)&/*qq*/(*node._v__ast__ChanInit));
-		// autofree_scope_vars(pos=137910 line_nr=4097 scope.pos=137893 scope.end_pos=137942)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=138222 line_nr=4104 scope.pos=138205 scope.end_pos=138254)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2058;
@@ -44974,11 +44981,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=138088 line_nr=4102 scope.pos=137946 scope.end_pos=138139)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=138400 line_nr=4109 scope.pos=138258 scope.end_pos=138451)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__rune_type;
@@ -44989,11 +44996,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=138159 line_nr=4106 scope.pos=138143 scope.end_pos=138183)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=138471 line_nr=4113 scope.pos=138455 scope.end_pos=138495)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45005,11 +45012,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2059 = v__checker__Checker_at_expr(c, (voidptr)&/*qq*/(*node._v__ast__AtExpr));
-		// autofree_scope_vars(pos=138202 line_nr=4109 scope.pos=138187 scope.end_pos=138232)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=138514 line_nr=4116 scope.pos=138499 scope.end_pos=138544)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2059;
@@ -45021,11 +45028,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2060 = v__checker__Checker_comptime_call(c, (voidptr)&/*qq*/(*node._v__ast__ComptimeCall));
-		// autofree_scope_vars(pos=138257 line_nr=4112 scope.pos=138236 scope.end_pos=138293)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=138569 line_nr=4119 scope.pos=138548 scope.end_pos=138605)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2060;
@@ -45050,17 +45057,17 @@ bool v__checker__Checker_expr_defer_0 = false;
 				}
 				// Defer end
 				/*tmp return var*/ v__ast__Type _t2061 = (*(v__ast__Type*)map_get_1(ADDR(map, c->comptime_fields_type), &(string[]){expr_name}, &(v__ast__Type[]){ 0 }));
-				// autofree_scope_vars(pos=138978 line_nr=4130 scope.pos=138972 scope.end_pos=139024)
+				// autofree_scope_vars(pos=139290 line_nr=4137 scope.pos=139284 scope.end_pos=139336)
 				// af parent scope:
-				// var "left_pos" var.pos=138688 var.line_nr=4123
-				// var "expr_name" var.pos=138889 var.line_nr=4128
+				// var "left_pos" var.pos=139000 var.line_nr=4130
+				// var "expr_name" var.pos=139201 var.line_nr=4135
 				// af parent scope:
-				// var "expr_type" var.pos=138379 var.line_nr=4116
-				// var "expr_sym" var.pos=138437 var.line_nr=4117
-				// var "node" var.pos=135067 var.line_nr=4001
+				// var "expr_type" var.pos=138691 var.line_nr=4123
+				// var "expr_sym" var.pos=138749 var.line_nr=4124
+				// var "node" var.pos=135379 var.line_nr=4008
 				// af parent scope:
-				// var "c" var.pos=134842 var.line_nr=3992
-				// var "node" var.pos=134858 var.line_nr=3992
+				// var "c" var.pos=135154 var.line_nr=3999
+				// var "node" var.pos=135170 var.line_nr=3999
 				// af parent scope:
 				// af parent scope:
 				return _t2061;
@@ -45074,13 +45081,13 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=139201 line_nr=4136 scope.pos=138297 scope.end_pos=139225)
-		// var "expr_type" var.pos=138379 var.line_nr=4116
-		// var "expr_sym" var.pos=138437 var.line_nr=4117
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=139513 line_nr=4143 scope.pos=138609 scope.end_pos=139537)
+		// var "expr_type" var.pos=138691 var.line_nr=4123
+		// var "expr_sym" var.pos=138749 var.line_nr=4124
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45092,11 +45099,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2062 = v__checker__Checker_concat_expr(c, (voidptr)&/*qq*/(*node._v__ast__ConcatExpr));
-		// autofree_scope_vars(pos=139248 line_nr=4139 scope.pos=139229 scope.end_pos=139282)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=139560 line_nr=4146 scope.pos=139541 scope.end_pos=139594)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2062;
@@ -45110,13 +45117,13 @@ bool v__checker__Checker_expr_defer_0 = false;
 				c->expr_level--;
 			}
 			// Defer end
-			// autofree_scope_vars(pos=139461 line_nr=4145 scope.pos=139387 scope.end_pos=139486)
+			// autofree_scope_vars(pos=139773 line_nr=4152 scope.pos=139699 scope.end_pos=139798)
 			// af parent scope:
-			// var "tsym" var.pos=139491 var.line_nr=4147
-			// var "node" var.pos=135067 var.line_nr=4001
+			// var "tsym" var.pos=139803 var.line_nr=4154
+			// var "node" var.pos=135379 var.line_nr=4008
 			// af parent scope:
-			// var "c" var.pos=134842 var.line_nr=3992
-			// var "node" var.pos=134858 var.line_nr=3992
+			// var "c" var.pos=135154 var.line_nr=3999
+			// var "node" var.pos=135170 var.line_nr=3999
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__void_type;
@@ -45130,12 +45137,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2063 = (*node._v__ast__DumpExpr).expr_type;
-		// autofree_scope_vars(pos=139619 line_nr=4150 scope.pos=139286 scope.end_pos=139644)
-		// var "tsym" var.pos=139491 var.line_nr=4147
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=139931 line_nr=4157 scope.pos=139598 scope.end_pos=139956)
+		// var "tsym" var.pos=139803 var.line_nr=4154
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2063;
@@ -45147,11 +45154,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2064 = v__checker__Checker_enum_val(c, (voidptr)&/*qq*/(*node._v__ast__EnumVal));
-		// autofree_scope_vars(pos=139664 line_nr=4153 scope.pos=139648 scope.end_pos=139695)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=139976 line_nr=4160 scope.pos=139960 scope.end_pos=140007)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2064;
@@ -45162,11 +45169,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=139720 line_nr=4156 scope.pos=139699 scope.end_pos=139753)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140032 line_nr=4163 scope.pos=140011 scope.end_pos=140065)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__float_literal_type;
@@ -45178,12 +45185,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=139860 line_nr=4162 scope.pos=139757 scope.end_pos=139874)
-		// var "res" var.pos=139806 var.line_nr=4160
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140172 line_nr=4169 scope.pos=140069 scope.end_pos=140186)
+		// var "res" var.pos=140118 var.line_nr=4167
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return res;
@@ -45195,11 +45202,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2065 = v__checker__Checker_if_expr(c, (voidptr)&/*qq*/(*node._v__ast__IfExpr));
-		// autofree_scope_vars(pos=139893 line_nr=4165 scope.pos=139878 scope.end_pos=139923)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140205 line_nr=4172 scope.pos=140190 scope.end_pos=140235)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2065;
@@ -45231,11 +45238,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=140523 line_nr=4190 scope.pos=139927 scope.end_pos=140547)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140835 line_nr=4197 scope.pos=140239 scope.end_pos=140859)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__bool_type;
@@ -45247,11 +45254,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2066 = v__checker__Checker_index_expr(c, (voidptr)&/*qq*/(*node._v__ast__IndexExpr));
-		// autofree_scope_vars(pos=140569 line_nr=4193 scope.pos=140551 scope.end_pos=140602)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140881 line_nr=4200 scope.pos=140863 scope.end_pos=140914)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2066;
@@ -45263,11 +45270,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2067 = v__checker__Checker_infix_expr(c, (voidptr)&/*qq*/(*node._v__ast__InfixExpr));
-		// autofree_scope_vars(pos=140624 line_nr=4196 scope.pos=140606 scope.end_pos=140657)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140936 line_nr=4203 scope.pos=140918 scope.end_pos=140969)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2067;
@@ -45278,11 +45285,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=140684 line_nr=4199 scope.pos=140661 scope.end_pos=140715)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=140996 line_nr=4206 scope.pos=140973 scope.end_pos=141027)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__int_literal_type;
@@ -45294,11 +45301,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2068 = v__checker__Checker_lock_expr(c, (voidptr)&/*qq*/(*node._v__ast__LockExpr));
-		// autofree_scope_vars(pos=140736 line_nr=4202 scope.pos=140719 scope.end_pos=140768)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141048 line_nr=4209 scope.pos=141031 scope.end_pos=141080)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2068;
@@ -45310,11 +45317,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2069 = v__checker__Checker_map_init(c, (voidptr)&/*qq*/(*node._v__ast__MapInit));
-		// autofree_scope_vars(pos=140788 line_nr=4205 scope.pos=140772 scope.end_pos=140819)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141100 line_nr=4212 scope.pos=141084 scope.end_pos=141131)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2069;
@@ -45326,11 +45333,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2070 = v__checker__Checker_match_expr(c, (voidptr)&/*qq*/(*node._v__ast__MatchExpr));
-		// autofree_scope_vars(pos=140841 line_nr=4208 scope.pos=140823 scope.end_pos=140874)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141153 line_nr=4215 scope.pos=141135 scope.end_pos=141186)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2070;
@@ -45342,11 +45349,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2071 = v__checker__Checker_postfix_expr(c, (voidptr)&/*qq*/(*node._v__ast__PostfixExpr));
-		// autofree_scope_vars(pos=140898 line_nr=4211 scope.pos=140878 scope.end_pos=140933)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141210 line_nr=4218 scope.pos=141190 scope.end_pos=141245)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2071;
@@ -45358,11 +45365,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2072 = v__checker__Checker_prefix_expr(c, (voidptr)&/*qq*/(*node._v__ast__PrefixExpr));
-		// autofree_scope_vars(pos=140956 line_nr=4214 scope.pos=140937 scope.end_pos=140990)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141268 line_nr=4221 scope.pos=141249 scope.end_pos=141302)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2072;
@@ -45373,11 +45380,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=141007 line_nr=4217 scope.pos=140994 scope.end_pos=141031)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141319 line_nr=4224 scope.pos=141306 scope.end_pos=141343)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__none_type;
@@ -45388,11 +45395,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=141070 line_nr=4221 scope.pos=141035 scope.end_pos=141094)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141382 line_nr=4228 scope.pos=141347 scope.end_pos=141406)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45404,11 +45411,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2073 = v__checker__Checker_expr(c, (*node._v__ast__ParExpr).expr);
-		// autofree_scope_vars(pos=141161 line_nr=4227 scope.pos=141145 scope.end_pos=141189)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141473 line_nr=4234 scope.pos=141457 scope.end_pos=141501)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2073;
@@ -45419,11 +45426,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=141231 line_nr=4231 scope.pos=141193 scope.end_pos=141255)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141543 line_nr=4238 scope.pos=141505 scope.end_pos=141567)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45435,11 +45442,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2074 = v__checker__Checker_select_expr(c, (voidptr)&/*qq*/(*node._v__ast__SelectExpr));
-		// autofree_scope_vars(pos=141278 line_nr=4234 scope.pos=141259 scope.end_pos=141312)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141590 line_nr=4241 scope.pos=141571 scope.end_pos=141624)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2074;
@@ -45451,11 +45458,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2075 = v__checker__Checker_selector_expr(c, (voidptr)&/*qq*/(*node._v__ast__SelectorExpr));
-		// autofree_scope_vars(pos=141337 line_nr=4237 scope.pos=141316 scope.end_pos=141373)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141649 line_nr=4244 scope.pos=141628 scope.end_pos=141685)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2075;
@@ -45469,11 +45476,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=141452 line_nr=4243 scope.pos=141377 scope.end_pos=141475)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141764 line_nr=4250 scope.pos=141689 scope.end_pos=141787)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__u32_type;
@@ -45485,11 +45492,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2076 = v__checker__Checker_offset_of(c, (*node._v__ast__OffsetOf));
-		// autofree_scope_vars(pos=141496 line_nr=4246 scope.pos=141479 scope.end_pos=141524)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141808 line_nr=4253 scope.pos=141791 scope.end_pos=141836)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2076;
@@ -45501,11 +45508,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2077 = v__checker__Checker_sql_expr(c, (voidptr)&/*qq*/(*node._v__ast__SqlExpr));
-		// autofree_scope_vars(pos=141544 line_nr=4249 scope.pos=141528 scope.end_pos=141575)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141856 line_nr=4256 scope.pos=141840 scope.end_pos=141887)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2077;
@@ -45517,12 +45524,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 				c->expr_level--;
 			}
 			// Defer end
-			// autofree_scope_vars(pos=141630 line_nr=4253 scope.pos=141625 scope.end_pos=141658)
+			// autofree_scope_vars(pos=141942 line_nr=4260 scope.pos=141937 scope.end_pos=141970)
 			// af parent scope:
-			// var "node" var.pos=135067 var.line_nr=4001
+			// var "node" var.pos=135379 var.line_nr=4008
 			// af parent scope:
-			// var "c" var.pos=134842 var.line_nr=3992
-			// var "node" var.pos=134858 var.line_nr=3992
+			// var "c" var.pos=135154 var.line_nr=3999
+			// var "node" var.pos=135170 var.line_nr=3999
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__byteptr_type;
@@ -45532,11 +45539,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=141662 line_nr=4255 scope.pos=141579 scope.end_pos=141688)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=141974 line_nr=4262 scope.pos=141891 scope.end_pos=142000)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -45548,11 +45555,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2078 = v__checker__Checker_string_inter_lit(c, (voidptr)&/*qq*/(*node._v__ast__StringInterLiteral));
-		// autofree_scope_vars(pos=141719 line_nr=4258 scope.pos=141692 scope.end_pos=141758)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=142031 line_nr=4265 scope.pos=142004 scope.end_pos=142070)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2078;
@@ -45565,12 +45572,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 			}
 			// Defer end
 			/*tmp return var*/ v__ast__Type _t2079 = v__checker__Checker_expr(c, v__ast__resolve_init((*node._v__ast__StructInit), v__checker__Checker_unwrap_generic(c, (*node._v__ast__StructInit).typ), c->table));
-			// autofree_scope_vars(pos=141806 line_nr=4262 scope.pos=141801 scope.end_pos=141885)
+			// autofree_scope_vars(pos=142118 line_nr=4269 scope.pos=142113 scope.end_pos=142197)
 			// af parent scope:
-			// var "node" var.pos=135067 var.line_nr=4001
+			// var "node" var.pos=135379 var.line_nr=4008
 			// af parent scope:
-			// var "c" var.pos=134842 var.line_nr=3992
-			// var "node" var.pos=134858 var.line_nr=3992
+			// var "c" var.pos=135154 var.line_nr=3999
+			// var "node" var.pos=135170 var.line_nr=3999
 			// af parent scope:
 			// af parent scope:
 			return _t2079;
@@ -45581,11 +45588,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2080 = v__checker__Checker_struct_init(c, (voidptr)&/*qq*/(*node._v__ast__StructInit));
-		// autofree_scope_vars(pos=141889 line_nr=4264 scope.pos=141762 scope.end_pos=141923)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=142201 line_nr=4271 scope.pos=142074 scope.end_pos=142235)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2080;
@@ -45597,11 +45604,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2081 = (*node._v__ast__TypeNode).typ;
-		// autofree_scope_vars(pos=141944 line_nr=4267 scope.pos=141927 scope.end_pos=141963)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=142256 line_nr=4274 scope.pos=142239 scope.end_pos=142275)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2081;
@@ -45613,11 +45620,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=142020 line_nr=4271 scope.pos=141967 scope.end_pos=142046)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=142332 line_nr=4278 scope.pos=142279 scope.end_pos=142358)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -45629,11 +45636,11 @@ bool v__checker__Checker_expr_defer_0 = false;
 		}
 		// Defer end
 		/*tmp return var*/ v__ast__Type _t2082 = v__checker__Checker_unsafe_expr(c, (voidptr)&/*qq*/(*node._v__ast__UnsafeExpr));
-		// autofree_scope_vars(pos=142069 line_nr=4274 scope.pos=142050 scope.end_pos=142103)
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=142381 line_nr=4281 scope.pos=142362 scope.end_pos=142415)
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _t2082;
@@ -45650,12 +45657,12 @@ bool v__checker__Checker_expr_defer_0 = false;
 			c->expr_level--;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=142424 line_nr=4284 scope.pos=142107 scope.end_pos=142448)
-		// var "ltype" var.pos=142123 var.line_nr=4277
-		// var "node" var.pos=135067 var.line_nr=4001
+		// autofree_scope_vars(pos=142736 line_nr=4291 scope.pos=142419 scope.end_pos=142760)
+		// var "ltype" var.pos=142435 var.line_nr=4284
+		// var "node" var.pos=135379 var.line_nr=4008
 		// af parent scope:
-		// var "c" var.pos=134842 var.line_nr=3992
-		// var "node" var.pos=134858 var.line_nr=3992
+		// var "c" var.pos=135154 var.line_nr=3999
+		// var "node" var.pos=135170 var.line_nr=3999
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__bool_type;
@@ -45665,9 +45672,9 @@ bool v__checker__Checker_expr_defer_0 = false;
 		c->expr_level--;
 	}
 	// Defer end
-	// autofree_scope_vars(pos=142453 line_nr=4287 scope.pos=134837 scope.end_pos=142475)
-	// var "c" var.pos=134842 var.line_nr=3992
-	// var "node" var.pos=134858 var.line_nr=3992
+	// autofree_scope_vars(pos=142765 line_nr=4294 scope.pos=135149 scope.end_pos=142787)
+	// var "c" var.pos=135154 var.line_nr=3999
+	// var "node" var.pos=135170 var.line_nr=3999
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__void_type;
@@ -45761,12 +45768,12 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 	}
 	node->typname = v__ast__Table_get_type_symbol(c->table, node->typ)->name;
 	/*tmp return var*/ v__ast__Type _t2084 = node->typ;
-	// autofree_scope_vars(pos=147815 line_nr=4408 scope.pos=142958 scope.end_pos=147832)
-	// var "c" var.pos=142963 var.line_nr=4307
-	// var "node" var.pos=142988 var.line_nr=4307
-	// var "from_type_sym" var.pos=143076 var.line_nr=4309
-	// var "to_type_sym" var.pos=143134 var.line_nr=4310
-	// var "expr_is_ptr" var.pos=143296 var.line_nr=4314
+	// autofree_scope_vars(pos=148127 line_nr=4415 scope.pos=143270 scope.end_pos=148144)
+	// var "c" var.pos=143275 var.line_nr=4314
+	// var "node" var.pos=143300 var.line_nr=4314
+	// var "from_type_sym" var.pos=143388 var.line_nr=4316
+	// var "to_type_sym" var.pos=143446 var.line_nr=4317
+	// var "expr_is_ptr" var.pos=143608 var.line_nr=4321
 	// af parent scope:
 	// af parent scope:
 	return _t2084;
@@ -45779,30 +45786,30 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 		if (_t2085.state != 0) { /*or block*/ 
 			IError err = _t2085.err;
 			v__checker__Checker_error(c, (*(err.msg)), node->env_pos);
-			// autofree_scope_vars(pos=148110 line_nr=4416 scope.pos=148072 scope.end_pos=148136)
-			// var "err" var.pos=148072 var.line_nr=4414
+			// autofree_scope_vars(pos=148422 line_nr=4423 scope.pos=148384 scope.end_pos=148448)
+			// var "err" var.pos=148384 var.line_nr=4421
 			// af parent scope:
-			// var "env_value" var.pos=147999 var.line_nr=4414
+			// var "env_value" var.pos=148311 var.line_nr=4421
 			// af parent scope:
-			// var "c" var.pos=147843 var.line_nr=4411
-			// var "node" var.pos=147872 var.line_nr=4411
-			// var "v" var.pos=149488 var.line_nr=4471
-			// var "method_name" var.pos=149926 var.line_nr=4482
-			// var "f" var.pos=150076 var.line_nr=4488
+			// var "c" var.pos=148155 var.line_nr=4418
+			// var "node" var.pos=148184 var.line_nr=4418
+			// var "v" var.pos=149800 var.line_nr=4478
+			// var "method_name" var.pos=150238 var.line_nr=4489
+			// var "f" var.pos=150388 var.line_nr=4495
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__string_type;
 		}
  		string env_value =  *(string*)_t2085.data;
 		node->env_value = env_value;
-		// autofree_scope_vars(pos=148168 line_nr=4419 scope.pos=147995 scope.end_pos=148193)
-		// var "env_value" var.pos=147999 var.line_nr=4414
+		// autofree_scope_vars(pos=148480 line_nr=4426 scope.pos=148307 scope.end_pos=148505)
+		// var "env_value" var.pos=148311 var.line_nr=4421
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -45810,13 +45817,13 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	if (node->is_embed) {
 		array_push(&c->file->embedded_files, _MOV((v__ast__EmbeddedFile[]){ node->embed_file }));
 		/*tmp return var*/ v__ast__Type _t2087 = v__ast__Table_find_type_idx(c->table, _SLIT("v.embed_file.EmbedFileData"));
-		// autofree_scope_vars(pos=148259 line_nr=4423 scope.pos=148213 scope.end_pos=148320)
+		// autofree_scope_vars(pos=148571 line_nr=4430 scope.pos=148525 scope.end_pos=148632)
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _t2087;
@@ -45860,14 +45867,14 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	if (string_eq(node->method_name, _SLIT("html"))) {
 		int rtyp = v__ast__Table_find_type_idx(c->table, _SLIT("vweb.Result"));
 		node->result_type = rtyp;
-		// autofree_scope_vars(pos=149215 line_nr=4457 scope.pos=149139 scope.end_pos=149229)
-		// var "rtyp" var.pos=149143 var.line_nr=4455
+		// autofree_scope_vars(pos=149527 line_nr=4464 scope.pos=149451 scope.end_pos=149541)
+		// var "rtyp" var.pos=149455 var.line_nr=4462
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return rtyp;
@@ -45878,25 +45885,25 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 			v__ast__CallArg arg = ((v__ast__CallArg*)node->args.data)[i];
 			(*(v__ast__CallArg*)/*ee elem_typ */array_get(node->args, i)).typ = v__checker__Checker_expr(c, arg.expr);
 		}
-		// autofree_scope_vars(pos=149397 line_nr=4465 scope.pos=149264 scope.end_pos=149422)
+		// autofree_scope_vars(pos=149709 line_nr=4472 scope.pos=149576 scope.end_pos=149734)
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
 	}
 	if (node->is_vweb) {
-		// autofree_scope_vars(pos=149444 line_nr=4468 scope.pos=149441 scope.end_pos=149469)
+		// autofree_scope_vars(pos=149756 line_nr=4475 scope.pos=149753 scope.end_pos=149781)
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__string_type;
@@ -45905,14 +45912,14 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	if (_t2095.state != 0) { /*or block*/ 
 		IError err = _t2095.err;
 		v__checker__Checker_error(c, _STR("unknown identifier `%.*s\000`", 2, node->method_name), node->method_pos);
-		// autofree_scope_vars(pos=149606 line_nr=4473 scope.pos=149534 scope.end_pos=149629)
-		// var "err" var.pos=149534 var.line_nr=4471
+		// autofree_scope_vars(pos=149918 line_nr=4480 scope.pos=149846 scope.end_pos=149941)
+		// var "err" var.pos=149846 var.line_nr=4478
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45921,14 +45928,14 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	if (!v__ast__Type_alias_eq(v->typ, _const_v__ast__string_type)) {
 		string s = v__checker__Checker_expected_msg(c, v->typ, _const_v__ast__string_type);
 		v__checker__Checker_error(c, _STR("invalid string method call: %.*s", 1, s), node->method_pos);
-		// autofree_scope_vars(pos=149770 line_nr=4478 scope.pos=149660 scope.end_pos=149793)
-		// var "s" var.pos=149664 var.line_nr=4476
+		// autofree_scope_vars(pos=150082 line_nr=4485 scope.pos=149972 scope.end_pos=150105)
+		// var "s" var.pos=149976 var.line_nr=4483
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45943,15 +45950,15 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	if (_t2096.state != 0) { /*or block*/ 
 		IError err = _t2096.err;
 		v__checker__Checker_error(c, _STR("could not find method `%.*s\000`", 2, method_name), node->method_pos);
-		// autofree_scope_vars(pos=150188 line_nr=4490 scope.pos=150118 scope.end_pos=150211)
-		// var "err" var.pos=150118 var.line_nr=4488
+		// autofree_scope_vars(pos=150500 line_nr=4497 scope.pos=150430 scope.end_pos=150523)
+		// var "err" var.pos=150430 var.line_nr=4495
 		// af parent scope:
-		// var "c" var.pos=147843 var.line_nr=4411
-		// var "node" var.pos=147872 var.line_nr=4411
-		// var "v" var.pos=149488 var.line_nr=4471
-		// var "method_name" var.pos=149926 var.line_nr=4482
+		// var "c" var.pos=148155 var.line_nr=4418
+		// var "node" var.pos=148184 var.line_nr=4418
+		// var "v" var.pos=149800 var.line_nr=4478
+		// var "method_name" var.pos=150238 var.line_nr=4489
 		// str literal
-		// var "f" var.pos=150076 var.line_nr=4488
+		// var "f" var.pos=150388 var.line_nr=4495
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -45959,13 +45966,13 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
  	v__ast__Fn f =  *(v__ast__Fn*)_t2096.data;
 	node->result_type = f.return_type;
 	/*tmp return var*/ v__ast__Type _t2097 = f.return_type;
-	// autofree_scope_vars(pos=150310 line_nr=4494 scope.pos=147838 scope.end_pos=150332)
-	// var "c" var.pos=147843 var.line_nr=4411
-	// var "node" var.pos=147872 var.line_nr=4411
-	// var "v" var.pos=149488 var.line_nr=4471
-	// var "method_name" var.pos=149926 var.line_nr=4482
+	// autofree_scope_vars(pos=150622 line_nr=4501 scope.pos=148150 scope.end_pos=150644)
+	// var "c" var.pos=148155 var.line_nr=4418
+	// var "node" var.pos=148184 var.line_nr=4418
+	// var "v" var.pos=149800 var.line_nr=4478
+	// var "method_name" var.pos=150238 var.line_nr=4489
 	// str literal
-	// var "f" var.pos=150076 var.line_nr=4488
+	// var "f" var.pos=150388 var.line_nr=4495
 	// af parent scope:
 	// af parent scope:
 	return _t2097;
@@ -46036,9 +46043,9 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_at_expr(v__checker__Checker* c,
 	else if (node->kind == (v__token__AtKind_unknown)) {
 		v__checker__Checker_error(c, _STR("unknown @ identifier: %.*s\000. Available identifiers: %.*s", 2, node->name, Array_string_str(_const_v__token__valid_at_tokens)), node->pos);
 	};
-	// autofree_scope_vars(pos=151860 line_nr=4558 scope.pos=150338 scope.end_pos=151884)
-	// var "c" var.pos=150343 var.line_nr=4497
-	// var "node" var.pos=150366 var.line_nr=4497
+	// autofree_scope_vars(pos=152172 line_nr=4565 scope.pos=150650 scope.end_pos=152196)
+	// var "c" var.pos=150655 var.line_nr=4504
+	// var "node" var.pos=150678 var.line_nr=4504
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__string_type;
@@ -46052,12 +46059,12 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 		}
 		if (string_eq(name, c->const_decl)) {
 			v__checker__Checker_error(c, _STR("cycle in constant `%.*s\000`", 2, c->const_decl), ident->pos);
-			// autofree_scope_vars(pos=152203 line_nr=4570 scope.pos=152140 scope.end_pos=152227)
+			// autofree_scope_vars(pos=152515 line_nr=4577 scope.pos=152452 scope.end_pos=152539)
 			// af parent scope:
-			// var "name" var.pos=152001 var.line_nr=4564
+			// var "name" var.pos=152313 var.line_nr=4571
 			// af parent scope:
-			// var "c" var.pos=151899 var.line_nr=4561
-			// var "ident" var.pos=151920 var.line_nr=4561
+			// var "c" var.pos=152211 var.line_nr=4568
+			// var "ident" var.pos=152232 var.line_nr=4568
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__void_type;
@@ -46068,10 +46075,10 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 		if (!(ident->tok_kind == v__token__Kind_assign || ident->tok_kind == v__token__Kind_decl_assign)) {
 			v__checker__Checker_error(c, _SLIT("undefined ident: `_` (may only be used in assignments)"), ident->pos);
 		}
-		// autofree_scope_vars(pos=152423 line_nr=4578 scope.pos=152286 scope.end_pos=152446)
+		// autofree_scope_vars(pos=152735 line_nr=4585 scope.pos=152598 scope.end_pos=152758)
 		// af parent scope:
-		// var "c" var.pos=151899 var.line_nr=4561
-		// var "ident" var.pos=151920 var.line_nr=4561
+		// var "c" var.pos=152211 var.line_nr=4568
+		// var "ident" var.pos=152232 var.line_nr=4568
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -46079,22 +46086,22 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 	if ((ident->kind == v__ast__IdentKind_constant || ident->kind == v__ast__IdentKind_global || ident->kind == v__ast__IdentKind_variable)) {
 		v__ast__IdentVar info = /* as */ *(v__ast__IdentVar*)__as_cast((ident->info)._v__ast__IdentVar,(ident->info)._typ, 357) /*expected idx: 357, name: v.ast.IdentVar */ ;
 		/*tmp return var*/ v__ast__Type _t2100 = info.typ;
-		// autofree_scope_vars(pos=152609 line_nr=4584 scope.pos=152513 scope.end_pos=152627)
-		// var "info" var.pos=152517 var.line_nr=4582
+		// autofree_scope_vars(pos=152921 line_nr=4591 scope.pos=152825 scope.end_pos=152939)
+		// var "info" var.pos=152829 var.line_nr=4589
 		// af parent scope:
-		// var "c" var.pos=151899 var.line_nr=4561
-		// var "ident" var.pos=151920 var.line_nr=4561
+		// var "c" var.pos=152211 var.line_nr=4568
+		// var "ident" var.pos=152232 var.line_nr=4568
 		// af parent scope:
 		// af parent scope:
 		return _t2100;
 	} else if (ident->kind == v__ast__IdentKind_function) {
 		v__ast__IdentFn info = /* as */ *(v__ast__IdentFn*)__as_cast((ident->info)._v__ast__IdentFn,(ident->info)._typ, 356) /*expected idx: 356, name: v.ast.IdentFn */ ;
 		/*tmp return var*/ v__ast__Type _t2101 = info.typ;
-		// autofree_scope_vars(pos=152700 line_nr=4587 scope.pos=152661 scope.end_pos=152718)
-		// var "info" var.pos=152665 var.line_nr=4586
+		// autofree_scope_vars(pos=153012 line_nr=4594 scope.pos=152973 scope.end_pos=153030)
+		// var "info" var.pos=152977 var.line_nr=4593
 		// af parent scope:
-		// var "c" var.pos=151899 var.line_nr=4561
-		// var "ident" var.pos=151920 var.line_nr=4561
+		// var "c" var.pos=152211 var.line_nr=4568
+		// var "ident" var.pos=152232 var.line_nr=4568
 		// af parent scope:
 		// af parent scope:
 		return _t2101;
@@ -46110,16 +46117,16 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 				ident->info = v__ast__IdentVar_to_sumtype_v__ast__IdentInfo(ADDR(v__ast__IdentVar, ((v__ast__IdentVar){.typ = (*obj._v__ast__GlobalField).typ,.is_mut = 0,.is_static = 0,.is_optional = 0,.share = 0,})));
 				ident->obj = obj;
 				/*tmp return var*/ v__ast__Type _t2103 = (*obj._v__ast__GlobalField).typ;
-				// autofree_scope_vars(pos=153102 line_nr=4601 scope.pos=152975 scope.end_pos=153122)
-				// var "obj" var.pos=152965 var.line_nr=4594
+				// autofree_scope_vars(pos=153414 line_nr=4608 scope.pos=153287 scope.end_pos=153434)
+				// var "obj" var.pos=153277 var.line_nr=4601
 				// af parent scope:
 				// af parent scope:
-				// var "obj" var.pos=152914 var.line_nr=4593
+				// var "obj" var.pos=153226 var.line_nr=4600
 				// af parent scope:
-				// var "name" var.pos=155288 var.line_nr=4664
+				// var "name" var.pos=155600 var.line_nr=4671
 				// af parent scope:
-				// var "c" var.pos=151899 var.line_nr=4561
-				// var "ident" var.pos=151920 var.line_nr=4561
+				// var "c" var.pos=152211 var.line_nr=4568
+				// var "ident" var.pos=152232 var.line_nr=4568
 				// af parent scope:
 				// af parent scope:
 				return _t2103;
@@ -46142,22 +46149,22 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 					if (((*obj._v__ast__Var).expr)._typ == 247 /* v.ast.Ident */) {
 						if ((*(*obj._v__ast__Var).expr._v__ast__Ident).kind == v__ast__IdentKind_unresolved) {
 							v__checker__Checker_error(c, _STR("unresolved variable: `%.*s\000`", 2, ident->name), ident->pos);
-							// autofree_scope_vars(pos=153757 line_nr=4618 scope.pos=153683 scope.end_pos=153786)
+							// autofree_scope_vars(pos=154069 line_nr=4625 scope.pos=153995 scope.end_pos=154098)
 							// af parent scope:
 							// af parent scope:
 							// af parent scope:
-							// var "is_sum_type_cast" var.pos=153364 var.line_nr=4610
-							// var "typ" var.pos=153514 var.line_nr=4613
-							// var "is_optional" var.pos=154154 var.line_nr=4630
-							// var "obj" var.pos=152965 var.line_nr=4594
+							// var "is_sum_type_cast" var.pos=153676 var.line_nr=4617
+							// var "typ" var.pos=153826 var.line_nr=4620
+							// var "is_optional" var.pos=154466 var.line_nr=4637
+							// var "obj" var.pos=153277 var.line_nr=4601
 							// af parent scope:
 							// af parent scope:
-							// var "obj" var.pos=152914 var.line_nr=4593
+							// var "obj" var.pos=153226 var.line_nr=4600
 							// af parent scope:
-							// var "name" var.pos=155288 var.line_nr=4664
+							// var "name" var.pos=155600 var.line_nr=4671
 							// af parent scope:
-							// var "c" var.pos=151899 var.line_nr=4561
-							// var "ident" var.pos=151920 var.line_nr=4561
+							// var "c" var.pos=152211 var.line_nr=4568
+							// var "ident" var.pos=152232 var.line_nr=4568
 							// af parent scope:
 							// af parent scope:
 							return _const_v__ast__void_type;
@@ -46182,37 +46189,37 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 				ident->obj = obj;
 				if (is_optional) {
 					/*tmp return var*/ v__ast__Type _t2105 = v__ast__Type_clear_flag(typ, v__ast__TypeFlag_optional);
-					// autofree_scope_vars(pos=155198 line_nr=4657 scope.pos=155191 scope.end_pos=155237)
+					// autofree_scope_vars(pos=155510 line_nr=4664 scope.pos=155503 scope.end_pos=155549)
 					// af parent scope:
-					// var "is_sum_type_cast" var.pos=153364 var.line_nr=4610
-					// var "typ" var.pos=153514 var.line_nr=4613
-					// var "is_optional" var.pos=154154 var.line_nr=4630
-					// var "obj" var.pos=152965 var.line_nr=4594
+					// var "is_sum_type_cast" var.pos=153676 var.line_nr=4617
+					// var "typ" var.pos=153826 var.line_nr=4620
+					// var "is_optional" var.pos=154466 var.line_nr=4637
+					// var "obj" var.pos=153277 var.line_nr=4601
 					// af parent scope:
 					// af parent scope:
-					// var "obj" var.pos=152914 var.line_nr=4593
+					// var "obj" var.pos=153226 var.line_nr=4600
 					// af parent scope:
-					// var "name" var.pos=155288 var.line_nr=4664
+					// var "name" var.pos=155600 var.line_nr=4671
 					// af parent scope:
-					// var "c" var.pos=151899 var.line_nr=4561
-					// var "ident" var.pos=151920 var.line_nr=4561
+					// var "c" var.pos=152211 var.line_nr=4568
+					// var "ident" var.pos=152232 var.line_nr=4568
 					// af parent scope:
 					// af parent scope:
 					return _t2105;
 				}
-				// autofree_scope_vars(pos=155243 line_nr=4659 scope.pos=153128 scope.end_pos=155259)
-				// var "is_sum_type_cast" var.pos=153364 var.line_nr=4610
-				// var "typ" var.pos=153514 var.line_nr=4613
-				// var "is_optional" var.pos=154154 var.line_nr=4630
-				// var "obj" var.pos=152965 var.line_nr=4594
+				// autofree_scope_vars(pos=155555 line_nr=4666 scope.pos=153440 scope.end_pos=155571)
+				// var "is_sum_type_cast" var.pos=153676 var.line_nr=4617
+				// var "typ" var.pos=153826 var.line_nr=4620
+				// var "is_optional" var.pos=154466 var.line_nr=4637
+				// var "obj" var.pos=153277 var.line_nr=4601
 				// af parent scope:
 				// af parent scope:
-				// var "obj" var.pos=152914 var.line_nr=4593
+				// var "obj" var.pos=153226 var.line_nr=4600
 				// af parent scope:
-				// var "name" var.pos=155288 var.line_nr=4664
+				// var "name" var.pos=155600 var.line_nr=4671
 				// af parent scope:
-				// var "c" var.pos=151899 var.line_nr=4561
-				// var "ident" var.pos=151920 var.line_nr=4561
+				// var "c" var.pos=152211 var.line_nr=4568
+				// var "ident" var.pos=152232 var.line_nr=4568
 				// af parent scope:
 				// af parent scope:
 				return typ;
@@ -46249,17 +46256,17 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 				ident->info = v__ast__IdentVar_to_sumtype_v__ast__IdentInfo(ADDR(v__ast__IdentVar, ((v__ast__IdentVar){.typ = typ,.is_mut = 0,.is_static = 0,.is_optional = 0,.share = 0,})));
 				(*obj._v__ast__ConstField).typ = typ;
 				ident->obj = obj;
-				// autofree_scope_vars(pos=156204 line_nr=4697 scope.pos=155634 scope.end_pos=156220)
-				// var "typ" var.pos=155789 var.line_nr=4679
-				// var "obj" var.pos=155624 var.line_nr=4674
+				// autofree_scope_vars(pos=156516 line_nr=4704 scope.pos=155946 scope.end_pos=156532)
+				// var "typ" var.pos=156101 var.line_nr=4686
+				// var "obj" var.pos=155936 var.line_nr=4681
 				// af parent scope:
 				// af parent scope:
-				// var "obj" var.pos=155571 var.line_nr=4673
+				// var "obj" var.pos=155883 var.line_nr=4680
 				// af parent scope:
-				// var "name" var.pos=155288 var.line_nr=4664
+				// var "name" var.pos=155600 var.line_nr=4671
 				// af parent scope:
-				// var "c" var.pos=151899 var.line_nr=4561
-				// var "ident" var.pos=151920 var.line_nr=4561
+				// var "c" var.pos=152211 var.line_nr=4568
+				// var "ident" var.pos=152232 var.line_nr=4568
 				// af parent scope:
 				// af parent scope:
 				return typ;
@@ -46274,15 +46281,15 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 			ident->name = name;
 			ident->kind = v__ast__IdentKind_function;
 			ident->info = v__ast__IdentFn_to_sumtype_v__ast__IdentInfo(ADDR(v__ast__IdentFn, ((v__ast__IdentFn){.typ = fn_type,})));
-			// autofree_scope_vars(pos=156544 line_nr=4711 scope.pos=156347 scope.end_pos=156562)
-			// var "fn_type" var.pos=156352 var.line_nr=4704
+			// autofree_scope_vars(pos=156856 line_nr=4718 scope.pos=156659 scope.end_pos=156874)
+			// var "fn_type" var.pos=156664 var.line_nr=4711
 			// af parent scope:
-			// var "func" var.pos=156317 var.line_nr=4703
+			// var "func" var.pos=156629 var.line_nr=4710
 			// af parent scope:
-			// var "name" var.pos=155288 var.line_nr=4664
+			// var "name" var.pos=155600 var.line_nr=4671
 			// af parent scope:
-			// var "c" var.pos=151899 var.line_nr=4561
-			// var "ident" var.pos=151920 var.line_nr=4561
+			// var "c" var.pos=152211 var.line_nr=4568
+			// var "ident" var.pos=152232 var.line_nr=4568
 			// af parent scope:
 			// af parent scope:
 			return fn_type;
@@ -46290,19 +46297,19 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 	}
 	if (ident->language == v__ast__Language_c) {
 		if (string_eq(ident->name, _SLIT("C.NULL"))) {
-			// autofree_scope_vars(pos=156626 line_nr=4716 scope.pos=156622 scope.end_pos=156653)
+			// autofree_scope_vars(pos=156938 line_nr=4723 scope.pos=156934 scope.end_pos=156965)
 			// af parent scope:
 			// af parent scope:
-			// var "c" var.pos=151899 var.line_nr=4561
-			// var "ident" var.pos=151920 var.line_nr=4561
+			// var "c" var.pos=152211 var.line_nr=4568
+			// var "ident" var.pos=152232 var.line_nr=4568
 			// af parent scope:
 			// af parent scope:
 			return _const_v__ast__voidptr_type;
 		}
-		// autofree_scope_vars(pos=156656 line_nr=4718 scope.pos=156592 scope.end_pos=156678)
+		// autofree_scope_vars(pos=156968 line_nr=4725 scope.pos=156904 scope.end_pos=156990)
 		// af parent scope:
-		// var "c" var.pos=151899 var.line_nr=4561
-		// var "ident" var.pos=151920 var.line_nr=4561
+		// var "c" var.pos=152211 var.line_nr=4568
+		// var "ident" var.pos=152232 var.line_nr=4568
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__int_type;
@@ -46312,13 +46319,13 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 		if (_t2108 = v__ast__Table_find_field(c->table, (voidptr)&/*qq*/c->cur_orm_ts, ident->name), _t2108.state == 0) {
 			v__ast__StructField field = *(v__ast__StructField*)_t2108.data;
 			/*tmp return var*/ v__ast__Type _t2109 = field.typ;
-			// autofree_scope_vars(pos=156762 line_nr=4722 scope.pos=156758 scope.end_pos=156782)
+			// autofree_scope_vars(pos=157074 line_nr=4729 scope.pos=157070 scope.end_pos=157094)
 			// af parent scope:
-			// var "field" var.pos=156704 var.line_nr=4721
+			// var "field" var.pos=157016 var.line_nr=4728
 			// af parent scope:
 			// af parent scope:
-			// var "c" var.pos=151899 var.line_nr=4561
-			// var "ident" var.pos=151920 var.line_nr=4561
+			// var "c" var.pos=152211 var.line_nr=4568
+			// var "ident" var.pos=152232 var.line_nr=4568
 			// af parent scope:
 			// af parent scope:
 			return _t2109;
@@ -46329,13 +46336,13 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 		ident->mod = _SLIT("builtin");
 		v__ast__Type builtin_type = v__checker__Checker_ident(c, ident);
 		if (!v__ast__Type_alias_eq(builtin_type, _const_v__ast__void_type)) {
-			// autofree_scope_vars(pos=157077 line_nr=4732 scope.pos=157073 scope.end_pos=157100)
+			// autofree_scope_vars(pos=157389 line_nr=4739 scope.pos=157385 scope.end_pos=157412)
 			// af parent scope:
-			// var "saved_mod" var.pos=156954 var.line_nr=4728
-			// var "builtin_type" var.pos=157003 var.line_nr=4730
+			// var "saved_mod" var.pos=157266 var.line_nr=4735
+			// var "builtin_type" var.pos=157315 var.line_nr=4737
 			// af parent scope:
-			// var "c" var.pos=151899 var.line_nr=4561
-			// var "ident" var.pos=151920 var.line_nr=4561
+			// var "c" var.pos=152211 var.line_nr=4568
+			// var "ident" var.pos=152232 var.line_nr=4568
 			// af parent scope:
 			// af parent scope:
 			return builtin_type;
@@ -46350,17 +46357,17 @@ v__ast__Type v__checker__Checker_ident(v__checker__Checker* c, v__ast__Ident* id
 		v__checker__Checker_error(c, _STR("undefined ident: `%.*s\000`", 2, ident->name), ident->pos);
 	}
 	if (v__ast__Table_known_type(c->table, ident->name)) {
-		// autofree_scope_vars(pos=157517 line_nr=4745 scope.pos=157466 scope.end_pos=157540)
+		// autofree_scope_vars(pos=157829 line_nr=4752 scope.pos=157778 scope.end_pos=157852)
 		// af parent scope:
-		// var "c" var.pos=151899 var.line_nr=4561
-		// var "ident" var.pos=151920 var.line_nr=4561
+		// var "c" var.pos=152211 var.line_nr=4568
+		// var "ident" var.pos=152232 var.line_nr=4568
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
 	}
-	// autofree_scope_vars(pos=157542 line_nr=4747 scope.pos=151894 scope.end_pos=157564)
-	// var "c" var.pos=151899 var.line_nr=4561
-	// var "ident" var.pos=151920 var.line_nr=4561
+	// autofree_scope_vars(pos=157854 line_nr=4754 scope.pos=152206 scope.end_pos=157876)
+	// var "c" var.pos=152211 var.line_nr=4568
+	// var "ident" var.pos=152232 var.line_nr=4568
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__void_type;
@@ -46376,12 +46383,12 @@ v__ast__Type v__checker__Checker_concat_expr(v__checker__Checker* c, v__ast__Con
 	if (concat_expr->vals.len == 1) {
 		v__ast__Type typ = (*(v__ast__Type*)/*ee elem_typ */array_get(mr_types, 0));
 		concat_expr->return_type = typ;
-		// autofree_scope_vars(pos=157823 line_nr=4758 scope.pos=157767 scope.end_pos=157836)
-		// var "typ" var.pos=157771 var.line_nr=4756
+		// autofree_scope_vars(pos=158135 line_nr=4765 scope.pos=158079 scope.end_pos=158148)
+		// var "typ" var.pos=158083 var.line_nr=4763
 		// af parent scope:
-		// var "c" var.pos=157579 var.line_nr=4750
-		// var "concat_expr" var.pos=157606 var.line_nr=4750
-		// var "mr_types" var.pos=157650 var.line_nr=4751
+		// var "c" var.pos=157891 var.line_nr=4757
+		// var "concat_expr" var.pos=157918 var.line_nr=4757
+		// var "mr_types" var.pos=157962 var.line_nr=4758
 		// af parent scope:
 		// af parent scope:
 		return typ;
@@ -46389,12 +46396,12 @@ v__ast__Type v__checker__Checker_concat_expr(v__checker__Checker* c, v__ast__Con
 		int typ = v__ast__Table_find_or_register_multi_return(c->table, mr_types);
 		v__ast__new_type(typ);
 		concat_expr->return_type = typ;
-		// autofree_scope_vars(pos=157955 line_nr=4763 scope.pos=157843 scope.end_pos=157968)
-		// var "typ" var.pos=157847 var.line_nr=4760
+		// autofree_scope_vars(pos=158267 line_nr=4770 scope.pos=158155 scope.end_pos=158280)
+		// var "typ" var.pos=158159 var.line_nr=4767
 		// af parent scope:
-		// var "c" var.pos=157579 var.line_nr=4750
-		// var "concat_expr" var.pos=157606 var.line_nr=4750
-		// var "mr_types" var.pos=157650 var.line_nr=4751
+		// var "c" var.pos=157891 var.line_nr=4757
+		// var "concat_expr" var.pos=157918 var.line_nr=4757
+		// var "mr_types" var.pos=157962 var.line_nr=4758
 		// af parent scope:
 		// af parent scope:
 		return typ;
@@ -46410,16 +46417,16 @@ v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Matc
 	Option_void _t2112 = v__checker__Checker_ensure_type_exists(c, node->cond_type, node->pos);
 	if (_t2112.state != 0 && _t2112.err._interface_idx != _IError_None___index) {
 		IError err = _t2112.err;
-		// autofree_scope_vars(pos=158382 line_nr=4774 scope.pos=158381 scope.end_pos=158404)
-		// var "err" var.pos=158381 var.line_nr=4774
+		// autofree_scope_vars(pos=158694 line_nr=4781 scope.pos=158693 scope.end_pos=158716)
+		// var "err" var.pos=158693 var.line_nr=4781
 		// af parent scope:
-		// var "c" var.pos=157985 var.line_nr=4767
-		// var "node" var.pos=158011 var.line_nr=4767
-		// var "cond_type" var.pos=158130 var.line_nr=4770
-		// var "cond_type_sym" var.pos=158407 var.line_nr=4775
-		// var "ret_type" var.pos=158617 var.line_nr=4781
-		// var "nbranches_with_return" var.pos=158648 var.line_nr=4782
-		// var "nbranches_without_return" var.pos=158680 var.line_nr=4783
+		// var "c" var.pos=158297 var.line_nr=4774
+		// var "node" var.pos=158323 var.line_nr=4774
+		// var "cond_type" var.pos=158442 var.line_nr=4777
+		// var "cond_type_sym" var.pos=158719 var.line_nr=4782
+		// var "ret_type" var.pos=158929 var.line_nr=4788
+		// var "nbranches_with_return" var.pos=158960 var.line_nr=4789
+		// var "nbranches_without_return" var.pos=158992 var.line_nr=4790
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -46485,14 +46492,14 @@ v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Matc
 		}
 	}
 	node->return_type = ret_type;
-	// autofree_scope_vars(pos=160630 line_nr=4846 scope.pos=157980 scope.end_pos=160647)
-	// var "c" var.pos=157985 var.line_nr=4767
-	// var "node" var.pos=158011 var.line_nr=4767
-	// var "cond_type" var.pos=158130 var.line_nr=4770
-	// var "cond_type_sym" var.pos=158407 var.line_nr=4775
-	// var "ret_type" var.pos=158617 var.line_nr=4781
-	// var "nbranches_with_return" var.pos=158648 var.line_nr=4782
-	// var "nbranches_without_return" var.pos=158680 var.line_nr=4783
+	// autofree_scope_vars(pos=160942 line_nr=4853 scope.pos=158292 scope.end_pos=160959)
+	// var "c" var.pos=158297 var.line_nr=4774
+	// var "node" var.pos=158323 var.line_nr=4774
+	// var "cond_type" var.pos=158442 var.line_nr=4777
+	// var "cond_type_sym" var.pos=158719 var.line_nr=4782
+	// var "ret_type" var.pos=158929 var.line_nr=4788
+	// var "nbranches_with_return" var.pos=158960 var.line_nr=4789
+	// var "nbranches_without_return" var.pos=158992 var.line_nr=4790
 	// af parent scope:
 	// af parent scope:
 	return ret_type;
@@ -46823,9 +46830,9 @@ v__ast__Type v__checker__Checker_select_expr(v__checker__Checker* c, v__ast__Sel
 		};
 		v__checker__Checker_stmts(c, branch.stmts);
 	}
-	// autofree_scope_vars(pos=170521 line_nr=5178 scope.pos=168777 scope.end_pos=170543)
-	// var "c" var.pos=168782 var.line_nr=5123
-	// var "node" var.pos=168809 var.line_nr=5123
+	// autofree_scope_vars(pos=170833 line_nr=5185 scope.pos=169089 scope.end_pos=170855)
+	// var "c" var.pos=169094 var.line_nr=5130
+	// var "node" var.pos=169121 var.line_nr=5130
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__bool_type;
@@ -46870,10 +46877,10 @@ v__ast__Type v__checker__Checker_lock_expr(v__checker__Checker* c, v__ast__LockE
 		node->is_expr = true;
 	}
 	node->typ = ret_type;
-	// autofree_scope_vars(pos=171691 line_nr=5221 scope.pos=170553 scope.end_pos=171708)
-	// var "c" var.pos=170558 var.line_nr=5181
-	// var "node" var.pos=170583 var.line_nr=5181
-	// var "ret_type" var.pos=171448 var.line_nr=5210
+	// autofree_scope_vars(pos=172003 line_nr=5228 scope.pos=170865 scope.end_pos=172020)
+	// var "c" var.pos=170870 var.line_nr=5188
+	// var "node" var.pos=170895 var.line_nr=5188
+	// var "ret_type" var.pos=171760 var.line_nr=5217
 	// af parent scope:
 	// af parent scope:
 	return ret_type;
@@ -46884,7 +46891,7 @@ v__ast__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__Uns
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t2138 = {0};
 		v_assert_meta_info__t2138.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
-		v_assert_meta_info__t2138.line_nr = 5225;
+		v_assert_meta_info__t2138.line_nr = 5232;
 		v_assert_meta_info__t2138.fn_name = _SLIT("unsafe_expr");
 		v_assert_meta_info__t2138.src = _SLIT("!c.inside_unsafe");
 		__print_assert_failure(&v_assert_meta_info__t2138);
@@ -46893,10 +46900,10 @@ v__ast__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__Uns
 	c->inside_unsafe = true;
 	v__ast__Type t = v__checker__Checker_expr(c, node->expr);
 	c->inside_unsafe = false;
-	// autofree_scope_vars(pos=171880 line_nr=5229 scope.pos=171718 scope.end_pos=171890)
-	// var "c" var.pos=171723 var.line_nr=5224
-	// var "node" var.pos=171750 var.line_nr=5224
-	// var "t" var.pos=171832 var.line_nr=5227
+	// autofree_scope_vars(pos=172192 line_nr=5236 scope.pos=172030 scope.end_pos=172202)
+	// var "c" var.pos=172035 var.line_nr=5231
+	// var "node" var.pos=172062 var.line_nr=5231
+	// var "t" var.pos=172144 var.line_nr=5234
 	// af parent scope:
 	// af parent scope:
 	return t;
@@ -46936,31 +46943,31 @@ v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr*
 					if (((*branch.cond._v__ast__InfixExpr).right)._typ != 272 /* v.ast.TypeNode */) {
 						v__checker__Checker_error(c, _SLIT("invalid `$if` condition: expected a type"), v__ast__Expr_position((*branch.cond._v__ast__InfixExpr).right));
 						/*tmp return var*/ v__ast__Type _t2139 = 0;
-						// autofree_scope_vars(pos=173467 line_nr=5268 scope.pos=173371 scope.end_pos=173482)
+						// autofree_scope_vars(pos=173779 line_nr=5275 scope.pos=173683 scope.end_pos=173794)
 						// af parent scope:
-						// var "got_type" var.pos=173489 var.line_nr=5270
-						// var "sym" var.pos=173564 var.line_nr=5271
-						// var "left" var.pos=173755 var.line_nr=5275
+						// var "got_type" var.pos=173801 var.line_nr=5277
+						// var "sym" var.pos=173876 var.line_nr=5278
+						// var "left" var.pos=174067 var.line_nr=5282
 						// af parent scope:
 						// af parent scope:
-						// var "comptime_field_name" var.pos=173230 var.line_nr=5263
+						// var "comptime_field_name" var.pos=173542 var.line_nr=5270
 						// str literal
-						// var "cur_skip_flags" var.pos=174168 var.line_nr=5289
+						// var "cur_skip_flags" var.pos=174480 var.line_nr=5296
 						// af parent scope:
-						// var "i" var.pos=172421 var.line_nr=5242
+						// var "i" var.pos=172733 var.line_nr=5249
 						// skipping tmp var "i"
-						// var "branch" var.pos=172457 var.line_nr=5243
+						// var "branch" var.pos=172769 var.line_nr=5250
 						// af parent scope:
-						// var "c" var.pos=171905 var.line_nr=5232
-						// var "node" var.pos=171928 var.line_nr=5232
-						// var "if_kind" var.pos=171957 var.line_nr=5233
-						// var "expr_required" var.pos=172014 var.line_nr=5234
-						// var "former_expected_type" var.pos=172065 var.line_nr=5235
-						// var "nbranches_with_return" var.pos=172136 var.line_nr=5237
-						// var "nbranches_without_return" var.pos=172168 var.line_nr=5238
-						// var "should_skip" var.pos=172203 var.line_nr=5239
-						// var "found_branch" var.pos=172277 var.line_nr=5240
-						// var "is_comptime_type_is_expr" var.pos=172358 var.line_nr=5241
+						// var "c" var.pos=172217 var.line_nr=5239
+						// var "node" var.pos=172240 var.line_nr=5239
+						// var "if_kind" var.pos=172269 var.line_nr=5240
+						// var "expr_required" var.pos=172326 var.line_nr=5241
+						// var "former_expected_type" var.pos=172377 var.line_nr=5242
+						// var "nbranches_with_return" var.pos=172448 var.line_nr=5244
+						// var "nbranches_without_return" var.pos=172480 var.line_nr=5245
+						// var "should_skip" var.pos=172515 var.line_nr=5246
+						// var "found_branch" var.pos=172589 var.line_nr=5247
+						// var "is_comptime_type_is_expr" var.pos=172670 var.line_nr=5248
 						// af parent scope:
 						// af parent scope:
 						return _t2139;
@@ -47152,17 +47159,17 @@ v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr*
 		v__checker__Checker_error(c, _STR("`%.*s\000` expression needs `%.*s\000else` clause", 3, if_kind, d), node->pos);
 	}
 	/*tmp return var*/ v__ast__Type _t2145 = node->typ;
-	// autofree_scope_vars(pos=179614 line_nr=5455 scope.pos=171900 scope.end_pos=179631)
-	// var "c" var.pos=171905 var.line_nr=5232
-	// var "node" var.pos=171928 var.line_nr=5232
-	// var "if_kind" var.pos=171957 var.line_nr=5233
-	// var "expr_required" var.pos=172014 var.line_nr=5234
-	// var "former_expected_type" var.pos=172065 var.line_nr=5235
-	// var "nbranches_with_return" var.pos=172136 var.line_nr=5237
-	// var "nbranches_without_return" var.pos=172168 var.line_nr=5238
-	// var "should_skip" var.pos=172203 var.line_nr=5239
-	// var "found_branch" var.pos=172277 var.line_nr=5240
-	// var "is_comptime_type_is_expr" var.pos=172358 var.line_nr=5241
+	// autofree_scope_vars(pos=179926 line_nr=5462 scope.pos=172212 scope.end_pos=179943)
+	// var "c" var.pos=172217 var.line_nr=5239
+	// var "node" var.pos=172240 var.line_nr=5239
+	// var "if_kind" var.pos=172269 var.line_nr=5240
+	// var "expr_required" var.pos=172326 var.line_nr=5241
+	// var "former_expected_type" var.pos=172377 var.line_nr=5242
+	// var "nbranches_with_return" var.pos=172448 var.line_nr=5244
+	// var "nbranches_without_return" var.pos=172480 var.line_nr=5245
+	// var "should_skip" var.pos=172515 var.line_nr=5246
+	// var "found_branch" var.pos=172589 var.line_nr=5247
+	// var "is_comptime_type_is_expr" var.pos=172670 var.line_nr=5248
 	// af parent scope:
 	// af parent scope:
 	return _t2145;
@@ -47171,24 +47178,24 @@ v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr*
 VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, v__ast__Expr cond, v__token__Position pos) {
 	if (cond._typ == 232 /* v.ast.BoolLiteral */) {
 		/*tmp return var*/ bool _t2146 = !(*cond._v__ast__BoolLiteral).val;
-		// autofree_scope_vars(pos=179974 line_nr=5464 scope.pos=179954 scope.end_pos=179994)
-		// var "cond" var.pos=179945 var.line_nr=5462
+		// autofree_scope_vars(pos=180286 line_nr=5471 scope.pos=180266 scope.end_pos=180306)
+		// var "cond" var.pos=180257 var.line_nr=5469
 		// af parent scope:
-		// var "c" var.pos=179833 var.line_nr=5460
-		// var "cond" var.pos=179859 var.line_nr=5460
-		// var "pos" var.pos=179874 var.line_nr=5460
+		// var "c" var.pos=180145 var.line_nr=5467
+		// var "cond" var.pos=180171 var.line_nr=5467
+		// var "pos" var.pos=180186 var.line_nr=5467
 		// af parent scope:
 		// af parent scope:
 		return _t2146;
 	}
 	else if (cond._typ == 261 /* v.ast.ParExpr */) {
 		/*tmp return var*/ bool _t2147 = v__checker__Checker_comp_if_branch(c, (*cond._v__ast__ParExpr).expr, pos);
-		// autofree_scope_vars(pos=180014 line_nr=5467 scope.pos=179998 scope.end_pos=180057)
-		// var "cond" var.pos=179945 var.line_nr=5462
+		// autofree_scope_vars(pos=180326 line_nr=5474 scope.pos=180310 scope.end_pos=180369)
+		// var "cond" var.pos=180257 var.line_nr=5469
 		// af parent scope:
-		// var "c" var.pos=179833 var.line_nr=5460
-		// var "cond" var.pos=179859 var.line_nr=5460
-		// var "pos" var.pos=179874 var.line_nr=5460
+		// var "c" var.pos=180145 var.line_nr=5467
+		// var "cond" var.pos=180171 var.line_nr=5467
+		// var "pos" var.pos=180186 var.line_nr=5467
 		// af parent scope:
 		// af parent scope:
 		return _t2147;
@@ -47198,12 +47205,12 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 			v__checker__Checker_error(c, _SLIT("invalid `$if` condition"), (*cond._v__ast__PrefixExpr).pos);
 		}
 		/*tmp return var*/ bool _t2148 = !v__checker__Checker_comp_if_branch(c, (*cond._v__ast__PrefixExpr).right, (*cond._v__ast__PrefixExpr).pos);
-		// autofree_scope_vars(pos=180159 line_nr=5473 scope.pos=180061 scope.end_pos=180209)
-		// var "cond" var.pos=179945 var.line_nr=5462
+		// autofree_scope_vars(pos=180471 line_nr=5480 scope.pos=180373 scope.end_pos=180521)
+		// var "cond" var.pos=180257 var.line_nr=5469
 		// af parent scope:
-		// var "c" var.pos=179833 var.line_nr=5460
-		// var "cond" var.pos=179859 var.line_nr=5460
-		// var "pos" var.pos=179874 var.line_nr=5460
+		// var "c" var.pos=180145 var.line_nr=5467
+		// var "cond" var.pos=180171 var.line_nr=5467
+		// var "pos" var.pos=180186 var.line_nr=5467
 		// af parent scope:
 		// af parent scope:
 		return _t2148;
@@ -47213,13 +47220,13 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 			v__checker__Checker_error(c, _SLIT("invalid $if postfix operator"), (*cond._v__ast__PostfixExpr).pos);
 		} else if (((*cond._v__ast__PostfixExpr).expr)._typ == 247 /* v.ast.Ident */) {
 			/*tmp return var*/ bool _t2149 = !(Array_string_contains(c->pref->compile_defines_all, (*(*cond._v__ast__PostfixExpr).expr._v__ast__Ident).name));
-			// autofree_scope_vars(pos=180356 line_nr=5479 scope.pos=180351 scope.end_pos=180413)
+			// autofree_scope_vars(pos=180668 line_nr=5486 scope.pos=180663 scope.end_pos=180725)
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2149;
@@ -47233,15 +47240,15 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 			bool l = v__checker__Checker_comp_if_branch(c, (*cond._v__ast__InfixExpr).left, (*cond._v__ast__InfixExpr).pos);
 			bool r = v__checker__Checker_comp_if_branch(c, (*cond._v__ast__InfixExpr).right, (*cond._v__ast__InfixExpr).pos);
 			/*tmp return var*/ bool _t2150 = l || r;
-			// autofree_scope_vars(pos=180630 line_nr=5489 scope.pos=180522 scope.end_pos=180705)
-			// var "l" var.pos=180534 var.line_nr=5487
-			// var "r" var.pos=180582 var.line_nr=5488
+			// autofree_scope_vars(pos=180942 line_nr=5496 scope.pos=180834 scope.end_pos=181017)
+			// var "l" var.pos=180846 var.line_nr=5494
+			// var "r" var.pos=180894 var.line_nr=5495
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2150;
@@ -47250,15 +47257,15 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 			bool l = v__checker__Checker_comp_if_branch(c, (*cond._v__ast__InfixExpr).left, (*cond._v__ast__InfixExpr).pos);
 			bool r = v__checker__Checker_comp_if_branch(c, (*cond._v__ast__InfixExpr).right, (*cond._v__ast__InfixExpr).pos);
 			/*tmp return var*/ bool _t2151 = l && r;
-			// autofree_scope_vars(pos=180826 line_nr=5494 scope.pos=180711 scope.end_pos=180898)
-			// var "l" var.pos=180730 var.line_nr=5492
-			// var "r" var.pos=180778 var.line_nr=5493
+			// autofree_scope_vars(pos=181138 line_nr=5501 scope.pos=181023 scope.end_pos=181210)
+			// var "l" var.pos=181042 var.line_nr=5499
+			// var "r" var.pos=181090 var.line_nr=5500
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2151;
@@ -47267,14 +47274,14 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 			if (((*cond._v__ast__InfixExpr).left)._typ == 266 /* v.ast.SelectorExpr */ || ((*cond._v__ast__InfixExpr).left)._typ == 272 /* v.ast.TypeNode */) {
 				v__checker__Checker_expr(c, (*cond._v__ast__InfixExpr).left);
 				/*tmp return var*/ bool _t2152 = false;
-				// autofree_scope_vars(pos=181057 line_nr=5500 scope.pos=180990 scope.end_pos=181076)
+				// autofree_scope_vars(pos=181369 line_nr=5507 scope.pos=181302 scope.end_pos=181388)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2152;
@@ -47292,20 +47299,20 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 					IError err = _t2153.err;
 					v__checker__Checker_error(c, (*(err.msg)), (*(*cond._v__ast__InfixExpr).left._v__ast__Ident).pos);
 					/*tmp return var*/ bool _t2154 = false;
-					// autofree_scope_vars(pos=181569 line_nr=5515 scope.pos=181522 scope.end_pos=181589)
-					// var "err" var.pos=181522 var.line_nr=5513
+					// autofree_scope_vars(pos=181881 line_nr=5522 scope.pos=181834 scope.end_pos=181901)
+					// var "err" var.pos=181834 var.line_nr=5520
 					// af parent scope:
-					// var "left_type" var.pos=181406 var.line_nr=5511
-					// var "right_type" var.pos=181443 var.line_nr=5512
-					// var "expr" var.pos=181482 var.line_nr=5513
-					// var "different" var.pos=181930 var.line_nr=5525
+					// var "left_type" var.pos=181718 var.line_nr=5518
+					// var "right_type" var.pos=181755 var.line_nr=5519
+					// var "expr" var.pos=181794 var.line_nr=5520
+					// var "different" var.pos=182242 var.line_nr=5532
 					// af parent scope:
 					// af parent scope:
-					// var "cond" var.pos=179945 var.line_nr=5462
+					// var "cond" var.pos=180257 var.line_nr=5469
 					// af parent scope:
-					// var "c" var.pos=179833 var.line_nr=5460
-					// var "cond" var.pos=179859 var.line_nr=5460
-					// var "pos" var.pos=179874 var.line_nr=5460
+					// var "c" var.pos=180145 var.line_nr=5467
+					// var "cond" var.pos=180171 var.line_nr=5467
+					// var "pos" var.pos=180186 var.line_nr=5467
 					// af parent scope:
 					// af parent scope:
 					return _t2154;
@@ -47318,18 +47325,18 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 				}
 				bool different = string_ne(v__ast__Expr_str(expr), v__ast__Expr_str((*cond._v__ast__InfixExpr).right));
 				/*tmp return var*/ bool _t2155 = ((*cond._v__ast__InfixExpr).op == v__token__Kind_eq ? (different) : (!different));
-				// autofree_scope_vars(pos=181979 line_nr=5526 scope.pos=181372 scope.end_pos=182044)
-				// var "left_type" var.pos=181406 var.line_nr=5511
-				// var "right_type" var.pos=181443 var.line_nr=5512
-				// var "expr" var.pos=181482 var.line_nr=5513
-				// var "different" var.pos=181930 var.line_nr=5525
+				// autofree_scope_vars(pos=182291 line_nr=5533 scope.pos=181684 scope.end_pos=182356)
+				// var "left_type" var.pos=181718 var.line_nr=5518
+				// var "right_type" var.pos=181755 var.line_nr=5519
+				// var "expr" var.pos=181794 var.line_nr=5520
+				// var "different" var.pos=182242 var.line_nr=5532
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2155;
@@ -47344,37 +47351,37 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 	else if (cond._typ == 247 /* v.ast.Ident */) {
 		if ((Array_string_contains(_const_v__checker__valid_comp_if_os, (*cond._v__ast__Ident).name))) {
 			/*tmp return var*/ bool _t2156 = string_ne((*cond._v__ast__Ident).name, string_to_lower(v__pref__OS_str(c->pref->os)));
-			// autofree_scope_vars(pos=182292 line_nr=5539 scope.pos=182287 scope.end_pos=182356)
+			// autofree_scope_vars(pos=182604 line_nr=5546 scope.pos=182599 scope.end_pos=182668)
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2156;
 		} else if ((Array_string_contains(_const_v__checker__valid_comp_if_compilers, (*cond._v__ast__Ident).name))) {
 			/*tmp return var*/ bool _t2157 = v__pref__cc_from_string((*cond._v__ast__Ident).name) != c->pref->ccompiler_type;
-			// autofree_scope_vars(pos=182416 line_nr=5541 scope.pos=182411 scope.end_pos=182483)
+			// autofree_scope_vars(pos=182728 line_nr=5548 scope.pos=182723 scope.end_pos=182795)
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2157;
 		} else if ((Array_string_contains(_const_v__checker__valid_comp_if_platforms, (*cond._v__ast__Ident).name))) {
 			/*tmp return var*/ bool _t2158 = false;
-			// autofree_scope_vars(pos=182543 line_nr=5543 scope.pos=182538 scope.end_pos=182568)
+			// autofree_scope_vars(pos=182855 line_nr=5550 scope.pos=182850 scope.end_pos=182880)
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2158;
@@ -47382,112 +47389,112 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 
 			if (string_eq((*cond._v__ast__Ident).name, _SLIT("js"))) {
 				/*tmp return var*/ bool _t2159 = c->pref->backend != v__pref__Backend_js;
-				// autofree_scope_vars(pos=182697 line_nr=5547 scope.pos=182691 scope.end_pos=182727)
+				// autofree_scope_vars(pos=183009 line_nr=5554 scope.pos=183003 scope.end_pos=183039)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2159;
 			}
 			else if (string_eq((*cond._v__ast__Ident).name, _SLIT("debug"))) {
 				/*tmp return var*/ bool _t2160 = !c->pref->is_debug;
-				// autofree_scope_vars(pos=182743 line_nr=5548 scope.pos=182734 scope.end_pos=182768)
+				// autofree_scope_vars(pos=183055 line_nr=5555 scope.pos=183046 scope.end_pos=183080)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2160;
 			}
 			else if (string_eq((*cond._v__ast__Ident).name, _SLIT("prod"))) {
 				/*tmp return var*/ bool _t2161 = !c->pref->is_prod;
-				// autofree_scope_vars(pos=182783 line_nr=5549 scope.pos=182775 scope.end_pos=182807)
+				// autofree_scope_vars(pos=183095 line_nr=5556 scope.pos=183087 scope.end_pos=183119)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2161;
 			}
 			else if (string_eq((*cond._v__ast__Ident).name, _SLIT("test"))) {
 				/*tmp return var*/ bool _t2162 = !c->pref->is_test;
-				// autofree_scope_vars(pos=182822 line_nr=5550 scope.pos=182814 scope.end_pos=182846)
+				// autofree_scope_vars(pos=183134 line_nr=5557 scope.pos=183126 scope.end_pos=183158)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2162;
 			}
 			else if (string_eq((*cond._v__ast__Ident).name, _SLIT("glibc"))) {
 				/*tmp return var*/ bool _t2163 = false;
-				// autofree_scope_vars(pos=182862 line_nr=5551 scope.pos=182853 scope.end_pos=182876)
+				// autofree_scope_vars(pos=183174 line_nr=5558 scope.pos=183165 scope.end_pos=183188)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2163;
 			}
 			else if (string_eq((*cond._v__ast__Ident).name, _SLIT("prealloc"))) {
 				/*tmp return var*/ bool _t2164 = !c->pref->prealloc;
-				// autofree_scope_vars(pos=182903 line_nr=5552 scope.pos=182891 scope.end_pos=182928)
+				// autofree_scope_vars(pos=183215 line_nr=5559 scope.pos=183203 scope.end_pos=183240)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2164;
 			}
 			else if (string_eq((*cond._v__ast__Ident).name, _SLIT("no_bounds_checking"))) {
 				/*tmp return var*/ bool _t2165 = !(Array_string_contains(c->pref->compile_defines_all, (*cond._v__ast__Ident).name));
-				// autofree_scope_vars(pos=182957 line_nr=5553 scope.pos=182935 scope.end_pos=183006)
+				// autofree_scope_vars(pos=183269 line_nr=5560 scope.pos=183247 scope.end_pos=183318)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2165;
 			}
 			else {
 				/*tmp return var*/ bool _t2166 = false;
-				// autofree_scope_vars(pos=183019 line_nr=5554 scope.pos=183013 scope.end_pos=183033)
+				// autofree_scope_vars(pos=183331 line_nr=5561 scope.pos=183325 scope.end_pos=183345)
 				// af parent scope:
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2166;
@@ -47497,16 +47504,16 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 			if (((*cond._v__ast__Ident).obj)._typ != 305 /* v.ast.Var */ && ((*cond._v__ast__Ident).obj)._typ != 303 /* v.ast.ConstField */ && ((*cond._v__ast__Ident).obj)._typ != 304 /* v.ast.GlobalField */) {
 				v__checker__Checker_error(c, _STR("unknown var: `%.*s\000`", 2, (*cond._v__ast__Ident).name), pos);
 				/*tmp return var*/ bool _t2167 = false;
-				// autofree_scope_vars(pos=183295 line_nr=5562 scope.pos=183242 scope.end_pos=183313)
+				// autofree_scope_vars(pos=183607 line_nr=5569 scope.pos=183554 scope.end_pos=183625)
 				// af parent scope:
-				// var "typ" var.pos=183126 var.line_nr=5558
-				// var "expr" var.pos=183319 var.line_nr=5564
+				// var "typ" var.pos=183438 var.line_nr=5565
+				// var "expr" var.pos=183631 var.line_nr=5571
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2167;
@@ -47516,17 +47523,17 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 				IError err = _t2168.err;
 				v__checker__Checker_error(c, (*(err.msg)), (*cond._v__ast__Ident).pos);
 				/*tmp return var*/ bool _t2169 = false;
-				// autofree_scope_vars(pos=183400 line_nr=5566 scope.pos=183362 scope.end_pos=183418)
-				// var "err" var.pos=183362 var.line_nr=5564
+				// autofree_scope_vars(pos=183712 line_nr=5573 scope.pos=183674 scope.end_pos=183730)
+				// var "err" var.pos=183674 var.line_nr=5571
 				// af parent scope:
-				// var "typ" var.pos=183126 var.line_nr=5558
-				// var "expr" var.pos=183319 var.line_nr=5564
+				// var "typ" var.pos=183438 var.line_nr=5565
+				// var "expr" var.pos=183631 var.line_nr=5571
 				// af parent scope:
-				// var "cond" var.pos=179945 var.line_nr=5462
+				// var "cond" var.pos=180257 var.line_nr=5469
 				// af parent scope:
-				// var "c" var.pos=179833 var.line_nr=5460
-				// var "cond" var.pos=179859 var.line_nr=5460
-				// var "pos" var.pos=179874 var.line_nr=5460
+				// var "c" var.pos=180145 var.line_nr=5467
+				// var "cond" var.pos=180171 var.line_nr=5467
+				// var "pos" var.pos=180186 var.line_nr=5467
 				// af parent scope:
 				// af parent scope:
 				return _t2169;
@@ -47537,15 +47544,15 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 				v__checker__Checker_error(c, _STR("non-bool type `%.*s\000` used as $if condition", 2, type_name), (*cond._v__ast__Ident).pos);
 			}
 			/*tmp return var*/ bool _t2170 = !(/* as */ *(v__ast__BoolLiteral*)__as_cast((expr)._v__ast__BoolLiteral,(expr)._typ, 232) /*expected idx: 232, name: v.ast.BoolLiteral */ ).val;
-			// autofree_scope_vars(pos=183676 line_nr=5574 scope.pos=183095 scope.end_pos=183718)
-			// var "typ" var.pos=183126 var.line_nr=5558
-			// var "expr" var.pos=183319 var.line_nr=5564
+			// autofree_scope_vars(pos=183988 line_nr=5581 scope.pos=183407 scope.end_pos=184030)
+			// var "typ" var.pos=183438 var.line_nr=5565
+			// var "expr" var.pos=183631 var.line_nr=5571
 			// af parent scope:
-			// var "cond" var.pos=179945 var.line_nr=5462
+			// var "cond" var.pos=180257 var.line_nr=5469
 			// af parent scope:
-			// var "c" var.pos=179833 var.line_nr=5460
-			// var "cond" var.pos=179859 var.line_nr=5460
-			// var "pos" var.pos=179874 var.line_nr=5460
+			// var "c" var.pos=180145 var.line_nr=5467
+			// var "cond" var.pos=180171 var.line_nr=5467
+			// var "pos" var.pos=180186 var.line_nr=5467
 			// af parent scope:
 			// af parent scope:
 			return _t2170;
@@ -47555,10 +47562,10 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 		v__checker__Checker_error(c, _SLIT("invalid `$if` condition"), pos);
 	};
 	/*tmp return var*/ bool _t2171 = false;
-	// autofree_scope_vars(pos=183784 line_nr=5581 scope.pos=179828 scope.end_pos=183798)
-	// var "c" var.pos=179833 var.line_nr=5460
-	// var "cond" var.pos=179859 var.line_nr=5460
-	// var "pos" var.pos=179874 var.line_nr=5460
+	// autofree_scope_vars(pos=184096 line_nr=5588 scope.pos=180140 scope.end_pos=184110)
+	// var "c" var.pos=180145 var.line_nr=5467
+	// var "cond" var.pos=180171 var.line_nr=5467
+	// var "pos" var.pos=180186 var.line_nr=5467
 	// af parent scope:
 	// af parent scope:
 	return _t2171;
@@ -47571,10 +47578,10 @@ VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_definition(v__check
 	}
 	else if (ident.kind == (v__ast__IdentKind_variable) || ident.kind == (v__ast__IdentKind_constant)) {
 		/*tmp return var*/ Option_v__ast__Expr _t2172 = v__checker__Checker_find_obj_definition(c, ident.obj);
-		// autofree_scope_vars(pos=183953 line_nr=5587 scope.pos=183931 scope.end_pos=183994)
+		// autofree_scope_vars(pos=184265 line_nr=5594 scope.pos=184243 scope.end_pos=184306)
 		// af parent scope:
-		// var "c" var.pos=183809 var.line_nr=5584
-		// var "ident" var.pos=183836 var.line_nr=5584
+		// var "c" var.pos=184121 var.line_nr=5591
+		// var "ident" var.pos=184148 var.line_nr=5591
 		// af parent scope:
 		// af parent scope:
 		return _t2172;
@@ -47615,13 +47622,13 @@ VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_obj_definition(v__c
 	}
 	if ((expr)._typ == 247 /* v.ast.Ident */) {
 		/*tmp return var*/ Option_v__ast__Expr _t2173 = v__checker__Checker_find_definition(c, /* as */ *(v__ast__Ident*)__as_cast((expr)._v__ast__Ident,(expr)._typ, 247) /*expected idx: 247, name: v.ast.Ident */ );
-		// autofree_scope_vars(pos=184695 line_nr=5611 scope.pos=184692 scope.end_pos=184760)
+		// autofree_scope_vars(pos=185007 line_nr=5618 scope.pos=185004 scope.end_pos=185072)
 		// af parent scope:
-		// var "c" var.pos=184131 var.line_nr=5593
-		// var "obj" var.pos=184162 var.line_nr=5593
-		// var "name" var.pos=184252 var.line_nr=5595
+		// var "c" var.pos=184443 var.line_nr=5600
+		// var "obj" var.pos=184474 var.line_nr=5600
+		// var "name" var.pos=184564 var.line_nr=5602
 		// str literal
-		// var "expr" var.pos=184364 var.line_nr=5599
+		// var "expr" var.pos=184676 var.line_nr=5606
 		// af parent scope:
 		// af parent scope:
 		return _t2173;
@@ -47664,15 +47671,15 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_185910 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_185910.arg0;
+		multi_return_string_v__token__Position mr_186222 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_186222.arg0;
 	}
-	// autofree_scope_vars(pos=185946 line_nr=5650 scope.pos=185331 scope.end_pos=185958)
-	// var "c" var.pos=185336 var.line_nr=5637
-	// var "node" var.pos=185364 var.line_nr=5637
-	// var "typ" var.pos=185398 var.line_nr=5638
-	// var "typ_sym" var.pos=185424 var.line_nr=5639
-	// var "is_non_void_pointer" var.pos=185465 var.line_nr=5640
+	// autofree_scope_vars(pos=186258 line_nr=5657 scope.pos=185643 scope.end_pos=186270)
+	// var "c" var.pos=185648 var.line_nr=5644
+	// var "node" var.pos=185676 var.line_nr=5644
+	// var "typ" var.pos=185710 var.line_nr=5645
+	// var "typ_sym" var.pos=185736 var.line_nr=5646
+	// var "is_non_void_pointer" var.pos=185777 var.line_nr=5647
 	// af parent scope:
 	// af parent scope:
 	return typ;
@@ -47736,24 +47743,24 @@ v__ast__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__Pre
 			}
 		}
 		/*tmp return var*/ v__ast__Type _t2177 = v__ast__Type_to_ptr(right_type);
-		// autofree_scope_vars(pos=187301 line_nr=5694 scope.pos=186312 scope.end_pos=187330)
-		// var "expr" var.pos=186320 var.line_nr=5661
+		// autofree_scope_vars(pos=187613 line_nr=5701 scope.pos=186624 scope.end_pos=187642)
+		// var "expr" var.pos=186632 var.line_nr=5668
 		// af parent scope:
-		// var "c" var.pos=185973 var.line_nr=5653
-		// var "node" var.pos=186000 var.line_nr=5653
-		// var "old_inside_ref_lit" var.pos=186033 var.line_nr=5654
-		// var "right_type" var.pos=186129 var.line_nr=5656
+		// var "c" var.pos=186285 var.line_nr=5660
+		// var "node" var.pos=186312 var.line_nr=5660
+		// var "old_inside_ref_lit" var.pos=186345 var.line_nr=5661
+		// var "right_type" var.pos=186441 var.line_nr=5663
 		// af parent scope:
 		// af parent scope:
 		return _t2177;
 	} else if (node->op == v__token__Kind_amp && (node->right)._typ != 235 /* v.ast.CastExpr */) {
 		/*tmp return var*/ v__ast__Type _t2178 = v__ast__Type_to_ptr(right_type);
-		// autofree_scope_vars(pos=187390 line_nr=5696 scope.pos=187387 scope.end_pos=187419)
+		// autofree_scope_vars(pos=187702 line_nr=5703 scope.pos=187699 scope.end_pos=187731)
 		// af parent scope:
-		// var "c" var.pos=185973 var.line_nr=5653
-		// var "node" var.pos=186000 var.line_nr=5653
-		// var "old_inside_ref_lit" var.pos=186033 var.line_nr=5654
-		// var "right_type" var.pos=186129 var.line_nr=5656
+		// var "c" var.pos=186285 var.line_nr=5660
+		// var "node" var.pos=186312 var.line_nr=5660
+		// var "old_inside_ref_lit" var.pos=186345 var.line_nr=5661
+		// var "right_type" var.pos=186441 var.line_nr=5663
 		// af parent scope:
 		// af parent scope:
 		return _t2178;
@@ -47761,13 +47768,13 @@ v__ast__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__Pre
 	if (node->op == v__token__Kind_mul) {
 		if (v__ast__Type_is_ptr(right_type)) {
 			/*tmp return var*/ v__ast__Type _t2179 = v__ast__Type_deref(right_type);
-			// autofree_scope_vars(pos=187472 line_nr=5700 scope.pos=187468 scope.end_pos=187501)
+			// autofree_scope_vars(pos=187784 line_nr=5707 scope.pos=187780 scope.end_pos=187813)
 			// af parent scope:
 			// af parent scope:
-			// var "c" var.pos=185973 var.line_nr=5653
-			// var "node" var.pos=186000 var.line_nr=5653
-			// var "old_inside_ref_lit" var.pos=186033 var.line_nr=5654
-			// var "right_type" var.pos=186129 var.line_nr=5656
+			// var "c" var.pos=186285 var.line_nr=5660
+			// var "node" var.pos=186312 var.line_nr=5660
+			// var "old_inside_ref_lit" var.pos=186345 var.line_nr=5661
+			// var "right_type" var.pos=186441 var.line_nr=5663
 			// af parent scope:
 			// af parent scope:
 			return _t2179;
@@ -47788,14 +47795,14 @@ v__ast__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__Pre
 		if (right->kind == v__ast__Kind_chan) {
 			v__checker__Checker_stmts(c, node->or_block.stmts);
 			/*tmp return var*/ v__ast__Type _t2180 = v__ast__TypeSymbol_chan_info(right).elem_type;
-			// autofree_scope_vars(pos=188047 line_nr=5717 scope.pos=188011 scope.end_pos=188085)
+			// autofree_scope_vars(pos=188359 line_nr=5724 scope.pos=188323 scope.end_pos=188397)
 			// af parent scope:
-			// var "right" var.pos=187941 var.line_nr=5714
+			// var "right" var.pos=188253 var.line_nr=5721
 			// af parent scope:
-			// var "c" var.pos=185973 var.line_nr=5653
-			// var "node" var.pos=186000 var.line_nr=5653
-			// var "old_inside_ref_lit" var.pos=186033 var.line_nr=5654
-			// var "right_type" var.pos=186129 var.line_nr=5656
+			// var "c" var.pos=186285 var.line_nr=5660
+			// var "node" var.pos=186312 var.line_nr=5660
+			// var "old_inside_ref_lit" var.pos=186345 var.line_nr=5661
+			// var "right_type" var.pos=186441 var.line_nr=5663
 			// af parent scope:
 			// af parent scope:
 			return _t2180;
@@ -47803,11 +47810,11 @@ v__ast__Type v__checker__Checker_prefix_expr(v__checker__Checker* c, v__ast__Pre
 			v__checker__Checker_error(c, _SLIT("<- operator can only be used with `chan` types"), node->pos);
 		}
 	}
-	// autofree_scope_vars(pos=188172 line_nr=5722 scope.pos=185968 scope.end_pos=188191)
-	// var "c" var.pos=185973 var.line_nr=5653
-	// var "node" var.pos=186000 var.line_nr=5653
-	// var "old_inside_ref_lit" var.pos=186033 var.line_nr=5654
-	// var "right_type" var.pos=186129 var.line_nr=5656
+	// autofree_scope_vars(pos=188484 line_nr=5729 scope.pos=186280 scope.end_pos=188503)
+	// var "c" var.pos=186285 var.line_nr=5660
+	// var "node" var.pos=186312 var.line_nr=5660
+	// var "old_inside_ref_lit" var.pos=186345 var.line_nr=5661
+	// var "right_type" var.pos=186441 var.line_nr=5663
 	// af parent scope:
 	// af parent scope:
 	return right_type;
@@ -47905,11 +47912,11 @@ v__ast__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__Inde
 		}
 	}
 	v__checker__Checker_stmts(c, node->or_expr.stmts);
-	// autofree_scope_vars(pos=191917 line_nr=5834 scope.pos=189579 scope.end_pos=191929)
-	// var "c" var.pos=189584 var.line_nr=5761
-	// var "node" var.pos=189610 var.line_nr=5761
-	// var "typ" var.pos=189646 var.line_nr=5762
-	// var "typ_sym" var.pos=189694 var.line_nr=5764
+	// autofree_scope_vars(pos=192229 line_nr=5841 scope.pos=189891 scope.end_pos=192241)
+	// var "c" var.pos=189896 var.line_nr=5768
+	// var "node" var.pos=189922 var.line_nr=5768
+	// var "typ" var.pos=189958 var.line_nr=5769
+	// var "typ_sym" var.pos=190006 var.line_nr=5771
 	// af parent scope:
 	// af parent scope:
 	return typ;
@@ -47919,14 +47926,14 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 	int typ_idx = ((node->enum_name).len == 0 ? (v__ast__Type_idx(c->expected_type)) : (v__ast__Table_find_type_idx(c->table, node->enum_name)));
 	if (typ_idx == 0) {
 		v__checker__Checker_error(c, _STR("not an enum (name=%.*s\000) (type_idx=0)", 2, node->enum_name), node->pos);
-		// autofree_scope_vars(pos=192386 line_nr=5849 scope.pos=192312 scope.end_pos=192409)
+		// autofree_scope_vars(pos=192698 line_nr=5856 scope.pos=192624 scope.end_pos=192721)
 		// af parent scope:
-		// var "c" var.pos=192057 var.line_nr=5840
-		// var "node" var.pos=192081 var.line_nr=5840
-		// var "typ_idx" var.pos=192111 var.line_nr=5841
-		// var "typ" var.pos=192416 var.line_nr=5851
-		// var "typ_sym" var.pos=192622 var.line_nr=5861
-		// var "info" var.pos=193256 var.line_nr=5878
+		// var "c" var.pos=192369 var.line_nr=5847
+		// var "node" var.pos=192393 var.line_nr=5847
+		// var "typ_idx" var.pos=192423 var.line_nr=5848
+		// var "typ" var.pos=192728 var.line_nr=5858
+		// var "typ_sym" var.pos=192934 var.line_nr=5868
+		// var "info" var.pos=193568 var.line_nr=5885
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -47934,28 +47941,28 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 	v__ast__Type typ = v__ast__new_type(typ_idx);
 	if (c->pref->translated) {
 		node->typ = typ;
-		// autofree_scope_vars(pos=192514 line_nr=5855 scope.pos=192467 scope.end_pos=192527)
+		// autofree_scope_vars(pos=192826 line_nr=5862 scope.pos=192779 scope.end_pos=192839)
 		// af parent scope:
-		// var "c" var.pos=192057 var.line_nr=5840
-		// var "node" var.pos=192081 var.line_nr=5840
-		// var "typ_idx" var.pos=192111 var.line_nr=5841
-		// var "typ" var.pos=192416 var.line_nr=5851
-		// var "typ_sym" var.pos=192622 var.line_nr=5861
-		// var "info" var.pos=193256 var.line_nr=5878
+		// var "c" var.pos=192369 var.line_nr=5847
+		// var "node" var.pos=192393 var.line_nr=5847
+		// var "typ_idx" var.pos=192423 var.line_nr=5848
+		// var "typ" var.pos=192728 var.line_nr=5858
+		// var "typ_sym" var.pos=192934 var.line_nr=5868
+		// var "info" var.pos=193568 var.line_nr=5885
 		// af parent scope:
 		// af parent scope:
 		return typ;
 	}
 	if (v__ast__Type_alias_eq(typ, _const_v__ast__void_type)) {
 		v__checker__Checker_error(c, _SLIT("not an enum"), node->pos);
-		// autofree_scope_vars(pos=192592 line_nr=5859 scope.pos=192554 scope.end_pos=192615)
+		// autofree_scope_vars(pos=192904 line_nr=5866 scope.pos=192866 scope.end_pos=192927)
 		// af parent scope:
-		// var "c" var.pos=192057 var.line_nr=5840
-		// var "node" var.pos=192081 var.line_nr=5840
-		// var "typ_idx" var.pos=192111 var.line_nr=5841
-		// var "typ" var.pos=192416 var.line_nr=5851
-		// var "typ_sym" var.pos=192622 var.line_nr=5861
-		// var "info" var.pos=193256 var.line_nr=5878
+		// var "c" var.pos=192369 var.line_nr=5847
+		// var "node" var.pos=192393 var.line_nr=5847
+		// var "typ_idx" var.pos=192423 var.line_nr=5848
+		// var "typ" var.pos=192728 var.line_nr=5858
+		// var "typ_sym" var.pos=192934 var.line_nr=5868
+		// var "info" var.pos=193568 var.line_nr=5885
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -47968,28 +47975,28 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 	}
 	if (typ_sym->kind != v__ast__Kind_enum_ && !c->pref->translated) {
 		v__checker__Checker_error(c, _STR("expected type is not an enum (`%.*s\000`)", 2, typ_sym->name), node->pos);
-		// autofree_scope_vars(pos=193100 line_nr=5871 scope.pos=192948 scope.end_pos=193123)
+		// autofree_scope_vars(pos=193412 line_nr=5878 scope.pos=193260 scope.end_pos=193435)
 		// af parent scope:
-		// var "c" var.pos=192057 var.line_nr=5840
-		// var "node" var.pos=192081 var.line_nr=5840
-		// var "typ_idx" var.pos=192111 var.line_nr=5841
-		// var "typ" var.pos=192416 var.line_nr=5851
-		// var "typ_sym" var.pos=192622 var.line_nr=5861
-		// var "info" var.pos=193256 var.line_nr=5878
+		// var "c" var.pos=192369 var.line_nr=5847
+		// var "node" var.pos=192393 var.line_nr=5847
+		// var "typ_idx" var.pos=192423 var.line_nr=5848
+		// var "typ" var.pos=192728 var.line_nr=5858
+		// var "typ_sym" var.pos=192934 var.line_nr=5868
+		// var "info" var.pos=193568 var.line_nr=5885
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
 	}
 	if ((typ_sym->info)._typ != 415 /* v.ast.Enum */) {
 		v__checker__Checker_error(c, _SLIT("not an enum"), node->pos);
-		// autofree_scope_vars(pos=193193 line_nr=5875 scope.pos=193155 scope.end_pos=193216)
+		// autofree_scope_vars(pos=193505 line_nr=5882 scope.pos=193467 scope.end_pos=193528)
 		// af parent scope:
-		// var "c" var.pos=192057 var.line_nr=5840
-		// var "node" var.pos=192081 var.line_nr=5840
-		// var "typ_idx" var.pos=192111 var.line_nr=5841
-		// var "typ" var.pos=192416 var.line_nr=5851
-		// var "typ_sym" var.pos=192622 var.line_nr=5861
-		// var "info" var.pos=193256 var.line_nr=5878
+		// var "c" var.pos=192369 var.line_nr=5847
+		// var "node" var.pos=192393 var.line_nr=5847
+		// var "typ_idx" var.pos=192423 var.line_nr=5848
+		// var "typ" var.pos=192728 var.line_nr=5858
+		// var "typ_sym" var.pos=192934 var.line_nr=5868
+		// var "info" var.pos=193568 var.line_nr=5885
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -48000,13 +48007,13 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 		v__checker__Checker_error(c, v__util__Suggestion_say(suggestion, _STR("enum `%.*s\000` does not have a value `%.*s\000`", 3, typ_sym->name, node->val)), node->pos);
 	}
 	node->typ = typ;
-	// autofree_scope_vars(pos=193584 line_nr=5887 scope.pos=192052 scope.end_pos=193596)
-	// var "c" var.pos=192057 var.line_nr=5840
-	// var "node" var.pos=192081 var.line_nr=5840
-	// var "typ_idx" var.pos=192111 var.line_nr=5841
-	// var "typ" var.pos=192416 var.line_nr=5851
-	// var "typ_sym" var.pos=192622 var.line_nr=5861
-	// var "info" var.pos=193256 var.line_nr=5878
+	// autofree_scope_vars(pos=193896 line_nr=5894 scope.pos=192364 scope.end_pos=193908)
+	// var "c" var.pos=192369 var.line_nr=5847
+	// var "node" var.pos=192393 var.line_nr=5847
+	// var "typ_idx" var.pos=192423 var.line_nr=5848
+	// var "typ" var.pos=192728 var.line_nr=5858
+	// var "typ_sym" var.pos=192934 var.line_nr=5868
+	// var "info" var.pos=193568 var.line_nr=5885
 	// af parent scope:
 	// af parent scope:
 	return typ;
@@ -48020,21 +48027,21 @@ v__ast__Type v__checker__Checker_chan_init(v__checker__Checker* c, v__ast__ChanI
 			v__checker__Checker_check_array_init_para_type(c, _SLIT("cap"), node->cap_expr, node->pos);
 		}
 		/*tmp return var*/ v__ast__Type _t2181 = node->typ;
-		// autofree_scope_vars(pos=193865 line_nr=5897 scope.pos=193684 scope.end_pos=193883)
-		// var "info" var.pos=193688 var.line_nr=5892
+		// autofree_scope_vars(pos=194177 line_nr=5904 scope.pos=193996 scope.end_pos=194195)
+		// var "info" var.pos=194000 var.line_nr=5899
 		// af parent scope:
-		// var "c" var.pos=193611 var.line_nr=5890
-		// var "node" var.pos=193636 var.line_nr=5890
+		// var "c" var.pos=193923 var.line_nr=5897
+		// var "node" var.pos=193948 var.line_nr=5897
 		// af parent scope:
 		// af parent scope:
 		return _t2181;
 	} else {
 		v__checker__Checker_error(c, _SLIT("`chan` of unknown type"), node->pos);
 		/*tmp return var*/ v__ast__Type _t2182 = node->typ;
-		// autofree_scope_vars(pos=193939 line_nr=5900 scope.pos=193890 scope.end_pos=193957)
+		// autofree_scope_vars(pos=194251 line_nr=5907 scope.pos=194202 scope.end_pos=194269)
 		// af parent scope:
-		// var "c" var.pos=193611 var.line_nr=5890
-		// var "node" var.pos=193636 var.line_nr=5890
+		// var "c" var.pos=193923 var.line_nr=5897
+		// var "node" var.pos=193948 var.line_nr=5897
 		// af parent scope:
 		// af parent scope:
 		return _t2182;
@@ -48046,11 +48053,11 @@ v__ast__Type v__checker__Checker_offset_of(v__checker__Checker* c, v__ast__Offse
 	v__ast__TypeSymbol* sym = v__ast__Table_get_final_type_symbol(c->table, node.struct_type);
 	if (sym->kind != v__ast__Kind_struct_) {
 		v__checker__Checker_error(c, _SLIT("first argument of __offsetof must be struct"), node.pos);
-		// autofree_scope_vars(pos=194176 line_nr=5908 scope.pos=194106 scope.end_pos=194198)
+		// autofree_scope_vars(pos=194488 line_nr=5915 scope.pos=194418 scope.end_pos=194510)
 		// af parent scope:
-		// var "c" var.pos=193974 var.line_nr=5904
-		// var "node" var.pos=193995 var.line_nr=5904
-		// var "sym" var.pos=194026 var.line_nr=5905
+		// var "c" var.pos=194286 var.line_nr=5911
+		// var "node" var.pos=194307 var.line_nr=5911
+		// var "sym" var.pos=194338 var.line_nr=5912
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__u32_type;
@@ -48058,10 +48065,10 @@ v__ast__Type v__checker__Checker_offset_of(v__checker__Checker* c, v__ast__Offse
 	if (!v__ast__Table_struct_has_field(c->table, sym, node.field)) {
 		v__checker__Checker_error(c, _STR("struct `%.*s\000` has no field called `%.*s\000`", 3, sym->name, node.field), node.pos);
 	}
-	// autofree_scope_vars(pos=194328 line_nr=5913 scope.pos=193969 scope.end_pos=194349)
-	// var "c" var.pos=193974 var.line_nr=5904
-	// var "node" var.pos=193995 var.line_nr=5904
-	// var "sym" var.pos=194026 var.line_nr=5905
+	// autofree_scope_vars(pos=194640 line_nr=5920 scope.pos=194281 scope.end_pos=194661)
+	// var "c" var.pos=194286 var.line_nr=5911
+	// var "node" var.pos=194307 var.line_nr=5911
+	// var "sym" var.pos=194338 var.line_nr=5912
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__u32_type;
@@ -48099,13 +48106,13 @@ v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapIni
 			node->key_type = info.key_type;
 			node->value_type = info.value_type;
 			/*tmp return var*/ v__ast__Type _t2183 = node->typ;
-			// autofree_scope_vars(pos=195260 line_nr=5948 scope.pos=195130 scope.end_pos=195279)
-			// var "info" var.pos=195135 var.line_nr=5944
+			// autofree_scope_vars(pos=195572 line_nr=5955 scope.pos=195442 scope.end_pos=195591)
+			// var "info" var.pos=195447 var.line_nr=5951
 			// af parent scope:
-			// var "sym" var.pos=195060 var.line_nr=5942
+			// var "sym" var.pos=195372 var.line_nr=5949
 			// af parent scope:
-			// var "c" var.pos=194926 var.line_nr=5939
-			// var "node" var.pos=194950 var.line_nr=5939
+			// var "c" var.pos=195238 var.line_nr=5946
+			// var "node" var.pos=195262 var.line_nr=5946
 			// af parent scope:
 			// af parent scope:
 			return _t2183;
@@ -48126,11 +48133,11 @@ v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapIni
 		node->key_type = info.key_type;
 		node->value_type = info.value_type;
 		/*tmp return var*/ v__ast__Type _t2186 = node->typ;
-		// autofree_scope_vars(pos=195696 line_nr=5961 scope.pos=195460 scope.end_pos=195714)
-		// var "info" var.pos=195464 var.line_nr=5956
+		// autofree_scope_vars(pos=196008 line_nr=5968 scope.pos=195772 scope.end_pos=196026)
+		// var "info" var.pos=195776 var.line_nr=5963
 		// af parent scope:
-		// var "c" var.pos=194926 var.line_nr=5939
-		// var "node" var.pos=194950 var.line_nr=5939
+		// var "c" var.pos=195238 var.line_nr=5946
+		// var "node" var.pos=195262 var.line_nr=5946
 		// af parent scope:
 		// af parent scope:
 		return _t2186;
@@ -48174,22 +48181,22 @@ v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapIni
 		node->typ = map_type;
 		node->key_type = key0_type;
 		node->value_type = val0_type;
-		// autofree_scope_vars(pos=196824 line_nr=6001 scope.pos=195759 scope.end_pos=196842)
-		// var "key0_type" var.pos=195786 var.line_nr=5965
-		// var "val0_type" var.pos=195918 var.line_nr=5969
-		// var "same_key_type" var.pos=196050 var.line_nr=5973
-		// var "map_type" var.pos=196666 var.line_nr=5997
+		// autofree_scope_vars(pos=197136 line_nr=6008 scope.pos=196071 scope.end_pos=197154)
+		// var "key0_type" var.pos=196098 var.line_nr=5972
+		// var "val0_type" var.pos=196230 var.line_nr=5976
+		// var "same_key_type" var.pos=196362 var.line_nr=5980
+		// var "map_type" var.pos=196978 var.line_nr=6004
 		// af parent scope:
-		// var "c" var.pos=194926 var.line_nr=5939
-		// var "node" var.pos=194950 var.line_nr=5939
+		// var "c" var.pos=195238 var.line_nr=5946
+		// var "node" var.pos=195262 var.line_nr=5946
 		// af parent scope:
 		// af parent scope:
 		return map_type;
 	}
 	/*tmp return var*/ v__ast__Type _t2187 = node->typ;
-	// autofree_scope_vars(pos=196844 line_nr=6003 scope.pos=194921 scope.end_pos=196861)
-	// var "c" var.pos=194926 var.line_nr=5939
-	// var "node" var.pos=194950 var.line_nr=5939
+	// autofree_scope_vars(pos=197156 line_nr=6010 scope.pos=195233 scope.end_pos=197173)
+	// var "c" var.pos=195238 var.line_nr=5946
+	// var "node" var.pos=195262 var.line_nr=5946
 	// af parent scope:
 	// af parent scope:
 	return _t2187;
@@ -48218,11 +48225,11 @@ void v__checker__Checker_error(v__checker__Checker* c, string message, v__token_
 VV_LOCAL_SYMBOL bool v__checker__Checker_check_struct_signature(v__checker__Checker* c, v__ast__Struct from, v__ast__Struct to) {
 	if (from.fields.len == 0) {
 		/*tmp return var*/ bool _t2189 = false;
-		// autofree_scope_vars(pos=197664 line_nr=6032 scope.pos=197661 scope.end_pos=197679)
+		// autofree_scope_vars(pos=197976 line_nr=6039 scope.pos=197973 scope.end_pos=197991)
 		// af parent scope:
-		// var "c" var.pos=197525 var.line_nr=6029
-		// var "from" var.pos=197560 var.line_nr=6029
-		// var "to" var.pos=197577 var.line_nr=6029
+		// var "c" var.pos=197837 var.line_nr=6036
+		// var "from" var.pos=197872 var.line_nr=6036
+		// var "to" var.pos=197889 var.line_nr=6036
 		// af parent scope:
 		// af parent scope:
 		return _t2189;
@@ -48244,16 +48251,16 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_check_struct_signature(v__checker__Chec
 		Array_v__ast__StructField filtered = _t2191;
 		if (filtered.len != 1) {
 			/*tmp return var*/ bool _t2193 = false;
-			// autofree_scope_vars(pos=197816 line_nr=6038 scope.pos=197786 scope.end_pos=197832)
+			// autofree_scope_vars(pos=198128 line_nr=6045 scope.pos=198098 scope.end_pos=198144)
 			// af parent scope:
-			// var "field" var.pos=197686 var.line_nr=6034
+			// var "field" var.pos=197998 var.line_nr=6041
 			// skipping tmp var "field"
-			// var "filtered" var.pos=197711 var.line_nr=6035
-			// var "counterpart" var.pos=197836 var.line_nr=6040
+			// var "filtered" var.pos=198023 var.line_nr=6042
+			// var "counterpart" var.pos=198148 var.line_nr=6047
 			// af parent scope:
-			// var "c" var.pos=197525 var.line_nr=6029
-			// var "from" var.pos=197560 var.line_nr=6029
-			// var "to" var.pos=197577 var.line_nr=6029
+			// var "c" var.pos=197837 var.line_nr=6036
+			// var "from" var.pos=197872 var.line_nr=6036
+			// var "to" var.pos=197889 var.line_nr=6036
 			// af parent scope:
 			// af parent scope:
 			return _t2193;
@@ -48261,58 +48268,58 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_check_struct_signature(v__checker__Chec
 		v__ast__StructField counterpart = (*(v__ast__StructField*)/*ee elem_typ */array_get(filtered, 0));
 		if (!v__ast__Type_alias_eq(field.typ, counterpart.typ)) {
 			/*tmp return var*/ bool _t2194 = false;
-			// autofree_scope_vars(pos=197931 line_nr=6043 scope.pos=197897 scope.end_pos=197947)
+			// autofree_scope_vars(pos=198243 line_nr=6050 scope.pos=198209 scope.end_pos=198259)
 			// af parent scope:
-			// var "field" var.pos=197686 var.line_nr=6034
+			// var "field" var.pos=197998 var.line_nr=6041
 			// skipping tmp var "field"
-			// var "filtered" var.pos=197711 var.line_nr=6035
-			// var "counterpart" var.pos=197836 var.line_nr=6040
+			// var "filtered" var.pos=198023 var.line_nr=6042
+			// var "counterpart" var.pos=198148 var.line_nr=6047
 			// af parent scope:
-			// var "c" var.pos=197525 var.line_nr=6029
-			// var "from" var.pos=197560 var.line_nr=6029
-			// var "to" var.pos=197577 var.line_nr=6029
+			// var "c" var.pos=197837 var.line_nr=6036
+			// var "from" var.pos=197872 var.line_nr=6036
+			// var "to" var.pos=197889 var.line_nr=6036
 			// af parent scope:
 			// af parent scope:
 			return _t2194;
 		}
 		if (field.is_pub != counterpart.is_pub) {
 			/*tmp return var*/ bool _t2195 = false;
-			// autofree_scope_vars(pos=198042 line_nr=6047 scope.pos=197989 scope.end_pos=198058)
+			// autofree_scope_vars(pos=198354 line_nr=6054 scope.pos=198301 scope.end_pos=198370)
 			// af parent scope:
-			// var "field" var.pos=197686 var.line_nr=6034
+			// var "field" var.pos=197998 var.line_nr=6041
 			// skipping tmp var "field"
-			// var "filtered" var.pos=197711 var.line_nr=6035
-			// var "counterpart" var.pos=197836 var.line_nr=6040
+			// var "filtered" var.pos=198023 var.line_nr=6042
+			// var "counterpart" var.pos=198148 var.line_nr=6047
 			// af parent scope:
-			// var "c" var.pos=197525 var.line_nr=6029
-			// var "from" var.pos=197560 var.line_nr=6029
-			// var "to" var.pos=197577 var.line_nr=6029
+			// var "c" var.pos=197837 var.line_nr=6036
+			// var "from" var.pos=197872 var.line_nr=6036
+			// var "to" var.pos=197889 var.line_nr=6036
 			// af parent scope:
 			// af parent scope:
 			return _t2195;
 		}
 		if (field.is_mut != counterpart.is_mut) {
 			/*tmp return var*/ bool _t2196 = false;
-			// autofree_scope_vars(pos=198154 line_nr=6051 scope.pos=198100 scope.end_pos=198170)
+			// autofree_scope_vars(pos=198466 line_nr=6058 scope.pos=198412 scope.end_pos=198482)
 			// af parent scope:
-			// var "field" var.pos=197686 var.line_nr=6034
+			// var "field" var.pos=197998 var.line_nr=6041
 			// skipping tmp var "field"
-			// var "filtered" var.pos=197711 var.line_nr=6035
-			// var "counterpart" var.pos=197836 var.line_nr=6040
+			// var "filtered" var.pos=198023 var.line_nr=6042
+			// var "counterpart" var.pos=198148 var.line_nr=6047
 			// af parent scope:
-			// var "c" var.pos=197525 var.line_nr=6029
-			// var "from" var.pos=197560 var.line_nr=6029
-			// var "to" var.pos=197577 var.line_nr=6029
+			// var "c" var.pos=197837 var.line_nr=6036
+			// var "from" var.pos=197872 var.line_nr=6036
+			// var "to" var.pos=197889 var.line_nr=6036
 			// af parent scope:
 			// af parent scope:
 			return _t2196;
 		}
 	}
 	/*tmp return var*/ bool _t2197 = true;
-	// autofree_scope_vars(pos=198175 line_nr=6054 scope.pos=197524 scope.end_pos=198188)
-	// var "c" var.pos=197525 var.line_nr=6029
-	// var "from" var.pos=197560 var.line_nr=6029
-	// var "to" var.pos=197577 var.line_nr=6029
+	// autofree_scope_vars(pos=198487 line_nr=6061 scope.pos=197836 scope.end_pos=198500)
+	// var "c" var.pos=197837 var.line_nr=6036
+	// var "from" var.pos=197872 var.line_nr=6036
+	// var "to" var.pos=197889 var.line_nr=6036
 	// af parent scope:
 	// af parent scope:
 	return _t2197;
@@ -48359,9 +48366,9 @@ VV_LOCAL_SYMBOL void v__checker__Checker_warn_or_error(v__checker__Checker* c, s
 
 VV_LOCAL_SYMBOL bool v__checker__Checker_fileis(v__checker__Checker* c, string s) {
 	/*tmp return var*/ bool _t2205 = string_contains(c->file->path, s);
-	// autofree_scope_vars(pos=199516 line_nr=6120 scope.pos=199479 scope.end_pos=199548)
-	// var "c" var.pos=199480 var.line_nr=6119
-	// var "s" var.pos=199499 var.line_nr=6119
+	// autofree_scope_vars(pos=199828 line_nr=6127 scope.pos=199791 scope.end_pos=199860)
+	// var "c" var.pos=199792 var.line_nr=6126
+	// var "s" var.pos=199811 var.line_nr=6126
 	// af parent scope:
 	// af parent scope:
 	return _t2205;
@@ -48380,15 +48387,15 @@ bool v__checker__Checker_sql_expr_defer_0 = false;
 			c->inside_sql = false;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=199778 line_nr=6129 scope.pos=199777 scope.end_pos=199800)
-		// var "err" var.pos=199777 var.line_nr=6129
+		// autofree_scope_vars(pos=200090 line_nr=6136 scope.pos=200089 scope.end_pos=200112)
+		// var "err" var.pos=200089 var.line_nr=6136
 		// af parent scope:
-		// var "c" var.pos=199559 var.line_nr=6123
-		// var "node" var.pos=199583 var.line_nr=6123
-		// var "sym" var.pos=199669 var.line_nr=6128
-		// var "info" var.pos=199823 var.line_nr=6131
-		// var "fields" var.pos=199855 var.line_nr=6132
-		// var "sub_structs" var.pos=199937 var.line_nr=6133
+		// var "c" var.pos=199871 var.line_nr=6130
+		// var "node" var.pos=199895 var.line_nr=6130
+		// var "sym" var.pos=199981 var.line_nr=6135
+		// var "info" var.pos=200135 var.line_nr=6138
+		// var "fields" var.pos=200167 var.line_nr=6139
+		// var "sub_structs" var.pos=200249 var.line_nr=6140
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -48474,13 +48481,13 @@ bool v__checker__Checker_sql_expr_defer_0 = false;
 	}
 	// Defer end
 	/*tmp return var*/ v__ast__Type _t2211 = node->typ;
-	// autofree_scope_vars(pos=201184 line_nr=6196 scope.pos=199554 scope.end_pos=201201)
-	// var "c" var.pos=199559 var.line_nr=6123
-	// var "node" var.pos=199583 var.line_nr=6123
-	// var "sym" var.pos=199669 var.line_nr=6128
-	// var "info" var.pos=199823 var.line_nr=6131
-	// var "fields" var.pos=199855 var.line_nr=6132
-	// var "sub_structs" var.pos=199937 var.line_nr=6133
+	// autofree_scope_vars(pos=201496 line_nr=6203 scope.pos=199866 scope.end_pos=201513)
+	// var "c" var.pos=199871 var.line_nr=6130
+	// var "node" var.pos=199895 var.line_nr=6130
+	// var "sym" var.pos=199981 var.line_nr=6135
+	// var "info" var.pos=200135 var.line_nr=6138
+	// var "fields" var.pos=200167 var.line_nr=6139
+	// var "sub_structs" var.pos=200249 var.line_nr=6140
 	// af parent scope:
 	// af parent scope:
 	return _t2211;
@@ -48498,15 +48505,15 @@ bool v__checker__Checker_sql_stmt_defer_0 = false;
 			c->inside_sql = false;
 		}
 		// Defer end
-		// autofree_scope_vars(pos=201378 line_nr=6204 scope.pos=201377 scope.end_pos=201400)
-		// var "err" var.pos=201377 var.line_nr=6204
+		// autofree_scope_vars(pos=201690 line_nr=6211 scope.pos=201689 scope.end_pos=201712)
+		// var "err" var.pos=201689 var.line_nr=6211
 		// af parent scope:
-		// var "c" var.pos=201212 var.line_nr=6199
-		// var "node" var.pos=201236 var.line_nr=6199
-		// var "table_sym" var.pos=201403 var.line_nr=6205
-		// var "info" var.pos=201488 var.line_nr=6207
-		// var "fields" var.pos=201526 var.line_nr=6208
-		// var "sub_structs" var.pos=201614 var.line_nr=6209
+		// var "c" var.pos=201524 var.line_nr=6206
+		// var "node" var.pos=201548 var.line_nr=6206
+		// var "table_sym" var.pos=201715 var.line_nr=6212
+		// var "info" var.pos=201800 var.line_nr=6214
+		// var "fields" var.pos=201838 var.line_nr=6215
+		// var "sub_structs" var.pos=201926 var.line_nr=6216
 		// af parent scope:
 		// af parent scope:
 		return _const_v__ast__void_type;
@@ -48555,13 +48562,13 @@ bool v__checker__Checker_sql_stmt_defer_0 = false;
 		c->inside_sql = false;
 	}
 	// Defer end
-	// autofree_scope_vars(pos=202305 line_nr=6238 scope.pos=201207 scope.end_pos=202327)
-	// var "c" var.pos=201212 var.line_nr=6199
-	// var "node" var.pos=201236 var.line_nr=6199
-	// var "table_sym" var.pos=201403 var.line_nr=6205
-	// var "info" var.pos=201488 var.line_nr=6207
-	// var "fields" var.pos=201526 var.line_nr=6208
-	// var "sub_structs" var.pos=201614 var.line_nr=6209
+	// autofree_scope_vars(pos=202617 line_nr=6245 scope.pos=201519 scope.end_pos=202639)
+	// var "c" var.pos=201524 var.line_nr=6206
+	// var "node" var.pos=201548 var.line_nr=6206
+	// var "table_sym" var.pos=201715 var.line_nr=6212
+	// var "info" var.pos=201800 var.line_nr=6214
+	// var "fields" var.pos=201838 var.line_nr=6215
+	// var "sub_structs" var.pos=201926 var.line_nr=6216
 	// af parent scope:
 	// af parent scope:
 	return _const_v__ast__void_type;
@@ -48583,13 +48590,13 @@ VV_LOCAL_SYMBOL Array_v__ast__StructField v__checker__Checker_fetch_and_verify_o
 	if (fields.len == 0) {
 		v__checker__Checker_error(c, _STR("V orm: select: empty fields in `%.*s\000`", 2, table_name), pos);
 		/*tmp return var*/ Array_v__ast__StructField _t2220 = __new_array_with_default(0, 0, sizeof(v__ast__StructField), 0);
-		// autofree_scope_vars(pos=202715 line_nr=6246 scope.pos=202649 scope.end_pos=202744)
+		// autofree_scope_vars(pos=203027 line_nr=6253 scope.pos=202961 scope.end_pos=203056)
 		// af parent scope:
-		// var "c" var.pos=202338 var.line_nr=6241
-		// var "info" var.pos=202377 var.line_nr=6241
-		// var "pos" var.pos=202394 var.line_nr=6241
-		// var "table_name" var.pos=202414 var.line_nr=6241
-		// var "fields" var.pos=202454 var.line_nr=6242
+		// var "c" var.pos=202650 var.line_nr=6248
+		// var "info" var.pos=202689 var.line_nr=6248
+		// var "pos" var.pos=202706 var.line_nr=6248
+		// var "table_name" var.pos=202726 var.line_nr=6248
+		// var "fields" var.pos=202766 var.line_nr=6249
 		// af parent scope:
 		// af parent scope:
 		return _t2220;
@@ -48597,12 +48604,12 @@ VV_LOCAL_SYMBOL Array_v__ast__StructField v__checker__Checker_fetch_and_verify_o
 	if (string_ne((*(v__ast__StructField*)/*ee elem_typ */array_get(fields, 0)).name, _SLIT("id"))) {
 		v__checker__Checker_error(c, _STR("V orm: `id int` must be the first field in `%.*s\000`", 2, table_name), pos);
 	}
-	// autofree_scope_vars(pos=202853 line_nr=6251 scope.pos=202333 scope.end_pos=202868)
-	// var "c" var.pos=202338 var.line_nr=6241
-	// var "info" var.pos=202377 var.line_nr=6241
-	// var "pos" var.pos=202394 var.line_nr=6241
-	// var "table_name" var.pos=202414 var.line_nr=6241
-	// var "fields" var.pos=202454 var.line_nr=6242
+	// autofree_scope_vars(pos=203165 line_nr=6258 scope.pos=202645 scope.end_pos=203180)
+	// var "c" var.pos=202650 var.line_nr=6248
+	// var "info" var.pos=202689 var.line_nr=6248
+	// var "pos" var.pos=202706 var.line_nr=6248
+	// var "table_name" var.pos=202726 var.line_nr=6248
+	// var "fields" var.pos=202766 var.line_nr=6249
 	// af parent scope:
 	// af parent scope:
 	return fields;
@@ -48775,27 +48782,27 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)stmts.data)[_t2231];
 		if ((stmt)._typ == 298 /* v.ast.Return */) {
 			/*tmp return var*/ bool _t2232 = true;
-			// autofree_scope_vars(pos=209268 line_nr=6433 scope.pos=209264 scope.end_pos=209283)
-			// var "stmt" var.pos=209245 var.line_nr=6432
+			// autofree_scope_vars(pos=209580 line_nr=6440 scope.pos=209576 scope.end_pos=209595)
+			// var "stmt" var.pos=209557 var.line_nr=6439
 			// af parent scope:
-			// var "stmt" var.pos=209224 var.line_nr=6431
+			// var "stmt" var.pos=209536 var.line_nr=6438
 			// skipping tmp var "stmt"
 			// af parent scope:
-			// var "stmts" var.pos=209194 var.line_nr=6430
+			// var "stmts" var.pos=209506 var.line_nr=6437
 			// af parent scope:
 			// af parent scope:
 			return _t2232;
 		} else if ((stmt)._typ == 279 /* v.ast.Block */) {
 			if (v__checker__has_top_return((*stmt._v__ast__Block).stmts)) {
 				/*tmp return var*/ bool _t2233 = true;
-				// autofree_scope_vars(pos=209351 line_nr=6436 scope.pos=209346 scope.end_pos=209367)
+				// autofree_scope_vars(pos=209663 line_nr=6443 scope.pos=209658 scope.end_pos=209679)
 				// af parent scope:
-				// var "stmt" var.pos=209293 var.line_nr=6434
+				// var "stmt" var.pos=209605 var.line_nr=6441
 				// af parent scope:
-				// var "stmt" var.pos=209224 var.line_nr=6431
+				// var "stmt" var.pos=209536 var.line_nr=6438
 				// skipping tmp var "stmt"
 				// af parent scope:
-				// var "stmts" var.pos=209194 var.line_nr=6430
+				// var "stmts" var.pos=209506 var.line_nr=6437
 				// af parent scope:
 				// af parent scope:
 				return _t2233;
@@ -48804,15 +48811,15 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts) {
 			if (((*stmt._v__ast__ExprStmt).expr)._typ == 234 /* v.ast.CallExpr */) {
 				if ((string_eq((*(*stmt._v__ast__ExprStmt).expr._v__ast__CallExpr).name, _SLIT("panic")) || string_eq((*(*stmt._v__ast__ExprStmt).expr._v__ast__CallExpr).name, _SLIT("exit")))) {
 					/*tmp return var*/ bool _t2234 = true;
-					// autofree_scope_vars(pos=209487 line_nr=6441 scope.pos=209481 scope.end_pos=209504)
+					// autofree_scope_vars(pos=209799 line_nr=6448 scope.pos=209793 scope.end_pos=209816)
 					// af parent scope:
 					// af parent scope:
-					// var "stmt" var.pos=209381 var.line_nr=6438
+					// var "stmt" var.pos=209693 var.line_nr=6445
 					// af parent scope:
-					// var "stmt" var.pos=209224 var.line_nr=6431
+					// var "stmt" var.pos=209536 var.line_nr=6438
 					// skipping tmp var "stmt"
 					// af parent scope:
-					// var "stmts" var.pos=209194 var.line_nr=6430
+					// var "stmts" var.pos=209506 var.line_nr=6437
 					// af parent scope:
 					// af parent scope:
 					return _t2234;
@@ -48821,8 +48828,8 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts) {
 		}
 	}
 	/*tmp return var*/ bool _t2235 = false;
-	// autofree_scope_vars(pos=209518 line_nr=6446 scope.pos=209179 scope.end_pos=209532)
-	// var "stmts" var.pos=209194 var.line_nr=6430
+	// autofree_scope_vars(pos=209830 line_nr=6453 scope.pos=209491 scope.end_pos=209844)
+	// var "stmts" var.pos=209506 var.line_nr=6437
 	// af parent scope:
 	// af parent scope:
 	return _t2235;
@@ -48857,10 +48864,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2238 = 0; _t2238 < sym_app->methods.len; ++_t2238) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2238];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_210294 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_210294.arg0;
-				int nroute_attributes = mr_210294.arg1;
-				int nargs = mr_210294.arg2;
+				multi_return_bool_int_int mr_210606 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_210606.arg0;
+				int nroute_attributes = mr_210606.arg1;
+				int nargs = mr_210606.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -66016,17 +66023,13 @@ bool v__gen__c__Gen_gen_assign_stmt_defer_0 = false;
 			g->is_shared = v__ast__Type_has_flag(var_type, v__ast__TypeFlag_shared_f);
 			if (!cloned) {
 				if (is_fixed_array_copy) {
-					string i_var = v__gen__c__Gen_new_tmp_var(g);
-					v__ast__ArrayFixed fixed_array = /* as */ *(v__ast__ArrayFixed*)__as_cast((right_sym->info)._v__ast__ArrayFixed,(right_sym->info)._typ, 411) /*expected idx: 411, name: v.ast.ArrayFixed */ ;
-					v__gen__c__Gen_write(g, _STR("for (int %.*s\000=0; %.*s\000<%"PRId32"\000; %.*s\000++) {", 5, i_var, i_var, fixed_array.size, i_var));
+					string typ_str = string_trim(v__gen__c__Gen_typ(g, val_type), _SLIT("*"));
+					string ref_str = (v__ast__Type_is_ptr(val_type) ? (_SLIT("")) : (_SLIT("&")));
+					v__gen__c__Gen_write(g, _STR("memcpy((%.*s\000*)", 2, typ_str));
 					v__gen__c__Gen_expr(g, left);
-					v__gen__c__Gen_write(g, _STR("[%.*s\000] = ", 2, i_var));
-					if (v__ast__Expr_is_auto_deref_var(val)) {
-						v__gen__c__Gen_write(g, _SLIT("*"));
-					}
+					v__gen__c__Gen_write(g, _STR(", (byte*)%.*s", 1, ref_str));
 					v__gen__c__Gen_expr(g, val);
-					v__gen__c__Gen_write(g, _STR("[%.*s\000];", 2, i_var));
-					v__gen__c__Gen_writeln(g, _SLIT("}"));
+					v__gen__c__Gen_write(g, _STR(", sizeof(%.*s\000))", 2, typ_str));
 				} else if (is_decl) {
 					if (is_fixed_array_init && !has_val) {
 						if ((val)._typ == 228 /* v.ast.ArrayInit */) {
@@ -66164,27 +66167,27 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_register_ternary_name(v__gen__c__Gen* g, str
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_get_ternary_name(v__gen__c__Gen* g, string name) {
 	if (g->inside_ternary == 0) {
-		// autofree_scope_vars(pos=78186 line_nr=2566 scope.pos=78183 scope.end_pos=78200)
+		// autofree_scope_vars(pos=78100 line_nr=2562 scope.pos=78097 scope.end_pos=78114)
 		// af parent scope:
-		// var "g" var.pos=78111 var.line_nr=2564
-		// var "name" var.pos=78135 var.line_nr=2564
+		// var "g" var.pos=78025 var.line_nr=2560
+		// var "name" var.pos=78049 var.line_nr=2560
 		// af parent scope:
 		// af parent scope:
 		return name;
 	}
 	if (!_IN_MAP(ADDR(string, name), ADDR(map, g->ternary_names))) {
-		// autofree_scope_vars(pos=78234 line_nr=2569 scope.pos=78231 scope.end_pos=78248)
+		// autofree_scope_vars(pos=78148 line_nr=2565 scope.pos=78145 scope.end_pos=78162)
 		// af parent scope:
-		// var "g" var.pos=78111 var.line_nr=2564
-		// var "name" var.pos=78135 var.line_nr=2564
+		// var "g" var.pos=78025 var.line_nr=2560
+		// var "name" var.pos=78049 var.line_nr=2560
 		// af parent scope:
 		// af parent scope:
 		return name;
 	}
 	/*tmp return var*/ string _t2878 = (*(string*)map_get_1(ADDR(map, g->ternary_names), &(string[]){name}, &(string[]){ (string){.str=(byteptr)"", .is_lit=1} }));
-	// autofree_scope_vars(pos=78250 line_nr=2571 scope.pos=78106 scope.end_pos=78280)
-	// var "g" var.pos=78111 var.line_nr=2564
-	// var "name" var.pos=78135 var.line_nr=2564
+	// autofree_scope_vars(pos=78164 line_nr=2567 scope.pos=78020 scope.end_pos=78194)
+	// var "g" var.pos=78025 var.line_nr=2560
+	// var "name" var.pos=78049 var.line_nr=2560
 	// af parent scope:
 	// af parent scope:
 	return _t2878;
@@ -66193,12 +66196,12 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_get_ternary_name(v__gen__c__Gen* g, string
 VV_LOCAL_SYMBOL bool v__gen__c__Gen_gen_clone_assignment(v__gen__c__Gen* g, v__ast__Expr val, v__ast__TypeSymbol right_sym, bool add_eq) {
 	if ((val)._typ != 247 /* v.ast.Ident */ && (val)._typ != 266 /* v.ast.SelectorExpr */) {
 		/*tmp return var*/ bool _t2879 = false;
-		// autofree_scope_vars(pos=78432 line_nr=2576 scope.pos=78429 scope.end_pos=78447)
+		// autofree_scope_vars(pos=78346 line_nr=2572 scope.pos=78343 scope.end_pos=78361)
 		// af parent scope:
-		// var "g" var.pos=78291 var.line_nr=2574
-		// var "val" var.pos=78319 var.line_nr=2574
-		// var "right_sym" var.pos=78333 var.line_nr=2574
-		// var "add_eq" var.pos=78359 var.line_nr=2574
+		// var "g" var.pos=78205 var.line_nr=2570
+		// var "val" var.pos=78233 var.line_nr=2570
+		// var "right_sym" var.pos=78247 var.line_nr=2570
+		// var "add_eq" var.pos=78273 var.line_nr=2570
 		// af parent scope:
 		// af parent scope:
 		return _t2879;
@@ -66219,11 +66222,11 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_gen_clone_assignment(v__gen__c__Gen* g, v__a
 		v__gen__c__Gen_write(g, _SLIT(")"));
 	}
 	/*tmp return var*/ bool _t2880 = true;
-	// autofree_scope_vars(pos=78839 line_nr=2595 scope.pos=78286 scope.end_pos=78852)
-	// var "g" var.pos=78291 var.line_nr=2574
-	// var "val" var.pos=78319 var.line_nr=2574
-	// var "right_sym" var.pos=78333 var.line_nr=2574
-	// var "add_eq" var.pos=78359 var.line_nr=2574
+	// autofree_scope_vars(pos=78753 line_nr=2591 scope.pos=78200 scope.end_pos=78766)
+	// var "g" var.pos=78205 var.line_nr=2570
+	// var "val" var.pos=78233 var.line_nr=2570
+	// var "right_sym" var.pos=78247 var.line_nr=2570
+	// var "add_eq" var.pos=78273 var.line_nr=2570
 	// af parent scope:
 	// af parent scope:
 	return _t2880;
@@ -66382,18 +66385,18 @@ VV_LOCAL_SYMBOL multi_return_string_string_string_string v__gen__c__Gen_map_fn_p
 	else if (key_typ.kind == (v__ast__Kind_voidptr)) {
 		v__ast__TypeSymbol* ts = (g->pref->m64 ? (&(*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(g->table->type_symbols, _const_v__ast__u64_type_idx))) : (&(*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(g->table->type_symbols, _const_v__ast__u32_type_idx))));
 		/*tmp return var*/ multi_return_string_string_string_string _t2886 = v__gen__c__Gen_map_fn_ptrs(g, *ts);
-		// autofree_scope_vars(pos=84068 line_nr=2794 scope.pos=83925 scope.end_pos=84096)
-		// var "ts" var.pos=83939 var.line_nr=2789
+		// autofree_scope_vars(pos=83982 line_nr=2790 scope.pos=83839 scope.end_pos=84010)
+		// var "ts" var.pos=83853 var.line_nr=2785
 		// af parent scope:
-		// var "g" var.pos=83361 var.line_nr=2767
-		// var "key_typ" var.pos=83380 var.line_nr=2767
-		// var "hash_fn" var.pos=83444 var.line_nr=2768
+		// var "g" var.pos=83275 var.line_nr=2763
+		// var "key_typ" var.pos=83294 var.line_nr=2763
+		// var "hash_fn" var.pos=83358 var.line_nr=2764
 		// str literal
-		// var "key_eq_fn" var.pos=83463 var.line_nr=2769
+		// var "key_eq_fn" var.pos=83377 var.line_nr=2765
 		// str literal
-		// var "clone_fn" var.pos=83484 var.line_nr=2770
+		// var "clone_fn" var.pos=83398 var.line_nr=2766
 		// str literal
-		// var "free_fn" var.pos=83504 var.line_nr=2771
+		// var "free_fn" var.pos=83418 var.line_nr=2767
 		// str literal
 		// af parent scope:
 		// af parent scope:
@@ -67390,12 +67393,12 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_match(v__gen__c__Gen* g, v__
 		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, node.return_type);
 		if (sym->kind == v__ast__Kind_multi_return) {
 			/*tmp return var*/ bool _t2892 = false;
-			// autofree_scope_vars(pos=113257 line_nr=3890 scope.pos=113253 scope.end_pos=113273)
+			// autofree_scope_vars(pos=113171 line_nr=3886 scope.pos=113167 scope.end_pos=113187)
 			// af parent scope:
-			// var "sym" var.pos=113173 var.line_nr=3888
+			// var "sym" var.pos=113087 var.line_nr=3884
 			// af parent scope:
-			// var "g" var.pos=113034 var.line_nr=3886
-			// var "node" var.pos=113063 var.line_nr=3886
+			// var "g" var.pos=112948 var.line_nr=3882
+			// var "node" var.pos=112977 var.line_nr=3882
 			// af parent scope:
 			// af parent scope:
 			return _t2892;
@@ -67405,15 +67408,15 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_match(v__gen__c__Gen* g, v__
 			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node.branches.data)[_t2893];
 			if (branch.stmts.len > 1) {
 				/*tmp return var*/ bool _t2894 = true;
-				// autofree_scope_vars(pos=113339 line_nr=3894 scope.pos=113334 scope.end_pos=113355)
+				// autofree_scope_vars(pos=113253 line_nr=3890 scope.pos=113248 scope.end_pos=113269)
 				// af parent scope:
-				// var "branch" var.pos=113281 var.line_nr=3892
+				// var "branch" var.pos=113195 var.line_nr=3888
 				// skipping tmp var "branch"
 				// af parent scope:
-				// var "sym" var.pos=113173 var.line_nr=3888
+				// var "sym" var.pos=113087 var.line_nr=3884
 				// af parent scope:
-				// var "g" var.pos=113034 var.line_nr=3886
-				// var "node" var.pos=113063 var.line_nr=3886
+				// var "g" var.pos=112948 var.line_nr=3882
+				// var "node" var.pos=112977 var.line_nr=3882
 				// af parent scope:
 				// af parent scope:
 				return _t2894;
@@ -67423,18 +67426,18 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_match(v__gen__c__Gen* g, v__
 					v__ast__ExprStmt stmt = /* as */ *(v__ast__ExprStmt*)__as_cast(((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, 0)))._v__ast__ExprStmt,((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, 0)))._typ, 286) /*expected idx: 286, name: v.ast.ExprStmt */ ;
 					if ((stmt.expr)._typ == 234 /* v.ast.CallExpr */ || (stmt.expr)._typ == 248 /* v.ast.IfExpr */ || (stmt.expr)._typ == 256 /* v.ast.MatchExpr */) {
 						/*tmp return var*/ bool _t2895 = true;
-						// autofree_scope_vars(pos=113577 line_nr=3901 scope.pos=113570 scope.end_pos=113595)
+						// autofree_scope_vars(pos=113491 line_nr=3897 scope.pos=113484 scope.end_pos=113509)
 						// af parent scope:
-						// var "stmt" var.pos=113433 var.line_nr=3898
+						// var "stmt" var.pos=113347 var.line_nr=3894
 						// af parent scope:
 						// af parent scope:
-						// var "branch" var.pos=113281 var.line_nr=3892
+						// var "branch" var.pos=113195 var.line_nr=3888
 						// skipping tmp var "branch"
 						// af parent scope:
-						// var "sym" var.pos=113173 var.line_nr=3888
+						// var "sym" var.pos=113087 var.line_nr=3884
 						// af parent scope:
-						// var "g" var.pos=113034 var.line_nr=3886
-						// var "node" var.pos=113063 var.line_nr=3886
+						// var "g" var.pos=112948 var.line_nr=3882
+						// var "node" var.pos=112977 var.line_nr=3882
 						// af parent scope:
 						// af parent scope:
 						return _t2895;
@@ -67444,9 +67447,9 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_match(v__gen__c__Gen* g, v__
 		}
 	}
 	/*tmp return var*/ bool _t2896 = false;
-	// autofree_scope_vars(pos=113615 line_nr=3907 scope.pos=113029 scope.end_pos=113629)
-	// var "g" var.pos=113034 var.line_nr=3886
-	// var "node" var.pos=113063 var.line_nr=3886
+	// autofree_scope_vars(pos=113529 line_nr=3903 scope.pos=112943 scope.end_pos=113543)
+	// var "g" var.pos=112948 var.line_nr=3882
+	// var "node" var.pos=112977 var.line_nr=3882
 	// af parent scope:
 	// af parent scope:
 	return _t2896;
@@ -67664,11 +67667,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_119629 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_119629.arg0;
-	string key_eq_fn = mr_119629.arg1;
-	string clone_fn = mr_119629.arg2;
-	string free_fn = mr_119629.arg3;
+	multi_return_string_string_string_string mr_119543 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_119543.arg0;
+	string key_eq_fn = mr_119543.arg1;
+	string clone_fn = mr_119543.arg2;
+	string free_fn = mr_119543.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -67968,11 +67971,11 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_if(v__gen__c__Gen* g, v__ast
 	if (node.is_expr && g->inside_ternary == 0) {
 		if (g->is_autofree || v__ast__Type_has_flag(node.typ, v__ast__TypeFlag_optional)) {
 			/*tmp return var*/ bool _t2918 = true;
-			// autofree_scope_vars(pos=127979 line_nr=4431 scope.pos=127975 scope.end_pos=127994)
+			// autofree_scope_vars(pos=127893 line_nr=4427 scope.pos=127889 scope.end_pos=127908)
 			// af parent scope:
 			// af parent scope:
-			// var "g" var.pos=127830 var.line_nr=4428
-			// var "node" var.pos=127856 var.line_nr=4428
+			// var "g" var.pos=127744 var.line_nr=4424
+			// var "node" var.pos=127770 var.line_nr=4424
 			// af parent scope:
 			// af parent scope:
 			return _t2918;
@@ -67982,14 +67985,14 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_if(v__gen__c__Gen* g, v__ast
 			v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[_t2919];
 			if ((branch.cond)._typ == 249 /* v.ast.IfGuardExpr */) {
 				/*tmp return var*/ bool _t2920 = true;
-				// autofree_scope_vars(pos=128070 line_nr=4435 scope.pos=128065 scope.end_pos=128086)
+				// autofree_scope_vars(pos=127984 line_nr=4431 scope.pos=127979 scope.end_pos=128000)
 				// af parent scope:
-				// var "branch" var.pos=128002 var.line_nr=4433
+				// var "branch" var.pos=127916 var.line_nr=4429
 				// skipping tmp var "branch"
 				// af parent scope:
 				// af parent scope:
-				// var "g" var.pos=127830 var.line_nr=4428
-				// var "node" var.pos=127856 var.line_nr=4428
+				// var "g" var.pos=127744 var.line_nr=4424
+				// var "node" var.pos=127770 var.line_nr=4424
 				// af parent scope:
 				// af parent scope:
 				return _t2920;
@@ -68002,20 +68005,20 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_if(v__gen__c__Gen* g, v__ast
 							v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, (*stmt.expr._v__ast__CallExpr).receiver_type);
 							if ((left_sym->kind == v__ast__Kind_array || left_sym->kind == v__ast__Kind_array_fixed || left_sym->kind == v__ast__Kind_map)) {
 								/*tmp return var*/ bool _t2921 = true;
-								// autofree_scope_vars(pos=128404 line_nr=4444 scope.pos=128395 scope.end_pos=128424)
+								// autofree_scope_vars(pos=128318 line_nr=4440 scope.pos=128309 scope.end_pos=128338)
 								// af parent scope:
-								// var "left_sym" var.pos=128278 var.line_nr=4442
-								// af parent scope:
-								// af parent scope:
-								// var "stmt" var.pos=128164 var.line_nr=4439
+								// var "left_sym" var.pos=128192 var.line_nr=4438
 								// af parent scope:
 								// af parent scope:
-								// var "branch" var.pos=128002 var.line_nr=4433
+								// var "stmt" var.pos=128078 var.line_nr=4435
+								// af parent scope:
+								// af parent scope:
+								// var "branch" var.pos=127916 var.line_nr=4429
 								// skipping tmp var "branch"
 								// af parent scope:
 								// af parent scope:
-								// var "g" var.pos=127830 var.line_nr=4428
-								// var "node" var.pos=127856 var.line_nr=4428
+								// var "g" var.pos=127744 var.line_nr=4424
+								// var "node" var.pos=127770 var.line_nr=4424
 								// af parent scope:
 								// af parent scope:
 								return _t2921;
@@ -68027,9 +68030,9 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_need_tmp_var_in_if(v__gen__c__Gen* g, v__ast
 		}
 	}
 	/*tmp return var*/ bool _t2922 = false;
-	// autofree_scope_vars(pos=128459 line_nr=4452 scope.pos=127825 scope.end_pos=128473)
-	// var "g" var.pos=127830 var.line_nr=4428
-	// var "node" var.pos=127856 var.line_nr=4428
+	// autofree_scope_vars(pos=128373 line_nr=4448 scope.pos=127739 scope.end_pos=128387)
+	// var "g" var.pos=127744 var.line_nr=4424
+	// var "node" var.pos=127770 var.line_nr=4424
 	// af parent scope:
 	// af parent scope:
 	return _t2922;
@@ -68176,21 +68179,21 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_if_expr(v__gen__c__Gen* g, v__ast__IfExpr no
 inline VV_LOCAL_SYMBOL bool v__gen__c__Gen_expr_is_multi_return_call(v__gen__c__Gen* g, v__ast__Expr expr) {
 	if (expr._typ == 234 /* v.ast.CallExpr */) {
 		/*tmp return var*/ bool _t2923 = v__ast__Table_get_type_symbol(g->table, (*expr._v__ast__CallExpr).return_type)->kind == v__ast__Kind_multi_return;
-		// autofree_scope_vars(pos=132424 line_nr=4599 scope.pos=132410 scope.end_pos=132496)
-		// var "expr" var.pos=132401 var.line_nr=4598
+		// autofree_scope_vars(pos=132338 line_nr=4595 scope.pos=132324 scope.end_pos=132410)
+		// var "expr" var.pos=132315 var.line_nr=4594
 		// af parent scope:
-		// var "g" var.pos=132338 var.line_nr=4597
-		// var "expr" var.pos=132372 var.line_nr=4597
+		// var "g" var.pos=132252 var.line_nr=4593
+		// var "expr" var.pos=132286 var.line_nr=4593
 		// af parent scope:
 		// af parent scope:
 		return _t2923;
 	}
 	else {
 		/*tmp return var*/ bool _t2924 = false;
-		// autofree_scope_vars(pos=132506 line_nr=4600 scope.pos=132500 scope.end_pos=132520)
+		// autofree_scope_vars(pos=132420 line_nr=4596 scope.pos=132414 scope.end_pos=132434)
 		// af parent scope:
-		// var "g" var.pos=132338 var.line_nr=4597
-		// var "expr" var.pos=132372 var.line_nr=4597
+		// var "g" var.pos=132252 var.line_nr=4593
+		// var "expr" var.pos=132286 var.line_nr=4593
 		// af parent scope:
 		// af parent scope:
 		return _t2924;
@@ -68928,9 +68931,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t2941 = 0; _t2941 < (*typ.info._v__ast__Struct).fields.len; ++_t2941) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t2941];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag_optional)) {
-						multi_return_string_string mr_155737 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_155737.arg0;
-						string base = mr_155737.arg1;
+						multi_return_string_string mr_155651 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_155651.arg0;
+						string base = mr_155651.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -69079,13 +69082,13 @@ VV_LOCAL_SYMBOL Array_v__ast__TypeSymbol v__gen__c__Gen_sort_structs(v__gen__c__
 		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)dep_graph_sorted->nodes.data)[_t2954];
 		array_push(&types_sorted, _MOV((v__ast__TypeSymbol[]){ (*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(g->table->type_symbols, (*(int*)map_get_1(&g->table->type_idxs, &(string[]){node.name}, &(int[]){ 0 })))) }));
 	}
-	// autofree_scope_vars(pos=160808 line_nr=5545 scope.pos=158912 scope.end_pos=160829)
-	// var "g" var.pos=158913 var.line_nr=5484
-	// var "typesa" var.pos=158934 var.line_nr=5484
-	// var "dep_graph" var.pos=158983 var.line_nr=5485
-	// var "type_names" var.pos=159046 var.line_nr=5487
-	// var "dep_graph_sorted" var.pos=160102 var.line_nr=5531
-	// var "types_sorted" var.pos=160663 var.line_nr=5541
+	// autofree_scope_vars(pos=160722 line_nr=5541 scope.pos=158826 scope.end_pos=160743)
+	// var "g" var.pos=158827 var.line_nr=5480
+	// var "typesa" var.pos=158848 var.line_nr=5480
+	// var "dep_graph" var.pos=158897 var.line_nr=5481
+	// var "type_names" var.pos=158960 var.line_nr=5483
+	// var "dep_graph_sorted" var.pos=160016 var.line_nr=5527
+	// var "types_sorted" var.pos=160577 var.line_nr=5537
 	// af parent scope:
 	// af parent scope:
 	return types_sorted;
@@ -69094,9 +69097,9 @@ VV_LOCAL_SYMBOL Array_v__ast__TypeSymbol v__gen__c__Gen_sort_structs(v__gen__c__
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL int v__gen__c__Gen_nth_stmt_pos(v__gen__c__Gen* g, int n) {
 	/*tmp return var*/ int _t2956 = (*(int*)/*ee elem_typ */array_get(g->stmt_path_pos, g->stmt_path_pos.len - (1 + n)));
-	// autofree_scope_vars(pos=160879 line_nr=5550 scope.pos=160844 scope.end_pos=160934)
-	// var "g" var.pos=160845 var.line_nr=5549
-	// var "n" var.pos=160866 var.line_nr=5549
+	// autofree_scope_vars(pos=160793 line_nr=5546 scope.pos=160758 scope.end_pos=160848)
+	// var "g" var.pos=160759 var.line_nr=5545
+	// var "n" var.pos=160780 var.line_nr=5545
 	// af parent scope:
 	// af parent scope:
 	return _t2956;
@@ -69106,11 +69109,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_go_before_stmt(v__gen__c__Gen* g, int n) {
 	int stmt_pos = v__gen__c__Gen_nth_stmt_pos(g, n);
 	string cur_line = strings__Builder_after(&g->out, stmt_pos);
 	strings__Builder_go_back(&g->out, cur_line.len);
-	// autofree_scope_vars(pos=161078 line_nr=5557 scope.pos=160940 scope.end_pos=161095)
-	// var "g" var.pos=160945 var.line_nr=5553
-	// var "n" var.pos=160967 var.line_nr=5553
-	// var "stmt_pos" var.pos=160984 var.line_nr=5554
-	// var "cur_line" var.pos=161015 var.line_nr=5555
+	// autofree_scope_vars(pos=160992 line_nr=5553 scope.pos=160854 scope.end_pos=161009)
+	// var "g" var.pos=160859 var.line_nr=5549
+	// var "n" var.pos=160881 var.line_nr=5549
+	// var "stmt_pos" var.pos=160898 var.line_nr=5550
+	// var "cur_line" var.pos=160929 var.line_nr=5551
 	// af parent scope:
 	// af parent scope:
 	return cur_line;
@@ -69119,8 +69122,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_go_before_stmt(v__gen__c__Gen* g, int n) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL string v__gen__c__Gen_go_before_ternary(v__gen__c__Gen* g) {
 	/*tmp return var*/ string _t2957 = v__gen__c__Gen_go_before_stmt(g, g->inside_ternary);
-	// autofree_scope_vars(pos=161151 line_nr=5562 scope.pos=161110 scope.end_pos=161194)
-	// var "g" var.pos=161115 var.line_nr=5561
+	// autofree_scope_vars(pos=161065 line_nr=5558 scope.pos=161024 scope.end_pos=161108)
+	// var "g" var.pos=161029 var.line_nr=5557
 	// af parent scope:
 	// af parent scope:
 	return _t2957;
@@ -69136,10 +69139,10 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_write_expr_to_string(v__gen__c__Gen* g, v_
 	int pos = g->out.buf.len;
 	v__gen__c__Gen_expr(g, expr);
 	/*tmp return var*/ string _t2958 = strings__Builder_cut_last(&g->out, g->out.buf.len - pos);
-	// autofree_scope_vars(pos=161408 line_nr=5574 scope.pos=161315 scope.end_pos=161452)
-	// var "g" var.pos=161320 var.line_nr=5571
-	// var "expr" var.pos=161348 var.line_nr=5571
-	// var "pos" var.pos=161373 var.line_nr=5572
+	// autofree_scope_vars(pos=161322 line_nr=5570 scope.pos=161229 scope.end_pos=161366)
+	// var "g" var.pos=161234 var.line_nr=5567
+	// var "expr" var.pos=161262 var.line_nr=5567
+	// var "pos" var.pos=161287 var.line_nr=5568
 	// af parent scope:
 	// af parent scope:
 	return _t2958;
@@ -69193,11 +69196,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_163476 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_163476.arg0;
-				string pafile = mr_163476.arg1;
-				string pamod = mr_163476.arg2;
-				string pafn = mr_163476.arg3;
+				multi_return_int_string_string_string mr_163390 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_163390.arg0;
+				string pafile = mr_163390.arg1;
+				string pamod = mr_163390.arg2;
+				string pafn = mr_163390.arg3;
 				v__gen__c__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), *%.*s\000.err.msg );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__c__Gen_writeln(g, _STR("\tpanic_optional_not_set(*%.*s\000.err.msg);", 2, cvar_name));
@@ -69256,8 +69259,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_in_optimization(v__gen__c__Gen* g, v__ast__E
 
 VV_LOCAL_SYMBOL string v__gen__c__op_to_fn_name(string name) {
 	/*tmp return var*/ string _t2960 = ((string_eq(name, _SLIT("+"))) ? (_SLIT("_op_plus")) : (string_eq(name, _SLIT("-"))) ? (_SLIT("_op_minus")) : (string_eq(name, _SLIT("*"))) ? (_SLIT("_op_mul")) : (string_eq(name, _SLIT("/"))) ? (_SLIT("_op_div")) : (string_eq(name, _SLIT("%"))) ? (_SLIT("_op_mod")) : (string_eq(name, _SLIT("<"))) ? (_SLIT("_op_lt")) : (string_eq(name, _SLIT(">"))) ? (_SLIT("_op_gt")) : (_STR("bad op %.*s", 1, name)));
-	// autofree_scope_vars(pos=165143 line_nr=5690 scope.pos=165107 scope.end_pos=165334)
-	// var "name" var.pos=165121 var.line_nr=5689
+	// autofree_scope_vars(pos=165057 line_nr=5686 scope.pos=165021 scope.end_pos=165248)
+	// var "name" var.pos=165035 var.line_nr=5685
 	// af parent scope:
 	// af parent scope:
 	return _t2960;
@@ -69268,17 +69271,17 @@ inline VV_LOCAL_SYMBOL string v__gen__c__c_name(string name_) {
 	string name = v__util__no_dots(name_);
 	if ((Array_string_contains(_const_v__gen__c__c_reserved, name))) {
 		/*tmp return var*/ string _t2961 = _STR("v_%.*s", 1, name);
-		// autofree_scope_vars(pos=165436 line_nr=5706 scope.pos=165433 scope.end_pos=165455)
+		// autofree_scope_vars(pos=165350 line_nr=5702 scope.pos=165347 scope.end_pos=165369)
 		// af parent scope:
-		// var "name_" var.pos=165356 var.line_nr=5703
-		// var "name" var.pos=165380 var.line_nr=5704
+		// var "name_" var.pos=165270 var.line_nr=5699
+		// var "name" var.pos=165294 var.line_nr=5700
 		// af parent scope:
 		// af parent scope:
 		return _t2961;
 	}
-	// autofree_scope_vars(pos=165457 line_nr=5708 scope.pos=165349 scope.end_pos=165470)
-	// var "name_" var.pos=165356 var.line_nr=5703
-	// var "name" var.pos=165380 var.line_nr=5704
+	// autofree_scope_vars(pos=165371 line_nr=5704 scope.pos=165263 scope.end_pos=165384)
+	// var "name_" var.pos=165270 var.line_nr=5699
+	// var "name" var.pos=165294 var.line_nr=5700
 	// af parent scope:
 	// af parent scope:
 	return name;
@@ -69288,26 +69291,26 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	v__ast__Type typ = v__gen__c__Gen_unwrap_generic(g, typ_);
 	if (v__ast__Type_has_flag(typ, v__ast__TypeFlag_optional)) {
 		/*tmp return var*/ string _t2962 = _SLIT("{0}");
-		// autofree_scope_vars(pos=165587 line_nr=5714 scope.pos=165584 scope.end_pos=165602)
+		// autofree_scope_vars(pos=165501 line_nr=5710 scope.pos=165498 scope.end_pos=165516)
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2962;
 	}
 	if (v__ast__Type_is_ptr(typ)) {
 		/*tmp return var*/ string _t2963 = _SLIT("0");
-		// autofree_scope_vars(pos=165653 line_nr=5718 scope.pos=165650 scope.end_pos=165666)
+		// autofree_scope_vars(pos=165567 line_nr=5714 scope.pos=165564 scope.end_pos=165580)
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2963;
@@ -69320,15 +69323,15 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 			elem_type_str = string_substr(elem_type_str, 3, elem_type_str.len);
 		}
 		/*tmp return var*/ string _t2964 = _STR("__new_array(0, 1, sizeof(%.*s\000))", 2, elem_type_str);
-		// autofree_scope_vars(pos=165907 line_nr=5727 scope.pos=165728 scope.end_pos=165960)
-		// var "elem_sym" var.pos=165732 var.line_nr=5722
-		// var "elem_type_str" var.pos=165784 var.line_nr=5723
+		// autofree_scope_vars(pos=165821 line_nr=5723 scope.pos=165642 scope.end_pos=165874)
+		// var "elem_sym" var.pos=165646 var.line_nr=5718
+		// var "elem_type_str" var.pos=165698 var.line_nr=5719
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2964;
@@ -69336,25 +69339,25 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	if (sym->kind == v__ast__Kind_map) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_166102 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_166102.arg0;
-		string key_eq_fn = mr_166102.arg1;
-		string clone_fn = mr_166102.arg2;
-		string free_fn = mr_166102.arg3;
+		multi_return_string_string_string_string mr_166016 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_166016.arg0;
+		string key_eq_fn = mr_166016.arg1;
+		string clone_fn = mr_166016.arg2;
+		string free_fn = mr_166016.arg3;
 		/*tmp return var*/ string _t2965 = _STR("new_map_2(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__c__Gen_typ(g, info.key_type), v__gen__c__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
-		// autofree_scope_vars(pos=166129 line_nr=5733 scope.pos=165983 scope.end_pos=166261)
-		// var "info" var.pos=165987 var.line_nr=5730
-		// var "key_typ" var.pos=166012 var.line_nr=5731
-		// var "hash_fn" var.pos=166064 var.line_nr=5732
-		// var "key_eq_fn" var.pos=166073 var.line_nr=5732
-		// var "clone_fn" var.pos=166084 var.line_nr=5732
-		// var "free_fn" var.pos=166094 var.line_nr=5732
+		// autofree_scope_vars(pos=166043 line_nr=5729 scope.pos=165897 scope.end_pos=166175)
+		// var "info" var.pos=165901 var.line_nr=5726
+		// var "key_typ" var.pos=165926 var.line_nr=5727
+		// var "hash_fn" var.pos=165978 var.line_nr=5728
+		// var "key_eq_fn" var.pos=165987 var.line_nr=5728
+		// var "clone_fn" var.pos=165998 var.line_nr=5728
+		// var "free_fn" var.pos=166008 var.line_nr=5728
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2965;
@@ -69384,17 +69387,17 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 		} else {
 			init_str = /*f*/string_add(init_str, _SLIT("0}"));
 		}
-		// autofree_scope_vars(pos=166980 line_nr=5760 scope.pos=166359 scope.end_pos=166998)
-		// var "has_none_zero" var.pos=166367 var.line_nr=5738
-		// var "init_str" var.pos=166396 var.line_nr=5739
+		// autofree_scope_vars(pos=166894 line_nr=5756 scope.pos=166273 scope.end_pos=166912)
+		// var "has_none_zero" var.pos=166281 var.line_nr=5734
+		// var "init_str" var.pos=166310 var.line_nr=5735
 		// str literal
-		// var "info" var.pos=166414 var.line_nr=5740
+		// var "info" var.pos=166328 var.line_nr=5736
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return init_str;
@@ -69402,13 +69405,13 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	int idx = ((int)(typ));
 	if (idx >= 1 && idx <= 17) {
 		/*tmp return var*/ string _t2967 = _SLIT("0");
-		// autofree_scope_vars(pos=167190 line_nr=5768 scope.pos=167187 scope.end_pos=167203)
+		// autofree_scope_vars(pos=167104 line_nr=5764 scope.pos=167101 scope.end_pos=167117)
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2967;
@@ -69416,26 +69419,26 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 
 	if (string_eq(sym->name, _SLIT("string"))) {
 		/*tmp return var*/ string _t2968 = _SLIT("(string){.str=(byteptr)\"\", .is_lit=1}");
-		// autofree_scope_vars(pos=167309 line_nr=5779 scope.pos=167299 scope.end_pos=167357)
+		// autofree_scope_vars(pos=167223 line_nr=5775 scope.pos=167213 scope.end_pos=167271)
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2968;
 	}
 	else if (string_eq(sym->name, _SLIT("rune"))) {
 		/*tmp return var*/ string _t2969 = _SLIT("0");
-		// autofree_scope_vars(pos=167369 line_nr=5780 scope.pos=167361 scope.end_pos=167381)
+		// autofree_scope_vars(pos=167283 line_nr=5776 scope.pos=167275 scope.end_pos=167295)
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2969;
@@ -69445,14 +69448,14 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	if (sym->kind == v__ast__Kind_chan) {
 		string elemtypstr = v__gen__c__Gen_typ(g, v__ast__TypeSymbol_chan_info(sym).elem_type);
 		/*tmp return var*/ string _t2970 = _STR("sync__new_channel_st(0, sizeof(%.*s\000))", 2, elemtypstr);
-		// autofree_scope_vars(pos=167470 line_nr=5785 scope.pos=167418 scope.end_pos=167526)
-		// var "elemtypstr" var.pos=167422 var.line_nr=5784
+		// autofree_scope_vars(pos=167384 line_nr=5781 scope.pos=167332 scope.end_pos=167440)
+		// var "elemtypstr" var.pos=167336 var.line_nr=5780
 		// af parent scope:
-		// var "g" var.pos=165481 var.line_nr=5711
-		// var "typ_" var.pos=165501 var.line_nr=5711
-		// var "typ" var.pos=165526 var.line_nr=5712
-		// var "sym" var.pos=165669 var.line_nr=5720
-		// var "idx" var.pos=167145 var.line_nr=5766
+		// var "g" var.pos=165395 var.line_nr=5707
+		// var "typ_" var.pos=165415 var.line_nr=5707
+		// var "typ" var.pos=165440 var.line_nr=5708
+		// var "sym" var.pos=165583 var.line_nr=5716
+		// var "idx" var.pos=167059 var.line_nr=5762
 		// af parent scope:
 		// af parent scope:
 		return _t2970;
@@ -69468,12 +69471,12 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else {
 		_t2972 = _SLIT("0");
 	}	/*tmp return var*/ string _t2971 = _t2972;
-	// autofree_scope_vars(pos=167528 line_nr=5787 scope.pos=165476 scope.end_pos=168026)
-	// var "g" var.pos=165481 var.line_nr=5711
-	// var "typ_" var.pos=165501 var.line_nr=5711
-	// var "typ" var.pos=165526 var.line_nr=5712
-	// var "sym" var.pos=165669 var.line_nr=5720
-	// var "idx" var.pos=167145 var.line_nr=5766
+	// autofree_scope_vars(pos=167442 line_nr=5783 scope.pos=165390 scope.end_pos=167940)
+	// var "g" var.pos=165395 var.line_nr=5707
+	// var "typ_" var.pos=165415 var.line_nr=5707
+	// var "typ" var.pos=165440 var.line_nr=5708
+	// var "sym" var.pos=165583 var.line_nr=5716
+	// var "idx" var.pos=167059 var.line_nr=5762
 	// af parent scope:
 	// af parent scope:
 	return _t2971;
@@ -69516,14 +69519,14 @@ VV_LOCAL_SYMBOL Array_string v__gen__c__Gen_get_all_test_function_names(v__gen__
 	if (tsuite_end.len > 0) {
 		array_push(&all_tfuncs, _MOV((string[]){ string_clone(tsuite_end) }));
 	}
-	// autofree_scope_vars(pos=168585 line_nr=5832 scope.pos=168032 scope.end_pos=168604)
-	// var "g" var.pos=168033 var.line_nr=5806
-	// var "tfuncs" var.pos=168087 var.line_nr=5807
-	// var "tsuite_begin" var.pos=168113 var.line_nr=5808
+	// autofree_scope_vars(pos=168499 line_nr=5828 scope.pos=167946 scope.end_pos=168518)
+	// var "g" var.pos=167947 var.line_nr=5802
+	// var "tfuncs" var.pos=168001 var.line_nr=5803
+	// var "tsuite_begin" var.pos=168027 var.line_nr=5804
 	// str literal
-	// var "tsuite_end" var.pos=168137 var.line_nr=5809
+	// var "tsuite_end" var.pos=168051 var.line_nr=5805
 	// str literal
-	// var "all_tfuncs" var.pos=168424 var.line_nr=5824
+	// var "all_tfuncs" var.pos=168338 var.line_nr=5820
 	// af parent scope:
 	// af parent scope:
 	return all_tfuncs;
@@ -69531,8 +69534,8 @@ VV_LOCAL_SYMBOL Array_string v__gen__c__Gen_get_all_test_function_names(v__gen__
 
 VV_LOCAL_SYMBOL bool v__gen__c__Gen_is_importing_os(v__gen__c__Gen* g) {
 	/*tmp return var*/ bool _t2981 = (Array_string_contains(g->table->imports, _SLIT("os")));
-	// autofree_scope_vars(pos=168644 line_nr=5836 scope.pos=168610 scope.end_pos=168676)
-	// var "g" var.pos=168611 var.line_nr=5835
+	// autofree_scope_vars(pos=168558 line_nr=5832 scope.pos=168524 scope.end_pos=168590)
+	// var "g" var.pos=168525 var.line_nr=5831
 	// af parent scope:
 	// af parent scope:
 	return _t2981;
@@ -69680,25 +69683,25 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_go_stmt(v__gen__c__Gen* g, v__ast__GoStmt 
 		}
 	}
 	if ((Array_string_contains(g->threaded_fns, name))) {
-		// autofree_scope_vars(pos=173518 line_nr=5982 scope.pos=173515 scope.end_pos=173534)
+		// autofree_scope_vars(pos=173432 line_nr=5978 scope.pos=173429 scope.end_pos=173448)
 		// af parent scope:
-		// var "g" var.pos=168856 var.line_nr=5847
-		// var "node" var.pos=168871 var.line_nr=5847
-		// var "joinable" var.pos=168888 var.line_nr=5847
-		// var "handle" var.pos=168917 var.line_nr=5848
+		// var "g" var.pos=168770 var.line_nr=5843
+		// var "node" var.pos=168785 var.line_nr=5843
+		// var "joinable" var.pos=168802 var.line_nr=5843
+		// var "handle" var.pos=168831 var.line_nr=5844
 		// str literal
-		// var "tmp" var.pos=168931 var.line_nr=5849
-		// var "expr" var.pos=168959 var.line_nr=5850
-		// var "name" var.pos=168987 var.line_nr=5851
-		// var "wrapper_struct_name" var.pos=170054 var.line_nr=5884
-		// var "wrapper_fn_name" var.pos=170099 var.line_nr=5885
-		// var "arg_tmp_var" var.pos=170144 var.line_nr=5886
-		// var "s_ret_typ" var.pos=170561 var.line_nr=5904
-		// var "is_opt" var.pos=170754 var.line_nr=5908
-		// var "gohandle_name" var.pos=170816 var.line_nr=5909
+		// var "tmp" var.pos=168845 var.line_nr=5845
+		// var "expr" var.pos=168873 var.line_nr=5846
+		// var "name" var.pos=168901 var.line_nr=5847
+		// var "wrapper_struct_name" var.pos=169968 var.line_nr=5880
+		// var "wrapper_fn_name" var.pos=170013 var.line_nr=5881
+		// var "arg_tmp_var" var.pos=170058 var.line_nr=5882
+		// var "s_ret_typ" var.pos=170475 var.line_nr=5900
+		// var "is_opt" var.pos=170668 var.line_nr=5904
+		// var "gohandle_name" var.pos=170730 var.line_nr=5905
 		// str literal
-		// var "need_return_ptr" var.pos=173714 var.line_nr=5989
-		// var "thread_ret_type" var.pos=174160 var.line_nr=6002
+		// var "need_return_ptr" var.pos=173628 var.line_nr=5985
+		// var "thread_ret_type" var.pos=174074 var.line_nr=5998
 		// af parent scope:
 		// af parent scope:
 		return handle;
@@ -69758,24 +69761,24 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_go_stmt(v__gen__c__Gen* g, v__ast__GoStmt 
 	}
 	strings__Builder_writeln(&g->gowrappers, _SLIT("}"));
 	array_push(&g->threaded_fns, _MOV((string[]){ string_clone(name) }));
-	// autofree_scope_vars(pos=175355 line_nr=6037 scope.pos=168851 scope.end_pos=175370)
-	// var "g" var.pos=168856 var.line_nr=5847
-	// var "node" var.pos=168871 var.line_nr=5847
-	// var "joinable" var.pos=168888 var.line_nr=5847
-	// var "handle" var.pos=168917 var.line_nr=5848
+	// autofree_scope_vars(pos=175269 line_nr=6033 scope.pos=168765 scope.end_pos=175284)
+	// var "g" var.pos=168770 var.line_nr=5843
+	// var "node" var.pos=168785 var.line_nr=5843
+	// var "joinable" var.pos=168802 var.line_nr=5843
+	// var "handle" var.pos=168831 var.line_nr=5844
 	// str literal
-	// var "tmp" var.pos=168931 var.line_nr=5849
-	// var "expr" var.pos=168959 var.line_nr=5850
-	// var "name" var.pos=168987 var.line_nr=5851
-	// var "wrapper_struct_name" var.pos=170054 var.line_nr=5884
-	// var "wrapper_fn_name" var.pos=170099 var.line_nr=5885
-	// var "arg_tmp_var" var.pos=170144 var.line_nr=5886
-	// var "s_ret_typ" var.pos=170561 var.line_nr=5904
-	// var "is_opt" var.pos=170754 var.line_nr=5908
-	// var "gohandle_name" var.pos=170816 var.line_nr=5909
+	// var "tmp" var.pos=168845 var.line_nr=5845
+	// var "expr" var.pos=168873 var.line_nr=5846
+	// var "name" var.pos=168901 var.line_nr=5847
+	// var "wrapper_struct_name" var.pos=169968 var.line_nr=5880
+	// var "wrapper_fn_name" var.pos=170013 var.line_nr=5881
+	// var "arg_tmp_var" var.pos=170058 var.line_nr=5882
+	// var "s_ret_typ" var.pos=170475 var.line_nr=5900
+	// var "is_opt" var.pos=170668 var.line_nr=5904
+	// var "gohandle_name" var.pos=170730 var.line_nr=5905
 	// str literal
-	// var "need_return_ptr" var.pos=173714 var.line_nr=5989
-	// var "thread_ret_type" var.pos=174160 var.line_nr=6002
+	// var "need_return_ptr" var.pos=173628 var.line_nr=5985
+	// var "thread_ret_type" var.pos=174074 var.line_nr=5998
 	// af parent scope:
 	// af parent scope:
 	return handle;
@@ -69816,11 +69819,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_as_cast(v__gen__c__Gen* g, v__ast__AsCast no
 VV_LOCAL_SYMBOL string v__gen__c__Gen_as_cast_name_table(v__gen__c__Gen* g) {
 	if (g->as_cast_type_names.len == 0) {
 		/*tmp return var*/ string _t2987 = _SLIT("new_array_from_c_array(1, 1, sizeof(VCastTypeIndexName), _MOV((VCastTypeIndexName[1]){(VCastTypeIndexName){.tindex = 0,.tname = _SLIT(\"unknown\")}}));");
-		// autofree_scope_vars(pos=176506 line_nr=6078 scope.pos=176503 scope.end_pos=176667)
+		// autofree_scope_vars(pos=176420 line_nr=6074 scope.pos=176417 scope.end_pos=176581)
 		// af parent scope:
-		// var "g" var.pos=176432 var.line_nr=6076
-		// var "name_ast" var.pos=176674 var.line_nr=6080
-		// var "casts_len" var.pos=176713 var.line_nr=6081
+		// var "g" var.pos=176346 var.line_nr=6072
+		// var "name_ast" var.pos=176588 var.line_nr=6076
+		// var "casts_len" var.pos=176627 var.line_nr=6077
 		// af parent scope:
 		// af parent scope:
 		return _t2987;
@@ -69847,10 +69850,10 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_as_cast_name_table(v__gen__c__Gen* g) {
 	}
 	strings__Builder_writeln(&name_ast, _SLIT("\t}));"));
 	/*tmp return var*/ string _t2992 = strings__Builder_str(&name_ast);
-	// autofree_scope_vars(pos=177142 line_nr=6088 scope.pos=176431 scope.end_pos=177165)
-	// var "g" var.pos=176432 var.line_nr=6076
-	// var "name_ast" var.pos=176674 var.line_nr=6080
-	// var "casts_len" var.pos=176713 var.line_nr=6081
+	// autofree_scope_vars(pos=177056 line_nr=6084 scope.pos=176345 scope.end_pos=177079)
+	// var "g" var.pos=176346 var.line_nr=6072
+	// var "name_ast" var.pos=176588 var.line_nr=6076
+	// var "casts_len" var.pos=176627 var.line_nr=6077
 	// af parent scope:
 	// af parent scope:
 	return _t2992;
@@ -69992,8 +69995,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone(&method.params);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,} });
-					multi_return_Array_string_Array_string mr_183358 = v__gen__c__Gen_fn_args(g, params, false);
-					Array_string fargs = mr_183358.arg0;
+					multi_return_Array_string_Array_string mr_183272 = v__gen__c__Gen_fn_args(g, params, false);
+					Array_string fargs = mr_183272.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -70036,9 +70039,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 		strings__Builder_writeln(&sb, strings__Builder_str(&cast_functions));
 	}
 	/*tmp return var*/ string _t3000 = strings__Builder_str(&sb);
-	// autofree_scope_vars(pos=184914 line_nr=6290 scope.pos=177924 scope.end_pos=184931)
-	// var "g" var.pos=177929 var.line_nr=6120
-	// var "sb" var.pos=177968 var.line_nr=6121
+	// autofree_scope_vars(pos=184828 line_nr=6286 scope.pos=177838 scope.end_pos=184845)
+	// var "g" var.pos=177843 var.line_nr=6116
+	// var "sb" var.pos=177882 var.line_nr=6117
 	// af parent scope:
 	// af parent scope:
 	return _t3000;
@@ -70057,10 +70060,10 @@ VV_LOCAL_SYMBOL multi_return_int_string_string_string v__gen__c__Gen_panic_debug
 
 string v__gen__c__get_guarded_include_text(string iname, string imessage) {
 	string res = string_strip_margin(_STR("\n	|#if defined(__has_include)\n	|\n	|#if __has_include(%.*s\000)\n	|#include %.*s\000\n	|#else\n	|#error VERROR_MESSAGE %.*s\000\n	|#endif\n	|\n	|#else\n	|#include %.*s\000\n	|#endif\n	", 5, iname, iname, imessage, iname));
-	// autofree_scope_vars(pos=185527 line_nr=6315 scope.pos=185267 scope.end_pos=185539)
-	// var "iname" var.pos=185292 var.line_nr=6304
-	// var "imessage" var.pos=185306 var.line_nr=6304
-	// var "res" var.pos=185333 var.line_nr=6305
+	// autofree_scope_vars(pos=185441 line_nr=6311 scope.pos=185181 scope.end_pos=185453)
+	// var "iname" var.pos=185206 var.line_nr=6300
+	// var "imessage" var.pos=185220 var.line_nr=6300
+	// var "res" var.pos=185247 var.line_nr=6301
 	// af parent scope:
 	// af parent scope:
 	return res;
