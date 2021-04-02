@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "69ba93f"
+#define V_COMMIT_HASH "897cd4c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fb302c6"
+	#define V_COMMIT_HASH "69ba93f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "69ba93f"
+	#define V_CURRENT_COMMIT_HASH "897cd4c"
 #endif
 
 // V comptime_defines:
@@ -26949,7 +26949,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fb302c6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("69ba93f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -80046,8 +80046,13 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 	string obj_path = os__real_path(path);
 	string cfile = _STR("%.*s\000.c", 2, string_substr(obj_path, 0, obj_path.len - 2));
 	string opath = v__vcache__CacheManager_postfix_with_key2cpath(&v->pref->cache_manager, _SLIT(".o"), obj_path);
+	string rebuild_reason_message = _STR("%.*s\000 not found, building it in %.*s\000 ...", 3, obj_path, opath);
 	if (os__exists(opath)) {
-		return;
+		if (os__exists(cfile) && os__file_last_mod_unix(opath) < os__file_last_mod_unix(cfile)) {
+			rebuild_reason_message = _STR("%.*s\000 is older than %.*s\000, rebuilding ...", 3, opath, cfile);
+		} else {
+			return;
+		}
 	}
 	if (os__exists(obj_path)) {
 		Option_void _t3521 = os__cp(obj_path, opath);
@@ -80057,7 +80062,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 		};
 		return;
 	}
-	println(_STR("%.*s\000 not found, building it in %.*s\000 ...", 3, obj_path, opath));
+	println(rebuild_reason_message);
 	string current_folder = os__getwd();
 	os__chdir(os__dir(v__pref__vexe_path()));
 	Array_string all_options = __new_array_with_default(0, 0, sizeof(string), 0);
@@ -80084,14 +80089,16 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 		IError err = _t3526.err;
 		v_panic(IError_str(err));
 	};
-	println(res.output);
+	if ((res.output).len != 0) {
+		println(res.output);
+	}
 }
 
 VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	#if defined(_WIN32)
 	{
 		/*tmp return var*/ string _t3527 = _SLIT("https://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows");
-		// autofree_scope_vars(pos=30777 line_nr=975 scope.pos=30774 scope.end_pos=30855)
+		// autofree_scope_vars(pos=31035 line_nr=982 scope.pos=31032 scope.end_pos=31113)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -80101,7 +80108,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	#if defined(__linux__)
 	{
 		/*tmp return var*/ string _t3528 = _SLIT("On Debian/Ubuntu, run `sudo apt install build-essential`");
-		// autofree_scope_vars(pos=30871 line_nr=978 scope.pos=30868 scope.end_pos=30939)
+		// autofree_scope_vars(pos=31129 line_nr=985 scope.pos=31126 scope.end_pos=31197)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -80111,7 +80118,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	#if defined(__APPLE__)
 	{
 		/*tmp return var*/ string _t3529 = _SLIT("Install command line XCode tools with `xcode-select --install`");
-		// autofree_scope_vars(pos=30955 line_nr=981 scope.pos=30952 scope.end_pos=31029)
+		// autofree_scope_vars(pos=31213 line_nr=988 scope.pos=31210 scope.end_pos=31287)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -80119,7 +80126,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	}
 	#endif
 	/*tmp return var*/ string _t3530 = _SLIT("");
-	// autofree_scope_vars(pos=31031 line_nr=983 scope.pos=30728 scope.end_pos=31042)
+	// autofree_scope_vars(pos=31289 line_nr=990 scope.pos=30986 scope.end_pos=31300)
 	// af parent scope:
 	// af parent scope:
 	return _t3530;
@@ -80142,16 +80149,16 @@ VV_LOCAL_SYMBOL Array_string v__builder__error_context_lines(string text, string
 	int idx_s = (eline_idx - before >= 0 ? (eline_idx - before) : (0));
 	int idx_e = (idx_s + after < lines.len ? (idx_s + after) : (lines.len));
 	/*tmp return var*/ Array_string _t3531 = array_slice(lines, idx_s, idx_e);
-	// autofree_scope_vars(pos=31594 line_nr=1000 scope.pos=31048 scope.end_pos=31622)
-	// var "text" var.pos=31068 var.line_nr=986
-	// var "keyword" var.pos=31081 var.line_nr=986
-	// var "before" var.pos=31097 var.line_nr=986
-	// var "after" var.pos=31109 var.line_nr=986
-	// var "khighlight" var.pos=31132 var.line_nr=987
-	// var "eline_idx" var.pos=31225 var.line_nr=988
-	// var "lines" var.pos=31245 var.line_nr=989
-	// var "idx_s" var.pos=31448 var.line_nr=998
-	// var "idx_e" var.pos=31519 var.line_nr=999
+	// autofree_scope_vars(pos=31852 line_nr=1007 scope.pos=31306 scope.end_pos=31880)
+	// var "text" var.pos=31326 var.line_nr=993
+	// var "keyword" var.pos=31339 var.line_nr=993
+	// var "before" var.pos=31355 var.line_nr=993
+	// var "after" var.pos=31367 var.line_nr=993
+	// var "khighlight" var.pos=31390 var.line_nr=994
+	// var "eline_idx" var.pos=31483 var.line_nr=995
+	// var "lines" var.pos=31503 var.line_nr=996
+	// var "idx_s" var.pos=31706 var.line_nr=1005
+	// var "idx_e" var.pos=31777 var.line_nr=1006
 	// af parent scope:
 	// af parent scope:
 	return _t3531;
