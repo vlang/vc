@@ -47551,6 +47551,7 @@ v__ast__Type v__checker__Checker_lock_expr(v__checker__Checker* c, v__ast__LockE
 
 v__ast__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__UnsafeExpr* node) {
 	// assert
+	/*
 	if (!(!c->inside_unsafe)) {
 		VAssertMetaInfo v_assert_meta_info__t2176 = {0};
 		v_assert_meta_info__t2176.fpath = _SLIT("/tmp/gen_vc/v/vlib/v/checker/checker.v");
@@ -47560,6 +47561,7 @@ v__ast__Type v__checker__Checker_unsafe_expr(v__checker__Checker* c, v__ast__Uns
 		__print_assert_failure(&v_assert_meta_info__t2176);
 		v_panic(_SLIT("Assertion failed..."));
 	}
+	*/
 	c->inside_unsafe = true;
 	v__ast__Type t = v__checker__Checker_expr(c, node->expr);
 	c->inside_unsafe = false;
