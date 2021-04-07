@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6d77c88"
+#define V_COMMIT_HASH "1d5ed89"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8dbe323"
+	#define V_COMMIT_HASH "6d77c88"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6d77c88"
+	#define V_CURRENT_COMMIT_HASH "1d5ed89"
 #endif
 
 // V comptime_defines:
@@ -27306,7 +27306,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8dbe323"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6d77c88"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27359,20 +27359,20 @@ string v__pref__default_tcc_compiler(void) {
 	string vroot = os__dir(vexe);
 	string vtccexe = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("thirdparty"), _SLIT("tcc"), _SLIT("tcc.exe")})));
 	if (os__exists(vtccexe)) {
-		// autofree_scope_vars(pos=5480 line_nr=174 scope.pos=5477 scope.end_pos=5497)
+		// autofree_scope_vars(pos=5477 line_nr=174 scope.pos=5474 scope.end_pos=5494)
 		// af parent scope:
-		// var "vexe" var.pos=5347 var.line_nr=170
-		// var "vroot" var.pos=5368 var.line_nr=171
-		// var "vtccexe" var.pos=5391 var.line_nr=172
+		// var "vexe" var.pos=5344 var.line_nr=170
+		// var "vroot" var.pos=5365 var.line_nr=171
+		// var "vtccexe" var.pos=5388 var.line_nr=172
 		// af parent scope:
 		// af parent scope:
 		return vtccexe;
 	}
 	 string _t817 = _SLIT("");
-	// autofree_scope_vars(pos=5499 line_nr=176 scope.pos=5314 scope.end_pos=5510)
-	// var "vexe" var.pos=5347 var.line_nr=170
-	// var "vroot" var.pos=5368 var.line_nr=171
-	// var "vtccexe" var.pos=5391 var.line_nr=172
+	// autofree_scope_vars(pos=5496 line_nr=176 scope.pos=5311 scope.end_pos=5507)
+	// var "vexe" var.pos=5344 var.line_nr=170
+	// var "vroot" var.pos=5365 var.line_nr=171
+	// var "vtccexe" var.pos=5388 var.line_nr=172
 	// af parent scope:
 	// af parent scope:
 	return _t817;
@@ -27382,7 +27382,7 @@ string v__pref__default_c_compiler(void) {
 	#if defined(_WIN32)
 	{
 		 string _t818 = _SLIT("gcc");
-		// autofree_scope_vars(pos=5716 line_nr=186 scope.pos=5713 scope.end_pos=5731)
+		// autofree_scope_vars(pos=5713 line_nr=186 scope.pos=5710 scope.end_pos=5728)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -27390,7 +27390,7 @@ string v__pref__default_c_compiler(void) {
 	}
 	#endif
 	 string _t819 = _SLIT("cc");
-	// autofree_scope_vars(pos=5733 line_nr=188 scope.pos=5520 scope.end_pos=5746)
+	// autofree_scope_vars(pos=5730 line_nr=188 scope.pos=5517 scope.end_pos=5743)
 	// af parent scope:
 	// af parent scope:
 	return _t819;
@@ -27399,19 +27399,19 @@ string v__pref__default_c_compiler(void) {
 string v__pref__vexe_path(void) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	if ((vexe).len != 0) {
-		// autofree_scope_vars(pos=5822 line_nr=194 scope.pos=5819 scope.end_pos=5836)
+		// autofree_scope_vars(pos=5819 line_nr=194 scope.pos=5816 scope.end_pos=5833)
 		// af parent scope:
-		// var "vexe" var.pos=5778 var.line_nr=192
-		// var "real_vexe_path" var.pos=5839 var.line_nr=196
+		// var "vexe" var.pos=5775 var.line_nr=192
+		// var "real_vexe_path" var.pos=5836 var.line_nr=196
 		// af parent scope:
 		// af parent scope:
 		return vexe;
 	}
 	string real_vexe_path = os__real_path(os__executable());
 	os__setenv(_SLIT("VEXE"), real_vexe_path, true);
-	// autofree_scope_vars(pos=5928 line_nr=198 scope.pos=5756 scope.end_pos=5951)
-	// var "vexe" var.pos=5778 var.line_nr=192
-	// var "real_vexe_path" var.pos=5839 var.line_nr=196
+	// autofree_scope_vars(pos=5925 line_nr=198 scope.pos=5753 scope.end_pos=5948)
+	// var "vexe" var.pos=5775 var.line_nr=192
+	// var "real_vexe_path" var.pos=5836 var.line_nr=196
 	// af parent scope:
 	// af parent scope:
 	return real_vexe_path;
