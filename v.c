@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9c67a1c"
+#define V_COMMIT_HASH "fdb4f17"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "66fafe7"
+	#define V_COMMIT_HASH "9c67a1c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9c67a1c"
+	#define V_CURRENT_COMMIT_HASH "fdb4f17"
 #endif
 
 // V comptime_defines:
@@ -27314,7 +27314,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("66fafe7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9c67a1c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -76070,23 +76070,26 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_create_table(v__gen__c__Gen* g, v__a
 	string table_name = (*(string*)array_last(string_split(typ_sym->name, _SLIT("."))));
 	string create_string = _STR("CREATE TABLE IF NOT EXISTS `%.*s\000` (", 2, table_name);
 	Array_string fields = __new_array_with_default(0, 0, sizeof(string), 0);
-		outer: {}
 	// FOR IN array
 	for (int _t3224 = 0; _t3224 < struct_data.fields.len; ++_t3224) {
 		v__ast__StructField field = ((v__ast__StructField*)struct_data.fields.data)[_t3224];
 		bool is_primary = false;
+		bool skip = false;
 		// FOR IN array
 		for (int _t3225 = 0; _t3225 < field.attrs.len; ++_t3225) {
 			v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t3225];
 
 			if (string_eq(attr.name, _SLIT("skip"))) {
-				goto outer__continue;
+				skip = true;
 			}
 			else if (string_eq(attr.name, _SLIT("primary"))) {
 				is_primary = true;
 			}
 			else {
 			};
+		}
+		if (skip) {
+			continue;
 		}
 		string stmt = _SLIT("");
 		string converted_typ = v__gen__c__Gen_sql_type_from_v(g, typ, field.typ);
@@ -76110,9 +76113,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_create_table(v__gen__c__Gen* g, v__a
 			stmt = /*f*/string_add(stmt, _SLIT(" PRIMARY KEY"));
 		}
 		array_push(&fields, _MOV((string[]){ string_clone(stmt) }));
-		outer__continue: {}
 	}
-		outer__break: {}
 	create_string = /*f*/string_add(create_string, Array_string_join(fields, _SLIT(", ")));
 	create_string = /*f*/string_add(create_string, _SLIT(");"));
 	v__gen__c__Gen_write(g, _SLIT("sqlite__DB_exec("));
@@ -76131,31 +76132,31 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_string(v__gen__c__Gen* g, strin
 VV_LOCAL_SYMBOL string v__gen__c__Gen_sqlite3_type_from_v(v__gen__c__Gen* g, v__gen__c__SqlType typ, v__ast__Type v_typ) {
 	if (v__ast__Type_is_number(v_typ) || v__ast__Type_alias_eq(v_typ, _const_v__ast__bool_type)) {
 		 string _t3227 = _SLIT("INTEGER");
-		// autofree_scope_vars(pos=12303 line_nr=441 scope.pos=12300 scope.end_pos=12322)
+		// autofree_scope_vars(pos=12359 line_nr=445 scope.pos=12356 scope.end_pos=12378)
 		// af parent scope:
-		// var "g" var.pos=12187 var.line_nr=439
-		// var "typ" var.pos=12214 var.line_nr=439
-		// var "v_typ" var.pos=12227 var.line_nr=439
+		// var "g" var.pos=12243 var.line_nr=443
+		// var "typ" var.pos=12270 var.line_nr=443
+		// var "v_typ" var.pos=12283 var.line_nr=443
 		// af parent scope:
 		// af parent scope:
 		return _t3227;
 	}
 	if (v__ast__Type_is_string(v_typ)) {
 		 string _t3228 = _SLIT("TEXT");
-		// autofree_scope_vars(pos=12349 line_nr=444 scope.pos=12346 scope.end_pos=12365)
+		// autofree_scope_vars(pos=12405 line_nr=448 scope.pos=12402 scope.end_pos=12421)
 		// af parent scope:
-		// var "g" var.pos=12187 var.line_nr=439
-		// var "typ" var.pos=12214 var.line_nr=439
-		// var "v_typ" var.pos=12227 var.line_nr=439
+		// var "g" var.pos=12243 var.line_nr=443
+		// var "typ" var.pos=12270 var.line_nr=443
+		// var "v_typ" var.pos=12283 var.line_nr=443
 		// af parent scope:
 		// af parent scope:
 		return _t3228;
 	}
 	 string _t3229 = _SLIT("");
-	// autofree_scope_vars(pos=12367 line_nr=446 scope.pos=12182 scope.end_pos=12378)
-	// var "g" var.pos=12187 var.line_nr=439
-	// var "typ" var.pos=12214 var.line_nr=439
-	// var "v_typ" var.pos=12227 var.line_nr=439
+	// autofree_scope_vars(pos=12423 line_nr=450 scope.pos=12238 scope.end_pos=12434)
+	// var "g" var.pos=12243 var.line_nr=443
+	// var "typ" var.pos=12270 var.line_nr=443
+	// var "v_typ" var.pos=12283 var.line_nr=443
 	// af parent scope:
 	// af parent scope:
 	return _t3229;
@@ -76271,12 +76272,12 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* 
 	if (expr._typ == 218 /* v.ast.Ident */) {
 		if (((*expr._v__ast__Ident).info)._typ == 328 /* v.ast.IdentVar */) {
 			 v__gen__c__SqlType _t3230 = v__gen__c__Gen_parse_db_from_type_string(g, v__ast__Table_get_type_name(g->table, (*(*expr._v__ast__Ident).info._v__ast__IdentVar).typ));
-			// autofree_scope_vars(pos=15179 line_nr=560 scope.pos=15174 scope.end_pos=15256)
+			// autofree_scope_vars(pos=15235 line_nr=564 scope.pos=15230 scope.end_pos=15312)
 			// af parent scope:
-			// var "expr" var.pos=15121 var.line_nr=557
+			// var "expr" var.pos=15177 var.line_nr=561
 			// af parent scope:
-			// var "g" var.pos=15068 var.line_nr=556
-			// var "expr" var.pos=15089 var.line_nr=556
+			// var "g" var.pos=15124 var.line_nr=560
+			// var "expr" var.pos=15145 var.line_nr=560
 			// af parent scope:
 			// af parent scope:
 			return _t3230;
@@ -76284,29 +76285,29 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* 
 	}
 	else if (expr._typ == 237 /* v.ast.SelectorExpr */) {
 		 v__gen__c__SqlType _t3231 = v__gen__c__Gen_parse_db_from_type_string(g, v__ast__Table_get_type_name(g->table, (*expr._v__ast__SelectorExpr).typ));
-		// autofree_scope_vars(pos=15285 line_nr=564 scope.pos=15264 scope.end_pos=15356)
-		// var "expr" var.pos=15121 var.line_nr=557
+		// autofree_scope_vars(pos=15341 line_nr=568 scope.pos=15320 scope.end_pos=15412)
+		// var "expr" var.pos=15177 var.line_nr=561
 		// af parent scope:
-		// var "g" var.pos=15068 var.line_nr=556
-		// var "expr" var.pos=15089 var.line_nr=556
+		// var "g" var.pos=15124 var.line_nr=560
+		// var "expr" var.pos=15145 var.line_nr=560
 		// af parent scope:
 		// af parent scope:
 		return _t3231;
 	}
 	else {
 		 v__gen__c__SqlType _t3232 = v__gen__c__SqlType_unknown;
-		// autofree_scope_vars(pos=15369 line_nr=567 scope.pos=15360 scope.end_pos=15388)
+		// autofree_scope_vars(pos=15425 line_nr=571 scope.pos=15416 scope.end_pos=15444)
 		// af parent scope:
-		// var "g" var.pos=15068 var.line_nr=556
-		// var "expr" var.pos=15089 var.line_nr=556
+		// var "g" var.pos=15124 var.line_nr=560
+		// var "expr" var.pos=15145 var.line_nr=560
 		// af parent scope:
 		// af parent scope:
 		return _t3232;
 	};
 	 v__gen__c__SqlType _t3233 = v__gen__c__SqlType_unknown;
-	// autofree_scope_vars(pos=15393 line_nr=570 scope.pos=15063 scope.end_pos=15410)
-	// var "g" var.pos=15068 var.line_nr=556
-	// var "expr" var.pos=15089 var.line_nr=556
+	// autofree_scope_vars(pos=15449 line_nr=574 scope.pos=15119 scope.end_pos=15466)
+	// var "g" var.pos=15124 var.line_nr=560
+	// var "expr" var.pos=15145 var.line_nr=560
 	// af parent scope:
 	// af parent scope:
 	return _t3233;
@@ -76316,20 +76317,20 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_from_type_string(v__g
 
 	if (string_eq(name, _SLIT("sqlite.DB"))) {
 		 v__gen__c__SqlType _t3234 = v__gen__c__SqlType_sqlite3;
-		// autofree_scope_vars(pos=15509 line_nr=576 scope.pos=15493 scope.end_pos=15528)
+		// autofree_scope_vars(pos=15565 line_nr=580 scope.pos=15549 scope.end_pos=15584)
 		// af parent scope:
-		// var "g" var.pos=15421 var.line_nr=573
-		// var "name" var.pos=15454 var.line_nr=573
+		// var "g" var.pos=15477 var.line_nr=577
+		// var "name" var.pos=15510 var.line_nr=577
 		// af parent scope:
 		// af parent scope:
 		return _t3234;
 	}
 	else {
 		 v__gen__c__SqlType _t3235 = v__gen__c__SqlType_unknown;
-		// autofree_scope_vars(pos=15541 line_nr=579 scope.pos=15532 scope.end_pos=15560)
+		// autofree_scope_vars(pos=15597 line_nr=583 scope.pos=15588 scope.end_pos=15616)
 		// af parent scope:
-		// var "g" var.pos=15421 var.line_nr=573
-		// var "name" var.pos=15454 var.line_nr=573
+		// var "g" var.pos=15477 var.line_nr=577
+		// var "name" var.pos=15510 var.line_nr=577
 		// af parent scope:
 		// af parent scope:
 		return _t3235;
