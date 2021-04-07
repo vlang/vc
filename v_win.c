@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "66fafe7"
+#define V_COMMIT_HASH "9c67a1c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "de5cf4a"
+	#define V_COMMIT_HASH "66fafe7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "66fafe7"
+	#define V_CURRENT_COMMIT_HASH "9c67a1c"
 #endif
 
 // V comptime_defines:
@@ -26697,7 +26697,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de5cf4a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("66fafe7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -80338,8 +80338,6 @@ void v__builder__Builder_build_c(v__builder__Builder* b, Array_string v_files, s
 	};
 	os__File_close(&f);
 	if (b->pref->is_stats) {
-		string slines = v__util__bold(int_str((string_count(output2, _SLIT("\n")) + 1)));
-		string sbytes = v__util__bold(int_str(output2.len));
 		int all_v_source_lines = 0;
 		int all_v_source_bytes = 0;
 		// FOR IN array
@@ -80348,7 +80346,15 @@ void v__builder__Builder_build_c(v__builder__Builder* b, Array_string v_files, s
 			all_v_source_lines += pf->lines;
 			all_v_source_bytes += pf->bytes;
 		}
-		println(_STR("          V source code size: %.*s\000 lines, %.*s\000 bytes", 3, v__util__bold(int_str(all_v_source_lines)), v__util__bold(int_str(all_v_source_bytes))));
+		string sall_v_source_lines = int_str(all_v_source_lines);
+		string sall_v_source_bytes = int_str(all_v_source_bytes);
+		string slines = int_str((string_count(output2, _SLIT("\n")) + 1));
+		string sbytes = int_str(output2.len);
+		slines = v__util__bold(_STR("%*.*s", 1, slines, 10));
+		sbytes = v__util__bold(_STR("%*.*s", 1, sbytes, 10));
+		sall_v_source_lines = v__util__bold(_STR("%*.*s", 1, sall_v_source_lines, 10));
+		sall_v_source_bytes = v__util__bold(_STR("%*.*s", 1, sall_v_source_bytes, 10));
+		println(_STR("          V source code size: %.*s\000 lines, %.*s\000 bytes", 3, sall_v_source_lines, sall_v_source_bytes));
 		println(_STR("generated C source code size: %.*s\000 lines, %.*s\000 bytes", 3, slines, sbytes));
 	}
 }
