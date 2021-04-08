@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f809d40"
+#define V_COMMIT_HASH "c37945e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "790961e"
+	#define V_COMMIT_HASH "f809d40"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f809d40"
+	#define V_CURRENT_COMMIT_HASH "c37945e"
 #endif
 
 // V comptime_defines:
@@ -27329,7 +27329,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("790961e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f809d40"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -76181,7 +76181,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr 
 		g->sql_side = v__gen__c__SqlExprSide_left;
 		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).left, typ);
 
-		if ((*expr._v__ast__InfixExpr).op == (v__token__Kind_eq)) {
+		if ((*expr._v__ast__InfixExpr).op == (v__token__Kind_ne)) {
+			v__gen__c__Gen_write(g, _SLIT(" != "));
+		}
+		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind_eq)) {
 			v__gen__c__Gen_write(g, _SLIT(" = "));
 		}
 		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind_gt)) {
@@ -76274,12 +76277,12 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* 
 	if (expr._typ == 218 /* v.ast.Ident */) {
 		if (((*expr._v__ast__Ident).info)._typ == 328 /* v.ast.IdentVar */) {
 			 v__gen__c__SqlType _t3230 = v__gen__c__Gen_parse_db_from_type_string(g, v__ast__Table_get_type_name(g->table, (*(*expr._v__ast__Ident).info._v__ast__IdentVar).typ));
-			// autofree_scope_vars(pos=15235 line_nr=564 scope.pos=15230 scope.end_pos=15312)
+			// autofree_scope_vars(pos=15263 line_nr=565 scope.pos=15258 scope.end_pos=15340)
 			// af parent scope:
-			// var "expr" var.pos=15177 var.line_nr=561
+			// var "expr" var.pos=15205 var.line_nr=562
 			// af parent scope:
-			// var "g" var.pos=15124 var.line_nr=560
-			// var "expr" var.pos=15145 var.line_nr=560
+			// var "g" var.pos=15152 var.line_nr=561
+			// var "expr" var.pos=15173 var.line_nr=561
 			// af parent scope:
 			// af parent scope:
 			return _t3230;
@@ -76287,29 +76290,29 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* 
 	}
 	else if (expr._typ == 237 /* v.ast.SelectorExpr */) {
 		 v__gen__c__SqlType _t3231 = v__gen__c__Gen_parse_db_from_type_string(g, v__ast__Table_get_type_name(g->table, (*expr._v__ast__SelectorExpr).typ));
-		// autofree_scope_vars(pos=15341 line_nr=568 scope.pos=15320 scope.end_pos=15412)
-		// var "expr" var.pos=15177 var.line_nr=561
+		// autofree_scope_vars(pos=15369 line_nr=569 scope.pos=15348 scope.end_pos=15440)
+		// var "expr" var.pos=15205 var.line_nr=562
 		// af parent scope:
-		// var "g" var.pos=15124 var.line_nr=560
-		// var "expr" var.pos=15145 var.line_nr=560
+		// var "g" var.pos=15152 var.line_nr=561
+		// var "expr" var.pos=15173 var.line_nr=561
 		// af parent scope:
 		// af parent scope:
 		return _t3231;
 	}
 	else {
 		 v__gen__c__SqlType _t3232 = v__gen__c__SqlType_unknown;
-		// autofree_scope_vars(pos=15425 line_nr=571 scope.pos=15416 scope.end_pos=15444)
+		// autofree_scope_vars(pos=15453 line_nr=572 scope.pos=15444 scope.end_pos=15472)
 		// af parent scope:
-		// var "g" var.pos=15124 var.line_nr=560
-		// var "expr" var.pos=15145 var.line_nr=560
+		// var "g" var.pos=15152 var.line_nr=561
+		// var "expr" var.pos=15173 var.line_nr=561
 		// af parent scope:
 		// af parent scope:
 		return _t3232;
 	};
 	 v__gen__c__SqlType _t3233 = v__gen__c__SqlType_unknown;
-	// autofree_scope_vars(pos=15449 line_nr=574 scope.pos=15119 scope.end_pos=15466)
-	// var "g" var.pos=15124 var.line_nr=560
-	// var "expr" var.pos=15145 var.line_nr=560
+	// autofree_scope_vars(pos=15477 line_nr=575 scope.pos=15147 scope.end_pos=15494)
+	// var "g" var.pos=15152 var.line_nr=561
+	// var "expr" var.pos=15173 var.line_nr=561
 	// af parent scope:
 	// af parent scope:
 	return _t3233;
@@ -76319,20 +76322,20 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_from_type_string(v__g
 
 	if (string_eq(name, _SLIT("sqlite.DB"))) {
 		 v__gen__c__SqlType _t3234 = v__gen__c__SqlType_sqlite3;
-		// autofree_scope_vars(pos=15565 line_nr=580 scope.pos=15549 scope.end_pos=15584)
+		// autofree_scope_vars(pos=15593 line_nr=581 scope.pos=15577 scope.end_pos=15612)
 		// af parent scope:
-		// var "g" var.pos=15477 var.line_nr=577
-		// var "name" var.pos=15510 var.line_nr=577
+		// var "g" var.pos=15505 var.line_nr=578
+		// var "name" var.pos=15538 var.line_nr=578
 		// af parent scope:
 		// af parent scope:
 		return _t3234;
 	}
 	else {
 		 v__gen__c__SqlType _t3235 = v__gen__c__SqlType_unknown;
-		// autofree_scope_vars(pos=15597 line_nr=583 scope.pos=15588 scope.end_pos=15616)
+		// autofree_scope_vars(pos=15625 line_nr=584 scope.pos=15616 scope.end_pos=15644)
 		// af parent scope:
-		// var "g" var.pos=15477 var.line_nr=577
-		// var "name" var.pos=15510 var.line_nr=577
+		// var "g" var.pos=15505 var.line_nr=578
+		// var "name" var.pos=15538 var.line_nr=578
 		// af parent scope:
 		// af parent scope:
 		return _t3235;
