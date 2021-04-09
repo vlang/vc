@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "67ec332"
+#define V_COMMIT_HASH "e6a67e7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e93a52a"
+	#define V_COMMIT_HASH "67ec332"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "67ec332"
+	#define V_CURRENT_COMMIT_HASH "e6a67e7"
 #endif
 
 // V comptime_defines:
@@ -26715,7 +26715,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e93a52a"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("67ec332"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -60722,7 +60722,7 @@ VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Pars
 		v__parser__Parser_register_auto_import(p, _SLIT("sync"));
 	}
 	v__parser__Parser_next(p);
-	v__ast__Expr right = (op == v__token__Kind_minus ? (v__parser__Parser_expr(p, ((int)(v__token__Precedence_call)))) : (v__parser__Parser_expr(p, ((int)(v__token__Precedence_prefix)))));
+	v__ast__Expr right = v__parser__Parser_expr(p, ((int)(v__token__Precedence_prefix)));
 	p->is_amp = false;
 	if ((right)._typ == 242 /* v.ast.CastExpr */) {
 		(*right._v__ast__CastExpr).in_prexpr = true;
@@ -60748,14 +60748,14 @@ VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Pars
 	}
 	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
 	 v__ast__PrefixExpr _t2716 = (v__ast__PrefixExpr){.op = op,.pos = pos,.right_type = 0,.right = right,.or_block = (v__ast__OrExpr){.stmts = or_stmts,.kind = or_kind,.pos = or_pos,},.is_option = 0,};
-	// autofree_scope_vars(pos=13196 line_nr=544 scope.pos=12078 scope.end_pos=13337)
+	// autofree_scope_vars(pos=13126 line_nr=540 scope.pos=12078 scope.end_pos=13267)
 	// var "p" var.pos=12083 var.line_nr=495
 	// var "pos" var.pos=12129 var.line_nr=496
 	// var "op" var.pos=12154 var.line_nr=497
 	// var "right" var.pos=12371 var.line_nr=509
-	// var "or_stmts" var.pos=12570 var.line_nr=518
-	// var "or_kind" var.pos=12600 var.line_nr=519
-	// var "or_pos" var.pos=12634 var.line_nr=520
+	// var "or_stmts" var.pos=12500 var.line_nr=514
+	// var "or_kind" var.pos=12530 var.line_nr=515
+	// var "or_pos" var.pos=12564 var.line_nr=516
 	// af parent scope:
 	// af parent scope:
 	return _t2716;
