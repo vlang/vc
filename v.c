@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0c710ce"
+#define V_COMMIT_HASH "6948419"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "820fe62"
+	#define V_COMMIT_HASH "0c710ce"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0c710ce"
+	#define V_CURRENT_COMMIT_HASH "6948419"
 #endif
 
 // V comptime_defines:
@@ -27370,7 +27370,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("820fe62"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0c710ce"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -63565,7 +63565,7 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 	ts->info = v__ast__Interface_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__Interface, (info)));
 	v__parser__Parser_top_level_statement_end(p);
 	v__parser__Parser_check(p, v__token__Kind_rcbr);
-	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
+	pos = v__token__Position_extend_with_last_line(pos, v__token__Token_position(&p->prev_tok), p->prev_tok.line_nr);
 	 v__ast__InterfaceDecl _t2816 = (v__ast__InterfaceDecl){
 		.name = interface_name,
 		.name_pos = name_pos,
@@ -63577,7 +63577,7 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 		.pos = pos,
 		.pre_comments = pre_comments,
 	};
-	// autofree_scope_vars(pos=15246 line_nr=574 scope.pos=11347 scope.end_pos=15432)
+	// autofree_scope_vars(pos=15280 line_nr=574 scope.pos=11347 scope.end_pos=15466)
 	// var "p" var.pos=11352 var.line_nr=433
 	// var "pos" var.pos=11435 var.line_nr=435
 	// var "is_pub" var.pos=11460 var.line_nr=436
