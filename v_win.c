@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cca06fc"
+#define V_COMMIT_HASH "3241611"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a2a18ef"
+	#define V_COMMIT_HASH "cca06fc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cca06fc"
+	#define V_CURRENT_COMMIT_HASH "3241611"
 #endif
 
 // V comptime_defines:
@@ -26869,7 +26869,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a2a18ef"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cca06fc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35935,15 +35935,12 @@ void v__ast__Table_generic_struct_insts_to_concrete(v__ast__Table* t) {
 			v__ast__Struct parent_info = /* as */ *(v__ast__Struct*)__as_cast((parent.info)._v__ast__Struct,(parent.info)._typ, 409) /*expected idx: 409, name: v.ast.Struct */ ;
 			Array_v__ast__StructField fields = array_clone(&parent_info.fields);
 			if (parent_info.generic_types.len == info.generic_types.len) {
-				// FOR IN array
 				for (int i = 0; i < fields.len; ++i) {
-					v__ast__StructField field = (*(v__ast__StructField*)/*ee elem_typ */array_get(fields, i));
 					Option_v__ast__Type _t1578;
-					if (_t1578 = v__ast__Table_resolve_generic_by_types(t, field.typ, parent_info.generic_types, info.generic_types), _t1578.state == 0) {
+					if (_t1578 = v__ast__Table_resolve_generic_by_types(t, (*(v__ast__StructField*)/*ee elem_typ */array_get(fields, i)).typ, parent_info.generic_types, info.generic_types), _t1578.state == 0) {
 						v__ast__Type t_typ = *(v__ast__Type*)_t1578.data;
-						field.typ = t_typ;
+						(*(v__ast__StructField*)/*ee elem_typ */array_get(fields, i)).typ = t_typ;
 					}
-					array_set(&fields, i, &(v__ast__StructField[]) { field });
 				}
 				parent_info.generic_types = __new_array_with_default(0, 0, sizeof(v__ast__Type), 0);
 				parent_info.concrete_types = array_clone(&info.generic_types);
