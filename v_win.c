@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9427c5f"
+#define V_COMMIT_HASH "ada763e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "19e4f5e"
+	#define V_COMMIT_HASH "9427c5f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9427c5f"
+	#define V_CURRENT_COMMIT_HASH "ada763e"
 #endif
 
 // V comptime_defines:
@@ -12838,7 +12838,7 @@ voidptr array_pop(array* a) {
 	}
 	#endif
 	int new_len = a->len - 1;
-	byte* last_elem = ((byte*)(a->data)) + (new_len) * a->element_size;
+	byte* last_elem = ((byte*)(a->data)) + new_len * a->element_size;
 	a->len = new_len;
 	return memdup(last_elem, a->element_size);
 }
@@ -26882,7 +26882,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("19e4f5e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9427c5f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -83568,7 +83568,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_os__hwnd_broadcast = ((voidptr)(0xFFFF));
 	_const_os__args = os__init_os_args_wide(___argc, (byteptr*)___argv);
 	_const_os__wd_at_startup = os__getwd();
-	_const_os__lang_neutral = (_const_os__sublang_neutral);
+	_const_os__lang_neutral = _const_os__sublang_neutral;
 	// Initializations for module os.cmdline :
 	// Initializations for module time :
 	_const_time__err_invalid_8601 = v_error(_SLIT("Invalid 8601 Format"));
