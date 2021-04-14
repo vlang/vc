@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9805218"
+#define V_COMMIT_HASH "3e297bc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "14434cc"
+	#define V_COMMIT_HASH "9805218"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9805218"
+	#define V_CURRENT_COMMIT_HASH "3e297bc"
 #endif
 
 // V comptime_defines:
@@ -27746,7 +27746,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("14434cc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9805218"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65828,7 +65828,6 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_map_equality_fn(v__gen__c__Gen* g, v__
 		strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (*(voidptr*)map_get(&b, k, &(voidptr[]){ 0 }) != v) {"));
 	}
 	else {
-		println(v__ast__Kind_str(kind));
 		strings__Builder_writeln(&fn_builder, _STR("\t\tif (*(%.*s\000*)map_get(&b, k, &(%.*s\000[]){ 0 }) != v) {", 3, ptr_value_typ, ptr_value_typ));
 	};
 	strings__Builder_writeln(&fn_builder, _SLIT("\t\t\treturn false;"));
@@ -65837,7 +65836,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_map_equality_fn(v__gen__c__Gen* g, v__
 	strings__Builder_writeln(&fn_builder, _SLIT("\treturn true;"));
 	strings__Builder_writeln(&fn_builder, _SLIT("}"));
 	array_push(&g->auto_fn_definitions, _MOV((string[]){ string_clone(strings__Builder_str(&fn_builder)) }));
-	// autofree_scope_vars(pos=14948 line_nr=340 scope.pos=11698 scope.end_pos=14964)
+	// autofree_scope_vars(pos=14931 line_nr=339 scope.pos=11698 scope.end_pos=14947)
 	// var "g" var.pos=11703 var.line_nr=261
 	// var "left" var.pos=11730 var.line_nr=261
 	// var "ptr_typ" var.pos=11755 var.line_nr=262
@@ -76583,7 +76582,7 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_struct_enc_dec(v__gen__c__Gen* g,
 		string field_type = v__gen__c__Gen_typ(g, field.typ);
 		v__ast__TypeSymbol* field_sym = v__ast__Table_get_type_symbol(g->table, field.typ);
 		if (Array_v__ast__Attr_contains(field.attrs, _SLIT("raw"))) {
-			strings__Builder_writeln(dec, string_add(_STR("\tres.%.*s\000 = tos4(cJSON_PrintUnformatted(", 2, v__gen__c__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
+			strings__Builder_writeln(dec, string_add(_STR("\tres.%.*s\000 = tos5(cJSON_PrintUnformatted(", 2, v__gen__c__c_name(field.name)), _STR("js_get(root, \"%.*s\000\")));", 2, name)));
 		} else {
 			v__gen__c__Gen_gen_json_for_type(g, field.typ);
 			string dec_name = v__gen__c__js_dec_name(field_type);
