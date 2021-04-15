@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1d2ef79"
+#define V_COMMIT_HASH "db908e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c7752ce"
+	#define V_COMMIT_HASH "1d2ef79"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1d2ef79"
+	#define V_CURRENT_COMMIT_HASH "db908e5"
 #endif
 
 // V comptime_defines:
@@ -27150,7 +27150,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c7752ce"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1d2ef79"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -64630,6 +64630,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_assert_stmt(v__gen__c__Gen* g, v__ast__A
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_assert_postfailure_mode(v__gen__c__Gen* g, v__ast__AssertStmt node) {
+	v__gen__c__Gen_write_v_source_line_info(g, node.pos);
 
 	if (g->pref->assert_failure_mode == (v__pref__AssertFailureMode_default)) {
 	}
@@ -64672,15 +64673,15 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_assert_metainfo(v__gen__c__Gen* g, v__
 	}
 	else {
 	};
-	// autofree_scope_vars(pos=3121 line_nr=99 scope.pos=1880 scope.end_pos=3138)
-	// var "g" var.pos=1885 var.line_nr=66
-	// var "node" var.pos=1912 var.line_nr=66
-	// var "mod_path" var.pos=1943 var.line_nr=67
-	// var "fn_name" var.pos=1978 var.line_nr=68
-	// var "line_nr" var.pos=2005 var.line_nr=69
-	// var "src" var.pos=2034 var.line_nr=70
-	// var "metaname" var.pos=2068 var.line_nr=71
-	// var "metasrc" var.pos=2333 var.line_nr=76
+	// autofree_scope_vars(pos=3159 line_nr=100 scope.pos=1918 scope.end_pos=3176)
+	// var "g" var.pos=1923 var.line_nr=67
+	// var "node" var.pos=1950 var.line_nr=67
+	// var "mod_path" var.pos=1981 var.line_nr=68
+	// var "fn_name" var.pos=2016 var.line_nr=69
+	// var "line_nr" var.pos=2043 var.line_nr=70
+	// var "src" var.pos=2072 var.line_nr=71
+	// var "metaname" var.pos=2106 var.line_nr=72
+	// var "metasrc" var.pos=2371 var.line_nr=77
 	// af parent scope:
 	// af parent scope:
 	return metaname;
