@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cb69c4c"
+#define V_COMMIT_HASH "d9fdae1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "466dc45"
+	#define V_COMMIT_HASH "cb69c4c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cb69c4c"
+	#define V_CURRENT_COMMIT_HASH "d9fdae1"
 #endif
 
 // V comptime_defines:
@@ -27141,7 +27141,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("466dc45"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cb69c4c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -63692,7 +63692,7 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 		// var "end_of_line_pos" var.pos=1714 var.line_nr=76
 		// var "start_of_line_pos" var.pos=1740 var.line_nr=77
 		// var "tline_number" var.pos=1768 var.line_nr=78
-		// var "result" var.pos=7136 var.line_nr=227
+		// var "result" var.pos=7363 var.line_nr=231
 		// af parent scope:
 		// af parent scope:
 		return _t2811;
@@ -63841,6 +63841,8 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 			} else {
 				strings__Builder_writeln(&source, _SLIT("</div>"));
 			}
+		} else if (state == v__parser__State_js) {
+			strings__Builder_writeln(&source, string_replace(string_replace(string_replace(string_replace(line, _SLIT("$"), _SLIT("\\$")), _SLIT("$$"), _SLIT("@")), _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
 		} else {
 			strings__Builder_writeln(&source, string_replace(string_replace(string_replace(string_replace(line, _SLIT("@"), _SLIT("$")), _SLIT("$$"), _SLIT("@")), _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
 		}
@@ -63850,7 +63852,7 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 	strings__Builder_writeln(&source, _SLIT("}"));
 	strings__Builder_writeln(&source, _SLIT("// === end of vweb html template ==="));
 	string result = strings__Builder_str(&source);
-	// autofree_scope_vars(pos=7159 line_nr=228 scope.pos=1173 scope.end_pos=7174)
+	// autofree_scope_vars(pos=7386 line_nr=232 scope.pos=1173 scope.end_pos=7401)
 	// var "p" var.pos=1178 var.line_nr=58
 	// var "template_file" var.pos=1210 var.line_nr=58
 	// var "fn_name" var.pos=1232 var.line_nr=58
@@ -63863,7 +63865,7 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 	// var "end_of_line_pos" var.pos=1714 var.line_nr=76
 	// var "start_of_line_pos" var.pos=1740 var.line_nr=77
 	// var "tline_number" var.pos=1768 var.line_nr=78
-	// var "result" var.pos=7136 var.line_nr=227
+	// var "result" var.pos=7363 var.line_nr=231
 	// af parent scope:
 	// af parent scope:
 	return result;
