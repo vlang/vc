@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "25a9d30"
+#define V_COMMIT_HASH "546dc91"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1250ce4"
+	#define V_COMMIT_HASH "25a9d30"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "25a9d30"
+	#define V_CURRENT_COMMIT_HASH "546dc91"
 #endif
 
 // V comptime_defines:
@@ -5570,6 +5570,7 @@ int os__wait();
 int os__file_last_mod_unix(string path);
 void os__flush();
 void os__chmod(string path, int mode);
+Option_void os__chown(string path, int owner, int group);
 Option_os__File os__open_append(string path);
 Option_void os__execvp(string cmdpath, Array_string args);
 Option_void os__execve(string cmdpath, Array_string args, Array_string envs);
@@ -5603,6 +5604,7 @@ string _const_os__path_delimiter; // a string literal, inited later
 #define _const_os__s_iwoth 00002
 #define _const_os__s_ixoth 00001
 os__Uname os__uname();
+string os__hostname();
 VV_LOCAL_SYMBOL Array_string os__init_os_args(int argc, byte** argv);
 Option_Array_string os__ls(string path);
 Option_bool os__mkdir(string path);
@@ -18977,8 +18979,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_7566 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_7566.arg0;
+		multi_return_int_bool mr_7599 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_7599.arg0;
 		return ret;
 	}
 	#endif
@@ -19023,9 +19025,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_8575 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_8575.arg0;
-		bool is_signaled = mr_8575.arg1;
+		multi_return_int_bool mr_8608 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_8608.arg0;
+		bool is_signaled = mr_8608.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -19518,7 +19520,28 @@ void os__flush(void) {
 }
 
 void os__chmod(string path, int mode) {
-	chmod(((char*)(path.str)), mode);
+	if (chmod(((char*)(path.str)), mode) != 0) {
+		v_panic(os__posix_get_error_msg(errno));
+	}
+}
+
+Option_void os__chown(string path, int owner, int group) {
+	#if defined(_WIN32)
+	{
+		return (Option_void){ .state=2, .err=v_error(_SLIT("os.chown() not implemented for Windows")) };
+	}
+	#else
+	{
+		if (owner < 0 || group < 0) {
+			return (Option_void){ .state=2, .err=v_error(_SLIT("os.chown() uid and gid cannot be negative: Not changing owner!")) };
+		} else {
+			if (chown(((char*)(path.str)), owner, group) != 0) {
+				return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
+			}
+		}
+	}
+	#endif
+	return (Option_void){0};
 }
 
 Option_os__File os__open_append(string path) {
@@ -19612,6 +19635,18 @@ os__Uname os__uname(void) {
 		v_free(d);
 	}
 	return u;
+}
+
+string os__hostname(void) {
+	string hstnme = _SLIT("");
+	int size = 256;
+	char* buf = ((char*)(v_malloc(size)));
+	if (gethostname(buf, size) == 0) {
+		hstnme = cstring_to_vstring(buf);
+		v_free(buf);
+		return hstnme;
+	}
+	return _SLIT("");
 }
 
 VV_LOCAL_SYMBOL Array_string os__init_os_args(int argc, byte** argv) {
@@ -27746,7 +27781,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1250ce4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("25a9d30"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}

@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "25a9d30"
+#define V_COMMIT_HASH "546dc91"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1250ce4"
+	#define V_COMMIT_HASH "25a9d30"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "25a9d30"
+	#define V_CURRENT_COMMIT_HASH "546dc91"
 #endif
 
 // V comptime_defines:
@@ -5764,6 +5764,7 @@ int os__wait();
 int os__file_last_mod_unix(string path);
 void os__flush();
 void os__chmod(string path, int mode);
+Option_void os__chown(string path, int owner, int group);
 Option_os__File os__open_append(string path);
 Option_void os__execvp(string cmdpath, Array_string args);
 Option_void os__execve(string cmdpath, Array_string args, Array_string envs);
@@ -5792,6 +5793,7 @@ void os__File_close(os__File* f);
 void os__add_vectored_exception_handler(bool first, VectoredExceptionHandler handler);
 bool os__debugger_present();
 os__Uname os__uname();
+string os__hostname();
 Option_bool os__is_writable_folder(string folder);
 int os__getpid();
 void os__posix_set_permission_bit(string path_s, u32 mode, bool enable);
@@ -18990,7 +18992,21 @@ void os__flush(void) {
 }
 
 void os__chmod(string path, int mode) {
-	chmod(((char*)(path.str)), mode);
+	if (chmod(((char*)(path.str)), mode) != 0) {
+		v_panic(os__posix_get_error_msg(errno));
+	}
+}
+
+Option_void os__chown(string path, int owner, int group) {
+	#if defined(_WIN32)
+	{
+		return (Option_void){ .state=2, .err=v_error(_SLIT("os.chown() not implemented for Windows")) };
+	}
+	#else
+	{
+	}
+	#endif
+	return (Option_void){0};
 }
 
 Option_os__File os__open_append(string path) {
@@ -19279,8 +19295,14 @@ bool os__debugger_present(void) {
 }
 
 os__Uname os__uname(void) {
-	string unknown = _SLIT("unknown");
-	return (os__Uname){.sysname = unknown,.nodename = unknown,.release = unknown,.version = unknown,.machine = unknown,};
+	Array_string sys_and_ver = string_split(os__execute(_SLIT("cmd /c ver")).output, _SLIT("["));
+	string nodename = os__execute(_SLIT("cmd /c hostname")).output;
+	string machine = os__execute(_SLIT("cmd /c echo %PROCESSOR_ARCHITECTURE%")).output;
+	return (os__Uname){.sysname = string_trim_space((*(string*)/*ee elem_typ */array_get(sys_and_ver, 0))),.nodename = nodename,.release = string_replace((*(string*)/*ee elem_typ */array_get(sys_and_ver, 1)), _SLIT("]"), _SLIT("")),.version = string_add(string_add((*(string*)/*ee elem_typ */array_get(sys_and_ver, 0)), _SLIT("[")), (*(string*)/*ee elem_typ */array_get(sys_and_ver, 1))),.machine = machine,};
+}
+
+string os__hostname(void) {
+	return os__execute(_SLIT("cmd /c hostname")).output;
 }
 
 Option_bool os__is_writable_folder(string folder) {
@@ -27107,7 +27129,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1250ce4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("25a9d30"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
