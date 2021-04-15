@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9d6caa1"
+#define V_COMMIT_HASH "4ecc500"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7df996e"
+	#define V_COMMIT_HASH "9d6caa1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9d6caa1"
+	#define V_CURRENT_COMMIT_HASH "4ecc500"
 #endif
 
 // V comptime_defines:
@@ -17141,7 +17141,7 @@ int utf8_str_visible_length(string s) {
 		}
 		else if (ul == (4)) {
 			u64 r = ((u64)(((((u32)(c)) << 24) | (((((u32)(s.str[i + 1])) << 16) | (((u32)(s.str[i + 2])) << 8)) | s.str[i + 3]))));
-			if ((r >= 0x0f9f8880 && r <= 0xf09f8a8f) || (r >= 0xf09f8c80 && r <= 0xf09f9c90) || (r >= 0xf09fa490 && r <= 0xf09fa7af) || (r >= 0xff0a08080 && r <= 0xf180807f)) {
+			if ((r >= 0x0f9f8880 && r <= 0xf09f8a8f) || (r >= 0xf09f8c80 && r <= 0xf09f9c90) || (r >= 0xf09fa490 && r <= 0xf09fa7af) || (r >= 0xf0a08080 && r <= 0xf180807f)) {
 				l++;
 			}
 		}
@@ -27131,7 +27131,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7df996e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9d6caa1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
