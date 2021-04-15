@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "466dc45"
+#define V_COMMIT_HASH "cb69c4c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dcf4a6b"
+	#define V_COMMIT_HASH "466dc45"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "466dc45"
+	#define V_CURRENT_COMMIT_HASH "cb69c4c"
 #endif
 
 // V comptime_defines:
@@ -5121,6 +5121,7 @@ array array_clone_noscan(array* a);
 VV_LOCAL_SYMBOL array array_slice_clone_noscan(array* a, int start, int _end);
 VV_LOCAL_SYMBOL array array_reverse_noscan(array a);
 void v_exit(int code);
+VV_LOCAL_SYMBOL string vcommithash();
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s);
 void panic_optional_not_set(string s);
 void v_panic(string s);
@@ -13209,6 +13210,10 @@ void v_exit(int code) {
 	exit(code);
 }
 
+VV_LOCAL_SYMBOL string vcommithash(void) {
+	return tos5(((char*)(V_CURRENT_COMMIT_HASH)));
+}
+
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s) {
 	#if !defined(_VFREESTANDING)
 	{
@@ -13217,6 +13222,7 @@ VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn
 		eprintln(_STR(" function: %.*s\000()", 2, fn_name));
 		eprintln(_STR("  message: %.*s", 1, s));
 		eprintln(_STR("     file: %.*s\000:%"PRId32"", 2, file, line_no));
+		eprintln(_STR("   v hash: %.*s", 1, vcommithash()));
 		eprintln(_SLIT("========================================="));
 	}
 	#else
@@ -13275,6 +13281,7 @@ void panic_optional_not_set(string s) {
 void v_panic(string s) {
 	eprint(_SLIT("V panic: "));
 	eprintln(s);
+	eprintln(_STR("v hash: %.*s", 1, vcommithash()));
 	#if defined(CUSTOM_DEFINE_exit_after_panic_message)
 	{
 		exit(1);
@@ -27786,7 +27793,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dcf4a6b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("466dc45"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
