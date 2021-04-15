@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5ae3b81"
+#define V_COMMIT_HASH "d90be54"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d9fdae1"
+	#define V_COMMIT_HASH "5ae3b81"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5ae3b81"
+	#define V_CURRENT_COMMIT_HASH "d90be54"
 #endif
 
 // V comptime_defines:
@@ -3079,6 +3079,7 @@ struct v__pref__Preferences {
 	v__vcache__CacheManager cache_manager;
 	bool is_help;
 	v__pref__GarbageCollectionMode gc_mode;
+	bool is_cstrict;
 	int checker_match_exhaustive_cutoff_limit;
 } ;
 
@@ -7499,8 +7500,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_post_process_c_compiler_output(v__build
 VV_LOCAL_SYMBOL string v__builder__Builder_rebuild_cached_module(v__builder__Builder* v, string vexe, string imp_path);
 VV_LOCAL_SYMBOL void v__builder__Builder_show_cc(v__builder__Builder* v, string cmd, string response_file, string response_file_content);
 VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Builder* v, string ccompiler);
-VV_LOCAL_SYMBOL Array_string v__builder__CcompilerOptions_all_args(v__builder__CcompilerOptions* ccoptions);
-VV_LOCAL_SYMBOL Array_string v__builder__CcompilerOptions_thirdparty_object_args(v__builder__CcompilerOptions* ccoptions, Array_string middle);
+VV_LOCAL_SYMBOL Array_string v__builder__Builder_all_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions);
+VV_LOCAL_SYMBOL Array_string v__builder__Builder_thirdparty_object_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions, Array_string middle);
 VV_LOCAL_SYMBOL void v__builder__Builder_setup_output_name(v__builder__Builder* v);
 VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v);
 VV_LOCAL_SYMBOL void v__builder__Builder_dump_c_options(v__builder__Builder* v, Array_string all_args);
@@ -27072,7 +27073,7 @@ string rand__ulid_at_millisecond(u64 unix_time_milli) {
 }
 
 v__pref__Preferences* v__pref__new_preferences(void) {
-	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
 	v__pref__Preferences_fill_with_defaults(p);
 	// autofree_scope_vars(pos=355 line_nr=15 scope.pos=273 scope.end_pos=365)
 	// var "p" var.pos=311 var.line_nr=13
@@ -27141,7 +27142,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d9fdae1"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5ae3b81"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27532,7 +27533,7 @@ v__pref__OS v__pref__get_host_os(void) {
 }
 
 multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args) {
-	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
 	#if defined(TARGET_IS_64BIT)
 	{
 		res->m64 = true;
@@ -27588,6 +27589,9 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		}
 		else if (string_eq(arg, _SLIT("-silent"))) {
 			res->output_mode = v__pref__OutputMode_silent;
+		}
+		else if (string_eq(arg, _SLIT("-cstrict"))) {
+			res->is_cstrict = true;
 		}
 		else if (string_eq(arg, _SLIT("-gc"))) {
 			string gc_mode = os__cmdline__option(current_args, _SLIT("-gc"), _SLIT(""));
@@ -27997,9 +28001,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	if (string_eq(arch_str, _SLIT("amd64")) || string_eq(arch_str, _SLIT("x86_64")) || string_eq(arch_str, _SLIT("x64")) || string_eq(arch_str, _SLIT("x86"))) {
 		Option_v__pref__Arch _t859;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_amd64 }, (Option*)(&_t859), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=19620 line_nr=626 scope.pos=19562 scope.end_pos=19641)
+		// autofree_scope_vars(pos=19754 line_nr=630 scope.pos=19696 scope.end_pos=19775)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t859;
@@ -28007,9 +28011,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("aarch64")) || string_eq(arch_str, _SLIT("arm64"))) {
 		Option_v__pref__Arch _t860;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_aarch64 }, (Option*)(&_t860), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=19692 line_nr=630 scope.pos=19645 scope.end_pos=19715)
+		// autofree_scope_vars(pos=19826 line_nr=634 scope.pos=19779 scope.end_pos=19849)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t860;
@@ -28017,9 +28021,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("arm32")) || string_eq(arch_str, _SLIT("aarch32")) || string_eq(arch_str, _SLIT("arm"))) {
 		Option_v__pref__Arch _t861;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_aarch32 }, (Option*)(&_t861), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=19773 line_nr=634 scope.pos=19719 scope.end_pos=19796)
+		// autofree_scope_vars(pos=19907 line_nr=638 scope.pos=19853 scope.end_pos=19930)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t861;
@@ -28027,9 +28031,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("rv64")) || string_eq(arch_str, _SLIT("riscv64")) || string_eq(arch_str, _SLIT("risc-v64")) || string_eq(arch_str, _SLIT("riscv")) || string_eq(arch_str, _SLIT("risc-v"))) {
 		Option_v__pref__Arch _t862;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_rv64 }, (Option*)(&_t862), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=19874 line_nr=638 scope.pos=19800 scope.end_pos=19894)
+		// autofree_scope_vars(pos=20008 line_nr=642 scope.pos=19934 scope.end_pos=20028)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t862;
@@ -28037,9 +28041,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("rv32")) || string_eq(arch_str, _SLIT("riscv32"))) {
 		Option_v__pref__Arch _t863;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_rv32 }, (Option*)(&_t863), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=19941 line_nr=642 scope.pos=19898 scope.end_pos=19961)
+		// autofree_scope_vars(pos=20075 line_nr=646 scope.pos=20032 scope.end_pos=20095)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t863;
@@ -28047,9 +28051,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("x86_32")) || string_eq(arch_str, _SLIT("x32")) || string_eq(arch_str, _SLIT("i386")) || string_eq(arch_str, _SLIT("IA-32")) || string_eq(arch_str, _SLIT("ia-32")) || string_eq(arch_str, _SLIT("ia32"))) {
 		Option_v__pref__Arch _t864;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_i386 }, (Option*)(&_t864), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20040 line_nr=646 scope.pos=19965 scope.end_pos=20060)
+		// autofree_scope_vars(pos=20174 line_nr=650 scope.pos=20099 scope.end_pos=20194)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t864;
@@ -28057,9 +28061,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (arch_str.len == 0) {
 		Option_v__pref__Arch _t865;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch__auto }, (Option*)(&_t865), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20071 line_nr=649 scope.pos=20064 scope.end_pos=20088)
+		// autofree_scope_vars(pos=20205 line_nr=653 scope.pos=20198 scope.end_pos=20222)
 		// af parent scope:
-		// var "arch_str" var.pos=19517 var.line_nr=622
+		// var "arch_str" var.pos=19651 var.line_nr=626
 		// af parent scope:
 		// af parent scope:
 		return _t865;
@@ -28080,8 +28084,8 @@ VV_LOCAL_SYMBOL void v__pref__must_exist(string path) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL bool v__pref__is_source_file(string path) {
 	 bool _t866 = string_ends_with(path, _SLIT(".v")) || os__exists(path);
-	// autofree_scope_vars(pos=20328 line_nr=666 scope.pos=20293 scope.end_pos=20376)
-	// var "path" var.pos=20308 var.line_nr=665
+	// autofree_scope_vars(pos=20462 line_nr=670 scope.pos=20427 scope.end_pos=20510)
+	// var "path" var.pos=20442 var.line_nr=669
 	// af parent scope:
 	// af parent scope:
 	return _t866;
@@ -28092,9 +28096,9 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	if (string_eq(s, _SLIT("c"))) {
 		Option_v__pref__Backend _t867;
 		opt_ok(&(v__pref__Backend[]) { v__pref__Backend_c }, (Option*)(&_t867), sizeof(v__pref__Backend));
-		// autofree_scope_vars(pos=20445 line_nr=671 scope.pos=20440 scope.end_pos=20456)
+		// autofree_scope_vars(pos=20579 line_nr=675 scope.pos=20574 scope.end_pos=20590)
 		// af parent scope:
-		// var "s" var.pos=20406 var.line_nr=669
+		// var "s" var.pos=20540 var.line_nr=673
 		// af parent scope:
 		// af parent scope:
 		return _t867;
@@ -28102,9 +28106,9 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	else if (string_eq(s, _SLIT("js"))) {
 		Option_v__pref__Backend _t868;
 		opt_ok(&(v__pref__Backend[]) { v__pref__Backend_js }, (Option*)(&_t868), sizeof(v__pref__Backend));
-		// autofree_scope_vars(pos=20466 line_nr=672 scope.pos=20460 scope.end_pos=20478)
+		// autofree_scope_vars(pos=20600 line_nr=676 scope.pos=20594 scope.end_pos=20612)
 		// af parent scope:
-		// var "s" var.pos=20406 var.line_nr=669
+		// var "s" var.pos=20540 var.line_nr=673
 		// af parent scope:
 		// af parent scope:
 		return _t868;
@@ -28112,9 +28116,9 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	else if (string_eq(s, _SLIT("x64"))) {
 		Option_v__pref__Backend _t869;
 		opt_ok(&(v__pref__Backend[]) { v__pref__Backend_x64 }, (Option*)(&_t869), sizeof(v__pref__Backend));
-		// autofree_scope_vars(pos=20489 line_nr=673 scope.pos=20482 scope.end_pos=20502)
+		// autofree_scope_vars(pos=20623 line_nr=677 scope.pos=20616 scope.end_pos=20636)
 		// af parent scope:
-		// var "s" var.pos=20406 var.line_nr=669
+		// var "s" var.pos=20540 var.line_nr=673
 		// af parent scope:
 		// af parent scope:
 		return _t869;
@@ -28128,13 +28132,13 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 v__pref__CompilerType v__pref__cc_from_string(string cc_str) {
 	if (cc_str.len == 0) {
 		 v__pref__CompilerType _t870 = v__pref__CompilerType_gcc;
-		// autofree_scope_vars(pos=20690 line_nr=681 scope.pos=20687 scope.end_pos=20704)
+		// autofree_scope_vars(pos=20824 line_nr=685 scope.pos=20821 scope.end_pos=20838)
 		// af parent scope:
-		// var "cc_str" var.pos=20637 var.line_nr=679
-		// var "normalized_cc" var.pos=20716 var.line_nr=684
-		// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-		// var "last_elem" var.pos=20809 var.line_nr=686
-		// var "cc" var.pos=20850 var.line_nr=687
+		// var "cc_str" var.pos=20771 var.line_nr=683
+		// var "normalized_cc" var.pos=20850 var.line_nr=688
+		// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+		// var "last_elem" var.pos=20943 var.line_nr=690
+		// var "cc" var.pos=20984 var.line_nr=691
 		// af parent scope:
 		// af parent scope:
 		return _t870;
@@ -28145,76 +28149,76 @@ v__pref__CompilerType v__pref__cc_from_string(string cc_str) {
 	string cc = string_all_before(last_elem, _SLIT("."));
 	if (string_contains(cc, _SLIT("++"))) {
 		 v__pref__CompilerType _t871 = v__pref__CompilerType_cplusplus;
-		// autofree_scope_vars(pos=20907 line_nr=689 scope.pos=20904 scope.end_pos=20927)
+		// autofree_scope_vars(pos=21041 line_nr=693 scope.pos=21038 scope.end_pos=21061)
 		// af parent scope:
-		// var "cc_str" var.pos=20637 var.line_nr=679
-		// var "normalized_cc" var.pos=20716 var.line_nr=684
-		// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-		// var "last_elem" var.pos=20809 var.line_nr=686
-		// var "cc" var.pos=20850 var.line_nr=687
+		// var "cc_str" var.pos=20771 var.line_nr=683
+		// var "normalized_cc" var.pos=20850 var.line_nr=688
+		// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+		// var "last_elem" var.pos=20943 var.line_nr=690
+		// var "cc" var.pos=20984 var.line_nr=691
 		// af parent scope:
 		// af parent scope:
 		return _t871;
 	}
 	if (string_contains(cc, _SLIT("tcc")) || string_contains(cc, _SLIT("tinyc"))) {
 		 v__pref__CompilerType _t872 = v__pref__CompilerType_tinyc;
-		// autofree_scope_vars(pos=20979 line_nr=692 scope.pos=20976 scope.end_pos=20995)
+		// autofree_scope_vars(pos=21113 line_nr=696 scope.pos=21110 scope.end_pos=21129)
 		// af parent scope:
-		// var "cc_str" var.pos=20637 var.line_nr=679
-		// var "normalized_cc" var.pos=20716 var.line_nr=684
-		// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-		// var "last_elem" var.pos=20809 var.line_nr=686
-		// var "cc" var.pos=20850 var.line_nr=687
+		// var "cc_str" var.pos=20771 var.line_nr=683
+		// var "normalized_cc" var.pos=20850 var.line_nr=688
+		// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+		// var "last_elem" var.pos=20943 var.line_nr=690
+		// var "cc" var.pos=20984 var.line_nr=691
 		// af parent scope:
 		// af parent scope:
 		return _t872;
 	}
 	if (string_contains(cc, _SLIT("clang"))) {
 		 v__pref__CompilerType _t873 = v__pref__CompilerType_clang;
-		// autofree_scope_vars(pos=21025 line_nr=695 scope.pos=21022 scope.end_pos=21041)
+		// autofree_scope_vars(pos=21159 line_nr=699 scope.pos=21156 scope.end_pos=21175)
 		// af parent scope:
-		// var "cc_str" var.pos=20637 var.line_nr=679
-		// var "normalized_cc" var.pos=20716 var.line_nr=684
-		// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-		// var "last_elem" var.pos=20809 var.line_nr=686
-		// var "cc" var.pos=20850 var.line_nr=687
+		// var "cc_str" var.pos=20771 var.line_nr=683
+		// var "normalized_cc" var.pos=20850 var.line_nr=688
+		// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+		// var "last_elem" var.pos=20943 var.line_nr=690
+		// var "cc" var.pos=20984 var.line_nr=691
 		// af parent scope:
 		// af parent scope:
 		return _t873;
 	}
 	if (string_contains(cc, _SLIT("mingw"))) {
 		 v__pref__CompilerType _t874 = v__pref__CompilerType_mingw;
-		// autofree_scope_vars(pos=21071 line_nr=698 scope.pos=21068 scope.end_pos=21087)
+		// autofree_scope_vars(pos=21205 line_nr=702 scope.pos=21202 scope.end_pos=21221)
 		// af parent scope:
-		// var "cc_str" var.pos=20637 var.line_nr=679
-		// var "normalized_cc" var.pos=20716 var.line_nr=684
-		// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-		// var "last_elem" var.pos=20809 var.line_nr=686
-		// var "cc" var.pos=20850 var.line_nr=687
+		// var "cc_str" var.pos=20771 var.line_nr=683
+		// var "normalized_cc" var.pos=20850 var.line_nr=688
+		// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+		// var "last_elem" var.pos=20943 var.line_nr=690
+		// var "cc" var.pos=20984 var.line_nr=691
 		// af parent scope:
 		// af parent scope:
 		return _t874;
 	}
 	if (string_contains(cc, _SLIT("msvc"))) {
 		 v__pref__CompilerType _t875 = v__pref__CompilerType_msvc;
-		// autofree_scope_vars(pos=21116 line_nr=701 scope.pos=21113 scope.end_pos=21131)
+		// autofree_scope_vars(pos=21250 line_nr=705 scope.pos=21247 scope.end_pos=21265)
 		// af parent scope:
-		// var "cc_str" var.pos=20637 var.line_nr=679
-		// var "normalized_cc" var.pos=20716 var.line_nr=684
-		// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-		// var "last_elem" var.pos=20809 var.line_nr=686
-		// var "cc" var.pos=20850 var.line_nr=687
+		// var "cc_str" var.pos=20771 var.line_nr=683
+		// var "normalized_cc" var.pos=20850 var.line_nr=688
+		// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+		// var "last_elem" var.pos=20943 var.line_nr=690
+		// var "cc" var.pos=20984 var.line_nr=691
 		// af parent scope:
 		// af parent scope:
 		return _t875;
 	}
 	 v__pref__CompilerType _t876 = v__pref__CompilerType_gcc;
-	// autofree_scope_vars(pos=21133 line_nr=703 scope.pos=20622 scope.end_pos=21146)
-	// var "cc_str" var.pos=20637 var.line_nr=679
-	// var "normalized_cc" var.pos=20716 var.line_nr=684
-	// var "normalized_cc_array" var.pos=20760 var.line_nr=685
-	// var "last_elem" var.pos=20809 var.line_nr=686
-	// var "cc" var.pos=20850 var.line_nr=687
+	// autofree_scope_vars(pos=21267 line_nr=707 scope.pos=20756 scope.end_pos=21280)
+	// var "cc_str" var.pos=20771 var.line_nr=683
+	// var "normalized_cc" var.pos=20850 var.line_nr=688
+	// var "normalized_cc_array" var.pos=20894 var.line_nr=689
+	// var "last_elem" var.pos=20943 var.line_nr=690
+	// var "cc" var.pos=20984 var.line_nr=691
 	// af parent scope:
 	// af parent scope:
 	return _t876;
@@ -28224,7 +28228,7 @@ v__pref__Arch v__pref__get_host_arch(void) {
 	#if defined(__V_amd64)
 	{
 		 v__pref__Arch _t877 = v__pref__Arch_amd64;
-		// autofree_scope_vars(pos=21193 line_nr=708 scope.pos=21190 scope.end_pos=21209)
+		// autofree_scope_vars(pos=21327 line_nr=712 scope.pos=21324 scope.end_pos=21343)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -28234,7 +28238,7 @@ v__pref__Arch v__pref__get_host_arch(void) {
 	#if defined(__V_aarch64)
 	{
 		 v__pref__Arch _t878 = v__pref__Arch_aarch64;
-		// autofree_scope_vars(pos=21267 line_nr=714 scope.pos=21264 scope.end_pos=21285)
+		// autofree_scope_vars(pos=21401 line_nr=718 scope.pos=21398 scope.end_pos=21419)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -47612,7 +47616,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	}
 	if (node->is_vweb) {
 		v__pref__Preferences pref_ = *c->pref;
-		v__pref__Preferences* pref2 = (v__pref__Preferences*)memdup(&(v__pref__Preferences){pref_.os,pref_.backend,pref_.build_mode,pref_.arch,pref_.output_mode,pref_.is_verbose,pref_.is_watch,pref_.is_test,pref_.is_script,pref_.is_vsh,pref_.is_livemain,pref_.is_liveshared,pref_.is_shared,pref_.is_prof,pref_.profile_file,pref_.profile_no_inline,pref_.translated,pref_.is_prod,pref_.obfuscate,pref_.is_repl,pref_.is_run,pref_.sanitize,pref_.is_debug,pref_.is_vlines,pref_.show_cc,pref_.show_c_output,pref_.dump_c_flags,pref_.use_cache,pref_.retry_compilation,pref_.is_stats,pref_.cflags,pref_.m64,pref_.ccompiler,pref_.ccompiler_type,pref_.third_party_option,pref_.building_v,pref_.autofree,pref_.compress,pref_.enable_globals,pref_.is_fmt,pref_.is_vet,pref_.is_bare,pref_.no_preludes,pref_.custom_prelude,pref_.lookup_path,pref_.bare_builtin_dir,pref_.output_cross_c,pref_.prealloc,pref_.vroot,pref_.out_name_c,pref_.out_name,pref_.path,pref_.compile_defines,pref_.compile_defines_all,pref_.run_args,pref_.printfn_list,pref_.print_v_files,pref_.skip_running,pref_.skip_warnings,pref_.warn_impure_v,pref_.warns_are_errors,pref_.fatal_errors,pref_.reuse_tmpc,pref_.use_color,pref_.is_parallel,pref_.error_limit,.is_vweb = true,pref_.only_check_syntax,pref_.experimental,pref_.skip_unused,pref_.show_timings,pref_.is_ios_simulator,pref_.is_apk,pref_.cleanup_files,pref_.build_options,pref_.cache_manager,pref_.is_help,pref_.gc_mode,pref_.checker_match_exhaustive_cutoff_limit,}, sizeof(v__pref__Preferences));
+		v__pref__Preferences* pref2 = (v__pref__Preferences*)memdup(&(v__pref__Preferences){pref_.os,pref_.backend,pref_.build_mode,pref_.arch,pref_.output_mode,pref_.is_verbose,pref_.is_watch,pref_.is_test,pref_.is_script,pref_.is_vsh,pref_.is_livemain,pref_.is_liveshared,pref_.is_shared,pref_.is_prof,pref_.profile_file,pref_.profile_no_inline,pref_.translated,pref_.is_prod,pref_.obfuscate,pref_.is_repl,pref_.is_run,pref_.sanitize,pref_.is_debug,pref_.is_vlines,pref_.show_cc,pref_.show_c_output,pref_.dump_c_flags,pref_.use_cache,pref_.retry_compilation,pref_.is_stats,pref_.cflags,pref_.m64,pref_.ccompiler,pref_.ccompiler_type,pref_.third_party_option,pref_.building_v,pref_.autofree,pref_.compress,pref_.enable_globals,pref_.is_fmt,pref_.is_vet,pref_.is_bare,pref_.no_preludes,pref_.custom_prelude,pref_.lookup_path,pref_.bare_builtin_dir,pref_.output_cross_c,pref_.prealloc,pref_.vroot,pref_.out_name_c,pref_.out_name,pref_.path,pref_.compile_defines,pref_.compile_defines_all,pref_.run_args,pref_.printfn_list,pref_.print_v_files,pref_.skip_running,pref_.skip_warnings,pref_.warn_impure_v,pref_.warns_are_errors,pref_.fatal_errors,pref_.reuse_tmpc,pref_.use_color,pref_.is_parallel,pref_.error_limit,.is_vweb = true,pref_.only_check_syntax,pref_.experimental,pref_.skip_unused,pref_.show_timings,pref_.is_ios_simulator,pref_.is_apk,pref_.cleanup_files,pref_.build_options,pref_.cache_manager,pref_.is_help,pref_.gc_mode,pref_.is_cstrict,pref_.checker_match_exhaustive_cutoff_limit,}, sizeof(v__pref__Preferences));
 		v__checker__Checker c2 = v__checker__new_checker(c->table, pref2);
 		v__checker__Checker_check(&c2, (voidptr)&/*qq*/node->vweb_tmpl);
 		int i = 0;
@@ -56109,12 +56113,12 @@ v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser*
 v__ast__Stmt v__parser__parse_stmt(string text, v__ast__Table* table, v__ast__Scope* scope) {
 bool v__parser__parse_stmt_defer_0 = false;
 	v__parser__Parser p = (v__parser__Parser){
-		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences)),
+		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences)),
 		.file_base = (string){.str=(byteptr)"", .is_lit=1},
 		.file_name = (string){.str=(byteptr)"", .is_lit=1},
 		.file_name_dir = (string){.str=(byteptr)"", .is_lit=1},
 		.file_backend_mode = 0,
-		.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences))),
+		.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences))),
 		.comments_mode = v__scanner__CommentsMode_skip_comments,
 		.tok = {0},
 		.prev_tok = {0},
@@ -82639,37 +82643,42 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	ccoptions.env_cflags = os__getenv(_SLIT("CFLAGS"));
 	ccoptions.env_ldflags = os__getenv(_SLIT("LDFLAGS"));
 	v->ccoptions = ccoptions;
-	v__vcache__CacheManager_set_temporary_options(&v->pref->cache_manager, v__builder__CcompilerOptions_thirdparty_object_args(&ccoptions, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){ccoptions.guessed_compiler}))));
+	v__vcache__CacheManager_set_temporary_options(&v->pref->cache_manager, v__builder__Builder_thirdparty_object_args(v, v->ccoptions, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){ccoptions.guessed_compiler}))));
 }
 
-VV_LOCAL_SYMBOL Array_string v__builder__CcompilerOptions_all_args(v__builder__CcompilerOptions* ccoptions) {
+VV_LOCAL_SYMBOL Array_string v__builder__Builder_all_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions) {
 	Array_string all = __new_array_with_default(0, 0, sizeof(string), 0);
-	array_push(&all, _MOV((string[]){ string_clone(ccoptions->env_cflags) }));
-	_PUSH_MANY(&all, (ccoptions->args), _t3519, Array_string);
-	_PUSH_MANY(&all, (ccoptions->o_args), _t3520, Array_string);
-	_PUSH_MANY(&all, (ccoptions->pre_args), _t3521, Array_string);
-	_PUSH_MANY(&all, (ccoptions->source_args), _t3522, Array_string);
-	_PUSH_MANY(&all, (ccoptions->post_args), _t3523, Array_string);
-	_PUSH_MANY(&all, (ccoptions->linker_flags), _t3524, Array_string);
-	array_push(&all, _MOV((string[]){ string_clone(ccoptions->env_ldflags) }));
-	// autofree_scope_vars(pos=12654 line_nr=395 scope.pos=12357 scope.end_pos=12666)
-	// var "ccoptions" var.pos=12358 var.line_nr=385
-	// var "all" var.pos=12413 var.line_nr=386
+	array_push(&all, _MOV((string[]){ string_clone(ccoptions.env_cflags) }));
+	if (v->pref->is_cstrict) {
+		_PUSH_MANY(&all, (ccoptions.wargs), _t3519, Array_string);
+	}
+	_PUSH_MANY(&all, (ccoptions.args), _t3520, Array_string);
+	_PUSH_MANY(&all, (ccoptions.o_args), _t3521, Array_string);
+	_PUSH_MANY(&all, (ccoptions.pre_args), _t3522, Array_string);
+	_PUSH_MANY(&all, (ccoptions.source_args), _t3523, Array_string);
+	_PUSH_MANY(&all, (ccoptions.post_args), _t3524, Array_string);
+	_PUSH_MANY(&all, (ccoptions.linker_flags), _t3525, Array_string);
+	array_push(&all, _MOV((string[]){ string_clone(ccoptions.env_ldflags) }));
+	// autofree_scope_vars(pos=12721 line_nr=398 scope.pos=12362 scope.end_pos=12733)
+	// var "v" var.pos=12363 var.line_nr=385
+	// var "ccoptions" var.pos=12384 var.line_nr=385
+	// var "all" var.pos=12428 var.line_nr=386
 	// af parent scope:
 	// af parent scope:
 	return all;
 }
 
-VV_LOCAL_SYMBOL Array_string v__builder__CcompilerOptions_thirdparty_object_args(v__builder__CcompilerOptions* ccoptions, Array_string middle) {
+VV_LOCAL_SYMBOL Array_string v__builder__Builder_thirdparty_object_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions, Array_string middle) {
 	Array_string all = __new_array_with_default(0, 0, sizeof(string), 0);
-	array_push(&all, _MOV((string[]){ string_clone(ccoptions->env_cflags) }));
-	_PUSH_MANY(&all, (ccoptions->args), _t3527, Array_string);
-	_PUSH_MANY(&all, (middle), _t3528, Array_string);
-	array_push(&all, _MOV((string[]){ string_clone(ccoptions->env_ldflags) }));
-	// autofree_scope_vars(pos=12872 line_nr=404 scope.pos=12672 scope.end_pos=12884)
-	// var "ccoptions" var.pos=12673 var.line_nr=398
-	// var "middle" var.pos=12724 var.line_nr=398
-	// var "all" var.pos=12757 var.line_nr=399
+	array_push(&all, _MOV((string[]){ string_clone(ccoptions.env_cflags) }));
+	_PUSH_MANY(&all, (ccoptions.args), _t3528, Array_string);
+	_PUSH_MANY(&all, (middle), _t3529, Array_string);
+	array_push(&all, _MOV((string[]){ string_clone(ccoptions.env_ldflags) }));
+	// autofree_scope_vars(pos=12951 line_nr=407 scope.pos=12739 scope.end_pos=12963)
+	// var "v" var.pos=12740 var.line_nr=401
+	// var "ccoptions" var.pos=12775 var.line_nr=401
+	// var "middle" var.pos=12803 var.line_nr=401
+	// var "all" var.pos=12836 var.line_nr=402
 	// af parent scope:
 	// af parent scope:
 	return all;
@@ -82690,9 +82699,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_output_name(v__builder__Builder* 
 		if (v->pref->is_verbose) {
 			println(_STR("Building %.*s\000 to %.*s\000 ...", 3, v->pref->path, v->pref->out_name));
 		}
-		Option_string _t3530 = v__vcache__CacheManager_save(&v->pref->cache_manager, _SLIT(".description.txt"), v->pref->path, _STR("%*.*s\000 @ %.*s\000\n", 3, v->pref->path, -30, v->pref->cache_manager.vopts));
-		if (_t3530.state != 0) { /*or block*/ 
-			IError err = _t3530.err;
+		Option_string _t3531 = v__vcache__CacheManager_save(&v->pref->cache_manager, _SLIT(".description.txt"), v->pref->path, _STR("%*.*s\000 @ %.*s\000\n", 3, v->pref->path, -30, v->pref->cache_manager.vopts));
+		if (_t3531.state != 0) { /*or block*/ 
+			IError err = _t3531.err;
 			v_panic(IError_str(err));
 		};
 	}
@@ -82731,55 +82740,55 @@ VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v) {
 			}
 		}
 		#endif
-		Option_void _t3532 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
-		if (_t3532.state != 0 && _t3532.err._typ != _IError_None___index) {
-			IError err = _t3532.err;
+		Option_void _t3533 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
+		if (_t3533.state != 0 && _t3533.err._typ != _IError_None___index) {
+			IError err = _t3533.err;
 			v_panic(IError_str(err));
 		};
-		 bool _t3533 = true;
-		// autofree_scope_vars(pos=15117 line_nr=472 scope.pos=14175 scope.end_pos=15131)
+		 bool _t3534 = true;
+		// autofree_scope_vars(pos=15196 line_nr=475 scope.pos=14254 scope.end_pos=15210)
 		// af parent scope:
-		// var "v" var.pos=13888 var.line_nr=436
-		// var "vexe" var.pos=13916 var.line_nr=437
-		// var "vdir" var.pos=13942 var.line_nr=438
-		// var "ends_with_c" var.pos=14046 var.line_nr=441
-		// var "ends_with_js" var.pos=14094 var.line_nr=442
+		// var "v" var.pos=13967 var.line_nr=439
+		// var "vexe" var.pos=13995 var.line_nr=440
+		// var "vdir" var.pos=14021 var.line_nr=441
+		// var "ends_with_c" var.pos=14125 var.line_nr=444
+		// var "ends_with_js" var.pos=14173 var.line_nr=445
 		// af parent scope:
 		// af parent scope:
-		return _t3533;
+		return _t3534;
 	}
-	 bool _t3534 = false;
-	// autofree_scope_vars(pos=15133 line_nr=474 scope.pos=13883 scope.end_pos=15147)
-	// var "v" var.pos=13888 var.line_nr=436
-	// var "vexe" var.pos=13916 var.line_nr=437
-	// var "vdir" var.pos=13942 var.line_nr=438
-	// var "ends_with_c" var.pos=14046 var.line_nr=441
-	// var "ends_with_js" var.pos=14094 var.line_nr=442
+	 bool _t3535 = false;
+	// autofree_scope_vars(pos=15212 line_nr=477 scope.pos=13962 scope.end_pos=15226)
+	// var "v" var.pos=13967 var.line_nr=439
+	// var "vexe" var.pos=13995 var.line_nr=440
+	// var "vdir" var.pos=14021 var.line_nr=441
+	// var "ends_with_c" var.pos=14125 var.line_nr=444
+	// var "ends_with_js" var.pos=14173 var.line_nr=445
 	// af parent scope:
 	// af parent scope:
-	return _t3534;
+	return _t3535;
 }
 
 VV_LOCAL_SYMBOL void v__builder__Builder_dump_c_options(v__builder__Builder* v, Array_string all_args) {
 	if ((v->pref->dump_c_flags).len != 0) {
-		Array_string _t3535_orig = all_args;
-		int _t3535_len = _t3535_orig.len;
-		Array_string _t3535 = __new_array(0, _t3535_len, sizeof(string));
+		Array_string _t3536_orig = all_args;
+		int _t3536_len = _t3536_orig.len;
+		Array_string _t3536 = __new_array(0, _t3536_len, sizeof(string));
 
-		for (int _t3536 = 0; _t3536 < _t3535_len; ++_t3536) {
-			string it = ((string*) _t3535_orig.data)[_t3536];
+		for (int _t3537 = 0; _t3537 < _t3536_len; ++_t3537) {
+			string it = ((string*) _t3536_orig.data)[_t3537];
 			if ((it).len != 0) {
-				array_push(&_t3535, &it); 
+				array_push(&_t3536, &it); 
 		}
 		}
 		
-		string non_empty_args = string_add(Array_string_join(_t3535, _SLIT("\n")), _SLIT("\n"));
+		string non_empty_args = string_add(Array_string_join(_t3536, _SLIT("\n")), _SLIT("\n"));
 		if (string_eq(v->pref->dump_c_flags, _SLIT("-"))) {
 			print(non_empty_args);
 		} else {
-			Option_void _t3537 = os__write_file(v->pref->dump_c_flags, non_empty_args);
-			if (_t3537.state != 0 && _t3537.err._typ != _IError_None___index) {
-				IError err = _t3537.err;
+			Option_void _t3538 = os__write_file(v->pref->dump_c_flags, non_empty_args);
+			if (_t3538.state != 0 && _t3538.err._typ != _IError_None___index) {
+				IError err = _t3538.err;
 				v_panic(IError_str(err));
 			};
 		}
@@ -82837,23 +82846,23 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 			string builtin_obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, _SLIT("vlib/builtin"));
 			array_push(&libs, _MOV((string[]){ string_clone(builtin_obj_path) }));
 			// FOR IN array
-			for (int _t3540 = 0; _t3540 < v->parsed_files.len; ++_t3540) {
-				v__ast__File ast_file = ((v__ast__File*)v->parsed_files.data)[_t3540];
+			for (int _t3541 = 0; _t3541 < v->parsed_files.len; ++_t3541) {
+				v__ast__File ast_file = ((v__ast__File*)v->parsed_files.data)[_t3541];
 				if (v->pref->is_test && string_ne(ast_file.mod.name, _SLIT("main"))) {
-					Option_string _t3541 = v__builder__Builder_find_module_path(v, ast_file.mod.name, ast_file.path);
-					if (_t3541.state != 0) { /*or block*/ 
-						IError err = _t3541.err;
+					Option_string _t3542 = v__builder__Builder_find_module_path(v, ast_file.mod.name, ast_file.path);
+					if (_t3542.state != 0) { /*or block*/ 
+						IError err = _t3542.err;
 						v__builder__verror(_STR("cannot import module \"%.*s\000\" (not found)", 2, ast_file.mod.name));
 						break;
 					}
- 					string imp_path =  *(string*)_t3541.data;
+ 					string imp_path =  *(string*)_t3542.data;
 					string obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, imp_path);
 					array_push(&libs, _MOV((string[]){ string_clone(obj_path) }));
 					array_push(&built_modules, _MOV((string[]){ string_clone(ast_file.mod.name) }));
 				}
 				// FOR IN array
-				for (int _t3544 = 0; _t3544 < ast_file.imports.len; ++_t3544) {
-					v__ast__Import imp_stmt = ((v__ast__Import*)ast_file.imports.data)[_t3544];
+				for (int _t3545 = 0; _t3545 < ast_file.imports.len; ++_t3545) {
+					v__ast__Import imp_stmt = ((v__ast__Import*)ast_file.imports.data)[_t3545];
 					string imp = imp_stmt.mod;
 					if ((string_eq(imp, _SLIT("strconv")) || string_eq(imp, _SLIT("strings")))) {
 						continue;
@@ -82870,13 +82879,13 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 					if (string_eq(imp, _SLIT("help"))) {
 						continue;
 					}
-					Option_string _t3545 = v__builder__Builder_find_module_path(v, imp, ast_file.path);
-					if (_t3545.state != 0) { /*or block*/ 
-						IError err = _t3545.err;
+					Option_string _t3546 = v__builder__Builder_find_module_path(v, imp, ast_file.path);
+					if (_t3546.state != 0) { /*or block*/ 
+						IError err = _t3546.err;
 						v__builder__verror(_STR("cannot import module \"%.*s\000\" (not found)", 2, imp));
 						break;
 					}
- 					string imp_path =  *(string*)_t3545.data;
+ 					string imp_path =  *(string*)_t3546.data;
 					string obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, imp_path);
 					array_push(&libs, _MOV((string[]){ string_clone(obj_path) }));
 					if (string_ends_with(obj_path, _SLIT("vlib/ui.o"))) {
@@ -82886,20 +82895,20 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 					array_push(&built_modules, _MOV((string[]){ string_clone(imp) }));
 				}
 			}
-			_PUSH_MANY(&v->ccoptions.post_args, (libs), _t3550, Array_string);
+			_PUSH_MANY(&v->ccoptions.post_args, (libs), _t3551, Array_string);
 		}
 		if (string_eq(ccompiler, _SLIT("msvc"))) {
 			v__builder__Builder_cc_msvc(v);
 			return;
 		}
-		Array_string all_args = v__builder__CcompilerOptions_all_args(&v->ccoptions);
+		Array_string all_args = v__builder__Builder_all_args(v, v->ccoptions);
 		v__builder__Builder_dump_c_options(v, all_args);
 		string str_args = Array_string_join(all_args, _SLIT(" "));
 		string response_file = _STR("%.*s\000.rsp", 2, v->out_name_c);
 		string response_file_content = string_replace(str_args, _SLIT("\\"), _SLIT("\\\\"));
-		Option_void _t3551 = os__write_file(response_file, response_file_content);
-		if (_t3551.state != 0 && _t3551.err._typ != _IError_None___index) {
-			IError err = _t3551.err;
+		Option_void _t3552 = os__write_file(response_file, response_file_content);
+		if (_t3552.state != 0 && _t3552.err._typ != _IError_None___index) {
+			IError err = _t3552.err;
 			v__builder__verror(_STR("Unable to write response file \"%.*s\000\"", 2, response_file));
 		};
 		if (!v->ccoptions.debug_mode) {
@@ -82930,8 +82939,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 				if (tried_compilation_commands.len > 1) {
 					eprintln(_STR("Recompilation loop detected (ccompiler: %.*s\000):", 2, ccompiler));
 					// FOR IN array
-					for (int _t3556 = 0; _t3556 < tried_compilation_commands.len; ++_t3556) {
-						string recompile_command = ((string*)tried_compilation_commands.data)[_t3556];
+					for (int _t3557 = 0; _t3557 < tried_compilation_commands.len; ++_t3557) {
+						string recompile_command = ((string*)tried_compilation_commands.data)[_t3557];
 						eprintln(_STR("   %.*s", 1, recompile_command));
 					}
 					v_exit(101);
@@ -82986,9 +82995,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_setup_output_name(b);
 	string parent_dir = os__vmodules_dir();
 	if (!os__exists(parent_dir)) {
-		Option_bool _t3557 = os__mkdir(parent_dir);
-		if (_t3557.state != 0) { /*or block*/ 
-			IError err = _t3557.err;
+		Option_bool _t3558 = os__mkdir(parent_dir);
+		if (_t3558.state != 0) { /*or block*/ 
+			IError err = _t3558.err;
 			v_panic(IError_str(err));
 		};
 	}
@@ -83008,21 +83017,21 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string_add(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_23808 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_23808.arg0;
-	Array_string others = mr_23808.arg1;
-	Array_string libs = mr_23808.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_23888 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_23888.arg0;
+	Array_string others = mr_23888.arg1;
+	Array_string libs = mr_23888.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-c")) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_SLIT("-target x86_64-linux-gnu")) }));
-	_PUSH_MANY(&cc_args, (defines), _t3562, Array_string);
+	_PUSH_MANY(&cc_args, (defines), _t3563, Array_string);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_STR("-I %.*s\000/include ", 2, sysroot)) }));
-	_PUSH_MANY(&cc_args, (others), _t3564, Array_string);
+	_PUSH_MANY(&cc_args, (others), _t3565, Array_string);
 	array_push(&cc_args, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000\"", 2, obj_file)) }));
 	array_push(&cc_args, _MOV((string[]){ string_clone(_STR("-c \"%.*s\000\"", 2, b->out_name_c)) }));
-	_PUSH_MANY(&cc_args, (libs), _t3567, Array_string);
+	_PUSH_MANY(&cc_args, (libs), _t3568, Array_string);
 	v__builder__Builder_dump_c_options(b, cc_args);
 	string cc_cmd = string_add(_SLIT("cc "), Array_string_join(cc_args, _SLIT(" ")));
 	if (b->pref->show_cc) {
@@ -83036,7 +83045,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	Array_string linker_args = new_array_from_c_array(12, 12, sizeof(string), _MOV((string[12]){
 			_STR("-L %.*s\000/usr/lib/x86_64-linux-gnu/", 2, sysroot), _STR("--sysroot=%.*s", 1, sysroot), _SLIT("-v"), _STR("-o %.*s", 1, b->pref->out_name), _SLIT("-m elf_x86_64"), _SLIT("-dynamic-linker /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"), _STR("%.*s\000/crt1.o %.*s\000/crti.o %.*s", 3, sysroot, sysroot, obj_file), _SLIT("-lc"), _SLIT("-lcrypto"), _SLIT("-lssl"), _SLIT("-lpthread"), _STR("%.*s\000/crtn.o", 2, sysroot)}));
-	_PUSH_MANY(&linker_args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t3568, Array_string);
+	_PUSH_MANY(&linker_args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t3569, Array_string);
 	v__builder__Builder_dump_c_options(b, linker_args);
 	string linker_cmd = string_add(_STR("%.*s\000/ld.lld ", 2, sysroot), Array_string_join(linker_args, _SLIT(" ")));
 	if (b->pref->show_cc) {
@@ -83065,9 +83074,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 	array_push(&args, _MOV((string[]){ string_clone(_SLIT("-w -L.")) }));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(c);
 	if (string_eq(c->pref->ccompiler, _SLIT("msvc"))) {
-		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_before_target_msvc(cflags)), _t3572, Array_string);
+		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_before_target_msvc(cflags)), _t3573, Array_string);
 	} else {
-		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_before_target(cflags)), _t3573, Array_string);
+		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_before_target(cflags)), _t3574, Array_string);
 	}
 	Array_string optimization_options = __new_array_with_default(0, 0, sizeof(string), 0);
 	Array_string debug_options = __new_array_with_default(0, 0, sizeof(string), 0);
@@ -83089,27 +83098,27 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 			v__builder__verror(_STR("%.*s\000 not found", 2, builtin_o));
 		}
 		// FOR IN array
-		for (int _t3575 = 0; _t3575 < c->table->imports.len; ++_t3575) {
-			string imp = ((string*)c->table->imports.data)[_t3575];
+		for (int _t3576 = 0; _t3576 < c->table->imports.len; ++_t3576) {
+			string imp = ((string*)c->table->imports.data)[_t3576];
 			array_push(&libs, _MOV((string[]){ string_clone(_STR("\"%.*s\000/vlib/%.*s\000.o\"", 3, _const_v__pref__default_module_path, imp)) }));
 		}
 	}
-	_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t3577, Array_string);
+	_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t3578, Array_string);
 	array_push(&args, _MOV((string[]){ string_clone(c->out_name_c) }));
 	if (string_eq(c->pref->ccompiler, _SLIT("msvc"))) {
-		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_after_target_msvc(cflags)), _t3579, Array_string);
+		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_after_target_msvc(cflags)), _t3580, Array_string);
 	} else {
-		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_after_target(cflags)), _t3580, Array_string);
+		_PUSH_MANY(&args, (Array_v__cflag__CFlag_c_options_after_target(cflags)), _t3581, Array_string);
 	}
 	if (!(string_eq(os__user_os(), _SLIT("macos")) || string_eq(os__user_os(), _SLIT("linux")))) {
 		println(os__user_os());
 		v_panic(_SLIT("your platform is not supported yet"));
 	}
 	Array_string all_args = __new_array_with_default(0, 0, sizeof(string), 0);
-	_PUSH_MANY(&all_args, (optimization_options), _t3581, Array_string);
-	_PUSH_MANY(&all_args, (debug_options), _t3582, Array_string);
+	_PUSH_MANY(&all_args, (optimization_options), _t3582, Array_string);
+	_PUSH_MANY(&all_args, (debug_options), _t3583, Array_string);
 	array_push(&all_args, _MOV((string[]){ string_clone(_SLIT("-std=gnu11")) }));
-	_PUSH_MANY(&all_args, (args), _t3584, Array_string);
+	_PUSH_MANY(&all_args, (args), _t3585, Array_string);
 	array_push(&all_args, _MOV((string[]){ string_clone(_SLIT("-municode")) }));
 	v__builder__Builder_dump_c_options(c, all_args);
 	string cmd = string_add(_STR("%.*s\000 ", 2, _const_v__builder__mingw_cc), Array_string_join(all_args, _SLIT(" ")));
@@ -83126,9 +83135,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_files(v__builder__Builder* b) {
 	v__builder__Builder_log(b, _STR("build_thirdparty_obj_files: v.ast.cflags: %.*s", 1, Array_v__cflag__CFlag_str(b->table->cflags)));
 	// FOR IN array
-	Array_v__cflag__CFlag _t3586 = v__builder__Builder_get_os_cflags(b);
-	for (int _t3587 = 0; _t3587 < _t3586.len; ++_t3587) {
-		v__cflag__CFlag flag = ((v__cflag__CFlag*)_t3586.data)[_t3587];
+	Array_v__cflag__CFlag _t3587 = v__builder__Builder_get_os_cflags(b);
+	for (int _t3588 = 0; _t3588 < _t3587.len; ++_t3588) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)_t3587.data)[_t3588];
 		if (string_ends_with(flag.value, _SLIT(".o"))) {
 			Array_v__cflag__CFlag rest_of_module_flags = v__builder__Builder_get_rest_of_module_cflags(b, (voidptr)&/*qq*/flag);
 			if (string_eq(b->pref->ccompiler, _SLIT("msvc"))) {
@@ -83153,9 +83162,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 		}
 	}
 	if (os__exists(obj_path)) {
-		Option_void _t3588 = os__cp(obj_path, opath);
-		if (_t3588.state != 0 && _t3588.err._typ != _IError_None___index) {
-			IError err = _t3588.err;
+		Option_void _t3589 = os__cp(obj_path, opath);
+		if (_t3589.state != 0 && _t3589.err._typ != _IError_None___index) {
+			IError err = _t3589.err;
 			v_panic(IError_str(err));
 		};
 		return;
@@ -83165,10 +83174,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 	os__chdir(os__dir(v__pref__vexe_path()));
 	Array_string all_options = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push(&all_options, _MOV((string[]){ string_clone(v->pref->third_party_option) }));
-	_PUSH_MANY(&all_options, (Array_v__cflag__CFlag_c_options_before_target(moduleflags)), _t3590, Array_string);
+	_PUSH_MANY(&all_options, (Array_v__cflag__CFlag_c_options_before_target(moduleflags)), _t3591, Array_string);
 	array_push(&all_options, _MOV((string[]){ string_clone(_STR("-o \"%.*s\000\"", 2, opath)) }));
 	array_push(&all_options, _MOV((string[]){ string_clone(_STR("-c \"%.*s\000\"", 2, cfile)) }));
-	string cc_options = Array_string_join(v__builder__CcompilerOptions_thirdparty_object_args(&v->ccoptions, all_options), _SLIT(" "));
+	string cc_options = Array_string_join(v__builder__Builder_thirdparty_object_args(v, v->ccoptions, all_options), _SLIT(" "));
 	string cmd = _STR("%.*s\000 %.*s", 2, v->pref->ccompiler, cc_options);
 	os__Result res = os__execute(cmd);
 	os__chdir(current_folder);
@@ -83177,9 +83186,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 		v__builder__verror(res.output);
 		return;
 	}
-	Option_string _t3593 = v__vcache__CacheManager_save(&v->pref->cache_manager, _SLIT(".description.txt"), obj_path, _STR("%*.*s\000 @ %.*s\000\n", 3, obj_path, -30, cmd));
-	if (_t3593.state != 0) { /*or block*/ 
-		IError err = _t3593.err;
+	Option_string _t3594 = v__vcache__CacheManager_save(&v->pref->cache_manager, _SLIT(".description.txt"), obj_path, _STR("%*.*s\000 @ %.*s\000\n", 3, obj_path, -30, cmd));
+	if (_t3594.state != 0) { /*or block*/ 
+		IError err = _t3594.err;
 		v_panic(IError_str(err));
 	};
 	if ((res.output).len != 0) {
@@ -83188,17 +83197,17 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 }
 
 VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
-	 string _t3594 = _SLIT("https://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows");
-	// autofree_scope_vars(pos=30835 line_nr=977 scope.pos=30832 scope.end_pos=30913)
+	 string _t3595 = _SLIT("https://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows");
+	// autofree_scope_vars(pos=30918 line_nr=980 scope.pos=30915 scope.end_pos=30996)
 	// af parent scope:
-	// af parent scope:
-	// af parent scope:
-	return _t3594;
-	 string _t3595 = _SLIT("");
-	// autofree_scope_vars(pos=31089 line_nr=985 scope.pos=30786 scope.end_pos=31100)
 	// af parent scope:
 	// af parent scope:
 	return _t3595;
+	 string _t3596 = _SLIT("");
+	// autofree_scope_vars(pos=31172 line_nr=988 scope.pos=30869 scope.end_pos=31183)
+	// af parent scope:
+	// af parent scope:
+	return _t3596;
 }
 
 VV_LOCAL_SYMBOL Array_string v__builder__error_context_lines(string text, string keyword, int before, int after) {
@@ -83217,31 +83226,31 @@ VV_LOCAL_SYMBOL Array_string v__builder__error_context_lines(string text, string
 	}
 	int idx_s = (eline_idx - before >= 0 ? (eline_idx - before) : (0));
 	int idx_e = (idx_s + after < lines.len ? (idx_s + after) : (lines.len));
-	 Array_string _t3596 = array_slice(lines, idx_s, idx_e);
-	// autofree_scope_vars(pos=31652 line_nr=1002 scope.pos=31106 scope.end_pos=31680)
-	// var "text" var.pos=31126 var.line_nr=988
-	// var "keyword" var.pos=31139 var.line_nr=988
-	// var "before" var.pos=31155 var.line_nr=988
-	// var "after" var.pos=31167 var.line_nr=988
-	// var "khighlight" var.pos=31190 var.line_nr=989
-	// var "eline_idx" var.pos=31283 var.line_nr=990
-	// var "lines" var.pos=31303 var.line_nr=991
-	// var "idx_s" var.pos=31506 var.line_nr=1000
-	// var "idx_e" var.pos=31577 var.line_nr=1001
+	 Array_string _t3597 = array_slice(lines, idx_s, idx_e);
+	// autofree_scope_vars(pos=31735 line_nr=1005 scope.pos=31189 scope.end_pos=31763)
+	// var "text" var.pos=31209 var.line_nr=991
+	// var "keyword" var.pos=31222 var.line_nr=991
+	// var "before" var.pos=31238 var.line_nr=991
+	// var "after" var.pos=31250 var.line_nr=991
+	// var "khighlight" var.pos=31273 var.line_nr=992
+	// var "eline_idx" var.pos=31366 var.line_nr=993
+	// var "lines" var.pos=31386 var.line_nr=994
+	// var "idx_s" var.pos=31589 var.line_nr=1003
+	// var "idx_e" var.pos=31660 var.line_nr=1004
 	// af parent scope:
 	// af parent scope:
-	return _t3596;
+	return _t3597;
 }
 
 VV_LOCAL_SYMBOL Array_v__cflag__CFlag v__builder__Builder_get_os_cflags(v__builder__Builder* v) {
 	Array_v__cflag__CFlag flags = __new_array_with_default(0, 0, sizeof(v__cflag__CFlag), 0);
 	Array_string ctimedefines = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (v->pref->compile_defines.len > 0) {
-		_PUSH_MANY(&ctimedefines, (v->pref->compile_defines), _t3597, Array_string);
+		_PUSH_MANY(&ctimedefines, (v->pref->compile_defines), _t3598, Array_string);
 	}
 	// FOR IN array
-	for (int _t3598 = 0; _t3598 < v->table->cflags.len; ++_t3598) {
-		v__cflag__CFlag* flag = ((v__cflag__CFlag*)v->table->cflags.data) + _t3598;
+	for (int _t3599 = 0; _t3599 < v->table->cflags.len; ++_t3599) {
+		v__cflag__CFlag* flag = ((v__cflag__CFlag*)v->table->cflags.data) + _t3599;
 		if (string_ends_with(flag->value, _SLIT(".o"))) {
 			flag->cached = v__vcache__CacheManager_postfix_with_key2cpath(&v->pref->cache_manager, _SLIT(".o"), os__real_path(flag->value));
 		}
@@ -83265,8 +83274,8 @@ VV_LOCAL_SYMBOL Array_v__cflag__CFlag v__builder__Builder_get_rest_of_module_cfl
 	Array_v__cflag__CFlag flags = __new_array_with_default(0, 0, sizeof(v__cflag__CFlag), 0);
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	// FOR IN array
-	for (int _t3601 = 0; _t3601 < cflags.len; ++_t3601) {
-		v__cflag__CFlag flag = ((v__cflag__CFlag*)cflags.data)[_t3601];
+	for (int _t3602 = 0; _t3602 < cflags.len; ++_t3602) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)cflags.data)[_t3602];
 		if (string_eq(c->mod, flag.mod)) {
 			if (string_eq(c->name, flag.name) && string_eq(c->value, flag.value) && string_eq(c->os, flag.os)) {
 				continue;
@@ -83291,7 +83300,7 @@ VV_LOCAL_SYMBOL string v__builder__Builder_get_vtmp_filename(v__builder__Builder
 		uniq = _STR(".%"PRIu64"", 1, rand__u64());
 	}
 	string fname = string_add(os__file_name(os__real_path(base_file_name)), _STR("%.*s\000%.*s", 2, uniq, postfix));
-	 string _t3603 = os__real_path(os__join_path(vtmp, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){fname}))));
+	 string _t3604 = os__real_path(os__join_path(vtmp, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){fname}))));
 	// autofree_scope_vars(pos=505 line_nr=18 scope.pos=252 scope.end_pos=553)
 	// var "b" var.pos=257 var.line_nr=11
 	// var "base_file_name" var.pos=286 var.line_nr=11
@@ -83302,7 +83311,7 @@ VV_LOCAL_SYMBOL string v__builder__Builder_get_vtmp_filename(v__builder__Builder
 	// var "fname" var.pos=435 var.line_nr=17
 	// af parent scope:
 	// af parent scope:
-	return _t3603;
+	return _t3604;
 }
 
 void v__builder__compile(string command, v__pref__Preferences* pref) {
@@ -83311,9 +83320,9 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 	if (odir.len == pref->out_name.len) {
 		output_folder = os__getwd();
 	}
-	Option_bool _t3604 = os__is_writable_folder(output_folder);
-	if (_t3604.state != 0) { /*or block*/ 
-		IError err = _t3604.err;
+	Option_bool _t3605 = os__is_writable_folder(output_folder);
+	if (_t3605.state != 0) { /*or block*/ 
+		IError err = _t3605.err;
 		v__builder__verror((*(err.msg)));
 		v_exit(1);
 	};
@@ -83338,8 +83347,8 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 		int all_v_source_lines = 0;
 		int all_v_source_bytes = 0;
 		// FOR IN array
-		for (int _t3605 = 0; _t3605 < b.parsed_files.len; ++_t3605) {
-			v__ast__File* pf = ((v__ast__File*)b.parsed_files.data) + _t3605;
+		for (int _t3606 = 0; _t3606 < b.parsed_files.len; ++_t3606) {
+			v__ast__File* pf = ((v__ast__File*)b.parsed_files.data) + _t3606;
 			all_v_source_lines += pf->lines;
 			all_v_source_bytes += pf->bytes;
 		}
@@ -83372,8 +83381,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_myfree(v__builder__Builder* b) {
 VV_LOCAL_SYMBOL void v__builder__Builder_exit_on_invalid_syntax(v__builder__Builder* b) {
 	if (b->pref->only_check_syntax) {
 		// FOR IN array
-		for (int _t3606 = 0; _t3606 < b->parsed_files.len; ++_t3606) {
-			v__ast__File pf = ((v__ast__File*)b->parsed_files.data)[_t3606];
+		for (int _t3607 = 0; _t3607 < b->parsed_files.len; ++_t3607) {
+			v__ast__File pf = ((v__ast__File*)b->parsed_files.data)[_t3607];
 			if (pf.errors.len > 0) {
 				v_exit(1);
 			}
@@ -83404,8 +83413,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 		cmd = _STR("node \"%.*s\000\"", 2, jsfile);
 	}
 	// FOR IN array
-	for (int _t3607 = 0; _t3607 < b->pref->run_args.len; ++_t3607) {
-		string arg = ((string*)b->pref->run_args.data)[_t3607];
+	for (int _t3608 = 0; _t3608 < b->pref->run_args.len; ++_t3608) {
+		string arg = ((string*)b->pref->run_args.data)[_t3608];
 		if (string_index_byte(arg, L' ') > 0) {
 			cmd = /*f*/string_add(cmd, string_add(string_add(_SLIT(" \""), arg), _SLIT("\"")));
 		} else {
@@ -83430,9 +83439,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cleanup_run_executable_after_exit(v__bu
 	}
 	if (os__is_executable(exefile)) {
 		v__pref__Preferences_vrun_elog(v->pref, _STR("remove run executable: %.*s", 1, exefile));
-		Option_void _t3608 = os__rm(exefile);
-		if (_t3608.state != 0 && _t3608.err._typ != _IError_None___index) {
-			IError err = _t3608.err;
+		Option_void _t3609 = os__rm(exefile);
+		if (_t3609.state != 0 && _t3609.err._typ != _IError_None___index) {
+			IError err = _t3609.err;
 			v_panic(IError_str(err));
 		};
 	}
@@ -83449,7 +83458,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_set_module_lookup_paths(v__builder__Bui
 		println(_STR("x: \"%.*s\000\"", 2, x));
 	}
 	array_push(&v->module_search_paths, _MOV((string[]){ string_clone(os__join_path(v->compiled_dir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("modules")})))) }));
-	_PUSH_MANY(&v->module_search_paths, (v->pref->lookup_path), _t3612, Array_string);
+	_PUSH_MANY(&v->module_search_paths, (v->pref->lookup_path), _t3613, Array_string);
 	if (v->pref->is_verbose) {
 		v__builder__Builder_log(v, _SLIT("v.module_search_paths:"));
 		println(Array_string_str(v->module_search_paths));
@@ -83459,21 +83468,21 @@ VV_LOCAL_SYMBOL void v__builder__Builder_set_module_lookup_paths(v__builder__Bui
 Array_string v__builder__Builder_get_builtin_files(v__builder__Builder* v) {
 	v__builder__Builder_log(v, _STR("v.pref.lookup_path: %.*s", 1, Array_string_str(v->pref->lookup_path)));
 	// FOR IN array
-	for (int _t3613 = 0; _t3613 < v->pref->lookup_path.len; ++_t3613) {
-		string location = ((string*)v->pref->lookup_path.data)[_t3613];
+	for (int _t3614 = 0; _t3614 < v->pref->lookup_path.len; ++_t3614) {
+		string location = ((string*)v->pref->lookup_path.data)[_t3614];
 		if (os__exists(os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("builtin")}))))) {
 			Array_string builtin_files = __new_array_with_default(0, 0, sizeof(string), 0);
 			if (v->pref->backend == v__pref__Backend_js) {
-				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("builtin"), _SLIT("js")}))))), _t3614, Array_string);
+				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("builtin"), _SLIT("js")}))))), _t3615, Array_string);
 			} else {
-				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("builtin")}))))), _t3615, Array_string);
+				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("builtin")}))))), _t3616, Array_string);
 			}
 			if (v->pref->is_bare) {
-				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, v->pref->bare_builtin_dir)), _t3616, Array_string);
+				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, v->pref->bare_builtin_dir)), _t3617, Array_string);
 			}
 			if (v->pref->backend == v__pref__Backend_c) {
 				if (v->pref->is_vsh && os__exists(os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("os")}))))) {
-					_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("os")}))))), _t3617, Array_string);
+					_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("os")}))))), _t3618, Array_string);
 				}
 			}
 			// autofree_scope_vars(pos=6927 line_nr=215 scope.pos=6353 scope.end_pos=6951)
@@ -83496,7 +83505,7 @@ Array_string v__builder__Builder_get_builtin_files(v__builder__Builder* v) {
 Array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 	if ((string_eq(v->pref->path, _SLIT("vlib/builtin")) || string_eq(v->pref->path, _SLIT("vlib/strconv")) || string_eq(v->pref->path, _SLIT("vlib/strings")) || string_eq(v->pref->path, _SLIT("vlib/hash")))) {
 		v__builder__Builder_log(v, _SLIT("Skipping user files."));
-		 Array_string _t3618 = __new_array_with_default(0, 0, sizeof(string), 0);
+		 Array_string _t3619 = __new_array_with_default(0, 0, sizeof(string), 0);
 		// autofree_scope_vars(pos=7542 line_nr=230 scope.pos=7291 scope.end_pos=7554)
 		// af parent scope:
 		// var "v" var.pos=7170 var.line_nr=224
@@ -83511,7 +83520,7 @@ Array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 		// var "resolved_link" var.pos=9520 var.line_nr=295
 		// af parent scope:
 		// af parent scope:
-		return _t3618;
+		return _t3619;
 	}
 	string dir = v->pref->path;
 	v__builder__Builder_log(v, _STR("get_v_files(%.*s\000)", 2, dir));
@@ -83539,17 +83548,17 @@ Array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 	bool is_test = v->pref->is_test;
 	bool is_internal_module_test = false;
 	if (is_test) {
-		Option_string _t3625 = os__read_file(dir);
-		if (_t3625.state != 0) { /*or block*/ 
-			IError err = _t3625.err;
+		Option_string _t3626 = os__read_file(dir);
+		if (_t3626.state != 0) { /*or block*/ 
+			IError err = _t3626.err;
 			v__builder__verror(_STR("%.*s\000 does not exist", 2, dir));
 			v_exit(0);
 		}
- 		string tcontent =  *(string*)_t3625.data;
+ 		string tcontent =  *(string*)_t3626.data;
 		Array_string slines = string_split_into_lines(string_trim_space(tcontent));
 		// FOR IN array
-		for (int _t3626 = 0; _t3626 < slines.len; ++_t3626) {
-			string sline = ((string*)slines.data)[_t3626];
+		for (int _t3627 = 0; _t3627 < slines.len; ++_t3627) {
+			string sline = ((string*)slines.data)[_t3627];
 			string line = string_trim_space(sline);
 			if (line.len > 2) {
 				if (string_at(line, 0) == L'/' && string_at(line, 1) == L'/') {
@@ -83588,7 +83597,7 @@ Array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 		if (v->pref->is_verbose) {
 			v__builder__Builder_log(v, _STR("> add all .v files from directory \"%.*s\000\" ...", 2, dir));
 		}
-		_PUSH_MANY(&user_files, (v__builder__Builder_v_files_from_dir(v, dir)), _t3629, Array_string);
+		_PUSH_MANY(&user_files, (v__builder__Builder_v_files_from_dir(v, dir)), _t3630, Array_string);
 	} else {
 		println(_SLIT("usage: `v file.v` or `v directory`"));
 		string ext = os__file_ext(dir);
@@ -83648,15 +83657,15 @@ void v__builder__Builder_build_js(v__builder__Builder* b, Array_string v_files, 
 	b->out_name_js = out_file;
 	v__builder__Builder_info(b, _STR("build_js(%.*s\000)", 2, out_file));
 	string output = v__builder__Builder_gen_js(b, v_files);
-	Option_os__File _t3630 = os__create(out_file);
-	if (_t3630.state != 0) { /*or block*/ 
-		IError err = _t3630.err;
-		v_panic(IError_str(err));
-	}
- 	os__File f =  *(os__File*)_t3630.data;
-	Option_int _t3631 = os__File_writeln(&f, output);
+	Option_os__File _t3631 = os__create(out_file);
 	if (_t3631.state != 0) { /*or block*/ 
 		IError err = _t3631.err;
+		v_panic(IError_str(err));
+	}
+ 	os__File f =  *(os__File*)_t3631.data;
+	Option_int _t3632 = os__File_writeln(&f, output);
+	if (_t3632.state != 0) { /*or block*/ 
+		IError err = _t3632.err;
 		v_panic(IError_str(err));
 	};
 	if (b->pref->is_stats) {
@@ -83668,7 +83677,7 @@ void v__builder__Builder_build_js(v__builder__Builder* b, Array_string v_files, 
 
 void v__builder__Builder_compile_js(v__builder__Builder* b) {
 	Array_string files = v__builder__Builder_get_user_files(b);
-	_PUSH_MANY(&files, (v__builder__Builder_get_builtin_files(b)), _t3632, Array_string);
+	_PUSH_MANY(&files, (v__builder__Builder_get_builtin_files(b)), _t3633, Array_string);
 	v__builder__Builder_set_module_lookup_paths(b);
 	if (b->pref->is_verbose) {
 		println(_SLIT("all .v files:"));
@@ -83696,8 +83705,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_js(v__builder__Builder* b) {
 VV_LOCAL_SYMBOL Option_string v__builder__find_windows_kit_internal(v__builder__RegKey key, Array_string versions) {
 	{ // Unsafe block
 		// FOR IN array
-		for (int _t3633 = 0; _t3633 < versions.len; ++_t3633) {
-			string version = ((string*)versions.data)[_t3633];
+		for (int _t3634 = 0; _t3634 < versions.len; ++_t3634) {
+			string version = ((string*)versions.data)[_t3634];
 			u32 required_bytes = ((u32)(0U));
 			voidptr result = RegQueryValueEx(key, string_to_wide(version), 0, 0, 0, &required_bytes);
 			u32 length = required_bytes / 2;
@@ -83718,8 +83727,8 @@ VV_LOCAL_SYMBOL Option_string v__builder__find_windows_kit_internal(v__builder__
 				value[length] = ((u16)(0U));
 			}
 			string res = string_from_wide(value);
-			Option_string _t3634;
-			opt_ok(&(string[]) { res }, (Option*)(&_t3634), sizeof(string));
+			Option_string _t3635;
+			opt_ok(&(string[]) { res }, (Option*)(&_t3635), sizeof(string));
 			// autofree_scope_vars(pos=1605 line_nr=65 scope.pos=894 scope.end_pos=1620)
 			// var "version" var.pos=894 var.line_nr=40
 			// skipping tmp var "version"
@@ -83737,7 +83746,7 @@ VV_LOCAL_SYMBOL Option_string v__builder__find_windows_kit_internal(v__builder__
 			// var "versions" var.pos=832 var.line_nr=37
 			// af parent scope:
 			// af parent scope:
-			return _t3634;
+			return _t3635;
 		}
 	}
 	return (Option_string){ .state=2, .err=v_error(_SLIT("windows kit not found")) };
@@ -83750,26 +83759,26 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root(
 	if (rc != 0) {
 		return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Unable to open root key")) };
 	}
-	Option_string _t3635 = v__builder__find_windows_kit_internal(root_key, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("KitsRoot10"), _SLIT("KitsRoot81")})));
-	if (_t3635.state != 0) { /*or block*/ 
-		IError err = _t3635.err;
+	Option_string _t3636 = v__builder__find_windows_kit_internal(root_key, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("KitsRoot10"), _SLIT("KitsRoot81")})));
+	if (_t3636.state != 0) { /*or block*/ 
+		IError err = _t3636.err;
 		RegCloseKey(root_key);
 		return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Unable to find a windows kit")) };
 	}
- 	string kit_root =  *(string*)_t3635.data;
+ 	string kit_root =  *(string*)_t3636.data;
 	string kit_lib = string_add(kit_root, _SLIT("Lib"));
-	Option_Array_string _t3636 = os__ls(kit_lib);
-	if (_t3636.state != 0) { /*or block*/ 
-		Option_v__builder__WindowsKit _t3637;
-		memcpy(&_t3637, &_t3636, sizeof(Option));
-		return _t3637;
+	Option_Array_string _t3637 = os__ls(kit_lib);
+	if (_t3637.state != 0) { /*or block*/ 
+		Option_v__builder__WindowsKit _t3638;
+		memcpy(&_t3638, &_t3637, sizeof(Option));
+		return _t3638;
 	}
- 	Array_string files =  *(Array_string*)_t3636.data;
+ 	Array_string files =  *(Array_string*)_t3637.data;
 	string highest_path = _SLIT("");
 	int highest_int = 0;
 	// FOR IN array
-	for (int _t3638 = 0; _t3638 < files.len; ++_t3638) {
-		string f = ((string*)files.data)[_t3638];
+	for (int _t3639 = 0; _t3639 < files.len; ++_t3639) {
+		string f = ((string*)files.data)[_t3639];
 		string no_dot = string_replace(f, _SLIT("."), _SLIT(""));
 		int v_int = string_int(no_dot);
 		if (v_int > highest_int) {
@@ -83780,8 +83789,8 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root(
 	string kit_lib_highest = string_add(kit_lib, _STR("\\%.*s", 1, highest_path));
 	string kit_include_highest = string_replace(kit_lib_highest, _SLIT("Lib"), _SLIT("Include"));
 	RegCloseKey(root_key);
-	Option_v__builder__WindowsKit _t3639;
-	opt_ok(&(v__builder__WindowsKit[]) { (v__builder__WindowsKit){.um_lib_path = string_add(kit_lib_highest, _STR("\\um\\%.*s", 1, target_arch)),.ucrt_lib_path = string_add(kit_lib_highest, _STR("\\ucrt\\%.*s", 1, target_arch)),.um_include_path = string_add(kit_include_highest, _SLIT("\\um")),.ucrt_include_path = string_add(kit_include_highest, _SLIT("\\ucrt")),.shared_include_path = string_add(kit_include_highest, _SLIT("\\shared")),} }, (Option*)(&_t3639), sizeof(v__builder__WindowsKit));
+	Option_v__builder__WindowsKit _t3640;
+	opt_ok(&(v__builder__WindowsKit[]) { (v__builder__WindowsKit){.um_lib_path = string_add(kit_lib_highest, _STR("\\um\\%.*s", 1, target_arch)),.ucrt_lib_path = string_add(kit_lib_highest, _STR("\\ucrt\\%.*s", 1, target_arch)),.um_include_path = string_add(kit_include_highest, _SLIT("\\um")),.ucrt_include_path = string_add(kit_include_highest, _SLIT("\\ucrt")),.shared_include_path = string_add(kit_include_highest, _SLIT("\\shared")),} }, (Option*)(&_t3640), sizeof(v__builder__WindowsKit));
 	// autofree_scope_vars(pos=2961 line_nr=114 scope.pos=1962 scope.end_pos=3259)
 	// var "root_key" var.pos=1966 var.line_nr=83
 	// var "path" var.pos=1990 var.line_nr=84
@@ -83799,7 +83808,7 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root(
 	// var "target_arch" var.pos=1915 var.line_nr=81
 	// af parent scope:
 	// af parent scope:
-	return _t3639;
+	return _t3640;
 	return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Host OS does not support finding a windows kit")) };
 }
 
@@ -83809,20 +83818,20 @@ VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs(string vsw
 		return (Option_v__builder__VsInstallation){ .state=2, .err=error_with_code(res.output, res.exit_code) };
 	}
 	string res_output = string_trim_right(res.output, _SLIT("\r\n"));
-	Option_string _t3640 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
-	if (_t3640.state != 0) { /*or block*/ 
-		IError err = _t3640.err;
+	Option_string _t3641 = os__read_file(_STR("%.*s\000\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt", 2, res_output));
+	if (_t3641.state != 0) { /*or block*/ 
+		IError err = _t3641.err;
 		return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("Unable to find vs installation")) };
 	}
- 	string version =  *(string*)_t3640.data;
+ 	string version =  *(string*)_t3641.data;
 	string version2 = version;
 	string v = (string_ends_with(version, _SLIT("\n")) ? (string_substr(version2, 0, version.len - 2)) : (version2));
 	string lib_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\lib\\%.*s", 3, res.output, v, target_arch);
 	string include_path = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\include", 3, res.output, v);
 	if (os__exists(_STR("%.*s\000\\vcruntime.lib", 2, lib_path))) {
 		string p = _STR("%.*s\000\\VC\\Tools\\MSVC\\%.*s\000\\bin\\Host%.*s\000\\%.*s", 4, res.output, v, host_arch, target_arch);
-		Option_v__builder__VsInstallation _t3641;
-		opt_ok(&(v__builder__VsInstallation[]) { (v__builder__VsInstallation){.include_path = include_path,.lib_path = lib_path,.exe_path = p,} }, (Option*)(&_t3641), sizeof(v__builder__VsInstallation));
+		Option_v__builder__VsInstallation _t3642;
+		opt_ok(&(v__builder__VsInstallation[]) { (v__builder__VsInstallation){.include_path = include_path,.lib_path = lib_path,.exe_path = p,} }, (Option*)(&_t3642), sizeof(v__builder__VsInstallation));
 		// autofree_scope_vars(pos=4780 line_nr=157 scope.pos=4660 scope.end_pos=4876)
 		// var "p" var.pos=4664 var.line_nr=155
 		// af parent scope:
@@ -83838,7 +83847,7 @@ VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs(string vsw
 		// var "include_path" var.pos=4558 var.line_nr=153
 		// af parent scope:
 		// af parent scope:
-		return _t3641;
+		return _t3642;
 	}
 	println(_STR("Unable to find vs installation (attempted to use lib path \"%.*s\000\")", 2, lib_path));
 	return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("Unable to find vs exe folder")) };
@@ -83860,19 +83869,19 @@ VV_LOCAL_SYMBOL Option_v__builder__MsvcResult v__builder__find_msvc(bool m64_tar
 				target_arch = _SLIT("X86");
 			}
 		}
-		Option_v__builder__WindowsKit _t3642 = v__builder__find_windows_kit_root(target_arch);
-		if (_t3642.state != 0) { /*or block*/ 
-			IError err = _t3642.err;
-			return (Option_v__builder__MsvcResult){ .state=2, .err=v_error(_SLIT("Unable to find windows sdk")) };
-		}
- 		v__builder__WindowsKit wk =  *(v__builder__WindowsKit*)_t3642.data;
-		Option_v__builder__VsInstallation _t3643 = v__builder__find_vs(vswhere_dir, host_arch, target_arch);
+		Option_v__builder__WindowsKit _t3643 = v__builder__find_windows_kit_root(target_arch);
 		if (_t3643.state != 0) { /*or block*/ 
 			IError err = _t3643.err;
+			return (Option_v__builder__MsvcResult){ .state=2, .err=v_error(_SLIT("Unable to find windows sdk")) };
+		}
+ 		v__builder__WindowsKit wk =  *(v__builder__WindowsKit*)_t3643.data;
+		Option_v__builder__VsInstallation _t3644 = v__builder__find_vs(vswhere_dir, host_arch, target_arch);
+		if (_t3644.state != 0) { /*or block*/ 
+			IError err = _t3644.err;
 			return (Option_v__builder__MsvcResult){ .state=2, .err=v_error(_SLIT("Unable to find visual studio")) };
 		}
- 		v__builder__VsInstallation vs =  *(v__builder__VsInstallation*)_t3643.data;
-		Option_v__builder__MsvcResult _t3644;
+ 		v__builder__VsInstallation vs =  *(v__builder__VsInstallation*)_t3644.data;
+		Option_v__builder__MsvcResult _t3645;
 		opt_ok(&(v__builder__MsvcResult[]) { (v__builder__MsvcResult){
 			.full_cl_exe_path = os__real_path(string_add(string_add(vs.exe_path, _const_os__path_separator), _SLIT("cl.exe"))),
 			.exe_path = vs.exe_path,
@@ -83884,7 +83893,7 @@ VV_LOCAL_SYMBOL Option_v__builder__MsvcResult v__builder__find_msvc(bool m64_tar
 			.vs_include_path = vs.include_path,
 			.shared_include_path = wk.shared_include_path,
 			.valid = true,
-		} }, (Option*)(&_t3644), sizeof(v__builder__MsvcResult));
+		} }, (Option*)(&_t3645), sizeof(v__builder__MsvcResult));
 		// autofree_scope_vars(pos=5714 line_nr=190 scope.pos=5067 scope.end_pos=6116)
 		// var "processor_architecture" var.pos=5071 var.line_nr=169
 		// var "vswhere_dir" var.pos=5135 var.line_nr=170
@@ -83897,7 +83906,7 @@ VV_LOCAL_SYMBOL Option_v__builder__MsvcResult v__builder__find_msvc(bool m64_tar
 		// var "m64_target" var.pos=5023 var.line_nr=167
 		// af parent scope:
 		// af parent scope:
-		return _t3644;
+		return _t3645;
 	}
 	#else
 	{
@@ -83925,7 +83934,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		array_push(&a, _MOV((string[]){ string_clone(_SLIT("/D_DEBUG")) }));
 	}
 	if (v->pref->is_debug) {
-		_PUSH_MANY(&a, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("/Zi"), _STR("/Fd\"%.*s\000\"", 2, out_name_pdb)}))), _t3650, Array_string);
+		_PUSH_MANY(&a, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("/Zi"), _STR("/Fd\"%.*s\000\"", 2, out_name_pdb)}))), _t3651, Array_string);
 	}
 	if (v->pref->is_shared) {
 		if (!string_ends_with(v->pref->out_name, _SLIT(".dll"))) {
@@ -83946,7 +83955,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	array_push(&a, _MOV((string[]){ string_clone(string_add(string_add(_SLIT("\""), os__real_path(v->out_name_c)), _SLIT("\""))) }));
 	Array_string real_libs = new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("kernel32.lib"), _SLIT("user32.lib"), _SLIT("advapi32.lib")}));
 	v__builder__MsvcStringFlags sflags = v__builder__msvc_string_flags(v__builder__Builder_get_os_cflags(v));
-	_PUSH_MANY(&real_libs, (sflags.real_libs), _t3654, Array_string);
+	_PUSH_MANY(&real_libs, (sflags.real_libs), _t3655, Array_string);
 	Array_string inc_paths = sflags.inc_paths;
 	Array_string lib_paths = sflags.lib_paths;
 	Array_string defines = sflags.defines;
@@ -83955,9 +83964,9 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	array_push(&a, _MOV((string[]){ string_clone(_STR("-I \"%.*s\000\"", 2, r.vs_include_path)) }));
 	array_push(&a, _MOV((string[]){ string_clone(_STR("-I \"%.*s\000\"", 2, r.um_include_path)) }));
 	array_push(&a, _MOV((string[]){ string_clone(_STR("-I \"%.*s\000\"", 2, r.shared_include_path)) }));
-	_PUSH_MANY(&a, (defines), _t3659, Array_string);
-	_PUSH_MANY(&a, (inc_paths), _t3660, Array_string);
-	_PUSH_MANY(&a, (other_flags), _t3661, Array_string);
+	_PUSH_MANY(&a, (defines), _t3660, Array_string);
+	_PUSH_MANY(&a, (inc_paths), _t3661, Array_string);
+	_PUSH_MANY(&a, (other_flags), _t3662, Array_string);
 	array_push(&a, _MOV((string[]){ string_clone(Array_string_join(real_libs, _SLIT(" "))) }));
 	array_push(&a, _MOV((string[]){ string_clone(_SLIT("/link")) }));
 	array_push(&a, _MOV((string[]){ string_clone(_SLIT("/NOLOGO")) }));
@@ -83971,11 +83980,11 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 		array_push(&a, _MOV((string[]){ string_clone(_SLIT("/OPT:REF")) }));
 		array_push(&a, _MOV((string[]){ string_clone(_SLIT("/OPT:ICF")) }));
 	}
-	_PUSH_MANY(&a, (lib_paths), _t3673, Array_string);
+	_PUSH_MANY(&a, (lib_paths), _t3674, Array_string);
 	string args = Array_string_join(a, _SLIT(" "));
-	Option_void _t3674 = os__write_file(out_name_cmd_line, args);
-	if (_t3674.state != 0 && _t3674.err._typ != _IError_None___index) {
-		IError err = _t3674.err;
+	Option_void _t3675 = os__write_file(out_name_cmd_line, args);
+	if (_t3675.state != 0 && _t3675.err._typ != _IError_None___index) {
+		IError err = _t3675.err;
 		v__builder__verror(_STR("Unable to write response file to \"%.*s\000\"", 2, out_name_cmd_line));
 	};
 	string cmd = _STR("\"%.*s\000\" \"@%.*s\000\"", 3, r.full_cl_exe_path, out_name_cmd_line);
@@ -83993,9 +84002,9 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	} else {
 		v__builder__Builder_post_process_c_compiler_output(v, res);
 	}
-	Option_void _t3675 = os__rm(out_name_obj);
-	if (_t3675.state != 0 && _t3675.err._typ != _IError_None___index) {
-		IError err = _t3675.err;
+	Option_void _t3676 = os__rm(out_name_obj);
+	if (_t3676.state != 0 && _t3676.err._typ != _IError_None___index) {
+		IError err = _t3676.err;
 		v_panic(IError_str(err));
 	};
 }
@@ -84044,8 +84053,8 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag 
 	Array_string defines = __new_array_with_default(0, 0, sizeof(string), 0);
 	Array_string other_flags = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	for (int _t3681 = 0; _t3681 < cflags.len; ++_t3681) {
-		v__cflag__CFlag flag = ((v__cflag__CFlag*)cflags.data)[_t3681];
+	for (int _t3682 = 0; _t3682 < cflags.len; ++_t3682) {
+		v__cflag__CFlag flag = ((v__cflag__CFlag*)cflags.data)[_t3682];
 		if (string_eq(flag.name, _SLIT("-l"))) {
 			if (string_ends_with(flag.value, _SLIT(".dll"))) {
 				v__builder__verror(_STR("MSVC cannot link against a dll (`#flag -l %.*s\000`)", 2, flag.value));
@@ -84067,11 +84076,11 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag 
 	}
 	Array_string lpaths = __new_array_with_default(0, 0, sizeof(string), 0);
 	// FOR IN array
-	for (int _t3689 = 0; _t3689 < lib_paths.len; ++_t3689) {
-		string l = ((string*)lib_paths.data)[_t3689];
+	for (int _t3690 = 0; _t3690 < lib_paths.len; ++_t3690) {
+		string l = ((string*)lib_paths.data)[_t3690];
 		array_push(&lpaths, _MOV((string[]){ string_clone(string_add(string_add(_SLIT("/LIBPATH:\""), os__real_path(l)), _SLIT("\""))) }));
 	}
-	 v__builder__MsvcStringFlags _t3691 = (v__builder__MsvcStringFlags){.real_libs = real_libs,.inc_paths = inc_paths,.lib_paths = lpaths,.defines = defines,.other_flags = other_flags,};
+	 v__builder__MsvcStringFlags _t3692 = (v__builder__MsvcStringFlags){.real_libs = real_libs,.inc_paths = inc_paths,.lib_paths = lpaths,.defines = defines,.other_flags = other_flags,};
 	// autofree_scope_vars(pos=13341 line_nr=434 scope.pos=11743 scope.end_pos=13481)
 	// var "cflags" var.pos=11761 var.line_nr=392
 	// var "real_libs" var.pos=11806 var.line_nr=393
@@ -84082,7 +84091,7 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag 
 	// var "lpaths" var.pos=13246 var.line_nr=430
 	// af parent scope:
 	// af parent scope:
-	return _t3691;
+	return _t3692;
 }
 
 void v__builder__Builder_build_x64(v__builder__Builder* b, Array_string v_files, string out_file) {
@@ -84132,7 +84141,7 @@ bool main__main_defer_0 = false;
 				println(_SLIT("Welcome to the V REPL (for help with V itself, type `exit`, then run `v help`)."));
 			} else {
 				Array_string args_and_flags = array_clone_static(array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len));
-				_PUSH_MANY(&args_and_flags, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("run"), _SLIT("-")}))), _t3692, Array_string);
+				_PUSH_MANY(&args_and_flags, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("run"), _SLIT("-")}))), _t3693, Array_string);
 				v__pref__parse_args(_const_main__external_tools, args_and_flags);
 			}
 		}
@@ -84149,18 +84158,18 @@ bool main__main_defer_0 = false;
 	v__pref__Preferences* prefs = mr_1629.arg0;
 	string command = mr_1629.arg1;
 	if (prefs->is_watch) {
-		Array_string _t3693_orig = array_slice(_const_os__args, 1, _const_os__args.len);
-		int _t3693_len = _t3693_orig.len;
-		Array_string _t3693 = __new_array(0, _t3693_len, sizeof(string));
+		Array_string _t3694_orig = array_slice(_const_os__args, 1, _const_os__args.len);
+		int _t3694_len = _t3694_orig.len;
+		Array_string _t3694 = __new_array(0, _t3694_len, sizeof(string));
 
-		for (int _t3694 = 0; _t3694 < _t3693_len; ++_t3694) {
-			string it = ((string*) _t3693_orig.data)[_t3694];
+		for (int _t3695 = 0; _t3695 < _t3694_len; ++_t3695) {
+			string it = ((string*) _t3694_orig.data)[_t3695];
 			if (string_ne(it, _SLIT("-watch"))) {
-				array_push(&_t3693, &it); 
+				array_push(&_t3694, &it); 
 		}
 		}
 		
-		v__util__launch_tool(prefs->is_verbose, _SLIT("vwatch"), _t3693);
+		v__util__launch_tool(prefs->is_verbose, _SLIT("vwatch"), _t3694);
 	}
 	if (prefs->is_verbose) {
 	}
