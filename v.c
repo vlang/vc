@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1b0f099"
+#define V_COMMIT_HASH "515d8c0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0b3d165"
+	#define V_COMMIT_HASH "1b0f099"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1b0f099"
+	#define V_CURRENT_COMMIT_HASH "515d8c0"
 #endif
 
 // V comptime_defines:
@@ -18881,7 +18881,7 @@ u64 os__file_size(string path) {
 		}
 		#endif
 	}
-	return -1;
+	return 0;
 }
 
 Option_void os__mv(string src, string dst) {
@@ -19049,8 +19049,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_8277 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_8277.arg0;
+		multi_return_int_bool mr_8422 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_8422.arg0;
 		return ret;
 	}
 	#endif
@@ -19095,9 +19095,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_9286 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_9286.arg0;
-		bool is_signaled = mr_9286.arg1;
+		multi_return_int_bool mr_9431 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_9431.arg0;
+		bool is_signaled = mr_9431.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -19602,12 +19602,8 @@ Option_void os__chown(string path, int owner, int group) {
 	}
 	#else
 	{
-		if (owner < 0 || group < 0) {
-			return (Option_void){ .state=2, .err=v_error(_SLIT("os.chown() uid and gid cannot be negative: Not changing owner!")) };
-		} else {
-			if (chown(((char*)(path.str)), owner, group) != 0) {
-				return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
-			}
+		if (chown(((char*)(path.str)), owner, group) != 0) {
+			return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
 		}
 	}
 	#endif
@@ -27851,7 +27847,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0b3d165"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1b0f099"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
