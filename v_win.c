@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8cb44ed"
+#define V_COMMIT_HASH "aa49bc2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e2be3ec"
+	#define V_COMMIT_HASH "8cb44ed"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8cb44ed"
+	#define V_CURRENT_COMMIT_HASH "aa49bc2"
 #endif
 
 // V comptime_defines:
@@ -5741,6 +5741,7 @@ os__Result os__execute_or_panic(string cmd);
 int os__is_atty(int fd);
 Option_Array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
+Option_void os__truncate(string path, u64 len);
 u64 os__file_size(string path);
 Option_void os__mv(string src, string dst);
 Option_void os__cp(string src, string dst);
@@ -18514,6 +18515,41 @@ bool os__read_file_defer_0 = false;
 	return (Option_string){0};
 }
 
+Option_void os__truncate(string path, u64 len) {
+bool os__truncate_defer_0 = false;
+	int fp = open(((char*)(path.str)), (_const_os__o_wronly | _const_os__o_trunc));
+	os__truncate_defer_0 = true;
+	if (fp < 0) {
+		// Defer begin
+		if (os__truncate_defer_0 == true) {
+			close(fp);
+		}
+		// Defer end
+		return (Option_void){ .state=2, .err=v_error(_SLIT("open file failed")) };
+	}
+	#if defined(_WIN32)
+	{
+		if (_chsize_s(fp, len) != 0) {
+			// Defer begin
+			if (os__truncate_defer_0 == true) {
+				close(fp);
+			}
+			// Defer end
+			return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
+		}
+	}
+	#else
+	{
+	}
+	#endif
+	// Defer begin
+	if (os__truncate_defer_0 == true) {
+		close(fp);
+	}
+	// Defer end
+	return (Option_void){0};
+}
+
 u64 os__file_size(string path) {
 	struct stat s;
 	{ // Unsafe block
@@ -18545,7 +18581,7 @@ u64 os__file_size(string path) {
 		}
 		#endif
 	}
-	return 0;
+	return -1;
 }
 
 Option_void os__mv(string src, string dst) {
@@ -19014,7 +19050,7 @@ void os__flush(void) {
 
 void os__chmod(string path, int mode) {
 	if (chmod(((char*)(path.str)), mode) != 0) {
-		v_panic(os__posix_get_error_msg(errno));
+		v_panic(string_add(_SLIT("chmod failed: "), os__posix_get_error_msg(errno)));
 	}
 }
 
@@ -27150,7 +27186,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e2be3ec"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8cb44ed"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}

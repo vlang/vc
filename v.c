@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8cb44ed"
+#define V_COMMIT_HASH "aa49bc2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e2be3ec"
+	#define V_COMMIT_HASH "8cb44ed"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8cb44ed"
+	#define V_CURRENT_COMMIT_HASH "aa49bc2"
 #endif
 
 // V comptime_defines:
@@ -5547,6 +5547,7 @@ os__Result os__execute_or_panic(string cmd);
 int os__is_atty(int fd);
 Option_Array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
+Option_void os__truncate(string path, u64 len);
 u64 os__file_size(string path);
 Option_void os__mv(string src, string dst);
 Option_void os__cp(string src, string dst);
@@ -18796,6 +18797,49 @@ bool os__read_file_defer_0 = false;
 	return (Option_string){0};
 }
 
+Option_void os__truncate(string path, u64 len) {
+bool os__truncate_defer_0 = false;
+	int fp = open(((char*)(path.str)), (_const_os__o_wronly | _const_os__o_trunc));
+	os__truncate_defer_0 = true;
+	if (fp < 0) {
+		// Defer begin
+		if (os__truncate_defer_0 == true) {
+			close(fp);
+		}
+		// Defer end
+		return (Option_void){ .state=2, .err=v_error(_SLIT("open file failed")) };
+	}
+	#if defined(_WIN32)
+	{
+		if (_chsize_s(fp, len) != 0) {
+			// Defer begin
+			if (os__truncate_defer_0 == true) {
+				close(fp);
+			}
+			// Defer end
+			return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
+		}
+	}
+	#else
+	{
+		if (ftruncate(fp, len) != 0) {
+			// Defer begin
+			if (os__truncate_defer_0 == true) {
+				close(fp);
+			}
+			// Defer end
+			return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
+		}
+	}
+	#endif
+	// Defer begin
+	if (os__truncate_defer_0 == true) {
+		close(fp);
+	}
+	// Defer end
+	return (Option_void){0};
+}
+
 u64 os__file_size(string path) {
 	struct stat s;
 	{ // Unsafe block
@@ -18836,7 +18880,7 @@ u64 os__file_size(string path) {
 		}
 		#endif
 	}
-	return 0;
+	return -1;
 }
 
 Option_void os__mv(string src, string dst) {
@@ -18888,17 +18932,21 @@ Option_void os__cp(string src, string dst) {
 		Array_fixed_byte_1024 buf = {0};
 		int count = 0;
 		for (;;) {
-			count = read(fp_from, &buf[0], 1024);
+			count = read(fp_from, &buf[0], /*SizeOf*/ sizeof(Array_fixed_byte_1024));
 			if (count == 0) {
 				break;
 			}
 			if (write(fp_to, &buf[0], count) < 0) {
+				close(fp_to);
+				close(fp_from);
 				return (Option_void){ .state=2, .err=error_with_code(_STR("cp: failed to write to %.*s", 1, dst), ((int)(-1))) };
 			}
 		}
 		struct stat from_attr;
 		stat(((char*)(src.str)), &from_attr);
 		if (chmod(((char*)(dst.str)), from_attr.st_mode) < 0) {
+			close(fp_to);
+			close(fp_from);
 			return (Option_void){ .state=2, .err=error_with_code(_STR("failed to set permissions for %.*s", 1, dst), ((int)(-1))) };
 		}
 		close(fp_to);
@@ -19000,8 +19048,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_7599 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_7599.arg0;
+		multi_return_int_bool mr_8277 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_8277.arg0;
 		return ret;
 	}
 	#endif
@@ -19046,9 +19094,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_8608 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_8608.arg0;
-		bool is_signaled = mr_8608.arg1;
+		multi_return_int_bool mr_9286 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_9286.arg0;
+		bool is_signaled = mr_9286.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -19542,7 +19590,7 @@ void os__flush(void) {
 
 void os__chmod(string path, int mode) {
 	if (chmod(((char*)(path.str)), mode) != 0) {
-		v_panic(os__posix_get_error_msg(errno));
+		v_panic(string_add(_SLIT("chmod failed: "), os__posix_get_error_msg(errno)));
 	}
 }
 
@@ -27802,7 +27850,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e2be3ec"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8cb44ed"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
