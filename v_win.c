@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "731e942"
+#define V_COMMIT_HASH "1c7fb65"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "990c4ab"
+	#define V_COMMIT_HASH "731e942"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "731e942"
+	#define V_CURRENT_COMMIT_HASH "1c7fb65"
 #endif
 
 // V comptime_defines:
@@ -27189,7 +27189,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("990c4ab"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("731e942"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -82063,8 +82063,12 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			// FOR IN array
 			for (int _t3443 = 0; _t3443 < parsed_files.len; ++_t3443) {
 				v__ast__File file = ((v__ast__File*)parsed_files.data)[_t3443];
-				if (string_ne(file.mod.name, mod)) {
-					v__builder__error_with_pos(_STR("bad module definition: %.*s\000 imports module \"%.*s\000\" but %.*s\000 is defined as module `%.*s\000`", 5, ast_file.path, mod, file.path, file.mod.name), ast_file.path, imp.pos);
+				string name = file.mod.name;
+				if ((name).len == 0) {
+					name = file.mod.short_name;
+				}
+				if (string_ne(name, mod)) {
+					v__builder__error_with_pos(_STR("bad module definition: %.*s\000 imports module \"%.*s\000\" but %.*s\000 is defined as module `%.*s\000`", 5, ast_file.path, mod, file.path, name), ast_file.path, imp.pos);
 				}
 			}
 			_PUSH_MANY(&b->parsed_files, (parsed_files), _t3444, Array_v__ast__File);
@@ -82146,10 +82150,10 @@ v__depgraph__DepGraph* v__builder__Builder_import_graph(v__builder__Builder* b) 
 		}
 		v__depgraph__DepGraph_add(graph, p.mod.name, deps);
 	}
-	// autofree_scope_vars(pos=5909 line_nr=195 scope.pos=5383 scope.end_pos=5923)
-	// var "b" var.pos=5384 var.line_nr=173
-	// var "builtins" var.pos=5433 var.line_nr=174
-	// var "graph" var.pos=5484 var.line_nr=175
+	// autofree_scope_vars(pos=5979 line_nr=199 scope.pos=5453 scope.end_pos=5993)
+	// var "b" var.pos=5454 var.line_nr=177
+	// var "builtins" var.pos=5503 var.line_nr=178
+	// var "graph" var.pos=5554 var.line_nr=179
 	// af parent scope:
 	// af parent scope:
 	return graph;
@@ -82175,10 +82179,10 @@ Array_string v__builder__Builder_v_files_from_dir(v__builder__Builder* b, string
 		println(_STR("v_files_from_dir (\"%.*s\000\")", 2, dir));
 	}
 	 Array_string _t3458 = v__pref__Preferences_should_compile_filtered_files(b->pref, dir, files);
-	// autofree_scope_vars(pos=6398 line_nr=212 scope.pos=5933 scope.end_pos=6455)
-	// var "b" var.pos=5934 var.line_nr=198
-	// var "dir" var.pos=5962 var.line_nr=198
-	// var "files" var.pos=6294 var.line_nr=208
+	// autofree_scope_vars(pos=6468 line_nr=216 scope.pos=6003 scope.end_pos=6525)
+	// var "b" var.pos=6004 var.line_nr=202
+	// var "dir" var.pos=6032 var.line_nr=202
+	// var "files" var.pos=6364 var.line_nr=212
 	// af parent scope:
 	// af parent scope:
 	return _t3458;
@@ -82199,8 +82203,8 @@ void v__builder__Builder_info(v__builder__Builder* b, string s) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL string v__builder__module_path(string mod) {
 	 string _t3459 = string_replace(mod, _SLIT("."), _const_os__path_separator);
-	// autofree_scope_vars(pos=6682 line_nr=230 scope.pos=6627 scope.end_pos=6726)
-	// var "mod" var.pos=6639 var.line_nr=228
+	// autofree_scope_vars(pos=6752 line_nr=234 scope.pos=6697 scope.end_pos=6796)
+	// var "mod" var.pos=6709 var.line_nr=232
 	// af parent scope:
 	// af parent scope:
 	return _t3459;
@@ -82238,21 +82242,21 @@ Option_string v__builder__Builder_find_module_path(v__builder__Builder* b, strin
 			}
 			Option_string _t3465;
 			opt_ok(&(string[]) { try_path }, (Option*)(&_t3465), sizeof(string));
-			// autofree_scope_vars(pos=8054 line_nr=267 scope.pos=7981 scope.end_pos=8073)
+			// autofree_scope_vars(pos=8124 line_nr=271 scope.pos=8051 scope.end_pos=8143)
 			// af parent scope:
-			// var "search_path" var.pos=7785 var.line_nr=258
+			// var "search_path" var.pos=7855 var.line_nr=262
 			// skipping tmp var "search_path"
-			// var "try_path" var.pos=7824 var.line_nr=259
+			// var "try_path" var.pos=7894 var.line_nr=263
 			// af parent scope:
-			// var "b" var.pos=6862 var.line_nr=235
-			// var "mod" var.pos=6891 var.line_nr=235
-			// var "fpath" var.pos=6903 var.line_nr=235
-			// var "mcache" var.pos=6973 var.line_nr=237
-			// var "vmod_file_location" var.pos=7001 var.line_nr=238
-			// var "mod_path" var.pos=7050 var.line_nr=239
-			// var "module_lookup_paths" var.pos=7084 var.line_nr=240
-			// var "path_parts" var.pos=8107 var.line_nr=271
-			// var "smodule_lookup_paths" var.pos=8423 var.line_nr=282
+			// var "b" var.pos=6932 var.line_nr=239
+			// var "mod" var.pos=6961 var.line_nr=239
+			// var "fpath" var.pos=6973 var.line_nr=239
+			// var "mcache" var.pos=7043 var.line_nr=241
+			// var "vmod_file_location" var.pos=7071 var.line_nr=242
+			// var "mod_path" var.pos=7120 var.line_nr=243
+			// var "module_lookup_paths" var.pos=7154 var.line_nr=244
+			// var "path_parts" var.pos=8177 var.line_nr=275
+			// var "smodule_lookup_paths" var.pos=8493 var.line_nr=286
 			// af parent scope:
 			// af parent scope:
 			return _t3465;
@@ -82268,21 +82272,21 @@ Option_string v__builder__Builder_find_module_path(v__builder__Builder* b, strin
 		if (os__is_dir(try_path)) {
 			Option_string _t3466;
 			opt_ok(&(string[]) { try_path }, (Option*)(&_t3466), sizeof(string));
-			// autofree_scope_vars(pos=8398 line_nr=279 scope.pos=8394 scope.end_pos=8417)
+			// autofree_scope_vars(pos=8468 line_nr=283 scope.pos=8464 scope.end_pos=8487)
 			// af parent scope:
-			// var "i" var.pos=8157 var.line_nr=272
-			// var "p1" var.pos=8197 var.line_nr=273
-			// var "try_path" var.pos=8246 var.line_nr=274
+			// var "i" var.pos=8227 var.line_nr=276
+			// var "p1" var.pos=8267 var.line_nr=277
+			// var "try_path" var.pos=8316 var.line_nr=278
 			// af parent scope:
-			// var "b" var.pos=6862 var.line_nr=235
-			// var "mod" var.pos=6891 var.line_nr=235
-			// var "fpath" var.pos=6903 var.line_nr=235
-			// var "mcache" var.pos=6973 var.line_nr=237
-			// var "vmod_file_location" var.pos=7001 var.line_nr=238
-			// var "mod_path" var.pos=7050 var.line_nr=239
-			// var "module_lookup_paths" var.pos=7084 var.line_nr=240
-			// var "path_parts" var.pos=8107 var.line_nr=271
-			// var "smodule_lookup_paths" var.pos=8423 var.line_nr=282
+			// var "b" var.pos=6932 var.line_nr=239
+			// var "mod" var.pos=6961 var.line_nr=239
+			// var "fpath" var.pos=6973 var.line_nr=239
+			// var "mcache" var.pos=7043 var.line_nr=241
+			// var "vmod_file_location" var.pos=7071 var.line_nr=242
+			// var "mod_path" var.pos=7120 var.line_nr=243
+			// var "module_lookup_paths" var.pos=7154 var.line_nr=244
+			// var "path_parts" var.pos=8177 var.line_nr=275
+			// var "smodule_lookup_paths" var.pos=8493 var.line_nr=286
 			// af parent scope:
 			// af parent scope:
 			return _t3466;
