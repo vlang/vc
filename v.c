@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cb70ffe"
+#define V_COMMIT_HASH "0a1d0e0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "515d8c0"
+	#define V_COMMIT_HASH "cb70ffe"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cb70ffe"
+	#define V_CURRENT_COMMIT_HASH "0a1d0e0"
 #endif
 
 // V comptime_defines:
@@ -13226,7 +13226,10 @@ VV_LOCAL_SYMBOL string vcommithash(void) {
 }
 
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s) {
-	#if !defined(_VFREESTANDING)
+	#if defined(_VFREESTANDING)
+	{
+	}
+	#else
 	{
 		eprintln(_SLIT("================ V panic ================"));
 		eprintln(_STR("   module: %.*s", 1, mod));
@@ -13235,50 +13238,41 @@ VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn
 		eprintln(_STR("     file: %.*s\000:%"PRId32"", 2, file, line_no));
 		eprintln(_STR("   v hash: %.*s", 1, vcommithash()));
 		eprintln(_SLIT("========================================="));
-	}
-	#else
-	{
-		eprint(_SLIT("V panic: "));
-		eprintln(s);
-	}
-	#endif
-	#if defined(CUSTOM_DEFINE_exit_after_panic_message)
-	{
-		exit(1);
-	}
-	#else
-	{
-		#if defined(CUSTOM_DEFINE_no_backtrace)
+		#if defined(CUSTOM_DEFINE_exit_after_panic_message)
 		{
 			exit(1);
 		}
 		#else
 		{
-			#if defined(__TINYC__)
+			#if defined(CUSTOM_DEFINE_no_backtrace)
 			{
+				exit(1);
+			}
+			#else
+			{
+				#if defined(__TINYC__)
+				{
+					#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+					{
+						break_if_debugger_attached();
+					}
+					#else
+					{
+						tcc_backtrace("Backtrace");
+					}
+					#endif
+					exit(1);
+				}
+				#endif
+				print_backtrace_skipping_top_frames(1);
 				#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
 				{
 					break_if_debugger_attached();
-				}
-				#else
-				{
-					tcc_backtrace("Backtrace");
 				}
 				#endif
 				exit(1);
 			}
 			#endif
-			#if !defined(_VFREESTANDING)
-			{
-				print_backtrace_skipping_top_frames(1);
-			}
-			#endif
-			#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
-			{
-				break_if_debugger_attached();
-			}
-			#endif
-			exit(1);
 		}
 		#endif
 	}
@@ -13290,46 +13284,49 @@ void panic_optional_not_set(string s) {
 }
 
 void v_panic(string s) {
-	eprint(_SLIT("V panic: "));
-	eprintln(s);
-	eprintln(_STR("v hash: %.*s", 1, vcommithash()));
-	#if defined(CUSTOM_DEFINE_exit_after_panic_message)
+	#if defined(_VFREESTANDING)
 	{
-		exit(1);
 	}
 	#else
 	{
-		#if defined(CUSTOM_DEFINE_no_backtrace)
+		eprint(_SLIT("V panic: "));
+		eprintln(s);
+		eprintln(_STR("v hash: %.*s", 1, vcommithash()));
+		#if defined(CUSTOM_DEFINE_exit_after_panic_message)
 		{
 			exit(1);
 		}
 		#else
 		{
-			#if defined(__TINYC__)
+			#if defined(CUSTOM_DEFINE_no_backtrace)
 			{
+				exit(1);
+			}
+			#else
+			{
+				#if defined(__TINYC__)
+				{
+					#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
+					{
+						break_if_debugger_attached();
+					}
+					#else
+					{
+						tcc_backtrace("Backtrace");
+					}
+					#endif
+					exit(1);
+				}
+				#endif
+				print_backtrace_skipping_top_frames(1);
 				#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
 				{
 					break_if_debugger_attached();
-				}
-				#else
-				{
-					tcc_backtrace("Backtrace");
 				}
 				#endif
 				exit(1);
 			}
 			#endif
-			#if !defined(_VFREESTANDING)
-			{
-				print_backtrace_skipping_top_frames(1);
-			}
-			#endif
-			#if defined(CUSTOM_DEFINE_panics_break_into_debugger)
-			{
-				break_if_debugger_attached();
-			}
-			#endif
-			exit(1);
 		}
 		#endif
 	}
@@ -13693,7 +13690,10 @@ int is_atty(int fd) {
 }
 
 void print_backtrace(void) {
-	#if !defined(_VFREESTANDING)
+	#if defined(_VFREESTANDING)
+	{
+	}
+	#else
 	{
 		print_backtrace_skipping_top_frames(2);
 	}
@@ -27847,7 +27847,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("515d8c0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cb70ffe"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -85913,7 +85913,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__gen__c__skip_struct_init = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("struct stat"), _SLIT("struct addrinfo")}));
 	_const_v__gen__c__builtins = new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){_SLIT("string"), _SLIT("array"), _SLIT("DenseArray"), _SLIT("map"), _SLIT("Error"), _SLIT("IError"), _SLIT("Option2"), _SLIT("Option")}));
 	_const_v__gen__c__c_headers = string_add(string_add(string_add(string_add(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#include <string.h>\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#ifdef ARM\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((externally_visible,visibility(\"default\")))\n		#else\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((visibility(\"default\")))\n		#endif\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#if defined(__TINYC__) && defined(__has_include)\n// tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n//#include \"fns.h\"\n#include <signal.h>\n#include <stdarg.h> // for va_list\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\nstatic voidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	v_free(ptr); // heloe\n	return memdup(src, sz);\n}\n\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#ifndef WIN32_FULL\n	#define WIN32_LEAN_AND_MEAN\n	#endif\n	#ifndef _UNICODE\n	#define _UNICODE\n	#endif\n	#ifndef UNICODE\n	#define UNICODE\n	#endif\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION int ____dummy_variable\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp\")\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nstatic void* g_live_info = NULL;\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n#ifdef _VFREESTANDING\n#undef _VFREESTANDING\n#endif\n")), _const_v__gen__c__c_wyhash);
-	_const_v__gen__c__bare_c_headers = string_add(string_add(string_add(string_add(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n\n#ifndef exit\n#define exit(rc) sys_exit(rc)\nvoid sys_exit (int);\n#endif\n\n#define stdin 0\n#define stdout 1\n#define stderr 2\n\n#define _VFREESTANDING\n\ntypedef long unsigned int size_t;\n\n// Memory allocation related headers\n// void *malloc(int size);\nbyte *calloc(int nitems, int size);\nbyte *realloc(byte *ptr, int size);\nbyte *memcpy(byte *dest, byte *src, int n);\nbyte *memset(byte *s, int c, int n);\nbyte *memmove(byte *dest, byte *src, int n);\n\n// Backtrace headers\nint backtrace(void **buffer, int size);\nchar **backtrace_symbols(void *const *buffer, int size);\nvoid backtrace_symbols_fd(void *const *buffer, int size, int fd);\n\n// I/O related headers\ntypedef void FILE;\nFILE *popen(const char *command, const char *type);\nint pclose(FILE *stream);\nint fgetc(FILE *stream);\nchar *fgets(char *s, int size, FILE *stream);\nint getc(FILE *stream);\nint getchar(void);\nint ungetc(int c, FILE *stream);\n\n\n// char manipulation headers\nint toupper(int c);\nint tolower(int c);\n// int toupper_l(int c, locale_t locale);\n// int tolower_l(int c, locale_t locale);\n\nint isatty(int fd);\n\n// varargs implementation, TODO: works on tcc and gcc, but is very unportable and hacky\ntypedef __builtin_va_list va_list;\n#define va_start(a, b) __builtin_va_start(a, b)\n#define va_end(a)      __builtin_va_end(a)\n#define va_arg(a, b)   __builtin_va_arg(a, b)\n#define va_copy(a, b)  __builtin_va_copy(a, b)\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\nstatic voidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	v_free(ptr); // heloe\n	return memdup(src, sz);\n}\n\n")), _const_v__gen__c__c_wyhash);
+	_const_v__gen__c__bare_c_headers = string_add(string_add(string_add(string_add(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n\n#define _VFREESTANDING\n\ntypedef long unsigned int size_t;\n\n// Memory allocation related headers\nvoid *malloc(size_t size);\nvoid *calloc(size_t nitems, size_t size);\nvoid *realloc(void *ptr, size_t size);\nvoid *memcpy(void *dest, void *src, size_t n);\nvoid *memset(void *s, int c, size_t n);\nvoid *memmove(void *dest, void *src, size_t n);\n\n// varargs implementation, TODO: works on tcc and gcc, but is very unportable and hacky\ntypedef __builtin_va_list va_list;\n#define va_start(a, b) __builtin_va_start(a, b)\n#define va_end(a)      __builtin_va_end(a)\n#define va_arg(a, b)   __builtin_va_arg(a, b)\n#define va_copy(a, b)  __builtin_va_copy(a, b)\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\nstatic voidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	v_free(ptr); // heloe\n	return memdup(src, sz);\n}\n\n")), _const_v__gen__c__c_wyhash);
 	// Initializations for module v.markused :
 	// Initializations for module v.gen.js :
 	_const_v__gen__js__js_reserved = new_array_from_c_array(48, 48, sizeof(string), _MOV((string[48]){
