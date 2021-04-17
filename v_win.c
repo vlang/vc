@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "515d8c0"
+#define V_COMMIT_HASH "cb70ffe"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1b0f099"
+	#define V_COMMIT_HASH "515d8c0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "515d8c0"
+	#define V_CURRENT_COMMIT_HASH "cb70ffe"
 #endif
 
 // V comptime_defines:
@@ -6543,8 +6543,8 @@ bool v__ast__Table_sumtype_has_variant(v__ast__Table* t, v__ast__Type parent, v_
 Array_string v__ast__Table_known_type_names(v__ast__Table* t);
 bool v__ast__Table_has_deep_child_no_ref(v__ast__Table* t, v__ast__TypeSymbol* ts, string name);
 v__ast__Type v__ast__Table_bitsize_to_type(v__ast__Table* t, int bit_size);
-Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__ast__Type generic_type, Array_string generic_names, Array_v__ast__Type generic_types);
-Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__ast__Type generic_type, Array_v__ast__Type from_types, Array_v__ast__Type to_types);
+Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__ast__Type generic_type, Array_string generic_names, Array_v__ast__Type concrete_types);
+Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__ast__Type generic_type, Array_v__ast__Type generic_types, Array_v__ast__Type concrete_types);
 void v__ast__Table_generic_struct_insts_to_concrete(v__ast__Table* t);
 v__ast__Language v__ast__pref_arch_to_table_language(v__pref__Arch pref_arch);
 string v__ast__ShareType_str(v__ast__ShareType t);
@@ -27187,7 +27187,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1b0f099"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("515d8c0"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36019,26 +36019,22 @@ v__ast__Type v__ast__Table_bitsize_to_type(v__ast__Table* t, int bit_size) {
 	return 0;
 }
 
-Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__ast__Type generic_type, Array_string generic_names, Array_v__ast__Type generic_types) {
+Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__ast__Type generic_type, Array_string generic_names, Array_v__ast__Type concrete_types) {
 	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(t, generic_type);
 	if ((Array_string_contains(generic_names, sym->name))) {
 		int index = Array_string_index(generic_names, sym->name);
-		v__ast__Type typ = (*(v__ast__Type*)/*ee elem_typ */array_get(generic_types, index));
-		typ = v__ast__Type_set_nr_muls(typ, v__ast__Type_nr_muls(generic_type));
-		if (v__ast__Type_has_flag(generic_type, v__ast__TypeFlag_optional)) {
-			typ = v__ast__Type_set_flag(typ, v__ast__TypeFlag_optional);
-		}
+		v__ast__Type typ = (*(v__ast__Type*)/*ee elem_typ */array_get(concrete_types, index));
 		Option_v__ast__Type _t1563;
-		opt_ok(&(v__ast__Type[]) { typ }, (Option*)(&_t1563), sizeof(v__ast__Type));
-		// autofree_scope_vars(pos=24890 line_nr=959 scope.pos=24687 scope.end_pos=24903)
-		// var "index" var.pos=24691 var.line_nr=953
-		// var "typ" var.pos=24736 var.line_nr=954
+		opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(typ, generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1563), sizeof(v__ast__Type));
+		// autofree_scope_vars(pos=24763 line_nr=955 scope.pos=24688 scope.end_pos=24818)
+		// var "index" var.pos=24692 var.line_nr=953
+		// var "typ" var.pos=24733 var.line_nr=954
 		// af parent scope:
 		// var "t" var.pos=24506 var.line_nr=950
 		// var "generic_type" var.pos=24540 var.line_nr=950
 		// var "generic_names" var.pos=24559 var.line_nr=950
-		// var "generic_types" var.pos=24583 var.line_nr=950
-		// var "sym" var.pos=24618 var.line_nr=951
+		// var "concrete_types" var.pos=24583 var.line_nr=950
+		// var "sym" var.pos=24619 var.line_nr=951
 		// af parent scope:
 		// af parent scope:
 		return _t1563;
@@ -36054,28 +36050,26 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 			dims++;
 		}
 		Option_v__ast__Type _t1564;
-		if (_t1564 = v__ast__Table_resolve_generic_by_names(t, elem_type, generic_names, generic_types), _t1564.state == 0) {
+		if (_t1564 = v__ast__Table_resolve_generic_by_names(t, elem_type, generic_names, concrete_types), _t1564.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1564.data;
 			int idx = v__ast__Table_find_or_register_array_with_dims(t, typ, dims);
-			v__ast__Type array_typ = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic);
 			Option_v__ast__Type _t1565;
-			opt_ok(&(v__ast__Type[]) { array_typ }, (Option*)(&_t1565), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=25402 line_nr=973 scope.pos=25270 scope.end_pos=25422)
-			// var "idx" var.pos=25275 var.line_nr=971
-			// var "array_typ" var.pos=25331 var.line_nr=972
+			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1565), sizeof(v__ast__Type));
+			// autofree_scope_vars(pos=25246 line_nr=968 scope.pos=25186 scope.end_pos=25312)
+			// var "idx" var.pos=25191 var.line_nr=967
 			// af parent scope:
-			// var "typ" var.pos=25195 var.line_nr=970
+			// var "typ" var.pos=25110 var.line_nr=966
 			// af parent scope:
-			// var "info" var.pos=24936 var.line_nr=961
-			// var "elem_type" var.pos=24968 var.line_nr=962
-			// var "elem_sym" var.pos=25002 var.line_nr=963
-			// var "dims" var.pos=25049 var.line_nr=964
+			// var "info" var.pos=24851 var.line_nr=957
+			// var "elem_type" var.pos=24883 var.line_nr=958
+			// var "elem_sym" var.pos=24917 var.line_nr=959
+			// var "dims" var.pos=24964 var.line_nr=960
 			// af parent scope:
 			// var "t" var.pos=24506 var.line_nr=950
 			// var "generic_type" var.pos=24540 var.line_nr=950
 			// var "generic_names" var.pos=24559 var.line_nr=950
-			// var "generic_types" var.pos=24583 var.line_nr=950
-			// var "sym" var.pos=24618 var.line_nr=951
+			// var "concrete_types" var.pos=24583 var.line_nr=950
+			// var "sym" var.pos=24619 var.line_nr=951
 			// af parent scope:
 			// af parent scope:
 			return _t1565;
@@ -36083,25 +36077,23 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 	} else if (sym->kind == v__ast__Kind_chan) {
 		v__ast__Chan info = /* as */ *(v__ast__Chan*)__as_cast((sym->info)._v__ast__Chan,(sym->info)._typ, 416) /*expected idx: 416, name: v.ast.Chan */ ;
 		Option_v__ast__Type _t1566;
-		if (_t1566 = v__ast__Table_resolve_generic_by_names(t, info.elem_type, generic_names, generic_types), _t1566.state == 0) {
+		if (_t1566 = v__ast__Table_resolve_generic_by_names(t, info.elem_type, generic_names, concrete_types), _t1566.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1566.data;
 			int idx = v__ast__Table_find_or_register_chan(t, typ, v__ast__Type_nr_muls(typ) > 0);
-			v__ast__Type chan_typ = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic);
 			Option_v__ast__Type _t1567;
-			opt_ok(&(v__ast__Type[]) { chan_typ }, (Option*)(&_t1567), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=25700 line_nr=980 scope.pos=25567 scope.end_pos=25719)
-			// var "idx" var.pos=25572 var.line_nr=978
-			// var "chan_typ" var.pos=25630 var.line_nr=979
+			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1567), sizeof(v__ast__Type));
+			// autofree_scope_vars(pos=25520 line_nr=974 scope.pos=25458 scope.end_pos=25586)
+			// var "idx" var.pos=25463 var.line_nr=973
 			// af parent scope:
-			// var "typ" var.pos=25487 var.line_nr=977
+			// var "typ" var.pos=25377 var.line_nr=972
 			// af parent scope:
-			// var "info" var.pos=25457 var.line_nr=976
+			// var "info" var.pos=25347 var.line_nr=971
 			// af parent scope:
 			// var "t" var.pos=24506 var.line_nr=950
 			// var "generic_type" var.pos=24540 var.line_nr=950
 			// var "generic_names" var.pos=24559 var.line_nr=950
-			// var "generic_types" var.pos=24583 var.line_nr=950
-			// var "sym" var.pos=24618 var.line_nr=951
+			// var "concrete_types" var.pos=24583 var.line_nr=950
+			// var "sym" var.pos=24619 var.line_nr=951
 			// af parent scope:
 			// af parent scope:
 			return _t1567;
@@ -36113,7 +36105,7 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 		for (int _t1568 = 0; _t1568 < (*sym->info._v__ast__MultiReturn).types.len; ++_t1568) {
 			v__ast__Type ret_type = ((v__ast__Type*)(*sym->info._v__ast__MultiReturn).types.data)[_t1568];
 			Option_v__ast__Type _t1569;
-			if (_t1569 = v__ast__Table_resolve_generic_by_names(t, ret_type, generic_names, generic_types), _t1569.state == 0) {
+			if (_t1569 = v__ast__Table_resolve_generic_by_names(t, ret_type, generic_names, concrete_types), _t1569.state == 0) {
 				v__ast__Type typ = *(v__ast__Type*)_t1569.data;
 				array_push(&types, _MOV((v__ast__Type[]){ typ }));
 				type_changed = true;
@@ -36124,21 +36116,19 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 		}
 		if (type_changed) {
 			int idx = v__ast__Table_find_or_register_multi_return(t, types);
-			v__ast__Type typ = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic);
 			Option_v__ast__Type _t1572;
-			opt_ok(&(v__ast__Type[]) { typ }, (Option*)(&_t1572), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=26152 line_nr=996 scope.pos=26033 scope.end_pos=26166)
-			// var "idx" var.pos=26038 var.line_nr=994
-			// var "typ" var.pos=26087 var.line_nr=995
+			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1572), sizeof(v__ast__Type));
+			// autofree_scope_vars(pos=25954 line_nr=989 scope.pos=25901 scope.end_pos=26020)
+			// var "idx" var.pos=25906 var.line_nr=988
 			// af parent scope:
-			// var "types" var.pos=25768 var.line_nr=983
-			// var "type_changed" var.pos=25792 var.line_nr=984
+			// var "types" var.pos=25635 var.line_nr=977
+			// var "type_changed" var.pos=25659 var.line_nr=978
 			// af parent scope:
 			// var "t" var.pos=24506 var.line_nr=950
 			// var "generic_type" var.pos=24540 var.line_nr=950
 			// var "generic_names" var.pos=24559 var.line_nr=950
-			// var "generic_types" var.pos=24583 var.line_nr=950
-			// var "sym" var.pos=24618 var.line_nr=951
+			// var "concrete_types" var.pos=24583 var.line_nr=950
+			// var "sym" var.pos=24619 var.line_nr=951
 			// af parent scope:
 			// af parent scope:
 			return _t1572;
@@ -36148,13 +36138,13 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 		v__ast__Type unwrapped_key_type = (*sym->info._v__ast__Map).key_type;
 		v__ast__Type unwrapped_value_type = (*sym->info._v__ast__Map).value_type;
 		Option_v__ast__Type _t1573;
-		if (_t1573 = v__ast__Table_resolve_generic_by_names(t, (*sym->info._v__ast__Map).key_type, generic_names, generic_types), _t1573.state == 0) {
+		if (_t1573 = v__ast__Table_resolve_generic_by_names(t, (*sym->info._v__ast__Map).key_type, generic_names, concrete_types), _t1573.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1573.data;
 			unwrapped_key_type = typ;
 			type_changed = true;
 		}
 		Option_v__ast__Type _t1574;
-		if (_t1574 = v__ast__Table_resolve_generic_by_names(t, (*sym->info._v__ast__Map).value_type, generic_names, generic_types), _t1574.state == 0) {
+		if (_t1574 = v__ast__Table_resolve_generic_by_names(t, (*sym->info._v__ast__Map).value_type, generic_names, concrete_types), _t1574.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1574.data;
 			unwrapped_value_type = typ;
 			type_changed = true;
@@ -36163,18 +36153,18 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 			int idx = v__ast__Table_find_or_register_map(t, unwrapped_key_type, unwrapped_value_type);
 			Option_v__ast__Type _t1575;
 			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1575), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=26716 line_nr=1012 scope.pos=26637 scope.end_pos=26782)
-			// var "idx" var.pos=26642 var.line_nr=1011
+			// autofree_scope_vars(pos=26572 line_nr=1005 scope.pos=26493 scope.end_pos=26638)
+			// var "idx" var.pos=26498 var.line_nr=1004
 			// af parent scope:
-			// var "type_changed" var.pos=26207 var.line_nr=999
-			// var "unwrapped_key_type" var.pos=26235 var.line_nr=1000
-			// var "unwrapped_value_type" var.pos=26281 var.line_nr=1001
+			// var "type_changed" var.pos=26061 var.line_nr=992
+			// var "unwrapped_key_type" var.pos=26089 var.line_nr=993
+			// var "unwrapped_value_type" var.pos=26135 var.line_nr=994
 			// af parent scope:
 			// var "t" var.pos=24506 var.line_nr=950
 			// var "generic_type" var.pos=24540 var.line_nr=950
 			// var "generic_names" var.pos=24559 var.line_nr=950
-			// var "generic_types" var.pos=24583 var.line_nr=950
-			// var "sym" var.pos=24618 var.line_nr=951
+			// var "concrete_types" var.pos=24583 var.line_nr=950
+			// var "sym" var.pos=24619 var.line_nr=951
 			// af parent scope:
 			// af parent scope:
 			return _t1575;
@@ -36183,26 +36173,22 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_names(v__ast__Table* t, v__
 	return (Option_v__ast__Type){ .state=2, .err=_const_none__ };
 }
 
-Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__ast__Type generic_type, Array_v__ast__Type from_types, Array_v__ast__Type to_types) {
+Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__ast__Type generic_type, Array_v__ast__Type generic_types, Array_v__ast__Type concrete_types) {
 	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(t, generic_type);
-	if ((Array_v__ast__Type_contains(from_types, generic_type))) {
-		int index = Array_v__ast__Type_index(from_types, generic_type);
-		v__ast__Type typ = (*(v__ast__Type*)/*ee elem_typ */array_get(to_types, index));
-		typ = v__ast__Type_set_nr_muls(typ, v__ast__Type_nr_muls(generic_type));
-		if (v__ast__Type_has_flag(generic_type, v__ast__TypeFlag_optional)) {
-			typ = v__ast__Type_set_flag(typ, v__ast__TypeFlag_optional);
-		}
+	if ((Array_v__ast__Type_contains(generic_types, generic_type))) {
+		int index = Array_v__ast__Type_index(generic_types, generic_type);
+		v__ast__Type typ = (*(v__ast__Type*)/*ee elem_typ */array_get(concrete_types, index));
 		Option_v__ast__Type _t1576;
-		opt_ok(&(v__ast__Type[]) { typ }, (Option*)(&_t1576), sizeof(v__ast__Type));
-		// autofree_scope_vars(pos=27438 line_nr=1030 scope.pos=27239 scope.end_pos=27451)
-		// var "index" var.pos=27243 var.line_nr=1024
-		// var "typ" var.pos=27289 var.line_nr=1025
+		opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(typ, generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1576), sizeof(v__ast__Type));
+		// autofree_scope_vars(pos=27186 line_nr=1019 scope.pos=27107 scope.end_pos=27241)
+		// var "index" var.pos=27111 var.line_nr=1017
+		// var "typ" var.pos=27156 var.line_nr=1018
 		// af parent scope:
-		// var "t" var.pos=27067 var.line_nr=1021
-		// var "generic_type" var.pos=27101 var.line_nr=1021
-		// var "from_types" var.pos=27120 var.line_nr=1021
-		// var "to_types" var.pos=27139 var.line_nr=1021
-		// var "sym" var.pos=27169 var.line_nr=1022
+		// var "t" var.pos=26923 var.line_nr=1014
+		// var "generic_type" var.pos=26957 var.line_nr=1014
+		// var "generic_types" var.pos=26976 var.line_nr=1014
+		// var "concrete_types" var.pos=26998 var.line_nr=1014
+		// var "sym" var.pos=27034 var.line_nr=1015
 		// af parent scope:
 		// af parent scope:
 		return _t1576;
@@ -36218,26 +36204,26 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__
 			dims++;
 		}
 		Option_v__ast__Type _t1577;
-		if (_t1577 = v__ast__Table_resolve_generic_by_types(t, elem_type, from_types, to_types), _t1577.state == 0) {
+		if (_t1577 = v__ast__Table_resolve_generic_by_types(t, elem_type, generic_types, concrete_types), _t1577.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1577.data;
 			int idx = v__ast__Table_find_or_register_array_with_dims(t, typ, dims);
 			Option_v__ast__Type _t1578;
 			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1578), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=27870 line_nr=1043 scope.pos=27810 scope.end_pos=27936)
-			// var "idx" var.pos=27815 var.line_nr=1042
+			// autofree_scope_vars(pos=27669 line_nr=1032 scope.pos=27609 scope.end_pos=27735)
+			// var "idx" var.pos=27614 var.line_nr=1031
 			// af parent scope:
-			// var "typ" var.pos=27743 var.line_nr=1041
+			// var "typ" var.pos=27533 var.line_nr=1030
 			// af parent scope:
-			// var "info" var.pos=27484 var.line_nr=1032
-			// var "elem_type" var.pos=27516 var.line_nr=1033
-			// var "elem_sym" var.pos=27550 var.line_nr=1034
-			// var "dims" var.pos=27597 var.line_nr=1035
+			// var "info" var.pos=27274 var.line_nr=1021
+			// var "elem_type" var.pos=27306 var.line_nr=1022
+			// var "elem_sym" var.pos=27340 var.line_nr=1023
+			// var "dims" var.pos=27387 var.line_nr=1024
 			// af parent scope:
-			// var "t" var.pos=27067 var.line_nr=1021
-			// var "generic_type" var.pos=27101 var.line_nr=1021
-			// var "from_types" var.pos=27120 var.line_nr=1021
-			// var "to_types" var.pos=27139 var.line_nr=1021
-			// var "sym" var.pos=27169 var.line_nr=1022
+			// var "t" var.pos=26923 var.line_nr=1014
+			// var "generic_type" var.pos=26957 var.line_nr=1014
+			// var "generic_types" var.pos=26976 var.line_nr=1014
+			// var "concrete_types" var.pos=26998 var.line_nr=1014
+			// var "sym" var.pos=27034 var.line_nr=1015
 			// af parent scope:
 			// af parent scope:
 			return _t1578;
@@ -36245,23 +36231,23 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__
 	} else if (sym->kind == v__ast__Kind_chan) {
 		v__ast__Chan info = /* as */ *(v__ast__Chan*)__as_cast((sym->info)._v__ast__Chan,(sym->info)._typ, 416) /*expected idx: 416, name: v.ast.Chan */ ;
 		Option_v__ast__Type _t1579;
-		if (_t1579 = v__ast__Table_resolve_generic_by_types(t, info.elem_type, from_types, to_types), _t1579.state == 0) {
+		if (_t1579 = v__ast__Table_resolve_generic_by_types(t, info.elem_type, generic_types, concrete_types), _t1579.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1579.data;
 			int idx = v__ast__Table_find_or_register_chan(t, typ, v__ast__Type_nr_muls(typ) > 0);
 			Option_v__ast__Type _t1580;
 			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1580), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=28135 line_nr=1049 scope.pos=28073 scope.end_pos=28201)
-			// var "idx" var.pos=28078 var.line_nr=1048
+			// autofree_scope_vars(pos=27943 line_nr=1038 scope.pos=27881 scope.end_pos=28009)
+			// var "idx" var.pos=27886 var.line_nr=1037
 			// af parent scope:
-			// var "typ" var.pos=28001 var.line_nr=1047
+			// var "typ" var.pos=27800 var.line_nr=1036
 			// af parent scope:
-			// var "info" var.pos=27971 var.line_nr=1046
+			// var "info" var.pos=27770 var.line_nr=1035
 			// af parent scope:
-			// var "t" var.pos=27067 var.line_nr=1021
-			// var "generic_type" var.pos=27101 var.line_nr=1021
-			// var "from_types" var.pos=27120 var.line_nr=1021
-			// var "to_types" var.pos=27139 var.line_nr=1021
-			// var "sym" var.pos=27169 var.line_nr=1022
+			// var "t" var.pos=26923 var.line_nr=1014
+			// var "generic_type" var.pos=26957 var.line_nr=1014
+			// var "generic_types" var.pos=26976 var.line_nr=1014
+			// var "concrete_types" var.pos=26998 var.line_nr=1014
+			// var "sym" var.pos=27034 var.line_nr=1015
 			// af parent scope:
 			// af parent scope:
 			return _t1580;
@@ -36273,7 +36259,7 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__
 		for (int _t1581 = 0; _t1581 < (*sym->info._v__ast__MultiReturn).types.len; ++_t1581) {
 			v__ast__Type ret_type = ((v__ast__Type*)(*sym->info._v__ast__MultiReturn).types.data)[_t1581];
 			Option_v__ast__Type _t1582;
-			if (_t1582 = v__ast__Table_resolve_generic_by_types(t, ret_type, from_types, to_types), _t1582.state == 0) {
+			if (_t1582 = v__ast__Table_resolve_generic_by_types(t, ret_type, generic_types, concrete_types), _t1582.state == 0) {
 				v__ast__Type typ = *(v__ast__Type*)_t1582.data;
 				array_push(&types, _MOV((v__ast__Type[]){ typ }));
 				type_changed = true;
@@ -36286,17 +36272,17 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__
 			int idx = v__ast__Table_find_or_register_multi_return(t, types);
 			Option_v__ast__Type _t1585;
 			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1585), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=28560 line_nr=1064 scope.pos=28507 scope.end_pos=28626)
-			// var "idx" var.pos=28512 var.line_nr=1063
+			// autofree_scope_vars(pos=28377 line_nr=1053 scope.pos=28324 scope.end_pos=28443)
+			// var "idx" var.pos=28329 var.line_nr=1052
 			// af parent scope:
-			// var "types" var.pos=28250 var.line_nr=1052
-			// var "type_changed" var.pos=28274 var.line_nr=1053
+			// var "types" var.pos=28058 var.line_nr=1041
+			// var "type_changed" var.pos=28082 var.line_nr=1042
 			// af parent scope:
-			// var "t" var.pos=27067 var.line_nr=1021
-			// var "generic_type" var.pos=27101 var.line_nr=1021
-			// var "from_types" var.pos=27120 var.line_nr=1021
-			// var "to_types" var.pos=27139 var.line_nr=1021
-			// var "sym" var.pos=27169 var.line_nr=1022
+			// var "t" var.pos=26923 var.line_nr=1014
+			// var "generic_type" var.pos=26957 var.line_nr=1014
+			// var "generic_types" var.pos=26976 var.line_nr=1014
+			// var "concrete_types" var.pos=26998 var.line_nr=1014
+			// var "sym" var.pos=27034 var.line_nr=1015
 			// af parent scope:
 			// af parent scope:
 			return _t1585;
@@ -36306,13 +36292,13 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__
 		v__ast__Type unwrapped_key_type = (*sym->info._v__ast__Map).key_type;
 		v__ast__Type unwrapped_value_type = (*sym->info._v__ast__Map).value_type;
 		Option_v__ast__Type _t1586;
-		if (_t1586 = v__ast__Table_resolve_generic_by_types(t, (*sym->info._v__ast__Map).key_type, from_types, to_types), _t1586.state == 0) {
+		if (_t1586 = v__ast__Table_resolve_generic_by_types(t, (*sym->info._v__ast__Map).key_type, generic_types, concrete_types), _t1586.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1586.data;
 			unwrapped_key_type = typ;
 			type_changed = true;
 		}
 		Option_v__ast__Type _t1587;
-		if (_t1587 = v__ast__Table_resolve_generic_by_types(t, (*sym->info._v__ast__Map).value_type, from_types, to_types), _t1587.state == 0) {
+		if (_t1587 = v__ast__Table_resolve_generic_by_types(t, (*sym->info._v__ast__Map).value_type, generic_types, concrete_types), _t1587.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t1587.data;
 			unwrapped_value_type = typ;
 			type_changed = true;
@@ -36321,18 +36307,18 @@ Option_v__ast__Type v__ast__Table_resolve_generic_by_types(v__ast__Table* t, v__
 			int idx = v__ast__Table_find_or_register_map(t, unwrapped_key_type, unwrapped_value_type);
 			Option_v__ast__Type _t1588;
 			opt_ok(&(v__ast__Type[]) { v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(idx), generic_type), v__ast__TypeFlag_generic) }, (Option*)(&_t1588), sizeof(v__ast__Type));
-			// autofree_scope_vars(pos=29160 line_nr=1080 scope.pos=29081 scope.end_pos=29226)
-			// var "idx" var.pos=29086 var.line_nr=1079
+			// autofree_scope_vars(pos=28995 line_nr=1069 scope.pos=28916 scope.end_pos=29061)
+			// var "idx" var.pos=28921 var.line_nr=1068
 			// af parent scope:
-			// var "type_changed" var.pos=28667 var.line_nr=1067
-			// var "unwrapped_key_type" var.pos=28695 var.line_nr=1068
-			// var "unwrapped_value_type" var.pos=28741 var.line_nr=1069
+			// var "type_changed" var.pos=28484 var.line_nr=1056
+			// var "unwrapped_key_type" var.pos=28512 var.line_nr=1057
+			// var "unwrapped_value_type" var.pos=28558 var.line_nr=1058
 			// af parent scope:
-			// var "t" var.pos=27067 var.line_nr=1021
-			// var "generic_type" var.pos=27101 var.line_nr=1021
-			// var "from_types" var.pos=27120 var.line_nr=1021
-			// var "to_types" var.pos=27139 var.line_nr=1021
-			// var "sym" var.pos=27169 var.line_nr=1022
+			// var "t" var.pos=26923 var.line_nr=1014
+			// var "generic_type" var.pos=26957 var.line_nr=1014
+			// var "generic_types" var.pos=26976 var.line_nr=1014
+			// var "concrete_types" var.pos=26998 var.line_nr=1014
+			// var "sym" var.pos=27034 var.line_nr=1015
 			// af parent scope:
 			// af parent scope:
 			return _t1588;
