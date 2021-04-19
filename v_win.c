@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3158617"
+#define V_COMMIT_HASH "9ec91f4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "22351a6"
+	#define V_COMMIT_HASH "3158617"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3158617"
+	#define V_CURRENT_COMMIT_HASH "9ec91f4"
 #endif
 
 // V comptime_defines:
@@ -5806,6 +5806,7 @@ void os__add_vectored_exception_handler(bool first, VectoredExceptionHandler han
 bool os__debugger_present();
 os__Uname os__uname();
 string os__hostname();
+string os__loginname();
 Option_bool os__is_writable_folder(string folder);
 int os__getpid();
 void os__posix_set_permission_bit(string path_s, u32 mode, bool enable);
@@ -18541,7 +18542,7 @@ bool os__truncate_defer_0 = false;
 			close(fp);
 		}
 		// Defer end
-		return (Option_void){ .state=2, .err=v_error(_SLIT("open file failed")) };
+		return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
 	}
 	#if defined(_WIN32)
 	{
@@ -18574,7 +18575,10 @@ u64 os__file_size(string path) {
 			#if defined(_WIN32)
 			{
 				struct __stat64 swin = (struct __stat64){.st_size = 0,.st_mode = 0,.st_mtime = 0,};
-				_wstat64(((char*)(string_to_wide(path))), ((voidptr)(&swin)));
+				if (_wstat64(((char*)(string_to_wide(path))), ((voidptr)(&swin))) != 0) {
+					eprintln(string_add(_SLIT("os.file_size() Cannot determine file-size: "), os__posix_get_error_msg(errno)));
+					return 0;
+				}
 				return swin.st_size;
 			}
 			#else
@@ -18587,7 +18591,10 @@ u64 os__file_size(string path) {
 		{
 			#if defined(_WIN32)
 			{
-				_wstat(string_to_wide(path), ((voidptr)(&s)));
+				if (_wstat(string_to_wide(path), ((voidptr)(&s))) != 0) {
+					eprintln(string_add(_SLIT("os.file_size() Cannot determine file-size: "), os__posix_get_error_msg(errno)));
+					return 0;
+				}
 				return ((u64)(s.st_size));
 			}
 			#else
@@ -19376,6 +19383,10 @@ os__Uname os__uname(void) {
 
 string os__hostname(void) {
 	return os__execute(_SLIT("cmd /c hostname")).output;
+}
+
+string os__loginname(void) {
+	return os__execute(_SLIT("cmd /c echo %USERNAME%")).output;
 }
 
 Option_bool os__is_writable_folder(string folder) {
@@ -27202,7 +27213,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22351a6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3158617"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}

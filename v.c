@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3158617"
+#define V_COMMIT_HASH "9ec91f4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "22351a6"
+	#define V_COMMIT_HASH "3158617"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3158617"
+	#define V_CURRENT_COMMIT_HASH "9ec91f4"
 #endif
 
 // V comptime_defines:
@@ -5617,6 +5617,7 @@ string _const_os__path_delimiter; // a string literal, inited later
 #define _const_os__s_ixoth 00001
 os__Uname os__uname();
 string os__hostname();
+string os__loginname();
 VV_LOCAL_SYMBOL Array_string os__init_os_args(int argc, byte** argv);
 Option_Array_string os__ls(string path);
 Option_bool os__mkdir(string path);
@@ -18821,7 +18822,7 @@ bool os__truncate_defer_0 = false;
 			close(fp);
 		}
 		// Defer end
-		return (Option_void){ .state=2, .err=v_error(_SLIT("open file failed")) };
+		return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno) };
 	}
 	#if defined(_WIN32)
 	{
@@ -18862,12 +18863,18 @@ u64 os__file_size(string path) {
 			#if defined(_WIN32)
 			{
 				struct __stat64 swin = (struct __stat64){.st_size = 0,.st_mode = 0,.st_mtime = 0,};
-				_wstat64(((char*)(string_to_wide(path))), ((voidptr)(&swin)));
+				if (_wstat64(((char*)(string_to_wide(path))), ((voidptr)(&swin))) != 0) {
+					eprintln(string_add(_SLIT("os.file_size() Cannot determine file-size: "), os__posix_get_error_msg(errno)));
+					return 0;
+				}
 				return swin.st_size;
 			}
 			#else
 			{
-				stat(((char*)(path.str)), &s);
+				if (stat(((char*)(path.str)), &s) != 0) {
+					eprintln(string_add(_SLIT("os.file_size() Cannot determine file-size: "), os__posix_get_error_msg(errno)));
+					return 0;
+				}
 				return ((u64)(s.st_size));
 			}
 			#endif
@@ -18882,12 +18889,18 @@ u64 os__file_size(string path) {
 			#endif
 			#if defined(_WIN32)
 			{
-				_wstat(string_to_wide(path), ((voidptr)(&s)));
+				if (_wstat(string_to_wide(path), ((voidptr)(&s))) != 0) {
+					eprintln(string_add(_SLIT("os.file_size() Cannot determine file-size: "), os__posix_get_error_msg(errno)));
+					return 0;
+				}
 				return ((u64)(s.st_size));
 			}
 			#else
 			{
-				stat(((char*)(path.str)), &s);
+				if (stat(((char*)(path.str)), &s) != 0) {
+					eprintln(string_add(_SLIT("os.file_size() Cannot determine file-size: "), os__posix_get_error_msg(errno)));
+					return 0;
+				}
 				return ((u64)(s.st_size));
 			}
 			#endif
@@ -19062,8 +19075,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_8422 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_8422.arg0;
+		multi_return_int_bool mr_8963 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_8963.arg0;
 		return ret;
 	}
 	#endif
@@ -19108,9 +19121,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_9431 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_9431.arg0;
-		bool is_signaled = mr_9431.arg1;
+		multi_return_int_bool mr_9972 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_9972.arg0;
+		bool is_signaled = mr_9972.arg1;
 		if (is_signaled) {
 			println(string_add(string_add(_STR("Terminated by signal %2"PRId32"\000 (", 2, ret), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -19724,6 +19737,18 @@ string os__hostname(void) {
 		hstnme = cstring_to_vstring(buf);
 		v_free(buf);
 		return hstnme;
+	}
+	return _SLIT("");
+}
+
+string os__loginname(void) {
+	string lgnname = _SLIT("");
+	int size = 256;
+	char* buf = ((char*)(v_malloc(size)));
+	if (getlogin_r(buf, size) == 0) {
+		lgnname = cstring_to_vstring(buf);
+		v_free(buf);
+		return lgnname;
 	}
 	return _SLIT("");
 }
@@ -27860,7 +27885,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22351a6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3158617"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
