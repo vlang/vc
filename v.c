@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0b0a5de"
+#define V_COMMIT_HASH "258be50"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "16e79bc"
+	#define V_COMMIT_HASH "0b0a5de"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0b0a5de"
+	#define V_CURRENT_COMMIT_HASH "258be50"
 #endif
 
 // V comptime_defines:
@@ -13377,13 +13377,12 @@ void eprintln(string s) {
 		}
 		#else
 		{
-			{int_literal _ = 0;}
-			;
+			int n = 0;
 			if (s.str == 0) {
-				write(2, "eprintln(NIL)\n", 14);
+				n = write(2, "eprintln(NIL)\n", 14);
 			} else {
-				write(2, s.str, s.len);
-				write(2, "\n", 1);
+				n = write(2, s.str, s.len);
+				n = write(2, "\n", 1);
 			}
 		}
 		#endif
@@ -13418,12 +13417,11 @@ void eprint(string s) {
 		}
 		#else
 		{
-			{int_literal _ = 0;}
-			;
+			int n = 0;
 			if (s.str == 0) {
-				write(2, "eprint(NIL)", 11);
+				n = write(2, "eprint(NIL)", 11);
 			} else {
-				write(2, s.str, s.len);
+				n = write(2, s.str, s.len);
 			}
 		}
 		#endif
@@ -13433,8 +13431,7 @@ void eprint(string s) {
 }
 
 void print(string s) {
-	{int_literal _ = 0;}
-	;
+	int n = 0;
 	#if defined(__ANDROID__)
 	{
 		fprintf(stdout, "%.*s", s.len, s.str);
@@ -13448,14 +13445,13 @@ void print(string s) {
 	}
 	#else
 	{
-		write(1, s.str, s.len);
+		n = write(1, s.str, s.len);
 	}
 	#endif
 }
 
 void println(string s) {
-	{int_literal _ = 0;}
-	;
+	int n = 0;
 	if (s.str == 0) {
 		#if defined(__ANDROID__)
 		{
@@ -13470,7 +13466,7 @@ void println(string s) {
 		}
 		#else
 		{
-			write(1, "println(NIL)\n", 13);
+			n = write(1, "println(NIL)\n", 13);
 		}
 		#endif
 		return;
@@ -13488,8 +13484,8 @@ void println(string s) {
 	}
 	#else
 	{
-		write(1, s.str, s.len);
-		write(1, "\n", 1);
+		n = write(1, s.str, s.len);
+		n = write(1, "\n", 1);
 	}
 	#endif
 }
@@ -19476,13 +19472,14 @@ bool os__is_link(string path) {
 }
 
 void os__chdir(string path) {
+	int n = 0;
 	#if defined(_WIN32)
 	{
 		_wchdir(string_to_wide(path));
 	}
 	#else
 	{
-		chdir(((char*)(path.str)));
+		n = chdir(((char*)(path.str)));
 	}
 	#endif
 }
@@ -20286,11 +20283,12 @@ VV_LOCAL_SYMBOL bool os__Process__is_alive(os__Process* p) {
 }
 
 VV_LOCAL_SYMBOL int os__Process_unix_spawn_process(os__Process* p) {
+	int n = 0;
 	Array_fixed_int_6 pipeset = {0};
 	if (p->use_stdio_ctl) {
-		pipe(&pipeset[0]);
-		pipe(&pipeset[2]);
-		pipe(&pipeset[4]);
+		n = pipe(&pipeset[0]);
+		n = pipe(&pipeset[2]);
+		n = pipe(&pipeset[4]);
 	}
 	int pid = os__fork();
 	if (pid != 0) {
@@ -20350,9 +20348,9 @@ VV_LOCAL_SYMBOL void os__Process_unix_wait(os__Process* p) {
 		p->err = os__posix_get_error_msg(errno);
 		return;
 	}
-	multi_return_int_bool mr_2125 = os__posix_wait4_to_exit_status(cstatus);
-	int pret = mr_2125.arg0;
-	bool is_signaled = mr_2125.arg1;
+	multi_return_int_bool mr_2149 = os__posix_wait4_to_exit_status(cstatus);
+	int pret = mr_2149.arg0;
+	bool is_signaled = mr_2149.arg1;
 	if (is_signaled) {
 		p->status = os__ProcessState_aborted;
 		p->err = _STR("Terminated by signal %2"PRId32"\000 (%.*s\000)", 3, ret, os__sigint_to_signal_name(pret));
@@ -20372,9 +20370,9 @@ VV_LOCAL_SYMBOL bool os__Process_unix_is_alive(os__Process* p) {
 	if (ret == 0) {
 		return true;
 	}
-	multi_return_int_bool mr_2558 = os__posix_wait4_to_exit_status(cstatus);
-	int pret = mr_2558.arg0;
-	bool is_signaled = mr_2558.arg1;
+	multi_return_int_bool mr_2582 = os__posix_wait4_to_exit_status(cstatus);
+	int pret = mr_2582.arg0;
+	bool is_signaled = mr_2582.arg1;
 	if (is_signaled) {
 		p->status = os__ProcessState_aborted;
 		p->err = _STR("Terminated by signal %2"PRId32"\000 (%.*s\000)", 3, ret, os__sigint_to_signal_name(pret));
@@ -27899,7 +27897,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("16e79bc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0b0a5de"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
