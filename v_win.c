@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c7a6d28"
+#define V_COMMIT_HASH "7ec90b0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aa40dfc"
+	#define V_COMMIT_HASH "c7a6d28"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c7a6d28"
+	#define V_CURRENT_COMMIT_HASH "7ec90b0"
 #endif
 
 // V comptime_defines:
@@ -27315,13 +27315,13 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	}
 	v__pref__Preferences_find_cc_if_cross_compiling(p);
 	p->ccompiler_type = v__pref__cc_from_string(p->ccompiler);
-	p->is_test = string_ends_with(p->path, _SLIT("_test.v")) || string_ends_with(p->path, _SLIT(".vv")) || string_ends_with(p->path, _SLIT(".vv")) || string_ends_with(string_all_before_last(string_all_before_last(p->path, _SLIT(".v")), _SLIT(".")), _SLIT("_test"));
+	p->is_test = string_ends_with(p->path, _SLIT("_test.v")) || string_ends_with(p->path, _SLIT("_test.vv")) || string_ends_with(string_all_before_last(string_all_before_last(p->path, _SLIT(".v")), _SLIT(".")), _SLIT("_test"));
 	p->is_vsh = string_ends_with(p->path, _SLIT(".vsh"));
 	p->is_script = p->is_vsh || string_ends_with(p->path, _SLIT(".v")) || string_ends_with(p->path, _SLIT(".vv"));
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("aa40dfc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c7a6d28"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -27367,20 +27367,20 @@ string v__pref__default_tcc_compiler(void) {
 	string vroot = os__dir(vexe);
 	string vtccexe = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("thirdparty"), _SLIT("tcc"), _SLIT("tcc.exe")})));
 	if (os__exists(vtccexe)) {
-		// autofree_scope_vars(pos=5611 line_nr=177 scope.pos=5608 scope.end_pos=5628)
+		// autofree_scope_vars(pos=5589 line_nr=177 scope.pos=5586 scope.end_pos=5606)
 		// af parent scope:
-		// var "vexe" var.pos=5478 var.line_nr=173
-		// var "vroot" var.pos=5499 var.line_nr=174
-		// var "vtccexe" var.pos=5522 var.line_nr=175
+		// var "vexe" var.pos=5456 var.line_nr=173
+		// var "vroot" var.pos=5477 var.line_nr=174
+		// var "vtccexe" var.pos=5500 var.line_nr=175
 		// af parent scope:
 		// af parent scope:
 		return vtccexe;
 	}
 	 string _t797 = _SLIT("");
-	// autofree_scope_vars(pos=5630 line_nr=179 scope.pos=5445 scope.end_pos=5641)
-	// var "vexe" var.pos=5478 var.line_nr=173
-	// var "vroot" var.pos=5499 var.line_nr=174
-	// var "vtccexe" var.pos=5522 var.line_nr=175
+	// autofree_scope_vars(pos=5608 line_nr=179 scope.pos=5423 scope.end_pos=5619)
+	// var "vexe" var.pos=5456 var.line_nr=173
+	// var "vroot" var.pos=5477 var.line_nr=174
+	// var "vtccexe" var.pos=5500 var.line_nr=175
 	// af parent scope:
 	// af parent scope:
 	return _t797;
@@ -27388,13 +27388,13 @@ string v__pref__default_tcc_compiler(void) {
 
 string v__pref__default_c_compiler(void) {
 	 string _t798 = _SLIT("gcc");
-	// autofree_scope_vars(pos=5847 line_nr=189 scope.pos=5844 scope.end_pos=5862)
+	// autofree_scope_vars(pos=5825 line_nr=189 scope.pos=5822 scope.end_pos=5840)
 	// af parent scope:
 	// af parent scope:
 	// af parent scope:
 	return _t798;
 	 string _t799 = _SLIT("cc");
-	// autofree_scope_vars(pos=5864 line_nr=191 scope.pos=5651 scope.end_pos=5877)
+	// autofree_scope_vars(pos=5842 line_nr=191 scope.pos=5629 scope.end_pos=5855)
 	// af parent scope:
 	// af parent scope:
 	return _t799;
@@ -27403,19 +27403,19 @@ string v__pref__default_c_compiler(void) {
 string v__pref__vexe_path(void) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	if ((vexe).len != 0) {
-		// autofree_scope_vars(pos=5953 line_nr=197 scope.pos=5950 scope.end_pos=5967)
+		// autofree_scope_vars(pos=5931 line_nr=197 scope.pos=5928 scope.end_pos=5945)
 		// af parent scope:
-		// var "vexe" var.pos=5909 var.line_nr=195
-		// var "real_vexe_path" var.pos=5970 var.line_nr=199
+		// var "vexe" var.pos=5887 var.line_nr=195
+		// var "real_vexe_path" var.pos=5948 var.line_nr=199
 		// af parent scope:
 		// af parent scope:
 		return vexe;
 	}
 	string real_vexe_path = os__real_path(os__executable());
 	os__setenv(_SLIT("VEXE"), real_vexe_path, true);
-	// autofree_scope_vars(pos=6059 line_nr=201 scope.pos=5887 scope.end_pos=6082)
-	// var "vexe" var.pos=5909 var.line_nr=195
-	// var "real_vexe_path" var.pos=5970 var.line_nr=199
+	// autofree_scope_vars(pos=6037 line_nr=201 scope.pos=5865 scope.end_pos=6060)
+	// var "vexe" var.pos=5887 var.line_nr=195
+	// var "real_vexe_path" var.pos=5948 var.line_nr=199
 	// af parent scope:
 	// af parent scope:
 	return real_vexe_path;
