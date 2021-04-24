@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "dee4904"
+#define V_COMMIT_HASH "187895c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8ccdae6"
+	#define V_COMMIT_HASH "dee4904"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "dee4904"
+	#define V_CURRENT_COMMIT_HASH "187895c"
 #endif
 
 // V comptime_defines:
@@ -1733,6 +1733,7 @@ typedef array Array_rune;
 typedef byte Array_fixed_byte_256 [256];
 typedef u16 Array_fixed_u16_32768 [32768];
 typedef byte Array_fixed_byte_4096 [4096];
+typedef u16 Array_fixed_u16_255 [255];
 typedef array Array_os__ProcessState;
 typedef array Array_v__token__Kind;
 typedef array Array_v__vmod__TokenKind;
@@ -19493,7 +19494,13 @@ os__Uname os__uname(void) {
 }
 
 string os__hostname(void) {
-	return os__execute(_SLIT("cmd /c hostname")).output;
+	Array_fixed_u16_255 hostname = {0};
+	u32 size = ((u32)(255U));
+	bool res = GetComputerNameW(&hostname[0], &size);
+	if (!res) {
+		return (*(v_error(os__get_error_msg(((int)(GetLastError())))).msg));
+	}
+	return string_from_wide(&hostname[0]);
 }
 
 string os__loginname(void) {
@@ -27322,7 +27329,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8ccdae6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dee4904"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
