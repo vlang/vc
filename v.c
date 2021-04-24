@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "187895c"
+#define V_COMMIT_HASH "b506d8f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dee4904"
+	#define V_COMMIT_HASH "187895c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "187895c"
+	#define V_CURRENT_COMMIT_HASH "b506d8f"
 #endif
 
 // V comptime_defines:
@@ -19855,13 +19855,9 @@ string os__hostname(void) {
 }
 
 string os__loginname(void) {
-	string lgnname = _SLIT("");
-	int size = 256;
-	char* buf = ((char*)(v_malloc(size)));
-	if (getlogin_r(buf, size) == 0) {
-		lgnname = cstring_to_vstring(buf);
-		v_free(buf);
-		return lgnname;
+	char* x = getlogin();
+	if (!isnil(x)) {
+		return cstring_to_vstring(x);
 	}
 	return _SLIT("");
 }
@@ -27996,7 +27992,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dee4904"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("187895c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
