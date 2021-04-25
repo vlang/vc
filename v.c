@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3c8d2bb"
+#define V_COMMIT_HASH "bfe0a78"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "44902b5"
+	#define V_COMMIT_HASH "3c8d2bb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3c8d2bb"
+	#define V_CURRENT_COMMIT_HASH "bfe0a78"
 #endif
 
 // V comptime_defines:
@@ -5483,7 +5483,7 @@ string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, voidptr buf);
 int string_utf32_code(string _rune);
 VV_LOCAL_SYMBOL int utf8_len(byte c);
-VV_LOCAL_SYMBOL int utf8_str_len(string s);
+int utf8_str_len(string s);
 int utf8_str_visible_length(string s);
 Array_string os__args_after(string cut_word);
 Array_string os__args_before(string cut_word);
@@ -11144,6 +11144,12 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 		i++;
 		x++;
 	}
+	if (i_n_digit == 0) {
+		{ // Unsafe block
+			array_set(&buf, i, &(byte[]) { 0 });
+			return tos(((byteptr)(&(*(byte*)/*ee elem_typ */array_get(buf, 0)))), i);
+		}
+	}
 	if (out_len >= 1) {
 		array_set(&buf, y - x, &(byte[]) { L'.' });
 		x++;
@@ -11322,9 +11328,9 @@ string strconv__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec32_bool mr_7987 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_7987.arg0;
-	bool ok = mr_7987.arg1;
+	multi_return_strconv__Dec32_bool mr_8114 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_8114.arg0;
+	bool ok = mr_8114.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -11341,9 +11347,9 @@ string strconv__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec32_bool mr_8704 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_8704.arg0;
-	bool ok = mr_8704.arg1;
+	multi_return_strconv__Dec32_bool mr_8831 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_8831.arg0;
+	bool ok = mr_8831.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -11388,6 +11394,12 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 		out /= 10U;
 		i++;
 		x++;
+	}
+	if (i_n_digit == 0) {
+		{ // Unsafe block
+			array_set(&buf, i, &(byte[]) { 0 });
+			return tos(((byteptr)(&(*(byte*)/*ee elem_typ */array_get(buf, 0)))), i);
+		}
 	}
 	if (out_len >= 1) {
 		array_set(&buf, y - x, &(byte[]) { L'.' });
@@ -11588,9 +11600,9 @@ string strconv__f64_to_str(f64 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp64) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec64_bool mr_9695 = strconv__f64_to_decimal_exact_int(mant, exp);
-	strconv__Dec64 d = mr_9695.arg0;
-	bool ok = mr_9695.arg1;
+	multi_return_strconv__Dec64_bool mr_9822 = strconv__f64_to_decimal_exact_int(mant, exp);
+	strconv__Dec64 d = mr_9822.arg0;
+	bool ok = mr_9822.arg1;
 	if (!ok) {
 		d = strconv__f64_to_decimal(mant, exp);
 	}
@@ -11607,9 +11619,9 @@ string strconv__f64_to_str_pad(f64 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp64) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec64_bool mr_10440 = strconv__f64_to_decimal_exact_int(mant, exp);
-	strconv__Dec64 d = mr_10440.arg0;
-	bool ok = mr_10440.arg1;
+	multi_return_strconv__Dec64_bool mr_10567 = strconv__f64_to_decimal_exact_int(mant, exp);
+	strconv__Dec64 d = mr_10567.arg0;
+	bool ok = mr_10567.arg1;
 	if (!ok) {
 		d = strconv__f64_to_decimal(mant, exp);
 	}
@@ -11713,6 +11725,9 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 			i++;
 		}
 	}
+	if (dec_digit <= 0) {
+		return tos(res.data, dot_res_sp);
+	}
 	if (dot_res_sp >= 0) {
 		if ((r_i - dot_res_sp) > dec_digit) {
 			r_i = dot_res_sp + dec_digit + 1;
@@ -11736,7 +11751,10 @@ string strconv__f64_to_str_lnd(f64 f, int dec_digit) {
 }
 
 string strconv__format_str(string s, strconv__BF_param p) {
-	int dif = p.len0 - s.len;
+	if (p.len0 <= 0) {
+		return s;
+	}
+	int dif = p.len0 - utf8_str_visible_length(s);
 	if (dif <= 0) {
 		return s;
 	}
@@ -17322,16 +17340,13 @@ VV_LOCAL_SYMBOL int utf8_len(byte c) {
 	return b;
 }
 
-VV_LOCAL_SYMBOL int utf8_str_len(string s) {
+int utf8_str_len(string s) {
 	int l = 0;
-	for (int i = 0; i < s.len; i++) {
+	int i = 0;
+	for (;;) {
+		if (!(i < s.len)) break;
 		l++;
-		byte c = s.str[i];
-		if (((c & (1 << 7))) != 0) {
-			for (byte t = ((byte)(1 << 6)); ((c & t)) != 0; t >>= 1) {
-				i++;
-			}
-		}
+		i += (((0xe5000000 >> (((s.str[i] >> 3) & 0x1e))) & 3)) + 1;
 	}
 	return l;
 }
@@ -17340,17 +17355,15 @@ int utf8_str_visible_length(string s) {
 	int l = 0;
 	int ul = 1;
 	for (int i = 0; i < s.len; i += ul) {
-		ul = 1;
 		byte c = s.str[i];
-		if (((c & (1 << 7))) != 0) {
-			for (byte t = ((byte)(1 << 6)); ((c & t)) != 0; t >>= 1) {
-				ul++;
-			}
-		}
+		ul = (((0xe5000000 >> (((s.str[i] >> 3) & 0x1e))) & 3)) + 1;
 		if (i + ul > s.len) {
 			return l;
 		}
 		l++;
+		if (ul == 1) {
+			continue;
+		}
 
 		if (ul == (2)) {
 			u64 r = ((u64)(((((u16)(c)) << 8U) | s.str[i + 1])));
@@ -27993,7 +28006,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("44902b5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3c8d2bb"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
