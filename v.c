@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7f5c3cc"
+#define V_COMMIT_HASH "44902b5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b506d8f"
+	#define V_COMMIT_HASH "7f5c3cc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7f5c3cc"
+	#define V_CURRENT_COMMIT_HASH "44902b5"
 #endif
 
 // V comptime_defines:
@@ -9589,7 +9589,7 @@ void strings__Builder_go_back(strings__Builder* b, int n) {
 
 VV_LOCAL_SYMBOL string strings__bytes2string(Array_byte b) {
 	Array_byte copy = array_clone(&b);
-	array_push((array*)&copy, _MOV((byte[]){ ((byte)(L'\0')) }));
+	array_push((array*)&copy, _MOV((byte[]){ ((byte)(0)) }));
 	return tos(copy.data, copy.len - 1);
 }
 
@@ -9608,7 +9608,7 @@ void strings__Builder_go_back_to(strings__Builder* b, int pos) {
 // Attr: [inline]
 inline void strings__Builder_writeln(strings__Builder* b, string s) {
 	array_push_many(&b->buf, s.str, s.len);
-	array_push((array*)&b->buf, _MOV((byte[]){ L'\n' }));
+	array_push((array*)&b->buf, _MOV((byte[]){ ((byte)(L'\n')) }));
 	b->len += s.len + 1;
 }
 
@@ -9627,8 +9627,9 @@ string strings__Builder_after(strings__Builder* b, int n) {
 }
 
 string strings__Builder_str(strings__Builder* b) {
-	array_push((array*)&b->buf, _MOV((byte[]){ L'\0' }));
-	string s = byte_vstring_with_len((((byte*)(memdup(b->buf.data, b->len)))), b->len);
+	array_push((array*)&b->buf, _MOV((byte[]){ ((byte)(0)) }));
+	byte* bcopy = ((byte*)(memdup(b->buf.data, b->buf.len)));
+	string s = byte_vstring_with_len(bcopy, b->len);
 	b->len = 0;
 	array_trim(&b->buf, 0);
 	return s;
@@ -27992,7 +27993,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b506d8f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7f5c3cc"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
