@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "de8c486"
+#define V_COMMIT_HASH "7ddf569"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2b43d31"
+	#define V_COMMIT_HASH "de8c486"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "de8c486"
+	#define V_CURRENT_COMMIT_HASH "7ddf569"
 #endif
 
 // V comptime_defines:
@@ -28046,7 +28046,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2b43d31"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de8c486"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65947,9 +65947,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_prepend(v__gen__c__Gen* g, v__ast_
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_contains_method(v__gen__c__Gen* g, v__ast__Type left_type) {
-	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, left_type);
-	v__ast__TypeSymbol* left_final_sym = v__ast__Table_get_final_type_symbol(g->table, left_type);
-	string left_type_str = string_replace(v__gen__c__Gen_typ(g, left_type), _SLIT("*"), _SLIT(""));
+	v__ast__Type unwrap_left_type = v__gen__c__Gen_unwrap_generic(g, left_type);
+	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, unwrap_left_type);
+	v__ast__TypeSymbol* left_final_sym = v__ast__Table_get_final_type_symbol(g->table, unwrap_left_type);
+	string left_type_str = string_replace(v__gen__c__Gen_typ(g, unwrap_left_type), _SLIT("*"), _SLIT(""));
 	string fn_name = _STR("%.*s\000_contains", 2, left_type_str);
 	if (!v__ast__TypeSymbol_has_method(left_sym, _SLIT("contains"))) {
 		v__ast__Array left_info = /* as */ *(v__ast__Array*)__as_cast((left_final_sym->info)._v__ast__Array,(left_final_sym->info)._typ, 363) /*expected idx: 363, name: v.ast.Array */ ;
@@ -65985,15 +65986,16 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_contains_method(v__gen__c__Gen* 
 		strings__Builder_writeln(&fn_builder, _SLIT("\treturn false;"));
 		strings__Builder_writeln(&fn_builder, _SLIT("}"));
 		array_push((array*)&g->auto_fn_definitions, _MOV((string[]){ string_clone(strings__Builder_str(&fn_builder)) }));
-		v__ast__TypeSymbol_register_method(left_sym, *(v__ast__Fn*)memdup(&(v__ast__Fn){.params = new_array_from_c_array(2, 2, sizeof(v__ast__Param), _MOV((v__ast__Param[2]){(v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = left_type,.type_pos = {0},.is_hidden = 0,}, (v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = left_info.elem_type,.type_pos = {0},.is_hidden = 0,}})),.return_type = 0,.is_variadic = 0,.language = 0,.generic_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_conditional = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.ctdefine = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 1, sizeof(v__ast__Attr)),.name = _SLIT("contains"),.source_fn = 0,.usages = 0,}, sizeof(v__ast__Fn)));
+		v__ast__TypeSymbol_register_method(left_sym, *(v__ast__Fn*)memdup(&(v__ast__Fn){.params = new_array_from_c_array(2, 2, sizeof(v__ast__Param), _MOV((v__ast__Param[2]){(v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = unwrap_left_type,.type_pos = {0},.is_hidden = 0,}, (v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = left_info.elem_type,.type_pos = {0},.is_hidden = 0,}})),.return_type = 0,.is_variadic = 0,.language = 0,.generic_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_conditional = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.ctdefine = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 1, sizeof(v__ast__Attr)),.name = _SLIT("contains"),.source_fn = 0,.usages = 0,}, sizeof(v__ast__Fn)));
 	}
-	// autofree_scope_vars(pos=15658 line_nr=502 scope.pos=13430 scope.end_pos=15674)
+	// autofree_scope_vars(pos=15735 line_nr=503 scope.pos=13430 scope.end_pos=15751)
 	// var "g" var.pos=13435 var.line_nr=454
 	// var "left_type" var.pos=13468 var.line_nr=454
-	// var "left_sym" var.pos=13502 var.line_nr=455
-	// var "left_final_sym" var.pos=13550 var.line_nr=456
-	// var "left_type_str" var.pos=13614 var.line_nr=457
-	// var "fn_name" var.pos=13666 var.line_nr=458
+	// var "unwrap_left_type" var.pos=13498 var.line_nr=455
+	// var "left_sym" var.pos=13551 var.line_nr=456
+	// var "left_final_sym" var.pos=13606 var.line_nr=457
+	// var "left_type_str" var.pos=13677 var.line_nr=458
+	// var "fn_name" var.pos=13736 var.line_nr=459
 	// af parent scope:
 	// af parent scope:
 	return fn_name;
@@ -66012,8 +66014,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_contains(v__gen__c__Gen* g, v__ast
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_index_method(v__gen__c__Gen* g, v__ast__Type left_type) {
-	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, left_type);
-	string left_type_str = string_trim(v__gen__c__Gen_typ(g, left_type), _SLIT("*"));
+	v__ast__Type unwrap_left_type = v__gen__c__Gen_unwrap_generic(g, left_type);
+	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, unwrap_left_type);
+	string left_type_str = string_trim(v__gen__c__Gen_typ(g, unwrap_left_type), _SLIT("*"));
 	string fn_name = _STR("%.*s\000_index", 2, left_type_str);
 	if (!v__ast__TypeSymbol_has_method(left_sym, _SLIT("index"))) {
 		v__ast__Array info = /* as */ *(v__ast__Array*)__as_cast((left_sym->info)._v__ast__Array,(left_sym->info)._typ, 363) /*expected idx: 363, name: v.ast.Array */ ;
@@ -66049,14 +66052,15 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_index_method(v__gen__c__Gen* g, 
 		strings__Builder_writeln(&fn_builder, _SLIT("\treturn -1;"));
 		strings__Builder_writeln(&fn_builder, _SLIT("}"));
 		array_push((array*)&g->auto_fn_definitions, _MOV((string[]){ string_clone(strings__Builder_str(&fn_builder)) }));
-		v__ast__TypeSymbol_register_method(left_sym, *(v__ast__Fn*)memdup(&(v__ast__Fn){.params = new_array_from_c_array(2, 2, sizeof(v__ast__Param), _MOV((v__ast__Param[2]){(v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = left_type,.type_pos = {0},.is_hidden = 0,}, (v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = info.elem_type,.type_pos = {0},.is_hidden = 0,}})),.return_type = 0,.is_variadic = 0,.language = 0,.generic_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_conditional = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.ctdefine = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 1, sizeof(v__ast__Attr)),.name = _SLIT("index"),.source_fn = 0,.usages = 0,}, sizeof(v__ast__Fn)));
+		v__ast__TypeSymbol_register_method(left_sym, *(v__ast__Fn*)memdup(&(v__ast__Fn){.params = new_array_from_c_array(2, 2, sizeof(v__ast__Param), _MOV((v__ast__Param[2]){(v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = unwrap_left_type,.type_pos = {0},.is_hidden = 0,}, (v__ast__Param){.pos = {0},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.typ = info.elem_type,.type_pos = {0},.is_hidden = 0,}})),.return_type = 0,.is_variadic = 0,.language = 0,.generic_names = __new_array(0, 1, sizeof(string)),.is_pub = 0,.is_deprecated = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_conditional = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.ctdefine = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 1, sizeof(v__ast__Attr)),.name = _SLIT("index"),.source_fn = 0,.usages = 0,}, sizeof(v__ast__Fn)));
 	}
-	// autofree_scope_vars(pos=18061 line_nr=565 scope.pos=15963 scope.end_pos=18077)
-	// var "g" var.pos=15968 var.line_nr=518
-	// var "left_type" var.pos=15998 var.line_nr=518
-	// var "left_sym" var.pos=16032 var.line_nr=519
-	// var "left_type_str" var.pos=16084 var.line_nr=520
-	// var "fn_name" var.pos=16129 var.line_nr=521
+	// autofree_scope_vars(pos=18208 line_nr=567 scope.pos=16040 scope.end_pos=18224)
+	// var "g" var.pos=16045 var.line_nr=519
+	// var "left_type" var.pos=16075 var.line_nr=519
+	// var "unwrap_left_type" var.pos=16105 var.line_nr=520
+	// var "left_sym" var.pos=16158 var.line_nr=521
+	// var "left_type_str" var.pos=16217 var.line_nr=522
+	// var "fn_name" var.pos=16269 var.line_nr=523
 	// af parent scope:
 	// af parent scope:
 	return fn_name;
