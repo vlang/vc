@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e4a2d1b"
+#define V_COMMIT_HASH "626517f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1fbf75f"
+	#define V_COMMIT_HASH "e4a2d1b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e4a2d1b"
+	#define V_CURRENT_COMMIT_HASH "626517f"
 #endif
 
 // V comptime_defines:
@@ -2868,6 +2868,7 @@ struct flag__FlagParser {
 	string application_description;
 	int min_free_args;
 	string args_description;
+	bool allow_unknown_args;
 } ;
 
 struct flag__Flag {
@@ -2975,7 +2976,6 @@ struct v__pref__Preferences {
 	v__pref__Arch arch;
 	v__pref__OutputMode output_mode;
 	bool is_verbose;
-	bool is_watch;
 	bool is_test;
 	bool is_script;
 	bool is_vsh;
@@ -5895,6 +5895,7 @@ void flag__FlagParser_application(flag__FlagParser* fs, string name);
 void flag__FlagParser_version(flag__FlagParser* fs, string vers);
 void flag__FlagParser_description(flag__FlagParser* fs, string desc);
 void flag__FlagParser_skip_executable(flag__FlagParser* fs);
+void flag__FlagParser_allow_unknown_args(flag__FlagParser* fs);
 VV_LOCAL_SYMBOL void flag__FlagParser_add_flag(flag__FlagParser* fs, string name, byte abbr, string usage, string desc);
 VV_LOCAL_SYMBOL Array_string flag__FlagParser_parse_value(flag__FlagParser* fs, string longhand, byte shorthand);
 VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser* fs, string longhand, byte shorthand);
@@ -5913,8 +5914,8 @@ void flag__FlagParser_limit_free_args_to_at_least(flag__FlagParser* fs, int n);
 void flag__FlagParser_limit_free_args_to_exactly(flag__FlagParser* fs, int n);
 void flag__FlagParser_limit_free_args(flag__FlagParser* fs, int min, int max);
 void flag__FlagParser_arguments_description(flag__FlagParser* fs, string description);
-string flag__FlagParser_usage(flag__FlagParser fs);
-Option_Array_string flag__FlagParser_finalize(flag__FlagParser fs);
+string flag__FlagParser_usage(flag__FlagParser* fs);
+Option_Array_string flag__FlagParser_finalize(flag__FlagParser* fs);
 VV_LOCAL_SYMBOL bool semver__version_satisfies(semver__Version ver, string input);
 VV_LOCAL_SYMBOL bool semver__compare_eq(semver__Version v1, semver__Version v2);
 VV_LOCAL_SYMBOL bool semver__compare_gt(semver__Version v1, semver__Version v2);
@@ -23055,9 +23056,9 @@ VV_LOCAL_SYMBOL void flag__FlagParser_free(flag__FlagParser* f) {
 }
 
 flag__FlagParser* flag__new_flag_parser(Array_string args) {
-	flag__FlagParser* _t1328 = (flag__FlagParser*)memdup(&(flag__FlagParser){.args = array_clone(&args),.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 1, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},}, sizeof(flag__FlagParser));
-	// autofree_scope_vars(pos=1988 line_nr=99 scope.pos=1943 scope.end_pos=2071)
-	// var "args" var.pos=1959 var.line_nr=98
+	flag__FlagParser* _t1328 = (flag__FlagParser*)memdup(&(flag__FlagParser){.args = array_clone(&args),.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 1, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},.allow_unknown_args = 0,}, sizeof(flag__FlagParser));
+	// autofree_scope_vars(pos=2070 line_nr=100 scope.pos=2025 scope.end_pos=2153)
+	// var "args" var.pos=2041 var.line_nr=99
 	// af parent scope:
 	// af parent scope:
 	return _t1328;
@@ -23077,6 +23078,10 @@ void flag__FlagParser_description(flag__FlagParser* fs, string desc) {
 
 void flag__FlagParser_skip_executable(flag__FlagParser* fs) {
 	array_delete(&fs->args, 0);
+}
+
+void flag__FlagParser_allow_unknown_args(flag__FlagParser* fs) {
+	fs->allow_unknown_args = true;
 }
 
 VV_LOCAL_SYMBOL void flag__FlagParser_add_flag(flag__FlagParser* fs, string name, byte abbr, string usage, string desc) {
@@ -23119,22 +23124,22 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 					string_free(&full);
 				}
 				// Defer end
-				// autofree_scope_vars(pos=3750 line_nr=170 scope.pos=3745 scope.end_pos=3764)
+				// autofree_scope_vars(pos=4192 line_nr=179 scope.pos=4187 scope.end_pos=4206)
 				// af parent scope:
-				// var "nextarg" var.pos=3769 var.line_nr=172
+				// var "nextarg" var.pos=4211 var.line_nr=181
 				// af parent scope:
-				// var "i" var.pos=3449 var.line_nr=156
+				// var "i" var.pos=3891 var.line_nr=165
 				// skipping tmp var "i"
-				// var "arg" var.pos=3452 var.line_nr=156
+				// var "arg" var.pos=3894 var.line_nr=165
 				// skipping tmp var "arg"
 				// af parent scope:
-				// var "fs" var.pos=3182 var.line_nr=145
-				// var "longhand" var.pos=3209 var.line_nr=145
-				// var "shorthand" var.pos=3226 var.line_nr=145
-				// var "full" var.pos=3254 var.line_nr=146
-				// var "found_entries" var.pos=3318 var.line_nr=150
-				// var "to_delete" var.pos=3351 var.line_nr=151
-				// var "should_skip_one" var.pos=3419 var.line_nr=155
+				// var "fs" var.pos=3624 var.line_nr=154
+				// var "longhand" var.pos=3651 var.line_nr=154
+				// var "shorthand" var.pos=3668 var.line_nr=154
+				// var "full" var.pos=3696 var.line_nr=155
+				// var "found_entries" var.pos=3760 var.line_nr=159
+				// var "to_delete" var.pos=3793 var.line_nr=160
+				// var "should_skip_one" var.pos=3861 var.line_nr=164
 				// af parent scope:
 				// af parent scope:
 				return _t1330;
@@ -23155,24 +23160,24 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 						string_free(&full);
 					}
 					// Defer end
-					// autofree_scope_vars(pos=4022 line_nr=179 scope.pos=3880 scope.end_pos=4037)
+					// autofree_scope_vars(pos=4464 line_nr=188 scope.pos=4322 scope.end_pos=4479)
 					// af parent scope:
-					// var "nextarg_rest" var.pos=3823 var.line_nr=174
+					// var "nextarg_rest" var.pos=4265 var.line_nr=183
 					// af parent scope:
-					// var "nextarg" var.pos=3769 var.line_nr=172
+					// var "nextarg" var.pos=4211 var.line_nr=181
 					// af parent scope:
-					// var "i" var.pos=3449 var.line_nr=156
+					// var "i" var.pos=3891 var.line_nr=165
 					// skipping tmp var "i"
-					// var "arg" var.pos=3452 var.line_nr=156
+					// var "arg" var.pos=3894 var.line_nr=165
 					// skipping tmp var "arg"
 					// af parent scope:
-					// var "fs" var.pos=3182 var.line_nr=145
-					// var "longhand" var.pos=3209 var.line_nr=145
-					// var "shorthand" var.pos=3226 var.line_nr=145
-					// var "full" var.pos=3254 var.line_nr=146
-					// var "found_entries" var.pos=3318 var.line_nr=150
-					// var "to_delete" var.pos=3351 var.line_nr=151
-					// var "should_skip_one" var.pos=3419 var.line_nr=155
+					// var "fs" var.pos=3624 var.line_nr=154
+					// var "longhand" var.pos=3651 var.line_nr=154
+					// var "shorthand" var.pos=3668 var.line_nr=154
+					// var "full" var.pos=3696 var.line_nr=155
+					// var "found_entries" var.pos=3760 var.line_nr=159
+					// var "to_delete" var.pos=3793 var.line_nr=160
+					// var "should_skip_one" var.pos=3861 var.line_nr=164
 					// af parent scope:
 					// af parent scope:
 					return _t1331;
@@ -23206,14 +23211,14 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 		string_free(&full);
 	}
 	// Defer end
-	// autofree_scope_vars(pos=4450 line_nr=199 scope.pos=3177 scope.end_pos=4472)
-	// var "fs" var.pos=3182 var.line_nr=145
-	// var "longhand" var.pos=3209 var.line_nr=145
-	// var "shorthand" var.pos=3226 var.line_nr=145
-	// var "full" var.pos=3254 var.line_nr=146
-	// var "found_entries" var.pos=3318 var.line_nr=150
-	// var "to_delete" var.pos=3351 var.line_nr=151
-	// var "should_skip_one" var.pos=3419 var.line_nr=155
+	// autofree_scope_vars(pos=4892 line_nr=208 scope.pos=3619 scope.end_pos=4914)
+	// var "fs" var.pos=3624 var.line_nr=154
+	// var "longhand" var.pos=3651 var.line_nr=154
+	// var "shorthand" var.pos=3668 var.line_nr=154
+	// var "full" var.pos=3696 var.line_nr=155
+	// var "found_entries" var.pos=3760 var.line_nr=159
+	// var "to_delete" var.pos=3793 var.line_nr=160
+	// var "should_skip_one" var.pos=3861 var.line_nr=164
 	// af parent scope:
 	// af parent scope:
 	return found_entries;
@@ -23241,20 +23246,20 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 					array_delete(&fs->args, i);
 					Option_string _t1338;
 					opt_ok(&(string[]) { val }, (Option*)(&_t1338), sizeof(string));
-					// autofree_scope_vars(pos=5185 line_nr=227 scope.pos=5102 scope.end_pos=5201)
-					// var "val" var.pos=5109 var.line_nr=224
+					// autofree_scope_vars(pos=5627 line_nr=236 scope.pos=5544 scope.end_pos=5643)
+					// var "val" var.pos=5551 var.line_nr=233
 					// af parent scope:
 					// af parent scope:
-					// var "i" var.pos=4789 var.line_nr=211
+					// var "i" var.pos=5231 var.line_nr=220
 					// skipping tmp var "i"
-					// var "arg" var.pos=4792 var.line_nr=211
+					// var "arg" var.pos=5234 var.line_nr=220
 					// skipping tmp var "arg"
 					// af parent scope:
-					// var "full" var.pos=4761 var.line_nr=210
+					// var "full" var.pos=5203 var.line_nr=219
 					// af parent scope:
-					// var "fs" var.pos=4681 var.line_nr=208
-					// var "longhand" var.pos=4713 var.line_nr=208
-					// var "shorthand" var.pos=4730 var.line_nr=208
+					// var "fs" var.pos=5123 var.line_nr=217
+					// var "longhand" var.pos=5155 var.line_nr=217
+					// var "shorthand" var.pos=5172 var.line_nr=217
 					// af parent scope:
 					// af parent scope:
 					return _t1338;
@@ -23262,19 +23267,19 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 					array_delete(&fs->args, i);
 					Option_string _t1339;
 					opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t1339), sizeof(string));
-					// autofree_scope_vars(pos=5237 line_nr=230 scope.pos=5208 scope.end_pos=5256)
+					// autofree_scope_vars(pos=5679 line_nr=239 scope.pos=5650 scope.end_pos=5698)
 					// af parent scope:
 					// af parent scope:
-					// var "i" var.pos=4789 var.line_nr=211
+					// var "i" var.pos=5231 var.line_nr=220
 					// skipping tmp var "i"
-					// var "arg" var.pos=4792 var.line_nr=211
+					// var "arg" var.pos=5234 var.line_nr=220
 					// skipping tmp var "arg"
 					// af parent scope:
-					// var "full" var.pos=4761 var.line_nr=210
+					// var "full" var.pos=5203 var.line_nr=219
 					// af parent scope:
-					// var "fs" var.pos=4681 var.line_nr=208
-					// var "longhand" var.pos=4713 var.line_nr=208
-					// var "shorthand" var.pos=4730 var.line_nr=208
+					// var "fs" var.pos=5123 var.line_nr=217
+					// var "longhand" var.pos=5155 var.line_nr=217
+					// var "shorthand" var.pos=5172 var.line_nr=217
 					// af parent scope:
 					// af parent scope:
 					return _t1339;
@@ -23285,19 +23290,19 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 				array_delete(&fs->args, i);
 				Option_string _t1340;
 				opt_ok(&(string[]) { val }, (Option*)(&_t1340), sizeof(string));
-				// autofree_scope_vars(pos=5406 line_nr=237 scope.pos=5327 scope.end_pos=5421)
-				// var "val" var.pos=5354 var.line_nr=235
+				// autofree_scope_vars(pos=5848 line_nr=246 scope.pos=5769 scope.end_pos=5863)
+				// var "val" var.pos=5796 var.line_nr=244
 				// af parent scope:
-				// var "i" var.pos=4789 var.line_nr=211
+				// var "i" var.pos=5231 var.line_nr=220
 				// skipping tmp var "i"
-				// var "arg" var.pos=4792 var.line_nr=211
+				// var "arg" var.pos=5234 var.line_nr=220
 				// skipping tmp var "arg"
 				// af parent scope:
-				// var "full" var.pos=4761 var.line_nr=210
+				// var "full" var.pos=5203 var.line_nr=219
 				// af parent scope:
-				// var "fs" var.pos=4681 var.line_nr=208
-				// var "longhand" var.pos=4713 var.line_nr=208
-				// var "shorthand" var.pos=4730 var.line_nr=208
+				// var "fs" var.pos=5123 var.line_nr=217
+				// var "longhand" var.pos=5155 var.line_nr=217
+				// var "shorthand" var.pos=5172 var.line_nr=217
 				// af parent scope:
 				// af parent scope:
 				return _t1340;
@@ -23305,18 +23310,18 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 			if (arg.len > 1 && string_at(arg, 0) == L'-' && string_at(arg, 1) != L'-' && string_index_byte(arg, shorthand) != -1) {
 				Option_string _t1341;
 				opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t1341), sizeof(string));
-				// autofree_scope_vars(pos=5553 line_nr=241 scope.pos=5510 scope.end_pos=5571)
+				// autofree_scope_vars(pos=5995 line_nr=250 scope.pos=5952 scope.end_pos=6013)
 				// af parent scope:
-				// var "i" var.pos=4789 var.line_nr=211
+				// var "i" var.pos=5231 var.line_nr=220
 				// skipping tmp var "i"
-				// var "arg" var.pos=4792 var.line_nr=211
+				// var "arg" var.pos=5234 var.line_nr=220
 				// skipping tmp var "arg"
 				// af parent scope:
-				// var "full" var.pos=4761 var.line_nr=210
+				// var "full" var.pos=5203 var.line_nr=219
 				// af parent scope:
-				// var "fs" var.pos=4681 var.line_nr=208
-				// var "longhand" var.pos=4713 var.line_nr=208
-				// var "shorthand" var.pos=4730 var.line_nr=208
+				// var "fs" var.pos=5123 var.line_nr=217
+				// var "longhand" var.pos=5155 var.line_nr=217
+				// var "shorthand" var.pos=5172 var.line_nr=217
 				// af parent scope:
 				// af parent scope:
 				return _t1341;
@@ -23340,12 +23345,12 @@ Option_bool flag__FlagParser_bool_opt(flag__FlagParser* fs, string name, byte ab
 	}
 	Option_bool _t1345;
 	opt_ok(&(bool[]) { res }, (Option*)(&_t1345), sizeof(bool));
-	// autofree_scope_vars(pos=6059 line_nr=259 scope.pos=5789 scope.end_pos=6071)
-	// var "fs" var.pos=5794 var.line_nr=250
-	// var "name" var.pos=5818 var.line_nr=250
-	// var "abbr" var.pos=5831 var.line_nr=250
-	// var "usage" var.pos=5842 var.line_nr=250
-	// var "res" var.pos=5869 var.line_nr=251
+	// autofree_scope_vars(pos=6501 line_nr=268 scope.pos=6231 scope.end_pos=6513)
+	// var "fs" var.pos=6236 var.line_nr=259
+	// var "name" var.pos=6260 var.line_nr=259
+	// var "abbr" var.pos=6273 var.line_nr=259
+	// var "usage" var.pos=6284 var.line_nr=259
+	// var "res" var.pos=6311 var.line_nr=260
 	// af parent scope:
 	// af parent scope:
 	return _t1345;
@@ -23355,27 +23360,27 @@ bool flag__FlagParser_bool(flag__FlagParser* fs, string name, byte abbr, bool bd
 	Option_bool _t1346 = flag__FlagParser_bool_opt(fs, name, abbr, usage);
 	if (_t1346.state != 0) { /*or block*/ 
 		IError err = _t1346.err;
-		// autofree_scope_vars(pos=6422 line_nr=270 scope.pos=6421 scope.end_pos=6439)
-		// var "err" var.pos=6421 var.line_nr=270
+		// autofree_scope_vars(pos=6864 line_nr=279 scope.pos=6863 scope.end_pos=6881)
+		// var "err" var.pos=6863 var.line_nr=279
 		// af parent scope:
-		// var "fs" var.pos=6297 var.line_nr=269
-		// var "name" var.pos=6317 var.line_nr=269
-		// var "abbr" var.pos=6330 var.line_nr=269
-		// var "bdefault" var.pos=6341 var.line_nr=269
-		// var "usage" var.pos=6356 var.line_nr=269
-		// var "value" var.pos=6378 var.line_nr=270
+		// var "fs" var.pos=6739 var.line_nr=278
+		// var "name" var.pos=6759 var.line_nr=278
+		// var "abbr" var.pos=6772 var.line_nr=278
+		// var "bdefault" var.pos=6783 var.line_nr=278
+		// var "usage" var.pos=6798 var.line_nr=278
+		// var "value" var.pos=6820 var.line_nr=279
 		// af parent scope:
 		// af parent scope:
 		return bdefault;
 	}
  	bool value =  *(bool*)_t1346.data;
-	// autofree_scope_vars(pos=6441 line_nr=271 scope.pos=6292 scope.end_pos=6455)
-	// var "fs" var.pos=6297 var.line_nr=269
-	// var "name" var.pos=6317 var.line_nr=269
-	// var "abbr" var.pos=6330 var.line_nr=269
-	// var "bdefault" var.pos=6341 var.line_nr=269
-	// var "usage" var.pos=6356 var.line_nr=269
-	// var "value" var.pos=6378 var.line_nr=270
+	// autofree_scope_vars(pos=6883 line_nr=280 scope.pos=6734 scope.end_pos=6897)
+	// var "fs" var.pos=6739 var.line_nr=278
+	// var "name" var.pos=6759 var.line_nr=278
+	// var "abbr" var.pos=6772 var.line_nr=278
+	// var "bdefault" var.pos=6783 var.line_nr=278
+	// var "usage" var.pos=6798 var.line_nr=278
+	// var "value" var.pos=6820 var.line_nr=279
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -23390,13 +23395,13 @@ Array_int flag__FlagParser_int_multi(flag__FlagParser* fs, string name, byte abb
 		string val = ((string*)parsed.data)[_t1349];
 		array_push((array*)&value, _MOV((int[]){ string_int(val) }));
 	}
-	// autofree_scope_vars(pos=6841 line_nr=283 scope.pos=6609 scope.end_pos=6855)
-	// var "fs" var.pos=6614 var.line_nr=276
-	// var "name" var.pos=6639 var.line_nr=276
-	// var "abbr" var.pos=6652 var.line_nr=276
-	// var "usage" var.pos=6663 var.line_nr=276
-	// var "parsed" var.pos=6737 var.line_nr=278
-	// var "value" var.pos=6779 var.line_nr=279
+	// autofree_scope_vars(pos=7283 line_nr=292 scope.pos=7051 scope.end_pos=7297)
+	// var "fs" var.pos=7056 var.line_nr=285
+	// var "name" var.pos=7081 var.line_nr=285
+	// var "abbr" var.pos=7094 var.line_nr=285
+	// var "usage" var.pos=7105 var.line_nr=285
+	// var "parsed" var.pos=7179 var.line_nr=287
+	// var "value" var.pos=7221 var.line_nr=288
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -23415,12 +23420,12 @@ Option_int flag__FlagParser_int_opt(flag__FlagParser* fs, string name, byte abbr
 	}
 	Option_int _t1353;
 	opt_ok(&(int[]) { res }, (Option*)(&_t1353), sizeof(int));
-	// autofree_scope_vars(pos=7310 line_nr=299 scope.pos=7014 scope.end_pos=7322)
-	// var "fs" var.pos=7019 var.line_nr=288
-	// var "name" var.pos=7042 var.line_nr=288
-	// var "abbr" var.pos=7055 var.line_nr=288
-	// var "usage" var.pos=7066 var.line_nr=288
-	// var "res" var.pos=7092 var.line_nr=289
+	// autofree_scope_vars(pos=7752 line_nr=308 scope.pos=7456 scope.end_pos=7764)
+	// var "fs" var.pos=7461 var.line_nr=297
+	// var "name" var.pos=7484 var.line_nr=297
+	// var "abbr" var.pos=7497 var.line_nr=297
+	// var "usage" var.pos=7508 var.line_nr=297
+	// var "res" var.pos=7534 var.line_nr=298
 	// af parent scope:
 	// af parent scope:
 	return _t1353;
@@ -23430,27 +23435,27 @@ int flag__FlagParser_int(flag__FlagParser* fs, string name, byte abbr, int idefa
 	Option_int _t1354 = flag__FlagParser_int_opt(fs, name, abbr, usage);
 	if (_t1354.state != 0) { /*or block*/ 
 		IError err = _t1354.err;
-		// autofree_scope_vars(pos=7661 line_nr=310 scope.pos=7660 scope.end_pos=7678)
-		// var "err" var.pos=7660 var.line_nr=310
+		// autofree_scope_vars(pos=8103 line_nr=319 scope.pos=8102 scope.end_pos=8120)
+		// var "err" var.pos=8102 var.line_nr=319
 		// af parent scope:
-		// var "fs" var.pos=7540 var.line_nr=309
-		// var "name" var.pos=7559 var.line_nr=309
-		// var "abbr" var.pos=7572 var.line_nr=309
-		// var "idefault" var.pos=7583 var.line_nr=309
-		// var "usage" var.pos=7597 var.line_nr=309
-		// var "value" var.pos=7618 var.line_nr=310
+		// var "fs" var.pos=7982 var.line_nr=318
+		// var "name" var.pos=8001 var.line_nr=318
+		// var "abbr" var.pos=8014 var.line_nr=318
+		// var "idefault" var.pos=8025 var.line_nr=318
+		// var "usage" var.pos=8039 var.line_nr=318
+		// var "value" var.pos=8060 var.line_nr=319
 		// af parent scope:
 		// af parent scope:
 		return idefault;
 	}
  	int value =  *(int*)_t1354.data;
-	// autofree_scope_vars(pos=7680 line_nr=311 scope.pos=7535 scope.end_pos=7694)
-	// var "fs" var.pos=7540 var.line_nr=309
-	// var "name" var.pos=7559 var.line_nr=309
-	// var "abbr" var.pos=7572 var.line_nr=309
-	// var "idefault" var.pos=7583 var.line_nr=309
-	// var "usage" var.pos=7597 var.line_nr=309
-	// var "value" var.pos=7618 var.line_nr=310
+	// autofree_scope_vars(pos=8122 line_nr=320 scope.pos=7977 scope.end_pos=8136)
+	// var "fs" var.pos=7982 var.line_nr=318
+	// var "name" var.pos=8001 var.line_nr=318
+	// var "abbr" var.pos=8014 var.line_nr=318
+	// var "idefault" var.pos=8025 var.line_nr=318
+	// var "usage" var.pos=8039 var.line_nr=318
+	// var "value" var.pos=8060 var.line_nr=319
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -23465,13 +23470,13 @@ Array_f64 flag__FlagParser_float_multi(flag__FlagParser* fs, string name, byte a
 		string val = ((string*)parsed.data)[_t1357];
 		array_push((array*)&value, _MOV((f64[]){ string_f64(val) }));
 	}
-	// autofree_scope_vars(pos=8086 line_nr=323 scope.pos=7850 scope.end_pos=8100)
-	// var "fs" var.pos=7855 var.line_nr=316
-	// var "name" var.pos=7882 var.line_nr=316
-	// var "abbr" var.pos=7895 var.line_nr=316
-	// var "usage" var.pos=7906 var.line_nr=316
-	// var "parsed" var.pos=7982 var.line_nr=318
-	// var "value" var.pos=8024 var.line_nr=319
+	// autofree_scope_vars(pos=8528 line_nr=332 scope.pos=8292 scope.end_pos=8542)
+	// var "fs" var.pos=8297 var.line_nr=325
+	// var "name" var.pos=8324 var.line_nr=325
+	// var "abbr" var.pos=8337 var.line_nr=325
+	// var "usage" var.pos=8348 var.line_nr=325
+	// var "parsed" var.pos=8424 var.line_nr=327
+	// var "value" var.pos=8466 var.line_nr=328
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -23489,12 +23494,12 @@ Option_f64 flag__FlagParser_float_opt(flag__FlagParser* fs, string name, byte ab
 	}
 	Option_f64 _t1361;
 	opt_ok(&(f64[]) { res }, (Option*)(&_t1361), sizeof(f64));
-	// autofree_scope_vars(pos=8542 line_nr=338 scope.pos=8261 scope.end_pos=8554)
-	// var "fs" var.pos=8266 var.line_nr=328
-	// var "name" var.pos=8291 var.line_nr=328
-	// var "abbr" var.pos=8304 var.line_nr=328
-	// var "usage" var.pos=8315 var.line_nr=328
-	// var "res" var.pos=8341 var.line_nr=329
+	// autofree_scope_vars(pos=8984 line_nr=347 scope.pos=8703 scope.end_pos=8996)
+	// var "fs" var.pos=8708 var.line_nr=337
+	// var "name" var.pos=8733 var.line_nr=337
+	// var "abbr" var.pos=8746 var.line_nr=337
+	// var "usage" var.pos=8757 var.line_nr=337
+	// var "res" var.pos=8783 var.line_nr=338
 	// af parent scope:
 	// af parent scope:
 	return _t1361;
@@ -23504,27 +23509,27 @@ f64 flag__FlagParser_float(flag__FlagParser* fs, string name, byte abbr, f64 fde
 	Option_f64 _t1362 = flag__FlagParser_float_opt(fs, name, abbr, usage);
 	if (_t1362.state != 0) { /*or block*/ 
 		IError err = _t1362.err;
-		// autofree_scope_vars(pos=8902 line_nr=349 scope.pos=8901 scope.end_pos=8919)
-		// var "err" var.pos=8901 var.line_nr=349
+		// autofree_scope_vars(pos=9344 line_nr=358 scope.pos=9343 scope.end_pos=9361)
+		// var "err" var.pos=9343 var.line_nr=358
 		// af parent scope:
-		// var "fs" var.pos=8777 var.line_nr=348
-		// var "name" var.pos=8798 var.line_nr=348
-		// var "abbr" var.pos=8811 var.line_nr=348
-		// var "fdefault" var.pos=8822 var.line_nr=348
-		// var "usage" var.pos=8836 var.line_nr=348
-		// var "value" var.pos=8857 var.line_nr=349
+		// var "fs" var.pos=9219 var.line_nr=357
+		// var "name" var.pos=9240 var.line_nr=357
+		// var "abbr" var.pos=9253 var.line_nr=357
+		// var "fdefault" var.pos=9264 var.line_nr=357
+		// var "usage" var.pos=9278 var.line_nr=357
+		// var "value" var.pos=9299 var.line_nr=358
 		// af parent scope:
 		// af parent scope:
 		return fdefault;
 	}
  	f64 value =  *(f64*)_t1362.data;
-	// autofree_scope_vars(pos=8921 line_nr=350 scope.pos=8772 scope.end_pos=8935)
-	// var "fs" var.pos=8777 var.line_nr=348
-	// var "name" var.pos=8798 var.line_nr=348
-	// var "abbr" var.pos=8811 var.line_nr=348
-	// var "fdefault" var.pos=8822 var.line_nr=348
-	// var "usage" var.pos=8836 var.line_nr=348
-	// var "value" var.pos=8857 var.line_nr=349
+	// autofree_scope_vars(pos=9363 line_nr=359 scope.pos=9214 scope.end_pos=9377)
+	// var "fs" var.pos=9219 var.line_nr=357
+	// var "name" var.pos=9240 var.line_nr=357
+	// var "abbr" var.pos=9253 var.line_nr=357
+	// var "fdefault" var.pos=9264 var.line_nr=357
+	// var "usage" var.pos=9278 var.line_nr=357
+	// var "value" var.pos=9299 var.line_nr=358
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -23533,11 +23538,11 @@ f64 flag__FlagParser_float(flag__FlagParser* fs, string name, byte abbr, f64 fde
 Array_string flag__FlagParser_string_multi(flag__FlagParser* fs, string name, byte abbr, string usage) {
 	flag__FlagParser_add_flag(fs, name, abbr, usage, _SLIT("<multiple strings>"));
 	Array_string _t1365 = flag__FlagParser_parse_value(fs, name, abbr);
-	// autofree_scope_vars(pos=9228 line_nr=357 scope.pos=9092 scope.end_pos=9263)
-	// var "fs" var.pos=9097 var.line_nr=355
-	// var "name" var.pos=9125 var.line_nr=355
-	// var "abbr" var.pos=9138 var.line_nr=355
-	// var "usage" var.pos=9149 var.line_nr=355
+	// autofree_scope_vars(pos=9670 line_nr=366 scope.pos=9534 scope.end_pos=9705)
+	// var "fs" var.pos=9539 var.line_nr=364
+	// var "name" var.pos=9567 var.line_nr=364
+	// var "abbr" var.pos=9580 var.line_nr=364
+	// var "usage" var.pos=9591 var.line_nr=364
 	// af parent scope:
 	// af parent scope:
 	return _t1365;
@@ -23555,12 +23560,12 @@ Option_string flag__FlagParser_string_opt(flag__FlagParser* fs, string name, byt
 	}
 	Option_string _t1367;
 	opt_ok(&(string[]) { res }, (Option*)(&_t1367), sizeof(string));
-	// autofree_scope_vars(pos=9704 line_nr=372 scope.pos=9425 scope.end_pos=9716)
-	// var "fs" var.pos=9430 var.line_nr=362
-	// var "name" var.pos=9456 var.line_nr=362
-	// var "abbr" var.pos=9469 var.line_nr=362
-	// var "usage" var.pos=9480 var.line_nr=362
-	// var "res" var.pos=9509 var.line_nr=363
+	// autofree_scope_vars(pos=10146 line_nr=381 scope.pos=9867 scope.end_pos=10158)
+	// var "fs" var.pos=9872 var.line_nr=371
+	// var "name" var.pos=9898 var.line_nr=371
+	// var "abbr" var.pos=9911 var.line_nr=371
+	// var "usage" var.pos=9922 var.line_nr=371
+	// var "res" var.pos=9951 var.line_nr=372
 	// str literal
 	// af parent scope:
 	// af parent scope:
@@ -23571,27 +23576,27 @@ string flag__FlagParser_string(flag__FlagParser* fs, string name, byte abbr, str
 	Option_string _t1368 = flag__FlagParser_string_opt(fs, name, abbr, usage);
 	if (_t1368.state != 0) { /*or block*/ 
 		IError err = _t1368.err;
-		// autofree_scope_vars(pos=10012 line_nr=382 scope.pos=10011 scope.end_pos=10029)
-		// var "err" var.pos=10011 var.line_nr=382
+		// autofree_scope_vars(pos=10454 line_nr=391 scope.pos=10453 scope.end_pos=10471)
+		// var "err" var.pos=10453 var.line_nr=391
 		// af parent scope:
-		// var "fs" var.pos=9879 var.line_nr=381
-		// var "name" var.pos=9901 var.line_nr=381
-		// var "abbr" var.pos=9914 var.line_nr=381
-		// var "sdefault" var.pos=9925 var.line_nr=381
-		// var "usage" var.pos=9942 var.line_nr=381
-		// var "value" var.pos=9966 var.line_nr=382
+		// var "fs" var.pos=10321 var.line_nr=390
+		// var "name" var.pos=10343 var.line_nr=390
+		// var "abbr" var.pos=10356 var.line_nr=390
+		// var "sdefault" var.pos=10367 var.line_nr=390
+		// var "usage" var.pos=10384 var.line_nr=390
+		// var "value" var.pos=10408 var.line_nr=391
 		// af parent scope:
 		// af parent scope:
 		return sdefault;
 	}
  	string value =  *(string*)_t1368.data;
-	// autofree_scope_vars(pos=10031 line_nr=383 scope.pos=9874 scope.end_pos=10045)
-	// var "fs" var.pos=9879 var.line_nr=381
-	// var "name" var.pos=9901 var.line_nr=381
-	// var "abbr" var.pos=9914 var.line_nr=381
-	// var "sdefault" var.pos=9925 var.line_nr=381
-	// var "usage" var.pos=9942 var.line_nr=381
-	// var "value" var.pos=9966 var.line_nr=382
+	// autofree_scope_vars(pos=10473 line_nr=392 scope.pos=10316 scope.end_pos=10487)
+	// var "fs" var.pos=10321 var.line_nr=390
+	// var "name" var.pos=10343 var.line_nr=390
+	// var "abbr" var.pos=10356 var.line_nr=390
+	// var "sdefault" var.pos=10367 var.line_nr=390
+	// var "usage" var.pos=10384 var.line_nr=390
+	// var "value" var.pos=10408 var.line_nr=391
 	// af parent scope:
 	// af parent scope:
 	return value;
@@ -23630,23 +23635,23 @@ void flag__FlagParser_arguments_description(flag__FlagParser* fs, string descrip
 	fs->args_description = description;
 }
 
-string flag__FlagParser_usage(flag__FlagParser fs) {
-	bool positive_min_arg = (fs.min_free_args > 0);
-	bool positive_max_arg = (fs.max_free_args > 0 && fs.max_free_args != _const_flag__max_args_number);
-	bool no_arguments = (fs.min_free_args == 0 && fs.max_free_args == 0);
-	string adesc = (fs.args_description.len > 0 ? (fs.args_description) : (_SLIT("[ARGS]")));
+string flag__FlagParser_usage(flag__FlagParser* fs) {
+	bool positive_min_arg = (fs->min_free_args > 0);
+	bool positive_max_arg = (fs->max_free_args > 0 && fs->max_free_args != _const_flag__max_args_number);
+	bool no_arguments = (fs->min_free_args == 0 && fs->max_free_args == 0);
+	string adesc = (fs->args_description.len > 0 ? (fs->args_description) : (_SLIT("[ARGS]")));
 	if (no_arguments) {
 		adesc = _SLIT("");
 	}
 	Array_string use = __new_array_with_default(0, 0, sizeof(string), 0);
-	if ((fs.application_version).len != 0) {
-		array_push((array*)&use, _MOV((string[]){ string_clone(_STR("%.*s\000 %.*s", 2, fs.application_name, fs.application_version)) }));
+	if ((fs->application_version).len != 0) {
+		array_push((array*)&use, _MOV((string[]){ string_clone(_STR("%.*s\000 %.*s", 2, fs->application_name, fs->application_version)) }));
 		array_push((array*)&use, _MOV((string[]){ string_clone(_STR("%.*s", 1, _const_flag__underline)) }));
 	}
-	array_push((array*)&use, _MOV((string[]){ string_clone(_STR("Usage: %.*s\000 [options] %.*s", 2, fs.application_name, adesc)) }));
+	array_push((array*)&use, _MOV((string[]){ string_clone(_STR("Usage: %.*s\000 [options] %.*s", 2, fs->application_name, adesc)) }));
 	array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
-	if ((fs.application_description).len != 0) {
-		array_push((array*)&use, _MOV((string[]){ string_clone(_STR("Description: %.*s", 1, fs.application_description)) }));
+	if ((fs->application_description).len != 0) {
+		array_push((array*)&use, _MOV((string[]){ string_clone(_STR("Description: %.*s", 1, fs->application_description)) }));
 		array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
 		array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
 	}
@@ -23657,24 +23662,24 @@ string flag__FlagParser_usage(flag__FlagParser fs) {
 		} else {
 			Array_string s = __new_array_with_default(0, 0, sizeof(string), 0);
 			if (positive_min_arg) {
-				array_push((array*)&s, _MOV((string[]){ string_clone(_STR("at least %"PRId32"", 1, fs.min_free_args)) }));
+				array_push((array*)&s, _MOV((string[]){ string_clone(_STR("at least %"PRId32"", 1, fs->min_free_args)) }));
 			}
 			if (positive_max_arg) {
-				array_push((array*)&s, _MOV((string[]){ string_clone(_STR("at most %"PRId32"", 1, fs.max_free_args)) }));
+				array_push((array*)&s, _MOV((string[]){ string_clone(_STR("at most %"PRId32"", 1, fs->max_free_args)) }));
 			}
-			if (positive_min_arg && positive_max_arg && fs.min_free_args == fs.max_free_args) {
-				s = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("exactly %"PRId32"", 1, fs.min_free_args)}));
+			if (positive_min_arg && positive_max_arg && fs->min_free_args == fs->max_free_args) {
+				s = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_STR("exactly %"PRId32"", 1, fs->min_free_args)}));
 			}
 			string sargs = Array_string_join(s, _SLIT(" and "));
 			array_push((array*)&use, _MOV((string[]){ string_clone(_STR("The arguments should be %.*s\000 in number.", 2, sargs)) }));
 			array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
 		}
 	}
-	if (fs.flags.len > 0) {
+	if (fs->flags.len > 0) {
 		array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("Options:")) }));
 		// FOR IN array
-		for (int _t1385 = 0; _t1385 < fs.flags.len; ++_t1385) {
-			flag__Flag f = ((flag__Flag*)fs.flags.data)[_t1385];
+		for (int _t1385 = 0; _t1385 < fs->flags.len; ++_t1385) {
+			flag__Flag f = ((flag__Flag*)fs->flags.data)[_t1385];
 			Array_string onames = __new_array_with_default(0, 0, sizeof(string), 0);
 			if (f.abbr != 0) {
 				array_push((array*)&onames, _MOV((string[]){ string_clone(_STR("-%.*s", 1, byte_ascii_str(f.abbr))) }));
@@ -23698,39 +23703,41 @@ string flag__FlagParser_usage(flag__FlagParser fs) {
 		}
 	}
 	string _t1390 = string_replace(Array_string_join(use, _SLIT("\n")), _SLIT("- ,"), _SLIT("   "));
-	// autofree_scope_vars(pos=12974 line_nr=488 scope.pos=11134 scope.end_pos=13019)
-	// var "fs" var.pos=11135 var.line_nr=422
-	// var "positive_min_arg" var.pos=11168 var.line_nr=423
-	// var "positive_max_arg" var.pos=11212 var.line_nr=424
-	// var "no_arguments" var.pos=11300 var.line_nr=425
-	// var "adesc" var.pos=11370 var.line_nr=426
-	// var "use" var.pos=11492 var.line_nr=430
+	// autofree_scope_vars(pos=13416 line_nr=497 scope.pos=11576 scope.end_pos=13461)
+	// var "fs" var.pos=11577 var.line_nr=431
+	// var "positive_min_arg" var.pos=11610 var.line_nr=432
+	// var "positive_max_arg" var.pos=11654 var.line_nr=433
+	// var "no_arguments" var.pos=11742 var.line_nr=434
+	// var "adesc" var.pos=11812 var.line_nr=435
+	// var "use" var.pos=11934 var.line_nr=439
 	// af parent scope:
 	// af parent scope:
 	return _t1390;
 }
 
-Option_Array_string flag__FlagParser_finalize(flag__FlagParser fs) {
-	// FOR IN array
-	for (int _t1391 = 0; _t1391 < fs.args.len; ++_t1391) {
-		string a = ((string*)fs.args.data)[_t1391];
-		if ((a.len >= 2 && string_eq(string_substr(a, 0, 2), _SLIT("--"))) || (a.len == 2 && string_at(a, 0) == L'-')) {
-			return (Option_Array_string){ .state=2, .err=I_flag__UnkownFlagError_to_Interface_IError((flag__UnkownFlagError*)memdup(&(flag__UnkownFlagError){.msg = _STR("Unknown flag `%.*s\000`", 2, a),.code = 0,}, sizeof(flag__UnkownFlagError))), .data={0} };
+Option_Array_string flag__FlagParser_finalize(flag__FlagParser* fs) {
+	if (!fs->allow_unknown_args) {
+		// FOR IN array
+		for (int _t1391 = 0; _t1391 < fs->args.len; ++_t1391) {
+			string a = ((string*)fs->args.data)[_t1391];
+			if ((a.len >= 2 && string_eq(string_substr(a, 0, 2), _SLIT("--"))) || (a.len == 2 && string_at(a, 0) == L'-')) {
+				return (Option_Array_string){ .state=2, .err=I_flag__UnkownFlagError_to_Interface_IError((flag__UnkownFlagError*)memdup(&(flag__UnkownFlagError){.msg = _STR("Unknown flag `%.*s\000`", 2, a),.code = 0,}, sizeof(flag__UnkownFlagError))), .data={0} };
+			}
 		}
 	}
-	if (fs.args.len < fs.min_free_args && fs.min_free_args > 0) {
-		return (Option_Array_string){ .state=2, .err=I_flag__MinimumArgsCountError_to_Interface_IError((flag__MinimumArgsCountError*)memdup(&(flag__MinimumArgsCountError){.msg = _STR("Expected at least %"PRId32"\000 arguments, but given %"PRId32"", 2, fs.min_free_args, fs.args.len),.code = 0,}, sizeof(flag__MinimumArgsCountError))), .data={0} };
+	if (fs->args.len < fs->min_free_args && fs->min_free_args > 0) {
+		return (Option_Array_string){ .state=2, .err=I_flag__MinimumArgsCountError_to_Interface_IError((flag__MinimumArgsCountError*)memdup(&(flag__MinimumArgsCountError){.msg = _STR("Expected at least %"PRId32"\000 arguments, but given %"PRId32"", 2, fs->min_free_args, fs->args.len),.code = 0,}, sizeof(flag__MinimumArgsCountError))), .data={0} };
 	}
-	if (fs.args.len > fs.max_free_args && fs.max_free_args > 0) {
-		return (Option_Array_string){ .state=2, .err=I_flag__MaximumArgsCountError_to_Interface_IError((flag__MaximumArgsCountError*)memdup(&(flag__MaximumArgsCountError){.msg = _STR("Expected at most %"PRId32"\000 arguments, but given %"PRId32"", 2, fs.max_free_args, fs.args.len),.code = 0,}, sizeof(flag__MaximumArgsCountError))), .data={0} };
+	if (fs->args.len > fs->max_free_args && fs->max_free_args > 0) {
+		return (Option_Array_string){ .state=2, .err=I_flag__MaximumArgsCountError_to_Interface_IError((flag__MaximumArgsCountError*)memdup(&(flag__MaximumArgsCountError){.msg = _STR("Expected at most %"PRId32"\000 arguments, but given %"PRId32"", 2, fs->max_free_args, fs->args.len),.code = 0,}, sizeof(flag__MaximumArgsCountError))), .data={0} };
 	}
-	if (fs.args.len > 0 && fs.max_free_args == 0 && fs.min_free_args == 0) {
-		return (Option_Array_string){ .state=2, .err=I_flag__NoArgsExpectedError_to_Interface_IError((flag__NoArgsExpectedError*)memdup(&(flag__NoArgsExpectedError){.msg = _STR("Expected no arguments, but given %"PRId32"", 1, fs.args.len),.code = 0,}, sizeof(flag__NoArgsExpectedError))), .data={0} };
+	if (fs->args.len > 0 && fs->max_free_args == 0 && fs->min_free_args == 0) {
+		return (Option_Array_string){ .state=2, .err=I_flag__NoArgsExpectedError_to_Interface_IError((flag__NoArgsExpectedError*)memdup(&(flag__NoArgsExpectedError){.msg = _STR("Expected no arguments, but given %"PRId32"", 1, fs->args.len),.code = 0,}, sizeof(flag__NoArgsExpectedError))), .data={0} };
 	}
 	Option_Array_string _t1396;
-	opt_ok(&(Array_string[]) { fs.args }, (Option*)(&_t1396), sizeof(Array_string));
-	// autofree_scope_vars(pos=14093 line_nr=519 scope.pos=13337 scope.end_pos=14109)
-	// var "fs" var.pos=13338 var.line_nr=496
+	opt_ok(&(Array_string[]) { fs->args }, (Option*)(&_t1396), sizeof(Array_string));
+	// autofree_scope_vars(pos=14574 line_nr=530 scope.pos=13779 scope.end_pos=14590)
+	// var "fs" var.pos=13780 var.line_nr=505
 	// af parent scope:
 	// af parent scope:
 	return _t1396;
@@ -26522,7 +26529,7 @@ Option_v__pkgconfig__Main_ptr v__pkgconfig__main(Array_string args) {
 	v__pkgconfig__Main* m = (v__pkgconfig__Main*)memdup(&(v__pkgconfig__Main){.opt = v__pkgconfig__parse_options(fp),.res = (string){.str=(byteptr)"", .is_lit=1},.has_actions = 0,}, sizeof(v__pkgconfig__Main));
 	v__pkgconfig__MainOptions* opt = m->opt;
 	if (opt->help) {
-		m->res = flag__FlagParser_usage(/*rec*/*fp);
+		m->res = flag__FlagParser_usage(fp);
 	} else if (opt->version) {
 		m->res = _const_v__pkgconfig__version;
 	} else if (opt->listall) {
@@ -27992,7 +27999,7 @@ string rand__ulid_at_millisecond(u64 unix_time_milli) {
 }
 
 v__pref__Preferences* v__pref__new_preferences(void) {
-	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
 	v__pref__Preferences_fill_with_defaults(p);
 	// autofree_scope_vars(pos=355 line_nr=15 scope.pos=273 scope.end_pos=365)
 	// var "p" var.pos=311 var.line_nr=13
@@ -28068,7 +28075,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1fbf75f"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e4a2d1b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -28586,7 +28593,7 @@ v__pref__OS v__pref__get_host_os(void) {
 }
 
 multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args) {
-	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences));
 	#if defined(TARGET_IS_64BIT)
 	{
 		res->m64 = true;
@@ -28853,7 +28860,8 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			res->skip_warnings = true;
 		}
 		else if (string_eq(arg, _SLIT("-watch"))) {
-			res->is_watch = true;
+			eprintln(_SLIT("The -watch option is deprecated. Please use the watch command `v watch file.v` instead."));
+			v_exit(1);
 		}
 		else if (string_eq(arg, _SLIT("-print-v-files"))) {
 			res->print_v_files = true;
@@ -29075,9 +29083,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	if (string_eq(arch_str, _SLIT("amd64")) || string_eq(arch_str, _SLIT("x86_64")) || string_eq(arch_str, _SLIT("x64")) || string_eq(arch_str, _SLIT("x86"))) {
 		Option_v__pref__Arch _t1915;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_amd64 }, (Option*)(&_t1915), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20614 line_nr=659 scope.pos=20556 scope.end_pos=20635)
+		// autofree_scope_vars(pos=20640 line_nr=659 scope.pos=20582 scope.end_pos=20661)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1915;
@@ -29085,9 +29093,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("aarch64")) || string_eq(arch_str, _SLIT("arm64"))) {
 		Option_v__pref__Arch _t1916;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_arm64 }, (Option*)(&_t1916), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20684 line_nr=663 scope.pos=20639 scope.end_pos=20705)
+		// autofree_scope_vars(pos=20710 line_nr=663 scope.pos=20665 scope.end_pos=20731)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1916;
@@ -29095,9 +29103,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("aarch32")) || string_eq(arch_str, _SLIT("arm32")) || string_eq(arch_str, _SLIT("arm"))) {
 		Option_v__pref__Arch _t1917;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_arm32 }, (Option*)(&_t1917), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20761 line_nr=667 scope.pos=20709 scope.end_pos=20782)
+		// autofree_scope_vars(pos=20787 line_nr=667 scope.pos=20735 scope.end_pos=20808)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1917;
@@ -29105,9 +29113,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("rv64")) || string_eq(arch_str, _SLIT("riscv64")) || string_eq(arch_str, _SLIT("risc-v64")) || string_eq(arch_str, _SLIT("riscv")) || string_eq(arch_str, _SLIT("risc-v"))) {
 		Option_v__pref__Arch _t1918;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_rv64 }, (Option*)(&_t1918), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20860 line_nr=671 scope.pos=20786 scope.end_pos=20880)
+		// autofree_scope_vars(pos=20886 line_nr=671 scope.pos=20812 scope.end_pos=20906)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1918;
@@ -29115,9 +29123,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("rv32")) || string_eq(arch_str, _SLIT("riscv32"))) {
 		Option_v__pref__Arch _t1919;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_rv32 }, (Option*)(&_t1919), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=20927 line_nr=675 scope.pos=20884 scope.end_pos=20947)
+		// autofree_scope_vars(pos=20953 line_nr=675 scope.pos=20910 scope.end_pos=20973)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1919;
@@ -29125,9 +29133,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (string_eq(arch_str, _SLIT("x86_32")) || string_eq(arch_str, _SLIT("x32")) || string_eq(arch_str, _SLIT("i386")) || string_eq(arch_str, _SLIT("IA-32")) || string_eq(arch_str, _SLIT("ia-32")) || string_eq(arch_str, _SLIT("ia32"))) {
 		Option_v__pref__Arch _t1920;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch_i386 }, (Option*)(&_t1920), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=21026 line_nr=679 scope.pos=20951 scope.end_pos=21046)
+		// autofree_scope_vars(pos=21052 line_nr=679 scope.pos=20977 scope.end_pos=21072)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1920;
@@ -29135,9 +29143,9 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 	else if (arch_str.len == 0) {
 		Option_v__pref__Arch _t1921;
 		opt_ok(&(v__pref__Arch[]) { v__pref__Arch__auto }, (Option*)(&_t1921), sizeof(v__pref__Arch));
-		// autofree_scope_vars(pos=21057 line_nr=682 scope.pos=21050 scope.end_pos=21074)
+		// autofree_scope_vars(pos=21083 line_nr=682 scope.pos=21076 scope.end_pos=21100)
 		// af parent scope:
-		// var "arch_str" var.pos=20511 var.line_nr=655
+		// var "arch_str" var.pos=20537 var.line_nr=655
 		// af parent scope:
 		// af parent scope:
 		return _t1921;
@@ -29158,8 +29166,8 @@ VV_LOCAL_SYMBOL void v__pref__must_exist(string path) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL bool v__pref__is_source_file(string path) {
 	bool _t1923 = string_ends_with(path, _SLIT(".v")) || os__exists(path);
-	// autofree_scope_vars(pos=21314 line_nr=699 scope.pos=21279 scope.end_pos=21362)
-	// var "path" var.pos=21294 var.line_nr=698
+	// autofree_scope_vars(pos=21340 line_nr=699 scope.pos=21305 scope.end_pos=21388)
+	// var "path" var.pos=21320 var.line_nr=698
 	// af parent scope:
 	// af parent scope:
 	return _t1923;
@@ -29170,9 +29178,9 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	if (string_eq(s, _SLIT("c"))) {
 		Option_v__pref__Backend _t1924;
 		opt_ok(&(v__pref__Backend[]) { v__pref__Backend_c }, (Option*)(&_t1924), sizeof(v__pref__Backend));
-		// autofree_scope_vars(pos=21431 line_nr=704 scope.pos=21426 scope.end_pos=21442)
+		// autofree_scope_vars(pos=21457 line_nr=704 scope.pos=21452 scope.end_pos=21468)
 		// af parent scope:
-		// var "s" var.pos=21392 var.line_nr=702
+		// var "s" var.pos=21418 var.line_nr=702
 		// af parent scope:
 		// af parent scope:
 		return _t1924;
@@ -29180,9 +29188,9 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	else if (string_eq(s, _SLIT("js"))) {
 		Option_v__pref__Backend _t1925;
 		opt_ok(&(v__pref__Backend[]) { v__pref__Backend_js }, (Option*)(&_t1925), sizeof(v__pref__Backend));
-		// autofree_scope_vars(pos=21452 line_nr=705 scope.pos=21446 scope.end_pos=21464)
+		// autofree_scope_vars(pos=21478 line_nr=705 scope.pos=21472 scope.end_pos=21490)
 		// af parent scope:
-		// var "s" var.pos=21392 var.line_nr=702
+		// var "s" var.pos=21418 var.line_nr=702
 		// af parent scope:
 		// af parent scope:
 		return _t1925;
@@ -29190,9 +29198,9 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	else if (string_eq(s, _SLIT("native"))) {
 		Option_v__pref__Backend _t1926;
 		opt_ok(&(v__pref__Backend[]) { v__pref__Backend_native }, (Option*)(&_t1926), sizeof(v__pref__Backend));
-		// autofree_scope_vars(pos=21478 line_nr=706 scope.pos=21468 scope.end_pos=21494)
+		// autofree_scope_vars(pos=21504 line_nr=706 scope.pos=21494 scope.end_pos=21520)
 		// af parent scope:
-		// var "s" var.pos=21392 var.line_nr=702
+		// var "s" var.pos=21418 var.line_nr=702
 		// af parent scope:
 		// af parent scope:
 		return _t1926;
@@ -29206,13 +29214,13 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 v__pref__CompilerType v__pref__cc_from_string(string cc_str) {
 	if (cc_str.len == 0) {
 		v__pref__CompilerType _t1928 = v__pref__CompilerType_gcc;
-		// autofree_scope_vars(pos=21682 line_nr=714 scope.pos=21679 scope.end_pos=21696)
+		// autofree_scope_vars(pos=21708 line_nr=714 scope.pos=21705 scope.end_pos=21722)
 		// af parent scope:
-		// var "cc_str" var.pos=21629 var.line_nr=712
-		// var "normalized_cc" var.pos=21708 var.line_nr=717
-		// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-		// var "last_elem" var.pos=21801 var.line_nr=719
-		// var "cc" var.pos=21842 var.line_nr=720
+		// var "cc_str" var.pos=21655 var.line_nr=712
+		// var "normalized_cc" var.pos=21734 var.line_nr=717
+		// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+		// var "last_elem" var.pos=21827 var.line_nr=719
+		// var "cc" var.pos=21868 var.line_nr=720
 		// af parent scope:
 		// af parent scope:
 		return _t1928;
@@ -29223,76 +29231,76 @@ v__pref__CompilerType v__pref__cc_from_string(string cc_str) {
 	string cc = string_all_before(last_elem, _SLIT("."));
 	if (string_contains(cc, _SLIT("++"))) {
 		v__pref__CompilerType _t1929 = v__pref__CompilerType_cplusplus;
-		// autofree_scope_vars(pos=21899 line_nr=722 scope.pos=21896 scope.end_pos=21919)
+		// autofree_scope_vars(pos=21925 line_nr=722 scope.pos=21922 scope.end_pos=21945)
 		// af parent scope:
-		// var "cc_str" var.pos=21629 var.line_nr=712
-		// var "normalized_cc" var.pos=21708 var.line_nr=717
-		// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-		// var "last_elem" var.pos=21801 var.line_nr=719
-		// var "cc" var.pos=21842 var.line_nr=720
+		// var "cc_str" var.pos=21655 var.line_nr=712
+		// var "normalized_cc" var.pos=21734 var.line_nr=717
+		// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+		// var "last_elem" var.pos=21827 var.line_nr=719
+		// var "cc" var.pos=21868 var.line_nr=720
 		// af parent scope:
 		// af parent scope:
 		return _t1929;
 	}
 	if (string_contains(cc, _SLIT("tcc")) || string_contains(cc, _SLIT("tinyc"))) {
 		v__pref__CompilerType _t1930 = v__pref__CompilerType_tinyc;
-		// autofree_scope_vars(pos=21971 line_nr=725 scope.pos=21968 scope.end_pos=21987)
+		// autofree_scope_vars(pos=21997 line_nr=725 scope.pos=21994 scope.end_pos=22013)
 		// af parent scope:
-		// var "cc_str" var.pos=21629 var.line_nr=712
-		// var "normalized_cc" var.pos=21708 var.line_nr=717
-		// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-		// var "last_elem" var.pos=21801 var.line_nr=719
-		// var "cc" var.pos=21842 var.line_nr=720
+		// var "cc_str" var.pos=21655 var.line_nr=712
+		// var "normalized_cc" var.pos=21734 var.line_nr=717
+		// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+		// var "last_elem" var.pos=21827 var.line_nr=719
+		// var "cc" var.pos=21868 var.line_nr=720
 		// af parent scope:
 		// af parent scope:
 		return _t1930;
 	}
 	if (string_contains(cc, _SLIT("clang"))) {
 		v__pref__CompilerType _t1931 = v__pref__CompilerType_clang;
-		// autofree_scope_vars(pos=22017 line_nr=728 scope.pos=22014 scope.end_pos=22033)
+		// autofree_scope_vars(pos=22043 line_nr=728 scope.pos=22040 scope.end_pos=22059)
 		// af parent scope:
-		// var "cc_str" var.pos=21629 var.line_nr=712
-		// var "normalized_cc" var.pos=21708 var.line_nr=717
-		// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-		// var "last_elem" var.pos=21801 var.line_nr=719
-		// var "cc" var.pos=21842 var.line_nr=720
+		// var "cc_str" var.pos=21655 var.line_nr=712
+		// var "normalized_cc" var.pos=21734 var.line_nr=717
+		// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+		// var "last_elem" var.pos=21827 var.line_nr=719
+		// var "cc" var.pos=21868 var.line_nr=720
 		// af parent scope:
 		// af parent scope:
 		return _t1931;
 	}
 	if (string_contains(cc, _SLIT("mingw"))) {
 		v__pref__CompilerType _t1932 = v__pref__CompilerType_mingw;
-		// autofree_scope_vars(pos=22063 line_nr=731 scope.pos=22060 scope.end_pos=22079)
+		// autofree_scope_vars(pos=22089 line_nr=731 scope.pos=22086 scope.end_pos=22105)
 		// af parent scope:
-		// var "cc_str" var.pos=21629 var.line_nr=712
-		// var "normalized_cc" var.pos=21708 var.line_nr=717
-		// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-		// var "last_elem" var.pos=21801 var.line_nr=719
-		// var "cc" var.pos=21842 var.line_nr=720
+		// var "cc_str" var.pos=21655 var.line_nr=712
+		// var "normalized_cc" var.pos=21734 var.line_nr=717
+		// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+		// var "last_elem" var.pos=21827 var.line_nr=719
+		// var "cc" var.pos=21868 var.line_nr=720
 		// af parent scope:
 		// af parent scope:
 		return _t1932;
 	}
 	if (string_contains(cc, _SLIT("msvc"))) {
 		v__pref__CompilerType _t1933 = v__pref__CompilerType_msvc;
-		// autofree_scope_vars(pos=22108 line_nr=734 scope.pos=22105 scope.end_pos=22123)
+		// autofree_scope_vars(pos=22134 line_nr=734 scope.pos=22131 scope.end_pos=22149)
 		// af parent scope:
-		// var "cc_str" var.pos=21629 var.line_nr=712
-		// var "normalized_cc" var.pos=21708 var.line_nr=717
-		// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-		// var "last_elem" var.pos=21801 var.line_nr=719
-		// var "cc" var.pos=21842 var.line_nr=720
+		// var "cc_str" var.pos=21655 var.line_nr=712
+		// var "normalized_cc" var.pos=21734 var.line_nr=717
+		// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+		// var "last_elem" var.pos=21827 var.line_nr=719
+		// var "cc" var.pos=21868 var.line_nr=720
 		// af parent scope:
 		// af parent scope:
 		return _t1933;
 	}
 	v__pref__CompilerType _t1934 = v__pref__CompilerType_gcc;
-	// autofree_scope_vars(pos=22125 line_nr=736 scope.pos=21614 scope.end_pos=22138)
-	// var "cc_str" var.pos=21629 var.line_nr=712
-	// var "normalized_cc" var.pos=21708 var.line_nr=717
-	// var "normalized_cc_array" var.pos=21752 var.line_nr=718
-	// var "last_elem" var.pos=21801 var.line_nr=719
-	// var "cc" var.pos=21842 var.line_nr=720
+	// autofree_scope_vars(pos=22151 line_nr=736 scope.pos=21640 scope.end_pos=22164)
+	// var "cc_str" var.pos=21655 var.line_nr=712
+	// var "normalized_cc" var.pos=21734 var.line_nr=717
+	// var "normalized_cc_array" var.pos=21778 var.line_nr=718
+	// var "last_elem" var.pos=21827 var.line_nr=719
+	// var "cc" var.pos=21868 var.line_nr=720
 	// af parent scope:
 	// af parent scope:
 	return _t1934;
@@ -29302,7 +29310,7 @@ v__pref__Arch v__pref__get_host_arch(void) {
 	#if defined(__V_amd64)
 	{
 		v__pref__Arch _t1935 = v__pref__Arch_amd64;
-		// autofree_scope_vars(pos=22185 line_nr=741 scope.pos=22182 scope.end_pos=22201)
+		// autofree_scope_vars(pos=22211 line_nr=741 scope.pos=22208 scope.end_pos=22227)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -29312,7 +29320,7 @@ v__pref__Arch v__pref__get_host_arch(void) {
 	#if defined(__V_arm64)
 	{
 		v__pref__Arch _t1936 = v__pref__Arch_arm64;
-		// autofree_scope_vars(pos=22294 line_nr=748 scope.pos=22291 scope.end_pos=22310)
+		// autofree_scope_vars(pos=22320 line_nr=748 scope.pos=22317 scope.end_pos=22336)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -46293,12 +46301,12 @@ v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser*
 v__ast__Stmt v__parser__parse_stmt(string text, v__ast__Table* table, v__ast__Scope* scope) {
 bool v__parser__parse_stmt_defer_0 = false;
 	v__parser__Parser p = (v__parser__Parser){
-		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences)),
+		.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences)),
 		.file_base = (string){.str=(byteptr)"", .is_lit=1},
 		.file_name = (string){.str=(byteptr)"", .is_lit=1},
 		.file_name_dir = (string){.str=(byteptr)"", .is_lit=1},
 		.file_backend_mode = 0,
-		.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_watch = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences))),
+		.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode_skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode_stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 1, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 1, sizeof(string)),.compile_defines_all = __new_array(0, 1, sizeof(string)),.run_args = __new_array(0, 1, sizeof(string)),.printfn_list = __new_array(0, 1, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 1, sizeof(string)),.build_options = __new_array(0, 1, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode_no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 10,}, sizeof(v__pref__Preferences))),
 		.comments_mode = v__scanner__CommentsMode_skip_comments,
 		.tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},
 		.prev_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},
@@ -80629,7 +80637,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	}
 	if (node->is_vweb) {
 		v__pref__Preferences pref_ = *c->pref;
-		v__pref__Preferences* pref2 = (v__pref__Preferences*)memdup(&(v__pref__Preferences){pref_.os,pref_.backend,pref_.build_mode,pref_.arch,pref_.output_mode,pref_.is_verbose,pref_.is_watch,pref_.is_test,pref_.is_script,pref_.is_vsh,pref_.is_livemain,pref_.is_liveshared,pref_.is_shared,pref_.is_prof,pref_.profile_file,pref_.profile_no_inline,pref_.translated,pref_.is_prod,pref_.obfuscate,pref_.is_repl,pref_.is_run,pref_.sanitize,pref_.is_debug,pref_.is_vlines,pref_.show_cc,pref_.show_c_output,pref_.dump_c_flags,pref_.use_cache,pref_.retry_compilation,pref_.is_stats,pref_.cflags,pref_.m64,pref_.ccompiler,pref_.ccompiler_type,pref_.third_party_option,pref_.building_v,pref_.autofree,pref_.compress,pref_.enable_globals,pref_.is_fmt,pref_.is_vet,pref_.is_bare,pref_.no_preludes,pref_.custom_prelude,pref_.lookup_path,pref_.bare_builtin_dir,pref_.output_cross_c,pref_.prealloc,pref_.vroot,pref_.out_name_c,pref_.out_name,pref_.path,pref_.compile_defines,pref_.compile_defines_all,pref_.run_args,pref_.printfn_list,pref_.print_v_files,pref_.skip_running,pref_.skip_warnings,pref_.warn_impure_v,pref_.warns_are_errors,pref_.fatal_errors,pref_.reuse_tmpc,pref_.use_color,pref_.is_parallel,pref_.error_limit,.is_vweb = true,pref_.only_check_syntax,pref_.experimental,pref_.skip_unused,pref_.show_timings,pref_.is_ios_simulator,pref_.is_apk,pref_.cleanup_files,pref_.build_options,pref_.cache_manager,pref_.is_help,pref_.gc_mode,pref_.is_cstrict,pref_.assert_failure_mode,pref_.checker_match_exhaustive_cutoff_limit,}, sizeof(v__pref__Preferences));
+		v__pref__Preferences* pref2 = (v__pref__Preferences*)memdup(&(v__pref__Preferences){pref_.os,pref_.backend,pref_.build_mode,pref_.arch,pref_.output_mode,pref_.is_verbose,pref_.is_test,pref_.is_script,pref_.is_vsh,pref_.is_livemain,pref_.is_liveshared,pref_.is_shared,pref_.is_prof,pref_.profile_file,pref_.profile_no_inline,pref_.translated,pref_.is_prod,pref_.obfuscate,pref_.is_repl,pref_.is_run,pref_.sanitize,pref_.is_debug,pref_.is_vlines,pref_.show_cc,pref_.show_c_output,pref_.dump_c_flags,pref_.use_cache,pref_.retry_compilation,pref_.is_stats,pref_.cflags,pref_.m64,pref_.ccompiler,pref_.ccompiler_type,pref_.third_party_option,pref_.building_v,pref_.autofree,pref_.compress,pref_.enable_globals,pref_.is_fmt,pref_.is_vet,pref_.is_bare,pref_.no_preludes,pref_.custom_prelude,pref_.lookup_path,pref_.bare_builtin_dir,pref_.output_cross_c,pref_.prealloc,pref_.vroot,pref_.out_name_c,pref_.out_name,pref_.path,pref_.compile_defines,pref_.compile_defines_all,pref_.run_args,pref_.printfn_list,pref_.print_v_files,pref_.skip_running,pref_.skip_warnings,pref_.warn_impure_v,pref_.warns_are_errors,pref_.fatal_errors,pref_.reuse_tmpc,pref_.use_color,pref_.is_parallel,pref_.error_limit,.is_vweb = true,pref_.only_check_syntax,pref_.experimental,pref_.skip_unused,pref_.show_timings,pref_.is_ios_simulator,pref_.is_apk,pref_.cleanup_files,pref_.build_options,pref_.cache_manager,pref_.is_help,pref_.gc_mode,pref_.is_cstrict,pref_.assert_failure_mode,pref_.checker_match_exhaustive_cutoff_limit,}, sizeof(v__pref__Preferences));
 		v__checker__Checker c2 = v__checker__new_checker(c->table, pref2);
 		v__checker__Checker_check(&c2, (voidptr)&/*qq*/node->vweb_tmpl);
 		int i = 0;
@@ -86438,23 +86446,9 @@ bool main__main_defer_0 = false;
 		return;
 	}
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1638 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
-	v__pref__Preferences* prefs = mr_1638.arg0;
-	string command = mr_1638.arg1;
-	if (prefs->is_watch) {
-		Array_string _t5303_orig = array_slice(_const_os__args, 1, _const_os__args.len);
-		int _t5303_len = _t5303_orig.len;
-		Array_string _t5303 = __new_array(0, _t5303_len, sizeof(string));
-
-		for (int _t5304 = 0; _t5304 < _t5303_len; ++_t5304) {
-			string it = ((string*) _t5303_orig.data)[_t5304];
-			if (string_ne(it, _SLIT("-watch"))) {
-				array_push((array*)&_t5303, &it); 
-		}
-		}
-		
-		v__util__launch_tool(prefs->is_verbose, _SLIT("vwatch"), _t5303);
-	}
+	multi_return_v__pref__Preferences_string mr_1649 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
+	v__pref__Preferences* prefs = mr_1649.arg0;
+	string command = mr_1649.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (prefs->use_cache && string_eq(os__user_os(), _SLIT("windows"))) {
@@ -86905,8 +86899,8 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__external_tools = new_array_from_c_array(24, 24, sizeof(string), _MOV((string[24]){
-		_SLIT("bin2v"), _SLIT("bug"), _SLIT("build-examples"), _SLIT("build-tools"), _SLIT("build-vbinaries"), _SLIT("check-md"), _SLIT("complete"), _SLIT("doc"), _SLIT("doctor"), _SLIT("fmt"), _SLIT("repl"), _SLIT("self"), _SLIT("setup-freetype"), _SLIT("symlink"), _SLIT("test"), _SLIT("test-all"), _SLIT("test-cleancode"), _SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-self"), _SLIT("tracev"), _SLIT("up"), _SLIT("vet"), _SLIT("wipe-cache")}));
+	_const_main__external_tools = new_array_from_c_array(25, 25, sizeof(string), _MOV((string[25]){
+		_SLIT("bin2v"), _SLIT("bug"), _SLIT("build-examples"), _SLIT("build-tools"), _SLIT("build-vbinaries"), _SLIT("check-md"), _SLIT("complete"), _SLIT("doc"), _SLIT("doctor"), _SLIT("fmt"), _SLIT("repl"), _SLIT("self"), _SLIT("setup-freetype"), _SLIT("symlink"), _SLIT("test"), _SLIT("test-all"), _SLIT("test-cleancode"), _SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-self"), _SLIT("tracev"), _SLIT("up"), _SLIT("vet"), _SLIT("wipe-cache"), _SLIT("watch")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("cc"), _SLIT("d"), _SLIT("define"), _SLIT("cf"), _SLIT("cflags")}));
 }
 void _vcleanup() {
