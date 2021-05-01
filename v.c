@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "000d4d3"
+#define V_COMMIT_HASH "3363c3e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ef63491"
+	#define V_COMMIT_HASH "000d4d3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "000d4d3"
+	#define V_CURRENT_COMMIT_HASH "3363c3e"
 #endif
 
 // V comptime_defines:
@@ -15758,10 +15758,10 @@ string string_replace_once(string s, string rep, string with) {
 
 string string_replace(string s, string rep, string with) {
 bool string_replace_defer_0 = false;
-	if (s.len == 0 || rep.len == 0) {
+	if (s.len == 0 || rep.len == 0 || rep.len > s.len) {
 		return string_clone(s);
 	}
-	Array_int idxs = __new_array_with_default(0, 0, sizeof(int), 0);
+	Array_int idxs = __new_array_with_default(0, s.len / rep.len, sizeof(int), 0);
 	string_replace_defer_0 = true;
 	int idx = 0;
 	for (;;) {
@@ -28032,7 +28032,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ef63491"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("000d4d3"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
