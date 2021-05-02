@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "581fe37"
+#define V_COMMIT_HASH "feb6067"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ae22967"
+	#define V_COMMIT_HASH "581fe37"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "581fe37"
+	#define V_CURRENT_COMMIT_HASH "feb6067"
 #endif
 
 // V comptime_defines:
@@ -5562,7 +5562,7 @@ string string_all_after(string s, string dot);
 string string_all_after_last(string s, string dot);
 string string_after(string s, string dot);
 string string_after_char(string s, byte dot);
-string Array_string_join(Array_string a, string del);
+string Array_string_join(Array_string a, string sep);
 string Array_string_join_lines(Array_string s);
 string string_reverse(string s);
 string string_limit(string s, int max);
@@ -16893,7 +16893,7 @@ string string_after_char(string s, byte dot) {
 	return string_substr(s, pos + 1, s.len);
 }
 
-string Array_string_join(Array_string a, string del) {
+string Array_string_join(Array_string a, string sep) {
 	if (a.len == 0) {
 		return _SLIT("");
 	}
@@ -16901,9 +16901,9 @@ string Array_string_join(Array_string a, string del) {
 	// FOR IN array
 	for (int _t632 = 0; _t632 < a.len; ++_t632) {
 		string val = ((string*)a.data)[_t632];
-		len += val.len + del.len;
+		len += val.len + sep.len;
 	}
-	len -= del.len;
+	len -= sep.len;
 	string res = (string){.str = v_malloc(len + 1), .len = len};
 	int idx = 0;
 	// FOR IN array
@@ -16915,8 +16915,8 @@ string Array_string_join(Array_string a, string del) {
 		}
 		if (i != a.len - 1) {
 			{ // Unsafe block
-				memcpy(res.str + idx, del.str, del.len);
-				idx += del.len;
+				memcpy(res.str + idx, sep.str, sep.len);
+				idx += sep.len;
 			}
 		}
 	}
@@ -27389,7 +27389,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ae22967"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("581fe37"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
