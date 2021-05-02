@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b818fa"
+#define V_COMMIT_HASH "dbadda8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3363c3e"
+	#define V_COMMIT_HASH "4b818fa"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b818fa"
+	#define V_CURRENT_COMMIT_HASH "dbadda8"
 #endif
 
 // V comptime_defines:
@@ -14139,49 +14139,45 @@ string char_str(char* cptr) {
 }
 
 // Attr: [inline]
+// Attr: [direct_array_access]
 inline VV_LOCAL_SYMBOL string int_str_l(int nn, int max) {
-	i64 n = ((i64)(nn));
-	int d = 0;
-	if (n == 0) {
-		return _SLIT("0");
-	}
-	byte* buf = v_malloc(max + 1);
-	bool is_neg = false;
-	if (n < 0) {
-		n = -n;
-		is_neg = true;
-	}
-	int index = max;
 	{ // Unsafe block
+		i64 n = ((i64)(nn));
+		int d = 0;
+		if (n == 0) {
+			return _SLIT("0");
+		}
+		bool is_neg = false;
+		if (n < 0) {
+			n = -n;
+			is_neg = true;
+		}
+		int index = max;
+		byte* buf = v_malloc(max + 1);
 		buf[index] = 0;
 		index--;
-	}
-	for (;;) {
-		if (!(n > 0)) break;
-		int n1 = ((int)(n / 100));
-		d = ((((int)(n)) - (n1 * 100)) << 1);
-		n = n1;
-		{ // Unsafe block
+		for (;;) {
+			if (!(n > 0)) break;
+			int n1 = ((int)(n / 100));
+			d = ((((int)(n)) - (n1 * 100)) << 1);
+			n = n1;
 			buf[index] = _const_digit_pairs.str[d];
 			index--;
 			d++;
 			buf[index] = _const_digit_pairs.str[d];
 			index--;
 		}
-	}
-	index++;
-	if (d < 20) {
 		index++;
-	}
-	if (is_neg) {
-		index--;
-		{ // Unsafe block
+		if (d < 20) {
+			index++;
+		}
+		if (is_neg) {
+			index--;
 			buf[index] = L'-';
 		}
-	}
-	{ // Unsafe block
-		memmove(buf, buf + index, (max - index) + 1);
-		return tos(buf, (max - index));
+		int diff = max - index;
+		memmove(buf, buf + index, diff + 1);
+		return tos(buf, diff);
 	}
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
@@ -14202,39 +14198,38 @@ string int_str(int n) {
 	return int_str_l(n, 12);
 }
 
-string u32_str(u32 nn) {
-	u32 n = nn;
-	u32 d = ((u32)(0U));
-	if (n == 0U) {
-		return _SLIT("0");
-	}
-	int max = 12;
-	byte* buf = v_malloc(max + 1);
-	int index = max;
+// Attr: [inline]
+// Attr: [direct_array_access]
+inline string u32_str(u32 nn) {
 	{ // Unsafe block
+		u32 n = nn;
+		u32 d = ((u32)(0U));
+		if (n == 0U) {
+			return _SLIT("0");
+		}
+		int max = 12;
+		byte* buf = v_malloc(max + 1);
+		int index = max;
 		buf[index] = 0;
 		index--;
-	}
-	for (;;) {
-		if (!(n > 0U)) break;
-		u32 n1 = n / ((u32)(100U));
-		d = ((n - (n1 * ((u32)(100U)))) << ((u32)(1U)));
-		n = n1;
-		{ // Unsafe block
+		for (;;) {
+			if (!(n > 0U)) break;
+			u32 n1 = n / ((u32)(100U));
+			d = ((n - (n1 * ((u32)(100U)))) << ((u32)(1U)));
+			n = n1;
 			buf[index] = string_at(_const_digit_pairs, d);
 			index--;
 			d++;
 			buf[index] = string_at(_const_digit_pairs, d);
 			index--;
 		}
-	}
-	index++;
-	if (d < ((u32)(20U))) {
 		index++;
-	}
-	{ // Unsafe block
-		memmove(buf, buf + index, (max - index) + 1);
-		return tos(buf, (max - index));
+		if (d < ((u32)(20U))) {
+			index++;
+		}
+		int diff = max - index;
+		memmove(buf, buf + index, diff + 1);
+		return tos(buf, diff);
 	}
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
@@ -14244,87 +14239,83 @@ inline string int_literal_str(int_literal n) {
 	return i64_str(((i64)(n)));
 }
 
-string i64_str(i64 nn) {
-	i64 n = nn;
-	i64 d = ((i64)(0));
-	if (n == 0) {
-		return _SLIT("0");
-	}
-	int max = 20;
-	byte* buf = vcalloc(max + 1);
-	bool is_neg = false;
-	if (n < 0) {
-		n = -n;
-		is_neg = true;
-	}
-	int index = max;
+// Attr: [inline]
+// Attr: [direct_array_access]
+inline string i64_str(i64 nn) {
 	{ // Unsafe block
+		i64 n = nn;
+		i64 d = ((i64)(0));
+		if (n == 0) {
+			return _SLIT("0");
+		}
+		int max = 20;
+		byte* buf = v_malloc(max + 1);
+		bool is_neg = false;
+		if (n < 0) {
+			n = -n;
+			is_neg = true;
+		}
+		int index = max;
 		buf[index] = 0;
 		index--;
-	}
-	for (;;) {
-		if (!(n > 0)) break;
-		i64 n1 = n / ((i64)(100));
-		d = ((n - (n1 * ((i64)(100)))) << ((i64)(1)));
-		n = n1;
-		{ // Unsafe block
+		for (;;) {
+			if (!(n > 0)) break;
+			i64 n1 = n / ((i64)(100));
+			d = ((n - (n1 * ((i64)(100)))) << ((i64)(1)));
+			n = n1;
 			buf[index] = string_at(_const_digit_pairs, d);
 			index--;
 			d++;
 			buf[index] = string_at(_const_digit_pairs, d);
 			index--;
 		}
-	}
-	index++;
-	if (d < ((i64)(20))) {
 		index++;
-	}
-	if (is_neg) {
-		index--;
-		{ // Unsafe block
+		if (d < ((i64)(20))) {
+			index++;
+		}
+		if (is_neg) {
+			index--;
 			buf[index] = L'-';
 		}
-	}
-	{ // Unsafe block
-		memmove(buf, buf + index, (max - index) + 1);
-		return tos(buf, (max - index));
+		int diff = max - index;
+		memmove(buf, buf + index, diff + 1);
+		return tos(buf, diff);
 	}
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
 
-string u64_str(u64 nn) {
-	u64 n = nn;
-	u64 d = ((u64)(0U));
-	if (n == 0U) {
-		return _SLIT("0");
-	}
-	int max = 20;
-	byte* buf = vcalloc(max + 1);
-	int index = max;
+// Attr: [inline]
+// Attr: [direct_array_access]
+inline string u64_str(u64 nn) {
 	{ // Unsafe block
+		u64 n = nn;
+		u64 d = ((u64)(0U));
+		if (n == 0U) {
+			return _SLIT("0");
+		}
+		int max = 20;
+		byte* buf = v_malloc(max + 1);
+		int index = max;
 		buf[index] = 0;
 		index--;
-	}
-	for (;;) {
-		if (!(n > 0U)) break;
-		u64 n1 = n / 100U;
-		d = ((n - (n1 * 100U)) << 1U);
-		n = n1;
-		{ // Unsafe block
+		for (;;) {
+			if (!(n > 0U)) break;
+			u64 n1 = n / 100U;
+			d = ((n - (n1 * 100U)) << 1U);
+			n = n1;
 			buf[index] = string_at(_const_digit_pairs, d);
 			index--;
 			d++;
 			buf[index] = string_at(_const_digit_pairs, d);
 			index--;
 		}
-	}
-	index++;
-	if (d < 20U) {
 		index++;
-	}
-	{ // Unsafe block
-		memmove(buf, buf + index, (max - index) + 1);
-		return tos(buf, (max - index));
+		if (d < 20U) {
+			index++;
+		}
+		int diff = max - index;
+		memmove(buf, buf + index, diff + 1);
+		return tos(buf, diff);
 	}
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
@@ -14337,37 +14328,39 @@ string bool_str(bool b) {
 }
 
 // Attr: [inline]
+// Attr: [direct_array_access]
 inline VV_LOCAL_SYMBOL string u64_to_hex(u64 nn, byte len) {
 	u64 n = nn;
 	Array_fixed_byte_256 buf = {0};
-	buf[v_fixed_index(len, 256)] = 0;
+	buf[len] = 0;
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xFU)));
 		rune x = (d < 10 ? (d + L'0') : (d + 87));
-		buf[v_fixed_index(i, 256)] = x;
+		buf[i] = x;
 		n = n >> 4U;
 	}
 	return tos(memdup(&buf[0], len + 1), len);
 }
 
 // Attr: [inline]
+// Attr: [direct_array_access]
 inline VV_LOCAL_SYMBOL string u64_to_hex_no_leading_zeros(u64 nn, byte len) {
 	u64 n = nn;
 	Array_fixed_byte_256 buf = {0};
-	buf[v_fixed_index(len, 256)] = 0;
+	buf[len] = 0;
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xFU)));
 		rune x = (d < 10 ? (d + L'0') : (d + 87));
-		buf[v_fixed_index(i, 256)] = x;
+		buf[i] = x;
 		n = n >> 4U;
 		if (n == 0U) {
 			break;
 		}
 	}
 	int res_len = len - i;
-	return tos(memdup(&buf[v_fixed_index(i, 256)], res_len + 1), res_len);
+	return tos(memdup(&buf[i], res_len + 1), res_len);
 }
 
 string byte_hex(byte nn) {
@@ -27391,7 +27384,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3363c3e"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4b818fa"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
