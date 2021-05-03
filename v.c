@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1d045e5"
+#define V_COMMIT_HASH "c21df2d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ddc0033"
+	#define V_COMMIT_HASH "1d045e5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1d045e5"
+	#define V_CURRENT_COMMIT_HASH "c21df2d"
 #endif
 
 // V comptime_defines:
@@ -28077,7 +28077,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ddc0033"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1d045e5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -85995,7 +85995,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 		if (v->pref->os == v__pref__OS_linux) {
 			array_push((array*)&ccoptions.linker_flags, _MOV((string[]){ string_clone(_SLIT("-ldl")) }));
 		}
-		if (v->pref->os == v__pref__OS_freebsd) {
+		if ((v->pref->os == v__pref__OS_freebsd || v->pref->os == v__pref__OS_netbsd)) {
 			array_push((array*)&ccoptions.linker_flags, _MOV((string[]){ string_clone(_SLIT("-lexecinfo")) }));
 		}
 	}
@@ -86027,10 +86027,10 @@ VV_LOCAL_SYMBOL Array_string v__builder__Builder_all_args(v__builder__Builder* v
 	_PUSH_MANY(&all, (ccoptions.post_args), _t5184, Array_string);
 	_PUSH_MANY(&all, (ccoptions.linker_flags), _t5185, Array_string);
 	array_push((array*)&all, _MOV((string[]){ string_clone(ccoptions.env_ldflags) }));
-	// autofree_scope_vars(pos=13356 line_nr=422 scope.pos=12997 scope.end_pos=13368)
-	// var "v" var.pos=12998 var.line_nr=409
-	// var "ccoptions" var.pos=13019 var.line_nr=409
-	// var "all" var.pos=13063 var.line_nr=410
+	// autofree_scope_vars(pos=13371 line_nr=422 scope.pos=13012 scope.end_pos=13383)
+	// var "v" var.pos=13013 var.line_nr=409
+	// var "ccoptions" var.pos=13034 var.line_nr=409
+	// var "all" var.pos=13078 var.line_nr=410
 	// af parent scope:
 	// af parent scope:
 	return all;
@@ -86042,11 +86042,11 @@ VV_LOCAL_SYMBOL Array_string v__builder__Builder_thirdparty_object_args(v__build
 	_PUSH_MANY(&all, (ccoptions.args), _t5189, Array_string);
 	_PUSH_MANY(&all, (middle), _t5190, Array_string);
 	array_push((array*)&all, _MOV((string[]){ string_clone(ccoptions.env_ldflags) }));
-	// autofree_scope_vars(pos=13586 line_nr=431 scope.pos=13374 scope.end_pos=13598)
-	// var "v" var.pos=13375 var.line_nr=425
-	// var "ccoptions" var.pos=13410 var.line_nr=425
-	// var "middle" var.pos=13438 var.line_nr=425
-	// var "all" var.pos=13471 var.line_nr=426
+	// autofree_scope_vars(pos=13601 line_nr=431 scope.pos=13389 scope.end_pos=13613)
+	// var "v" var.pos=13390 var.line_nr=425
+	// var "ccoptions" var.pos=13425 var.line_nr=425
+	// var "middle" var.pos=13453 var.line_nr=425
+	// var "all" var.pos=13486 var.line_nr=426
 	// af parent scope:
 	// af parent scope:
 	return all;
@@ -86114,24 +86114,24 @@ VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v) {
 			v_panic(IError_str(err));
 		};
 		bool _t5196 = true;
-		// autofree_scope_vars(pos=15831 line_nr=499 scope.pos=14889 scope.end_pos=15845)
+		// autofree_scope_vars(pos=15846 line_nr=499 scope.pos=14904 scope.end_pos=15860)
 		// af parent scope:
-		// var "v" var.pos=14602 var.line_nr=463
-		// var "vexe" var.pos=14630 var.line_nr=464
-		// var "vdir" var.pos=14656 var.line_nr=465
-		// var "ends_with_c" var.pos=14760 var.line_nr=468
-		// var "ends_with_js" var.pos=14808 var.line_nr=469
+		// var "v" var.pos=14617 var.line_nr=463
+		// var "vexe" var.pos=14645 var.line_nr=464
+		// var "vdir" var.pos=14671 var.line_nr=465
+		// var "ends_with_c" var.pos=14775 var.line_nr=468
+		// var "ends_with_js" var.pos=14823 var.line_nr=469
 		// af parent scope:
 		// af parent scope:
 		return _t5196;
 	}
 	bool _t5197 = false;
-	// autofree_scope_vars(pos=15847 line_nr=501 scope.pos=14597 scope.end_pos=15861)
-	// var "v" var.pos=14602 var.line_nr=463
-	// var "vexe" var.pos=14630 var.line_nr=464
-	// var "vdir" var.pos=14656 var.line_nr=465
-	// var "ends_with_c" var.pos=14760 var.line_nr=468
-	// var "ends_with_js" var.pos=14808 var.line_nr=469
+	// autofree_scope_vars(pos=15862 line_nr=501 scope.pos=14612 scope.end_pos=15876)
+	// var "v" var.pos=14617 var.line_nr=463
+	// var "vexe" var.pos=14645 var.line_nr=464
+	// var "vdir" var.pos=14671 var.line_nr=465
+	// var "ends_with_c" var.pos=14775 var.line_nr=468
+	// var "ends_with_js" var.pos=14823 var.line_nr=469
 	// af parent scope:
 	// af parent scope:
 	return _t5197;
@@ -86413,10 +86413,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string_add(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_24523 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_24523.arg0;
-	Array_string others = mr_24523.arg1;
-	Array_string libs = mr_24523.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24538 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24538.arg0;
+	Array_string others = mr_24538.arg1;
+	Array_string libs = mr_24538.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
@@ -86611,7 +86611,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	#if defined(_WIN32)
 	{
 		string _t5257 = _SLIT("https://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows");
-		// autofree_scope_vars(pos=31553 line_nr=1004 scope.pos=31550 scope.end_pos=31631)
+		// autofree_scope_vars(pos=31568 line_nr=1004 scope.pos=31565 scope.end_pos=31646)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -86621,7 +86621,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	#if defined(__linux__)
 	{
 		string _t5258 = _SLIT("On Debian/Ubuntu, run `sudo apt install build-essential`");
-		// autofree_scope_vars(pos=31647 line_nr=1007 scope.pos=31644 scope.end_pos=31715)
+		// autofree_scope_vars(pos=31662 line_nr=1007 scope.pos=31659 scope.end_pos=31730)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -86631,7 +86631,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	#if defined(__APPLE__)
 	{
 		string _t5259 = _SLIT("Install command line XCode tools with `xcode-select --install`");
-		// autofree_scope_vars(pos=31731 line_nr=1010 scope.pos=31728 scope.end_pos=31805)
+		// autofree_scope_vars(pos=31746 line_nr=1010 scope.pos=31743 scope.end_pos=31820)
 		// af parent scope:
 		// af parent scope:
 		// af parent scope:
@@ -86639,7 +86639,7 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 	}
 	#endif
 	string _t5260 = _SLIT("");
-	// autofree_scope_vars(pos=31807 line_nr=1012 scope.pos=31504 scope.end_pos=31818)
+	// autofree_scope_vars(pos=31822 line_nr=1012 scope.pos=31519 scope.end_pos=31833)
 	// af parent scope:
 	// af parent scope:
 	return _t5260;
@@ -86662,16 +86662,16 @@ VV_LOCAL_SYMBOL Array_string v__builder__error_context_lines(string text, string
 	int idx_s = (eline_idx - before >= 0 ? (eline_idx - before) : (0));
 	int idx_e = (idx_s + after < lines.len ? (idx_s + after) : (lines.len));
 	Array_string _t5261 = array_slice(lines, idx_s, idx_e);
-	// autofree_scope_vars(pos=32370 line_nr=1029 scope.pos=31824 scope.end_pos=32398)
-	// var "text" var.pos=31844 var.line_nr=1015
-	// var "keyword" var.pos=31857 var.line_nr=1015
-	// var "before" var.pos=31873 var.line_nr=1015
-	// var "after" var.pos=31885 var.line_nr=1015
-	// var "khighlight" var.pos=31908 var.line_nr=1016
-	// var "eline_idx" var.pos=32001 var.line_nr=1017
-	// var "lines" var.pos=32021 var.line_nr=1018
-	// var "idx_s" var.pos=32224 var.line_nr=1027
-	// var "idx_e" var.pos=32295 var.line_nr=1028
+	// autofree_scope_vars(pos=32385 line_nr=1029 scope.pos=31839 scope.end_pos=32413)
+	// var "text" var.pos=31859 var.line_nr=1015
+	// var "keyword" var.pos=31872 var.line_nr=1015
+	// var "before" var.pos=31888 var.line_nr=1015
+	// var "after" var.pos=31900 var.line_nr=1015
+	// var "khighlight" var.pos=31923 var.line_nr=1016
+	// var "eline_idx" var.pos=32016 var.line_nr=1017
+	// var "lines" var.pos=32036 var.line_nr=1018
+	// var "idx_s" var.pos=32239 var.line_nr=1027
+	// var "idx_e" var.pos=32310 var.line_nr=1028
 	// af parent scope:
 	// af parent scope:
 	return _t5261;
