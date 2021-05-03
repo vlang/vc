@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "035fd05"
+#define V_COMMIT_HASH "ddc0033"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0fa9a64"
+	#define V_COMMIT_HASH "035fd05"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "035fd05"
+	#define V_CURRENT_COMMIT_HASH "ddc0033"
 #endif
 
 // V comptime_defines:
@@ -27401,7 +27401,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0fa9a64"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("035fd05"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -83791,6 +83791,14 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			string ct_name = *(string*)_t4947.data;
 			v__checker__Checker_error(c, _STR("only functions that do NOT return values can have `[if %.*s\000]` tags", 2, ct_name), node->pos);
 		}
+		if (node->generic_names.len > 0) {
+			v__ast__TypeSymbol* gs = v__ast__Table_get_type_symbol(c->table, node->return_type);
+			if ((gs->info)._typ == 407 /* v.ast.Struct */) {
+				if ((*gs->info._v__ast__Struct).is_generic && !v__ast__Type_has_flag(node->return_type, v__ast__TypeFlag_generic)) {
+					v__checker__Checker_error(c, _SLIT("return generic struct in fn declaration must specify the generic type names, e.g. Foo<T>"), node->return_type_pos);
+				}
+			}
+		}
 	}
 	if (node->is_method) {
 		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, node->receiver.typ);
@@ -83916,27 +83924,27 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)stmts.data)[_t4953];
 		if ((stmt)._typ == 309 /* v.ast.Return */) {
 			bool _t4954 = true;
-			// autofree_scope_vars(pos=225867 line_nr=6942 scope.pos=225863 scope.end_pos=225882)
-			// var "stmt" var.pos=225844 var.line_nr=6941
+			// autofree_scope_vars(pos=226198 line_nr=6951 scope.pos=226194 scope.end_pos=226213)
+			// var "stmt" var.pos=226175 var.line_nr=6950
 			// af parent scope:
-			// var "stmt" var.pos=225823 var.line_nr=6940
+			// var "stmt" var.pos=226154 var.line_nr=6949
 			// skipping tmp var "stmt"
 			// af parent scope:
-			// var "stmts" var.pos=225793 var.line_nr=6939
+			// var "stmts" var.pos=226124 var.line_nr=6948
 			// af parent scope:
 			// af parent scope:
 			return _t4954;
 		} else if ((stmt)._typ == 291 /* v.ast.Block */) {
 			if (v__checker__has_top_return((*stmt._v__ast__Block).stmts)) {
 				bool _t4955 = true;
-				// autofree_scope_vars(pos=225950 line_nr=6945 scope.pos=225945 scope.end_pos=225966)
+				// autofree_scope_vars(pos=226281 line_nr=6954 scope.pos=226276 scope.end_pos=226297)
 				// af parent scope:
-				// var "stmt" var.pos=225892 var.line_nr=6943
+				// var "stmt" var.pos=226223 var.line_nr=6952
 				// af parent scope:
-				// var "stmt" var.pos=225823 var.line_nr=6940
+				// var "stmt" var.pos=226154 var.line_nr=6949
 				// skipping tmp var "stmt"
 				// af parent scope:
-				// var "stmts" var.pos=225793 var.line_nr=6939
+				// var "stmts" var.pos=226124 var.line_nr=6948
 				// af parent scope:
 				// af parent scope:
 				return _t4955;
@@ -83945,15 +83953,15 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts) {
 			if (((*stmt._v__ast__ExprStmt).expr)._typ == 246 /* v.ast.CallExpr */) {
 				if (!(*(*stmt._v__ast__ExprStmt).expr._v__ast__CallExpr).is_method && (string_eq((*(*stmt._v__ast__ExprStmt).expr._v__ast__CallExpr).name, _SLIT("panic")) || string_eq((*(*stmt._v__ast__ExprStmt).expr._v__ast__CallExpr).name, _SLIT("exit")))) {
 					bool _t4956 = true;
-					// autofree_scope_vars(pos=226110 line_nr=6950 scope.pos=226104 scope.end_pos=226127)
+					// autofree_scope_vars(pos=226441 line_nr=6959 scope.pos=226435 scope.end_pos=226458)
 					// af parent scope:
 					// af parent scope:
-					// var "stmt" var.pos=225980 var.line_nr=6947
+					// var "stmt" var.pos=226311 var.line_nr=6956
 					// af parent scope:
-					// var "stmt" var.pos=225823 var.line_nr=6940
+					// var "stmt" var.pos=226154 var.line_nr=6949
 					// skipping tmp var "stmt"
 					// af parent scope:
-					// var "stmts" var.pos=225793 var.line_nr=6939
+					// var "stmts" var.pos=226124 var.line_nr=6948
 					// af parent scope:
 					// af parent scope:
 					return _t4956;
@@ -83962,8 +83970,8 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts) {
 		}
 	}
 	bool _t4957 = false;
-	// autofree_scope_vars(pos=226141 line_nr=6955 scope.pos=225778 scope.end_pos=226155)
-	// var "stmts" var.pos=225793 var.line_nr=6939
+	// autofree_scope_vars(pos=226472 line_nr=6964 scope.pos=226109 scope.end_pos=226486)
+	// var "stmts" var.pos=226124 var.line_nr=6948
 	// af parent scope:
 	// af parent scope:
 	return _t4957;
@@ -84000,10 +84008,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t4962 = 0; _t4962 < sym_app->methods.len; ++_t4962) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t4962];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_226981 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_226981.arg0;
-				int nroute_attributes = mr_226981.arg1;
-				int nargs = mr_226981.arg2;
+				multi_return_bool_int_int mr_227312 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_227312.arg0;
+				int nroute_attributes = mr_227312.arg1;
+				int nargs = mr_227312.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
