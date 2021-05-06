@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "adffae4"
+#define V_COMMIT_HASH "483068f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2eafea6"
+	#define V_COMMIT_HASH "adffae4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "adffae4"
+	#define V_CURRENT_COMMIT_HASH "483068f"
 #endif
 
 // V comptime_defines:
@@ -27538,7 +27538,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2eafea6"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("adffae4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -86644,7 +86644,7 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag 
 }
 
 void v__builder__Builder_build_native(v__builder__Builder* b, Array_string v_files, string out_file) {
-	if (b->pref->os != v__pref__OS_linux || b->pref->os != v__pref__OS_macos) {
+	if (!(b->pref->os == v__pref__OS_linux || b->pref->os == v__pref__OS_macos)) {
 		eprintln(_SLIT("Warning: v -native can only generate macOS and Linux binaries for now"));
 	}
 	Option_void _t5268 = v__builder__Builder_front_and_middle_stages(b, v_files);
@@ -86653,9 +86653,9 @@ void v__builder__Builder_build_native(v__builder__Builder* b, Array_string v_fil
 		return;
 	};
 	v__util__timing_start(_SLIT("Native GEN"));
-	multi_return_int_int mr_387 = v__gen__native__gen(b->parsed_files, b->table, out_file, b->pref);
-	b->stats_lines = mr_387.arg0;
-	b->stats_bytes = mr_387.arg1;
+	multi_return_int_int mr_375 = v__gen__native__gen(b->parsed_files, b->table, out_file, b->pref);
+	b->stats_lines = mr_375.arg0;
+	b->stats_bytes = mr_375.arg1;
 	v__util__timing_measure(_SLIT("Native GEN"));
 }
 
