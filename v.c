@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ed7c8d5"
+#define V_COMMIT_HASH "7d922c8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b5afa04"
+	#define V_COMMIT_HASH "ed7c8d5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ed7c8d5"
+	#define V_CURRENT_COMMIT_HASH "7d922c8"
 #endif
 
 // V comptime_defines:
@@ -9903,10 +9903,10 @@ string strings__repeat_string(string s, int n) {
 // Attr: [inline]
 inline u64 hash__wyhash_c(byte* key, u64 len, u64 seed) {
 	u64 _t27 = wyhash(key, len, seed, ((u64*)(_wyp)));
-	// autofree_scope_vars(pos=203 line_nr=9 scope.pos=158 scope.end_pos=250)
-	// var "key" var.pos=167 var.line_nr=8
-	// var "len" var.pos=178 var.line_nr=8
-	// var "seed" var.pos=187 var.line_nr=8
+	// autofree_scope_vars(pos=204 line_nr=10 scope.pos=159 scope.end_pos=251)
+	// var "key" var.pos=168 var.line_nr=9
+	// var "len" var.pos=179 var.line_nr=9
+	// var "seed" var.pos=188 var.line_nr=9
 	// af parent scope:
 	// af parent scope:
 	return _t27;
@@ -9915,9 +9915,9 @@ inline u64 hash__wyhash_c(byte* key, u64 len, u64 seed) {
 // Attr: [inline]
 inline u64 hash__wyhash64_c(u64 a, u64 b) {
 	u64 _t28 = wyhash64(a, b);
-	// autofree_scope_vars(pos=300 line_nr=14 scope.pos=269 scope.end_pos=325)
-	// var "a" var.pos=280 var.line_nr=13
-	// var "b" var.pos=287 var.line_nr=13
+	// autofree_scope_vars(pos=301 line_nr=15 scope.pos=270 scope.end_pos=326)
+	// var "a" var.pos=281 var.line_nr=14
+	// var "b" var.pos=288 var.line_nr=14
 	// af parent scope:
 	// af parent scope:
 	return _t28;
@@ -28378,7 +28378,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b5afa04"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ed7c8d5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
