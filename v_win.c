@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0d20551"
+#define V_COMMIT_HASH "23513ae"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c16d491"
+	#define V_COMMIT_HASH "0d20551"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0d20551"
+	#define V_CURRENT_COMMIT_HASH "23513ae"
 #endif
 
 // V comptime_defines:
@@ -27691,7 +27691,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c16d491"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0d20551"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -41526,10 +41526,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			// var "tmpl_path" var.pos=3421 var.line_nr=132
 			// var "dir" var.pos=3550 var.line_nr=134
 			// var "path" var.pos=3590 var.line_nr=135
-			// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-			// var "v_code" var.pos=4413 var.line_nr=169
-			// var "scope" var.pos=4609 var.line_nr=176
-			// var "file" var.pos=4825 var.line_nr=187
+			// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+			// var "v_code" var.pos=4450 var.line_nr=170
+			// var "scope" var.pos=4646 var.line_nr=177
+			// var "file" var.pos=4862 var.line_nr=188
 			// af parent scope:
 			// af parent scope:
 			return err_node;
@@ -41558,10 +41558,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		// var "tmpl_path" var.pos=3421 var.line_nr=132
 		// var "dir" var.pos=3550 var.line_nr=134
 		// var "path" var.pos=3590 var.line_nr=135
-		// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-		// var "v_code" var.pos=4413 var.line_nr=169
-		// var "scope" var.pos=4609 var.line_nr=176
-		// var "file" var.pos=4825 var.line_nr=187
+		// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+		// var "v_code" var.pos=4450 var.line_nr=170
+		// var "scope" var.pos=4646 var.line_nr=177
+		// var "file" var.pos=4862 var.line_nr=188
 		// af parent scope:
 		// af parent scope:
 		return err_node;
@@ -41614,10 +41614,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		// var "tmpl_path" var.pos=3421 var.line_nr=132
 		// var "dir" var.pos=3550 var.line_nr=134
 		// var "path" var.pos=3590 var.line_nr=135
-		// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-		// var "v_code" var.pos=4413 var.line_nr=169
-		// var "scope" var.pos=4609 var.line_nr=176
-		// var "file" var.pos=4825 var.line_nr=187
+		// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+		// var "v_code" var.pos=4450 var.line_nr=170
+		// var "scope" var.pos=4646 var.line_nr=177
+		// var "file" var.pos=4862 var.line_nr=188
 		// af parent scope:
 		// af parent scope:
 		return _t3015;
@@ -41655,10 +41655,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			// var "tmpl_path" var.pos=3421 var.line_nr=132
 			// var "dir" var.pos=3550 var.line_nr=134
 			// var "path" var.pos=3590 var.line_nr=135
-			// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-			// var "v_code" var.pos=4413 var.line_nr=169
-			// var "scope" var.pos=4609 var.line_nr=176
-			// var "file" var.pos=4825 var.line_nr=187
+			// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+			// var "v_code" var.pos=4450 var.line_nr=170
+			// var "scope" var.pos=4646 var.line_nr=177
+			// var "file" var.pos=4862 var.line_nr=188
 			// af parent scope:
 			// af parent scope:
 			return err_node;
@@ -41693,10 +41693,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 					// var "tmpl_path" var.pos=3421 var.line_nr=132
 					// var "dir" var.pos=3550 var.line_nr=134
 					// var "path" var.pos=3590 var.line_nr=135
-					// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-					// var "v_code" var.pos=4413 var.line_nr=169
-					// var "scope" var.pos=4609 var.line_nr=176
-					// var "file" var.pos=4825 var.line_nr=187
+					// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+					// var "v_code" var.pos=4450 var.line_nr=170
+					// var "scope" var.pos=4646 var.line_nr=177
+					// var "file" var.pos=4862 var.line_nr=188
 					// af parent scope:
 					// af parent scope:
 					return err_node;
@@ -41727,10 +41727,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 					// var "tmpl_path" var.pos=3421 var.line_nr=132
 					// var "dir" var.pos=3550 var.line_nr=134
 					// var "path" var.pos=3590 var.line_nr=135
-					// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-					// var "v_code" var.pos=4413 var.line_nr=169
-					// var "scope" var.pos=4609 var.line_nr=176
-					// var "file" var.pos=4825 var.line_nr=187
+					// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+					// var "v_code" var.pos=4450 var.line_nr=170
+					// var "scope" var.pos=4646 var.line_nr=177
+					// var "file" var.pos=4862 var.line_nr=188
 					// af parent scope:
 					// af parent scope:
 					return err_node;
@@ -41761,10 +41761,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		// var "tmpl_path" var.pos=3421 var.line_nr=132
 		// var "dir" var.pos=3550 var.line_nr=134
 		// var "path" var.pos=3590 var.line_nr=135
-		// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-		// var "v_code" var.pos=4413 var.line_nr=169
-		// var "scope" var.pos=4609 var.line_nr=176
-		// var "file" var.pos=4825 var.line_nr=187
+		// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+		// var "v_code" var.pos=4450 var.line_nr=170
+		// var "scope" var.pos=4646 var.line_nr=177
+		// var "file" var.pos=4862 var.line_nr=188
 		// af parent scope:
 		// af parent scope:
 		return _t3019;
@@ -41787,8 +41787,8 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		}
 		if (!os__exists(path)) {
 			if (p->pref->is_fmt) {
-				v__ast__ComptimeCall _t3020 = (v__ast__ComptimeCall){.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),.has_parens = 0,.method_name = n,.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.scope = 0,.left = {0},.args_var = (string){.str=(byteptr)"", .is_lit=1},.is_vweb = true,.vweb_tmpl = (v__ast__File){.path = (string){.str=(byteptr)"", .is_lit=1},.path_base = (string){.str=(byteptr)"", .is_lit=1},.nr_lines = 0,.nr_bytes = 0,.mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 1, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},.global_scope = 0,.is_test = 0,.scope = 0,.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.imports = __new_array(0, 1, sizeof(v__ast__Import)),.auto_imports = __new_array(0, 1, sizeof(string)),.embedded_files = __new_array(0, 1, sizeof(v__ast__EmbeddedFile)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.notices = __new_array(0, 1, sizeof(v__errors__Notice)),.generic_fns = __new_array(0, 1, sizeof(v__ast__FnDecl*)),.global_labels = __new_array(0, 1, sizeof(string)),},.is_embed = 0,.embed_file = (v__ast__EmbeddedFile){.rpath = (string){.str=(byteptr)"", .is_lit=1},.apath = (string){.str=(byteptr)"", .is_lit=1},},.is_env = 0,.env_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.sym = (v__ast__TypeSymbol){.parent_idx = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.cname = (string){.str=(byteptr)"", .is_lit=1},.methods = __new_array(0, 1, sizeof(v__ast__Fn)),.mod = (string){.str=(byteptr)"", .is_lit=1},.is_public = 0,},.result_type = 0,.env_value = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 1, sizeof(v__ast__CallArg)),};
-				// autofree_scope_vars(pos=3927 line_nr=149 scope.pos=3922 scope.end_pos=4065)
+				v__ast__ComptimeCall _t3020 = (v__ast__ComptimeCall){.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),.has_parens = 0,.method_name = n,.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.scope = 0,.left = {0},.args_var = literal_string_param,.is_vweb = true,.vweb_tmpl = (v__ast__File){.path = (string){.str=(byteptr)"", .is_lit=1},.path_base = (string){.str=(byteptr)"", .is_lit=1},.nr_lines = 0,.nr_bytes = 0,.mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 1, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},.global_scope = 0,.is_test = 0,.scope = 0,.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.imports = __new_array(0, 1, sizeof(v__ast__Import)),.auto_imports = __new_array(0, 1, sizeof(string)),.embedded_files = __new_array(0, 1, sizeof(v__ast__EmbeddedFile)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors = __new_array(0, 1, sizeof(v__errors__Error)),.warnings = __new_array(0, 1, sizeof(v__errors__Warning)),.notices = __new_array(0, 1, sizeof(v__errors__Notice)),.generic_fns = __new_array(0, 1, sizeof(v__ast__FnDecl*)),.global_labels = __new_array(0, 1, sizeof(string)),},.is_embed = 0,.embed_file = (v__ast__EmbeddedFile){.rpath = (string){.str=(byteptr)"", .is_lit=1},.apath = (string){.str=(byteptr)"", .is_lit=1},},.is_env = 0,.env_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.sym = (v__ast__TypeSymbol){.parent_idx = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.cname = (string){.str=(byteptr)"", .is_lit=1},.methods = __new_array(0, 1, sizeof(v__ast__Fn)),.mod = (string){.str=(byteptr)"", .is_lit=1},.is_public = 0,},.result_type = 0,.env_value = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 1, sizeof(v__ast__CallArg)),};
+				// autofree_scope_vars(pos=3928 line_nr=149 scope.pos=3923 scope.end_pos=4102)
 				// af parent scope:
 				// af parent scope:
 				// af parent scope:
@@ -41809,10 +41809,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 				// var "tmpl_path" var.pos=3421 var.line_nr=132
 				// var "dir" var.pos=3550 var.line_nr=134
 				// var "path" var.pos=3590 var.line_nr=135
-				// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-				// var "v_code" var.pos=4413 var.line_nr=169
-				// var "scope" var.pos=4609 var.line_nr=176
-				// var "file" var.pos=4825 var.line_nr=187
+				// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+				// var "v_code" var.pos=4450 var.line_nr=170
+				// var "scope" var.pos=4646 var.line_nr=177
+				// var "file" var.pos=4862 var.line_nr=188
 				// af parent scope:
 				// af parent scope:
 				return _t3020;
@@ -41822,7 +41822,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			} else {
 				v__parser__Parser_error(p, _STR("template file \"%.*s\000\" not found", 2, path));
 			}
-			// autofree_scope_vars(pos=4201 line_nr=161 scope.pos=3900 scope.end_pos=4220)
+			// autofree_scope_vars(pos=4238 line_nr=162 scope.pos=3901 scope.end_pos=4257)
 			// af parent scope:
 			// af parent scope:
 			// var "p" var.pos=873 var.line_nr=41
@@ -41842,10 +41842,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 			// var "tmpl_path" var.pos=3421 var.line_nr=132
 			// var "dir" var.pos=3550 var.line_nr=134
 			// var "path" var.pos=3590 var.line_nr=135
-			// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-			// var "v_code" var.pos=4413 var.line_nr=169
-			// var "scope" var.pos=4609 var.line_nr=176
-			// var "file" var.pos=4825 var.line_nr=187
+			// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+			// var "v_code" var.pos=4450 var.line_nr=170
+			// var "scope" var.pos=4646 var.line_nr=177
+			// var "file" var.pos=4862 var.line_nr=188
 			// af parent scope:
 			// af parent scope:
 			return err_node;
@@ -41904,7 +41904,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		.env_value = (string){.str=(byteptr)"", .is_lit=1},
 		.args = __new_array(0, 1, sizeof(v__ast__CallArg)),
 	};
-	// autofree_scope_vars(pos=5546 line_nr=215 scope.pos=868 scope.end_pos=5717)
+	// autofree_scope_vars(pos=5583 line_nr=216 scope.pos=868 scope.end_pos=5754)
 	// var "p" var.pos=873 var.line_nr=41
 	// var "err_node" var.pos=915 var.line_nr=42
 	// var "start_pos" var.pos=978 var.line_nr=46
@@ -41922,10 +41922,10 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	// var "tmpl_path" var.pos=3421 var.line_nr=132
 	// var "dir" var.pos=3550 var.line_nr=134
 	// var "path" var.pos=3590 var.line_nr=135
-	// var "tmp_fn_name" var.pos=4262 var.line_nr=165
-	// var "v_code" var.pos=4413 var.line_nr=169
-	// var "scope" var.pos=4609 var.line_nr=176
-	// var "file" var.pos=4825 var.line_nr=187
+	// var "tmp_fn_name" var.pos=4299 var.line_nr=166
+	// var "v_code" var.pos=4450 var.line_nr=170
+	// var "scope" var.pos=4646 var.line_nr=177
+	// var "file" var.pos=4862 var.line_nr=188
 	// af parent scope:
 	// af parent scope:
 	return _t3027;
@@ -41956,18 +41956,18 @@ VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p)
 	} else {
 		v__parser__Parser_error_with_pos(p, _STR("unknown kind `%.*s\000`, available are: `methods`, `fields` or `attributes`", 2, for_val), v__token__Token_position(&p->prev_tok));
 		v__ast__CompFor _t3028 = (v__ast__CompFor){.val_var = (string){.str=(byteptr)"", .is_lit=1},.stmts = __new_array(0, 1, sizeof(v__ast__Stmt)),.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.typ_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.typ = 0,};
-		// autofree_scope_vars(pos=6834 line_nr=265 scope.pos=6707 scope.end_pos=6857)
+		// autofree_scope_vars(pos=6871 line_nr=266 scope.pos=6744 scope.end_pos=6894)
 		// af parent scope:
-		// var "p" var.pos=5728 var.line_nr=225
-		// var "var_pos" var.pos=5905 var.line_nr=231
-		// var "val_var" var.pos=5934 var.line_nr=232
-		// var "typ_pos" var.pos=5983 var.line_nr=234
-		// var "lang" var.pos=6012 var.line_nr=235
-		// var "typ" var.pos=6040 var.line_nr=236
-		// var "for_val" var.pos=6149 var.line_nr=239
-		// var "kind" var.pos=6180 var.line_nr=240
-		// var "spos" var.pos=6860 var.line_nr=267
-		// var "stmts" var.pos=6886 var.line_nr=268
+		// var "p" var.pos=5765 var.line_nr=226
+		// var "var_pos" var.pos=5942 var.line_nr=232
+		// var "val_var" var.pos=5971 var.line_nr=233
+		// var "typ_pos" var.pos=6020 var.line_nr=235
+		// var "lang" var.pos=6049 var.line_nr=236
+		// var "typ" var.pos=6077 var.line_nr=237
+		// var "for_val" var.pos=6186 var.line_nr=240
+		// var "kind" var.pos=6217 var.line_nr=241
+		// var "spos" var.pos=6897 var.line_nr=268
+		// var "stmts" var.pos=6923 var.line_nr=269
 		// af parent scope:
 		// af parent scope:
 		return _t3028;
@@ -41983,17 +41983,17 @@ VV_LOCAL_SYMBOL v__ast__CompFor v__parser__Parser_comp_for(v__parser__Parser* p)
 		.typ_pos = typ_pos,
 		.typ = typ,
 	};
-	// autofree_scope_vars(pos=6928 line_nr=270 scope.pos=5723 scope.end_pos=7066)
-	// var "p" var.pos=5728 var.line_nr=225
-	// var "var_pos" var.pos=5905 var.line_nr=231
-	// var "val_var" var.pos=5934 var.line_nr=232
-	// var "typ_pos" var.pos=5983 var.line_nr=234
-	// var "lang" var.pos=6012 var.line_nr=235
-	// var "typ" var.pos=6040 var.line_nr=236
-	// var "for_val" var.pos=6149 var.line_nr=239
-	// var "kind" var.pos=6180 var.line_nr=240
-	// var "spos" var.pos=6860 var.line_nr=267
-	// var "stmts" var.pos=6886 var.line_nr=268
+	// autofree_scope_vars(pos=6965 line_nr=271 scope.pos=5760 scope.end_pos=7103)
+	// var "p" var.pos=5765 var.line_nr=226
+	// var "var_pos" var.pos=5942 var.line_nr=232
+	// var "val_var" var.pos=5971 var.line_nr=233
+	// var "typ_pos" var.pos=6020 var.line_nr=235
+	// var "lang" var.pos=6049 var.line_nr=236
+	// var "typ" var.pos=6077 var.line_nr=237
+	// var "for_val" var.pos=6186 var.line_nr=240
+	// var "kind" var.pos=6217 var.line_nr=241
+	// var "spos" var.pos=6897 var.line_nr=268
+	// var "stmts" var.pos=6923 var.line_nr=269
 	// af parent scope:
 	// af parent scope:
 	return _t3029;
@@ -42004,10 +42004,10 @@ VV_LOCAL_SYMBOL v__ast__AtExpr v__parser__Parser_at(v__parser__Parser* p) {
 	v__token__AtKind kind = ((string_eq(name, _SLIT("@FN"))) ? (v__token__AtKind_fn_name) : (string_eq(name, _SLIT("@METHOD"))) ? (v__token__AtKind_method_name) : (string_eq(name, _SLIT("@MOD"))) ? (v__token__AtKind_mod_name) : (string_eq(name, _SLIT("@STRUCT"))) ? (v__token__AtKind_struct_name) : (string_eq(name, _SLIT("@FILE"))) ? (v__token__AtKind_file_path) : (string_eq(name, _SLIT("@LINE"))) ? (v__token__AtKind_line_nr) : (string_eq(name, _SLIT("@COLUMN"))) ? (v__token__AtKind_column_nr) : (string_eq(name, _SLIT("@VHASH"))) ? (v__token__AtKind_vhash) : (string_eq(name, _SLIT("@VMOD_FILE"))) ? (v__token__AtKind_vmod_file) : (string_eq(name, _SLIT("@VEXE"))) ? (v__token__AtKind_vexe_path) : (string_eq(name, _SLIT("@VEXEROOT"))) ? (v__token__AtKind_vexeroot_path) : (string_eq(name, _SLIT("@VMODROOT"))) ? (v__token__AtKind_vmodroot_path) : (string_eq(name, _SLIT("@VROOT"))) ? (v__token__AtKind_vroot_path) : (v__token__AtKind_unknown));
 	v__parser__Parser_next(p);
 	v__ast__AtExpr _t3030 = (v__ast__AtExpr){.name = name,.pos = v__token__Token_position(&p->tok),.kind = kind,.val = (string){.str=(byteptr)"", .is_lit=1},};
-	// autofree_scope_vars(pos=7802 line_nr=300 scope.pos=7138 scope.end_pos=7875)
-	// var "p" var.pos=7143 var.line_nr=281
-	// var "name" var.pos=7172 var.line_nr=282
-	// var "kind" var.pos=7191 var.line_nr=283
+	// autofree_scope_vars(pos=7839 line_nr=301 scope.pos=7175 scope.end_pos=7912)
+	// var "p" var.pos=7180 var.line_nr=282
+	// var "name" var.pos=7209 var.line_nr=283
+	// var "kind" var.pos=7228 var.line_nr=284
 	// af parent scope:
 	// af parent scope:
 	return _t3030;
@@ -42046,16 +42046,16 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_comptime_selector(v__parser__Pars
 			.env_value = (string){.str=(byteptr)"", .is_lit=1},
 			.args = args,
 		})));
-		// autofree_scope_vars(pos=8306 line_nr=322 scope.pos=8023 scope.end_pos=8501)
-		// var "method_pos" var.pos=8027 var.line_nr=311
-		// var "method_name" var.pos=8060 var.line_nr=312
-		// var "args" var.pos=8187 var.line_nr=316
+		// autofree_scope_vars(pos=8343 line_nr=323 scope.pos=8060 scope.end_pos=8538)
+		// var "method_pos" var.pos=8064 var.line_nr=312
+		// var "method_name" var.pos=8097 var.line_nr=313
+		// var "args" var.pos=8224 var.line_nr=317
 		// af parent scope:
-		// var "p" var.pos=7886 var.line_nr=307
-		// var "left" var.pos=7914 var.line_nr=307
-		// var "start_pos" var.pos=7959 var.line_nr=309
-		// var "has_parens" var.pos=8508 var.line_nr=332
-		// var "expr" var.pos=8699 var.line_nr=339
+		// var "p" var.pos=7923 var.line_nr=308
+		// var "left" var.pos=7951 var.line_nr=308
+		// var "start_pos" var.pos=7996 var.line_nr=310
+		// var "has_parens" var.pos=8545 var.line_nr=333
+		// var "expr" var.pos=8736 var.line_nr=340
 		// af parent scope:
 		// af parent scope:
 		return _t3031;
@@ -42072,12 +42072,12 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_comptime_selector(v__parser__Pars
 		v__parser__Parser_check(p, v__token__Kind_rpar);
 	}
 	v__ast__Expr _t3032 = v__ast__ComptimeSelector_to_sumtype_v__ast__Expr(ADDR(v__ast__ComptimeSelector, ((v__ast__ComptimeSelector){.has_parens = has_parens,.left = left,.field_expr = expr,.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),.left_type = 0,.typ = 0,})));
-	// autofree_scope_vars(pos=8754 line_nr=343 scope.pos=7881 scope.end_pos=8891)
-	// var "p" var.pos=7886 var.line_nr=307
-	// var "left" var.pos=7914 var.line_nr=307
-	// var "start_pos" var.pos=7959 var.line_nr=309
-	// var "has_parens" var.pos=8508 var.line_nr=332
-	// var "expr" var.pos=8699 var.line_nr=339
+	// autofree_scope_vars(pos=8791 line_nr=344 scope.pos=7918 scope.end_pos=8928)
+	// var "p" var.pos=7923 var.line_nr=308
+	// var "left" var.pos=7951 var.line_nr=308
+	// var "start_pos" var.pos=7996 var.line_nr=310
+	// var "has_parens" var.pos=8545 var.line_nr=333
+	// var "expr" var.pos=8736 var.line_nr=340
 	// af parent scope:
 	// af parent scope:
 	return _t3032;
