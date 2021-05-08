@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c16d491"
+#define V_COMMIT_HASH "0d20551"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cbf30bd"
+	#define V_COMMIT_HASH "c16d491"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c16d491"
+	#define V_CURRENT_COMMIT_HASH "0d20551"
 #endif
 
 // V comptime_defines:
@@ -9925,7 +9925,7 @@ inline u64 hash__wyhash64_c(u64 a, u64 b) {
 
 // Attr: [inline]
 inline u64 hash__sum64_string(string key, u64 seed) {
-	u64 _t29 = hash__wyhash64(key.str, ((u64)(key.len)), seed);
+	u64 _t29 = hash__wyhash_c(key.str, ((u64)(key.len)), seed);
 	// autofree_scope_vars(pos=861 line_nr=27 scope.pos=820 scope.end_pos=907)
 	// var "key" var.pos=833 var.line_nr=26
 	// var "seed" var.pos=845 var.line_nr=26
@@ -9936,7 +9936,7 @@ inline u64 hash__sum64_string(string key, u64 seed) {
 
 // Attr: [inline]
 inline u64 hash__sum64(Array_byte key, u64 seed) {
-	u64 _t30 = hash__wyhash64(((byte*)(key.data)), ((u64)(key.len)), seed);
+	u64 _t30 = hash__wyhash_c(((byte*)(key.data)), ((u64)(key.len)), seed);
 	// autofree_scope_vars(pos=960 line_nr=32 scope.pos=926 scope.end_pos=1014)
 	// var "key" var.pos=932 var.line_nr=31
 	// var "seed" var.pos=944 var.line_nr=31
@@ -9945,21 +9945,22 @@ inline u64 hash__sum64(Array_byte key, u64 seed) {
 	return _t30;
 }
 
+// Attr: [deprecated]
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL u64 hash__wyhash64(byte* key, u64 len, u64 seed_) {
 	if (len == 0U) {
 		u64 _t31 = 0U;
-		// autofree_scope_vars(pos=1091 line_nr=38 scope.pos=1088 scope.end_pos=1102)
+		// autofree_scope_vars(pos=1164 line_nr=39 scope.pos=1161 scope.end_pos=1175)
 		// af parent scope:
-		// var "key" var.pos=1038 var.line_nr=36
-		// var "len" var.pos=1049 var.line_nr=36
-		// var "seed_" var.pos=1058 var.line_nr=36
-		// var "p" var.pos=1109 var.line_nr=40
-		// var "seed" var.pos=1134 var.line_nr=41
-		// var "i" var.pos=1153 var.line_nr=42
-		// var "see1" var.pos=2182 var.line_nr=73
-		// var "see2" var.pos=2200 var.line_nr=74
-		// var "see3" var.pos=2218 var.line_nr=75
+		// var "key" var.pos=1111 var.line_nr=37
+		// var "len" var.pos=1122 var.line_nr=37
+		// var "seed_" var.pos=1131 var.line_nr=37
+		// var "p" var.pos=1182 var.line_nr=41
+		// var "seed" var.pos=1207 var.line_nr=42
+		// var "i" var.pos=1226 var.line_nr=43
+		// var "see1" var.pos=2255 var.line_nr=74
+		// var "see2" var.pos=2273 var.line_nr=75
+		// var "see3" var.pos=2291 var.line_nr=76
 		// af parent scope:
 		// af parent scope:
 		return _t31;
@@ -9989,17 +9990,17 @@ inline VV_LOCAL_SYMBOL u64 hash__wyhash64(byte* key, u64 len, u64 seed_) {
 	}	seed = _t32;
 	if (i == len) {
 		u64 _t33 = hash__wymum(seed, (len ^ _const_hash__wyp4));
-		// autofree_scope_vars(pos=2137 line_nr=71 scope.pos=2134 scope.end_pos=2175)
+		// autofree_scope_vars(pos=2210 line_nr=72 scope.pos=2207 scope.end_pos=2248)
 		// af parent scope:
-		// var "key" var.pos=1038 var.line_nr=36
-		// var "len" var.pos=1049 var.line_nr=36
-		// var "seed_" var.pos=1058 var.line_nr=36
-		// var "p" var.pos=1109 var.line_nr=40
-		// var "seed" var.pos=1134 var.line_nr=41
-		// var "i" var.pos=1153 var.line_nr=42
-		// var "see1" var.pos=2182 var.line_nr=73
-		// var "see2" var.pos=2200 var.line_nr=74
-		// var "see3" var.pos=2218 var.line_nr=75
+		// var "key" var.pos=1111 var.line_nr=37
+		// var "len" var.pos=1122 var.line_nr=37
+		// var "seed_" var.pos=1131 var.line_nr=37
+		// var "p" var.pos=1182 var.line_nr=41
+		// var "seed" var.pos=1207 var.line_nr=42
+		// var "i" var.pos=1226 var.line_nr=43
+		// var "see1" var.pos=2255 var.line_nr=74
+		// var "see2" var.pos=2273 var.line_nr=75
+		// var "see3" var.pos=2291 var.line_nr=76
 		// af parent scope:
 		// af parent scope:
 		return _t33;
@@ -10018,16 +10019,16 @@ inline VV_LOCAL_SYMBOL u64 hash__wyhash64(byte* key, u64 len, u64 seed_) {
 		}
 	}
 	u64 _t34 = hash__wymum(((seed ^ see1) ^ see2), ((see3 ^ len) ^ _const_hash__wyp4));
-	// autofree_scope_vars(pos=2634 line_nr=86 scope.pos=1029 scope.end_pos=2692)
-	// var "key" var.pos=1038 var.line_nr=36
-	// var "len" var.pos=1049 var.line_nr=36
-	// var "seed_" var.pos=1058 var.line_nr=36
-	// var "p" var.pos=1109 var.line_nr=40
-	// var "seed" var.pos=1134 var.line_nr=41
-	// var "i" var.pos=1153 var.line_nr=42
-	// var "see1" var.pos=2182 var.line_nr=73
-	// var "see2" var.pos=2200 var.line_nr=74
-	// var "see3" var.pos=2218 var.line_nr=75
+	// autofree_scope_vars(pos=2707 line_nr=87 scope.pos=1102 scope.end_pos=2765)
+	// var "key" var.pos=1111 var.line_nr=37
+	// var "len" var.pos=1122 var.line_nr=37
+	// var "seed_" var.pos=1131 var.line_nr=37
+	// var "p" var.pos=1182 var.line_nr=41
+	// var "seed" var.pos=1207 var.line_nr=42
+	// var "i" var.pos=1226 var.line_nr=43
+	// var "see1" var.pos=2255 var.line_nr=74
+	// var "see2" var.pos=2273 var.line_nr=75
+	// var "see3" var.pos=2291 var.line_nr=76
 	// af parent scope:
 	// af parent scope:
 	return _t34;
@@ -10036,9 +10037,9 @@ inline VV_LOCAL_SYMBOL u64 hash__wyhash64(byte* key, u64 len, u64 seed_) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL u64 hash__wyrotr(u64 v, u32 k) {
 	u64 _t35 = ((v >> k) | (v << (64 - k)));
-	// autofree_scope_vars(pos=2734 line_nr=91 scope.pos=2707 scope.end_pos=2769)
-	// var "v" var.pos=2714 var.line_nr=90
-	// var "k" var.pos=2721 var.line_nr=90
+	// autofree_scope_vars(pos=2807 line_nr=92 scope.pos=2780 scope.end_pos=2842)
+	// var "v" var.pos=2787 var.line_nr=91
+	// var "k" var.pos=2794 var.line_nr=91
 	// af parent scope:
 	// af parent scope:
 	return _t35;
@@ -10059,20 +10060,20 @@ inline u64 hash__wymum(u64 a, u64 b) {
 	u64 hi = x1 * y1 + w2 + (w1 >> 32U);
 	u64 lo = a * b;
 	u64 _t36 = (hi ^ lo);
-	// autofree_scope_vars(pos=3100 line_nr=113 scope.pos=2788 scope.end_pos=3116)
-	// var "a" var.pos=2794 var.line_nr=95
-	// var "b" var.pos=2801 var.line_nr=95
-	// var "mask32" var.pos=2868 var.line_nr=101
-	// var "x0" var.pos=2895 var.line_nr=102
-	// var "x1" var.pos=2913 var.line_nr=103
-	// var "y0" var.pos=2928 var.line_nr=104
-	// var "y1" var.pos=2946 var.line_nr=105
-	// var "w0" var.pos=2961 var.line_nr=106
-	// var "t" var.pos=2976 var.line_nr=107
-	// var "w1" var.pos=3007 var.line_nr=108
-	// var "w2" var.pos=3025 var.line_nr=109
-	// var "hi" var.pos=3055 var.line_nr=111
-	// var "lo" var.pos=3088 var.line_nr=112
+	// autofree_scope_vars(pos=3173 line_nr=114 scope.pos=2861 scope.end_pos=3189)
+	// var "a" var.pos=2867 var.line_nr=96
+	// var "b" var.pos=2874 var.line_nr=96
+	// var "mask32" var.pos=2941 var.line_nr=102
+	// var "x0" var.pos=2968 var.line_nr=103
+	// var "x1" var.pos=2986 var.line_nr=104
+	// var "y0" var.pos=3001 var.line_nr=105
+	// var "y1" var.pos=3019 var.line_nr=106
+	// var "w0" var.pos=3034 var.line_nr=107
+	// var "t" var.pos=3049 var.line_nr=108
+	// var "w1" var.pos=3080 var.line_nr=109
+	// var "w2" var.pos=3098 var.line_nr=110
+	// var "hi" var.pos=3128 var.line_nr=112
+	// var "lo" var.pos=3161 var.line_nr=113
 	// af parent scope:
 	// af parent scope:
 	return _t36;
@@ -10082,9 +10083,9 @@ inline u64 hash__wymum(u64 a, u64 b) {
 inline VV_LOCAL_SYMBOL u64 hash__wyr3(byte* p, u64 k) {
 	{ // Unsafe block
 		u64 _t37 = (((((u64)(p[0])) << 16U) | (((u64)(p[k >> 1U])) << 8U)) | ((u64)(p[k - 1U])));
-		// autofree_scope_vars(pos=3169 line_nr=119 scope.pos=3131 scope.end_pos=3238)
-		// var "p" var.pos=3136 var.line_nr=117
-		// var "k" var.pos=3145 var.line_nr=117
+		// autofree_scope_vars(pos=3242 line_nr=120 scope.pos=3204 scope.end_pos=3311)
+		// var "p" var.pos=3209 var.line_nr=118
+		// var "k" var.pos=3218 var.line_nr=118
 		// af parent scope:
 		// af parent scope:
 		return _t37;
@@ -10096,8 +10097,8 @@ inline VV_LOCAL_SYMBOL u64 hash__wyr3(byte* p, u64 k) {
 inline VV_LOCAL_SYMBOL u64 hash__wyr4(byte* p) {
 	{ // Unsafe block
 		u64 _t38 = (((((u32)(p[0])) | (((u32)(p[1])) << ((u32)(8U)))) | (((u32)(p[2])) << ((u32)(16U)))) | (((u32)(p[3])) << ((u32)(24U))));
-		// autofree_scope_vars(pos=3284 line_nr=126 scope.pos=3253 scope.end_pos=3379)
-		// var "p" var.pos=3258 var.line_nr=124
+		// autofree_scope_vars(pos=3357 line_nr=127 scope.pos=3326 scope.end_pos=3452)
+		// var "p" var.pos=3331 var.line_nr=125
 		// af parent scope:
 		// af parent scope:
 		return _t38;
@@ -10109,8 +10110,8 @@ inline VV_LOCAL_SYMBOL u64 hash__wyr4(byte* p) {
 inline VV_LOCAL_SYMBOL u64 hash__wyr8(byte* p) {
 	{ // Unsafe block
 		u64 _t39 = (((((((((u64)(p[0])) | (((u64)(p[1])) << 8U)) | (((u64)(p[2])) << 16U)) | (((u64)(p[3])) << 24U)) | (((u64)(p[4])) << 32U)) | (((u64)(p[5])) << 40U)) | (((u64)(p[6])) << 48U)) | (((u64)(p[7])) << 56U));
-		// autofree_scope_vars(pos=3425 line_nr=133 scope.pos=3394 scope.end_pos=3585)
-		// var "p" var.pos=3399 var.line_nr=131
+		// autofree_scope_vars(pos=3498 line_nr=134 scope.pos=3467 scope.end_pos=3658)
+		// var "p" var.pos=3472 var.line_nr=132
 		// af parent scope:
 		// af parent scope:
 		return _t39;
@@ -28378,7 +28379,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cbf30bd"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c16d491"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
