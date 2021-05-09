@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2a6a9c5"
+#define V_COMMIT_HASH "4728d10"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "74defc4"
+	#define V_COMMIT_HASH "2a6a9c5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2a6a9c5"
+	#define V_CURRENT_COMMIT_HASH "4728d10"
 #endif
 
 // V comptime_defines:
@@ -1081,6 +1081,7 @@ typedef enum {
 	os__ProcessState_stopped, // +2
 	os__ProcessState_exited, // +3
 	os__ProcessState_aborted, // +4
+	os__ProcessState_closed, // +5
 } os__ProcessState;
 
 typedef enum {
@@ -5743,6 +5744,8 @@ void os__Process_signal_pgkill(os__Process* p);
 void os__Process_signal_stop(os__Process* p);
 void os__Process_signal_continue(os__Process* p);
 void os__Process_wait(os__Process* p);
+void os__Process_close(os__Process* p);
+void os__Process_free(os__Process* p);
 VV_LOCAL_SYMBOL int os__Process__spawn(os__Process* p);
 bool os__Process_is_alive(os__Process* p);
 void os__Process_set_redirect_stdio(os__Process* p);
@@ -20501,6 +20504,33 @@ void os__Process_wait(os__Process* p) {
 	return;
 }
 
+void os__Process_close(os__Process* p) {
+	if ((p->status == os__ProcessState_not_started || p->status == os__ProcessState_closed)) {
+		return;
+	}
+	p->status = os__ProcessState_closed;
+	#if !defined(_WIN32)
+	{
+		for (int i = 0; i < 3; ++i) {
+			if (p->stdio_fd[v_fixed_index(i, 3)] != 0) {
+				os__fd_close(p->stdio_fd[v_fixed_index(i, 3)]);
+			}
+		}
+	}
+	#endif
+}
+
+// Attr: [unsafe]
+void os__Process_free(os__Process* p) {
+	os__Process_close(p);
+	{ // Unsafe block
+		string_free(&p->filename);
+		string_free(&p->err);
+		array_free(&p->args);
+		array_free(&p->env);
+	}
+}
+
 VV_LOCAL_SYMBOL int os__Process__spawn(os__Process* p) {
 	if (!p->env_is_custom) {
 		p->env = __new_array_with_default(0, 0, sizeof(string), 0);
@@ -20593,14 +20623,14 @@ string os__Process_stdout_read(os__Process* p) {
 	os__Process__check_redirection_call(p, _SLIT("stdout_read"));
 	#if defined(_WIN32)
 	{
-		multi_return_string_int mr_5347 = os__Process_win_read_string(p, 1, 4096);
-		string s = mr_5347.arg0;
+		multi_return_string_int mr_6006 = os__Process_win_read_string(p, 1, 4096);
+		string s = mr_6006.arg0;
 		return s;
 	}
 	#else
 	{
-		multi_return_string_int mr_5406 = os__fd_read(p->stdio_fd[1], 4096);
-		string s = mr_5406.arg0;
+		multi_return_string_int mr_6065 = os__fd_read(p->stdio_fd[1], 4096);
+		string s = mr_6065.arg0;
 		return s;
 	}
 	#endif
@@ -20611,14 +20641,14 @@ string os__Process_stderr_read(os__Process* p) {
 	os__Process__check_redirection_call(p, _SLIT("stderr_read"));
 	#if defined(_WIN32)
 	{
-		multi_return_string_int mr_5565 = os__Process_win_read_string(p, 2, 4096);
-		string s = mr_5565.arg0;
+		multi_return_string_int mr_6224 = os__Process_win_read_string(p, 2, 4096);
+		string s = mr_6224.arg0;
 		return s;
 	}
 	#else
 	{
-		multi_return_string_int mr_5624 = os__fd_read(p->stdio_fd[2], 4096);
-		string s = mr_5624.arg0;
+		multi_return_string_int mr_6283 = os__fd_read(p->stdio_fd[2], 4096);
+		string s = mr_6283.arg0;
 		return s;
 	}
 	#endif
@@ -28383,7 +28413,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("74defc4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2a6a9c5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
