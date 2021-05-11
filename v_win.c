@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3b06238"
+#define V_COMMIT_HASH "d60a55d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dcf4d73"
+	#define V_COMMIT_HASH "3b06238"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3b06238"
+	#define V_CURRENT_COMMIT_HASH "d60a55d"
 #endif
 
 // V comptime_defines:
@@ -11148,11 +11148,12 @@ VV_LOCAL_SYMBOL bool strconv__underscore_ok(string s) {
 	return saw != L'_';
 }
 
+// Attr: [direct_array_access]
 string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, int i_pad_digit) {
 	int n_digit = i_n_digit + 1;
 	int pad_digit = i_pad_digit + 1;
 	u32 out = d.m;
-	int out_len = strconv__decimal_len_32(out);
+	int out_len = strconv__dec_digits(out);
 	int out_len_original = out_len;
 	int fw_zeros = 0;
 	if (pad_digit > out_len) {
@@ -11161,7 +11162,7 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 	Array_byte buf = __new_array_with_default(((int)(out_len + 5 + 1 + 1)), 0, sizeof(byte), 0);
 	int i = 0;
 	if (neg) {
-		array_set(&buf, i, &(byte[]) { L'-' });
+		((byte*)buf.data)[i] = L'-';
 		i++;
 	}
 	int disp = 0;
@@ -11169,59 +11170,59 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 		disp = 1;
 	}
 	if (n_digit < out_len) {
-		out += (*(u32*)/*ee elem_typ */array_get(_const_strconv__ten_pow_table_32, out_len - n_digit - 1)) * 5U;
-		out /= (*(u32*)/*ee elem_typ */array_get(_const_strconv__ten_pow_table_32, out_len - n_digit));
+		out += ((u32*)_const_strconv__ten_pow_table_32.data)[out_len - n_digit - 1] * 5U;
+		out /= ((u32*)_const_strconv__ten_pow_table_32.data)[out_len - n_digit];
 		out_len = n_digit;
 	}
 	int y = i + out_len;
 	int x = 0;
 	for (;;) {
 		if (!(x < (out_len - disp - 1))) break;
-		array_set(&buf, y - x, &(byte[]) { L'0' + ((byte)(out % 10U)) });
+		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
 		out /= 10U;
 		i++;
 		x++;
 	}
 	if (i_n_digit == 0) {
 		{ // Unsafe block
-			array_set(&buf, i, &(byte[]) { 0 });
-			return tos(((byteptr)(&(*(byte*)/*ee elem_typ */array_get(buf, 0)))), i);
+			((byte*)buf.data)[i] = 0;
+			return tos(((byteptr)(&((byte*)buf.data)[0])), i);
 		}
 	}
 	if (out_len >= 1) {
-		array_set(&buf, y - x, &(byte[]) { L'.' });
+		((byte*)buf.data)[y - x] = L'.';
 		x++;
 		i++;
 	}
 	if (y - x >= 0) {
-		array_set(&buf, y - x, &(byte[]) { L'0' + ((byte)(out % 10U)) });
+		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
 		i++;
 	}
 	for (;;) {
 		if (!(fw_zeros > 0)) break;
-		array_set(&buf, i, &(byte[]) { L'0' });
+		((byte*)buf.data)[i] = L'0';
 		i++;
 		fw_zeros--;
 	}
-	array_set(&buf, i, &(byte[]) { L'e' });
+	((byte*)buf.data)[i] = L'e';
 	i++;
 	int exp = d.e + out_len_original - 1;
 	if (exp < 0) {
-		array_set(&buf, i, &(byte[]) { L'-' });
+		((byte*)buf.data)[i] = L'-';
 		i++;
 		exp = -exp;
 	} else {
-		array_set(&buf, i, &(byte[]) { L'+' });
+		((byte*)buf.data)[i] = L'+';
 		i++;
 	}
 	int d1 = exp % 10;
 	int d0 = exp / 10;
-	array_set(&buf, i, &(byte[]) { L'0' + ((byte)(d0)) });
+	((byte*)buf.data)[i] = L'0' + ((byte)(d0));
 	i++;
-	array_set(&buf, i, &(byte[]) { L'0' + ((byte)(d1)) });
+	((byte*)buf.data)[i] = L'0' + ((byte)(d1));
 	i++;
-	array_set(&buf, i, &(byte[]) { 0 });
-	return tos(((byteptr)(&(*(byte*)/*ee elem_typ */array_get(buf, 0)))), i);
+	((byte*)buf.data)[i] = 0;
+	return tos(((byteptr)(&((byte*)buf.data)[0])), i);
 }
 
 VV_LOCAL_SYMBOL multi_return_strconv__Dec32_bool strconv__f32_to_decimal_exact_int(u32 i_mant, u32 exp) {
@@ -11367,9 +11368,9 @@ string strconv__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec32_bool mr_8118 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_8118.arg0;
-	bool ok = mr_8118.arg1;
+	multi_return_strconv__Dec32_bool mr_8525 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_8525.arg0;
+	bool ok = mr_8525.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -11386,21 +11387,22 @@ string strconv__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec32_bool mr_8835 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_8835.arg0;
-	bool ok = mr_8835.arg1;
+	multi_return_strconv__Dec32_bool mr_9250 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_9250.arg0;
+	bool ok = mr_9250.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
 	return strconv__Dec32_get_string_32(d, neg, n_digit, n_digit);
 }
 
+// Attr: [direct_array_access]
 VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, int i_n_digit, int i_pad_digit) {
 	int n_digit = i_n_digit + 1;
 	int pad_digit = i_pad_digit + 1;
 	u64 out = d.m;
 	int d_exp = d.e;
-	int out_len = strconv__decimal_len_64(out);
+	int out_len = strconv__dec_digits(out);
 	int out_len_original = out_len;
 	int fw_zeros = 0;
 	if (pad_digit > out_len) {
@@ -11409,7 +11411,7 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 	Array_byte buf = __new_array_with_default((out_len + 6 + 1 + 1 + fw_zeros), 0, sizeof(byte), 0);
 	int i = 0;
 	if (neg) {
-		array_set(&buf, i, &(byte[]) { L'-' });
+		((byte*)buf.data)[i] = L'-';
 		i++;
 	}
 	int disp = 0;
@@ -11417,9 +11419,9 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 		disp = 1;
 	}
 	if (n_digit < out_len) {
-		out += (*(u64*)/*ee elem_typ */array_get(_const_strconv__ten_pow_table_64, out_len - n_digit - 1)) * 5U;
-		out /= (*(u64*)/*ee elem_typ */array_get(_const_strconv__ten_pow_table_64, out_len - n_digit));
-		if (d.m / (*(u64*)/*ee elem_typ */array_get(_const_strconv__ten_pow_table_64, out_len - n_digit)) < out) {
+		out += ((u64*)_const_strconv__ten_pow_table_64.data)[out_len - n_digit - 1] * 5U;
+		out /= ((u64*)_const_strconv__ten_pow_table_64.data)[out_len - n_digit];
+		if (d.m / ((u64*)_const_strconv__ten_pow_table_64.data)[out_len - n_digit] < out) {
 			d_exp++;
 			n_digit++;
 		}
@@ -11429,41 +11431,41 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 	int x = 0;
 	for (;;) {
 		if (!(x < (out_len - disp - 1))) break;
-		array_set(&buf, y - x, &(byte[]) { L'0' + ((byte)(out % 10U)) });
+		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
 		out /= 10U;
 		i++;
 		x++;
 	}
 	if (i_n_digit == 0) {
 		{ // Unsafe block
-			array_set(&buf, i, &(byte[]) { 0 });
-			return tos(((byteptr)(&(*(byte*)/*ee elem_typ */array_get(buf, 0)))), i);
+			((byte*)buf.data)[i] = 0;
+			return tos(((byteptr)(&((byte*)buf.data)[0])), i);
 		}
 	}
 	if (out_len >= 1) {
-		array_set(&buf, y - x, &(byte[]) { L'.' });
+		((byte*)buf.data)[y - x] = L'.';
 		x++;
 		i++;
 	}
 	if (y - x >= 0) {
-		array_set(&buf, y - x, &(byte[]) { L'0' + ((byte)(out % 10U)) });
+		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
 		i++;
 	}
 	for (;;) {
 		if (!(fw_zeros > 0)) break;
-		array_set(&buf, i, &(byte[]) { L'0' });
+		((byte*)buf.data)[i] = L'0';
 		i++;
 		fw_zeros--;
 	}
-	array_set(&buf, i, &(byte[]) { L'e' });
+	((byte*)buf.data)[i] = L'e';
 	i++;
 	int exp = d_exp + out_len_original - 1;
 	if (exp < 0) {
-		array_set(&buf, i, &(byte[]) { L'-' });
+		((byte*)buf.data)[i] = L'-';
 		i++;
 		exp = -exp;
 	} else {
-		array_set(&buf, i, &(byte[]) { L'+' });
+		((byte*)buf.data)[i] = L'+';
 		i++;
 	}
 	int d2 = exp % 10;
@@ -11471,15 +11473,15 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 	int d1 = exp % 10;
 	int d0 = exp / 10;
 	if (d0 > 0) {
-		array_set(&buf, i, &(byte[]) { L'0' + ((byte)(d0)) });
+		((byte*)buf.data)[i] = L'0' + ((byte)(d0));
 		i++;
 	}
-	array_set(&buf, i, &(byte[]) { L'0' + ((byte)(d1)) });
+	((byte*)buf.data)[i] = L'0' + ((byte)(d1));
 	i++;
-	array_set(&buf, i, &(byte[]) { L'0' + ((byte)(d2)) });
+	((byte*)buf.data)[i] = L'0' + ((byte)(d2));
 	i++;
-	array_set(&buf, i, &(byte[]) { 0 });
-	return tos(((byteptr)(&(*(byte*)/*ee elem_typ */array_get(buf, 0)))), i);
+	((byte*)buf.data)[i] = 0;
+	return tos(((byteptr)(&((byte*)buf.data)[0])), i);
 }
 
 VV_LOCAL_SYMBOL multi_return_strconv__Dec64_bool strconv__f64_to_decimal_exact_int(u64 i_mant, u64 exp) {
@@ -11640,9 +11642,9 @@ string strconv__f64_to_str(f64 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp64) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec64_bool mr_9826 = strconv__f64_to_decimal_exact_int(mant, exp);
-	strconv__Dec64 d = mr_9826.arg0;
-	bool ok = mr_9826.arg1;
+	multi_return_strconv__Dec64_bool mr_10245 = strconv__f64_to_decimal_exact_int(mant, exp);
+	strconv__Dec64 d = mr_10245.arg0;
+	bool ok = mr_10245.arg1;
 	if (!ok) {
 		d = strconv__f64_to_decimal(mant, exp);
 	}
@@ -11659,9 +11661,9 @@ string strconv__f64_to_str_pad(f64 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp64) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec64_bool mr_10571 = strconv__f64_to_decimal_exact_int(mant, exp);
-	strconv__Dec64 d = mr_10571.arg0;
-	bool ok = mr_10571.arg1;
+	multi_return_strconv__Dec64_bool mr_10998 = strconv__f64_to_decimal_exact_int(mant, exp);
+	strconv__Dec64 d = mr_10998.arg0;
+	bool ok = mr_10998.arg1;
 	if (!ok) {
 		d = strconv__f64_to_decimal(mant, exp);
 	}
@@ -27721,7 +27723,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dcf4d73"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3b06238"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
