@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8361f71"
+#define V_COMMIT_HASH "cf3dd7a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "066374b"
+	#define V_COMMIT_HASH "8361f71"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8361f71"
+	#define V_CURRENT_COMMIT_HASH "cf3dd7a"
 #endif
 
 // V comptime_defines:
@@ -24940,7 +24940,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("066374b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8361f71"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -58411,29 +58411,29 @@ void v__checker__Checker_check(v__checker__Checker* c, v__ast__File* ast_file) {
 }
 
 void v__checker__Checker_check_scope_vars(v__checker__Checker* c, v__ast__Scope* sc) {
-	// FOR IN map
-	Map_string_v__ast__ScopeObject _t4461 = sc->objects;
-	int _t4463 = _t4461.key_values.len;
-	for (int _t4462 = 0; _t4462 < _t4463; ++_t4462 ) {
-		int _t4464 = _t4461.key_values.len - _t4463;
-		_t4463 = _t4461.key_values.len;
-		if (_t4464 < 0) {
-			_t4462 = -1;
-			continue;
-		}
-		if (!DenseArray_has_index(&_t4461.key_values, _t4462)) {continue;}
-		v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t4461.key_values, _t4462));
-		if (obj._typ == 315 /* v.ast.Var */) {
-			if (!c->pref->is_repl) {
-				if (!(*obj._v__ast__Var).is_used && string_at((*obj._v__ast__Var).name, 0) != L'_' && !c->file->is_test) {
+	if (!c->pref->is_repl && !c->file->is_test) {
+		// FOR IN map
+		Map_string_v__ast__ScopeObject _t4461 = sc->objects;
+		int _t4463 = _t4461.key_values.len;
+		for (int _t4462 = 0; _t4462 < _t4463; ++_t4462 ) {
+			int _t4464 = _t4461.key_values.len - _t4463;
+			_t4463 = _t4461.key_values.len;
+			if (_t4464 < 0) {
+				_t4462 = -1;
+				continue;
+			}
+			if (!DenseArray_has_index(&_t4461.key_values, _t4462)) {continue;}
+			v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t4461.key_values, _t4462));
+			if (obj._typ == 315 /* v.ast.Var */) {
+				if (!(*obj._v__ast__Var).is_used && string_at((*obj._v__ast__Var).name, 0) != L'_') {
 					v__checker__Checker_warn(c, _STR("unused variable: `%.*s\000`", 2, (*obj._v__ast__Var).name), (*obj._v__ast__Var).pos);
 				}
+				if ((*obj._v__ast__Var).is_mut && !(*obj._v__ast__Var).is_changed && !c->is_builtin_mod && string_ne((*obj._v__ast__Var).name, _SLIT("it"))) {
+				}
 			}
-			if ((*obj._v__ast__Var).is_mut && !(*obj._v__ast__Var).is_changed && !c->is_builtin_mod && string_ne((*obj._v__ast__Var).name, _SLIT("it"))) {
-			}
+			else {
+			};
 		}
-		else {
-		};
 	}
 	// FOR IN array
 	for (int _t4465 = 0; _t4465 < sc->children.len; ++_t4465) {
@@ -59530,8 +59530,8 @@ bool v__checker__Checker_infix_expr_defer_0 = false;
 				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), infix_expr->pos);
 			}
 			v__checker__Checker_check_expr_opt_call(c, infix_expr->right, right_type);
-			multi_return_string_v__token__Position mr_40356 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
-			infix_expr->auto_locked = mr_40356.arg0;
+			multi_return_string_v__token__Position mr_40362 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
+			infix_expr->auto_locked = mr_40362.arg0;
 			v__ast__Type left_value_type = v__ast__Table_value_type(c->table, left_type);
 			v__ast__TypeSymbol* left_value_sym = v__ast__Table_get_type_symbol(c->table, left_value_type);
 			if (left_value_sym->kind == v__ast__Kind_interface_) {
@@ -59770,19 +59770,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag_shared_f)) {
 			v__checker__Checker_error(c, _STR("you have to create a handle and `lock` it to modify `shared` %.*s\000 element", 2, kind), v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_48425 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_48425.arg0;
-		pos = mr_48425.arg1;
+		multi_return_string_v__token__Position mr_48431 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_48431.arg0;
+		pos = mr_48431.arg1;
 	}
 	else if (expr._typ == 272 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_48494 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_48494.arg0;
-		pos = mr_48494.arg1;
+		multi_return_string_v__token__Position mr_48500 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_48500.arg0;
+		pos = mr_48500.arg1;
 	}
 	else if (expr._typ == 274 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_48566 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_48566.arg0;
-		pos = mr_48566.arg1;
+		multi_return_string_v__token__Position mr_48572 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_48572.arg0;
+		pos = mr_48572.arg1;
 	}
 	else if (expr._typ == 277 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -59833,9 +59833,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 				string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 				v__checker__Checker_error(c, _STR("you have to create a handle and `lock` it to modify `shared` field `%.*s\000` of struct `%.*s\000`", 3, (*expr._v__ast__SelectorExpr).field_name, type_str), (*expr._v__ast__SelectorExpr).pos);
 			}
-			multi_return_string_v__token__Position mr_50087 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-			to_lock = mr_50087.arg0;
-			pos = mr_50087.arg1;
+			multi_return_string_v__token__Position mr_50093 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+			to_lock = mr_50093.arg0;
+			pos = mr_50093.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -59870,9 +59870,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 245 /* v.ast.CallExpr */) {
 		if (string_eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_51199 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_51199.arg0;
-			pos = mr_51199.arg1;
+			multi_return_string_v__token__Position mr_51205 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_51205.arg0;
+			pos = mr_51205.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -60161,9 +60161,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_63141 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_63141.arg0;
-			v__token__Position pos = mr_63141.arg1;
+			multi_return_string_v__token__Position mr_63147 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_63147.arg0;
+			v__token__Position pos = mr_63147.arg1;
 			if ((to_lock).len != 0 && rec_share != v__ast__ShareType_shared_t) {
 				v__checker__Checker_error(c, _STR("%.*s\000 is `shared` and must be `lock`ed to be passed as `mut`", 2, to_lock), pos);
 			}
@@ -60245,9 +60245,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg.pos);
 			}
 			if (arg.is_mut) {
-				multi_return_string_v__token__Position mr_67409 = v__checker__Checker_fail_if_immutable(c, arg.expr);
-				string to_lock = mr_67409.arg0;
-				v__token__Position pos = mr_67409.arg1;
+				multi_return_string_v__token__Position mr_67415 = v__checker__Checker_fail_if_immutable(c, arg.expr);
+				string to_lock = mr_67415.arg0;
+				v__token__Position pos = mr_67415.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg.share);
 					v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, param.name, tok, tok), v__ast__Expr_position(arg.expr));
@@ -60750,9 +60750,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg.pos);
 		}
 		if (call_arg.is_mut && func.language == v__ast__Language_v) {
-			multi_return_string_v__token__Position mr_86796 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
-			string to_lock = mr_86796.arg0;
-			v__token__Position pos = mr_86796.arg1;
+			multi_return_string_v__token__Position mr_86802 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
+			string to_lock = mr_86802.arg0;
+			v__token__Position pos = mr_86802.arg1;
 			if (!param.is_mut) {
 				string tok = v__ast__ShareType_str(call_arg.share);
 				v__checker__Checker_error(c, _STR("`%.*s\000` parameter `%.*s\000` is not `%.*s\000`, `%.*s\000` is not needed`", 5, call_expr->name, param.name, tok, tok), v__ast__Expr_position(call_arg.expr));
@@ -61639,8 +61639,20 @@ bool v__checker__Checker_assign_stmt_defer_0 = false;
 			}
 		}
 		else if (left._typ == 274 /* v.ast.PrefixExpr */) {
-			if ((*left._v__ast__PrefixExpr).op == v__token__Kind_mul && !c->inside_unsafe) {
-				v__checker__Checker_error(c, _SLIT("modifying variables via dereferencing can only be done in `unsafe` blocks"), assign_stmt->pos);
+			if ((*left._v__ast__PrefixExpr).op == v__token__Kind_mul) {
+				if (!c->inside_unsafe) {
+					v__checker__Checker_error(c, _SLIT("modifying variables via dereferencing can only be done in `unsafe` blocks"), assign_stmt->pos);
+				} else {
+					if ((*left._v__ast__PrefixExpr).right._typ == 258 /* v.ast.Ident */) {
+						if ((*(*left._v__ast__PrefixExpr).right._v__ast__Ident).obj._typ == 315 /* v.ast.Var */) {
+							(*(*(*left._v__ast__PrefixExpr).right._v__ast__Ident).obj._v__ast__Var).is_used = true;
+						}
+						else {
+						};
+					}
+					else {
+					};
+				}
 			}
 			if (is_decl) {
 				v__checker__Checker_error(c, _SLIT("non-name on the left side of `:=`"), (*left._v__ast__PrefixExpr).pos);
@@ -64741,8 +64753,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c, _STR("invalid operation: %.*s\000 (non-numeric type `%.*s\000`)", 3, v__token__Kind_str(node->op), typ_sym->name), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_203142 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_203142.arg0;
+		multi_return_string_v__token__Position mr_203431 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_203431.arg0;
 	}
 	return typ;
 }
@@ -65738,10 +65750,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5048 = 0; _t5048 < sym_app->methods.len; ++_t5048) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5048];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_232256 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_232256.arg0;
-				int nroute_attributes = mr_232256.arg1;
-				int nargs = mr_232256.arg2;
+				multi_return_bool_int_int mr_232545 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_232545.arg0;
+				int nroute_attributes = mr_232545.arg1;
+				int nargs = mr_232545.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
