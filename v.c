@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4273a96"
+#define V_COMMIT_HASH "b728d89"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a849d52"
+	#define V_COMMIT_HASH "4273a96"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4273a96"
+	#define V_CURRENT_COMMIT_HASH "b728d89"
 #endif
 
 // V comptime_defines:
@@ -25607,7 +25607,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a849d52"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4273a96"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -59310,11 +59310,10 @@ void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__
 				to_set = v__ast__Table_mktyp(c->table, arg.typ);
 				v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, arg.typ);
 				if ((sym->info)._typ == 389 /* v.ast.FnType */) {
-					if (!(*sym->info._v__ast__FnType).is_anon) {
-						(*sym->info._v__ast__FnType).func.name = _SLIT("");
-						int idx = v__ast__Table_find_or_register_fn_type(c->table, c->mod, (*sym->info._v__ast__FnType).func, true, false);
-						to_set = v__ast__Type_derive(v__ast__new_type(idx), arg.typ);
-					}
+					v__ast__Fn func = (*sym->info._v__ast__FnType).func;
+					func.name = _SLIT("");
+					int idx = v__ast__Table_find_or_register_fn_type(c->table, c->mod, func, true, false);
+					to_set = v__ast__Type_derive(v__ast__new_type(idx), arg.typ);
 				}
 				if (v__ast__Expr_is_auto_deref_var(arg.expr)) {
 					to_set = v__ast__Type_deref(to_set);
