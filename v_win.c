@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9fa805c"
+#define V_COMMIT_HASH "1305ca6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e657cb2"
+	#define V_COMMIT_HASH "9fa805c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9fa805c"
+	#define V_CURRENT_COMMIT_HASH "1305ca6"
 #endif
 
 // V comptime_defines:
@@ -5156,11 +5156,11 @@ u64 _const_strconv__double_minus_infinity; // inited later
 #define _const_strconv__parser_mzero 2
 #define _const_strconv__parser_pinf 3
 #define _const_strconv__parser_minf 4
-#define _const_strconv__c_dpoint L'.'
-#define _const_strconv__c_plus L'+'
-#define _const_strconv__c_minus L'-'
-#define _const_strconv__c_zero L'0'
-#define _const_strconv__c_nine L'9'
+#define _const_strconv__c_dpoint '.'
+#define _const_strconv__c_plus '+'
+#define _const_strconv__c_minus '-'
+#define _const_strconv__c_zero '0'
+#define _const_strconv__c_nine '9'
 u32 _const_strconv__c_ten; // inited later
 VV_LOCAL_SYMBOL bool strconv__is_digit(byte x);
 VV_LOCAL_SYMBOL bool strconv__is_space(byte x);
@@ -6828,9 +6828,9 @@ Option_v__ast__StructField v__ast__Struct_find_field(v__ast__Struct* s, string n
 v__ast__StructField v__ast__Struct_get_field(v__ast__Struct* s, string name);
 Option_v__ast__StructField v__ast__SumType_find_field(v__ast__SumType* s, string name);
 bool v__ast__Interface_defines_method(v__ast__Interface i, string name);
-#define _const_v__scanner__single_quote L'\''
-#define _const_v__scanner__double_quote L'"'
-#define _const_v__scanner__num_sep L'_'
+#define _const_v__scanner__single_quote '\''
+#define _const_v__scanner__double_quote '"'
+#define _const_v__scanner__num_sep '_'
 #define _const_v__scanner__b_lf 10
 #define _const_v__scanner__b_cr 13
 v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
@@ -7474,9 +7474,9 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_svc(v__gen__native__Gen* g);
 void v__gen__native__Arm64_gen_exit(v__gen__native__Arm64* c, v__gen__native__Gen* g, v__ast__Expr expr);
 void v__gen__native__Gen_gen_arm64_exit(v__gen__native__Gen* g, v__ast__Expr expr);
 byte _const_v__gen__native__mag0; // inited later
-#define _const_v__gen__native__mag1 L'E'
-#define _const_v__gen__native__mag2 L'L'
-#define _const_v__gen__native__mag3 L'F'
+#define _const_v__gen__native__mag1 'E'
+#define _const_v__gen__native__mag2 'L'
+#define _const_v__gen__native__mag3 'F'
 #define _const_v__gen__native__ei_class 4
 #define _const_v__gen__native__elfclass64 2
 #define _const_v__gen__native__elfdata2lsb 1
@@ -9944,7 +9944,7 @@ void strings__Builder_go_back_to(strings__Builder* b, int pos) {
 // Attr: [inline]
 inline void strings__Builder_writeln(strings__Builder* b, string s) {
 	array_push_many(&b->buf, s.str, s.len);
-	array_push((array*)&b->buf, _MOV((byte[]){ ((byte)(L'\n')) }));
+	array_push((array*)&b->buf, _MOV((byte[]){ ((byte)('\n')) }));
 	b->len += s.len + 1;
 }
 
@@ -10046,7 +10046,7 @@ string strings__repeat(byte c, int n) {
 	byte* bytes = v_malloc(n + 1);
 	{ // Unsafe block
 		memset(bytes, c, n);
-		bytes[n] = L'0';
+		bytes[n] = '0';
 	}
 	return byte_vstring_with_len(bytes, n);
 }
@@ -10067,7 +10067,7 @@ string strings__repeat_string(string s, int n) {
 		}
 	}
 	{ // Unsafe block
-		bytes[blen] = L'0';
+		bytes[blen] = '0';
 	}
 	return byte_vstring_with_len(bytes, blen);
 }
@@ -10448,11 +10448,11 @@ VV_LOCAL_SYMBOL bool strconv__is_digit(byte x) {
 }
 
 VV_LOCAL_SYMBOL bool strconv__is_space(byte x) {
-	return (x == L'\t' || x == L'\n' || x == L'\v' || x == L'\f' || x == L'\r' || x == L' ');
+	return (x == '\t' || x == '\n' || x == '\v' || x == '\f' || x == '\r' || x == ' ');
 }
 
 VV_LOCAL_SYMBOL bool strconv__is_exp(byte x) {
-	return (x == L'E' || x == L'e') == true;
+	return (x == 'E' || x == 'e') == true;
 }
 
 VV_LOCAL_SYMBOL multi_return_int_strconv__PrepNumber strconv__parser(string s) {
@@ -10466,11 +10466,11 @@ VV_LOCAL_SYMBOL multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 		if (!(i < s.len && byte_is_space(string_at(s, i)))) break;
 		i++;
 	}
-	if (string_at(s, i) == L'-') {
+	if (string_at(s, i) == '-') {
 		pn.negative = true;
 		i++;
 	}
-	if (string_at(s, i) == L'+') {
+	if (string_at(s, i) == '+') {
 		i++;
 	}
 	for (;;) {
@@ -10484,7 +10484,7 @@ VV_LOCAL_SYMBOL multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 		}
 		i++;
 	}
-	if ((i < s.len) && (string_at(s, i) == L'.')) {
+	if ((i < s.len) && (string_at(s, i) == '.')) {
 		i++;
 		for (;;) {
 			if (!(i < s.len && byte_is_digit(string_at(s, i)))) break;
@@ -10497,7 +10497,7 @@ VV_LOCAL_SYMBOL multi_return_int_strconv__PrepNumber strconv__parser(string s) {
 			i++;
 		}
 	}
-	if ((i < s.len) && ((string_at(s, i) == L'e') || (string_at(s, i) == L'E'))) {
+	if ((i < s.len) && ((string_at(s, i) == 'e') || (string_at(s, i) == 'E'))) {
 		i++;
 		if (i < s.len) {
 			if (string_at(s, i) == _const_strconv__c_plus) {
@@ -10720,18 +10720,18 @@ f64 strconv__atof_quick(string s) {
 	f64 sign = ((f64)(1.0));
 	int i = 0;
 	for (;;) {
-		if (!(i < s.len && string_at(s, i) == L' ')) break;
+		if (!(i < s.len && string_at(s, i) == ' ')) break;
 		i++;
 	}
 	if (i < s.len) {
-		if (string_at(s, i) == L'-') {
+		if (string_at(s, i) == '-') {
 			sign = -1.0;
 			i++;
-		} else if (string_at(s, i) == L'+') {
+		} else if (string_at(s, i) == '+') {
 			i++;
 		}
 	}
-	if (string_at(s, i) == L'i' && i + 2 < s.len && string_at(s, i + 1) == L'n' && string_at(s, i + 2) == L'f') {
+	if (string_at(s, i) == 'i' && i + 2 < s.len && string_at(s, i + 1) == 'n' && string_at(s, i + 2) == 'f') {
 		if (sign > 0.0) {
 			f.u = _const_strconv__double_plus_infinity;
 		} else {
@@ -10740,7 +10740,7 @@ f64 strconv__atof_quick(string s) {
 		return f.f;
 	}
 	for (;;) {
-		if (!(i < s.len && string_at(s, i) == L'0')) break;
+		if (!(i < s.len && string_at(s, i) == '0')) break;
 		i++;
 		if (i >= s.len) {
 			if (sign > 0.0) {
@@ -10752,41 +10752,41 @@ f64 strconv__atof_quick(string s) {
 		}
 	}
 	for (;;) {
-		if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
+		if (!(i < s.len && (string_at(s, i) >= '0' && string_at(s, i) <= '9'))) break;
 		f.f *= ((f64)(10.0));
-		f.f += ((f64)(string_at(s, i) - L'0'));
+		f.f += ((f64)(string_at(s, i) - '0'));
 		i++;
 	}
-	if (i < s.len && string_at(s, i) == L'.') {
+	if (i < s.len && string_at(s, i) == '.') {
 		i++;
 		f64 frac_mul = ((f64)(0.1));
 		for (;;) {
-			if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
-			f.f += ((f64)(string_at(s, i) - L'0')) * frac_mul;
+			if (!(i < s.len && (string_at(s, i) >= '0' && string_at(s, i) <= '9'))) break;
+			f.f += ((f64)(string_at(s, i) - '0')) * frac_mul;
 			frac_mul *= ((f64)(0.1));
 			i++;
 		}
 	}
-	if (i < s.len && (string_at(s, i) == L'e' || string_at(s, i) == L'E')) {
+	if (i < s.len && (string_at(s, i) == 'e' || string_at(s, i) == 'E')) {
 		i++;
 		int exp = 0;
 		int exp_sign = 1;
 		if (i < s.len) {
-			if (string_at(s, i) == L'-') {
+			if (string_at(s, i) == '-') {
 				exp_sign = -1;
 				i++;
-			} else if (string_at(s, i) == L'+') {
+			} else if (string_at(s, i) == '+') {
 				i++;
 			}
 		}
 		for (;;) {
-			if (!(i < s.len && string_at(s, i) == L'0')) break;
+			if (!(i < s.len && string_at(s, i) == '0')) break;
 			i++;
 		}
 		for (;;) {
-			if (!(i < s.len && (string_at(s, i) >= L'0' && string_at(s, i) <= L'9'))) break;
+			if (!(i < s.len && (string_at(s, i) >= '0' && string_at(s, i) <= '9'))) break;
 			exp *= 10;
-			exp += ((int)(string_at(s, i) - L'0'));
+			exp += ((int)(string_at(s, i) - '0'));
 			i++;
 		}
 		if (exp_sign == 1) {
@@ -10821,7 +10821,7 @@ f64 strconv__atof_quick(string s) {
 }
 
 byte strconv__byte_to_lower(byte c) {
-	return (c | (L'x' - L'X'));
+	return (c | ('x' - 'X'));
 }
 
 u64 strconv__common_parse_uint(string s, int _base, int _bit_size, bool error_on_non_digit, bool error_on_high_digit) {
@@ -10847,17 +10847,17 @@ multi_return_u64_int strconv__common_parse_uint2(string s, int _base, int _bit_s
 	if (2 <= base && base <= 36) {
 	} else if (base == 0) {
 		base = 10;
-		if (string_at(s, 0) == L'0') {
-			if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == L'b') {
+		if (string_at(s, 0) == '0') {
+			if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'b') {
 				base = 2;
 				start_index += 2;
-			} else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == L'o') {
+			} else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'o') {
 				base = 8;
 				start_index += 2;
-			} else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == L'x') {
+			} else if (s.len >= 3 && strconv__byte_to_lower(string_at(s, 1)) == 'x') {
 				base = 16;
 				start_index += 2;
-			} else if (s.len >= 2 && (string_at(s, 1) >= L'0' && string_at(s, 1) <= L'9')) {
+			} else if (s.len >= 2 && (string_at(s, 1) >= '0' && string_at(s, 1) <= '9')) {
 				base = 10;
 				start_index++;
 			} else {
@@ -10880,12 +10880,12 @@ multi_return_u64_int strconv__common_parse_uint2(string s, int _base, int _bit_s
 		byte c = string_at(s, i);
 		byte cl = strconv__byte_to_lower(c);
 		byte d = ((byte)(0));
-		if (c == L'_' && base0) {
+		if (c == '_' && base0) {
 			continue;
-		} else if (L'0' <= c && c <= L'9') {
-			d = c - L'0';
-		} else if (L'a' <= cl && cl <= L'z') {
-			d = cl - L'a' + 10;
+		} else if ('0' <= c && c <= '9') {
+			d = c - '0';
+		} else if ('a' <= cl && cl <= 'z') {
+			d = cl - 'a' + 10;
 		} else {
 			return (multi_return_u64_int){.arg0=n, .arg1=i + 1};
 		}
@@ -10916,9 +10916,9 @@ i64 strconv__common_parse_int(string _s, int base, int _bit_size, bool error_on_
 		return ((i64)(0));
 	}
 	bool neg = false;
-	if (string_at(s, 0) == L'+') {
+	if (string_at(s, 0) == '+') {
 		s = string_substr(s, 1, s.len);
-	} else if (string_at(s, 0) == L'-') {
+	} else if (string_at(s, 0) == '-') {
 		neg = true;
 		s = string_substr(s, 1, s.len);
 	}
@@ -10949,7 +10949,7 @@ Option_int strconv__atoi(string s) {
 	}
 	if ((_const_strconv__int_size == 32 && (0 < s.len && s.len < 10)) || (_const_strconv__int_size == 64 && (0 < s.len && s.len < 19))) {
 		int start_idx = 0;
-		if (string_at(s, 0) == L'-' || string_at(s, 0) == L'+') {
+		if (string_at(s, 0) == '-' || string_at(s, 0) == '+') {
 			start_idx++;
 			if (s.len - start_idx < 1) {
 				return (Option_int){ .state=2, .err=v_error(_STR("strconv.atoi: parsing \"%.*s\000\": invalid syntax ", 2, s)), .data={0} };
@@ -10957,14 +10957,14 @@ Option_int strconv__atoi(string s) {
 		}
 		int n = 0;
 		for (int i = start_idx; i < s.len; ++i) {
-			rune ch = string_at(s, i) - L'0';
+			rune ch = string_at(s, i) - '0';
 			if (ch > 9) {
 				return (Option_int){ .state=2, .err=v_error(_STR("strconv.atoi: parsing \"%.*s\000\": invalid syntax ", 2, s)), .data={0} };
 			}
 			n = n * 10 + ((int)(ch));
 		}
 		Option_int _t104; /* if prepend */
-		if (string_at(s, 0) == L'-') {
+		if (string_at(s, 0) == '-') {
 			opt_ok(&(int[]) { -n }, (Option*)(&_t104), sizeof(int));
 		} else {
 			opt_ok(&(int[]) { n }, (Option*)(&_t104), sizeof(int));
@@ -10978,35 +10978,35 @@ Option_int strconv__atoi(string s) {
 }
 
 VV_LOCAL_SYMBOL bool strconv__underscore_ok(string s) {
-	rune saw = L'^';
+	rune saw = '^';
 	int i = 0;
-	if (s.len >= 1 && (string_at(s, 0) == L'-' || string_at(s, 0) == L'+')) {
+	if (s.len >= 1 && (string_at(s, 0) == '-' || string_at(s, 0) == '+')) {
 		i++;
 	}
 	bool hex = false;
-	if (s.len - i >= 2 && string_at(s, i) == L'0' && (strconv__byte_to_lower(string_at(s, i + 1)) == L'b' || strconv__byte_to_lower(string_at(s, i + 1)) == L'o' || strconv__byte_to_lower(string_at(s, i + 1)) == L'x')) {
-		saw = L'0';
-		hex = strconv__byte_to_lower(string_at(s, i + 1)) == L'x';
+	if (s.len - i >= 2 && string_at(s, i) == '0' && (strconv__byte_to_lower(string_at(s, i + 1)) == 'b' || strconv__byte_to_lower(string_at(s, i + 1)) == 'o' || strconv__byte_to_lower(string_at(s, i + 1)) == 'x')) {
+		saw = '0';
+		hex = strconv__byte_to_lower(string_at(s, i + 1)) == 'x';
 		i += 2;
 	}
 	for (; i < s.len; i++) {
-		if ((L'0' <= string_at(s, i) && string_at(s, i) <= L'9') || (hex && L'a' <= strconv__byte_to_lower(string_at(s, i)) && strconv__byte_to_lower(string_at(s, i)) <= L'f')) {
-			saw = L'0';
+		if (('0' <= string_at(s, i) && string_at(s, i) <= '9') || (hex && 'a' <= strconv__byte_to_lower(string_at(s, i)) && strconv__byte_to_lower(string_at(s, i)) <= 'f')) {
+			saw = '0';
 			continue;
 		}
-		if (string_at(s, i) == L'_') {
-			if (saw != L'0') {
+		if (string_at(s, i) == '_') {
+			if (saw != '0') {
 				return false;
 			}
-			saw = L'_';
+			saw = '_';
 			continue;
 		}
-		if (saw == L'_') {
+		if (saw == '_') {
 			return false;
 		}
-		saw = L'!';
+		saw = '!';
 	}
-	return saw != L'_';
+	return saw != '_';
 }
 
 // Attr: [direct_array_access]
@@ -11023,7 +11023,7 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 	Array_byte buf = __new_array_with_default(((int)(out_len + 5 + 1 + 1)), 0, sizeof(byte), 0);
 	int i = 0;
 	if (neg) {
-		((byte*)buf.data)[i] = L'-';
+		((byte*)buf.data)[i] = '-';
 		i++;
 	}
 	int disp = 0;
@@ -11039,7 +11039,7 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 	int x = 0;
 	for (;;) {
 		if (!(x < (out_len - disp - 1))) break;
-		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
+		((byte*)buf.data)[y - x] = '0' + ((byte)(out % 10U));
 		out /= 10U;
 		i++;
 		x++;
@@ -11051,36 +11051,36 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 		}
 	}
 	if (out_len >= 1) {
-		((byte*)buf.data)[y - x] = L'.';
+		((byte*)buf.data)[y - x] = '.';
 		x++;
 		i++;
 	}
 	if (y - x >= 0) {
-		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
+		((byte*)buf.data)[y - x] = '0' + ((byte)(out % 10U));
 		i++;
 	}
 	for (;;) {
 		if (!(fw_zeros > 0)) break;
-		((byte*)buf.data)[i] = L'0';
+		((byte*)buf.data)[i] = '0';
 		i++;
 		fw_zeros--;
 	}
-	((byte*)buf.data)[i] = L'e';
+	((byte*)buf.data)[i] = 'e';
 	i++;
 	int exp = d.e + out_len_original - 1;
 	if (exp < 0) {
-		((byte*)buf.data)[i] = L'-';
+		((byte*)buf.data)[i] = '-';
 		i++;
 		exp = -exp;
 	} else {
-		((byte*)buf.data)[i] = L'+';
+		((byte*)buf.data)[i] = '+';
 		i++;
 	}
 	int d1 = exp % 10;
 	int d0 = exp / 10;
-	((byte*)buf.data)[i] = L'0' + ((byte)(d0));
+	((byte*)buf.data)[i] = '0' + ((byte)(d0));
 	i++;
-	((byte*)buf.data)[i] = L'0' + ((byte)(d1));
+	((byte*)buf.data)[i] = '0' + ((byte)(d1));
 	i++;
 	((byte*)buf.data)[i] = 0;
 	return tos(((byteptr)(&((byte*)buf.data)[0])), i);
@@ -11272,7 +11272,7 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 	Array_byte buf = __new_array_with_default((out_len + 6 + 1 + 1 + fw_zeros), 0, sizeof(byte), 0);
 	int i = 0;
 	if (neg) {
-		((byte*)buf.data)[i] = L'-';
+		((byte*)buf.data)[i] = '-';
 		i++;
 	}
 	int disp = 0;
@@ -11292,7 +11292,7 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 	int x = 0;
 	for (;;) {
 		if (!(x < (out_len - disp - 1))) break;
-		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
+		((byte*)buf.data)[y - x] = '0' + ((byte)(out % 10U));
 		out /= 10U;
 		i++;
 		x++;
@@ -11304,29 +11304,29 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 		}
 	}
 	if (out_len >= 1) {
-		((byte*)buf.data)[y - x] = L'.';
+		((byte*)buf.data)[y - x] = '.';
 		x++;
 		i++;
 	}
 	if (y - x >= 0) {
-		((byte*)buf.data)[y - x] = L'0' + ((byte)(out % 10U));
+		((byte*)buf.data)[y - x] = '0' + ((byte)(out % 10U));
 		i++;
 	}
 	for (;;) {
 		if (!(fw_zeros > 0)) break;
-		((byte*)buf.data)[i] = L'0';
+		((byte*)buf.data)[i] = '0';
 		i++;
 		fw_zeros--;
 	}
-	((byte*)buf.data)[i] = L'e';
+	((byte*)buf.data)[i] = 'e';
 	i++;
 	int exp = d_exp + out_len_original - 1;
 	if (exp < 0) {
-		((byte*)buf.data)[i] = L'-';
+		((byte*)buf.data)[i] = '-';
 		i++;
 		exp = -exp;
 	} else {
-		((byte*)buf.data)[i] = L'+';
+		((byte*)buf.data)[i] = '+';
 		i++;
 	}
 	int d2 = exp % 10;
@@ -11334,12 +11334,12 @@ VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, 
 	int d1 = exp % 10;
 	int d0 = exp / 10;
 	if (d0 > 0) {
-		((byte*)buf.data)[i] = L'0' + ((byte)(d0));
+		((byte*)buf.data)[i] = '0' + ((byte)(d0));
 		i++;
 	}
-	((byte*)buf.data)[i] = L'0' + ((byte)(d1));
+	((byte*)buf.data)[i] = '0' + ((byte)(d1));
 	i++;
-	((byte*)buf.data)[i] = L'0' + ((byte)(d2));
+	((byte*)buf.data)[i] = '0' + ((byte)(d2));
 	i++;
 	((byte*)buf.data)[i] = 0;
 	return tos(((byteptr)(&((byte*)buf.data)[0])), i);
@@ -11790,7 +11790,7 @@ string strconv__f32_to_str_l(f64 f) {
 
 string strconv__f64_to_str_l(f64 f) {
 	string s = strconv__f64_to_str(f, 18);
-	if (s.len > 2 && (string_at(s, 0) == L'n' || string_at(s, 1) == L'i')) {
+	if (s.len > 2 && (string_at(s, 0) == 'n' || string_at(s, 1) == 'i')) {
 		return s;
 	}
 	bool m_sgn_flag = false;
@@ -11803,24 +11803,24 @@ string strconv__f64_to_str_l(f64 f) {
 	int exp_sgn = 1;
 	for (int _t179 = 0; _t179 < s.len; ++_t179) {
 		byte c = s.str[_t179];
-		if (c == L'-') {
+		if (c == '-') {
 			sgn = -1;
 			i++;
-		} else if (c == L'+') {
+		} else if (c == '+') {
 			sgn = 1;
 			i++;
-		} else if (c >= L'0' && c <= L'9') {
+		} else if (c >= '0' && c <= '9') {
 			b[v_fixed_index(i1, 26)] = c;
 			i1++;
 			i++;
-		} else if (c == L'.') {
+		} else if (c == '.') {
 			if (sgn > 0) {
 				d_pos = i;
 			} else {
 				d_pos = i - 1;
 			}
 			i++;
-		} else if (c == L'e') {
+		} else if (c == 'e') {
 			i++;
 			break;
 		} else {
@@ -11828,26 +11828,26 @@ string strconv__f64_to_str_l(f64 f) {
 		}
 	}
 	b[v_fixed_index(i1, 26)] = 0;
-	if (string_at(s, i) == L'-') {
+	if (string_at(s, i) == '-') {
 		exp_sgn = -1;
 		i++;
-	} else if (string_at(s, i) == L'+') {
+	} else if (string_at(s, i) == '+') {
 		exp_sgn = 1;
 		i++;
 	}
 	for (int _t181 = 0; _t181 < string_substr(s, i, s.len).len; ++_t181) {
 		byte c = string_substr(s, i, s.len).str[_t181];
-		exp = exp * 10 + ((int)(c - L'0'));
+		exp = exp * 10 + ((int)(c - '0'));
 	}
 	Array_byte res = __new_array_with_default(exp + 32, 0, sizeof(byte), &(byte[]){0});
 	int r_i = 0;
 	if (sgn == 1) {
 		if (m_sgn_flag) {
-			array_set(&res, r_i, &(byte[]) { L'+' });
+			array_set(&res, r_i, &(byte[]) { '+' });
 			r_i++;
 		}
 	} else {
-		array_set(&res, r_i, &(byte[]) { L'-' });
+		array_set(&res, r_i, &(byte[]) { '-' });
 		r_i++;
 	}
 	i = 0;
@@ -11859,7 +11859,7 @@ string strconv__f64_to_str_l(f64 f) {
 			i++;
 			if (i >= d_pos && exp >= 0) {
 				if (exp == 0) {
-					array_set(&res, r_i, &(byte[]) { L'.' });
+					array_set(&res, r_i, &(byte[]) { '.' });
 					r_i++;
 				}
 				exp--;
@@ -11867,7 +11867,7 @@ string strconv__f64_to_str_l(f64 f) {
 		}
 		for (;;) {
 			if (!(exp >= 0)) break;
-			array_set(&res, r_i, &(byte[]) { L'0' });
+			array_set(&res, r_i, &(byte[]) { '0' });
 			r_i++;
 			exp--;
 		}
@@ -11875,11 +11875,11 @@ string strconv__f64_to_str_l(f64 f) {
 		bool dot_p = true;
 		for (;;) {
 			if (!(exp > 0)) break;
-			array_set(&res, r_i, &(byte[]) { L'0' });
+			array_set(&res, r_i, &(byte[]) { '0' });
 			r_i++;
 			exp--;
 			if (dot_p) {
-				array_set(&res, r_i, &(byte[]) { L'.' });
+				array_set(&res, r_i, &(byte[]) { '.' });
 				r_i++;
 				dot_p = false;
 			}
@@ -11987,9 +11987,9 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 	int len0 = -1;
 	int len1 = -1;
 	int def_len1 = 6;
-	byte pad_ch = ((byte)(L' '));
-	rune ch1 = L'0';
-	rune ch2 = L'0';
+	byte pad_ch = ((byte)(' '));
+	rune ch1 = '0';
+	rune ch2 = '0';
 	strconv__Char_parse_state status = strconv__Char_parse_state_norm_char;
 	for (;;) {
 		if (!(i < str.len)) break;
@@ -11998,24 +11998,24 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			allign = strconv__Align_text_right;
 			len0 = -1;
 			len1 = -1;
-			pad_ch = L' ';
+			pad_ch = ' ';
 			status = strconv__Char_parse_state_norm_char;
-			ch1 = L'0';
-			ch2 = L'0';
+			ch1 = '0';
+			ch2 = '0';
 			continue;
 		}
 		byte ch = string_at(str, i);
-		if (ch != L'%' && status == strconv__Char_parse_state_norm_char) {
+		if (ch != '%' && status == strconv__Char_parse_state_norm_char) {
 			strings__Builder_write_b(&res, ch);
 			i++;
 			continue;
 		}
-		if (ch == L'%' && status == strconv__Char_parse_state_norm_char) {
+		if (ch == '%' && status == strconv__Char_parse_state_norm_char) {
 			status = strconv__Char_parse_state_field_char;
 			i++;
 			continue;
 		}
-		if (ch == L'c' && status == strconv__Char_parse_state_field_char) {
+		if (ch == 'c' && status == strconv__Char_parse_state_field_char) {
 			strconv__v_sprintf_panic(p_index, pt.len);
 			byte d1 = *(((byte*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 			strings__Builder_write_b(&res, d1);
@@ -12024,7 +12024,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			i++;
 			continue;
 		}
-		if (ch == L'p' && status == strconv__Char_parse_state_field_char) {
+		if (ch == 'p' && status == strconv__Char_parse_state_field_char) {
 			strconv__v_sprintf_panic(p_index, pt.len);
 			strings__Builder_write_string(&res, _SLIT("0x"));
 			strings__Builder_write_string(&res, ptr_str((*(voidptr*)/*ee elem_typ */array_get(pt, p_index))));
@@ -12034,36 +12034,36 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			continue;
 		}
 		if (status == strconv__Char_parse_state_field_char) {
-			rune fc_ch1 = L'0';
-			rune fc_ch2 = L'0';
+			rune fc_ch1 = '0';
+			rune fc_ch2 = '0';
 			if ((i + 1) < str.len) {
 				fc_ch1 = string_at(str, i + 1);
 				if ((i + 2) < str.len) {
 					fc_ch2 = string_at(str, i + 2);
 				}
 			}
-			if (ch == L'+') {
+			if (ch == '+') {
 				sign = true;
 				i++;
 				continue;
-			} else if (ch == L'-') {
+			} else if (ch == '-') {
 				allign = strconv__Align_text_left;
 				i++;
 				continue;
-			} else if ((ch == L'0' || ch == L' ')) {
+			} else if ((ch == '0' || ch == ' ')) {
 				if (allign == strconv__Align_text_right) {
 					pad_ch = ch;
 				}
 				i++;
 				continue;
-			} else if (ch == L'\'') {
+			} else if (ch == '\'') {
 				i++;
 				continue;
-			} else if (ch == L'.' && fc_ch1 >= L'1' && fc_ch1 <= L'9') {
+			} else if (ch == '.' && fc_ch1 >= '1' && fc_ch1 <= '9') {
 				status = strconv__Char_parse_state_check_float;
 				i++;
 				continue;
-			} else if (ch == L'.' && fc_ch1 == L'*' && fc_ch2 == L's') {
+			} else if (ch == '.' && fc_ch1 == '*' && fc_ch2 == 's') {
 				strconv__v_sprintf_panic(p_index, pt.len);
 				int len = *(((int*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 				p_index++;
@@ -12080,13 +12080,13 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			continue;
 		}
 		if (status == strconv__Char_parse_state_len_set_start) {
-			if (ch >= L'1' && ch <= L'9') {
-				len0 = ((int)(ch - L'0'));
+			if (ch >= '1' && ch <= '9') {
+				len0 = ((int)(ch - '0'));
 				status = strconv__Char_parse_state_len_set_in;
 				i++;
 				continue;
 			}
-			if (ch == L'.') {
+			if (ch == '.') {
 				status = strconv__Char_parse_state_check_float;
 				i++;
 				continue;
@@ -12095,13 +12095,13 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			continue;
 		}
 		if (status == strconv__Char_parse_state_len_set_in) {
-			if (ch >= L'0' && ch <= L'9') {
+			if (ch >= '0' && ch <= '9') {
 				len0 *= 10;
-				len0 += ((int)(ch - L'0'));
+				len0 += ((int)(ch - '0'));
 				i++;
 				continue;
 			}
-			if (ch == L'.') {
+			if (ch == '.') {
 				status = strconv__Char_parse_state_check_float;
 				i++;
 				continue;
@@ -12110,8 +12110,8 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			continue;
 		}
 		if (status == strconv__Char_parse_state_check_float) {
-			if (ch >= L'0' && ch <= L'9') {
-				len1 = ((int)(ch - L'0'));
+			if (ch >= '0' && ch <= '9') {
+				len1 = ((int)(ch - '0'));
 				status = strconv__Char_parse_state_check_float_in;
 				i++;
 				continue;
@@ -12120,9 +12120,9 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			continue;
 		}
 		if (status == strconv__Char_parse_state_check_float_in) {
-			if (ch >= L'0' && ch <= L'9') {
+			if (ch >= '0' && ch <= '9') {
 				len1 *= 10;
-				len1 += ((int)(ch - L'0'));
+				len1 += ((int)(ch - '0'));
 				i++;
 				continue;
 			}
@@ -12130,32 +12130,32 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 			continue;
 		}
 		if (status == strconv__Char_parse_state_check_type) {
-			if (ch == L'l') {
-				if (ch1 == L'0') {
-					ch1 = L'l';
+			if (ch == 'l') {
+				if (ch1 == '0') {
+					ch1 = 'l';
 					i++;
 					continue;
 				} else {
-					ch2 = L'l';
+					ch2 = 'l';
 					i++;
 					continue;
 				}
-			} else if (ch == L'h') {
-				if (ch1 == L'0') {
-					ch1 = L'h';
+			} else if (ch == 'h') {
+				if (ch1 == '0') {
+					ch1 = 'h';
 					i++;
 					continue;
 				} else {
-					ch2 = L'h';
+					ch2 = 'h';
 					i++;
 					continue;
 				}
-			} else if ((ch == L'd' || ch == L'i')) {
+			} else if ((ch == 'd' || ch == 'i')) {
 				u64 d1 = ((u64)(0U));
 				bool positive = true;
 
-				if (ch1 == (L'h')) {
-					if (ch2 == L'h') {
+				if (ch1 == ('h')) {
+					if (ch2 == 'h') {
 						strconv__v_sprintf_panic(p_index, pt.len);
 						i8 x = *(((i8*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 						positive = (x >= 0 ? (true) : (false));
@@ -12166,7 +12166,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 						d1 = (positive ? (((u64)(x))) : (((u64)(-x))));
 					}
 				}
-				else if (ch1 == (L'l')) {
+				else if (ch1 == ('l')) {
 					strconv__v_sprintf_panic(p_index, pt.len);
 					i64 x = *(((i64*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 					positive = (x >= 0 ? (true) : (false));
@@ -12190,22 +12190,22 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 				status = strconv__Char_parse_state_reset_params;
 				p_index++;
 				i++;
-				ch1 = L'0';
-				ch2 = L'0';
+				ch1 = '0';
+				ch2 = '0';
 				continue;
-			} else if (ch == L'u') {
+			} else if (ch == 'u') {
 				u64 d1 = ((u64)(0U));
 				bool positive = true;
 				strconv__v_sprintf_panic(p_index, pt.len);
 
-				if (ch1 == (L'h')) {
-					if (ch2 == L'h') {
+				if (ch1 == ('h')) {
+					if (ch2 == 'h') {
 						d1 = ((u64)(*(((byte*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))))));
 					} else {
 						d1 = ((u64)(*(((u16*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))))));
 					}
 				}
-				else if (ch1 == (L'l')) {
+				else if (ch1 == ('l')) {
 					d1 = ((u64)(*(((u64*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))))));
 				}
 				else {
@@ -12224,12 +12224,12 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 				p_index++;
 				i++;
 				continue;
-			} else if ((ch == L'x' || ch == L'X')) {
+			} else if ((ch == 'x' || ch == 'X')) {
 				strconv__v_sprintf_panic(p_index, pt.len);
 				string s = _SLIT("");
 
-				if (ch1 == (L'h')) {
-					if (ch2 == L'h') {
+				if (ch1 == ('h')) {
+					if (ch2 == 'h') {
 						i8 x = *(((i8*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 						s = i8_hex(x);
 					} else {
@@ -12237,7 +12237,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 						s = i16_hex(x);
 					}
 				}
-				else if (ch1 == (L'l')) {
+				else if (ch1 == ('l')) {
 					i64 x = *(((i64*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 					s = i64_hex(x);
 				}
@@ -12245,7 +12245,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 					int x = *(((int*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 					s = int_hex(x);
 				};
-				if (ch == L'X') {
+				if (ch == 'X') {
 					s = string_to_upper(s);
 				}
 				strings__Builder_write_string(&res, strconv__format_str(s, (strconv__BF_param){
@@ -12262,7 +12262,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 				i++;
 				continue;
 			}
-			if ((ch == L'f' || ch == L'F')) {
+			if ((ch == 'f' || ch == 'F')) {
 				strconv__v_sprintf_panic(p_index, pt.len);
 				f64 x = *(((f64*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 				bool positive = x >= ((f64)(0.0));
@@ -12276,12 +12276,12 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 					.allign = allign,
 					.rm_tail_zero = 0,
 				});
-				strings__Builder_write_string(&res, (ch == L'F' ? (string_to_upper(s)) : (s)));
+				strings__Builder_write_string(&res, (ch == 'F' ? (string_to_upper(s)) : (s)));
 				status = strconv__Char_parse_state_reset_params;
 				p_index++;
 				i++;
 				continue;
-			} else if ((ch == L'e' || ch == L'E')) {
+			} else if ((ch == 'e' || ch == 'E')) {
 				strconv__v_sprintf_panic(p_index, pt.len);
 				f64 x = *(((f64*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 				bool positive = x >= ((f64)(0.0));
@@ -12295,12 +12295,12 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 					.allign = allign,
 					.rm_tail_zero = 0,
 				});
-				strings__Builder_write_string(&res, (ch == L'E' ? (string_to_upper(s)) : (s)));
+				strings__Builder_write_string(&res, (ch == 'E' ? (string_to_upper(s)) : (s)));
 				status = strconv__Char_parse_state_reset_params;
 				p_index++;
 				i++;
 				continue;
-			} else if ((ch == L'g' || ch == L'G')) {
+			} else if ((ch == 'g' || ch == 'G')) {
 				strconv__v_sprintf_panic(p_index, pt.len);
 				f64 x = *(((f64*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
 				bool positive = x >= ((f64)(0.0));
@@ -12329,15 +12329,15 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 						.rm_tail_zero = true,
 					});
 				}
-				strings__Builder_write_string(&res, (ch == L'G' ? (string_to_upper(s)) : (s)));
+				strings__Builder_write_string(&res, (ch == 'G' ? (string_to_upper(s)) : (s)));
 				status = strconv__Char_parse_state_reset_params;
 				p_index++;
 				i++;
 				continue;
-			} else if (ch == L's') {
+			} else if (ch == 's') {
 				strconv__v_sprintf_panic(p_index, pt.len);
 				string s1 = *(((string*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
-				pad_ch = L' ';
+				pad_ch = ' ';
 				strings__Builder_write_string(&res, strconv__format_str(s1, (strconv__BF_param){
 					.pad_ch = pad_ch,
 					.len0 = len0,
@@ -12381,7 +12381,7 @@ VV_LOCAL_SYMBOL f64 strconv__fabs(f64 x) {
 string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 	{ // Unsafe block
 		string s = strconv__f64_to_str(f + (*(f64*)/*ee elem_typ */array_get(_const_strconv__dec_round, dec_digit)), 18);
-		if (s.len > 2 && (string_at(s, 0) == L'n' || string_at(s, 1) == L'i')) {
+		if (s.len > 2 && (string_at(s, 0) == 'n' || string_at(s, 1) == 'i')) {
 			return s;
 		}
 		bool m_sgn_flag = false;
@@ -12395,24 +12395,24 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 		int dot_res_sp = -1;
 		for (int _t207 = 0; _t207 < s.len; ++_t207) {
 			byte c = s.str[_t207];
-			if (c == L'-') {
+			if (c == '-') {
 				sgn = -1;
 				i++;
-			} else if (c == L'+') {
+			} else if (c == '+') {
 				sgn = 1;
 				i++;
-			} else if (c >= L'0' && c <= L'9') {
+			} else if (c >= '0' && c <= '9') {
 				b[v_fixed_index(i1, 26)] = c;
 				i1++;
 				i++;
-			} else if (c == L'.') {
+			} else if (c == '.') {
 				if (sgn > 0) {
 					d_pos = i;
 				} else {
 					d_pos = i - 1;
 				}
 				i++;
-			} else if (c == L'e') {
+			} else if (c == 'e') {
 				i++;
 				break;
 			} else {
@@ -12421,17 +12421,17 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 			}
 		}
 		b[v_fixed_index(i1, 26)] = 0;
-		if (string_at(s, i) == L'-') {
+		if (string_at(s, i) == '-') {
 			exp_sgn = -1;
 			i++;
-		} else if (string_at(s, i) == L'+') {
+		} else if (string_at(s, i) == '+') {
 			exp_sgn = 1;
 			i++;
 		}
 		int c = i;
 		for (;;) {
 			if (!(c < s.len)) break;
-			exp = exp * 10 + ((int)(string_at(s, c) - L'0'));
+			exp = exp * 10 + ((int)(string_at(s, c) - '0'));
 			c++;
 		}
 		Array_byte res = __new_array_with_default(exp + 32, 0, sizeof(byte), &(byte[]){0});
@@ -12439,11 +12439,11 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 		string_free(&s);
 		if (sgn == 1) {
 			if (m_sgn_flag) {
-				array_set(&res, r_i, &(byte[]) { L'+' });
+				array_set(&res, r_i, &(byte[]) { '+' });
 				r_i++;
 			}
 		} else {
-			array_set(&res, r_i, &(byte[]) { L'-' });
+			array_set(&res, r_i, &(byte[]) { '-' });
 			r_i++;
 		}
 		i = 0;
@@ -12456,7 +12456,7 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 				if (i >= d_pos && exp >= 0) {
 					if (exp == 0) {
 						dot_res_sp = r_i;
-						array_set(&res, r_i, &(byte[]) { L'.' });
+						array_set(&res, r_i, &(byte[]) { '.' });
 						r_i++;
 					}
 					exp--;
@@ -12464,7 +12464,7 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 			}
 			for (;;) {
 				if (!(exp >= 0)) break;
-				array_set(&res, r_i, &(byte[]) { L'0' });
+				array_set(&res, r_i, &(byte[]) { '0' });
 				r_i++;
 				exp--;
 			}
@@ -12472,12 +12472,12 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 			bool dot_p = true;
 			for (;;) {
 				if (!(exp > 0)) break;
-				array_set(&res, r_i, &(byte[]) { L'0' });
+				array_set(&res, r_i, &(byte[]) { '0' });
 				r_i++;
 				exp--;
 				if (dot_p) {
 					dot_res_sp = r_i;
-					array_set(&res, r_i, &(byte[]) { L'.' });
+					array_set(&res, r_i, &(byte[]) { '.' });
 					r_i++;
 					dot_p = false;
 				}
@@ -12505,11 +12505,11 @@ string strconv__f64_to_str_lnd1(f64 f, int dec_digit) {
 		} else {
 			if (dec_digit > 0) {
 				int c1 = 0;
-				array_set(&res, r_i, &(byte[]) { L'.' });
+				array_set(&res, r_i, &(byte[]) { '.' });
 				r_i++;
 				for (;;) {
 					if (!(c1 < dec_digit)) break;
-					array_set(&res, r_i, &(byte[]) { L'0' });
+					array_set(&res, r_i, &(byte[]) { '0' });
 					r_i++;
 					c1++;
 				}
@@ -12528,7 +12528,7 @@ string strconv__format_fl_old(f64 f, strconv__BF_param p) {
 	{ // Unsafe block
 		string s = _SLIT("");
 		string fs = strconv__f64_to_str_lnd1((f >= 0.0 ? (f) : (-f)), p.len1);
-		if (string_at(fs, 0) == L'[') {
+		if (string_at(fs, 0) == '[') {
 			string_free(&s);
 			return fs;
 		}
@@ -12539,14 +12539,14 @@ string strconv__format_fl_old(f64 f, strconv__BF_param p) {
 		}
 		strings__Builder res = strings__new_builder((p.len0 > fs.len ? (p.len0) : (fs.len)));
 		int sign_len_diff = 0;
-		if (p.pad_ch == L'0') {
+		if (p.pad_ch == '0') {
 			if (p.positive) {
 				if (p.sign_flag) {
-					strings__Builder_write_b(&res, L'+');
+					strings__Builder_write_b(&res, '+');
 					sign_len_diff = -1;
 				}
 			} else {
-				strings__Builder_write_b(&res, L'-');
+				strings__Builder_write_b(&res, '-');
 				sign_len_diff = -1;
 			}
 			string tmp = s;
@@ -12600,14 +12600,14 @@ string strconv__format_es_old(f64 f, strconv__BF_param p) {
 		}
 		strings__Builder res = strings__new_builder((p.len0 > fs.len ? (p.len0) : (fs.len)));
 		int sign_len_diff = 0;
-		if (p.pad_ch == L'0') {
+		if (p.pad_ch == '0') {
 			if (p.positive) {
 				if (p.sign_flag) {
-					strings__Builder_write_b(&res, L'+');
+					strings__Builder_write_b(&res, '+');
 					sign_len_diff = -1;
 				}
 			} else {
-				strings__Builder_write_b(&res, L'-');
+				strings__Builder_write_b(&res, '-');
 				sign_len_diff = -1;
 			}
 			string tmp = s;
@@ -12660,15 +12660,15 @@ string strconv__remove_tail_zeros_old(string s) {
 	for (;;) {
 		if (!(i < s.len)) break;
 		byte ch = s.str[i];
-		if (ch == L'.') {
+		if (ch == '.') {
 			in_decimal = true;
 			dot_pos = i;
 		} else if (in_decimal) {
-			if (ch == L'0' && prev_ch != L'0') {
+			if (ch == '0' && prev_ch != '0') {
 				last_zero_start = i;
-			} else if (ch >= L'1' && ch <= L'9') {
+			} else if (ch >= '1' && ch <= '9') {
 				last_zero_start = -1;
-			} else if (ch == L'e') {
+			} else if (ch == 'e') {
 				break;
 			}
 		}
@@ -12685,7 +12685,7 @@ string strconv__remove_tail_zeros_old(string s) {
 	} else {
 		tmp = s;
 	}
-	if (tmp.str[tmp.len - 1] == L'.') {
+	if (tmp.str[tmp.len - 1] == '.') {
 		return string_substr(tmp, 0, tmp.len - 1);
 	}
 	return tmp;
@@ -12695,14 +12695,14 @@ string strconv__format_dec_old(u64 d, strconv__BF_param p) {
 	string s = _SLIT("");
 	strings__Builder res = strings__new_builder(20);
 	int sign_len_diff = 0;
-	if (p.pad_ch == L'0') {
+	if (p.pad_ch == '0') {
 		if (p.positive) {
 			if (p.sign_flag) {
-				strings__Builder_write_b(&res, L'+');
+				strings__Builder_write_b(&res, '+');
 				sign_len_diff = -1;
 			}
 		} else {
-			strings__Builder_write_b(&res, L'-');
+			strings__Builder_write_b(&res, '-');
 			sign_len_diff = -1;
 		}
 		s = u64_str(d);
@@ -13166,12 +13166,12 @@ string Array_byte_hex(Array_byte b) {
 		byte i = ((byte*)b.data)[_t241];
 		byte n0 = i >> 4;
 		{ // Unsafe block
-			hex[dst_i] = (n0 < 10 ? (n0 + L'0') : (n0 + ((byte)(87))));
+			hex[dst_i] = (n0 < 10 ? (n0 + '0') : (n0 + ((byte)(87))));
 			dst_i++;
 		}
 		byte n1 = (i & 0xF);
 		{ // Unsafe block
-			hex[dst_i] = (n1 < 10 ? (n1 + L'0') : (n1 + ((byte)(87))));
+			hex[dst_i] = (n1 < 10 ? (n1 + '0') : (n1 + ((byte)(87))));
 			dst_i++;
 		}
 	}
@@ -14053,7 +14053,7 @@ inline VV_LOCAL_SYMBOL string int_str_l(int nn, int max) {
 		}
 		if (is_neg) {
 			index--;
-			buf[index] = L'-';
+			buf[index] = '-';
 		}
 		int diff = max - index;
 		memmove(buf, buf + index, diff + 1);
@@ -14155,7 +14155,7 @@ inline string i64_str(i64 nn) {
 		}
 		if (is_neg) {
 			index--;
-			buf[index] = L'-';
+			buf[index] = '-';
 		}
 		int diff = max - index;
 		memmove(buf, buf + index, diff + 1);
@@ -14216,7 +14216,7 @@ inline VV_LOCAL_SYMBOL string u64_to_hex(u64 nn, byte len) {
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xFU)));
-		rune x = (d < 10 ? (d + L'0') : (d + 87));
+		rune x = (d < 10 ? (d + '0') : (d + 87));
 		buf[i] = x;
 		n = n >> 4U;
 	}
@@ -14232,7 +14232,7 @@ inline VV_LOCAL_SYMBOL string u64_to_hex_no_leading_zeros(u64 nn, byte len) {
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xFU)));
-		rune x = (d < 10 ? (d + L'0') : (d + 87));
+		rune x = (d < 10 ? (d + '0') : (d + 87));
 		buf[i] = x;
 		n = n >> 4U;
 		if (n == 0U) {
@@ -15054,7 +15054,7 @@ string rune_str(rune c) {
 }
 
 bool byte_is_capital(byte c) {
-	return c >= L'A' && c <= L'Z';
+	return c >= 'A' && c <= 'Z';
 }
 
 Array_byte Array_byte_clone(Array_byte b) {
@@ -16215,7 +16215,7 @@ string string_to_lower(string s) {
 	{ // Unsafe block
 		byte* b = v_malloc(s.len + 1);
 		for (int i = 0; i < s.len; ++i) {
-			if (s.str[i] >= L'A' && s.str[i] <= L'Z') {
+			if (s.str[i] >= 'A' && s.str[i] <= 'Z') {
 				b[i] = s.str[i] + 32;
 			} else {
 				b[i] = s.str[i];
@@ -16230,7 +16230,7 @@ string string_to_lower(string s) {
 // Attr: [direct_array_access]
 bool string_is_lower(string s) {
 	for (int i = 0; i < s.len; ++i) {
-		if (s.str[ i] >= L'A' && s.str[ i] <= L'Z') {
+		if (s.str[ i] >= 'A' && s.str[ i] <= 'Z') {
 			return false;
 		}
 	}
@@ -16241,7 +16241,7 @@ string string_to_upper(string s) {
 	{ // Unsafe block
 		byte* b = v_malloc(s.len + 1);
 		for (int i = 0; i < s.len; ++i) {
-			if (s.str[i] >= L'a' && s.str[i] <= L'z') {
+			if (s.str[i] >= 'a' && s.str[i] <= 'z') {
 				b[i] = s.str[i] - 32;
 			} else {
 				b[i] = s.str[i];
@@ -16256,7 +16256,7 @@ string string_to_upper(string s) {
 // Attr: [direct_array_access]
 bool string_is_upper(string s) {
 	for (int i = 0; i < s.len; ++i) {
-		if (s.str[ i] >= L'a' && s.str[ i] <= L'z') {
+		if (s.str[ i] >= 'a' && s.str[ i] <= 'z') {
 			return false;
 		}
 	}
@@ -16281,11 +16281,11 @@ string string_capitalize(string s) {
 
 // Attr: [direct_array_access]
 bool string_is_capital(string s) {
-	if (s.len == 0 || !(s.str[ 0] >= L'A' && s.str[ 0] <= L'Z')) {
+	if (s.len == 0 || !(s.str[ 0] >= 'A' && s.str[ 0] <= 'Z')) {
 		return false;
 	}
 	for (int i = 1; i < s.len; ++i) {
-		if (s.str[ i] >= L'A' && s.str[ i] <= L'Z') {
+		if (s.str[ i] >= 'A' && s.str[ i] <= 'Z') {
 			return false;
 		}
 	}
@@ -16677,23 +16677,23 @@ VV_LOCAL_SYMBOL void ustring_free(ustring* u) {
 }
 
 bool byte_is_digit(byte c) {
-	return c >= L'0' && c <= L'9';
+	return c >= '0' && c <= '9';
 }
 
 bool byte_is_hex_digit(byte c) {
-	return byte_is_digit(c) || (c >= L'a' && c <= L'f') || (c >= L'A' && c <= L'F');
+	return byte_is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
 bool byte_is_oct_digit(byte c) {
-	return c >= L'0' && c <= L'7';
+	return c >= '0' && c <= '7';
 }
 
 bool byte_is_bin_digit(byte c) {
-	return c == L'0' || c == L'1';
+	return c == '0' || c == '1';
 }
 
 bool byte_is_letter(byte c) {
-	return (c >= L'a' && c <= L'z') || (c >= L'A' && c <= L'Z');
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 // Attr: [unsafe]
@@ -16909,7 +16909,7 @@ Array_string string_fields(string s) {
 }
 
 string string_strip_margin(string s) {
-	return string_strip_margin_custom(s, L'|');
+	return string_strip_margin_custom(s, '|');
 }
 
 // Attr: [direct_array_access]
@@ -16918,7 +16918,7 @@ string string_strip_margin_custom(string s, byte del) {
 	if (byte_is_space(sep)) {
 		eprintln(_SLIT("Warning: `strip_margin` cannot use white-space as a delimiter"));
 		eprintln(_SLIT("    Defaulting to `|`"));
-		sep = L'|';
+		sep = '|';
 	}
 	byte* ret = v_malloc(s.len + 1);
 	int count = 0;
@@ -17337,7 +17337,7 @@ Map_string_string os__environ(void) {
 		string eline = _SLIT("");
 		for (u16* c = estrings; *c != 0U; ) {
 			eline = string_from_wide(c);
-			int eq_index = string_index_byte(eline, L'=');
+			int eq_index = string_index_byte(eline, '=');
 			if (eq_index > 0) {
 				map_set(&res, &(string[]){string_substr(eline, 0, eq_index)}, &(string[]) { string_substr(eline, eq_index + 1, eline.len) });
 			}
@@ -17417,28 +17417,28 @@ Option_os__File os__open_file(string path, string mode, Array_int options) {
 	for (int _t713 = 0; _t713 < mode.len; ++_t713) {
 		byte m = mode.str[_t713];
 
-		if (m == (L'w')) {
+		if (m == ('w')) {
 			flags |= (_const_os__o_create | _const_os__o_trunc);
 		}
-		else if (m == (L'a')) {
+		else if (m == ('a')) {
 			flags |= (_const_os__o_create | _const_os__o_append);
 		}
-		else if (m == (L'r')) {
+		else if (m == ('r')) {
 			flags |= _const_os__o_rdonly;
 		}
-		else if (m == (L'b')) {
+		else if (m == ('b')) {
 			flags |= _const_os__o_binary;
 		}
-		else if (m == (L's')) {
+		else if (m == ('s')) {
 			flags |= _const_os__o_sync;
 		}
-		else if (m == (L'n')) {
+		else if (m == ('n')) {
 			flags |= _const_os__o_nonblock;
 		}
-		else if (m == (L'c')) {
+		else if (m == ('c')) {
 			flags |= _const_os__o_noctty;
 		}
-		else if (m == (L'+')) {
+		else if (m == ('+')) {
 			flags |= _const_os__o_rdwr;
 		}
 		else {
@@ -18298,8 +18298,8 @@ bool os__is_abs_path(string path) {
 	if (path.len == 0) {
 		return false;
 	}
-	return string_at(path, 0) == L'/' || (byte_is_letter(string_at(path, 0)) && path.len > 1 && string_at(path, 1) == L':');
-	return string_at(path, 0) == L'/';
+	return string_at(path, 0) == '/' || (byte_is_letter(string_at(path, 0)) && path.len > 1 && string_at(path, 1) == ':');
+	return string_at(path, 0) == '/';
 }
 
 // Attr: [manualfree]
@@ -18810,7 +18810,7 @@ int os__system(string cmd) {
 	int ret = 0;
 	#if defined(_WIN32)
 	{
-		string wcmd = (cmd.len > 1 && string_at(cmd, 0) == L'"' && string_at(cmd, 1) != L'"' ? (_STR("\"%.*s\000\"", 2, cmd)) : (cmd));
+		string wcmd = (cmd.len > 1 && string_at(cmd, 0) == '"' && string_at(cmd, 1) != '"' ? (_STR("\"%.*s\000\"", 2, cmd)) : (cmd));
 		{ // Unsafe block
 			ret = _wsystem(string_to_wide(wcmd));
 		}
@@ -18932,7 +18932,7 @@ string os__get_raw_line(void) {
 				if (!res || bytes_read == 0U) {
 					break;
 				}
-				if (*pos == L'\n' || *pos == L'\r') {
+				if (*pos == '\n' || *pos == '\r') {
 					offset++;
 					break;
 				}
@@ -19115,7 +19115,7 @@ bool os__real_path_defer_0 = false;
 }
 
 VV_LOCAL_SYMBOL string os__normalize_drive_letter(string path) {
-	if (path.len > 2 && string_at(path, 0) >= L'a' && string_at(path, 0) <= L'z' && string_at(path, 1) == L':' && string_at(path, 2) == string_at(_const_os__path_separator, 0)) {
+	if (path.len > 2 && string_at(path, 0) >= 'a' && string_at(path, 0) <= 'z' && string_at(path, 1) == ':' && string_at(path, 2) == string_at(_const_os__path_separator, 0)) {
 		{ // Unsafe block
 			byte* x = &path.str[0];
 			(*x) = *x - 32;
@@ -20338,7 +20338,7 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601
 	int minute_ = 0;
 	int second_ = 0;
 	int microsecond_ = 0;
-	rune plus_min_z = L'a';
+	rune plus_min_z = 'a';
 	int offset_hour = 0;
 	int offset_minute = 0;
 	int count = sscanf(((char*)(s.str)), "%2d:%2d:%2d.%6d%c%2d:%2d", &hour_, &minute_, &second_, &microsecond_, ((char*)(&plus_min_z)), &offset_hour, &offset_minute);
@@ -20349,12 +20349,12 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601
 	if (count < 4) {
 		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_const_time__err_invalid_8601, .data={0} };
 	}
-	bool is_local_time = plus_min_z == L'a' && count == 4;
-	bool is_utc = plus_min_z == L'Z' && count == 5;
+	bool is_local_time = plus_min_z == 'a' && count == 4;
+	bool is_utc = plus_min_z == 'Z' && count == 5;
 	if (!(count == 7 || is_local_time || is_utc)) {
 		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_const_time__err_invalid_8601, .data={0} };
 	}
-	if (plus_min_z != L'+' && plus_min_z != L'-' && !is_utc && !is_local_time) {
+	if (plus_min_z != '+' && plus_min_z != '-' && !is_utc && !is_local_time) {
 		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_SLIT("Invalid 8601 format, expected `Z` or `+` or `-` as time separator")), .data={0} };
 	}
 	int unix_offset = 0;
@@ -20364,7 +20364,7 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601
 	if (offset_minute > 0) {
 		unix_offset += 60 * offset_minute;
 	}
-	if (plus_min_z == L'+') {
+	if (plus_min_z == '+') {
 		unix_offset *= -1;
 	}
 	Option_multi_return_int_int_int_int_i64_bool _t1116;
@@ -21783,10 +21783,10 @@ bool flag__FlagParser_parse_value_defer_1 = false;
 		if (string_eq(arg, _SLIT("--"))) {
 			break;
 		}
-		if (string_at(arg, 0) != L'-') {
+		if (string_at(arg, 0) != '-') {
 			continue;
 		}
-		if ((arg.len == 2 && string_at(arg, 0) == L'-' && string_at(arg, 1) == shorthand) || string_eq(arg, full)) {
+		if ((arg.len == 2 && string_at(arg, 0) == '-' && string_at(arg, 1) == shorthand) || string_eq(arg, full)) {
 			if (i + 1 >= fs->args.len) {
 				Array_string _t1278 = __new_array_with_default(0, 0, sizeof(string), 0);
 				// Defer begin
@@ -21863,10 +21863,10 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 			if (arg.len == 0) {
 				continue;
 			}
-			if (string_at(arg, 0) != L'-') {
+			if (string_at(arg, 0) != '-') {
 				continue;
 			}
-			if ((arg.len == 2 && string_at(arg, 0) == L'-' && string_at(arg, 1) == shorthand) || string_eq(arg, full)) {
+			if ((arg.len == 2 && string_at(arg, 0) == '-' && string_at(arg, 1) == shorthand) || string_eq(arg, full)) {
 				if (fs->args.len > i + 1 && ((string_eq((*(string*)/*ee elem_typ */array_get(fs->args, i + 1)), _SLIT("true")) || string_eq((*(string*)/*ee elem_typ */array_get(fs->args, i + 1)), _SLIT("false"))))) {
 					string val = (*(string*)/*ee elem_typ */array_get(fs->args, i + 1));
 					array_delete(&fs->args, i + 1);
@@ -21888,7 +21888,7 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 				opt_ok(&(string[]) { val }, (Option*)(&_t1288), sizeof(string));
 				return _t1288;
 			}
-			if (arg.len > 1 && string_at(arg, 0) == L'-' && string_at(arg, 1) != L'-' && string_index_byte(arg, shorthand) != -1) {
+			if (arg.len > 1 && string_at(arg, 0) == '-' && string_at(arg, 1) != '-' && string_index_byte(arg, shorthand) != -1) {
 				Option_string _t1289;
 				opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t1289), sizeof(string));
 				return _t1289;
@@ -22140,7 +22140,7 @@ Option_Array_string flag__FlagParser_finalize(flag__FlagParser* fs) {
 		// FOR IN array
 		for (int _t1339 = 0; _t1339 < fs->args.len; ++_t1339) {
 			string a = ((string*)fs->args.data)[_t1339];
-			if ((a.len >= 2 && string_eq(string_substr(a, 0, 2), _SLIT("--"))) || (a.len == 2 && string_at(a, 0) == L'-')) {
+			if ((a.len >= 2 && string_eq(string_substr(a, 0, 2), _SLIT("--"))) || (a.len == 2 && string_at(a, 0) == '-')) {
 				return (Option_Array_string){ .state=2, .err=I_flag__UnkownFlagError_to_Interface_IError((flag__UnkownFlagError*)memdup(&(flag__UnkownFlagError){.msg = _STR("Unknown flag `%.*s\000`", 2, a),.code = 0,}, sizeof(flag__UnkownFlagError))), .data={0} };
 			}
 		}
@@ -22473,18 +22473,18 @@ VV_LOCAL_SYMBOL Option_semver__Version semver__parse_xrange(string input) {
 }
 
 VV_LOCAL_SYMBOL bool semver__can_expand(string input) {
-	bool _t1403 = string_at(input, 0) == L'~' || string_at(input, 0) == L'^' || string_contains(input, _const_semver__hyphen_range_sep) || string_index_any(input, _const_semver__x_range_symbols) > -1;
+	bool _t1403 = string_at(input, 0) == '~' || string_at(input, 0) == '^' || string_contains(input, _const_semver__hyphen_range_sep) || string_index_any(input, _const_semver__x_range_symbols) > -1;
 	return _t1403;
 }
 
 VV_LOCAL_SYMBOL Option_semver__ComparatorSet semver__expand_comparator_set(string input) {
 	byte _t1404 = string_at(input, 0);
 	
-	if (_t1404 == (L'~')) {
+	if (_t1404 == ('~')) {
 		Option_semver__ComparatorSet _t1405 = semver__expand_tilda(string_substr(input, 1, input.len));
 		return _t1405;
 	}
-	else if (_t1404 == (L'^')) {
+	else if (_t1404 == ('^')) {
 		Option_semver__ComparatorSet _t1406 = semver__expand_caret(string_substr(input, 1, input.len));
 		return _t1406;
 	}
@@ -22714,7 +22714,7 @@ inline VV_LOCAL_SYMBOL semver__Version semver__increment_version(semver__Version
 VV_LOCAL_SYMBOL bool semver__is_valid_string(string input) {
 	for (int _t1448 = 0; _t1448 < input.len; ++_t1448) {
 		byte c = input.str[_t1448];
-		if (!(byte_is_letter(c) || byte_is_digit(c) || c == L'.' || c == L'-')) {
+		if (!(byte_is_letter(c) || byte_is_digit(c) || c == '.' || c == '-')) {
 			bool _t1449 = false;
 			return _t1449;
 		}
@@ -23325,7 +23325,7 @@ void term__clear(void) {
 	scrollrect.Bottom = ((u16)(csbi.dwSize.Y));
 	scrolltarget.X = 0;
 	scrolltarget.Y = (0 - csbi.dwSize.Y);
-	fill.Char.UnicodeChar = ((rune)(L' '));
+	fill.Char.UnicodeChar = ((rune)(' '));
 	fill.Attributes = csbi.wAttributes;
 	ScrollConsoleScreenBuffer(hconsole, &scrollrect, NULL, scrolltarget, &fill);
 	csbi.dwCursorPosition.X = 0;
@@ -23365,7 +23365,7 @@ VV_LOCAL_SYMBOL void v__vmod__Scanner_skip_whitespace(v__vmod__Scanner* s) {
 }
 
 VV_LOCAL_SYMBOL bool v__vmod__is_name_alpha(byte chr) {
-	bool _t1548 = byte_is_letter(chr) || chr == L'_';
+	bool _t1548 = byte_is_letter(chr) || chr == '_';
 	return _t1548;
 }
 
@@ -23373,7 +23373,7 @@ VV_LOCAL_SYMBOL string v__vmod__Scanner_create_string(v__vmod__Scanner* s, byte 
 	string str = _SLIT("");
 	for (;;) {
 		if (!(string_at(s->text, s->pos) != q)) break;
-		if (string_at(s->text, s->pos) == L'\\' && string_at(s->text, s->pos + 1) == q) {
+		if (string_at(s->text, s->pos) == '\\' && string_at(s->text, s->pos + 1) == q) {
 			str = /*f*/string_add(str, string_substr(s->text, s->pos, s->pos + 1));
 			s->pos += 2;
 		} else {
@@ -23403,7 +23403,7 @@ VV_LOCAL_SYMBOL void v__vmod__Scanner_scan_all(v__vmod__Scanner* s) {
 	for (;;) {
 		if (!(s->pos < s->text.len)) break;
 		byte c = string_at(s->text, s->pos);
-		if (byte_is_space(c) || c == L'\\') {
+		if (byte_is_space(c) || c == '\\') {
 			s->pos++;
 			continue;
 		}
@@ -23413,7 +23413,7 @@ VV_LOCAL_SYMBOL void v__vmod__Scanner_scan_all(v__vmod__Scanner* s) {
 				v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_module_keyword, name);
 				s->pos++;
 				continue;
-			} else if (string_at(s->text, s->pos) == L':') {
+			} else if (string_at(s->text, s->pos) == ':') {
 				v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_field_key, string_add(name, _SLIT(":")));
 				s->pos += 2;
 				continue;
@@ -23423,7 +23423,7 @@ VV_LOCAL_SYMBOL void v__vmod__Scanner_scan_all(v__vmod__Scanner* s) {
 				continue;
 			}
 		}
-		if ((c == L'\'' || c == L'\"') && !v__vmod__Scanner_peek_char(/*rec*/*s, L'\\')) {
+		if ((c == '\'' || c == '\"') && !v__vmod__Scanner_peek_char(/*rec*/*s, '\\')) {
 			s->pos++;
 			string str = v__vmod__Scanner_create_string(s, c);
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_str, str);
@@ -23431,22 +23431,22 @@ VV_LOCAL_SYMBOL void v__vmod__Scanner_scan_all(v__vmod__Scanner* s) {
 			continue;
 		}
 
-		if (c == (L'{')) {
+		if (c == ('{')) {
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_lcbr, byte_ascii_str(c));
 		}
-		else if (c == (L'}')) {
+		else if (c == ('}')) {
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rcbr, byte_ascii_str(c));
 		}
-		else if (c == (L'[')) {
+		else if (c == ('[')) {
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_labr, byte_ascii_str(c));
 		}
-		else if (c == (L']')) {
+		else if (c == (']')) {
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_rabr, byte_ascii_str(c));
 		}
-		else if (c == (L':')) {
+		else if (c == (':')) {
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_colon, byte_ascii_str(c));
 		}
-		else if (c == (L',')) {
+		else if (c == (',')) {
 			v__vmod__Scanner_tokenize(s, v__vmod__TokenKind_comma, byte_ascii_str(c));
 		}
 		else {
@@ -23734,7 +23734,7 @@ string v__cflag__CFlag_eval(v__cflag__CFlag* cf) {
 	cflag_eval_outer_loop:
 	for (int i = 0; i < cf->value.len; i++) {
 		byte x = string_at(cf->value, i);
-		if (x == L'$') {
+		if (x == '$') {
 			string remainder = string_substr(cf->value, i, cf->value.len);
 			if (string_starts_with(remainder, _const_v__cflag__fexisting_literal)) {
 				string sparams = string_all_before(string_substr(remainder, _const_v__cflag__fexisting_literal.len + 1, remainder.len), _SLIT(")"));
@@ -23928,7 +23928,7 @@ Option_v__pkgconfig__Main_ptr v__pkgconfig__main(Array_string args) {
 					continue;
 				}
  				string d =  *(string*)_t1620.data;
-				string pad = strings__repeat(L' ', 20 - mod.len);
+				string pad = strings__repeat(' ', 20 - mod.len);
 				m->res = /*f*/string_add(m->res, _STR("%.*s\000 %.*s\000 %.*s\000\n", 4, mod, pad, d));
 			}
 		} else {
@@ -24068,26 +24068,26 @@ VV_LOCAL_SYMBOL string v__pkgconfig__filter(Array_string libs, string prefix, st
 }
 
 VV_LOCAL_SYMBOL v__pkgconfig__MainOptions* v__pkgconfig__parse_options(flag__FlagParser* fp) {
-	v__pkgconfig__MainOptions* _t1648 = (v__pkgconfig__MainOptions*)memdup(&(v__pkgconfig__MainOptions){.modversion = flag__FlagParser_bool(fp, _SLIT("modversion"), L'V', false, _SLIT("show version of module")),
-		.description = flag__FlagParser_bool(fp, _SLIT("description"), L'd', false, _SLIT("show pkg module description")),
-		.help = flag__FlagParser_bool(fp, _SLIT("help"), L'h', false, _SLIT("show this help message")),
-		.debug = flag__FlagParser_bool(fp, _SLIT("debug"), L'D', false, _SLIT("show debug information")),
-		.listall = flag__FlagParser_bool(fp, _SLIT("list-all"), L'l', false, _SLIT("list all pkgmodules")),
-		.exists = flag__FlagParser_bool(fp, _SLIT("exists"), L'e', false, _SLIT("return 0 if pkg exists")),
-		.variables = flag__FlagParser_bool(fp, _SLIT("print-variables"), L'V', false, _SLIT("display variable names")),
-		.requires = flag__FlagParser_bool(fp, _SLIT("print-requires"), L'r', false, _SLIT("display requires of the module")),
-		.atleast = flag__FlagParser_string(fp, _SLIT("atleast-version"), L'a', _SLIT(""), _SLIT("return 0 if pkg version is at least the given one")),
-		.atleastpc = flag__FlagParser_string(fp, _SLIT("atleast-pkgconfig-version"), L'A', _SLIT(""), _SLIT("return 0 if pkgconfig version is at least the given one")),
-		.exactversion = flag__FlagParser_string(fp, _SLIT("exact-version"), L' ', _SLIT(""), _SLIT("return 0 if pkg version is at least the given one")),
-		.version = flag__FlagParser_bool(fp, _SLIT("version"), L'v', false, _SLIT("show version of this tool")),
-		.cflags = flag__FlagParser_bool(fp, _SLIT("cflags"), L'c', false, _SLIT("output all pre-processor and compiler flags")),
-		.cflags_only_path = flag__FlagParser_bool(fp, _SLIT("cflags-only-I"), L'I', false, _SLIT("show only -I flags from CFLAGS")),
-		.cflags_only_other = flag__FlagParser_bool(fp, _SLIT("cflags-only-other"), L' ', false, _SLIT("show cflags without -I")),
-		.stat1c = flag__FlagParser_bool(fp, _SLIT("static"), L's', false, _SLIT("show --libs for static linking")),
-		.libs = flag__FlagParser_bool(fp, _SLIT("libs"), L'l', false, _SLIT("output all linker flags")),
-		.libs_only_link = flag__FlagParser_bool(fp, _SLIT("libs-only-l"), L' ', false, _SLIT("show only -l from ldflags")),
-		.libs_only_path = flag__FlagParser_bool(fp, _SLIT("libs-only-L"), L'L', false, _SLIT("show only -L from ldflags")),
-		.libs_only_other = flag__FlagParser_bool(fp, _SLIT("libs-only-other"), L' ', false, _SLIT("show flags not containing -l or -L")),
+	v__pkgconfig__MainOptions* _t1648 = (v__pkgconfig__MainOptions*)memdup(&(v__pkgconfig__MainOptions){.modversion = flag__FlagParser_bool(fp, _SLIT("modversion"), 'V', false, _SLIT("show version of module")),
+		.description = flag__FlagParser_bool(fp, _SLIT("description"), 'd', false, _SLIT("show pkg module description")),
+		.help = flag__FlagParser_bool(fp, _SLIT("help"), 'h', false, _SLIT("show this help message")),
+		.debug = flag__FlagParser_bool(fp, _SLIT("debug"), 'D', false, _SLIT("show debug information")),
+		.listall = flag__FlagParser_bool(fp, _SLIT("list-all"), 'l', false, _SLIT("list all pkgmodules")),
+		.exists = flag__FlagParser_bool(fp, _SLIT("exists"), 'e', false, _SLIT("return 0 if pkg exists")),
+		.variables = flag__FlagParser_bool(fp, _SLIT("print-variables"), 'V', false, _SLIT("display variable names")),
+		.requires = flag__FlagParser_bool(fp, _SLIT("print-requires"), 'r', false, _SLIT("display requires of the module")),
+		.atleast = flag__FlagParser_string(fp, _SLIT("atleast-version"), 'a', _SLIT(""), _SLIT("return 0 if pkg version is at least the given one")),
+		.atleastpc = flag__FlagParser_string(fp, _SLIT("atleast-pkgconfig-version"), 'A', _SLIT(""), _SLIT("return 0 if pkgconfig version is at least the given one")),
+		.exactversion = flag__FlagParser_string(fp, _SLIT("exact-version"), ' ', _SLIT(""), _SLIT("return 0 if pkg version is at least the given one")),
+		.version = flag__FlagParser_bool(fp, _SLIT("version"), 'v', false, _SLIT("show version of this tool")),
+		.cflags = flag__FlagParser_bool(fp, _SLIT("cflags"), 'c', false, _SLIT("output all pre-processor and compiler flags")),
+		.cflags_only_path = flag__FlagParser_bool(fp, _SLIT("cflags-only-I"), 'I', false, _SLIT("show only -I flags from CFLAGS")),
+		.cflags_only_other = flag__FlagParser_bool(fp, _SLIT("cflags-only-other"), ' ', false, _SLIT("show cflags without -I")),
+		.stat1c = flag__FlagParser_bool(fp, _SLIT("static"), 's', false, _SLIT("show --libs for static linking")),
+		.libs = flag__FlagParser_bool(fp, _SLIT("libs"), 'l', false, _SLIT("output all linker flags")),
+		.libs_only_link = flag__FlagParser_bool(fp, _SLIT("libs-only-l"), ' ', false, _SLIT("show only -l from ldflags")),
+		.libs_only_path = flag__FlagParser_bool(fp, _SLIT("libs-only-L"), 'L', false, _SLIT("show only -L from ldflags")),
+		.libs_only_other = flag__FlagParser_bool(fp, _SLIT("libs-only-other"), ' ', false, _SLIT("show flags not containing -l or -L")),
 		.args = fp->args,
 	}, sizeof(v__pkgconfig__MainOptions));
 	return _t1648;
@@ -24848,11 +24848,11 @@ string rand__uuid_v4(void) {
 	d = ((byte)(x));
 	{ // Unsafe block
 		buf[19] = (d > 0x39 ? (d + 0x27) : (d));
-		buf[8] = L'-';
-		buf[13] = L'-';
-		buf[18] = L'-';
-		buf[23] = L'-';
-		buf[14] = L'4';
+		buf[8] = '-';
+		buf[13] = '-';
+		buf[18] = '-';
+		buf[23] = '-';
+		buf[14] = '4';
 		buf[buflen] = 0;
 		string _t1766 = byte_vstring_with_len(buf, buflen);
 		return _t1766;
@@ -24971,7 +24971,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e657cb2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9fa805c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -25417,7 +25417,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			res->use_color = v__pref__ColorOutput_always;
 		}
 		else if (string_eq(arg, _SLIT("-m32")) || string_eq(arg, _SLIT("-m64"))) {
-			res->m64 = string_at(arg, 2) == L'6';
+			res->m64 = string_at(arg, 2) == '6';
 			res->cflags = /*f*/string_add(res->cflags, _STR(" %.*s", 1, arg));
 		}
 		else if (string_eq(arg, _SLIT("-nocolor"))) {
@@ -25566,7 +25566,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 				eprintln(_STR("Use `v %.*s\000` instead.", 2, arg));
 				v_exit(1);
 			}
-			if (string_at(arg, 0) == L'-') {
+			if (string_at(arg, 0) == '-') {
 				if ((Array_string_contains(_const_v__pref__list_of_flags_with_param, string_substr(arg, 1, arg.len)))) {
 					i++;
 					continue;
@@ -26056,7 +26056,7 @@ void help__print_and_exit(string topic) {
 	string vroot = os__dir(vexe);
 	for (int _t1909 = 0; _t1909 < topic.len; ++_t1909) {
 		byte b = topic.str[_t1909];
-		if ((b >= L'a' && b <= L'z') || b == L'-' || (b >= L'0' && b <= L'9')) {
+		if ((b >= 'a' && b <= 'z') || b == '-' || (b >= '0' && b <= '9')) {
 			continue;
 		}
 		eprintln(_const_help__unknown_topic);
@@ -26474,20 +26474,20 @@ string v__util__smart_quote(string str, bool raw) {
 
 // Attr: [inline]
 inline bool v__util__is_name_char(byte c) {
-	bool _t1965 = (c >= L'a' && c <= L'z') || (c >= L'A' && c <= L'Z') || c == L'_';
+	bool _t1965 = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 	return _t1965;
 }
 
 // Attr: [inline]
 inline bool v__util__is_func_char(byte c) {
-	bool _t1966 = (c >= L'a' && c <= L'z') || (c >= L'A' && c <= L'Z') || c == L'_' || byte_is_digit(c);
+	bool _t1966 = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || byte_is_digit(c);
 	return _t1966;
 }
 
 bool v__util__contains_capital(string s) {
 	for (int _t1967 = 0; _t1967 < s.len; ++_t1967) {
 		byte c = s.str[_t1967];
-		if (c >= L'A' && c <= L'Z') {
+		if (c >= 'A' && c <= 'Z') {
 			bool _t1968 = true;
 			return _t1968;
 		}
@@ -26840,15 +26840,15 @@ Option_string v__util__resolve_env_value(string str, bool check_for_presence) {
 		return (Option_string){ .state=2, .err=v_error(string_add(_STR("no \"%.*s", 1, env_ident), _STR("...\')\" could be found in \"%.*s\000\".", 2, str))), .data={0} };
 	}
  	int at =  *(int*)_t2009.data;
-	byte ch = ((byte)(L'.'));
+	byte ch = ((byte)('.'));
 	string env_lit = _SLIT("");
-	for (int i = at + env_ident.len; i < str.len && ch != L')'; i++) {
+	for (int i = at + env_ident.len; i < str.len && ch != ')'; i++) {
 		ch = ((byte)(string_at(str, i)));
-		if (byte_is_letter(ch) || byte_is_digit(ch) || ch == L'_') {
+		if (byte_is_letter(ch) || byte_is_digit(ch) || ch == '_') {
 			env_lit = /*f*/string_add(env_lit, byte_ascii_str(ch));
 		} else {
-			if (!(ch == L'\'' || ch == L')')) {
-				if (ch == L'$') {
+			if (!(ch == '\'' || ch == ')')) {
+				if (ch == '$') {
 					return (Option_string){ .state=2, .err=v_error(_SLIT("cannot use string interpolation in compile time $env() expression")), .data={0} };
 				}
 				return (Option_string){ .state=2, .err=v_error(_STR("invalid environment variable name in \"%.*s\000\", invalid character \"%.*s\000\"", 3, str, byte_ascii_str(ch))), .data={0} };
@@ -27058,7 +27058,7 @@ string v__util__skip_bom(string file_content) {
 string v__util__replace_op(string s) {
 	if (s.len == 1) {
 		byte last_char = string_at(s, s.len - 1);
-		string suffix = ((last_char == (L'+')) ? (_SLIT("_plus")) : (last_char == (L'-')) ? (_SLIT("_minus")) : (last_char == (L'*')) ? (_SLIT("_mult")) : (last_char == (L'/')) ? (_SLIT("_div")) : (last_char == (L'%')) ? (_SLIT("_mod")) : (last_char == (L'<')) ? (_SLIT("_lt")) : (last_char == (L'>')) ? (_SLIT("_gt")) : (_SLIT("")));
+		string suffix = ((last_char == ('+')) ? (_SLIT("_plus")) : (last_char == ('-')) ? (_SLIT("_minus")) : (last_char == ('*')) ? (_SLIT("_mult")) : (last_char == ('/')) ? (_SLIT("_div")) : (last_char == ('%')) ? (_SLIT("_mod")) : (last_char == ('<')) ? (_SLIT("_lt")) : (last_char == ('>')) ? (_SLIT("_gt")) : (_SLIT("")));
 		string _t2037 = string_add(string_substr(s, 0, s.len - 1), suffix);
 		return _t2037;
 	} else {
@@ -28654,7 +28654,7 @@ Option_bool v__ast__Table_parse_cflag(v__ast__Table* t, string cflg, string mod,
 	for (;;) {
 		string name = _SLIT("");
 		string value = _SLIT("");
-		if (string_at(flag, 0) == L'-') {
+		if (string_at(flag, 0) == '-') {
 			// FOR IN array
 			for (int _t2369 = 0; _t2369 < allowed_flags.len; ++_t2369) {
 				string f = ((string*)allowed_flags.data)[_t2369];
@@ -29186,7 +29186,7 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 	if (!needs_braces) {
 		if (i + 1 < lit->vals.len && (*(string*)/*ee elem_typ */array_get(lit->vals, i + 1)).len > 0) {
 			byte next_char = string_at((*(string*)/*ee elem_typ */array_get(lit->vals, i + 1)), 0);
-			if (v__util__is_func_char(next_char) || next_char == L'.' || next_char == L'(') {
+			if (v__util__is_func_char(next_char) || next_char == '.' || next_char == '(') {
 				needs_braces = true;
 			}
 		}
@@ -29195,7 +29195,7 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 		v__ast__Expr sub_expr = (*(v__ast__Expr*)/*ee elem_typ */array_get(lit->exprs, i));
 		for (;;) {
 			if (sub_expr._typ == 258 /* v.ast.Ident */) {
-				if (string_at((*sub_expr._v__ast__Ident).name, 0) == L'@') {
+				if (string_at((*sub_expr._v__ast__Ident).name, 0) == '@') {
 					needs_braces = true;
 				}
 				break;
@@ -29212,7 +29212,7 @@ multi_return_string_bool v__ast__StringInterLiteral_get_fspec_braces(v__ast__Str
 				break;
 			}
 			else if (sub_expr._typ == 277 /* v.ast.SelectorExpr */) {
-				if (string_at((*sub_expr._v__ast__SelectorExpr).field_name, 0) == L'@') {
+				if (string_at((*sub_expr._v__ast__SelectorExpr).field_name, 0) == '@') {
 					needs_braces = true;
 					break;
 				}
@@ -31601,7 +31601,7 @@ string v__ast__Table_type_to_str_using_aliases(v__ast__Table* t, v__ast__Type ty
 		res = string_add(_SLIT("shared "), res);
 	}
 	if (nr_muls > 0) {
-		res = string_add(strings__repeat(L'&', nr_muls), res);
+		res = string_add(strings__repeat('&', nr_muls), res);
 	}
 	if (v__ast__Type_has_flag(typ, v__ast__TypeFlag_optional)) {
 		res = string_add(_SLIT("?"), res);
@@ -32041,7 +32041,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_num_lit(v__scanner__Scanner* s, int s
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
 	int first_wrong_digit_pos = 0;
-	rune first_wrong_digit = L'\0';
+	rune first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
 	if (s->pos < s->text.len && string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
@@ -32083,7 +32083,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_bin_number(v__scanner__Scanner*
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
 	int first_wrong_digit_pos = 0;
-	rune first_wrong_digit = L'\0';
+	rune first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	if (s->pos + 2 >= s->text.len) {
 		string _t2886 = _SLIT("0x");
@@ -32128,7 +32128,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_hex_number(v__scanner__Scanner*
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
 	int first_wrong_digit_pos = 0;
-	rune first_wrong_digit = L'\0';
+	rune first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	s->pos += 2;
 	if (s->pos < s->text.len && string_at(s->text, s->pos) == _const_v__scanner__num_sep) {
@@ -32170,7 +32170,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_oct_number(v__scanner__Scanner*
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner* s) {
 	bool has_wrong_digit = false;
 	int first_wrong_digit_pos = 0;
-	rune first_wrong_digit = L'\0';
+	rune first_wrong_digit = '\0';
 	int start_pos = s->pos;
 	for (;;) {
 		if (!(s->pos < s->text.len)) break;
@@ -32179,7 +32179,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 			v__scanner__Scanner_error(s, _SLIT("cannot use `_` consecutively"));
 		}
 		if (!byte_is_digit(c) && c != _const_v__scanner__num_sep) {
-			if (!byte_is_letter(c) || (c == L'e' || c == L'E') || s->is_inside_string) {
+			if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->is_inside_string) {
 				break;
 			} else if (!has_wrong_digit) {
 				has_wrong_digit = true;
@@ -32195,7 +32195,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 	}
 	bool call_method = false;
 	bool is_range = false;
-	if (s->pos < s->text.len && s->text.str[ s->pos] == L'.') {
+	if (s->pos < s->text.len && s->text.str[ s->pos] == '.') {
 		s->pos++;
 		if (s->pos < s->text.len) {
 			if (byte_is_digit(s->text.str[ s->pos])) {
@@ -32203,8 +32203,8 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 					if (!(s->pos < s->text.len)) break;
 					byte c = s->text.str[ s->pos];
 					if (!byte_is_digit(c)) {
-						if (!byte_is_letter(c) || (c == L'e' || c == L'E') || s->is_inside_string) {
-							if (c == L'.' && s->pos + 1 < s->text.len && byte_is_letter(s->text.str[ s->pos + 1])) {
+						if (!byte_is_letter(c) || (c == 'e' || c == 'E') || s->is_inside_string) {
+							if (c == '.' && s->pos + 1 < s->text.len && byte_is_letter(s->text.str[ s->pos + 1])) {
 								call_method = true;
 							}
 							break;
@@ -32216,10 +32216,10 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 					}
 					s->pos++;
 				}
-			} else if (s->text.str[ s->pos] == L'.') {
+			} else if (s->text.str[ s->pos] == '.') {
 				is_range = true;
 				s->pos--;
-			} else if ((s->text.str[ s->pos] == L'e' || s->text.str[ s->pos] == L'E')) {
+			} else if ((s->text.str[ s->pos] == 'e' || s->text.str[ s->pos] == 'E')) {
 			} else if (byte_is_letter(s->text.str[ s->pos])) {
 				call_method = true;
 				s->pos--;
@@ -32228,10 +32228,10 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 		}
 	}
 	bool has_exp = false;
-	if (s->pos < s->text.len && (s->text.str[ s->pos] == L'e' || s->text.str[ s->pos] == L'E')) {
+	if (s->pos < s->text.len && (s->text.str[ s->pos] == 'e' || s->text.str[ s->pos] == 'E')) {
 		has_exp = true;
 		s->pos++;
-		if (s->pos < s->text.len && (s->text.str[ s->pos] == L'-' || s->text.str[ s->pos] == L'+')) {
+		if (s->pos < s->text.len && (s->text.str[ s->pos] == '-' || s->text.str[ s->pos] == '+')) {
 			s->pos++;
 		}
 		for (;;) {
@@ -32239,7 +32239,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 			byte c = s->text.str[ s->pos];
 			if (!byte_is_digit(c)) {
 				if (!byte_is_letter(c) || s->is_inside_string) {
-					if (c == L'.' && s->pos + 1 < s->text.len && byte_is_letter(s->text.str[ s->pos + 1])) {
+					if (c == '.' && s->pos + 1 < s->text.len && byte_is_letter(s->text.str[ s->pos + 1])) {
 						call_method = true;
 					}
 					break;
@@ -32255,10 +32255,10 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 	if (has_wrong_digit) {
 		s->pos = first_wrong_digit_pos;
 		v__scanner__Scanner_error(s, _STR("this number has unsuitable digit `%.*s\000`", 2, rune_str(first_wrong_digit)));
-	} else if ((s->text.str[ s->pos - 1] == L'e' || s->text.str[ s->pos - 1] == L'E')) {
+	} else if ((s->text.str[ s->pos - 1] == 'e' || s->text.str[ s->pos - 1] == 'E')) {
 		s->pos--;
 		v__scanner__Scanner_error(s, _SLIT("exponent has no digits"));
-	} else if (s->pos < s->text.len && s->text.str[ s->pos] == L'.' && !is_range && !call_method) {
+	} else if (s->pos < s->text.len && s->text.str[ s->pos] == '.' && !is_range && !call_method) {
 		if (has_exp) {
 			v__scanner__Scanner_error(s, _SLIT("exponential part should be integer"));
 		} else {
@@ -32398,7 +32398,7 @@ inline VV_LOCAL_SYMBOL byte v__scanner__Scanner_look_ahead(v__scanner__Scanner* 
 		byte _t2902 = s->text.str[ s->pos + n];
 		return _t2902;
 	} else {
-		byte _t2903 = L'\0';
+		byte _t2903 = '\0';
 		return _t2903;
 	}
 	return 0;
@@ -32452,31 +32452,31 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 					s->is_inside_string = false;
 				}
 			}
-			if (s->is_inter_start && next_char == L'\\' && !(v__scanner__Scanner_look_ahead(s, 2) == L'x' || v__scanner__Scanner_look_ahead(s, 2) == L'n' || v__scanner__Scanner_look_ahead(s, 2) == L'r' || v__scanner__Scanner_look_ahead(s, 2) == L'\\' || v__scanner__Scanner_look_ahead(s, 2) == L't' || v__scanner__Scanner_look_ahead(s, 2) == L'e' || v__scanner__Scanner_look_ahead(s, 2) == L'"' || v__scanner__Scanner_look_ahead(s, 2) == L'\'')) {
+			if (s->is_inter_start && next_char == '\\' && !(v__scanner__Scanner_look_ahead(s, 2) == 'x' || v__scanner__Scanner_look_ahead(s, 2) == 'n' || v__scanner__Scanner_look_ahead(s, 2) == 'r' || v__scanner__Scanner_look_ahead(s, 2) == '\\' || v__scanner__Scanner_look_ahead(s, 2) == 't' || v__scanner__Scanner_look_ahead(s, 2) == 'e' || v__scanner__Scanner_look_ahead(s, 2) == '"' || v__scanner__Scanner_look_ahead(s, 2) == '\'')) {
 				v__scanner__Scanner_warn(s, _STR("unknown escape sequence \\%"PRIu8"", 1, v__scanner__Scanner_look_ahead(s, 2)));
 			}
-			if (s->is_inter_start && next_char == L'(') {
-				if (v__scanner__Scanner_look_ahead(s, 2) != L')') {
+			if (s->is_inter_start && next_char == '(') {
+				if (v__scanner__Scanner_look_ahead(s, 2) != ')') {
 					v__scanner__Scanner_warn(s, _SLIT("use `${f(expr)}` instead of `$f(expr)`"));
 				}
-			} else if (s->is_inter_start && next_char != L'.') {
+			} else if (s->is_inter_start && next_char != '.') {
 				s->is_inter_end = true;
 				s->is_inter_start = false;
 			}
-			if (s->pos == 0 && next_char == L' ') {
+			if (s->pos == 0 && next_char == ' ') {
 				s->pos++;
 			}
 			v__token__Token _t2909 = v__scanner__Scanner_new_token(s, v__token__Kind_name, name, name.len);
 			return _t2909;
-		} else if (byte_is_digit(c) || (c == L'.' && byte_is_digit(nextc))) {
+		} else if (byte_is_digit(c) || (c == '.' && byte_is_digit(nextc))) {
 			if (!s->is_inside_string) {
 				int start_pos = s->pos;
 				for (;;) {
-					if (!(start_pos < s->text.len && s->text.str[ start_pos] == L'0')) break;
+					if (!(start_pos < s->text.len && s->text.str[ start_pos] == '0')) break;
 					start_pos++;
 				}
 				int prefix_zero_num = start_pos - s->pos;
-				if (start_pos == s->text.len || (c == L'0' && !byte_is_digit(s->text.str[ start_pos]))) {
+				if (start_pos == s->text.len || (c == '0' && !byte_is_digit(s->text.str[ start_pos]))) {
 					prefix_zero_num--;
 				}
 				s->pos += prefix_zero_num;
@@ -32485,9 +32485,9 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2910 = v__scanner__Scanner_new_token(s, v__token__Kind_number, num, num.len);
 			return _t2910;
 		}
-		if (c == L')' && s->is_inter_start) {
+		if (c == ')' && s->is_inter_start) {
 			byte next_char = v__scanner__Scanner_look_ahead(s, 1);
-			if (next_char != L'.') {
+			if (next_char != '.') {
 				s->is_inter_end = true;
 				s->is_inter_start = false;
 				if (next_char == s->quote) {
@@ -32498,12 +32498,12 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			}
 		}
 
-		if (c == (L'+')) {
-			if (nextc == L'+') {
+		if (c == ('+')) {
+			if (nextc == '+') {
 				s->pos++;
 				v__token__Token _t2912 = v__scanner__Scanner_new_token(s, v__token__Kind_inc, _SLIT(""), 2);
 				return _t2912;
-			} else if (nextc == L'=') {
+			} else if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2913 = v__scanner__Scanner_new_token(s, v__token__Kind_plus_assign, _SLIT(""), 2);
 				return _t2913;
@@ -32511,12 +32511,12 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2914 = v__scanner__Scanner_new_token(s, v__token__Kind_plus, _SLIT(""), 1);
 			return _t2914;
 		}
-		else if (c == (L'-')) {
-			if (nextc == L'-') {
+		else if (c == ('-')) {
+			if (nextc == '-') {
 				s->pos++;
 				v__token__Token _t2915 = v__scanner__Scanner_new_token(s, v__token__Kind_dec, _SLIT(""), 2);
 				return _t2915;
-			} else if (nextc == L'=') {
+			} else if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2916 = v__scanner__Scanner_new_token(s, v__token__Kind_minus_assign, _SLIT(""), 2);
 				return _t2916;
@@ -32524,8 +32524,8 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2917 = v__scanner__Scanner_new_token(s, v__token__Kind_minus, _SLIT(""), 1);
 			return _t2917;
 		}
-		else if (c == (L'*')) {
-			if (nextc == L'=') {
+		else if (c == ('*')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2918 = v__scanner__Scanner_new_token(s, v__token__Kind_mult_assign, _SLIT(""), 2);
 				return _t2918;
@@ -32533,8 +32533,8 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2919 = v__scanner__Scanner_new_token(s, v__token__Kind_mul, _SLIT(""), 1);
 			return _t2919;
 		}
-		else if (c == (L'^')) {
-			if (nextc == L'=') {
+		else if (c == ('^')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2920 = v__scanner__Scanner_new_token(s, v__token__Kind_xor_assign, _SLIT(""), 2);
 				return _t2920;
@@ -32542,8 +32542,8 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2921 = v__scanner__Scanner_new_token(s, v__token__Kind_xor, _SLIT(""), 1);
 			return _t2921;
 		}
-		else if (c == (L'%')) {
-			if (nextc == L'=') {
+		else if (c == ('%')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2922 = v__scanner__Scanner_new_token(s, v__token__Kind_mod_assign, _SLIT(""), 2);
 				return _t2922;
@@ -32551,7 +32551,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2923 = v__scanner__Scanner_new_token(s, v__token__Kind_mod, _SLIT(""), 1);
 			return _t2923;
 		}
-		else if (c == (L'?')) {
+		else if (c == ('?')) {
 			v__token__Token _t2924 = v__scanner__Scanner_new_token(s, v__token__Kind_question, _SLIT(""), 1);
 			return _t2924;
 		}
@@ -32566,36 +32566,36 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2926 = v__scanner__Scanner_new_token(s, v__token__Kind_chartoken, ident_char, ident_char.len + 2);
 			return _t2926;
 		}
-		else if (c == (L'(')) {
-			if (s->pref->is_vet && s->text.str[ s->pos + 1] == L' ') {
+		else if (c == ('(')) {
+			if (s->pref->is_vet && s->text.str[ s->pos + 1] == ' ') {
 				v__scanner__Scanner_vet_error(s, _SLIT("Looks like you are adding a space after `(`"), v__vet__FixKind_vfmt);
 			}
 			v__token__Token _t2927 = v__scanner__Scanner_new_token(s, v__token__Kind_lpar, _SLIT(""), 1);
 			return _t2927;
 		}
-		else if (c == (L')')) {
-			if (s->pref->is_vet && s->text.str[ s->pos - 1] == L' ') {
+		else if (c == (')')) {
+			if (s->pref->is_vet && s->text.str[ s->pos - 1] == ' ') {
 				v__scanner__Scanner_vet_error(s, _SLIT("Looks like you are adding a space before `)`"), v__vet__FixKind_vfmt);
 			}
 			v__token__Token _t2928 = v__scanner__Scanner_new_token(s, v__token__Kind_rpar, _SLIT(""), 1);
 			return _t2928;
 		}
-		else if (c == (L'[')) {
+		else if (c == ('[')) {
 			v__token__Token _t2929 = v__scanner__Scanner_new_token(s, v__token__Kind_lsbr, _SLIT(""), 1);
 			return _t2929;
 		}
-		else if (c == (L']')) {
+		else if (c == (']')) {
 			v__token__Token _t2930 = v__scanner__Scanner_new_token(s, v__token__Kind_rsbr, _SLIT(""), 1);
 			return _t2930;
 		}
-		else if (c == (L'{')) {
+		else if (c == ('{')) {
 			if (s->is_inside_string) {
 				continue;
 			}
 			v__token__Token _t2931 = v__scanner__Scanner_new_token(s, v__token__Kind_lcbr, _SLIT(""), 1);
 			return _t2931;
 		}
-		else if (c == (L'$')) {
+		else if (c == ('$')) {
 			if (s->is_inside_string) {
 				v__token__Token _t2932 = v__scanner__Scanner_new_token(s, v__token__Kind_str_dollar, _SLIT(""), 1);
 				return _t2932;
@@ -32604,7 +32604,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2933;
 			}
 		}
-		else if (c == (L'}')) {
+		else if (c == ('}')) {
 			if (s->is_enclosed_inter) {
 				if (s->pos < s->text.len - 1) {
 					s->pos++;
@@ -32626,14 +32626,14 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2936;
 			}
 		}
-		else if (c == (L'&')) {
-			if (nextc == L'=') {
+		else if (c == ('&')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2937 = v__scanner__Scanner_new_token(s, v__token__Kind_and_assign, _SLIT(""), 2);
 				return _t2937;
 			}
 			byte afternextc = v__scanner__Scanner_look_ahead(s, 2);
-			if (nextc == L'&' && byte_is_space(afternextc)) {
+			if (nextc == '&' && byte_is_space(afternextc)) {
 				s->pos++;
 				v__token__Token _t2938 = v__scanner__Scanner_new_token(s, v__token__Kind_and, _SLIT(""), 2);
 				return _t2938;
@@ -32641,13 +32641,13 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2939 = v__scanner__Scanner_new_token(s, v__token__Kind_amp, _SLIT(""), 1);
 			return _t2939;
 		}
-		else if (c == (L'|')) {
-			if (nextc == L'|') {
+		else if (c == ('|')) {
+			if (nextc == '|') {
 				s->pos++;
 				v__token__Token _t2940 = v__scanner__Scanner_new_token(s, v__token__Kind_logical_or, _SLIT(""), 2);
 				return _t2940;
 			}
-			if (nextc == L'=') {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2941 = v__scanner__Scanner_new_token(s, v__token__Kind_or_assign, _SLIT(""), 2);
 				return _t2941;
@@ -32655,13 +32655,13 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2942 = v__scanner__Scanner_new_token(s, v__token__Kind_pipe, _SLIT(""), 1);
 			return _t2942;
 		}
-		else if (c == (L',')) {
+		else if (c == (',')) {
 			v__token__Token _t2943 = v__scanner__Scanner_new_token(s, v__token__Kind_comma, _SLIT(""), 1);
 			return _t2943;
 		}
-		else if (c == (L'@')) {
+		else if (c == ('@')) {
 			string name = _SLIT("");
-			if (nextc != L'\0') {
+			if (nextc != '\0') {
 				s->pos++;
 				name = v__scanner__Scanner_ident_name(s);
 			}
@@ -32683,10 +32683,10 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2946 = v__scanner__Scanner_new_token(s, v__token__Kind_name, name, name.len);
 			return _t2946;
 		}
-		else if (c == (L'.')) {
-			if (nextc == L'.') {
+		else if (c == ('.')) {
+			if (nextc == '.') {
 				s->pos++;
-				if (s->pos + 1 < s->text.len && s->text.str[ s->pos + 1] == L'.') {
+				if (s->pos + 1 < s->text.len && s->text.str[ s->pos + 1] == '.') {
 					s->pos++;
 					v__token__Token _t2947 = v__scanner__Scanner_new_token(s, v__token__Kind_ellipsis, _SLIT(""), 3);
 					return _t2947;
@@ -32697,10 +32697,10 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2949 = v__scanner__Scanner_new_token(s, v__token__Kind_dot, _SLIT(""), 1);
 			return _t2949;
 		}
-		else if (c == (L'#')) {
+		else if (c == ('#')) {
 			int start = s->pos + 1;
 			v__scanner__Scanner_ignore_line(s);
-			if (nextc == L'!') {
+			if (nextc == '!') {
 				string comment = string_trim_space(string_substr(s->text, start - 1, s->pos));
 				v__token__Token _t2950 = v__scanner__Scanner_new_token(s, v__token__Kind_comment, comment, comment.len + 2);
 				return _t2950;
@@ -32709,13 +32709,13 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 			v__token__Token _t2951 = v__scanner__Scanner_new_token(s, v__token__Kind_hash, hash, hash.len + 2);
 			return _t2951;
 		}
-		else if (c == (L'>')) {
-			if (nextc == L'=') {
+		else if (c == ('>')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2952 = v__scanner__Scanner_new_token(s, v__token__Kind_ge, _SLIT(""), 2);
 				return _t2952;
-			} else if (nextc == L'>') {
-				if (s->pos + 2 < s->text.len && s->text.str[ s->pos + 2] == L'=') {
+			} else if (nextc == '>') {
+				if (s->pos + 2 < s->text.len && s->text.str[ s->pos + 2] == '=') {
 					s->pos += 2;
 					v__token__Token _t2953 = v__scanner__Scanner_new_token(s, v__token__Kind_right_shift_assign, _SLIT(""), 3);
 					return _t2953;
@@ -32728,13 +32728,13 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2955;
 			}
 		}
-		else if (c == (L'<')) {
-			if (nextc == L'=') {
+		else if (c == ('<')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2956 = v__scanner__Scanner_new_token(s, v__token__Kind_le, _SLIT(""), 2);
 				return _t2956;
-			} else if (nextc == L'<') {
-				if (s->pos + 2 < s->text.len && s->text.str[ s->pos + 2] == L'=') {
+			} else if (nextc == '<') {
+				if (s->pos + 2 < s->text.len && s->text.str[ s->pos + 2] == '=') {
 					s->pos += 2;
 					v__token__Token _t2957 = v__scanner__Scanner_new_token(s, v__token__Kind_left_shift_assign, _SLIT(""), 3);
 					return _t2957;
@@ -32742,7 +32742,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				s->pos++;
 				v__token__Token _t2958 = v__scanner__Scanner_new_token(s, v__token__Kind_left_shift, _SLIT(""), 2);
 				return _t2958;
-			} else if (nextc == L'-') {
+			} else if (nextc == '-') {
 				s->pos++;
 				v__token__Token _t2959 = v__scanner__Scanner_new_token(s, v__token__Kind_arrow, _SLIT(""), 2);
 				return _t2959;
@@ -32751,8 +32751,8 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2960;
 			}
 		}
-		else if (c == (L'=')) {
-			if (nextc == L'=') {
+		else if (c == ('=')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2961 = v__scanner__Scanner_new_token(s, v__token__Kind_eq, _SLIT(""), 2);
 				return _t2961;
@@ -32761,8 +32761,8 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2962;
 			}
 		}
-		else if (c == (L':')) {
-			if (nextc == L'=') {
+		else if (c == (':')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2963 = v__scanner__Scanner_new_token(s, v__token__Kind_decl_assign, _SLIT(""), 2);
 				return _t2963;
@@ -32771,20 +32771,20 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2964;
 			}
 		}
-		else if (c == (L';')) {
+		else if (c == (';')) {
 			v__token__Token _t2965 = v__scanner__Scanner_new_token(s, v__token__Kind_semicolon, _SLIT(""), 1);
 			return _t2965;
 		}
-		else if (c == (L'!')) {
-			if (nextc == L'=') {
+		else if (c == ('!')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2966 = v__scanner__Scanner_new_token(s, v__token__Kind_ne, _SLIT(""), 2);
 				return _t2966;
-			} else if (s->text.len > s->pos + 3 && nextc == L'i' && s->text.str[ s->pos + 2] == L'n' && byte_is_space(s->text.str[ s->pos + 3])) {
+			} else if (s->text.len > s->pos + 3 && nextc == 'i' && s->text.str[ s->pos + 2] == 'n' && byte_is_space(s->text.str[ s->pos + 3])) {
 				s->pos += 2;
 				v__token__Token _t2967 = v__scanner__Scanner_new_token(s, v__token__Kind_not_in, _SLIT(""), 3);
 				return _t2967;
-			} else if (s->text.len > s->pos + 3 && nextc == L'i' && s->text.str[ s->pos + 2] == L's' && byte_is_space(s->text.str[ s->pos + 3])) {
+			} else if (s->text.len > s->pos + 3 && nextc == 'i' && s->text.str[ s->pos + 2] == 's' && byte_is_space(s->text.str[ s->pos + 3])) {
 				s->pos += 2;
 				v__token__Token _t2968 = v__scanner__Scanner_new_token(s, v__token__Kind_not_is, _SLIT(""), 3);
 				return _t2968;
@@ -32793,17 +32793,17 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				return _t2969;
 			}
 		}
-		else if (c == (L'~')) {
+		else if (c == ('~')) {
 			v__token__Token _t2970 = v__scanner__Scanner_new_token(s, v__token__Kind_bit_not, _SLIT(""), 1);
 			return _t2970;
 		}
-		else if (c == (L'/')) {
-			if (nextc == L'=') {
+		else if (c == ('/')) {
+			if (nextc == '=') {
 				s->pos++;
 				v__token__Token _t2971 = v__scanner__Scanner_new_token(s, v__token__Kind_div_assign, _SLIT(""), 2);
 				return _t2971;
 			}
-			if (nextc == L'/') {
+			if (nextc == '/') {
 				int start = s->pos + 1;
 				v__scanner__Scanner_ignore_line(s);
 				int comment_line_end = s->pos;
@@ -32818,7 +32818,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 					string comment = s->line_comment;
 					bool is_separate_line_comment = true;
 					for (int j = start - 2; j >= 0 && s->text.str[ j] != _const_v__scanner__b_lf; j--) {
-						if (!(s->text.str[ j] == L'\t' || s->text.str[ j] == L' ')) {
+						if (!(s->text.str[ j] == '\t' || s->text.str[ j] == ' ')) {
 							is_separate_line_comment = false;
 						}
 					}
@@ -32830,7 +32830,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				}
 				continue;
 			}
-			if (nextc == L'*') {
+			if (nextc == '*') {
 				int start = s->pos + 2;
 				int start_line = s->line_nr;
 				int nest_count = 1;
@@ -32869,7 +32869,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 		}
 		else {
 		};
-		if (c == L'\0') {
+		if (c == '\0') {
 			v__token__Token _t2975 = v__scanner__Scanner_end_of_file(s);
 			return _t2975;
 		}
@@ -32907,8 +32907,8 @@ VV_LOCAL_SYMBOL int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner*
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
 	byte q = s->text.str[ s->pos];
 	bool is_quote = q == _const_v__scanner__single_quote || q == _const_v__scanner__double_quote;
-	bool is_raw = is_quote && s->pos > 0 && s->text.str[ s->pos - 1] == L'r' && !s->is_inside_string;
-	bool is_cstr = is_quote && s->pos > 0 && s->text.str[ s->pos - 1] == L'c' && !s->is_inside_string;
+	bool is_raw = is_quote && s->pos > 0 && s->text.str[ s->pos - 1] == 'r' && !s->is_inside_string;
+	bool is_cstr = is_quote && s->pos > 0 && s->text.str[ s->pos - 1] == 'c' && !s->is_inside_string;
 	if (is_quote) {
 		if (s->is_inside_string || s->is_enclosed_inter || s->is_inter_start) {
 			s->inter_quote = q;
@@ -32926,7 +32926,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 	}
 	s->is_inside_string = false;
 	Array_int u_escapes_pos = __new_array_with_default(0, 0, sizeof(int), 0);
-	rune slash = L'\\';
+	rune slash = '\\';
 	for (;;) {
 		s->pos++;
 		if (s->pos >= s->text.len) {
@@ -32947,36 +32947,36 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		if (c == _const_v__scanner__b_lf) {
 			v__scanner__Scanner_inc_line_number(s);
 		}
-		if (c == L'0' && s->pos > 2 && prevc == slash) {
+		if (c == '0' && s->pos > 2 && prevc == slash) {
 			if ((s->pos < s->text.len - 1 && byte_is_digit(s->text.str[ s->pos + 1])) || v__scanner__Scanner_count_symbol_before(s, s->pos - 1, slash) % 2 == 0) {
 			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, _SLIT("cannot use `\\0` (NULL character) in the string literal"));
 			}
 		}
-		if (c == L'0' && s->pos > 5 && v__scanner__Scanner_expect(s, _SLIT("\\x0"), s->pos - 3)) {
+		if (c == '0' && s->pos > 5 && v__scanner__Scanner_expect(s, _SLIT("\\x0"), s->pos - 3)) {
 			if (v__scanner__Scanner_count_symbol_before(s, s->pos - 3, slash) % 2 == 0) {
 			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, _SLIT("cannot use `\\x00` (NULL character) in the string literal"));
 			}
 		}
 		if (prevc == slash && !is_raw && !is_cstr && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
-			if (c == L'x' && (s->text.str[ s->pos + 1] == s->quote || !byte_is_hex_digit(s->text.str[ s->pos + 1]))) {
+			if (c == 'x' && (s->text.str[ s->pos + 1] == s->quote || !byte_is_hex_digit(s->text.str[ s->pos + 1]))) {
 				v__scanner__Scanner_error(s, _SLIT("`\\x` used with no following hex digits"));
 			}
-			if (c == L'u') {
+			if (c == 'u') {
 				if (s->text.str[ s->pos + 1] == s->quote || s->text.str[ s->pos + 2] == s->quote || s->text.str[ s->pos + 3] == s->quote || s->text.str[ s->pos + 4] == s->quote || !byte_is_hex_digit(s->text.str[ s->pos + 1]) || !byte_is_hex_digit(s->text.str[ s->pos + 2]) || !byte_is_hex_digit(s->text.str[ s->pos + 3]) || !byte_is_hex_digit(s->text.str[ s->pos + 4])) {
 					v__scanner__Scanner_error(s, _SLIT("`\\u` incomplete unicode character value"));
 				}
 				array_push((array*)&u_escapes_pos, _MOV((int[]){ s->pos - 1 }));
 			}
 		}
-		if (prevc == L'$' && c == L'{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->is_enclosed_inter = true;
 			s->pos -= 2;
 			break;
 		}
-		if (prevc == L'$' && v__util__is_name_char(c) && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (prevc == '$' && v__util__is_name_char(c) && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->is_inter_start = true;
 			s->pos -= 2;
@@ -33044,7 +33044,7 @@ VV_LOCAL_SYMBOL string v__scanner__trim_slash_line_break(string s) {
 
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
 	int start = s->pos;
-	rune slash = L'\\';
+	rune slash = '\\';
 	int len = 0;
 	for (;;) {
 		s->pos++;
@@ -38258,7 +38258,7 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p)
 		int precision = 987698;
 		bool visible_plus = false;
 		bool fill = false;
-		rune fmt = L'_';
+		rune fmt = '_';
 		if (p->tok.kind == v__token__Kind_colon) {
 			v__parser__Parser_next(p);
 			if (p->tok.kind == v__token__Kind_minus) {
@@ -38270,7 +38270,7 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_string_expr(v__parser__Parser* p)
 			}
 			if (p->tok.kind == v__token__Kind_number) {
 				Array_string fields = string_split(p->tok.lit, _SLIT("."));
-				if ((*(string*)/*ee elem_typ */array_get(fields, 0)).len > 0 && string_at((*(string*)/*ee elem_typ */array_get(fields, 0)), 0) == L'0') {
+				if ((*(string*)/*ee elem_typ */array_get(fields, 0)).len > 0 && string_at((*(string*)/*ee elem_typ */array_get(fields, 0)), 0) == '0') {
 					fill = true;
 				}
 				fwidth = string_int((*(string*)/*ee elem_typ */array_get(fields, 0)));
@@ -43738,7 +43738,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_base_type(v__gen__c__Gen* g, v__ast__Type 
 	}
 	int nr_muls = v__ast__Type_nr_muls(t);
 	if (nr_muls > 0) {
-		styp = /*f*/string_add(styp, strings__repeat(L'*', nr_muls));
+		styp = /*f*/string_add(styp, strings__repeat('*', nr_muls));
 	}
 	return styp;
 }
@@ -43899,7 +43899,7 @@ void v__gen__c__Gen_write_typedef_types(v__gen__c__Gen* g) {
 
 		if (typ.kind == (v__ast__Kind_alias)) {
 			v__ast__TypeSymbol* parent = &(*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(g->table->type_symbols, typ.parent_idx));
-			bool is_c_parent = parent->name.len > 2 && string_at(parent->name, 0) == L'C' && string_at(parent->name, 1) == L'.';
+			bool is_c_parent = parent->name.len > 2 && string_at(parent->name, 0) == 'C' && string_at(parent->name, 1) == '.';
 			bool is_typedef = false;
 			if ((parent->info)._typ == 404 /* v.ast.Struct */) {
 				is_typedef = (*parent->info._v__ast__Struct).is_typedef;
@@ -44931,7 +44931,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_with_cast(v__gen__c__Gen* g, v__ast__Ex
 		return;
 	}
 	if ((expr)._typ == 263 /* v.ast.IntegerLiteral */) {
-		if ((expected_type == _const_v__ast__u64_type || expected_type == _const_v__ast__u32_type || expected_type == _const_v__ast__u16_type) && string_at((*expr._v__ast__IntegerLiteral).val, 0) != L'-') {
+		if ((expected_type == _const_v__ast__u64_type || expected_type == _const_v__ast__u32_type || expected_type == _const_v__ast__u16_type) && string_at((*expr._v__ast__IntegerLiteral).val, 0) != '-') {
 			v__gen__c__Gen_expr(g, expr);
 			v__gen__c__Gen_write(g, _SLIT("U"));
 			return;
@@ -45126,7 +45126,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_asm_arg(v__gen__c__Gen* g, v__ast__AsmArg ar
 		};
 	}
 	else if (arg._typ == 387 /* v.ast.AsmDisp */) {
-		if ((*arg._v__ast__AsmDisp).val.len >= 2 && (string_at((*arg._v__ast__AsmDisp).val, 0) == L'b' || string_at((*arg._v__ast__AsmDisp).val, 0) == L'f')) {
+		if ((*arg._v__ast__AsmDisp).val.len >= 2 && (string_at((*arg._v__ast__AsmDisp).val, 0) == 'b' || string_at((*arg._v__ast__AsmDisp).val, 0) == 'f')) {
 			bool is_digit = true;
 			for (int _t3852 = 0; _t3852 < string_substr((*arg._v__ast__AsmDisp).val, 1, (*arg._v__ast__AsmDisp).val.len).len; ++_t3852) {
 				byte c = string_substr((*arg._v__ast__AsmDisp).val, 1, (*arg._v__ast__AsmDisp).val.len).str[_t3852];
@@ -46017,7 +46017,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr(v__gen__c__Gen* g, v__ast__Expr node) {
 		if (string_eq((*node._v__ast__CharLiteral).val, _SLIT("\\`"))) {
 			v__gen__c__Gen_write(g, _SLIT("'`'"));
 		} else {
-			v__gen__c__Gen_write(g, _STR("L'%.*s\000'", 2, (*node._v__ast__CharLiteral).val));
+			if (utf8_str_len((*node._v__ast__CharLiteral).val) < (*node._v__ast__CharLiteral).val.len) {
+				v__gen__c__Gen_write(g, _STR("L'%.*s\000'", 2, (*node._v__ast__CharLiteral).val));
+			} else {
+				v__gen__c__Gen_write(g, _STR("'%.*s\000'", 2, (*node._v__ast__CharLiteral).val));
+			}
 		}
 	}
 	else if (node._typ == 253 /* v.ast.DumpExpr */) {
@@ -47147,11 +47151,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_123714 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_123714.arg0;
-	string key_eq_fn = mr_123714.arg1;
-	string clone_fn = mr_123714.arg2;
-	string free_fn = mr_123714.arg3;
+	multi_return_string_string_string_string mr_123809 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_123809.arg0;
+	string key_eq_fn = mr_123809.arg1;
+	string clone_fn = mr_123809.arg2;
+	string free_fn = mr_123809.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -48460,9 +48464,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3930 = 0; _t3930 < (*typ.info._v__ast__Struct).fields.len; ++_t3930) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t3930];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag_optional)) {
-						multi_return_string_string mr_163156 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_163156.arg0;
-						string base = mr_163156.arg1;
+						multi_return_string_string mr_163251 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_163251.arg0;
+						string base = mr_163251.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -48697,11 +48701,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string_eq(g->file.mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_171041 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_171041.arg0;
-				string pafile = mr_171041.arg1;
-				string pamod = mr_171041.arg2;
-				string pafn = mr_171041.arg3;
+				multi_return_int_string_string_string mr_171136 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_171136.arg0;
+				string pafile = mr_171136.arg1;
+				string pamod = mr_171136.arg2;
+				string pafn = mr_171136.arg3;
 				v__gen__c__Gen_writeln(g, _STR("panic_debug(%"PRId32"\000, tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), tos3(\"%.*s\000\"), *%.*s\000.err.msg );", 6, paline, pafile, pamod, pafn, cvar_name));
 			} else {
 				v__gen__c__Gen_writeln(g, _STR("\tpanic_optional_not_set(*%.*s\000.err.msg);", 2, cvar_name));
@@ -48826,11 +48830,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind_map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_174492 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_174492.arg0;
-		string key_eq_fn = mr_174492.arg1;
-		string clone_fn = mr_174492.arg2;
-		string free_fn = mr_174492.arg3;
+		multi_return_string_string_string_string mr_174587 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_174587.arg0;
+		string key_eq_fn = mr_174587.arg1;
+		string clone_fn = mr_174587.arg2;
+		string free_fn = mr_174587.arg3;
 		string init_str = _STR("new_map(sizeof(%.*s\000), sizeof(%.*s\000), %.*s\000, %.*s\000, %.*s\000, %.*s\000)", 7, v__gen__c__Gen_typ(g, info.key_type), v__gen__c__Gen_typ(g, info.value_type), hash_fn, key_eq_fn, clone_fn, free_fn);
 		if (v__ast__Type_has_flag(typ, v__ast__TypeFlag_shared_f)) {
 			string mtyp = _STR("__shared__Map_%.*s\000_%.*s", 2, key_typ->cname, v__ast__Table_get_type_symbol(g->table, info.value_type)->cname);
@@ -49323,8 +49327,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone(&method.params);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string mr_191511 = v__gen__c__Gen_fn_args(g, params, false);
-					Array_string fargs = mr_191511.arg0;
+					multi_return_Array_string_Array_string mr_191606 = v__gen__c__Gen_fn_args(g, params, false);
+					Array_string fargs = mr_191606.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -51154,7 +51158,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		if (diff < 0) {
 		} else if (diff > 0) {
 			v__gen__c__Gen_write(g, _STR("/*diff=%"PRId32"\000*/", 2, diff));
-			v__gen__c__Gen_write(g, Array_byte_bytestr(__new_array_with_default(diff, 0, sizeof(byte), &(byte[]){L'*'})));
+			v__gen__c__Gen_write(g, Array_byte_bytestr(__new_array_with_default(diff, 0, sizeof(byte), &(byte[]){'*'})));
 		}
 	}
 	if (g->is_autofree && node.free_receiver && !g->inside_lambda && !g->is_builtin_mod) {
@@ -54156,7 +54160,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal(v__gen__c__Gen* g, v__a
 		if ((*(int*)/*ee elem_typ */array_get(node.precisions, i)) != 987698) {
 			fmt = _STR("%.*s\000.%"PRId32"", 2, fmt, (*(int*)/*ee elem_typ */array_get(node.precisions, i)));
 		}
-		if (fspec == L's') {
+		if (fspec == 's') {
 			if ((*(int*)/*ee elem_typ */array_get(node.fwidths, i)) == 0) {
 				v__gen__c__Gen_write(g, _SLIT(".*s"));
 			} else {
@@ -54165,13 +54169,13 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal(v__gen__c__Gen* g, v__a
 		} else if (v__ast__Type_is_float(typ)) {
 			v__gen__c__Gen_write(g, _STR("%.*s\000%c", 2, fmt, fspec));
 		} else if (v__ast__Type_is_pointer(typ)) {
-			if (fspec == L'p') {
+			if (fspec == 'p') {
 				v__gen__c__Gen_write(g, _STR("%.*s\000p", 2, fmt));
 			} else {
 				v__gen__c__Gen_write(g, _STR("%.*s\000\"PRI%c\000PTR\"", 3, fmt, fspec));
 			}
 		} else if (v__ast__Type_is_int(typ)) {
-			if (fspec == L'c') {
+			if (fspec == 'c') {
 				v__gen__c__Gen_write(g, _STR("%.*s\000c", 2, fmt));
 			} else {
 				v__gen__c__Gen_write(g, _STR("%.*s\000\"PRI%c", 2, fmt, fspec));
@@ -54213,10 +54217,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal(v__gen__c__Gen* g, v__a
 				}
 				v__gen__c__Gen_expr(g, expr);
 			}
-		} else if ((*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == L's' || v__ast__Type_has_flag(typ, v__ast__TypeFlag_variadic)) {
+		} else if ((*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == 's' || v__ast__Type_has_flag(typ, v__ast__TypeFlag_variadic)) {
 			v__gen__c__Gen_gen_expr_to_string(g, expr, typ);
-		} else if (v__ast__Type_is_number(typ) || v__ast__Type_is_pointer(typ) || (*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == L'd') {
-			if (v__ast__Type_is_signed(typ) && ((*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == L'x' || (*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == L'X' || (*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == L'o')) {
+		} else if (v__ast__Type_is_number(typ) || v__ast__Type_is_pointer(typ) || (*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == 'd') {
+			if (v__ast__Type_is_signed(typ) && ((*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == 'x' || (*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == 'X' || (*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == 'o')) {
 				if (v__ast__Type_alias_eq(typ, _const_v__ast__i8_type)) {
 					v__gen__c__Gen_write(g, _SLIT("(byte)("));
 				} else if (v__ast__Type_alias_eq(typ, _const_v__ast__i16_type)) {
@@ -54243,7 +54247,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal(v__gen__c__Gen* g, v__a
 			}
 			v__gen__c__Gen_expr(g, expr);
 		}
-		if ((*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == L's' && (*(int*)/*ee elem_typ */array_get(node.fwidths, i)) != 0) {
+		if ((*(byte*)/*ee elem_typ */array_get(node.fmts, i)) == 's' && (*(int*)/*ee elem_typ */array_get(node.fwidths, i)) != 0) {
 			v__gen__c__Gen_write(g, _STR(", %"PRId32"", 1, (*(int*)/*ee elem_typ */array_get(node.fwidths, i))));
 		}
 		if (i < node.exprs.len - 1) {
@@ -55492,7 +55496,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__
 	} else {
 		string name = v__gen__js__JsGen_js_name(g, it.name);
 		byte c = string_at(name, 0);
-		if ((c == L'+' || c == L'-' || c == L'*' || c == L'/')) {
+		if ((c == '+' || c == '-' || c == '*' || c == '/')) {
 			name = v__util__replace_op(name);
 		}
 		v__gen__js__JsDoc_gen_fn(g->doc, it);
@@ -56230,7 +56234,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_inter_literal(v__gen__js__JsGe
 		int fwidth = (*(int*)/*ee elem_typ */array_get(it.fwidths, i));
 		int precision = (*(int*)/*ee elem_typ */array_get(it.precisions, i));
 		v__gen__js__JsGen_write(g, _SLIT("${"));
-		if (fmt != L'_' || fwidth != 0 || precision != 987698) {
+		if (fmt != '_' || fwidth != 0 || precision != 987698) {
 			v__gen__js__JsGen_expr(g, expr);
 		} else {
 			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, (*(v__ast__Type*)/*ee elem_typ */array_get(it.expr_types, i)));
@@ -57473,7 +57477,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_println(v__gen__native__Gen* g, string 
 		return;
 	}
 	string addr = int_hex(g->debug_pos);
-	print(term__red(string_add(string_add(strings__repeat(L'0', 6 - addr.len), addr), _SLIT("  "))));
+	print(term__red(string_add(string_add(strings__repeat('0', 6 - addr.len), addr), _SLIT("  "))));
 	for (int i = g->debug_pos; i < g->buf.len; i++) {
 		string s = byte_hex((*(byte*)/*ee elem_typ */array_get(g->buf, i)));
 		if (s.len == 1) {
@@ -58286,19 +58290,19 @@ bool v__checker__Checker_symmetric_check(v__checker__Checker* c, v__ast__Type le
 
 byte v__checker__Checker_get_default_fmt(v__checker__Checker* c, v__ast__Type ftyp, v__ast__Type typ) {
 	if (v__ast__Type_has_flag(ftyp, v__ast__TypeFlag_optional)) {
-		byte _t4465 = L's';
+		byte _t4465 = 's';
 		return _t4465;
 	} else if (v__ast__Type_is_float(typ)) {
-		byte _t4466 = L'g';
+		byte _t4466 = 'g';
 		return _t4466;
 	} else if (v__ast__Type_is_signed(typ) || v__ast__Type_is_int_literal(typ)) {
-		byte _t4467 = L'd';
+		byte _t4467 = 'd';
 		return _t4467;
 	} else if (v__ast__Type_is_unsigned(typ)) {
-		byte _t4468 = L'u';
+		byte _t4468 = 'u';
 		return _t4468;
 	} else if (v__ast__Type_is_pointer(typ)) {
-		byte _t4469 = L'p';
+		byte _t4469 = 'p';
 		return _t4469;
 	} else {
 		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, ftyp));
@@ -58306,19 +58310,19 @@ byte v__checker__Checker_get_default_fmt(v__checker__Checker* c, v__ast__Type ft
 			v__ast__Alias info = /* as */ *(v__ast__Alias*)__as_cast((sym->info)._v__ast__Alias,(sym->info)._typ, 419) /*expected idx: 419, name: v.ast.Alias */ ;
 			sym = v__ast__Table_get_type_symbol(c->table, info.parent_type);
 			if (v__ast__Type_alias_eq(info.parent_type, _const_v__ast__string_type)) {
-				byte _t4470 = L's';
+				byte _t4470 = 's';
 				return _t4470;
 			}
 		}
 		if (sym->kind == v__ast__Kind_function) {
-			byte _t4471 = L's';
+			byte _t4471 = 's';
 			return _t4471;
 		}
 		if ((ftyp == _const_v__ast__string_type || ftyp == _const_v__ast__bool_type) || (sym->kind == v__ast__Kind_enum_ || sym->kind == v__ast__Kind_array || sym->kind == v__ast__Kind_array_fixed || sym->kind == v__ast__Kind_struct_ || sym->kind == v__ast__Kind_map || sym->kind == v__ast__Kind_multi_return || sym->kind == v__ast__Kind_sum_type || sym->kind == v__ast__Kind_interface_ || sym->kind == v__ast__Kind_none_) || v__ast__Type_has_flag(ftyp, v__ast__TypeFlag_optional) || v__ast__TypeSymbol_has_method(sym, _SLIT("str"))) {
-			byte _t4472 = L's';
+			byte _t4472 = 's';
 			return _t4472;
 		} else {
-			byte _t4473 = L'_';
+			byte _t4473 = '_';
 			return _t4473;
 		}
 	}
@@ -58371,12 +58375,12 @@ v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast
 		array_push((array*)&node->expr_types, _MOV((v__ast__Type[]){ ftyp }));
 		v__ast__Type typ = v__ast__Table_unalias_num_type(c->table, ftyp);
 		byte fmt = (*(byte*)/*ee elem_typ */array_get(node->fmts, i));
-		if (!(fmt == L'E' || fmt == L'F' || fmt == L'G' || fmt == L'e' || fmt == L'f' || fmt == L'g' || fmt == L'd' || fmt == L'u' || fmt == L'x' || fmt == L'X' || fmt == L'o' || fmt == L'c' || fmt == L's' || fmt == L'p' || fmt == L'_')) {
+		if (!(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g' || fmt == 'd' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c' || fmt == 's' || fmt == 'p' || fmt == '_')) {
 			v__checker__Checker_error(c, _STR("unknown format specifier `%c\000`", 2, fmt), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 		}
-		if (fmt == L'_') {
+		if (fmt == '_') {
 			fmt = v__checker__Checker_get_default_fmt(c, ftyp, typ);
-			if (fmt == L'_') {
+			if (fmt == '_') {
 				if (!v__ast__Type_alias_eq(typ, _const_v__ast__void_type)) {
 					v__checker__Checker_error(c, _STR("no known default format for type `%.*s\000`", 2, v__ast__Table_get_type_name(c->table, ftyp)), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 				}
@@ -58391,7 +58395,7 @@ v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast
 			if ((*(bool*)/*ee elem_typ */array_get(node->pluss, i)) && !v__ast__Type_is_number(typ)) {
 				v__checker__Checker_error(c, _SLIT("plus prefix only allowed for numbers"), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 			}
-			if ((v__ast__Type_is_unsigned(typ) && !(fmt == L'u' || fmt == L'x' || fmt == L'X' || fmt == L'o' || fmt == L'c')) || (v__ast__Type_is_signed(typ) && !(fmt == L'd' || fmt == L'x' || fmt == L'X' || fmt == L'o' || fmt == L'c')) || (v__ast__Type_is_int_literal(typ) && !(fmt == L'd' || fmt == L'c' || fmt == L'x' || fmt == L'X' || fmt == L'o' || fmt == L'u' || fmt == L'x' || fmt == L'X' || fmt == L'o')) || (v__ast__Type_is_float(typ) && !(fmt == L'E' || fmt == L'F' || fmt == L'G' || fmt == L'e' || fmt == L'f' || fmt == L'g')) || (v__ast__Type_is_pointer(typ) && !(fmt == L'p' || fmt == L'x' || fmt == L'X')) || (v__ast__Type_is_string(typ) && fmt != L's') || ((v__ast__Type_idx(typ) == _const_v__ast__i64_type_idx || v__ast__Type_idx(typ) == _const_v__ast__f64_type_idx) && fmt == L'c')) {
+			if ((v__ast__Type_is_unsigned(typ) && !(fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c')) || (v__ast__Type_is_signed(typ) && !(fmt == 'd' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c')) || (v__ast__Type_is_int_literal(typ) && !(fmt == 'd' || fmt == 'c' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o')) || (v__ast__Type_is_float(typ) && !(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g')) || (v__ast__Type_is_pointer(typ) && !(fmt == 'p' || fmt == 'x' || fmt == 'X')) || (v__ast__Type_is_string(typ) && fmt != 's') || ((v__ast__Type_idx(typ) == _const_v__ast__i64_type_idx || v__ast__Type_idx(typ) == _const_v__ast__f64_type_idx) && fmt == 'c')) {
 				v__checker__Checker_error(c, _STR("illegal format specifier `%c\000` for type `%.*s\000`", 3, fmt, v__ast__Table_get_type_name(c->table, ftyp)), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 			}
 			(*(bool*)/*ee elem_typ */array_get(node->need_fmts, i)) = fmt != v__checker__Checker_get_default_fmt(c, ftyp, typ);
@@ -58557,7 +58561,7 @@ void v__checker__Checker_check_scope_vars(v__checker__Checker* c, v__ast__Scope*
 			if (!DenseArray_has_index(&_t4483.key_values, _t4484)) {continue;}
 			v__ast__ScopeObject obj = (*(v__ast__ScopeObject*)DenseArray_value(&_t4483.key_values, _t4484));
 			if (obj._typ == 315 /* v.ast.Var */) {
-				if (!(*obj._v__ast__Var).is_used && string_at((*obj._v__ast__Var).name, 0) != L'_') {
+				if (!(*obj._v__ast__Var).is_used && string_at((*obj._v__ast__Var).name, 0) != '_') {
 					v__checker__Checker_warn(c, _STR("unused variable: `%.*s\000`", 2, (*obj._v__ast__Var).name), (*obj._v__ast__Var).pos);
 				}
 				if ((*obj._v__ast__Var).is_mut && !(*obj._v__ast__Var).is_changed && !c->is_builtin_mod && string_ne((*obj._v__ast__Var).name, _SLIT("it"))) {
@@ -58743,7 +58747,7 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_file_has_main_fn(v__checker__Checker* c
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_check_valid_snake_case(v__checker__Checker* c, string name, string identifier, v__token__Position pos) {
-	if (!c->pref->is_vweb && name.len > 0 && (string_at(name, 0) == L'_' || string_contains(name, _SLIT("._")))) {
+	if (!c->pref->is_vweb && name.len > 0 && (string_at(name, 0) == '_' || string_contains(name, _SLIT("._")))) {
 		v__checker__Checker_error(c, _STR("%.*s\000 `%.*s\000` cannot start with `_`", 3, identifier, name), pos);
 	}
 	if (!c->pref->experimental && !c->pref->translated && v__util__contains_capital(name)) {
@@ -60508,7 +60512,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_map_builtin_method_call(v__chec
 	v__ast__Type ret_type = _const_v__ast__void_type;
 
 	if (string_eq(method_name, _SLIT("clone")) || string_eq(method_name, _SLIT("move"))) {
-		if (string_at(method_name, 0) == L'm') {
+		if (string_at(method_name, 0) == 'm') {
 			v__checker__Checker_fail_if_immutable(c, call_expr->left);
 		}
 		if (v__ast__Expr_is_auto_deref_var(call_expr->left)) {
@@ -60565,7 +60569,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_array_builtin_method_call(v__ch
 				}
 				byte left_name = string_at(_STR("%.*s", 1, v__ast__Expr_str((*(*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, 0)).expr._v__ast__InfixExpr).left)), 0);
 				byte right_name = string_at(_STR("%.*s", 1, v__ast__Expr_str((*(*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, 0)).expr._v__ast__InfixExpr).right)), 0);
-				if (!(left_name == L'a' || left_name == L'b') || !(right_name == L'a' || right_name == L'b')) {
+				if (!(left_name == 'a' || left_name == 'b') || !(right_name == 'a' || right_name == 'b')) {
 					v__checker__Checker_error(c, _SLIT("`.sort()` can only use `a` or `b` as argument, e.g. `arr.sort(a < b)`"), call_expr->pos);
 				} else if (left_name == right_name) {
 					v__checker__Checker_error(c, _SLIT("`.sort()` cannot use same argument"), call_expr->pos);
@@ -60803,7 +60807,7 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 	if (!isnil(c->table->cur_fn) && !c->table->cur_fn->is_deprecated && func.is_deprecated) {
 		v__checker__Checker_deprecate_fnmethod(c, _SLIT("function"), func.name, func, *call_expr);
 	}
-	if (func.is_unsafe && !c->inside_unsafe && (func.language != v__ast__Language_c || ((string_at(func.name, 2) == L'm' || string_at(func.name, 2) == L's') && string_eq(func.mod, _SLIT("builtin"))))) {
+	if (func.is_unsafe && !c->inside_unsafe && (func.language != v__ast__Language_c || ((string_at(func.name, 2) == 'm' || string_at(func.name, 2) == 's') && string_eq(func.mod, _SLIT("builtin"))))) {
 		v__checker__Checker_warn(c, _STR("function `%.*s\000` must be called from an `unsafe` block", 2, func.name), call_expr->pos);
 	}
 	call_expr->is_keep_alive = func.is_keep_alive;
@@ -65064,7 +65068,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_check_index(v__checker__Checker* c, v__
 			v__checker__Checker_error(c, _STR("%.*s", 1, type_str), pos);
 		}
 		if ((index)._typ == 263 /* v.ast.IntegerLiteral */) {
-			if (string_at((*index._v__ast__IntegerLiteral).val, 0) == L'-') {
+			if (string_at((*index._v__ast__IntegerLiteral).val, 0) == '-') {
 				v__checker__Checker_error(c, _STR("negative index `%.*s\000`", 2, (*index._v__ast__IntegerLiteral).val), (*index._v__ast__IntegerLiteral).pos);
 			} else if (typ_sym->kind == v__ast__Kind_array_fixed) {
 				int i = string_int((*index._v__ast__IntegerLiteral).val);
@@ -65743,7 +65747,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			};
 		}
 	}
-	if (node->language == v__ast__Language_v && string_eq(string_after_char(node->name, L'.'), _SLIT("init")) && !node->is_method && node->params.len == 0) {
+	if (node->language == v__ast__Language_v && string_eq(string_after_char(node->name, '.'), _SLIT("init")) && !node->is_method && node->params.len == 0) {
 		if (node->is_pub) {
 			v__checker__Checker_error(c, _SLIT("fn `init` must not be public"), node->pos);
 		}
@@ -67447,7 +67451,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 	// FOR IN array
 	for (int _t5264 = 0; _t5264 < b->pref->run_args.len; ++_t5264) {
 		string arg = ((string*)b->pref->run_args.data)[_t5264];
-		if (string_index_byte(arg, L' ') > 0) {
+		if (string_index_byte(arg, ' ') > 0) {
 			cmd = /*f*/string_add(cmd, string_add(string_add(_SLIT(" \""), arg), _SLIT("\"")));
 		} else {
 			cmd = /*f*/string_add(cmd, string_add(_SLIT(" "), arg));
@@ -67570,7 +67574,7 @@ Array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 			string sline = ((string*)slines.data)[_t5284];
 			string line = string_trim_space(sline);
 			if (line.len > 2) {
-				if (string_at(line, 0) == L'/' && string_at(line, 1) == L'/') {
+				if (string_at(line, 0) == '/' && string_at(line, 1) == '/') {
 					continue;
 				}
 				if (string_starts_with(line, _SLIT("module "))) {
