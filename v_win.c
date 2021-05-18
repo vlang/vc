@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d5c306c"
+#define V_COMMIT_HASH "f1174da"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4d7f15b"
+	#define V_COMMIT_HASH "d5c306c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d5c306c"
+	#define V_CURRENT_COMMIT_HASH "f1174da"
 #endif
 
 // V comptime_defines:
@@ -1030,36 +1030,36 @@ typedef enum {
 
 typedef enum {
 	os__Signal_hup = 1, // 1
-	os__Signal_int, // 1+1
-	os__Signal_quit, // 1+2
-	os__Signal_ill, // 1+3
-	os__Signal_trap, // 1+4
-	os__Signal_abrt, // 1+5
-	os__Signal_bus, // 1+6
-	os__Signal_fpe, // 1+7
-	os__Signal_kill, // 1+8
-	os__Signal_usr1, // 1+9
-	os__Signal_segv, // 1+10
-	os__Signal_usr2, // 1+11
-	os__Signal_pipe, // 1+12
-	os__Signal_alrm, // 1+13
-	os__Signal_term, // 1+14
-	os__Signal_stkflt, // 1+15
-	os__Signal_chld, // 1+16
-	os__Signal_cont, // 1+17
-	os__Signal_stop, // 1+18
-	os__Signal_tstp, // 1+19
-	os__Signal_ttin, // 1+20
-	os__Signal_ttou, // 1+21
-	os__Signal_urg, // 1+22
-	os__Signal_xcpu, // 1+23
-	os__Signal_xfsz, // 1+24
-	os__Signal_vtalrm, // 1+25
-	os__Signal_prof, // 1+26
-	os__Signal_winch, // 1+27
-	os__Signal_poll, // 1+28
-	os__Signal_pwr, // 1+29
-	os__Signal_sys, // 1+30
+	os__Signal_int = 2, // 2
+	os__Signal_quit = 3, // 3
+	os__Signal_ill = 4, // 4
+	os__Signal_trap = 5, // 5
+	os__Signal_abrt = 6, // 6
+	os__Signal_bus = 7, // 7
+	os__Signal_fpe = 8, // 8
+	os__Signal_kill = 9, // 9
+	os__Signal_usr1 = 10, // 10
+	os__Signal_segv = 11, // 11
+	os__Signal_usr2 = 12, // 12
+	os__Signal_pipe = 13, // 13
+	os__Signal_alrm = 14, // 14
+	os__Signal_term = 15, // 15
+	os__Signal_stkflt = 16, // 16
+	os__Signal_chld = 17, // 17
+	os__Signal_cont = 18, // 18
+	os__Signal_stop = 19, // 19
+	os__Signal_tstp = 20, // 20
+	os__Signal_ttin = 21, // 21
+	os__Signal_ttou = 22, // 22
+	os__Signal_urg = 23, // 23
+	os__Signal_xcpu = 24, // 24
+	os__Signal_xfsz = 25, // 25
+	os__Signal_vtalrm = 26, // 26
+	os__Signal_prof = 27, // 27
+	os__Signal_winch = 28, // 28
+	os__Signal_poll = 29, // 29
+	os__Signal_pwr = 30, // 30
+	os__Signal_sys = 31, // 31
 } os__Signal;
 
 typedef enum {
@@ -5984,7 +5984,7 @@ bool time__Time__lt(time__Time t1, time__Time t2);
 time__Duration time__Time__minus(time__Time lhs, time__Time rhs);
 Option_time__Time time__parse(string s);
 Option_time__Time time__parse_rfc2822(string s);
-IError _const_time__err_invalid_8601; // inited later
+string _const_time__err_invalid_8601; // a string literal, inited later
 VV_LOCAL_SYMBOL Option_multi_return_int_int_int time__parse_iso8601_date(string s);
 VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601_time(string s);
 Option_time__Time time__parse_iso8601(string s);
@@ -8074,6 +8074,7 @@ void vinit_string_literals(){
 	_const_digit_pairs = _SLIT("00102030405060708090011121314151617181910212223242526272829203132333435363738393041424344454647484940515253545556575859506162636465666768696071727374757677787970818283848586878889809192939495969798999");
 	_const_os__path_separator = _SLIT("\\");
 	_const_os__path_delimiter = _SLIT(";");
+	_const_time__err_invalid_8601 = _SLIT("Invalid 8601 Format");
 	_const_time__days_string = _SLIT("MonTueWedThuFriSatSun");
 	_const_time__months_string = _SLIT("JanFebMarAprMayJunJulAugSepOctNovDec");
 	_const_flag__space = _SLIT("                            ");
@@ -20326,7 +20327,7 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int time__parse_iso8601_date(string 
 	byte dummy = ((byte)(0));
 	int count = sscanf(((char*)(s.str)), "%4d-%2d-%2d%c", &year, &month, &day, &dummy);
 	if (count != 3) {
-		return (Option_multi_return_int_int_int){ .state=2, .err=_const_time__err_invalid_8601, .data={0} };
+		return (Option_multi_return_int_int_int){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={0} };
 	}
 	Option_multi_return_int_int_int _t1112;
 	opt_ok(&(multi_return_int_int_int/*X*/[]) { (multi_return_int_int_int){.arg0=year, .arg1=month, .arg2=day} }, (Option*)(&_t1112), sizeof(multi_return_int_int_int));
@@ -20347,12 +20348,12 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601
 		count++;
 	}
 	if (count < 4) {
-		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_const_time__err_invalid_8601, .data={0} };
+		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={0} };
 	}
 	bool is_local_time = plus_min_z == 'a' && count == 4;
 	bool is_utc = plus_min_z == 'Z' && count == 5;
 	if (!(count == 7 || is_local_time || is_utc)) {
-		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_const_time__err_invalid_8601, .data={0} };
+		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={0} };
 	}
 	if (plus_min_z != '+' && plus_min_z != '-' && !is_utc && !is_local_time) {
 		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_SLIT("Invalid 8601 format, expected `Z` or `+` or `-` as time separator")), .data={0} };
@@ -20381,7 +20382,7 @@ Option_time__Time time__parse_iso8601(string s) {
  	int t_i =  *(int*)_t1117.data;
 	Array_string parts = (t_i != -1 ? (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){string_substr(s, 0, t_i), string_substr(s, t_i + 1, s.len)}))) : (string_split(s, _SLIT(" "))));
 	if (!(parts.len == 1 || parts.len == 2)) {
-		return (Option_time__Time){ .state=2, .err=_const_time__err_invalid_8601, .data={0} };
+		return (Option_time__Time){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={0} };
 	}
 	Option_multi_return_int_int_int _t1119 = time__parse_iso8601_date((*(string*)/*ee elem_typ */array_get(parts, 0)));
 	if (_t1119.state != 0) { /*or block*/ 
@@ -20389,10 +20390,10 @@ Option_time__Time time__parse_iso8601(string s) {
 		memcpy(&_t1120, &_t1119, sizeof(Option));
 		return _t1120;
 	}
- 	Option_multi_return_int_int_int mr_3465 =  _t1119 /*U*/;
-	int year = (*(multi_return_int_int_int*)mr_3465.data).arg0;
-	int month = (*(multi_return_int_int_int*)mr_3465.data).arg1;
-	int day = (*(multi_return_int_int_int*)mr_3465.data).arg2;
+ 	Option_multi_return_int_int_int mr_3486 =  _t1119 /*U*/;
+	int year = (*(multi_return_int_int_int*)mr_3486.data).arg0;
+	int month = (*(multi_return_int_int_int*)mr_3486.data).arg1;
+	int day = (*(multi_return_int_int_int*)mr_3486.data).arg2;
 	int hour_ = 0;
 	int minute_ = 0;
 	int second_ = 0;
@@ -20406,13 +20407,13 @@ Option_time__Time time__parse_iso8601(string s) {
 			memcpy(&_t1122, &_t1121, sizeof(Option));
 			return _t1122;
 		}
- 		Option_multi_return_int_int_int_int_i64_bool mr_3707 =  _t1121 /*U*/;
-		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3707.data).arg0;
-		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3707.data).arg1;
-		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3707.data).arg2;
-		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3707.data).arg3;
-		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3707.data).arg4;
-		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3707.data).arg5;
+ 		Option_multi_return_int_int_int_int_i64_bool mr_3728 =  _t1121 /*U*/;
+		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg0;
+		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg1;
+		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg2;
+		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg3;
+		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg4;
+		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg5;
 	}
 	time__Time t = time__new_time((time__Time){
 		.year = year,
@@ -24971,7 +24972,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4d7f15b"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d5c306c"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -68792,7 +68793,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_os__lang_neutral = _const_os__sublang_neutral;
 	// Initializations for module os.cmdline :
 	// Initializations for module time :
-	_const_time__err_invalid_8601 = v_error(_SLIT("Invalid 8601 Format"));
 	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
 		31, 28, 31, 30, 31, 30, 31, 31, 30,
 		31, 30, 31}));
