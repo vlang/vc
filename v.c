@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "de080ba"
+#define V_COMMIT_HASH "be189e0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a639f94"
+	#define V_COMMIT_HASH "de080ba"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "de080ba"
+	#define V_CURRENT_COMMIT_HASH "be189e0"
 #endif
 
 // V comptime_defines:
@@ -25712,7 +25712,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a639f94"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de080ba"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32435,6 +32435,21 @@ string v__ast__Table_type_to_str_using_aliases(v__ast__Table* t, v__ast__Type ty
 			res = v__ast__Table_shorten_user_defined_typenames(t, res, import_aliases);
 		}
 	}
+	else if (sym->kind == (v__ast__Kind_generic_struct_inst)) {
+		v__ast__GenericStructInst info = /* as */ *(v__ast__GenericStructInst*)__as_cast((sym->info)._v__ast__GenericStructInst,(sym->info)._typ, 390) /*expected idx: 390, name: v.ast.GenericStructInst */ ;
+		res = string_all_before(sym->name, _SLIT("<"));
+		res = /*f*/string_add(res, _SLIT("<"));
+		// FOR IN array
+		for (int i = 0; i < info.concrete_types.len; ++i) {
+			v__ast__Type ctyp = ((v__ast__Type*)info.concrete_types.data)[i];
+			res = /*f*/string_add(res, v__ast__Table_get_type_symbol(t, ctyp)->name);
+			if (i != info.concrete_types.len - 1) {
+				res = /*f*/string_add(res, _SLIT(", "));
+			}
+		}
+		res = /*f*/string_add(res, _SLIT(">"));
+		res = v__ast__Table_shorten_user_defined_typenames(t, res, import_aliases);
+	}
 	else if (sym->kind == (v__ast__Kind_void)) {
 		if (v__ast__Type_has_flag(typ, v__ast__TypeFlag_optional)) {
 			string _t2952 = _SLIT("?");
@@ -36961,7 +36976,7 @@ v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser*
 	v__parser__Parser_check(p, v__token__Kind_gt);
 	p->in_generic_params = false;
 	bs_name = /*f*/string_add(bs_name, _SLIT(">"));
-	if (is_instance && concrete_types.len > 0) {
+	if ((is_instance || p->pref->is_fmt) && concrete_types.len > 0) {
 		int gt_idx = v__ast__Table_find_type_idx(p->table, bs_name);
 		if (gt_idx > 0) {
 			v__ast__Type _t3372 = v__ast__new_type(gt_idx);
