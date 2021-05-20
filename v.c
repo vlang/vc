@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f09a513"
+#define V_COMMIT_HASH "b0de1f7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ac469f5"
+	#define V_COMMIT_HASH "f09a513"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f09a513"
+	#define V_CURRENT_COMMIT_HASH "b0de1f7"
 #endif
 
 // V comptime_defines:
@@ -45,6 +45,7 @@ typedef struct multi_return_bool_int_int multi_return_bool_int_int;
 typedef struct multi_return_Array_v__ast__Param_bool_bool multi_return_Array_v__ast__Param_bool_bool;
 typedef struct multi_return_Array_v__ast__Expr_Array_v__ast__Comment multi_return_Array_v__ast__Expr_Array_v__ast__Comment;
 typedef struct multi_return_v__ast__File_Array_v__vet__Error multi_return_v__ast__File_Array_v__vet__Error;
+typedef struct multi_return_bool_Array_string multi_return_bool_Array_string;
 typedef struct multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField;
 typedef struct multi_return_string_string_string_string multi_return_string_string_string_string;
 typedef struct multi_return_int_string_string_string multi_return_int_string_string_string;
@@ -4590,6 +4591,11 @@ struct multi_return_v__ast__File_Array_v__vet__Error {
 	Array_v__vet__Error arg1;
 };
 
+struct multi_return_bool_Array_string {
+	bool arg0;
+	Array_string arg1;
+};
+
 struct multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField {
 	Map_string_v__ast__FnDecl arg0;
 	Map_string_v__ast__ConstField arg1;
@@ -5950,7 +5956,7 @@ v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* grap
 v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph);
 string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph);
-VV_LOCAL_SYMBOL bool v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string* already_seen);
+VV_LOCAL_SYMBOL multi_return_bool_Array_string v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string already_seen);
 u64 hash__wyhash_c(byte* key, u64 len, u64 seed);
 u64 hash__wyhash64_c(u64 a, u64 b);
 u64 _const_hash__wyp0; // inited later
@@ -22171,6 +22177,7 @@ string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph) {
 }
 
 string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
+	bool seen = false;
 	Array_string out = __new_array_with_default(0, 0, sizeof(string), 0);
 	v__depgraph__NodeNames nn = (v__depgraph__NodeNames){.is_cycle = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.names = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
 	// FOR IN array
@@ -22195,7 +22202,10 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 		if (_IN_MAP(ADDR(string, k), ADDR(map, nn.is_cycle))) {
 			continue;
 		}
-		if (v__depgraph__NodeNames_is_part_of_cycle(&nn, k, &/*arr*/cycle_names)) {
+		multi_return_bool_Array_string mr_3178 = v__depgraph__NodeNames_is_part_of_cycle(&nn, k, cycle_names);
+		seen = mr_3178.arg0;
+		cycle_names = mr_3178.arg1;
+		if (seen) {
 			array_push((array*)&out, _MOV((string[]){ string_clone(string_add(_SLIT(" * "), Array_string_join(cycle_names, _SLIT(" -> ")))) }));
 			nn.is_cycle = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
 		}
@@ -22204,38 +22214,38 @@ string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
 	return _t1353;
 }
 
-VV_LOCAL_SYMBOL bool v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string* already_seen) {
+VV_LOCAL_SYMBOL multi_return_bool_Array_string v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string already_seen) {
+	bool seen = false;
+	Array_string new_already_seen = array_clone(&already_seen);
 	if (_IN_MAP(ADDR(string, name), ADDR(map, nn->is_cycle))) {
-		bool _t1354 = (*(bool*)map_get(ADDR(map, nn->is_cycle), &(string[]){name}, &(bool[]){ 0 }));
-		return _t1354;
+		return (multi_return_bool_Array_string){.arg0=(*(bool*)map_get(ADDR(map, nn->is_cycle), &(string[]){name}, &(bool[]){ 0 })), .arg1=new_already_seen};
 	}
-	if ((Array_string_contains(*already_seen, name))) {
-		array_push((array*)already_seen, _MOV((string[]){ string_clone(name) }));
+	if ((Array_string_contains(already_seen, name))) {
+		array_push((array*)&new_already_seen, _MOV((string[]){ string_clone(name) }));
 		map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { true });
-		bool _t1356 = true;
-		return _t1356;
+		return (multi_return_bool_Array_string){.arg0=true, .arg1=new_already_seen};
 	}
-	array_push((array*)already_seen, _MOV((string[]){ string_clone(name) }));
+	array_push((array*)&new_already_seen, _MOV((string[]){ string_clone(name) }));
 	Array_string deps = (*(Array_string*)map_get(ADDR(map, nn->names), &(string[]){name}, &(Array_string[]){ __new_array(0, 1, sizeof(string)) }));
 	if (deps.len == 0) {
 		map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { false });
-		bool _t1358 = false;
-		return _t1358;
+		return (multi_return_bool_Array_string){.arg0=false, .arg1=new_already_seen};
 	}
 	// FOR IN array
 	for (int _t1359 = 0; _t1359 < deps.len; ++_t1359) {
 		string d = ((string*)deps.data)[_t1359];
-		Array_string d_already_seen = array_clone(already_seen);
-		if (v__depgraph__NodeNames_is_part_of_cycle(nn, d, &/*arr*/d_already_seen)) {
-			*already_seen = array_clone(&d_already_seen);
+		Array_string d_already_seen = array_clone(&new_already_seen);
+		multi_return_bool_Array_string mr_3911 = v__depgraph__NodeNames_is_part_of_cycle(nn, d, d_already_seen);
+		seen = mr_3911.arg0;
+		d_already_seen = mr_3911.arg1;
+		if (seen) {
+			new_already_seen = array_clone(&d_already_seen);
 			map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { true });
-			bool _t1360 = true;
-			return _t1360;
+			return (multi_return_bool_Array_string){.arg0=true, .arg1=new_already_seen};
 		}
 	}
 	map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { false });
-	bool _t1361 = false;
-	return _t1361;
+	return (multi_return_bool_Array_string){.arg0=false, .arg1=new_already_seen};
 }
 
 // Attr: [inline]
@@ -25768,7 +25778,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ac469f5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f09a513"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
