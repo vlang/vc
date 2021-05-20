@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ac469f5"
+#define V_COMMIT_HASH "f09a513"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9ddf1ec"
+	#define V_COMMIT_HASH "ac469f5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ac469f5"
+	#define V_CURRENT_COMMIT_HASH "f09a513"
 #endif
 
 // V comptime_defines:
@@ -25110,7 +25110,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9ddf1ec"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ac469f5"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65364,8 +65364,13 @@ v__ast__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__Inde
 v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVal* node) {
 	int typ_idx = ((node->enum_name).len == 0 ? (v__ast__Type_idx(c->expected_type)) : (v__ast__Table_find_type_idx(c->table, node->enum_name)));
 	if (typ_idx == 0) {
-		v__checker__Checker_error(c, _STR("not an enum (name=%.*s\000) (type_idx=0)", 2, node->enum_name), node->pos);
-		return _const_v__ast__void_type;
+		if (string_starts_with(node->enum_name, _SLIT("main."))) {
+			typ_idx = v__ast__Table_find_type_idx(c->table, string_substr(node->enum_name, _SLIT(".main").len, node->enum_name.len));
+			if (typ_idx == 0) {
+				v__checker__Checker_error(c, _STR("unknown enum `%.*s\000` (type_idx=0)", 2, node->enum_name), node->pos);
+				return _const_v__ast__void_type;
+			}
+		}
 	}
 	v__ast__Type typ = v__ast__new_type(typ_idx);
 	if (c->pref->translated) {
@@ -66091,10 +66096,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5094 = 0; _t5094 < sym_app->methods.len; ++_t5094) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5094];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_233395 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_233395.arg0;
-				int nroute_attributes = mr_233395.arg1;
-				int nargs = mr_233395.arg2;
+				multi_return_bool_int_int mr_233729 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_233729.arg0;
+				int nroute_attributes = mr_233729.arg1;
+				int nargs = mr_233729.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
