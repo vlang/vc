@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c0f8f7"
+#define V_COMMIT_HASH "e512caf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "565dbc4"
+	#define V_COMMIT_HASH "7c0f8f7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c0f8f7"
+	#define V_CURRENT_COMMIT_HASH "e512caf"
 #endif
 
 // V comptime_defines:
@@ -25993,7 +25993,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("565dbc4"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7c0f8f7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36749,7 +36749,11 @@ v__ast__Type v__parser__Parser_parse_array_type(v__parser__Parser* p) {
 				}
 			} else {
 				IError err = _t3346.err;
-				v__parser__Parser_error_with_pos(p, _STR("non-constant array bound `%.*s\000`", 2, (*size_expr._v__ast__Ident).name), (*size_expr._v__ast__Ident).pos);
+				if (p->pref->is_fmt) {
+					fixed_size = 1;
+				} else {
+					v__parser__Parser_error_with_pos(p, _STR("non-constant array bound `%.*s\000`", 2, (*size_expr._v__ast__Ident).name), (*size_expr._v__ast__Ident).pos);
+				}
 			}
 		}
 		else {
@@ -36926,9 +36930,9 @@ v__ast__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) 
 	v__parser__Parser_check(p, v__token__Kind_key_fn);
 	bool has_generic = false;
 	int line_nr = p->tok.line_nr;
-	multi_return_Array_v__ast__Param_bool_bool mr_5245 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_5245.arg0;
-	bool is_variadic = mr_5245.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_5434 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_5434.arg0;
+	bool is_variadic = mr_5434.arg2;
 	// FOR IN array
 	for (int _t3372 = 0; _t3372 < args.len; ++_t3372) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t3372];
