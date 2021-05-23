@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a27e7f7"
+#define V_COMMIT_HASH "5efd8c6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ae9f862"
+	#define V_COMMIT_HASH "a27e7f7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a27e7f7"
+	#define V_CURRENT_COMMIT_HASH "5efd8c6"
 #endif
 
 // V comptime_defines:
@@ -16877,13 +16877,12 @@ bool byte_is_letter(byte c) {
 // Attr: [unsafe]
 void string_free(string* s) {
 	if (s->is_lit == -98761234) {
-		byte* dsfree_msg = "double string.free() detected\n";
 		#if defined(_VFREESTANDING)
 		{
 		}
 		#else
 		{
-			printf(dsfree_msg);
+			printf("double string.free() detected\n");
 		}
 		#endif
 		return;
@@ -25382,7 +25381,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ae9f862"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a27e7f7"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
