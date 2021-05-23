@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4b11e59"
+#define V_COMMIT_HASH "efa07cb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bc01de2"
+	#define V_COMMIT_HASH "4b11e59"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4b11e59"
+	#define V_CURRENT_COMMIT_HASH "efa07cb"
 #endif
 
 // V comptime_defines:
@@ -4799,6 +4799,7 @@ static bool v__ast__IntegerLiteral_struct_eq(v__ast__IntegerLiteral a, v__ast__I
 static bool v__token__Position_struct_eq(v__token__Position a, v__token__Position b); // auto
 static bool v__ast__FloatLiteral_struct_eq(v__ast__FloatLiteral a, v__ast__FloatLiteral b); // auto
 static string v__gen__native__Register_str(v__gen__native__Register it); // auto
+static string v__gen__native__Arm64Register_str(v__gen__native__Arm64Register it); // auto
 static string v__errors__Reporter_str(v__errors__Reporter it); // auto
 static string v__errors__Warning_str(v__errors__Warning it); // auto
 static string indent_v__errors__Warning_str(v__errors__Warning it, int indent_count); // auto
@@ -7521,8 +7522,9 @@ void v__gen__native__Gen_allocate_var(v__gen__native__Gen* g, string name, int s
 void v__gen__native__Arm64_allocate_var(v__gen__native__Arm64* x, string name, int size, int initial_val);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_arm(v__gen__native__Gen* g, v__gen__native__Arm64Register reg, u64 val);
 void v__gen__native__Gen_fn_decl_arm64(v__gen__native__Gen* g, v__ast__FnDecl node);
+void v__gen__native__Gen_call_fn_arm64(v__gen__native__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_gen_arm64_helloworld(v__gen__native__Gen* g);
-VV_LOCAL_SYMBOL void v__gen__native__Gen_adr(v__gen__native__Gen* g);
+VV_LOCAL_SYMBOL void v__gen__native__Gen_adr(v__gen__native__Gen* g, v__gen__native__Arm64Register r, int delta);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_bl(v__gen__native__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_svc(v__gen__native__Gen* g);
 void v__gen__native__Arm64_gen_exit(v__gen__native__Arm64* c, v__gen__native__Gen* g, v__ast__Expr expr);
@@ -8760,6 +8762,28 @@ static string v__gen__native__Register_str(v__gen__native__Register it) { /* gen
 		case v__gen__native__Register_r13: return _SLIT("r13");
 		case v__gen__native__Register_r14: return _SLIT("r14");
 		case v__gen__native__Register_r15: return _SLIT("r15");
+		default: return _SLIT("unknown enum value");
+	}
+}
+static string v__gen__native__Arm64Register_str(v__gen__native__Arm64Register it) { /* gen_str_for_enum */
+	switch(it) {
+		case v__gen__native__Arm64Register_x0: return _SLIT("x0");
+		case v__gen__native__Arm64Register_x1: return _SLIT("x1");
+		case v__gen__native__Arm64Register_x2: return _SLIT("x2");
+		case v__gen__native__Arm64Register_x3: return _SLIT("x3");
+		case v__gen__native__Arm64Register_x4: return _SLIT("x4");
+		case v__gen__native__Arm64Register_x5: return _SLIT("x5");
+		case v__gen__native__Arm64Register_x6: return _SLIT("x6");
+		case v__gen__native__Arm64Register_x7: return _SLIT("x7");
+		case v__gen__native__Arm64Register_x8: return _SLIT("x8");
+		case v__gen__native__Arm64Register_x9: return _SLIT("x9");
+		case v__gen__native__Arm64Register_x10: return _SLIT("x10");
+		case v__gen__native__Arm64Register_x11: return _SLIT("x11");
+		case v__gen__native__Arm64Register_x12: return _SLIT("x12");
+		case v__gen__native__Arm64Register_x13: return _SLIT("x13");
+		case v__gen__native__Arm64Register_x14: return _SLIT("x14");
+		case v__gen__native__Arm64Register_x15: return _SLIT("x15");
+		case v__gen__native__Arm64Register_x16: return _SLIT("x16");
 		default: return _SLIT("unknown enum value");
 	}
 }
@@ -25335,7 +25359,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bc01de2"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4b11e59"), _STR("%.*s\000 | %.*s\000 | %.*s\000 | %.*s\000 | %.*s", 5, v__pref__Backend_str(p->backend), v__pref__OS_str(p->os), p->ccompiler, p->is_prod ? _SLIT("true") : _SLIT("false"), p->sanitize ? _SLIT("true") : _SLIT("false")), string_trim_space(p->cflags), string_trim_space(p->third_party_option), _STR("%.*s", 1, Array_string_str(p->compile_defines_all)), _STR("%.*s", 1, Array_string_str(p->compile_defines)), _STR("%.*s", 1, Array_string_str(p->lookup_path))})));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -57076,6 +57100,10 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_var_to_reg(v__gen__native__Gen* g, 
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_call(v__gen__native__Gen* g, int addr) {
+	if (g->pref->arch == v__pref__Arch_arm64) {
+		v__gen__native__Gen_bl(g);
+		return;
+	}
 	int rel = 0xffffffff - (g->buf.len + 5 - addr - 1);
 	v__gen__native__Gen_write8(g, 0xe8);
 	v__gen__native__Gen_write32(g, rel);
@@ -57343,6 +57371,10 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_rbp_rsp(v__gen__native__Gen* g) {
 }
 
 void v__gen__native__Gen_call_fn(v__gen__native__Gen* g, v__ast__CallExpr node) {
+	if (g->pref->arch == v__pref__Arch_arm64) {
+		v__gen__native__Gen_call_fn_arm64(g, node);
+		return;
+	}
 	string name = node.name;
 	i64 addr = (*(i64*)map_get(ADDR(map, g->fn_addr), &(string[]){name}, &(i64[]){ 0 }));
 	if (addr == 0) {
@@ -57545,24 +57577,51 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_arm(v__gen__native__Gen* g, v__gen_
 	if (r == 0 && val == 1U) {
 		v__gen__native__Gen_write32(g, 0xd2800020);
 		v__gen__native__Gen_println(g, _SLIT("mov x0, 1"));
-	} else if (r == 0) {
-		v__gen__native__Gen_write32(g, 0xd2800000);
-		v__gen__native__Gen_println(g, _SLIT("mov x0, 0"));
-	} else if (r == 16) {
-		v__gen__native__Gen_write32(g, 0xd2800030);
-		v__gen__native__Gen_println(g, _SLIT("mov x16, 1"));
+	} else if (r >= 0 && r <= 16) {
+		v__gen__native__Gen_write32(g, 0xd2800000 + ((int)(r)) + (((int)(val)) << 5));
+		v__gen__native__Gen_println(g, _STR("mov x%"PRId32"\000, %"PRIu64"", 2, r, val));
 	} else {
 		v__gen__native__verror(_SLIT("mov_arm unsupported values"));
 	}
 }
 
 void v__gen__native__Gen_fn_decl_arm64(v__gen__native__Gen* g, v__ast__FnDecl node) {
+	v__gen__native__Gen_gen_arm64_helloworld(g);
+}
+
+void v__gen__native__Gen_call_fn_arm64(v__gen__native__Gen* g, v__ast__CallExpr node) {
+	string name = node.name;
+	i64 addr = (*(i64*)map_get(ADDR(map, g->fn_addr), &(string[]){name}, &(i64[]){ 0 }));
+	if (addr == 0) {
+		v__gen__native__verror(_STR("fn addr of `%.*s\000` = 0", 2, name));
+	}
+	for (int i = 0; i < node.args.len; ++i) {
+		v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, i)).expr;
+		if (expr._typ == 264 /* v.ast.IntegerLiteral */) {
+		}
+		else {
+			v__gen__native__verror(string_add(_STR("unhandled call_fn (name=%.*s\000) node: ", 2, name), tos3( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ))));
+		};
+	}
+	if (node.args.len > 6) {
+		v__gen__native__verror(_SLIT("more than 6 args not allowed for now"));
+	}
+	v__gen__native__Gen_call(g, ((int)(addr)));
+	v__gen__native__Gen_println(g, _STR("fn call `%.*s\000()`", 2, name));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_gen_arm64_helloworld(v__gen__native__Gen* g) {
-	v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register_x0, 1U);
-	v__gen__native__Gen_adr(g);
-	v__gen__native__Gen_bl(g);
+	if (g->pref->os == v__pref__OS_linux) {
+		v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register_x0, 1U);
+		v__gen__native__Gen_adr(g, v__gen__native__Arm64Register_x1, 0x10);
+		v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register_x2, 13U);
+		v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register_x8, 64U);
+		v__gen__native__Gen_svc(g);
+	} else {
+		v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register_x0, 0U);
+		v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register_x16, 1U);
+		v__gen__native__Gen_svc(g);
+	}
 	v__ast__IntegerLiteral zero = (v__ast__IntegerLiteral){.val = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},};
 	v__gen__native__Gen_gen_exit(g, v__ast__IntegerLiteral_to_sumtype_v__ast__Expr(&zero));
 	v__gen__native__Gen_write_string(g, _SLIT("Hello World!\n"));
@@ -57571,9 +57630,9 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_gen_arm64_helloworld(v__gen__native__Ge
 	v__gen__native__Gen_write8(g, 0);
 }
 
-VV_LOCAL_SYMBOL void v__gen__native__Gen_adr(v__gen__native__Gen* g) {
-	v__gen__native__Gen_write32(g, 0x100000a0);
-	v__gen__native__Gen_println(g, _SLIT("adr x0, 0x14"));
+VV_LOCAL_SYMBOL void v__gen__native__Gen_adr(v__gen__native__Gen* g, v__gen__native__Arm64Register r, int delta) {
+	v__gen__native__Gen_write32(g, ((0x10000000 | ((int)(r))) | (delta << 4)));
+	v__gen__native__Gen_println(g, _STR("adr %.*s\000, %"PRId32"", 2, v__gen__native__Arm64Register_str(r), delta));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_bl(v__gen__native__Gen* g) {
@@ -57601,6 +57660,7 @@ void v__gen__native__Arm64_gen_exit(v__gen__native__Arm64* c, v__gen__native__Ge
 	}
 	else if (c->g->pref->os == (v__pref__OS_linux)) {
 		v__gen__native__Gen_mov_arm(c->g, v__gen__native__Arm64Register_x16, return_code);
+		v__gen__native__Gen_mov_arm(c->g, v__gen__native__Arm64Register_x8, 93U);
 		v__gen__native__Gen_mov_arm(c->g, v__gen__native__Arm64Register_x0, 0U);
 	}
 	else {
@@ -57625,7 +57685,7 @@ void v__gen__native__Gen_generate_elf_header(v__gen__native__Gen* g) {
 	array_push((array*)&g->buf, _MOV((byte[]){ _const_v__gen__native__elfclass64 }));
 	array_push((array*)&g->buf, _MOV((byte[]){ _const_v__gen__native__elfdata2lsb }));
 	array_push((array*)&g->buf, _MOV((byte[]){ _const_v__gen__native__ev_current }));
-	array_push((array*)&g->buf, _MOV((byte[]){ 1 }));
+	array_push((array*)&g->buf, _MOV((byte[]){ _const_v__gen__native__elf_osabi }));
 	v__gen__native__Gen_write64(g, 0);
 	v__gen__native__Gen_write16(g, 2);
 	if (g->pref->arch == v__pref__Arch_arm64) {
@@ -57675,7 +57735,12 @@ void v__gen__native__Gen_generate_elf_footer(v__gen__native__Gen* g) {
 	int file_size = g->buf.len;
 	v__gen__native__Gen_write64_at(g, file_size, g->file_size_pos);
 	v__gen__native__Gen_write64_at(g, file_size, g->file_size_pos + 8);
-	v__gen__native__Gen_write32_at(g, g->code_start_pos + 1, ((int)(g->main_fn_addr - g->code_start_pos)) - 5);
+	if (g->pref->arch == v__pref__Arch_arm64) {
+		u32 bl_next = ((u32)(0x94000001U));
+		v__gen__native__Gen_write32_at(g, g->code_start_pos, ((int)(bl_next)));
+	} else {
+		v__gen__native__Gen_write32_at(g, g->code_start_pos + 1, ((int)(g->main_fn_addr - g->code_start_pos)) - 5);
+	}
 	v__gen__native__Gen_create_executable(g);
 }
 
@@ -57719,7 +57784,7 @@ multi_return_int_int v__gen__native__gen(Array_v__ast__File_ptr files, v__ast__T
 	Option_v__gen__native__CodeGen _t4399 = v__gen__native__Gen_get_backend(g);
 	if (_t4399.state != 0) { /*or block*/ 
 		IError err = _t4399.err;
-		eprintln(_SLIT("No available backend for this configuration"));
+		eprintln(_SLIT("No available backend for this configuration. Use `-a arm64` or `-a amd64`."));
 		v_exit(1);
 	}
  	g->cgen =  (*(v__gen__native__CodeGen*)_t4399.data);
