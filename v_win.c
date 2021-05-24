@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d8d05e0"
+#define V_COMMIT_HASH "c0b1f99"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "603e577"
+	#define V_COMMIT_HASH "d8d05e0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d8d05e0"
+	#define V_CURRENT_COMMIT_HASH "c0b1f99"
 #endif
 
 // V comptime_defines:
@@ -26398,7 +26398,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("603e577"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d8d05e0"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string_eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -67914,7 +67914,8 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			} else {
 				v__ast__TypeSymbol* receiver_sym = v__ast__Table_get_type_symbol(c->table, node->receiver.typ);
 				v__ast__TypeSymbol* param_sym = v__ast__Table_get_type_symbol(c->table, (*(v__ast__Param*)/*ee elem_typ */array_get(node->params, 1)).typ);
-				if (!(param_sym->kind == v__ast__Kind_struct_ || param_sym->kind == v__ast__Kind_alias) || !(receiver_sym->kind == v__ast__Kind_struct_ || receiver_sym->kind == v__ast__Kind_alias)) {
+				if (param_sym->kind == v__ast__Kind_string && receiver_sym->kind == v__ast__Kind_string) {
+				} else if (!(param_sym->kind == v__ast__Kind_struct_ || param_sym->kind == v__ast__Kind_alias) || !(receiver_sym->kind == v__ast__Kind_struct_ || receiver_sym->kind == v__ast__Kind_alias)) {
 					v__checker__Checker_error(c, _SLIT("operator methods are only allowed for struct and type alias"), node->pos);
 				} else {
 					v__ast__TypeSymbol* parent_sym = v__ast__Table_get_final_type_symbol(c->table, node->receiver.typ);
@@ -68026,10 +68027,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5230 = 0; _t5230 < sym_app->methods.len; ++_t5230) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5230];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_235114 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_235114.arg0;
-				int nroute_attributes = mr_235114.arg1;
-				int nargs = mr_235114.arg2;
+				multi_return_bool_int_int mr_235281 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_235281.arg0;
+				int nroute_attributes = mr_235281.arg1;
+				int nargs = mr_235281.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
