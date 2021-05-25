@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0e6f0c1"
+#define V_COMMIT_HASH "7d210da"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "da88235"
+	#define V_COMMIT_HASH "0e6f0c1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0e6f0c1"
+	#define V_CURRENT_COMMIT_HASH "7d210da"
 #endif
 
 // V comptime_defines:
@@ -26377,7 +26377,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("da88235"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0e6f0c1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -59862,17 +59862,17 @@ Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, 
 }
 
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected) {
-	v__ast__Type got_ = v__ast__Table_unalias_num_type(c->table, got);
-	v__ast__Type exp_ = v__ast__Table_unalias_num_type(c->table, expected);
-	if (v__ast__Type_idx(got_) == v__ast__Type_idx(exp_)) {
+	v__ast__Type unalias_got = v__ast__Table_unalias_num_type(c->table, got);
+	v__ast__Type unalias_expected = v__ast__Table_unalias_num_type(c->table, expected);
+	if (v__ast__Type_idx(unalias_got) == v__ast__Type_idx(unalias_expected)) {
 		bool _t4548 = true;
 		return _t4548;
 	}
-	if ((v__ast__Type_is_pointer(exp_) || v__ast__Type_is_number(exp_)) && (v__ast__Type_is_pointer(got_) || v__ast__Type_is_number(got_))) {
+	if ((v__ast__Type_is_pointer(unalias_expected) || v__ast__Type_is_number(unalias_expected)) && (v__ast__Type_is_pointer(unalias_got) || v__ast__Type_is_number(unalias_got))) {
 		bool _t4549 = true;
 		return _t4549;
 	}
-	if (v__ast__Type_is_ptr(expected) && v__ast__Type_alias_eq(got_, _const_v__ast__int_literal_type)) {
+	if (v__ast__Type_is_ptr(expected) && v__ast__Type_alias_eq(unalias_got, _const_v__ast__int_literal_type)) {
 		bool _t4550 = true;
 		return _t4550;
 	}
@@ -59888,7 +59888,7 @@ bool v__checker__Checker_check_basic(v__checker__Checker* c, v__ast__Type got, v
 			return _t4552;
 		}
 	}
-	if (!v__ast__Type_is_ptr(got_) && got_sym->kind == v__ast__Kind_array_fixed && (v__ast__Type_is_pointer(exp_) || v__ast__Type_is_ptr(exp_))) {
+	if (!v__ast__Type_is_ptr(unalias_got) && got_sym->kind == v__ast__Kind_array_fixed && (v__ast__Type_is_pointer(unalias_expected) || v__ast__Type_is_ptr(unalias_expected))) {
 		bool _t4553 = false;
 		return _t4553;
 	}
@@ -60011,10 +60011,10 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_promote_num(v__checker__Checker
 	v__ast__Type type_hi = left_type;
 	v__ast__Type type_lo = right_type;
 	if (v__ast__Type_idx(type_hi) < v__ast__Type_idx(type_lo)) {
-		v__ast__Type _var_8497 = type_hi;
-		v__ast__Type _var_8506 = type_lo;
-		type_hi = _var_8506;
-		type_lo = _var_8497;
+		v__ast__Type _var_8615 = type_hi;
+		v__ast__Type _var_8624 = type_lo;
+		type_hi = _var_8624;
+		type_lo = _var_8615;
 	}
 	int idx_hi = v__ast__Type_idx(type_hi);
 	int idx_lo = v__ast__Type_idx(type_lo);
