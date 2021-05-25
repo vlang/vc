@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "306c16f"
+#define V_COMMIT_HASH "f327470"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7d210da"
+	#define V_COMMIT_HASH "306c16f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "306c16f"
+	#define V_CURRENT_COMMIT_HASH "f327470"
 #endif
 
 // V comptime_defines:
@@ -26998,7 +26998,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7d210da"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("306c16f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -45756,10 +45756,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_struct(v__gen__c__Gen* g, v__ast
 		for (int i = 0; i < info.fields.len; ++i) {
 			v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
 			string ptr_amp = (v__ast__Type_is_ptr(field.typ) ? (_SLIT("&")) : (_SLIT("")));
-			StrIntpType base_fmt = v__gen__c__Gen_type_to_fmt1(g, field.typ);
+			StrIntpType base_fmt = v__gen__c__Gen_type_to_fmt1(g, v__gen__c__Gen_unwrap_generic(g, field.typ));
 			string quote_str = _SLIT("");
 			string prefix = _SLIT("");
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
+			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, v__gen__c__Gen_unwrap_generic(g, field.typ));
 			if (sym->kind == v__ast__Kind_string) {
 				quote_str = _SLIT("'");
 			} else if ((Array_v__ast__Type_contains(_const_v__ast__charptr_types, field.typ))) {
@@ -45806,9 +45806,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_struct(v__gen__c__Gen* g, v__ast
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__struct_auto_str_func1(v__ast__TypeSymbol* sym, v__ast__Type field_type, string fn_name, string field_name) {
-	multi_return_bool_bool_int mr_6031 = v__ast__TypeSymbol_str_method_info(sym);
-	bool has_custom_str = mr_6031.arg0;
-	bool expects_ptr = mr_6031.arg1;
+	multi_return_bool_bool_int mr_6067 = v__ast__TypeSymbol_str_method_info(sym);
+	bool has_custom_str = mr_6067.arg0;
+	bool expects_ptr = mr_6067.arg1;
 	if (sym->kind == v__ast__Kind_enum_) {
 		string _t4030 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fn_name}}, {_SLIT("(it."), 0xfe10, {.d_s = v__gen__c__c_name(field_name)}}, {_SLIT(")"), 0, { .d_c = 0 }}})) ;
 		return _t4030;
