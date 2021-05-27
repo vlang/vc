@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "539594b"
+#define V_COMMIT_HASH "8828054"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d5cacd1"
+	#define V_COMMIT_HASH "539594b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "539594b"
+	#define V_CURRENT_COMMIT_HASH "8828054"
 #endif
 
 // V comptime_defines:
@@ -1704,6 +1704,7 @@ struct string {
 struct array {
 	int element_size;
 	voidptr data;
+	int offset;
 	int len;
 	int cap;
 };
@@ -13067,13 +13068,13 @@ string strconv__format_dec_old(u64 d, strconv__BF_param p) {
 
 VV_LOCAL_SYMBOL array __new_array(int mylen, int cap, int elm_size) {
 	int cap_ = (cap < mylen ? (mylen) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.len = mylen,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,};
 	return arr;
 }
 
 VV_LOCAL_SYMBOL array __new_array_with_default(int mylen, int cap, int elm_size, voidptr val) {
 	int cap_ = (cap < mylen ? (mylen) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.len = mylen,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,};
 	if (val != 0) {
 		for (int i = 0; i < arr.len; ++i) {
 			array_set_unsafe(&arr, i, val);
@@ -13084,7 +13085,7 @@ VV_LOCAL_SYMBOL array __new_array_with_default(int mylen, int cap, int elm_size,
 
 VV_LOCAL_SYMBOL array __new_array_with_array_default(int mylen, int cap, int elm_size, array val) {
 	int cap_ = (cap < mylen ? (mylen) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.len = mylen,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,};
 	for (int i = 0; i < arr.len; ++i) {
 		array val_clone = array_clone(&val);
 		array_set_unsafe(&arr, i, &val_clone);
@@ -13094,13 +13095,13 @@ VV_LOCAL_SYMBOL array __new_array_with_array_default(int mylen, int cap, int elm
 
 VV_LOCAL_SYMBOL array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array) {
 	int cap_ = (cap < len ? (len) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.len = len,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc(cap_ * elm_size),.offset = 0,.len = len,.cap = cap_,};
 	memcpy(arr.data, c_array, len * elm_size);
 	return arr;
 }
 
 VV_LOCAL_SYMBOL array new_array_from_c_array_no_alloc(int len, int cap, int elm_size, voidptr c_array) {
-	array arr = (array){.element_size = elm_size,.data = c_array,.len = len,.cap = cap,};
+	array arr = (array){.element_size = elm_size,.data = c_array,.offset = 0,.len = len,.cap = cap,};
 	return arr;
 }
 
@@ -13114,7 +13115,12 @@ VV_LOCAL_SYMBOL void array_ensure_cap(array* a, int required) {
 		cap *= 2;
 	}
 	int new_size = cap * a->element_size;
-	a->data = (a->data != ((voidptr)(0)) ? (realloc_data(a->data, a->cap * a->element_size, new_size)) : (vcalloc(new_size)));
+	byte* new_data = vcalloc(new_size);
+	if (a->data != ((voidptr)(0))) {
+		memcpy(new_data, a->data, a->len * a->element_size);
+	}
+	a->data = new_data;
+	a->offset = 0;
 	a->cap = cap;
 }
 
@@ -13126,11 +13132,11 @@ array array_repeat(array a, int count) {
 	if (size == 0) {
 		size = a.element_size;
 	}
-	array arr = (array){.element_size = a.element_size,.data = vcalloc(size),.len = count * a.len,.cap = count * a.len,};
+	array arr = (array){.element_size = a.element_size,.data = vcalloc(size),.offset = 0,.len = count * a.len,.cap = count * a.len,};
 	int size_of_array = ((int)(/*SizeOf*/ sizeof(array)));
 	for (int i = 0; i < count; ++i) {
 		if (a.len > 0 && a.element_size == size_of_array) {
-			array ary = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
+			array ary = (array){.element_size = 0,.data = 0,.offset = 0,.len = 0,.cap = 0,};
 			memcpy(&ary, a.data, size_of_array);
 			array ary_clone = array_clone(&ary);
 			memcpy(array_get_unsafe(arr, i * a.len), &ary_clone, a.len * a.element_size);
@@ -13316,12 +13322,10 @@ VV_LOCAL_SYMBOL array array_slice(array a, int start, int _end) {
 		}
 	}
 	#endif
-	byte* data = ((byte*)(0));
-	{ // Unsafe block
-		data = ((byte*)(a.data)) + start * a.element_size;
-	}
+	int offset = start * a.element_size;
+	byte* data = ((byte*)(a.data)) + offset;
 	int l = end - start;
-	array res = (array){.element_size = a.element_size,.data = data,.len = l,.cap = l,};
+	array res = (array){.element_size = a.element_size,.data = data,.offset = a.offset + offset,.len = l,.cap = l,};
 	return res;
 }
 
@@ -13339,12 +13343,12 @@ array array_clone(array* a) {
 	if (size == 0) {
 		size++;
 	}
-	array arr = (array){.element_size = a->element_size,.data = vcalloc(size),.len = a->len,.cap = a->cap,};
+	array arr = (array){.element_size = a->element_size,.data = vcalloc(size),.offset = 0,.len = a->len,.cap = a->cap,};
 	int size_of_array = ((int)(/*SizeOf*/ sizeof(array)));
 	if (a->element_size == size_of_array) {
 		bool is_elem_array = true;
 		for (int i = 0; i < a->len; ++i) {
-			array ar = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
+			array ar = (array){.element_size = 0,.data = 0,.offset = 0,.len = 0,.cap = 0,};
 			memcpy(&ar, array_get_unsafe(/*rec*/*a, i), size_of_array);
 			if (ar.len > ar.cap || ar.cap <= 0 || ar.element_size <= 0) {
 				is_elem_array = false;
@@ -13379,11 +13383,12 @@ VV_LOCAL_SYMBOL array array_slice_clone(array* a, int start, int _end) {
 	}
 	#endif
 	byte* data = ((byte*)(0));
+	int offset = start * a->element_size;
 	{ // Unsafe block
-		data = ((byte*)(a->data)) + start * a->element_size;
+		data = ((byte*)(a->data)) + offset;
 	}
 	int l = end - start;
-	array res = (array){.element_size = a->element_size,.data = data,.len = l,.cap = l,};
+	array res = (array){.element_size = a->element_size,.data = data,.offset = offset,.len = l,.cap = l,};
 	return array_clone(&res);
 }
 
@@ -13444,7 +13449,7 @@ array array_reverse(array a) {
 	if (a.len < 2) {
 		return a;
 	}
-	array arr = (array){.element_size = a.element_size,.data = vcalloc(a.cap * a.element_size),.len = a.len,.cap = a.cap,};
+	array arr = (array){.element_size = a.element_size,.data = vcalloc(a.cap * a.element_size),.offset = 0,.len = a.len,.cap = a.cap,};
 	for (int i = 0; i < a.len; ++i) {
 		array_set_unsafe(&arr, i, array_get_unsafe(a, a.len - 1 - i));
 	}
@@ -13458,7 +13463,7 @@ void array_free(array* a) {
 		return;
 	}
 	#endif
-	v_free(a->data);
+	v_free(((byte*)(a->data)) - a->offset);
 }
 
 // Attr: [unsafe]
@@ -13607,7 +13612,7 @@ Array_voidptr array_pointers(array a) {
 
 // Attr: [unsafe]
 Array_byte voidptr_vbytes(voidptr data, int len) {
-	array res = (array){.element_size = 1,.data = data,.len = len,.cap = len,};
+	array res = (array){.element_size = 1,.data = data,.offset = 0,.len = len,.cap = len,};
 	return res;
 }
 
@@ -13618,13 +13623,13 @@ Array_byte byte_vbytes(byte* data, int len) {
 
 VV_LOCAL_SYMBOL array __new_array_noscan(int mylen, int cap, int elm_size) {
 	int cap_ = (cap < mylen ? (mylen) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.len = mylen,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,};
 	return arr;
 }
 
 VV_LOCAL_SYMBOL array __new_array_with_default_noscan(int mylen, int cap, int elm_size, voidptr val) {
 	int cap_ = (cap < mylen ? (mylen) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.len = mylen,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,};
 	if (val != 0) {
 		for (int i = 0; i < arr.len; ++i) {
 			array_set_unsafe(&arr, i, val);
@@ -13635,7 +13640,7 @@ VV_LOCAL_SYMBOL array __new_array_with_default_noscan(int mylen, int cap, int el
 
 VV_LOCAL_SYMBOL array __new_array_with_array_default_noscan(int mylen, int cap, int elm_size, array val) {
 	int cap_ = (cap < mylen ? (mylen) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.len = mylen,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,};
 	for (int i = 0; i < arr.len; ++i) {
 		array val_clone = array_clone(&val);
 		array_set_unsafe(&arr, i, &val_clone);
@@ -13645,7 +13650,7 @@ VV_LOCAL_SYMBOL array __new_array_with_array_default_noscan(int mylen, int cap, 
 
 VV_LOCAL_SYMBOL array new_array_from_c_array_noscan(int len, int cap, int elm_size, voidptr c_array) {
 	int cap_ = (cap < len ? (len) : (cap));
-	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.len = len,.cap = cap_,};
+	array arr = (array){.element_size = elm_size,.data = vcalloc_noscan(cap_ * elm_size),.offset = 0,.len = len,.cap = cap_,};
 	memcpy(arr.data, c_array, len * elm_size);
 	return arr;
 }
@@ -13658,11 +13663,11 @@ VV_LOCAL_SYMBOL array array_repeat_noscan(array a, int count) {
 	if (size == 0) {
 		size = a.element_size;
 	}
-	array arr = (array){.element_size = a.element_size,.data = vcalloc_noscan(size),.len = count * a.len,.cap = count * a.len,};
+	array arr = (array){.element_size = a.element_size,.data = vcalloc_noscan(size),.offset = 0,.len = count * a.len,.cap = count * a.len,};
 	int size_of_array = ((int)(/*SizeOf*/ sizeof(array)));
 	for (int i = 0; i < count; ++i) {
 		if (a.len > 0 && a.element_size == size_of_array) {
-			array ary = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
+			array ary = (array){.element_size = 0,.data = 0,.offset = 0,.len = 0,.cap = 0,};
 			memcpy(&ary, a.data, size_of_array);
 			array ary_clone = array_clone(&ary);
 			memcpy(array_get_unsafe(arr, i * a.len), &ary_clone, a.len * a.element_size);
@@ -13678,12 +13683,12 @@ array array_clone_noscan(array* a) {
 	if (size == 0) {
 		size++;
 	}
-	array arr = (array){.element_size = a->element_size,.data = vcalloc_noscan(size),.len = a->len,.cap = a->cap,};
+	array arr = (array){.element_size = a->element_size,.data = vcalloc_noscan(size),.offset = 0,.len = a->len,.cap = a->cap,};
 	int size_of_array = ((int)(/*SizeOf*/ sizeof(array)));
 	if (a->element_size == size_of_array) {
 		bool is_elem_array = true;
 		for (int i = 0; i < a->len; ++i) {
-			array ar = (array){.element_size = 0,.data = 0,.len = 0,.cap = 0,};
+			array ar = (array){.element_size = 0,.data = 0,.offset = 0,.len = 0,.cap = 0,};
 			memcpy(&ar, array_get_unsafe(/*rec*/*a, i), size_of_array);
 			if (ar.len > ar.cap || ar.cap <= 0 || ar.element_size <= 0) {
 				is_elem_array = false;
@@ -13722,7 +13727,7 @@ VV_LOCAL_SYMBOL array array_slice_clone_noscan(array* a, int start, int _end) {
 		data = ((byte*)(a->data)) + start * a->element_size;
 	}
 	int l = end - start;
-	array res = (array){.element_size = a->element_size,.data = data,.len = l,.cap = l,};
+	array res = (array){.element_size = a->element_size,.data = data,.offset = 0,.len = l,.cap = l,};
 	return array_clone_noscan(&res);
 }
 
@@ -13730,7 +13735,7 @@ VV_LOCAL_SYMBOL array array_reverse_noscan(array a) {
 	if (a.len < 2) {
 		return a;
 	}
-	array arr = (array){.element_size = a.element_size,.data = vcalloc_noscan(a.cap * a.element_size),.len = a.len,.cap = a.cap,};
+	array arr = (array){.element_size = a.element_size,.data = vcalloc_noscan(a.cap * a.element_size),.offset = 0,.len = a.len,.cap = a.cap,};
 	for (int i = 0; i < a.len; ++i) {
 		array_set_unsafe(&arr, i, array_get_unsafe(a, a.len - 1 - i));
 	}
@@ -20573,7 +20578,7 @@ Array_byte os__get_raw_stdin(void) {
 				buf = realloc_data(buf, old_size, new_size);
 				old_size = new_size;
 			}
-			return (array){.element_size = 1,.data = ((voidptr)(buf)),.len = offset,.cap = offset,};
+			return (array){.element_size = 1,.data = ((voidptr)(buf)),.offset = 0,.len = offset,.cap = offset,};
 		}
 	}
 	#else
@@ -20581,7 +20586,7 @@ Array_byte os__get_raw_stdin(void) {
 		size_t max = ((size_t)(0));
 		char* buf = ((char*)(0));
 		int nr_chars = getline(&buf, &max, stdin);
-		return (array){.element_size = 1,.data = ((voidptr)(buf)),.len = (nr_chars < 0 ? (0) : (nr_chars)),.cap = ((int)(max)),};
+		return (array){.element_size = 1,.data = ((voidptr)(buf)),.offset = 0,.len = (nr_chars < 0 ? (0) : (nr_chars)),.cap = ((int)(max)),};
 	}
 	#endif
 	return __new_array(0, 0, sizeof(byte));
@@ -26979,7 +26984,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d5cacd1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("539594b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
