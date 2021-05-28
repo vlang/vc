@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9ea753e"
+#define V_COMMIT_HASH "e09f023"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7089ff3"
+	#define V_COMMIT_HASH "9ea753e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9ea753e"
+	#define V_CURRENT_COMMIT_HASH "e09f023"
 #endif
 
 // V comptime_defines:
@@ -26362,7 +26362,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7089ff3"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9ea753e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -70271,9 +70271,9 @@ bool main__main_defer_0 = false;
 		return;
 	}
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1649 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
-	v__pref__Preferences* prefs = mr_1649.arg0;
-	string command = mr_1649.arg1;
+	multi_return_v__pref__Preferences_string mr_1658 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
+	v__pref__Preferences* prefs = mr_1658.arg0;
+	string command = mr_1658.arg1;
 	if (prefs->is_verbose) {
 	}
 	if (prefs->use_cache && string__eq(os__user_os(), _SLIT("windows"))) {
@@ -71081,10 +71081,11 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__builder__key_wow64_32key = (0x0200);
 	_const_v__builder__key_enumerate_sub_keys = (0x0008);
 	// Initializations for module main :
-	_const_main__external_tools = new_array_from_c_array(25, 25, sizeof(string), _MOV((string[25]){
+	_const_main__external_tools = new_array_from_c_array(26, 26, sizeof(string), _MOV((string[26]){
 		_SLIT("bin2v"), _SLIT("bug"), _SLIT("build-examples"), _SLIT("build-tools"), _SLIT("build-vbinaries"), _SLIT("check-md"), _SLIT("complete"), _SLIT("doc"), _SLIT("doctor"),
 		_SLIT("fmt"), _SLIT("repl"), _SLIT("self"), _SLIT("setup-freetype"), _SLIT("symlink"), _SLIT("test"), _SLIT("test-all"), _SLIT("test-cleancode"),
-		_SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-self"), _SLIT("tracev"), _SLIT("up"), _SLIT("vet"), _SLIT("wipe-cache"), _SLIT("watch")}));
+		_SLIT("test-fmt"), _SLIT("test-parser"), _SLIT("test-self"), _SLIT("tracev"), _SLIT("up"), _SLIT("vet"), _SLIT("wipe-cache"), _SLIT("watch"),
+		_SLIT("ast")}));
 	_const_main__list_of_flags_that_allow_duplicates = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("cc"), _SLIT("d"), _SLIT("define"), _SLIT("cf"), _SLIT("cflags")}));
 }
 void _vcleanup() {
