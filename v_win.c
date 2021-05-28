@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8a109b0"
+#define V_COMMIT_HASH "39de06c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "df2b688"
+	#define V_COMMIT_HASH "8a109b0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8a109b0"
+	#define V_CURRENT_COMMIT_HASH "39de06c"
 #endif
 
 // V comptime_defines:
@@ -26362,7 +26362,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("df2b688"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8a109b0"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -26804,12 +26804,12 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		else if (string__eq(arg, _SLIT("-translated"))) {
 			res->translated = true;
 		}
-		else if (string__eq(arg, _SLIT("-color"))) {
-			res->use_color = v__pref__ColorOutput_always;
-		}
 		else if (string__eq(arg, _SLIT("-m32")) || string__eq(arg, _SLIT("-m64"))) {
 			res->m64 = string_at(arg, 2) == '6';
 			res->cflags = /*f*/string__plus(res->cflags,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = arg}}, {_SLIT0, 0, { .d_c = 0 }}})) );
+		}
+		else if (string__eq(arg, _SLIT("-color"))) {
+			res->use_color = v__pref__ColorOutput_always;
 		}
 		else if (string__eq(arg, _SLIT("-nocolor"))) {
 			res->use_color = v__pref__ColorOutput_never;
@@ -26889,7 +26889,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			array_push((array*)&res->build_options, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = arg}}, {_SLIT(" \""), 0xfe10, {.d_s = string_trim_space(res->cflags)}}, {_SLIT("\""), 0, { .d_c = 0 }}})) ) }));
 			i++;
 		}
-		else if (string__eq(arg, _SLIT("-define")) || string__eq(arg, _SLIT("-d"))) {
+		else if (string__eq(arg, _SLIT("-d")) || string__eq(arg, _SLIT("-define"))) {
 			if (current_args.len > 1) {
 				string define = (*(string*)/*ee elem_typ */array_get(current_args, 1));
 				v__pref__parse_define(res, define);
@@ -26905,8 +26905,8 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			res->checker_match_exhaustive_cutoff_limit = string_int(os__cmdline__option(current_args, arg, _SLIT("10")));
 			i++;
 		}
-		else if (string__eq(arg, _SLIT("-o"))) {
-			res->out_name = os__cmdline__option(current_args, _SLIT("-o"), _SLIT(""));
+		else if (string__eq(arg, _SLIT("-o")) || string__eq(arg, _SLIT("-output"))) {
+			res->out_name = os__cmdline__option(current_args, arg, _SLIT(""));
 			if (string_ends_with(res->out_name, _SLIT(".js"))) {
 				res->backend = v__pref__Backend_js;
 			}
@@ -26915,8 +26915,8 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			}
 			i++;
 		}
-		else if (string__eq(arg, _SLIT("-b"))) {
-			string sbackend = os__cmdline__option(current_args, _SLIT("-b"), _SLIT("c"));
+		else if (string__eq(arg, _SLIT("-b")) || string__eq(arg, _SLIT("-backend"))) {
+			string sbackend = os__cmdline__option(current_args, arg, _SLIT("c"));
 			array_push((array*)&res->build_options, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = arg}}, {_SLIT(" "), 0xfe10, {.d_s = sbackend}}, {_SLIT0, 0, { .d_c = 0 }}})) ) }));
 			Option_v__pref__Backend _t1913 = v__pref__backend_from_string(sbackend);
 			if (_t1913.state != 0) { /*or block*/ 
