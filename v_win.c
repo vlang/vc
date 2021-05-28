@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ca8158a"
+#define V_COMMIT_HASH "7089ff3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9fab4af"
+	#define V_COMMIT_HASH "ca8158a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ca8158a"
+	#define V_CURRENT_COMMIT_HASH "7089ff3"
 #endif
 
 // V comptime_defines:
@@ -18117,12 +18117,12 @@ inline string str_intp_rune(string in_str) {
 
 // Attr: [inline]
 inline string str_intp_g32(string in_str) {
-	return  str_intp(3, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"\"), "), 0xfe10, {.d_s = _const_si_g32_code}}, {_SLIT(", {.d_f32 = "), 0xfe10, {.d_s = in_str}}, {_SLIT(" }}}))"), 0, { .d_c = 0 }}})) ;
+	return  str_intp(3, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT0, "), 0xfe10, {.d_s = _const_si_g32_code}}, {_SLIT(", {.d_f32 = "), 0xfe10, {.d_s = in_str}}, {_SLIT(" }}}))"), 0, { .d_c = 0 }}})) ;
 }
 
 // Attr: [inline]
 inline string str_intp_g64(string in_str) {
-	return  str_intp(3, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"\"), "), 0xfe10, {.d_s = _const_si_g64_code}}, {_SLIT(", {.d_f64 = "), 0xfe10, {.d_s = in_str}}, {_SLIT(" }}}))"), 0, { .d_c = 0 }}})) ;
+	return  str_intp(3, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT0, "), 0xfe10, {.d_s = _const_si_g64_code}}, {_SLIT(", {.d_f64 = "), 0xfe10, {.d_s = in_str}}, {_SLIT(" }}}))"), 0, { .d_c = 0 }}})) ;
 }
 
 // Attr: [manualfree]
@@ -26362,7 +26362,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9fab4af"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ca8158a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -54772,7 +54772,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_create_table(v__gen__c__Gen* g, v__ast
 	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_mysql__Result "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = mysql__Connection_query(&"), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_expr(g, db_expr);
 	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = create_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})) );
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 }
 
@@ -54784,7 +54784,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_drop_table(v__gen__c__Gen* g, v__ast__
 	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_mysql__Result "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = mysql__Connection_query(&"), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_expr(g, db_expr);
 	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = drop_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})) );
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 }
 
@@ -54924,7 +54924,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt
 				g->sql_table_name = tmp_sql_table_name;
 				string res = v__gen__c__Gen_new_tmp_var(g);
 				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_pg__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = pg__DB_exec_one("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\"SELECT LASTVAL();\"));"), 0, { .d_c = 0 }}})) );
-				string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT0, "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+				string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT0, "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = res}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 				g->sql_buf = strings__new_builder(100);
 				v__gen__c__Gen_sql_bind(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string_int((*(string*)array_get((*(pg__Row*)"), 0xfe10, {.d_s = res}}, {_SLIT(".data).vals, 0)))"), 0, { .d_c = 0 }}})) , _SLIT(""), _const_v__ast__int_type, typ);
@@ -54963,7 +54963,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt
 	if (arr_stmt.len > 0) {
 		string res = v__gen__c__Gen_new_tmp_var(g);
 		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_pg__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = pg__DB_exec_one("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\"SELECT LASTVAL();\"));"), 0, { .d_c = 0 }}})) );
-		string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT0, "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+		string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT0, "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = res}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 		string id_name = v__gen__c__Gen_new_tmp_var(g);
 		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = string_int((*(string*)array_get((*(pg__Row*)"), 0xfe10, {.d_s = res}}, {_SLIT(".data).vals, 0)));"), 0, { .d_c = 0 }}})) );
@@ -54992,7 +54992,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_select_expr(v__gen__c__Gen* g, v__ast__
 	v__gen__c__Gen_writeln(g, buf);
 	string res = v__gen__c__Gen_new_tmp_var(g);
 	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("Option_Array_pg__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = pg__DB_exec("), 0xfe10, {.d_s = db_name}}, {_SLIT(", "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})) );
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = res}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 	string rows = v__gen__c__Gen_new_tmp_var(g);
 	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Array_pg__Row "), 0xfe10, {.d_s = rows}}, {_SLIT(" = *(Array_pg__Row*) "), 0xfe10, {.d_s = res}}, {_SLIT(".data;"), 0, { .d_c = 0 }}})) );
@@ -55108,7 +55108,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_create_table(v__gen__c__Gen* g, v__ast_
 	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_Array_pg__Row "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = pg__DB_exec("), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_expr(g, db_expr);
 	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = create_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})) );
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 }
 
@@ -55121,7 +55121,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_drop_table(v__gen__c__Gen* g, v__ast__S
 	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_Array_pg__Row "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = pg__DB_exec("), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_expr(g, db_expr);
 	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = drop_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})) );
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}))"), 0, { .d_c = 0 }}})) ;
+	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}})) ;
 	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})) );
 }
 
@@ -55907,7 +55907,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_expr_to_string(v__gen__c__Gen* g, v__ast
 		bool is_var_mut = v__ast__Expr_is_auto_deref_var(expr);
 		string str_fn_name = v__gen__c__Gen_gen_str_for_type(g, typ);
 		if (is_ptr && !is_var_mut) {
-			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){_SLIT(\"&\"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s="), 0, { .d_c = 0 }}})) );
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"&\"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s="), 0, { .d_c = 0 }}})) );
 		}
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = str_fn_name}}, {_SLIT("("), 0, { .d_c = 0 }}})) );
 		if (str_method_expects_ptr && !is_ptr) {
@@ -55927,7 +55927,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_expr_to_string(v__gen__c__Gen* g, v__ast
 		}
 		v__gen__c__Gen_write(g, _SLIT(")"));
 		if (is_ptr && !is_var_mut) {
-			v__gen__c__Gen_write(g, _SLIT("}}))"));
+			v__gen__c__Gen_write(g, _SLIT("}}}))"));
 		}
 	} else {
 		string str_fn_name = v__gen__c__Gen_gen_str_for_type(g, typ);
