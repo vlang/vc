@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1555716"
+#define V_COMMIT_HASH "2d8a136"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bd467f9"
+	#define V_COMMIT_HASH "1555716"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1555716"
+	#define V_CURRENT_COMMIT_HASH "2d8a136"
 #endif
 
 // V comptime_defines:
@@ -18648,7 +18648,7 @@ multi_return_string_int os__fd_read(int fd, int maxbytes) {
 		return (multi_return_string_int){.arg0=_SLIT(""), .arg1=0};
 	}
 	{ // Unsafe block
-		byte* buf = v_malloc(maxbytes);
+		byte* buf = v_malloc(maxbytes + 1);
 		int nbytes = read(fd, buf, maxbytes);
 		if (nbytes < 0) {
 			v_free(buf);
@@ -20051,7 +20051,7 @@ bool os__read_file_defer_0 = false;
 	rewind(fp);
 	{ // Unsafe block
 		byte* str = v_malloc(fsize + 1);
-		int nelements = ((int)(fread(str, fsize, 1, fp)));
+		int nelements = ((int)(fread(str, 1, fsize, fp)));
 		int is_eof = ((int)(feof(fp)));
 		int is_error = ((int)(ferror(fp)));
 		if (is_eof == 0 && is_error != 0) {
@@ -20064,7 +20064,7 @@ bool os__read_file_defer_0 = false;
 			// Defer end
 			return _t1034;
 		}
-		str[fsize] = 0;
+		str[nelements] = 0;
 		if (nelements == 0) {
 			Option_string _t1035;
 			opt_ok(&(string[]) { byte_vstring(str) }, (Option*)(&_t1035), sizeof(string));
@@ -20076,7 +20076,7 @@ bool os__read_file_defer_0 = false;
 			return _t1035;
 		}
 		Option_string _t1036;
-		opt_ok(&(string[]) { byte_vstring_with_len(str, fsize) }, (Option*)(&_t1036), sizeof(string));
+		opt_ok(&(string[]) { byte_vstring_with_len(str, nelements) }, (Option*)(&_t1036), sizeof(string));
 		// Defer begin
 		if (os__read_file_defer_0) {
 			fclose(fp);
@@ -20353,8 +20353,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_8963 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_8963.arg0;
+		multi_return_int_bool mr_8971 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_8971.arg0;
 		return ret;
 	}
 	#endif
@@ -20399,9 +20399,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_9972 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_9972.arg0;
-		bool is_signaled = mr_9972.arg1;
+		multi_return_int_bool mr_9980 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_9980.arg0;
+		bool is_signaled = mr_9980.arg1;
 		if (is_signaled) {
 			println(string__plus(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Terminated by signal "), 0x4fe27, {.d_i32 = ret}}, {_SLIT(" ("), 0, { .d_c = 0 }}})) , os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -26990,7 +26990,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bd467f9"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1555716"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}

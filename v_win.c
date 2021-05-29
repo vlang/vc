@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1555716"
+#define V_COMMIT_HASH "2d8a136"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bd467f9"
+	#define V_COMMIT_HASH "1555716"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1555716"
+	#define V_CURRENT_COMMIT_HASH "2d8a136"
 #endif
 
 // V comptime_defines:
@@ -18553,7 +18553,7 @@ multi_return_string_int os__fd_read(int fd, int maxbytes) {
 		return (multi_return_string_int){.arg0=_SLIT(""), .arg1=0};
 	}
 	{ // Unsafe block
-		byte* buf = v_malloc(maxbytes);
+		byte* buf = v_malloc(maxbytes + 1);
 		int nbytes = read(fd, buf, maxbytes);
 		if (nbytes < 0) {
 			v_free(buf);
@@ -19768,7 +19768,7 @@ bool os__read_file_defer_0 = false;
 	rewind(fp);
 	{ // Unsafe block
 		byte* str = v_malloc(fsize + 1);
-		int nelements = ((int)(fread(str, fsize, 1, fp)));
+		int nelements = ((int)(fread(str, 1, fsize, fp)));
 		int is_eof = ((int)(feof(fp)));
 		int is_error = ((int)(ferror(fp)));
 		if (is_eof == 0 && is_error != 0) {
@@ -19781,7 +19781,7 @@ bool os__read_file_defer_0 = false;
 			// Defer end
 			return _t980;
 		}
-		str[fsize] = 0;
+		str[nelements] = 0;
 		if (nelements == 0) {
 			Option_string _t981;
 			opt_ok(&(string[]) { byte_vstring(str) }, (Option*)(&_t981), sizeof(string));
@@ -19793,7 +19793,7 @@ bool os__read_file_defer_0 = false;
 			return _t981;
 		}
 		Option_string _t982;
-		opt_ok(&(string[]) { byte_vstring_with_len(str, fsize) }, (Option*)(&_t982), sizeof(string));
+		opt_ok(&(string[]) { byte_vstring_with_len(str, nelements) }, (Option*)(&_t982), sizeof(string));
 		// Defer begin
 		if (os__read_file_defer_0) {
 			fclose(fp);
@@ -26369,7 +26369,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bd467f9"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1555716"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
