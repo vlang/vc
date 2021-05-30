@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ba86d61"
+#define V_COMMIT_HASH "c67891d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b29bc9c"
+	#define V_COMMIT_HASH "ba86d61"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ba86d61"
+	#define V_CURRENT_COMMIT_HASH "c67891d"
 #endif
 
 // V comptime_defines:
@@ -26406,7 +26406,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b29bc9c"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ba86d61"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -66043,11 +66043,7 @@ v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Matc
 	};
 	v__checker__Checker_check_expr_opt_call(c, node->cond, cond_type);
 	v__ast__TypeSymbol* cond_type_sym = v__ast__Table_get_type_symbol(c->table, cond_type);
-	if (!(cond_type_sym->kind == v__ast__Kind_interface_ || cond_type_sym->kind == v__ast__Kind_sum_type)) {
-		node->is_sum_type = false;
-	} else {
-		node->is_sum_type = true;
-	}
+	node->is_sum_type = (cond_type_sym->kind == v__ast__Kind_interface_ || cond_type_sym->kind == v__ast__Kind_sum_type);
 	v__checker__Checker_match_exprs(c, node, *cond_type_sym);
 	c->expected_type = cond_type;
 	v__ast__Type ret_type = _const_v__ast__void_type;
@@ -67025,8 +67021,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})) , node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_207541 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_207541.arg0;
+		multi_return_string_v__token__Position mr_207488 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_207488.arg0;
 	}
 	return typ;
 }
@@ -68043,10 +68039,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5223 = 0; _t5223 < sym_app->methods.len; ++_t5223) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5223];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_237470 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_237470.arg0;
-				int nroute_attributes = mr_237470.arg1;
-				int nargs = mr_237470.arg2;
+				multi_return_bool_int_int mr_237417 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_237417.arg0;
+				int nroute_attributes = mr_237417.arg1;
+				int nargs = mr_237417.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
