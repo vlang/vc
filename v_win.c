@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a368800"
+#define V_COMMIT_HASH "5400a76"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f6bb4d9"
+	#define V_COMMIT_HASH "a368800"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a368800"
+	#define V_CURRENT_COMMIT_HASH "5400a76"
 #endif
 
 // V comptime_defines:
@@ -7413,6 +7413,7 @@ void v__gen__c__Gen_gen_c_main_footer(v__gen__c__Gen* g);
 void v__gen__c__Gen_gen_c_android_sokol_main(v__gen__c__Gen* g);
 void v__gen__c__Gen_write_tests_definitions(v__gen__c__Gen* g);
 void v__gen__c__Gen_gen_failing_error_propagation_for_test_fn(v__gen__c__Gen* g, v__ast__OrExpr or_block, string cvar_name);
+void v__gen__c__Gen_gen_failing_return_error_for_test_fn(v__gen__c__Gen* g, v__ast__Return return_stmt, string cvar_name);
 void v__gen__c__Gen_gen_c_main_for_tests(v__gen__c__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_comptime_selector(v__gen__c__Gen* g, v__ast__ComptimeSelector node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_comptime_call(v__gen__c__Gen* g, v__ast__ComptimeCall node);
@@ -26469,7 +26470,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f6bb4d9"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a368800"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -49747,8 +49748,22 @@ bool v__gen__c__Gen_return_stmt_defer_0 = false;
 	if (fn_return_is_optional) {
 		bool optional_none = ((*(v__ast__Expr*)/*ee elem_typ */array_get(node.exprs, 0)))._typ == 274 /* v.ast.None */;
 		string ftyp = v__gen__c__Gen_typ(g, (*(v__ast__Type*)/*ee elem_typ */array_get(node.types, 0)));
-		bool is_regular_option = (string__eq(ftyp, _SLIT("Option2")) || string__eq(ftyp, _SLIT("Option")));
+		bool is_regular_option = string__eq(ftyp, _SLIT("Option"));
 		if (optional_none || is_regular_option || (*(v__ast__Type*)/*ee elem_typ */array_get(node.types, 0)) == _const_v__ast__error_type_idx) {
+			if (!isnil(g->fn_decl) && g->fn_decl->is_test) {
+				string test_error_var = v__gen__c__Gen_new_tmp_var(g);
+				v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ret_typ}}, {_SLIT(" "), 0xfe10, {.d_s = test_error_var}}, {_SLIT(" = "), 0, { .d_c = 0 }}})) );
+				v__gen__c__Gen_gen_optional_error(g, g->fn_decl->return_type, (*(v__ast__Expr*)/*ee elem_typ */array_get(node.exprs, 0)));
+				v__gen__c__Gen_writeln(g, _SLIT(";"));
+				v__gen__c__Gen_write_defer_stmts_when_needed(g);
+				v__gen__c__Gen_gen_failing_return_error_for_test_fn(g, node, test_error_var);
+				// Defer begin
+				if (v__gen__c__Gen_return_stmt_defer_0) {
+					g->inside_return = false;
+				}
+				// Defer end
+				return;
+			}
 			if (use_tmp_var) {
 				v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ret_typ}}, {_SLIT(" "), 0xfe10, {.d_s = tmpvar}}, {_SLIT(" = "), 0, { .d_c = 0 }}})) );
 			} else {
@@ -49869,7 +49884,7 @@ bool v__gen__c__Gen_return_stmt_defer_0 = false;
 			_t4066 = v__ast__Type_has_flag((*(v__ast__Type*)/*ee elem_typ */array_get(node.types, 0)), v__ast__TypeFlag_optional);
 			;
 		}		bool expr_type_is_opt = _t4066;
-		if (fn_return_is_optional && !expr_type_is_opt && !(string__eq(return_sym->name, _SLIT("Option2")) || string__eq(return_sym->name, _SLIT("Option")))) {
+		if (fn_return_is_optional && !expr_type_is_opt && !string__eq(return_sym->name, _SLIT("Option"))) {
 			string styp = v__gen__c__Gen_base_type(g, g->fn_decl->return_type);
 			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ret_typ}}, {_SLIT(" "), 0xfe10, {.d_s = tmpvar}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("opt_ok(&("), 0xfe10, {.d_s = styp}}, {_SLIT("[]) { "), 0, { .d_c = 0 }}})) );
@@ -50027,9 +50042,6 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_const_decl_simple_define(v__gen__c__Gen* g, 
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_const_decl_init_later(v__gen__c__Gen* g, string mod, string name, v__ast__Expr expr, v__ast__Type typ, bool unwrap_option) {
 	string styp = v__gen__c__Gen_typ(g, typ);
-	if (string__eq(styp, _SLIT("Option2"))) {
-		styp = _SLIT("IError");
-	}
 	string cname =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_const_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) ;
 	strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = cname}}, {_SLIT("; // inited later"), 0, { .d_c = 0 }}})) );
 	if (string__eq(cname, _SLIT("_const_os__args"))) {
@@ -50466,9 +50478,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t4086 = 0; _t4086 < (*typ.info._v__ast__Struct).fields.len; ++_t4086) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t4086];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag_optional)) {
-						multi_return_string_string mr_163969 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_163969.arg0;
-						string base = mr_163969.arg1;
+						multi_return_string_string mr_164215 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_164215.arg0;
+						string base = mr_164215.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -50705,11 +50717,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_172145 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_172145.arg0;
-				string pafile = mr_172145.arg1;
-				string pamod = mr_172145.arg2;
-				string pafn = mr_172145.arg3;
+				multi_return_int_string_string_string mr_172391 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_172391.arg0;
+				string pafile = mr_172391.arg1;
+				string pamod = mr_172391.arg2;
+				string pafn = mr_172391.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})) );
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})) );
@@ -50829,11 +50841,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind_map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_175364 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_175364.arg0;
-		string key_eq_fn = mr_175364.arg1;
-		string clone_fn = mr_175364.arg2;
-		string free_fn = mr_175364.arg3;
+		multi_return_string_string_string_string mr_175610 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_175610.arg0;
+		string key_eq_fn = mr_175610.arg1;
+		string clone_fn = mr_175610.arg2;
+		string free_fn = mr_175610.arg3;
 		string init_str =  str_intp(7, _MOV((StrIntpData[]){{_SLIT("new_map(sizeof("), 0xfe10, {.d_s = v__gen__c__Gen_typ(g, info.key_type)}}, {_SLIT("), sizeof("), 0xfe10, {.d_s = v__gen__c__Gen_typ(g, info.value_type)}}, {_SLIT("), "), 0xfe10, {.d_s = hash_fn}}, {_SLIT(", "), 0xfe10, {.d_s = key_eq_fn}}, {_SLIT(", "), 0xfe10, {.d_s = clone_fn}}, {_SLIT(", "), 0xfe10, {.d_s = free_fn}}, {_SLIT(")"), 0, { .d_c = 0 }}})) ;
 		if (v__ast__Type_has_flag(typ, v__ast__TypeFlag_shared_f)) {
 			string mtyp =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("__shared__Map_"), 0xfe10, {.d_s = key_typ->cname}}, {_SLIT("_"), 0xfe10, {.d_s = v__ast__Table_get_type_symbol(g->table, info.value_type)->cname}}, {_SLIT0, 0, { .d_c = 0 }}})) ;
@@ -51326,8 +51338,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone(&method.params);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string mr_192387 = v__gen__c__Gen_fn_args(g, params, false);
-					Array_string fargs = mr_192387.arg0;
+					multi_return_Array_string_Array_string mr_192633 = v__gen__c__Gen_fn_args(g, params, false);
+					Array_string fargs = mr_192633.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -51578,6 +51590,17 @@ void v__gen__c__Gen_gen_failing_error_propagation_for_test_fn(v__gen__c__Gen* g,
 	string pafile = mr_4703.arg1;
 	string pamod = mr_4703.arg2;
 	string pafn = mr_4703.arg3;
+	v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\tmain__cb_propagate_test_error("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *("), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg) );"), 0, { .d_c = 0 }}})) );
+	v__gen__c__Gen_writeln(g, _SLIT("\tg_test_fails++;"));
+	v__gen__c__Gen_writeln(g, _SLIT("\tlongjmp(g_jump_buffer, 1);"));
+}
+
+void v__gen__c__Gen_gen_failing_return_error_for_test_fn(v__gen__c__Gen* g, v__ast__Return return_stmt, string cvar_name) {
+	multi_return_int_string_string_string mr_5291 = v__gen__c__Gen_panic_debug_info(g, return_stmt.pos);
+	int paline = mr_5291.arg0;
+	string pafile = mr_5291.arg1;
+	string pamod = mr_5291.arg2;
+	string pafn = mr_5291.arg3;
 	v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\tmain__cb_propagate_test_error("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *("), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg) );"), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_writeln(g, _SLIT("\tg_test_fails++;"));
 	v__gen__c__Gen_writeln(g, _SLIT("\tlongjmp(g_jump_buffer, 1);"));
@@ -71481,7 +71504,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__gen__c__cmp_str = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("eq"), _SLIT("ne"), _SLIT("gt"), _SLIT("lt"), _SLIT("ge"), _SLIT("le")}));
 	_const_v__gen__c__cmp_rev = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("eq"), _SLIT("ne"), _SLIT("lt"), _SLIT("gt"), _SLIT("le"), _SLIT("ge")}));
 	_const_v__gen__c__skip_struct_init = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("struct stat"), _SLIT("struct addrinfo")}));
-	_const_v__gen__c__builtins = new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){_SLIT("string"), _SLIT("array"), _SLIT("DenseArray"), _SLIT("map"), _SLIT("Error"), _SLIT("IError"), _SLIT("Option2"), _SLIT("Option")}));
+	_const_v__gen__c__builtins = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("string"), _SLIT("array"), _SLIT("DenseArray"), _SLIT("map"), _SLIT("Error"), _SLIT("IError"), _SLIT("Option")}));
 	_const_v__gen__c__c_headers = string__plus(string__plus(string__plus(string__plus(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#include <string.h>\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#ifdef ARM\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((externally_visible,visibility(\"default\")))\n		#else\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((visibility(\"default\")))\n		#endif\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#if defined(__TINYC__) && defined(__has_include)\n// tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n#include <stdarg.h> // for va_list\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\nstatic voidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	v_free(ptr); // heloe\n	return memdup(src, sz);\n}\n\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG 1\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE 1\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#ifndef WIN32_FULL\n	#define WIN32_LEAN_AND_MEAN\n	#endif\n	#ifndef _UNICODE\n	#define _UNICODE\n	#endif\n	#ifndef UNICODE\n	#define UNICODE\n	#endif\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION char __pad\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp\")\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nstatic void* g_live_info = NULL;\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n#ifdef _VFREESTANDING\n#undef _VFREESTANDING\n#endif\n")), _const_v__gen__c__c_wyhash);
 	_const_v__gen__c__bare_c_headers = string__plus(string__plus(string__plus(string__plus(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n\n#define _VFREESTANDING\n\ntypedef long unsigned int size_t;\n\n// Memory allocation related headers\nvoid *malloc(size_t size);\nvoid *calloc(size_t nitems, size_t size);\nvoid *realloc(void *ptr, size_t size);\nvoid *memcpy(void *dest, void *src, size_t n);\nvoid *memset(void *s, int c, size_t n);\nvoid *memmove(void *dest, void *src, size_t n);\n\n// varargs implementation, TODO: works on tcc and gcc, but is very unportable and hacky\ntypedef __builtin_va_list va_list;\n#define va_start(a, b) __builtin_va_start(a, b)\n#define va_end(a)      __builtin_va_end(a)\n#define va_arg(a, b)   __builtin_va_arg(a, b)\n#define va_copy(a, b)  __builtin_va_copy(a, b)\n\n//================================== GLOBALS =================================*/\n//byte g_str_buf[1024];\nbyte* g_str_buf;\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\nstatic voidptr memfreedup(voidptr ptr, voidptr src, int sz) {\n	v_free(ptr); // heloe\n	return memdup(src, sz);\n}\n\n")), _const_v__gen__c__c_wyhash);
 	// Initializations for module v.gen.js :
