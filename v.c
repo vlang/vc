@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "452a51c"
+#define V_COMMIT_HASH "4b2319f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ce3e71c"
+	#define V_COMMIT_HASH "452a51c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "452a51c"
+	#define V_CURRENT_COMMIT_HASH "4b2319f"
 #endif
 
 // V comptime_defines:
@@ -7536,14 +7536,14 @@ void v__gen__native__Gen_error_with_pos(v__gen__native__Gen* g, string s, v__tok
 #define _const_v__gen__native__s_attr_loc_reloc 0x00000100
 #define _const_v__gen__native__macho_symcmd_size 0x18
 #define _const_v__gen__native__macho_d_size 0x50
-#define _const_v__gen__native__lc_symtab 0x2
-#define _const_v__gen__native__lc_dysymtab 0xb
 #define _const_v__gen__native__mh_object 1
 #define _const_v__gen__native__mh_execute 2
+#define _const_v__gen__native__lc_dysymtab 0xb
+#define _const_v__gen__native__lc_load_dylib 0xc
+#define _const_v__gen__native__lc_load_dylinker 0xe
 #define _const_v__gen__native__lc_main 0x80000028
 #define _const_v__gen__native__lc_segment_64 0x19
-#define _const_v__gen__native__lc_load_dylinker 0xe
-#define _const_v__gen__native__lc_load_dylib 0xc
+#define _const_v__gen__native__lc_symtab 0x2
 VV_LOCAL_SYMBOL void v__gen__native__Gen_macho_segment64_pagezero(v__gen__native__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_macho_segment64_linkedit(v__gen__native__Gen* g);
 VV_LOCAL_SYMBOL int v__gen__native__Gen_macho_header(v__gen__native__Gen* g, int ncmds, int bintype);
@@ -27082,7 +27082,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ce3e71c"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("452a51c"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -60193,11 +60193,10 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_fn_decl(v__gen__native__Gen* g, v__ast_
 	if (is_main) {
 		v__ast__IntegerLiteral zero = (v__ast__IntegerLiteral){.val = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},};
 		v__gen__native__Gen_gen_exit(g, v__ast__IntegerLiteral_to_sumtype_v__ast__Expr(&zero));
+		return;
 	}
-	if (!is_main) {
-		v__gen__native__Gen_add8(g, v__gen__native__Register_rsp, 0x10);
-		v__gen__native__Gen_pop(g, v__gen__native__Register_rbp);
-	}
+	v__gen__native__Gen_add8(g, v__gen__native__Register_rsp, 0x10);
+	v__gen__native__Gen_pop(g, v__gen__native__Register_rbp);
 	v__gen__native__Gen_ret(g);
 }
 
@@ -60811,7 +60810,7 @@ VV_LOCAL_SYMBOL Array_int v__gen__native__Gen_macho_segment64_text(v__gen__nativ
 	v__gen__native__Gen_write32(g, _const_v__gen__native__lc_segment_64);
 	v__gen__native__Gen_write32(g, 152);
 	v__gen__native__Gen_write_string_with_padding(g, _SLIT("__TEXT"), 16);
-	v__gen__native__Gen_write64(g, 0x100001000);
+	v__gen__native__Gen_write64(g, 0x100000000);
 	array_push((array*)&patch, _MOV((int[]){ g->buf.len }));
 	v__gen__native__Gen_write64(g, 0x00001000);
 	v__gen__native__Gen_write64(g, 0x00000000);
@@ -60823,7 +60822,7 @@ VV_LOCAL_SYMBOL Array_int v__gen__native__Gen_macho_segment64_text(v__gen__nativ
 	v__gen__native__Gen_write32(g, 0);
 	v__gen__native__Gen_write_string_with_padding(g, _SLIT("__text"), 16);
 	v__gen__native__Gen_write_string_with_padding(g, _SLIT("__TEXT"), 16);
-	v__gen__native__Gen_write64(g, 0x0000000100002000);
+	v__gen__native__Gen_write64(g, 0x0000000100001000);
 	array_push((array*)&patch, _MOV((int[]){ g->buf.len }));
 	v__gen__native__Gen_write64(g, 0);
 	v__gen__native__Gen_write32(g, 4096);
@@ -61081,7 +61080,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_write_symbol(v__gen__native__Gen* g, v_
 VV_LOCAL_SYMBOL int v__gen__native__Gen_sym_string_table(v__gen__native__Gen* g) {
 	int begin = g->buf.len;
 	v__gen__native__Gen_zeroes(g, 1);
-	i64 at = ((i64)(0x100001000));
+	i64 at = ((i64)(0x100000000));
 	// FOR IN array
 	for (int i = 0; i < g->strings.len; ++i) {
 		string s = ((string*)g->strings.data)[i];
