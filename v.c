@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "27f3737"
+#define V_COMMIT_HASH "007ba51"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "43acb5a"
+	#define V_COMMIT_HASH "27f3737"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "27f3737"
+	#define V_CURRENT_COMMIT_HASH "007ba51"
 #endif
 
 // V comptime_defines:
@@ -27189,7 +27189,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("43acb5a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("27f3737"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -70811,6 +70811,8 @@ VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v) {
 			}
 		}
 		#endif
+		string msg_mv =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("os.mv_by_cp "), 0xfe10, {.d_s = v->out_name_c}}, {_SLIT(" => "), 0xfe10, {.d_s = v->pref->out_name}}, {_SLIT0, 0, { .d_c = 0 }}})) ;
+		v__util__timing_start(msg_mv);
 		Option_void _t5504 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
 		if (_t5504.state != 0 && _t5504.err._typ != _IError_None___index) {
 			IError err = _t5504.err;
@@ -70818,6 +70820,7 @@ VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v) {
 		;
 		}
 		;
+		v__util__timing_measure(msg_mv);
 		bool _t5505 = true;
 		return _t5505;
 	}
@@ -71109,10 +71112,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	}
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_24270 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_24270.arg0;
-	Array_string others = mr_24270.arg1;
-	Array_string libs = mr_24270.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24379 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24379.arg0;
+	Array_string others = mr_24379.arg1;
+	Array_string libs = mr_24379.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
@@ -72238,6 +72241,7 @@ v__util__Timers* timers;
 	main__main_defer_0 = true;
 	v__util__Timers_start(timers, _SLIT("v start"));
 	v__util__Timers_show(timers, _SLIT("v start"));
+	v__util__Timers_start(timers, _SLIT("parse_CLI_args"));
 	Array_string args = array_slice(_const_os__args, 1, _const_os__args.len);
 	if (args.len == 0 || (string__eq((*(string*)/*ee elem_typ */array_get(args, 0)), _SLIT("-")) || string__eq((*(string*)/*ee elem_typ */array_get(args, 0)), _SLIT("repl")))) {
 		if (args.len == 0) {
@@ -72258,15 +72262,14 @@ v__util__Timers* timers;
 		return;
 	}
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1658 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
-	v__pref__Preferences* prefs = mr_1658.arg0;
-	string command = mr_1658.arg1;
-	if (prefs->is_verbose) {
-	}
+	multi_return_v__pref__Preferences_string mr_1690 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
+	v__pref__Preferences* prefs = mr_1690.arg0;
+	string command = mr_1690.arg1;
 	if (prefs->use_cache && string__eq(os__user_os(), _SLIT("windows"))) {
 		eprintln(_SLIT("-usecache is currently disabled on windows"));
 		v_exit(1);
 	}
+	v__util__Timers_show(timers, _SLIT("parse_CLI_args"));
 	if ((Array_string_contains(_const_main__external_tools, command))) {
 		v__util__launch_tool(prefs->is_verbose, string__plus(_SLIT("v"), command), array_slice(_const_os__args, 1, _const_os__args.len));
 		// Defer begin
