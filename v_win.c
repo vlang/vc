@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "86778d0"
+#define V_COMMIT_HASH "0615f2e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8a49708"
+	#define V_COMMIT_HASH "86778d0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "86778d0"
+	#define V_CURRENT_COMMIT_HASH "0615f2e"
 #endif
 
 // V comptime_defines:
@@ -26720,7 +26720,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8a49708"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("86778d0"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -69393,6 +69393,15 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("missing return at end of function `"), 0xfe10, {.d_s = node->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node->pos);
 		}
 	}
+	if (node->is_method) {
+		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, node->receiver.typ);
+		if (sym->kind == v__ast__Kind_struct_) {
+			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 410) /*expected idx: 410, name: v.ast.Struct */ ;
+			if (info.is_generic && c->table->cur_fn->generic_names.len == 0) {
+				v__checker__Checker_error(c, _SLIT("receiver must specify the generic type names, e.g. Foo<T>"), node->method_type_pos);
+			}
+		}
+	}
 	c->returns = false;
 	node->source_file = c->file;
 }
@@ -69453,10 +69462,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5267 = 0; _t5267 < sym_app->methods.len; ++_t5267) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5267];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_237176 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_237176.arg0;
-				int nroute_attributes = mr_237176.arg1;
-				int nargs = mr_237176.arg2;
+				multi_return_bool_int_int mr_237483 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_237483.arg0;
+				int nroute_attributes = mr_237483.arg1;
+				int nargs = mr_237483.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
