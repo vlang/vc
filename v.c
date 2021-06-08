@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a224305"
+#define V_COMMIT_HASH "49de1f8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3dc4d13"
+	#define V_COMMIT_HASH "a224305"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a224305"
+	#define V_CURRENT_COMMIT_HASH "49de1f8"
 #endif
 
 // V comptime_defines:
@@ -7630,7 +7630,7 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl*
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_unwrap_generic_struct(v__checker__Checker* c, v__ast__Type struct_type, Array_string generic_names, Array_v__ast__Type concrete_types);
 v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_div_mod_by_zero(v__checker__Checker* c, v__ast__Expr expr, v__token__Kind op_kind);
-v__ast__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* infix_expr);
+v__ast__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* node);
 VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast__Expr expr);
 v__ast__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__CallExpr* call_expr);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_map_and_filter(v__checker__Checker* c, bool is_map, v__ast__Type elem_typ, v__ast__CallExpr call_expr);
@@ -27288,7 +27288,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3dc4d13"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a224305"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -63838,47 +63838,47 @@ VV_LOCAL_SYMBOL void v__checker__Checker_check_div_mod_by_zero(v__checker__Check
 	;
 }
 
-v__ast__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* infix_expr) {
+v__ast__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* node) {
 bool v__checker__Checker_infix_expr_defer_0 = false;
 v__ast__Type former_expected_type;
 	 former_expected_type = c->expected_type;
 	v__checker__Checker_infix_expr_defer_0 = true;
-	v__ast__Type left_type = v__checker__Checker_expr(c, infix_expr->left);
-	infix_expr->left_type = left_type;
+	v__ast__Type left_type = v__checker__Checker_expr(c, node->left);
+	node->left_type = left_type;
 	c->expected_type = left_type;
-	v__ast__Type right_type = v__checker__Checker_expr(c, infix_expr->right);
-	infix_expr->right_type = right_type;
+	v__ast__Type right_type = v__checker__Checker_expr(c, node->right);
+	node->right_type = right_type;
 	if (v__ast__Type_is_number(left_type) && !v__ast__Type_is_ptr(left_type) && (right_type == _const_v__ast__int_literal_type || right_type == _const_v__ast__float_literal_type)) {
-		infix_expr->right_type = left_type;
+		node->right_type = left_type;
 	}
 	if (v__ast__Type_is_number(right_type) && !v__ast__Type_is_ptr(right_type) && (left_type == _const_v__ast__int_literal_type || left_type == _const_v__ast__float_literal_type)) {
-		infix_expr->left_type = right_type;
+		node->left_type = right_type;
 	}
-	v__ast__TypeSymbol* right = v__ast__Table_get_type_symbol(c->table, right_type);
+	v__ast__TypeSymbol* right_sym = v__ast__Table_get_type_symbol(c->table, right_type);
 	v__ast__TypeSymbol* right_final = v__ast__Table_get_final_type_symbol(c->table, right_type);
-	v__ast__TypeSymbol* left = v__ast__Table_get_type_symbol(c->table, left_type);
+	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(c->table, left_type);
 	v__ast__TypeSymbol* left_final = v__ast__Table_get_final_type_symbol(c->table, left_type);
-	v__token__Position left_pos = v__ast__Expr_position(infix_expr->left);
-	v__token__Position right_pos = v__ast__Expr_position(infix_expr->right);
+	v__token__Position left_pos = v__ast__Expr_position(node->left);
+	v__token__Position right_pos = v__ast__Expr_position(node->right);
 	v__token__Position left_right_pos = v__token__Position_extend(left_pos, right_pos);
-	if ((v__ast__Type_is_ptr(left_type) || v__ast__TypeSymbol_is_pointer(left)) && (infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_minus)) {
-		if (!c->inside_unsafe && !v__ast__Expr_is_auto_deref_var(infix_expr->left) && !v__ast__Expr_is_auto_deref_var(infix_expr->right)) {
+	if ((v__ast__Type_is_ptr(left_type) || v__ast__TypeSymbol_is_pointer(left_sym)) && (node->op == v__token__Kind_plus || node->op == v__token__Kind_minus)) {
+		if (!c->inside_unsafe && !v__ast__Expr_is_auto_deref_var(node->left) && !v__ast__Expr_is_auto_deref_var(node->right)) {
 			v__checker__Checker_warn(c, _SLIT("pointer arithmetic is only allowed in `unsafe` blocks"), left_pos);
 		}
 		if (v__ast__Type_alias_eq(left_type, _const_v__ast__voidptr_type)) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` cannot be used with `voidptr`"), 0, { .d_c = 0 }}})) , left_pos);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` cannot be used with `voidptr`"), 0, { .d_c = 0 }}})) , left_pos);
 		}
 	}
 	v__ast__Type return_type = left_type;
-	if (infix_expr->op != v__token__Kind_key_is) {
-		if (infix_expr->left._typ == 228 /* v.ast.Ident */) {
-			if ((*infix_expr->left._v__ast__Ident).is_mut) {
-				v__checker__Checker_error(c, _SLIT("remove unnecessary `mut`"), (*infix_expr->left._v__ast__Ident).mut_pos);
+	if (node->op != v__token__Kind_key_is) {
+		if (node->left._typ == 228 /* v.ast.Ident */) {
+			if ((*node->left._v__ast__Ident).is_mut) {
+				v__checker__Checker_error(c, _SLIT("remove unnecessary `mut`"), (*node->left._v__ast__Ident).mut_pos);
 			}
 		}
-		else if (infix_expr->left._typ == 247 /* v.ast.SelectorExpr */) {
-			if ((*infix_expr->left._v__ast__SelectorExpr).is_mut) {
-				v__checker__Checker_error(c, _SLIT("remove unnecessary `mut`"), (*infix_expr->left._v__ast__SelectorExpr).mut_pos);
+		else if (node->left._typ == 247 /* v.ast.SelectorExpr */) {
+			if ((*node->left._v__ast__SelectorExpr).is_mut) {
+				v__checker__Checker_error(c, _SLIT("remove unnecessary `mut`"), (*node->left._v__ast__SelectorExpr).mut_pos);
 			}
 		}
 		
@@ -63886,22 +63886,22 @@ v__ast__Type former_expected_type;
 		}
 		;
 	}
-	bool eq_ne = (infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne);
+	bool eq_ne = (node->op == v__token__Kind_eq || node->op == v__token__Kind_ne);
 
-	if (infix_expr->op == (v__token__Kind_eq) || infix_expr->op == (v__token__Kind_ne)) {
-		bool is_mismatch = (left->kind == v__ast__Kind_alias && (right->kind == v__ast__Kind_struct_ || right->kind == v__ast__Kind_array || right->kind == v__ast__Kind_sum_type)) || (right->kind == v__ast__Kind_alias && (left->kind == v__ast__Kind_struct_ || left->kind == v__ast__Kind_array || left->kind == v__ast__Kind_sum_type));
+	if (node->op == (v__token__Kind_eq) || node->op == (v__token__Kind_ne)) {
+		bool is_mismatch = (left_sym->kind == v__ast__Kind_alias && (right_sym->kind == v__ast__Kind_struct_ || right_sym->kind == v__ast__Kind_array || right_sym->kind == v__ast__Kind_sum_type)) || (right_sym->kind == v__ast__Kind_alias && (left_sym->kind == v__ast__Kind_struct_ || left_sym->kind == v__ast__Kind_array || left_sym->kind == v__ast__Kind_sum_type));
 		if (is_mismatch) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("possible type mismatch of compared values of `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` operation"), 0, { .d_c = 0 }}})) , left_right_pos);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("possible type mismatch of compared values of `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` operation"), 0, { .d_c = 0 }}})) , left_right_pos);
 		}
 	}
-	else if (infix_expr->op == (v__token__Kind_key_in) || infix_expr->op == (v__token__Kind_not_in)) {
+	else if (node->op == (v__token__Kind_key_in) || node->op == (v__token__Kind_not_in)) {
 
 		if (right_final->kind == (v__ast__Kind_array)) {
 			v__ast__Type elem_type = v__ast__TypeSymbol_array_info(right_final).elem_type;
 			Option_void _t4884 = v__checker__Checker_check_expected(c, left_type, elem_type);
 			if (_t4884.state != 0 && _t4884.err._typ != _IError_None___index) {
 				IError err = _t4884.err;
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` does not match the array element type: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , left_right_pos);
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` does not match the array element type: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , left_right_pos);
 			;
 			}
 			;
@@ -63911,24 +63911,24 @@ v__ast__Type former_expected_type;
 			Option_void _t4885 = v__checker__Checker_check_expected(c, left_type, map_info.key_type);
 			if (_t4885.state != 0 && _t4885.err._typ != _IError_None___index) {
 				IError err = _t4885.err;
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` does not match the map key type: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , left_right_pos);
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` does not match the map key type: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , left_right_pos);
 			;
 			}
 			;
-			infix_expr->left_type = map_info.key_type;
+			node->left_type = map_info.key_type;
 		}
 		else if (right_final->kind == (v__ast__Kind_string)) {
 			v__checker__Checker_warn(c, _SLIT("use `str.contains(substr)` instead of `substr in str`"), left_right_pos);
 			Option_void _t4886 = v__checker__Checker_check_expected(c, left_type, right_type);
 			if (_t4886.state != 0 && _t4886.err._typ != _IError_None___index) {
 				IError err = _t4886.err;
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` does not match: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , left_right_pos);
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` does not match: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , left_right_pos);
 			;
 			}
 			;
 		}
 		else {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` can only be used with an array/map/string"), 0, { .d_c = 0 }}})) , infix_expr->pos);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` can only be used with an array/map/string"), 0, { .d_c = 0 }}})) , node->pos);
 		};
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
@@ -63937,17 +63937,17 @@ v__ast__Type former_expected_type;
 		// Defer end
 		return _const_v__ast__bool_type;
 	}
-	else if (infix_expr->op == (v__token__Kind_plus) || infix_expr->op == (v__token__Kind_minus) || infix_expr->op == (v__token__Kind_mul) || infix_expr->op == (v__token__Kind_div) || infix_expr->op == (v__token__Kind_mod) || infix_expr->op == (v__token__Kind_xor) || infix_expr->op == (v__token__Kind_amp) || infix_expr->op == (v__token__Kind_pipe)) {
-		if ((right->info)._typ == 390 /* v.ast.Alias */ && (/* as */ *(v__ast__Alias*)__as_cast((right->info)._v__ast__Alias,(right->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).language != v__ast__Language_c && string__eq(c->mod, (*(string*)/*ee elem_typ */array_get(string_split(v__ast__Table_type_to_str(c->table, right_type), _SLIT(".")), 0))) && v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right->info)._v__ast__Alias,(right->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type))) {
-			right = v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right->info)._v__ast__Alias,(right->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type);
+	else if (node->op == (v__token__Kind_plus) || node->op == (v__token__Kind_minus) || node->op == (v__token__Kind_mul) || node->op == (v__token__Kind_div) || node->op == (v__token__Kind_mod) || node->op == (v__token__Kind_xor) || node->op == (v__token__Kind_amp) || node->op == (v__token__Kind_pipe)) {
+		if ((right_sym->info)._typ == 390 /* v.ast.Alias */ && (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).language != v__ast__Language_c && string__eq(c->mod, (*(string*)/*ee elem_typ */array_get(string_split(v__ast__Table_type_to_str(c->table, right_type), _SLIT(".")), 0))) && v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type))) {
+			right_sym = v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type);
 		}
-		if ((left->info)._typ == 390 /* v.ast.Alias */ && (/* as */ *(v__ast__Alias*)__as_cast((left->info)._v__ast__Alias,(left->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).language != v__ast__Language_c && string__eq(c->mod, (*(string*)/*ee elem_typ */array_get(string_split(v__ast__Table_type_to_str(c->table, left_type), _SLIT(".")), 0))) && v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left->info)._v__ast__Alias,(left->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type))) {
-			left = v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left->info)._v__ast__Alias,(left->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type);
+		if ((left_sym->info)._typ == 390 /* v.ast.Alias */ && (/* as */ *(v__ast__Alias*)__as_cast((left_sym->info)._v__ast__Alias,(left_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).language != v__ast__Language_c && string__eq(c->mod, (*(string*)/*ee elem_typ */array_get(string_split(v__ast__Table_type_to_str(c->table, left_type), _SLIT(".")), 0))) && v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left_sym->info)._v__ast__Alias,(left_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type))) {
+			left_sym = v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left_sym->info)._v__ast__Alias,(left_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type);
 		}
-		if (left->kind == v__ast__Kind_alias && (left->info)._typ == 390 /* v.ast.Alias */ && !(v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left->info)._v__ast__Alias,(left->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type)))) {
-			if (v__ast__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
+		if (left_sym->kind == v__ast__Kind_alias && (left_sym->info)._typ == 390 /* v.ast.Alias */ && !(v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left_sym->info)._v__ast__Alias,(left_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type)))) {
+			if (v__ast__TypeSymbol_has_method(left_sym, v__token__Kind_str(node->op))) {
 				Option_v__ast__Fn _t4888;
-				if (_t4888 = v__ast__TypeSymbol_find_method(left, v__token__Kind_str(infix_expr->op)), _t4888.state == 0) {
+				if (_t4888 = v__ast__TypeSymbol_find_method(left_sym, v__token__Kind_str(node->op)), _t4888.state == 0) {
 					v__ast__Fn method = *(v__ast__Fn*)_t4888.data;
 					return_type = method.return_type;
 				} else {
@@ -63958,15 +63958,15 @@ v__ast__Type former_expected_type;
 				string left_name = v__ast__Table_type_to_str(c->table, left_type);
 				string right_name = v__ast__Table_type_to_str(c->table, right_type);
 				if (string__eq(left_name, right_name)) {
-					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
+					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				} else {
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mismatched types `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` and `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				}
 			}
-		} else if (right->kind == v__ast__Kind_alias && (right->info)._typ == 390 /* v.ast.Alias */ && !(v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right->info)._v__ast__Alias,(right->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type)))) {
-			if (v__ast__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
+		} else if (right_sym->kind == v__ast__Kind_alias && (right_sym->info)._typ == 390 /* v.ast.Alias */ && !(v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Alias */ ).parent_type)))) {
+			if (v__ast__TypeSymbol_has_method(right_sym, v__token__Kind_str(node->op))) {
 				Option_v__ast__Fn _t4889;
-				if (_t4889 = v__ast__TypeSymbol_find_method(right, v__token__Kind_str(infix_expr->op)), _t4889.state == 0) {
+				if (_t4889 = v__ast__TypeSymbol_find_method(right_sym, v__token__Kind_str(node->op)), _t4889.state == 0) {
 					v__ast__Fn method = *(v__ast__Fn*)_t4889.data;
 					return_type = method.return_type;
 				} else {
@@ -63977,16 +63977,16 @@ v__ast__Type former_expected_type;
 				string left_name = v__ast__Table_type_to_str(c->table, left_type);
 				string right_name = v__ast__Table_type_to_str(c->table, right_type);
 				if (string__eq(left_name, right_name)) {
-					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
+					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				} else {
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mismatched types `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` and `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				}
 			}
 		}
-		if ((left->kind == v__ast__Kind_array || left->kind == v__ast__Kind_array_fixed || left->kind == v__ast__Kind_map || left->kind == v__ast__Kind_struct_)) {
-			if (v__ast__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op))) {
+		if ((left_sym->kind == v__ast__Kind_array || left_sym->kind == v__ast__Kind_array_fixed || left_sym->kind == v__ast__Kind_map || left_sym->kind == v__ast__Kind_struct_)) {
+			if (v__ast__TypeSymbol_has_method(left_sym, v__token__Kind_str(node->op))) {
 				Option_v__ast__Fn _t4890;
-				if (_t4890 = v__ast__TypeSymbol_find_method(left, v__token__Kind_str(infix_expr->op)), _t4890.state == 0) {
+				if (_t4890 = v__ast__TypeSymbol_find_method(left_sym, v__token__Kind_str(node->op)), _t4890.state == 0) {
 					v__ast__Fn method = *(v__ast__Fn*)_t4890.data;
 					return_type = method.return_type;
 				} else {
@@ -63997,15 +63997,15 @@ v__ast__Type former_expected_type;
 				string left_name = v__ast__Table_type_to_str(c->table, left_type);
 				string right_name = v__ast__Table_type_to_str(c->table, right_type);
 				if (string__eq(left_name, right_name)) {
-					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
+					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				} else {
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mismatched types `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` and `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				}
 			}
-		} else if ((right->kind == v__ast__Kind_array || right->kind == v__ast__Kind_array_fixed || right->kind == v__ast__Kind_map || right->kind == v__ast__Kind_struct_)) {
-			if (v__ast__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op))) {
+		} else if ((right_sym->kind == v__ast__Kind_array || right_sym->kind == v__ast__Kind_array_fixed || right_sym->kind == v__ast__Kind_map || right_sym->kind == v__ast__Kind_struct_)) {
+			if (v__ast__TypeSymbol_has_method(right_sym, v__token__Kind_str(node->op))) {
 				Option_v__ast__Fn _t4891;
-				if (_t4891 = v__ast__TypeSymbol_find_method(right, v__token__Kind_str(infix_expr->op)), _t4891.state == 0) {
+				if (_t4891 = v__ast__TypeSymbol_find_method(right_sym, v__token__Kind_str(node->op)), _t4891.state == 0) {
 					v__ast__Fn method = *(v__ast__Fn*)_t4891.data;
 					return_type = method.return_type;
 				} else {
@@ -64016,7 +64016,7 @@ v__ast__Type former_expected_type;
 				string left_name = v__ast__Table_type_to_str(c->table, left_type);
 				string right_name = v__ast__Table_type_to_str(c->table, right_type);
 				if (string__eq(left_name, right_name)) {
-					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
+					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				} else {
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mismatched types `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` and `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				}
@@ -64029,55 +64029,55 @@ v__ast__Type former_expected_type;
 				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mismatched types `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` and `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 			} else if (v__ast__Type_has_flag(promoted_type, v__ast__TypeFlag_optional)) {
 				string s = v__ast__Table_type_to_str(c->table, promoted_type);
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` cannot be used with `"), 0xfe10, {.d_s = s}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , infix_expr->pos);
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` cannot be used with `"), 0xfe10, {.d_s = s}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node->pos);
 			} else if (v__ast__Type_is_float(promoted_type)) {
-				if ((infix_expr->op == v__token__Kind_mod || infix_expr->op == v__token__Kind_xor || infix_expr->op == v__token__Kind_amp || infix_expr->op == v__token__Kind_pipe)) {
+				if ((node->op == v__token__Kind_mod || node->op == v__token__Kind_xor || node->op == v__token__Kind_amp || node->op == v__token__Kind_pipe)) {
 					string side = (v__ast__Type_alias_eq(left_type, promoted_type) ? (_SLIT("left")) : (_SLIT("right")));
 					v__token__Position pos = (v__ast__Type_alias_eq(left_type, promoted_type) ? (left_pos) : (right_pos));
-					string name = (v__ast__Type_alias_eq(left_type, promoted_type) ? (left->name) : (right->name));
-					if (infix_expr->op == v__token__Kind_mod) {
+					string name = (v__ast__Type_alias_eq(left_type, promoted_type) ? (left_sym->name) : (right_sym->name));
+					if (node->op == v__token__Kind_mod) {
 						v__checker__Checker_error(c, _SLIT("float modulo not allowed, use math.fmod() instead"), pos);
 					} else {
-						v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = side}}, {_SLIT(" type of `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` cannot be non-integer type `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , pos);
+						v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = side}}, {_SLIT(" type of `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` cannot be non-integer type `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , pos);
 					}
 				}
 			}
-			if ((infix_expr->op == v__token__Kind_div || infix_expr->op == v__token__Kind_mod)) {
-				v__checker__Checker_check_div_mod_by_zero(c, infix_expr->right, infix_expr->op);
+			if ((node->op == v__token__Kind_div || node->op == v__token__Kind_mod)) {
+				v__checker__Checker_check_div_mod_by_zero(c, node->right, node->op);
 			}
 			return_type = promoted_type;
 		}
 	}
-	else if (infix_expr->op == (v__token__Kind_gt) || infix_expr->op == (v__token__Kind_lt) || infix_expr->op == (v__token__Kind_ge) || infix_expr->op == (v__token__Kind_le)) {
-		if ((left->kind == v__ast__Kind_array || left->kind == v__ast__Kind_array_fixed) && (right->kind == v__ast__Kind_array || right->kind == v__ast__Kind_array_fixed)) {
-			v__checker__Checker_error(c, _SLIT("only `==` and `!=` are defined on arrays"), infix_expr->pos);
-		} else if (left->kind == v__ast__Kind_struct_ && right->kind == v__ast__Kind_struct_ && (infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_lt)) {
-			if (!(v__ast__TypeSymbol_has_method(left, v__token__Kind_str(infix_expr->op)) && v__ast__TypeSymbol_has_method(right, v__token__Kind_str(infix_expr->op)))) {
+	else if (node->op == (v__token__Kind_gt) || node->op == (v__token__Kind_lt) || node->op == (v__token__Kind_ge) || node->op == (v__token__Kind_le)) {
+		if ((left_sym->kind == v__ast__Kind_array || left_sym->kind == v__ast__Kind_array_fixed) && (right_sym->kind == v__ast__Kind_array || right_sym->kind == v__ast__Kind_array_fixed)) {
+			v__checker__Checker_error(c, _SLIT("only `==` and `!=` are defined on arrays"), node->pos);
+		} else if (left_sym->kind == v__ast__Kind_struct_ && right_sym->kind == v__ast__Kind_struct_ && (node->op == v__token__Kind_eq || node->op == v__token__Kind_lt)) {
+			if (!(v__ast__TypeSymbol_has_method(left_sym, v__token__Kind_str(node->op)) && v__ast__TypeSymbol_has_method(right_sym, v__token__Kind_str(node->op)))) {
 				string left_name = v__ast__Table_type_to_str(c->table, left_type);
 				string right_name = v__ast__Table_type_to_str(c->table, right_type);
 				if (string__eq(left_name, right_name)) {
-					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
+					v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("undefined operation `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				} else {
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mismatched types `"), 0xfe10, {.d_s = left_name}}, {_SLIT("` and `"), 0xfe10, {.d_s = right_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 				}
 			}
 		}
-		if (left->kind == v__ast__Kind_struct_ && right->kind == v__ast__Kind_struct_) {
-			if (!v__ast__TypeSymbol_has_method(left, _SLIT("<")) && (infix_expr->op == v__token__Kind_ge || infix_expr->op == v__token__Kind_le)) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot use `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` as `<` operator method is not defined"), 0, { .d_c = 0 }}})) , left_right_pos);
-			} else if (!v__ast__TypeSymbol_has_method(left, _SLIT("<")) && infix_expr->op == v__token__Kind_gt) {
+		if (left_sym->kind == v__ast__Kind_struct_ && right_sym->kind == v__ast__Kind_struct_) {
+			if (!v__ast__TypeSymbol_has_method(left_sym, _SLIT("<")) && (node->op == v__token__Kind_ge || node->op == v__token__Kind_le)) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot use `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` as `<` operator method is not defined"), 0, { .d_c = 0 }}})) , left_right_pos);
+			} else if (!v__ast__TypeSymbol_has_method(left_sym, _SLIT("<")) && node->op == v__token__Kind_gt) {
 				v__checker__Checker_error(c, _SLIT("cannot use `>` as `<=` operator method is not defined"), left_right_pos);
 			}
 		}
 	}
-	else if (infix_expr->op == (v__token__Kind_left_shift)) {
+	else if (node->op == (v__token__Kind_left_shift)) {
 		if (left_final->kind == v__ast__Kind_array) {
-			if (!infix_expr->is_stmt) {
-				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), infix_expr->pos);
+			if (!node->is_stmt) {
+				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), node->pos);
 			}
-			v__checker__Checker_check_expr_opt_call(c, infix_expr->right, right_type);
-			multi_return_string_v__token__Position mr_43000 = v__checker__Checker_fail_if_immutable(c, infix_expr->left);
-			infix_expr->auto_locked = mr_43000.arg0;
+			v__checker__Checker_check_expr_opt_call(c, node->right, right_type);
+			multi_return_string_v__token__Position mr_42687 = v__checker__Checker_fail_if_immutable(c, node->left);
+			node->auto_locked = mr_42687.arg0;
 			v__ast__Type left_value_type = v__ast__Table_value_type(c->table, left_type);
 			v__ast__TypeSymbol* left_value_sym = v__ast__Table_get_type_symbol(c->table, left_value_type);
 			if (left_value_sym->kind == v__ast__Kind_interface_) {
@@ -64109,7 +64109,7 @@ v__ast__Type former_expected_type;
 				// Defer end
 				return _const_v__ast__void_type;
 			}
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot append `"), 0xfe10, {.d_s = right->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = left->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , right_pos);
+			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot append `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , right_pos);
 			// Defer begin
 			if (v__checker__Checker_infix_expr_defer_0) {
 				c->expected_type = former_expected_type;
@@ -64126,7 +64126,7 @@ v__ast__Type former_expected_type;
 			return _t4896;
 		}
 	}
-	else if (infix_expr->op == (v__token__Kind_right_shift)) {
+	else if (node->op == (v__token__Kind_right_shift)) {
 		v__ast__Type _t4897 = v__checker__Checker_check_shift(c, left_type, right_type, left_pos, right_pos);
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
@@ -64135,8 +64135,8 @@ v__ast__Type former_expected_type;
 		// Defer end
 		return _t4897;
 	}
-	else if (infix_expr->op == (v__token__Kind_key_is) || infix_expr->op == (v__token__Kind_not_is)) {
-		v__ast__Expr right_expr = infix_expr->right;
+	else if (node->op == (v__token__Kind_key_is) || node->op == (v__token__Kind_not_is)) {
+		v__ast__Expr right_expr = node->right;
 		v__ast__Type _t4898;
 		if (right_expr._typ == 253 /* v.ast.TypeNode */) {
 			_t4898 = (*right_expr._v__ast__TypeNode).typ;
@@ -64155,15 +64155,15 @@ v__ast__Type former_expected_type;
 				v__ast__Type typ = _t4898;
 		if (!v__ast__Type_alias_eq(typ, ((v__ast__Type)(0)))) {
 			v__ast__TypeSymbol* typ_sym = v__ast__Table_get_type_symbol(c->table, typ);
-			string op = v__token__Kind_str(infix_expr->op);
+			string op = v__token__Kind_str(node->op);
 			if (typ_sym->kind == v__ast__Kind_placeholder) {
 				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = op}}, {_SLIT(": type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("` does not exist"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(right_expr));
 			}
-			if (!(left->kind == v__ast__Kind_interface_ || left->kind == v__ast__Kind_sum_type)) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = op}}, {_SLIT("` can only be used with interfaces and sum types"), 0, { .d_c = 0 }}})) , infix_expr->pos);
-			} else if ((left->info)._typ == 388 /* v.ast.SumType */) {
-				if (!(Array_v__ast__Type_contains((*left->info._v__ast__SumType).variants, typ))) {
-					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = left->name}}, {_SLIT("` has no variant `"), 0xfe10, {.d_s = right->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , infix_expr->pos);
+			if (!(left_sym->kind == v__ast__Kind_interface_ || left_sym->kind == v__ast__Kind_sum_type)) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = op}}, {_SLIT("` can only be used with interfaces and sum types"), 0, { .d_c = 0 }}})) , node->pos);
+			} else if ((left_sym->info)._typ == 388 /* v.ast.SumType */) {
+				if (!(Array_v__ast__Type_contains((*left_sym->info._v__ast__SumType).variants, typ))) {
+					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("` has no variant `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node->pos);
 				}
 			}
 		}
@@ -64174,22 +64174,22 @@ v__ast__Type former_expected_type;
 		// Defer end
 		return _const_v__ast__bool_type;
 	}
-	else if (infix_expr->op == (v__token__Kind_arrow)) {
-		if (left->kind == v__ast__Kind_chan) {
-			v__ast__Chan chan_info = v__ast__TypeSymbol_chan_info(left);
+	else if (node->op == (v__token__Kind_arrow)) {
+		if (left_sym->kind == v__ast__Kind_chan) {
+			v__ast__Chan chan_info = v__ast__TypeSymbol_chan_info(left_sym);
 			v__ast__Type elem_type = chan_info.elem_type;
 			if (!v__checker__Checker_check_types(c, right_type, elem_type)) {
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot push `"), 0xfe10, {.d_s = right->name}}, {_SLIT("` on `"), 0xfe10, {.d_s = left->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , right_pos);
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot push `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("` on `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , right_pos);
 			}
 			if (chan_info.is_mut) {
-				v__checker__Checker_fail_if_immutable(c, infix_expr->right);
+				v__checker__Checker_fail_if_immutable(c, node->right);
 			}
 			if (v__ast__Type_is_ptr(elem_type) && !v__ast__Type_is_ptr(right_type)) {
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot push non-reference `"), 0xfe10, {.d_s = right->name}}, {_SLIT("` on `"), 0xfe10, {.d_s = left->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , right_pos);
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot push non-reference `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("` on `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , right_pos);
 			}
-			v__checker__Checker_stmts(c, infix_expr->or_block.stmts);
+			v__checker__Checker_stmts(c, node->or_block.stmts);
 		} else {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot push on non-channel `"), 0xfe10, {.d_s = left->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_pos);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot push on non-channel `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_pos);
 		}
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
@@ -64198,42 +64198,42 @@ v__ast__Type former_expected_type;
 		// Defer end
 		return _const_v__ast__void_type;
 	}
-	else if (infix_expr->op == (v__token__Kind_and) || infix_expr->op == (v__token__Kind_logical_or)) {
+	else if (node->op == (v__token__Kind_and) || node->op == (v__token__Kind_logical_or)) {
 		if (!c->pref->translated) {
-			if (infix_expr->left_type != _const_v__ast__bool_type_idx) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("left operand for `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` is not a boolean"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(infix_expr->left));
+			if (node->left_type != _const_v__ast__bool_type_idx) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("left operand for `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` is not a boolean"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(node->left));
 			}
-			if (infix_expr->right_type != _const_v__ast__bool_type_idx) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("right operand for `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` is not a boolean"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(infix_expr->right));
+			if (node->right_type != _const_v__ast__bool_type_idx) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("right operand for `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` is not a boolean"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(node->right));
 			}
 		}
-		if ((infix_expr->left)._typ == 232 /* v.ast.InfixExpr */) {
-			if ((*infix_expr->left._v__ast__InfixExpr).op != infix_expr->op && ((*infix_expr->left._v__ast__InfixExpr).op == v__token__Kind_logical_or || (*infix_expr->left._v__ast__InfixExpr).op == v__token__Kind_and)) {
-				v__checker__Checker_error(c, _SLIT("ambiguous boolean expression. use `()` to ensure correct order of operations"), infix_expr->pos);
+		if ((node->left)._typ == 232 /* v.ast.InfixExpr */) {
+			if ((*node->left._v__ast__InfixExpr).op != node->op && ((*node->left._v__ast__InfixExpr).op == v__token__Kind_logical_or || (*node->left._v__ast__InfixExpr).op == v__token__Kind_and)) {
+				v__checker__Checker_error(c, _SLIT("ambiguous boolean expression. use `()` to ensure correct order of operations"), node->pos);
 			}
 		}
 	}
 	else {
 	};
-	if (v__ast__Type_alias_eq(left_type, _const_v__ast__bool_type) && !(infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_logical_or || infix_expr->op == v__token__Kind_and)) {
-		v__checker__Checker_error(c, _SLIT("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), infix_expr->pos);
-	} else if (v__ast__Type_alias_eq(left_type, _const_v__ast__string_type) && !(infix_expr->op == v__token__Kind_plus || infix_expr->op == v__token__Kind_eq || infix_expr->op == v__token__Kind_ne || infix_expr->op == v__token__Kind_lt || infix_expr->op == v__token__Kind_gt || infix_expr->op == v__token__Kind_le || infix_expr->op == v__token__Kind_ge)) {
-		v__checker__Checker_error(c, _SLIT("string types only have the following operators defined: `==`, `!=`, `<`, `>`, `<=`, `>=`, and `+`"), infix_expr->pos);
-	} else if (left->kind == v__ast__Kind_enum_ && right->kind == v__ast__Kind_enum_ && !eq_ne) {
-		v__ast__Enum left_enum = /* as */ *(v__ast__Enum*)__as_cast((left->info)._v__ast__Enum,(left->info)._typ, 397) /*expected idx: 397, name: v.ast.Enum */ ;
-		v__ast__Enum right_enum = /* as */ *(v__ast__Enum*)__as_cast((right->info)._v__ast__Enum,(right->info)._typ, 397) /*expected idx: 397, name: v.ast.Enum */ ;
+	if (v__ast__Type_alias_eq(left_type, _const_v__ast__bool_type) && !(node->op == v__token__Kind_eq || node->op == v__token__Kind_ne || node->op == v__token__Kind_logical_or || node->op == v__token__Kind_and)) {
+		v__checker__Checker_error(c, _SLIT("bool types only have the following operators defined: `==`, `!=`, `||`, and `&&`"), node->pos);
+	} else if (v__ast__Type_alias_eq(left_type, _const_v__ast__string_type) && !(node->op == v__token__Kind_plus || node->op == v__token__Kind_eq || node->op == v__token__Kind_ne || node->op == v__token__Kind_lt || node->op == v__token__Kind_gt || node->op == v__token__Kind_le || node->op == v__token__Kind_ge)) {
+		v__checker__Checker_error(c, _SLIT("string types only have the following operators defined: `==`, `!=`, `<`, `>`, `<=`, `>=`, and `+`"), node->pos);
+	} else if (left_sym->kind == v__ast__Kind_enum_ && right_sym->kind == v__ast__Kind_enum_ && !eq_ne) {
+		v__ast__Enum left_enum = /* as */ *(v__ast__Enum*)__as_cast((left_sym->info)._v__ast__Enum,(left_sym->info)._typ, 397) /*expected idx: 397, name: v.ast.Enum */ ;
+		v__ast__Enum right_enum = /* as */ *(v__ast__Enum*)__as_cast((right_sym->info)._v__ast__Enum,(right_sym->info)._typ, 397) /*expected idx: 397, name: v.ast.Enum */ ;
 		if (left_enum.is_flag && right_enum.is_flag) {
-			if (!(infix_expr->op == v__token__Kind_pipe || infix_expr->op == v__token__Kind_amp)) {
-				v__checker__Checker_error(c, _SLIT("only `==`, `!=`, `|` and `&` are defined on `[flag]` tagged `enum`, use an explicit cast to `int` if needed"), infix_expr->pos);
+			if (!(node->op == v__token__Kind_pipe || node->op == v__token__Kind_amp)) {
+				v__checker__Checker_error(c, _SLIT("only `==`, `!=`, `|` and `&` are defined on `[flag]` tagged `enum`, use an explicit cast to `int` if needed"), node->pos);
 			}
 		} else if (!c->pref->translated) {
-			v__checker__Checker_error(c, _SLIT("only `==` and `!=` are defined on `enum`, use an explicit cast to `int` if needed"), infix_expr->pos);
+			v__checker__Checker_error(c, _SLIT("only `==` and `!=` are defined on `enum`, use an explicit cast to `int` if needed"), node->pos);
 		}
 	}
 	if (v__ast__Table_type_kind(c->table, left_type) == v__ast__Kind_sum_type && !eq_ne) {
-		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot use operator `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` with `"), 0xfe10, {.d_s = left->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , infix_expr->pos);
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot use operator `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` with `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node->pos);
 	} else if (v__ast__Table_type_kind(c->table, right_type) == v__ast__Kind_sum_type && !eq_ne) {
-		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot use operator `"), 0xfe10, {.d_s = v__token__Kind_str(infix_expr->op)}}, {_SLIT("` with `"), 0xfe10, {.d_s = right->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , infix_expr->pos);
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot use operator `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` with `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node->pos);
 	}
 	bool left_is_optional = v__ast__Type_has_flag(left_type, v__ast__TypeFlag_optional);
 	bool right_is_optional = v__ast__Type_has_flag(right_type, v__ast__TypeFlag_optional);
@@ -64257,9 +64257,9 @@ v__ast__Type former_expected_type;
 			// Defer end
 			return return_type;
 		}
-		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("infix expr: cannot use `"), 0xfe10, {.d_s = right->name}}, {_SLIT("` (right expression) as `"), 0xfe10, {.d_s = left->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("infix expr: cannot use `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("` (right expression) as `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , left_right_pos);
 	}
-	v__ast__Type _t4903 = (v__token__Kind_is_relational(infix_expr->op) ? (_const_v__ast__bool_type) : (return_type));
+	v__ast__Type _t4903 = (v__token__Kind_is_relational(node->op) ? (_const_v__ast__bool_type) : (return_type));
 	// Defer begin
 	if (v__checker__Checker_infix_expr_defer_0) {
 		c->expected_type = former_expected_type;
@@ -64325,19 +64325,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag_shared_f)) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("you have to create a handle and `lock` it to modify `shared` "), 0xfe10, {.d_s = kind}}, {_SLIT(" element"), 0, { .d_c = 0 }}})) , v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_51129 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_51129.arg0;
-		pos = mr_51129.arg1;
+		multi_return_string_v__token__Position mr_50692 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_50692.arg0;
+		pos = mr_50692.arg1;
 	}
 	else if (expr._typ == 242 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_51198 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_51198.arg0;
-		pos = mr_51198.arg1;
+		multi_return_string_v__token__Position mr_50761 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_50761.arg0;
+		pos = mr_50761.arg1;
 	}
 	else if (expr._typ == 244 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_51270 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_51270.arg0;
-		pos = mr_51270.arg1;
+		multi_return_string_v__token__Position mr_50833 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_50833.arg0;
+		pos = mr_50833.arg1;
 	}
 	else if (expr._typ == 247 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -64400,9 +64400,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 					string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*expr._v__ast__SelectorExpr).field_name}}, {_SLIT("` of struct `"), 0xfe10, {.d_s = type_str}}, {_SLIT("` is immutable"), 0, { .d_c = 0 }}})) , (*expr._v__ast__SelectorExpr).pos);
 				}
-				multi_return_string_v__token__Position mr_53071 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-				to_lock = mr_53071.arg0;
-				pos = mr_53071.arg1;
+				multi_return_string_v__token__Position mr_52634 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+				to_lock = mr_52634.arg0;
+				pos = mr_52634.arg1;
 			}
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
@@ -64439,9 +64439,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 215 /* v.ast.CallExpr */) {
 		if (string__eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_54190 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_54190.arg0;
-			pos = mr_54190.arg1;
+			multi_return_string_v__token__Position mr_53753 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_53753.arg0;
+			pos = mr_53753.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -64710,9 +64710,9 @@ bool was_inside_c_call;
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_64929 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_64929.arg0;
-			v__token__Position pos = mr_64929.arg1;
+			multi_return_string_v__token__Position mr_64492 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_64492.arg0;
+			v__token__Position pos = mr_64492.arg1;
 			if ((to_lock).len != 0 && rec_share != v__ast__ShareType_shared_t) {
 				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = to_lock}}, {_SLIT(" is `shared` and must be `lock`ed to be passed as `mut`"), 0, { .d_c = 0 }}})) , pos);
 			}
@@ -64801,9 +64801,9 @@ bool was_inside_c_call;
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg.pos);
 			}
 			if (arg.is_mut) {
-				multi_return_string_v__token__Position mr_69197 = v__checker__Checker_fail_if_immutable(c, arg.expr);
-				string to_lock = mr_69197.arg0;
-				v__token__Position pos = mr_69197.arg1;
+				multi_return_string_v__token__Position mr_68760 = v__checker__Checker_fail_if_immutable(c, arg.expr);
+				string to_lock = mr_68760.arg0;
+				v__token__Position pos = mr_68760.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg.share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(arg.expr));
@@ -65405,9 +65405,9 @@ bool was_inside_c_call;
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg.pos);
 		}
 		if (call_arg.is_mut && func.language == v__ast__Language_v) {
-			multi_return_string_v__token__Position mr_88873 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
-			string to_lock = mr_88873.arg0;
-			v__token__Position pos = mr_88873.arg1;
+			multi_return_string_v__token__Position mr_88436 = v__checker__Checker_fail_if_immutable(c, call_arg.expr);
+			string to_lock = mr_88436.arg0;
+			v__token__Position pos = mr_88436.arg1;
 			if (!param.is_mut) {
 				string tok = v__ast__ShareType_str(call_arg.share);
 				v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})) , v__ast__Expr_position(call_arg.expr));
@@ -69603,8 +69603,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})) , node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_207492 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_207492.arg0;
+		multi_return_string_v__token__Position mr_207055 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_207055.arg0;
 	}
 	return typ;
 }
@@ -70643,10 +70643,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5396 = 0; _t5396 < sym_app->methods.len; ++_t5396) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5396];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_237425 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_237425.arg0;
-				int nroute_attributes = mr_237425.arg1;
-				int nargs = mr_237425.arg2;
+				multi_return_bool_int_int mr_236988 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_236988.arg0;
+				int nroute_attributes = mr_236988.arg1;
+				int nargs = mr_236988.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
