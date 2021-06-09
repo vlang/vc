@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "811a3e1"
+#define V_COMMIT_HASH "14519bb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "115edff"
+	#define V_COMMIT_HASH "811a3e1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "811a3e1"
+	#define V_CURRENT_COMMIT_HASH "14519bb"
 #endif
 
 // V comptime_defines:
@@ -8166,50 +8166,28 @@ int _rand__PRNG_rand__wyrand__WyRandRNG_index = 0;
 
 // Methods wrapper for interface "rand__PRNG"
 
-typedef void (*_rand__PRNG_seed_fn)(void* _, Array_u32 seed_data);
-typedef u32 (*_rand__PRNG_u32_fn)(void* _);
-typedef u64 (*_rand__PRNG_u64_fn)(void* _);
-typedef u32 (*_rand__PRNG_u32n_fn)(void* _, u32 max);
-typedef u64 (*_rand__PRNG_u64n_fn)(void* _, u64 max);
-typedef u32 (*_rand__PRNG_u32_in_range_fn)(void* _, u32 min, u32 max);
-typedef u64 (*_rand__PRNG_u64_in_range_fn)(void* _, u64 min, u64 max);
-typedef int (*_rand__PRNG_int_fn)(void* _);
-typedef i64 (*_rand__PRNG_i64_fn)(void* _);
-typedef int (*_rand__PRNG_int31_fn)(void* _);
-typedef i64 (*_rand__PRNG_int63_fn)(void* _);
-typedef int (*_rand__PRNG_intn_fn)(void* _, int max);
-typedef i64 (*_rand__PRNG_i64n_fn)(void* _, i64 max);
-typedef int (*_rand__PRNG_int_in_range_fn)(void* _, int min, int max);
-typedef i64 (*_rand__PRNG_i64_in_range_fn)(void* _, i64 min, i64 max);
-typedef f32 (*_rand__PRNG_f32_fn)(void* _);
-typedef f64 (*_rand__PRNG_f64_fn)(void* _);
-typedef f32 (*_rand__PRNG_f32n_fn)(void* _, f32 max);
-typedef f64 (*_rand__PRNG_f64n_fn)(void* _, f64 max);
-typedef f32 (*_rand__PRNG_f32_in_range_fn)(void* _, f32 min, f32 max);
-typedef f64 (*_rand__PRNG_f64_in_range_fn)(void* _, f64 min, f64 max);
-
 struct _rand__PRNG_interface_methods {
-	_rand__PRNG_seed_fn _method_seed;
-	_rand__PRNG_u32_fn _method_u32;
-	_rand__PRNG_u64_fn _method_u64;
-	_rand__PRNG_u32n_fn _method_u32n;
-	_rand__PRNG_u64n_fn _method_u64n;
-	_rand__PRNG_u32_in_range_fn _method_u32_in_range;
-	_rand__PRNG_u64_in_range_fn _method_u64_in_range;
-	_rand__PRNG_int_fn _method_v_int;
-	_rand__PRNG_i64_fn _method_i64;
-	_rand__PRNG_int31_fn _method_int31;
-	_rand__PRNG_int63_fn _method_int63;
-	_rand__PRNG_intn_fn _method_intn;
-	_rand__PRNG_i64n_fn _method_i64n;
-	_rand__PRNG_int_in_range_fn _method_int_in_range;
-	_rand__PRNG_i64_in_range_fn _method_i64_in_range;
-	_rand__PRNG_f32_fn _method_f32;
-	_rand__PRNG_f64_fn _method_f64;
-	_rand__PRNG_f32n_fn _method_f32n;
-	_rand__PRNG_f64n_fn _method_f64n;
-	_rand__PRNG_f32_in_range_fn _method_f32_in_range;
-	_rand__PRNG_f64_in_range_fn _method_f64_in_range;
+	void (*_method_seed)(void* _, Array_u32 seed_data);
+	u32 (*_method_u32)(void* _);
+	u64 (*_method_u64)(void* _);
+	u32 (*_method_u32n)(void* _, u32 max);
+	u64 (*_method_u64n)(void* _, u64 max);
+	u32 (*_method_u32_in_range)(void* _, u32 min, u32 max);
+	u64 (*_method_u64_in_range)(void* _, u64 min, u64 max);
+	int (*_method_v_int)(void* _);
+	i64 (*_method_i64)(void* _);
+	int (*_method_int31)(void* _);
+	i64 (*_method_int63)(void* _);
+	int (*_method_intn)(void* _, int max);
+	i64 (*_method_i64n)(void* _, i64 max);
+	int (*_method_int_in_range)(void* _, int min, int max);
+	i64 (*_method_i64_in_range)(void* _, i64 min, i64 max);
+	f32 (*_method_f32)(void* _);
+	f64 (*_method_f64)(void* _);
+	f32 (*_method_f32n)(void* _, f32 max);
+	f64 (*_method_f64n)(void* _, f64 max);
+	f32 (*_method_f32_in_range)(void* _, f32 min, f32 max);
+	f64 (*_method_f64_in_range)(void* _, f64 min, f64 max);
 };
 
 struct _rand__PRNG_interface_methods rand__PRNG_name_table[1] = {
@@ -8255,10 +8233,8 @@ int _v__gen__native__CodeGen_v__gen__native__Amd64_index = 1;
 
 // Methods wrapper for interface "v__gen__native__CodeGen"
 
-typedef void (*_v__gen__native__CodeGen_gen_exit_fn)(void* _, v__gen__native__Gen* g, v__ast__Expr expr);
-
 struct _v__gen__native__CodeGen_interface_methods {
-	_v__gen__native__CodeGen_gen_exit_fn _method_gen_exit;
+	void (*_method_gen_exit)(void* _, v__gen__native__Gen* g, v__ast__Expr expr);
 };
 
 struct _v__gen__native__CodeGen_interface_methods v__gen__native__CodeGen_name_table[2] = {
@@ -8293,14 +8269,10 @@ static inline v__gen__native__CodeGen I_v__gen__native__Amd64_to_Interface_v__ge
 
 // Methods wrapper for interface "hash__Hasher"
 
-typedef Array_byte (*_hash__Hasher_sum_fn)(void* _, Array_byte b);
-typedef int (*_hash__Hasher_size_fn)(void* _);
-typedef int (*_hash__Hasher_block_size_fn)(void* _);
-
 struct _hash__Hasher_interface_methods {
-	_hash__Hasher_sum_fn _method_sum;
-	_hash__Hasher_size_fn _method_size;
-	_hash__Hasher_block_size_fn _method_block_size;
+	Array_byte (*_method_sum)(void* _, Array_byte b);
+	int (*_method_size)(void* _);
+	int (*_method_block_size)(void* _);
 };
 
 struct _hash__Hasher_interface_methods hash__Hasher_name_table[1];
@@ -8311,10 +8283,8 @@ struct _hash__Hasher_interface_methods hash__Hasher_name_table[1];
 
 // Methods wrapper for interface "hash__Hash32er"
 
-typedef u32 (*_hash__Hash32er_sum32_fn)(void* _);
-
 struct _hash__Hash32er_interface_methods {
-	_hash__Hash32er_sum32_fn _method_sum32;
+	u32 (*_method_sum32)(void* _);
 };
 
 struct _hash__Hash32er_interface_methods hash__Hash32er_name_table[1];
@@ -8325,10 +8295,8 @@ struct _hash__Hash32er_interface_methods hash__Hash32er_name_table[1];
 
 // Methods wrapper for interface "hash__Hash64er"
 
-typedef u64 (*_hash__Hash64er_sum64_fn)(void* _);
-
 struct _hash__Hash64er_interface_methods {
-	_hash__Hash64er_sum64_fn _method_sum64;
+	u64 (*_method_sum64)(void* _);
 };
 
 struct _hash__Hash64er_interface_methods hash__Hash64er_name_table[1];
@@ -26649,7 +26617,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("115edff"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("811a3e1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51747,29 +51715,23 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 		v__ast__Interface inter_info = /* as */ *(v__ast__Interface*)__as_cast((ityp.info)._v__ast__Interface,(ityp.info)._typ, 422) /*expected idx: 422, name: v.ast.Interface */ ;
 		string interface_name = ityp.cname;
 		string methods_struct_name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("struct _"), 0xfe10, {.d_s = interface_name}}, {_SLIT("_interface_methods"), 0, { .d_c = 0 }}})) ;
-		strings__Builder methods_typ_def = strings__new_builder(100);
 		strings__Builder methods_struct_def = strings__new_builder(100);
 		strings__Builder_writeln(&methods_struct_def,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = methods_struct_name}}, {_SLIT(" {"), 0, { .d_c = 0 }}})) );
-		Map_string_string imethods = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
 		Map_string_int methodidx = new_map(sizeof(string), sizeof(int), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
 		// FOR IN array
 		for (int k = 0; k < inter_info.methods.len; ++k) {
 			v__ast__Fn method = ((v__ast__Fn*)inter_info.methods.data)[k];
 			map_set(&methodidx, &(string[]){method.name}, &(int[]) { k });
-			string typ_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_"), 0xfe10, {.d_s = interface_name}}, {_SLIT("_"), 0xfe10, {.d_s = method.name}}, {_SLIT("_fn"), 0, { .d_c = 0 }}})) ;
 			string ret_styp = v__gen__c__Gen_typ(g, method.return_type);
-			strings__Builder_write_string(&methods_typ_def,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("typedef "), 0xfe10, {.d_s = ret_styp}}, {_SLIT(" (*"), 0xfe10, {.d_s = typ_name}}, {_SLIT(")(void* _"), 0, { .d_c = 0 }}})) );
+			strings__Builder_write_string(&methods_struct_def,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = ret_styp}}, {_SLIT(" (*_method_"), 0xfe10, {.d_s = v__gen__c__c_name(method.name)}}, {_SLIT(")(void* _"), 0, { .d_c = 0 }}})) );
 			for (int i = 1; i < method.params.len; ++i) {
 				v__ast__Param arg = (*(v__ast__Param*)/*ee elem_typ */array_get(method.params, i));
-				strings__Builder_write_string(&methods_typ_def,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(", "), 0xfe10, {.d_s = v__gen__c__Gen_typ(g, arg.typ)}}, {_SLIT(" "), 0xfe10, {.d_s = arg.name}}, {_SLIT0, 0, { .d_c = 0 }}})) );
+				strings__Builder_write_string(&methods_struct_def,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(", "), 0xfe10, {.d_s = v__gen__c__Gen_typ(g, arg.typ)}}, {_SLIT(" "), 0xfe10, {.d_s = arg.name}}, {_SLIT0, 0, { .d_c = 0 }}})) );
 			}
-			strings__Builder_writeln(&methods_typ_def, _SLIT(");"));
-			strings__Builder_writeln(&methods_struct_def,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = typ_name}}, {_SLIT(" _method_"), 0xfe10, {.d_s = v__gen__c__c_name(method.name)}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
-			map_set(&imethods, &(string[]){method.name}, &(string[]) { typ_name });
+			strings__Builder_writeln(&methods_struct_def, _SLIT(");"));
 		}
 		strings__Builder_writeln(&methods_struct_def, _SLIT("};"));
 		strings__Builder methods_struct = strings__new_builder(100);
-		string staticprefix = _SLIT("static");
 		int iname_table_length = inter_info.types.len;
 		if (iname_table_length == 0) {
 			strings__Builder_writeln(&methods_struct,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = methods_struct_name}}, {_SLIT(" "), 0xfe10, {.d_s = interface_name}}, {_SLIT("_name_table[1];"), 0, { .d_c = 0 }}})) );
@@ -51798,7 +51760,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 			map_set(&already_generated_mwrappers, &(string[]){interface_index_name}, &(int[]) { current_iinidx });
 			current_iinidx++;
 			if (!string__eq(ityp.name, _SLIT("vweb.DbInterface"))) {
-				strings__Builder_writeln(&sb,  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = staticprefix}}, {_SLIT(" "), 0xfe10, {.d_s = interface_name}}, {_SLIT(" I_"), 0xfe10, {.d_s = cctype}}, {_SLIT("_to_Interface_"), 0xfe10, {.d_s = interface_name}}, {_SLIT("("), 0xfe10, {.d_s = cctype}}, {_SLIT("* x);"), 0, { .d_c = 0 }}})) );
+				strings__Builder_writeln(&sb,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("static "), 0xfe10, {.d_s = interface_name}}, {_SLIT(" I_"), 0xfe10, {.d_s = cctype}}, {_SLIT("_to_Interface_"), 0xfe10, {.d_s = interface_name}}, {_SLIT("("), 0xfe10, {.d_s = cctype}}, {_SLIT("* x);"), 0, { .d_c = 0 }}})) );
 				strings__Builder cast_struct = strings__new_builder(100);
 				strings__Builder_writeln(&cast_struct,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("("), 0xfe10, {.d_s = interface_name}}, {_SLIT(") {"), 0, { .d_c = 0 }}})) );
 				strings__Builder_writeln(&cast_struct,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\t._"), 0xfe10, {.d_s = cctype}}, {_SLIT(" = x,"), 0, { .d_c = 0 }}})) );
@@ -51829,7 +51791,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 				}
 				strings__Builder_write_string(&cast_struct, _SLIT("\t}"));
 				string cast_struct_str = strings__Builder_str(&cast_struct);
-				strings__Builder_writeln(&cast_functions,  str_intp(9, _MOV((StrIntpData[]){{_SLIT("\n// Casting functions for converting \""), 0xfe10, {.d_s = cctype}}, {_SLIT("\" to interface \""), 0xfe10, {.d_s = interface_name}}, {_SLIT("\"\n"), 0xfe10, {.d_s = staticprefix}}, {_SLIT(" inline "), 0xfe10, {.d_s = interface_name}}, {_SLIT(" I_"), 0xfe10, {.d_s = cctype}}, {_SLIT("_to_Interface_"), 0xfe10, {.d_s = interface_name}}, {_SLIT("("), 0xfe10, {.d_s = cctype}}, {_SLIT("* x) {\n	return "), 0xfe10, {.d_s = cast_struct_str}}, {_SLIT(";\n}"), 0, { .d_c = 0 }}})) );
+				strings__Builder_writeln(&cast_functions,  str_intp(8, _MOV((StrIntpData[]){{_SLIT("\n// Casting functions for converting \""), 0xfe10, {.d_s = cctype}}, {_SLIT("\" to interface \""), 0xfe10, {.d_s = interface_name}}, {_SLIT("\"\nstatic inline "), 0xfe10, {.d_s = interface_name}}, {_SLIT(" I_"), 0xfe10, {.d_s = cctype}}, {_SLIT("_to_Interface_"), 0xfe10, {.d_s = interface_name}}, {_SLIT("("), 0xfe10, {.d_s = cctype}}, {_SLIT("* x) {\n	return "), 0xfe10, {.d_s = cast_struct_str}}, {_SLIT(";\n}"), 0, { .d_c = 0 }}})) );
 			}
 			if (g->pref->build_mode != v__pref__BuildMode_build_module) {
 				strings__Builder_writeln(&methods_struct, _SLIT("\t{"));
@@ -51837,7 +51799,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 			// FOR IN array
 			for (int _t4170 = 0; _t4170 < st_sym->methods.len; ++_t4170) {
 				v__ast__Fn method = ((v__ast__Fn*)st_sym->methods.data)[_t4170];
-				if (!_IN_MAP(ADDR(string, method.name), ADDR(map, imethods))) {
+				if (!_IN_MAP(ADDR(string, method.name), ADDR(map, methodidx))) {
 					continue;
 				}
 				string method_call =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cctype}}, {_SLIT("_"), 0xfe10, {.d_s = method.name}}, {_SLIT0, 0, { .d_c = 0 }}})) ;
@@ -51847,8 +51809,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string mr_192908 = v__gen__c__Gen_fn_args(g, params, false);
-					Array_string fargs = mr_192908.arg0;
+					multi_return_Array_string_Array_string mr_192592 = v__gen__c__Gen_fn_args(g, params, false);
+					Array_string fargs = mr_192592.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -51884,7 +51846,6 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 		strings__Builder_writeln(&sb, _SLIT(""));
 		if (inter_info.methods.len > 0) {
 			strings__Builder_writeln(&sb, strings__Builder_str(&methods_wrapper));
-			strings__Builder_writeln(&sb, strings__Builder_str(&methods_typ_def));
 			strings__Builder_writeln(&sb, strings__Builder_str(&methods_struct_def));
 			strings__Builder_writeln(&sb, strings__Builder_str(&methods_struct));
 		}
