@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7878bad"
+#define V_COMMIT_HASH "6576d87"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9d852e2"
+	#define V_COMMIT_HASH "7878bad"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7878bad"
+	#define V_CURRENT_COMMIT_HASH "6576d87"
 #endif
 
 // V comptime_defines:
@@ -29419,7 +29419,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9d852e2"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7878bad"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -38940,7 +38940,7 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	v__token__Position end_pos = v__token__Token_position(&p->prev_tok);
 	string short_fn_name = name;
 	bool is_main = string__eq(short_fn_name, _SLIT("main")) && string__eq(p->mod, _SLIT("main"));
-	bool is_test = (string_starts_with(short_fn_name, _SLIT("test_")) || string_starts_with(short_fn_name, _SLIT("testsuite_"))) && (string_ends_with(p->file_base, _SLIT("_test.v")) || string_ends_with(p->file_base, _SLIT("_test.vv")));
+	bool is_test = (string_starts_with(short_fn_name, _SLIT("test_")) || string_starts_with(short_fn_name, _SLIT("testsuite_"))) && (string_ends_with(p->file_base, _SLIT("_test.v")) || string_ends_with(string_all_before_last(string_all_before_last(p->file_base, _SLIT(".v")), _SLIT(".")), _SLIT("_test")));
 	if (is_method) {
 		v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(p->table, rec.typ);
 		bool is_non_local = type_sym->mod.len > 0 && !string__eq(type_sym->mod, p->mod) && type_sym->language == v__ast__Language_v;
@@ -39200,9 +39200,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	if (p->pref->backend != v__pref__Backend_js) {
 		p->scope->detached_from_parent = true;
 	}
-	multi_return_Array_v__ast__Param_bool_bool mr_17243 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_17243.arg0;
-	bool is_variadic = mr_17243.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_17285 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_17285.arg0;
+	bool is_variadic = mr_17285.arg2;
 	// FOR IN array
 	for (int _t3484 = 0; _t3484 < args.len; ++_t3484) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t3484];
@@ -41857,7 +41857,7 @@ bool v__parser__Parser_asm_stmt_defer_0 = false;
 			name = p->tok.lit;
 			v__parser__Parser_check(p, v__token__Kind_name);
 		}
-		if ((arch == v__pref__Arch_rv32 || arch == v__pref__Arch_rv64)) {
+		if ((arch == v__pref__Arch_rv32 || arch == v__pref__Arch_rv64 || arch == v__pref__Arch_amd64)) {
 			for (;;) {
 				if (!(p->tok.kind == v__token__Kind_dot)) break;
 				name = /*f*/string__plus(name, _SLIT("."));
@@ -42450,9 +42450,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parse
 	v__token__Position pos = v__token__Token_position(&tok);
 	Array_v__ast__Ident defer_vars = p->defer_vars;
 	p->defer_vars = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_42386 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_42386.arg0;
-	Array_v__ast__Comment left_comments = mr_42386.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_42394 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_42394.arg0;
+	Array_v__ast__Comment left_comments = mr_42394.arg1;
 	if (!(p->inside_defer && p->tok.kind == v__token__Kind_decl_assign)) {
 		_PUSH_MANY(&defer_vars, (p->defer_vars), _t3785, Array_v__ast__Ident);
 	}
@@ -43445,9 +43445,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t3879 = (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t3879;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_71043 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_71043.arg0;
-	Array_v__ast__Comment comments2 = mr_71043.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_71051 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_71051.arg0;
+	Array_v__ast__Comment comments2 = mr_71051.arg1;
 	_PUSH_MANY(&comments, (comments2), _t3880, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3881 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
@@ -56203,7 +56203,7 @@ string last_fn_c_name_save;
 	} else {
 		g->defer_stmts = __new_array_with_default(0, 0, sizeof(v__ast__DeferStmt), 0);
 	}
-	if (!v__ast__Type_alias_eq(node->return_type, _const_v__ast__void_type) && node->stmts.len > 0 && ((*(v__ast__Stmt*)array_last(node->stmts)))._typ != 313 /* v.ast.Return */) {
+	if (!v__ast__Type_alias_eq(node->return_type, _const_v__ast__void_type) && node->stmts.len > 0 && ((*(v__ast__Stmt*)array_last(node->stmts)))._typ != 313 /* v.ast.Return */ && !Array_v__ast__Attr_contains(node->attrs, _SLIT("_naked"))) {
 		string default_expr = v__gen__c__Gen_type_default(g, node->return_type);
 		if (string__eq(default_expr, _SLIT("{0}"))) {
 			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\treturn ("), 0xfe10, {.d_s = type_name}}, {_SLIT(")"), 0xfe10, {.d_s = default_expr}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
@@ -56759,11 +56759,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_28424 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_28424.arg0;
-			string pafile = mr_28424.arg1;
-			string pamod = mr_28424.arg2;
-			string pafn = mr_28424.arg3;
+			multi_return_int_string_string_string mr_28460 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_28460.arg0;
+			string pafile = mr_28460.arg1;
+			string pamod = mr_28460.arg2;
+			string pafn = mr_28460.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})) );
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
@@ -57107,6 +57107,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_write_fn_attrs(v__gen__c__Gen* g, Array_v_
 		}
 		else if (string__eq(attr.name, _SLIT("_pure"))) {
 			v__gen__c__Gen_write(g, _SLIT("__attribute__((const)) "));
+		}
+		else if (string__eq(attr.name, _SLIT("_naked"))) {
+			v__gen__c__Gen_write(g, _SLIT("__attribute__((naked)) "));
 		}
 		else if (string__eq(attr.name, _SLIT("windows_stdcall"))) {
 			msvc_attrs = /*f*/string__plus(msvc_attrs, _SLIT("__stdcall "));
@@ -72521,7 +72524,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 	if (node->language == v__ast__Language_v && !node->no_body && !v__ast__Type_alias_eq(node->return_type, _const_v__ast__void_type) && !node->has_return && (node->is_method || !(string__eq(node->name, _SLIT("panic")) || string__eq(node->name, _SLIT("exit"))))) {
 		if (c->inside_anon_fn) {
 			v__checker__Checker_error(c, _SLIT("missing return at the end of an anonymous function"), node->pos);
-		} else {
+		} else if (!Array_v__ast__Attr_contains(node->attrs, _SLIT("_naked"))) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("missing return at end of function `"), 0xfe10, {.d_s = node->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node->pos);
 		}
 	}
@@ -72594,10 +72597,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5570 = 0; _t5570 < sym_app->methods.len; ++_t5570) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5570];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_237449 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_237449.arg0;
-				int nroute_attributes = mr_237449.arg1;
-				int nargs = mr_237449.arg2;
+				multi_return_bool_int_int mr_237483 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_237483.arg0;
+				int nroute_attributes = mr_237483.arg1;
+				int nargs = mr_237483.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
