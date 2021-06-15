@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "af60eba"
+#define V_COMMIT_HASH "60c880a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "48b3ab8"
+	#define V_COMMIT_HASH "af60eba"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "af60eba"
+	#define V_CURRENT_COMMIT_HASH "60c880a"
 #endif
 
 // V comptime_defines:
@@ -11799,7 +11799,7 @@ string strings__repeat(byte c, int n) {
 	if (n <= 0) {
 		return _SLIT("");
 	}
-	byte* bytes = v_malloc(n + 1);
+	byte* bytes = malloc_noscan(n + 1);
 	{ // Unsafe block
 		memset(bytes, c, n);
 		bytes[n] = '0';
@@ -11813,7 +11813,7 @@ string strings__repeat_string(string s, int n) {
 	}
 	int slen = s.len;
 	int blen = slen * n;
-	byte* bytes = v_malloc(blen + 1);
+	byte* bytes = malloc_noscan(blen + 1);
 	for (int bi = 0; bi < n; ++bi) {
 		int bislen = bi * slen;
 		for (int si = 0; si < slen; ++si) {
@@ -13679,7 +13679,7 @@ string strconv__format_es(f64 f, strconv__BF_param p) {
 // Attr: [direct_array_access]
 string strconv__remove_tail_zeros(string s) {
 	{ // Unsafe block
-		byte* buf = v_malloc(s.len + 1);
+		byte* buf = malloc_noscan(s.len + 1);
 		int i_d = 0;
 		int i_s = 0;
 		for (;;) {
@@ -16178,7 +16178,7 @@ inline VV_LOCAL_SYMBOL string int_str_l(int nn, int max) {
 			is_neg = true;
 		}
 		int index = max;
-		byte* buf = v_malloc(max + 1);
+		byte* buf = malloc_noscan(max + 1);
 		buf[index] = 0;
 		index--;
 		for (;;) {
@@ -16233,7 +16233,7 @@ inline string u32_str(u32 nn) {
 			return _SLIT("0");
 		}
 		int max = 12;
-		byte* buf = v_malloc(max + 1);
+		byte* buf = malloc_noscan(max + 1);
 		int index = max;
 		buf[index] = 0;
 		index--;
@@ -16274,7 +16274,7 @@ inline string i64_str(i64 nn) {
 			return _SLIT("0");
 		}
 		int max = 20;
-		byte* buf = v_malloc(max + 1);
+		byte* buf = malloc_noscan(max + 1);
 		bool is_neg = false;
 		if (n < 0) {
 			n = -n;
@@ -16319,7 +16319,7 @@ inline string u64_str(u64 nn) {
 			return _SLIT("0");
 		}
 		int max = 20;
-		byte* buf = v_malloc(max + 1);
+		byte* buf = malloc_noscan(max + 1);
 		int index = max;
 		buf[index] = 0;
 		index--;
@@ -16457,7 +16457,7 @@ string byte_str(byte b) {
 }
 
 string byte_ascii_str(byte b) {
-	string str = (string){.str = v_malloc(2), .len = 1};
+	string str = (string){.str = malloc_noscan(2), .len = 1};
 	{ // Unsafe block
 		str.str[0] = b;
 		str.str[1] = 0;
@@ -17293,7 +17293,7 @@ Array_byte Array_byte_clone(Array_byte b) {
 
 string Array_byte_bytestr(Array_byte b) {
 	{ // Unsafe block
-		byte* buf = v_malloc(b.len + 1);
+		byte* buf = malloc_noscan(b.len + 1);
 		memcpy(buf, b.data, b.len);
 		buf[b.len] = 0;
 		return tos(buf, b.len);
@@ -19820,7 +19820,7 @@ u16* string_to_wide(string _str) {
 	{
 		{ // Unsafe block
 			int num_chars = (MultiByteToWideChar(_const_cp_utf8, 0U, ((char*)(_str.str)), _str.len, 0, 0));
-			u16* wstr = ((u16*)(v_malloc((num_chars + 1) * 2)));
+			u16* wstr = ((u16*)(malloc_noscan((num_chars + 1) * 2)));
 			if (wstr != 0) {
 				MultiByteToWideChar(_const_cp_utf8, 0U, ((char*)(_str.str)), _str.len, wstr, num_chars);
 				memset(((byte*)(wstr)) + num_chars * 2, 0, 2);
@@ -19857,7 +19857,7 @@ string string_from_wide2(u16* _wstr, int len) {
 	{
 		{ // Unsafe block
 			int num_chars = WideCharToMultiByte(_const_cp_utf8, 0U, _wstr, len, 0, 0, 0, 0);
-			byte* str_to = v_malloc(num_chars + 1);
+			byte* str_to = malloc_noscan(num_chars + 1);
 			if (str_to != 0) {
 				WideCharToMultiByte(_const_cp_utf8, 0U, _wstr, len, ((char*)(str_to)), num_chars, 0, 0);
 				memset(str_to + num_chars, 0, 1);
@@ -19905,7 +19905,7 @@ int utf8_char_len(byte b) {
 
 string utf32_to_str(u32 code) {
 	{ // Unsafe block
-		byte* buffer = v_malloc(5);
+		byte* buffer = malloc_noscan(5);
 		return utf32_to_str_no_malloc(code, buffer);
 	}
 	return (string){.str=(byteptr)"", .is_lit=1};
@@ -20214,7 +20214,7 @@ multi_return_string_int os__fd_read(int fd, int maxbytes) {
 		return (multi_return_string_int){.arg0=_SLIT(""), .arg1=0};
 	}
 	{ // Unsafe block
-		byte* buf = v_malloc(maxbytes + 1);
+		byte* buf = malloc_noscan(maxbytes + 1);
 		int nbytes = read(fd, buf, maxbytes);
 		if (nbytes < 0) {
 			v_free(buf);
@@ -21478,7 +21478,7 @@ FILE* fp;
 	}
 	rewind(fp);
 	{ // Unsafe block
-		byte* str = v_malloc(fsize + 1);
+		byte* str = malloc_noscan(fsize + 1);
 		int nelements = ((int)(fread(str, 1, fsize, fp)));
 		int is_eof = ((int)(feof(fp)));
 		int is_error = ((int)(ferror(fp)));
@@ -21822,7 +21822,7 @@ string os__get_raw_line(void) {
 	{
 		{ // Unsafe block
 			int max_line_chars = 256;
-			byte* buf = v_malloc(max_line_chars * 2);
+			byte* buf = malloc_noscan(max_line_chars * 2);
 			voidptr h_input = GetStdHandle(STD_INPUT_HANDLE);
 			u32 bytes_read = ((u32)(0U));
 			if (os__is_atty(0) > 0) {
@@ -21864,7 +21864,7 @@ Array_byte os__get_raw_stdin(void) {
 		{ // Unsafe block
 			int block_bytes = 512;
 			int old_size = block_bytes;
-			byte* buf = v_malloc(block_bytes);
+			byte* buf = malloc_noscan(block_bytes);
 			voidptr h_input = GetStdHandle(STD_INPUT_HANDLE);
 			int bytes_read = 0;
 			int offset = 0;
@@ -21898,14 +21898,14 @@ void os__on_segfault(voidptr f) {
 string os__executable(void) {
 	int max = 512;
 	int size = max * 2;
-	u16* result = ((u16*)(vcalloc(size)));
+	u16* result = ((u16*)(vcalloc_noscan(size)));
 	int len = GetModuleFileName(0, result, max);
 	u32 attrs = GetFileAttributesW(result);
 	u32 is_set = (attrs & 0x400U);
 	if (is_set != 0U) {
 		voidptr file = CreateFile(result, 0x80000000U, 1U, 0, 3U, 0x80U, 0);
 		if (file != ((voidptr)(-1))) {
-			u16* final_path = ((u16*)(vcalloc(size)));
+			u16* final_path = ((u16*)(vcalloc_noscan(size)));
 			int final_len = GetFinalPathNameByHandleW(file, final_path, size, 0U);
 			if (final_len < size) {
 				string ret = string_from_wide2(final_path, final_len);
@@ -21970,7 +21970,7 @@ string os__getwd(void) {
 	{
 		int max = 512;
 		{ // Unsafe block
-			u16* buf = ((u16*)(vcalloc(max * 2)));
+			u16* buf = ((u16*)(vcalloc_noscan(max * 2)));
 			if (_wgetcwd(buf, max) == 0) {
 				v_free(buf);
 				return _SLIT("");
@@ -21991,7 +21991,7 @@ string os__real_path(string fpath) {
 	string res = _SLIT("");
 	#if defined(_WIN32)
 	{
-		fullpath = ((u16*)(vcalloc(_const_os__max_path_len * 2)));
+		fullpath = ((u16*)(vcalloc_noscan(_const_os__max_path_len * 2)));
 		u32 ret = GetFullPathName(string_to_wide(fpath), _const_os__max_path_len, fullpath, 0);
 		if (ret == 0U) {
 			v_free(fullpath);
@@ -22194,7 +22194,7 @@ os__HANDLE os__get_file_handle(string path) {
 Option_string os__get_module_filename(os__HANDLE handle) {
 	{ // Unsafe block
 		int sz = 4096;
-		u16* buf = ((u16*)(v_malloc(4096)));
+		u16* buf = ((u16*)(malloc_noscan(4096)));
 		for (;;) {
 			int status = ((int)(GetModuleFileNameW(handle, ((voidptr)(&buf)), sz)));
 
@@ -23253,7 +23253,7 @@ Option_time__Time time__parse_rfc2822(string s) {
  	int pos =  (*(int*)_t1169.data);
 	int mm = pos / 3 + 1;
 	{ // Unsafe block
-		byte* tmstr = v_malloc(s.len * 2);
+		byte* tmstr = malloc_noscan(s.len * 2);
 		int count = snprintf(((char*)(tmstr)), (s.len * 2), "%s-%02d-%s %s", (*(string*)/*ee elem_typ */array_get(fields, 3)).str, mm, (*(string*)/*ee elem_typ */array_get(fields, 1)).str, (*(string*)/*ee elem_typ */array_get(fields, 4)).str);
 		Option_time__Time _t1171 = time__parse(tos(tmstr, count));
 		return _t1171;
@@ -23333,10 +23333,10 @@ Option_time__Time time__parse_iso8601(string s) {
 		return _t1181;
 	}
 	
- 	Option_multi_return_int_int_int mr_3486 =  _t1180 /*U*/;
-	int year = (*(multi_return_int_int_int*)mr_3486.data).arg0;
-	int month = (*(multi_return_int_int_int*)mr_3486.data).arg1;
-	int day = (*(multi_return_int_int_int*)mr_3486.data).arg2;
+ 	Option_multi_return_int_int_int mr_3493 =  _t1180 /*U*/;
+	int year = (*(multi_return_int_int_int*)mr_3493.data).arg0;
+	int month = (*(multi_return_int_int_int*)mr_3493.data).arg1;
+	int day = (*(multi_return_int_int_int*)mr_3493.data).arg2;
 	int hour_ = 0;
 	int minute_ = 0;
 	int second_ = 0;
@@ -23351,13 +23351,13 @@ Option_time__Time time__parse_iso8601(string s) {
 			return _t1183;
 		}
 		
- 		Option_multi_return_int_int_int_int_i64_bool mr_3728 =  _t1182 /*U*/;
-		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg0;
-		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg1;
-		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg2;
-		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg3;
-		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg4;
-		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3728.data).arg5;
+ 		Option_multi_return_int_int_int_int_i64_bool mr_3735 =  _t1182 /*U*/;
+		hour_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3735.data).arg0;
+		minute_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3735.data).arg1;
+		second_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3735.data).arg2;
+		microsecond_ = (*(multi_return_int_int_int_int_i64_bool*)mr_3735.data).arg3;
+		unix_offset = (*(multi_return_int_int_int_int_i64_bool*)mr_3735.data).arg4;
+		is_local_time = (*(multi_return_int_int_int_int_i64_bool*)mr_3735.data).arg5;
 	}
 	time__Time t = time__new_time((time__Time){
 		.year = year,
@@ -24795,7 +24795,7 @@ string encoding__base64__decode_str(string data) {
 		return _t1350;
 	}
 	{ // Unsafe block
-		byte* buffer = v_malloc(size + 1);
+		byte* buffer = malloc_noscan(size + 1);
 		buffer[size] = 0;
 		string _t1351 = tos(buffer, encoding__base64__decode_in_buffer((voidptr)&/*qq*/data, buffer));
 		return _t1351;
@@ -24820,7 +24820,7 @@ VV_LOCAL_SYMBOL string encoding__base64__alloc_and_encode(byte* src, int len) {
 		return _t1354;
 	}
 	{ // Unsafe block
-		byte* buffer = v_malloc(size + 1);
+		byte* buffer = malloc_noscan(size + 1);
 		buffer[size] = 0;
 		string _t1355 = tos(buffer, encoding__base64__encode_from_buffer(buffer, src, len));
 		return _t1355;
@@ -29782,7 +29782,7 @@ string rand__string_from_set(string charset, int len) {
 		string _t2129 = _SLIT("");
 		return _t2129;
 	}
-	byte* buf = v_malloc(len + 1);
+	byte* buf = malloc_noscan(len + 1);
 	for (int i = 0; i < len; ++i) {
 		{ // Unsafe block
 			buf[i] = string_at(charset, rand__intn(charset.len));
@@ -29812,7 +29812,7 @@ string rand__ascii(int len) {
 
 string rand__uuid_v4(void) {
 	int buflen = 36;
-	byte* buf = v_malloc(37);
+	byte* buf = malloc_noscan(37);
 	int i_buf = 0;
 	u64 x = ((u64)(0U));
 	byte d = ((byte)(0));
@@ -29856,7 +29856,7 @@ string rand__ulid(void) {
 
 string rand__ulid_at_millisecond(u64 unix_time_milli) {
 	int buflen = 26;
-	byte* buf = v_malloc(27);
+	byte* buf = malloc_noscan(27);
 	u64 t = unix_time_milli;
 	int i = 9;
 	for (;;) {
@@ -29963,7 +29963,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("48b3ab8"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("af60eba"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37221,7 +37221,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_num_lit(v__scanner__Scanner* s, int s
 	}
 	{ // Unsafe block
 		byte* txt = s->text.str;
-		byte* b = v_malloc(end - start + 1);
+		byte* b = malloc_noscan(end - start + 1);
 		int i1 = 0;
 		for (int i = start; i < end; i++) {
 			if (txt[i] != _const_v__scanner__num_sep) {
@@ -75190,7 +75190,7 @@ VV_LOCAL_SYMBOL Option_string v__builder__find_windows_kit_internal(v__builder__
 				continue;
 			}
 			u32 alloc_length = (required_bytes + 2U);
-			u16* value = ((u16*)(v_malloc(((int)(alloc_length)))));
+			u16* value = ((u16*)(malloc_noscan(((int)(alloc_length)))));
 			if (isnil(value)) {
 				continue;
 			} else {
