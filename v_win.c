@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "60c880a"
+#define V_COMMIT_HASH "f3408a2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "af60eba"
+	#define V_COMMIT_HASH "60c880a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "60c880a"
+	#define V_CURRENT_COMMIT_HASH "f3408a2"
 #endif
 
 // V comptime_defines:
@@ -1422,8 +1422,7 @@ typedef enum {
 	v__pref__GarbageCollectionMode_boehm_incr, // +2
 	v__pref__GarbageCollectionMode_boehm_full_opt, // +3
 	v__pref__GarbageCollectionMode_boehm_incr_opt, // +4
-	v__pref__GarbageCollectionMode_boehm, // +5
-	v__pref__GarbageCollectionMode_boehm_leak, // +6
+	v__pref__GarbageCollectionMode_boehm_leak, // +5
 } v__pref__GarbageCollectionMode;
 
 typedef enum {
@@ -29963,7 +29962,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("af60eba"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("60c880a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -30270,7 +30269,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		else if (string__eq(arg, _SLIT("-gc"))) {
 			string gc_mode = os__cmdline__option(current_args, _SLIT("-gc"), _SLIT(""));
 
-			if (string__eq(gc_mode, _SLIT(""))) {
+			if (string__eq(gc_mode, _SLIT("")) || string__eq(gc_mode, _SLIT("none"))) {
 				res->gc_mode = v__pref__GarbageCollectionMode_no_gc;
 			}
 			else if (string__eq(gc_mode, _SLIT("boehm_full"))) {
@@ -30296,8 +30295,10 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 				v__pref__parse_define(res, _SLIT("gcboehm_opt"));
 			}
 			else if (string__eq(gc_mode, _SLIT("boehm"))) {
-				res->gc_mode = v__pref__GarbageCollectionMode_boehm;
+				res->gc_mode = v__pref__GarbageCollectionMode_boehm_full_opt;
 				v__pref__parse_define(res, _SLIT("gcboehm"));
+				v__pref__parse_define(res, _SLIT("gcboehm_full"));
+				v__pref__parse_define(res, _SLIT("gcboehm_opt"));
 			}
 			else if (string__eq(gc_mode, _SLIT("boehm_leak"))) {
 				res->gc_mode = v__pref__GarbageCollectionMode_boehm_leak;
@@ -30306,12 +30307,13 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			}
 			else {
 				eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown garbage collection mode `-gc "), 0xfe10, {.d_s = gc_mode}}, {_SLIT("`, supported modes are:`"), 0, { .d_c = 0 }}})) );
-				eprintln(_SLIT("  `-gc boehm` ............ default mode for the platform"));
+				eprintln(_SLIT("  `-gc boehm` ............ default GC-mode (currently `boehm_full_opt`)"));
 				eprintln(_SLIT("  `-gc boehm_full` ....... classic full collection"));
 				eprintln(_SLIT("  `-gc boehm_incr` ....... incremental collection"));
 				eprintln(_SLIT("  `-gc boehm_full_opt` ... optimized classic full collection"));
 				eprintln(_SLIT("  `-gc boehm_incr_opt` ... optimized incremental collection"));
 				eprintln(_SLIT("  `-gc boehm_leak` ....... leak detection (for debugging)"));
+				eprintln(_SLIT("  `-gc none` ............. no garbage collection"));
 				v_exit(1);
 			};
 			i++;
@@ -49443,7 +49445,7 @@ void v__gen__c__Gen_init(v__gen__c__Gen* g) {
 	if (g->table->gostmts > 0) {
 		strings__Builder_writeln(&g->comptime_defines, _SLIT("#define __VTHREADS__ (1)"));
 	}
-	if ((g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak)) {
+	if ((g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak)) {
 		strings__Builder_writeln(&g->comptime_defines, _SLIT("#define _VGCBOEHM (1)"));
 	}
 	if (g->pref->is_debug || (Array_string_contains(g->pref->compile_defines, _SLIT("debug")))) {
@@ -49632,9 +49634,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_optional_type_text(v__gen__c__Gen* g, stri
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_register_optional(v__gen__c__Gen* g, v__ast__Type t) {
-	multi_return_string_string mr_23439 = v__gen__c__Gen_optional_type_name(g, t);
-	string styp = mr_23439.arg0;
-	string base = mr_23439.arg1;
+	multi_return_string_string mr_23426 = v__gen__c__Gen_optional_type_name(g, t);
+	string styp = mr_23426.arg0;
+	string base = mr_23426.arg1;
 	if (!(Array_string_contains(g->optionals, styp))) {
 		strings__Builder_writeln(&g->typedefs2,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("typedef struct "), 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = styp}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
 		strings__Builder_write_string(&g->options, v__gen__c__Gen_optional_type_text(g, styp, base));
@@ -53028,11 +53030,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_125882 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_125882.arg0;
-	string key_eq_fn = mr_125882.arg1;
-	string clone_fn = mr_125882.arg2;
-	string free_fn = mr_125882.arg3;
+	multi_return_string_string_string_string mr_125869 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_125869.arg0;
+	string key_eq_fn = mr_125869.arg1;
+	string clone_fn = mr_125869.arg2;
+	string free_fn = mr_125869.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -54390,9 +54392,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t4387 = 0; _t4387 < (*typ.info._v__ast__Struct).fields.len; ++_t4387) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t4387];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag_optional)) {
-						multi_return_string_string mr_166206 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_166206.arg0;
-						string base = mr_166206.arg1;
+						multi_return_string_string mr_166193 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_166193.arg0;
+						string base = mr_166193.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -54637,11 +54639,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind_propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_174581 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_174581.arg0;
-				string pafile = mr_174581.arg1;
-				string pamod = mr_174581.arg2;
-				string pafn = mr_174581.arg3;
+				multi_return_int_string_string_string mr_174568 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_174568.arg0;
+				string pafile = mr_174568.arg1;
+				string pamod = mr_174568.arg2;
+				string pafn = mr_174568.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})) );
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})) );
@@ -54763,11 +54765,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind_map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_177876 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_177876.arg0;
-		string key_eq_fn = mr_177876.arg1;
-		string clone_fn = mr_177876.arg2;
-		string free_fn = mr_177876.arg3;
+		multi_return_string_string_string_string mr_177863 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_177863.arg0;
+		string key_eq_fn = mr_177863.arg1;
+		string clone_fn = mr_177863.arg2;
+		string free_fn = mr_177863.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -55267,8 +55269,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string mr_194928 = v__gen__c__Gen_fn_args(g, params, false);
-					Array_string fargs = mr_194928.arg0;
+					multi_return_Array_string_Array_string mr_194915 = v__gen__c__Gen_fn_args(g, params, false);
+					Array_string fargs = mr_194915.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -55492,7 +55494,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_c_main_function_header(v__gen__c__Gen* g
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_c_main_header(v__gen__c__Gen* g) {
 	v__gen__c__Gen_gen_c_main_function_header(g);
-	if ((g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak)) {
+	if ((g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak)) {
 		v__gen__c__Gen_writeln(g, _SLIT("#if defined(_VGCBOEHM)"));
 		if (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak) {
 			v__gen__c__Gen_writeln(g, _SLIT("\tGC_set_find_leak(1);"));
@@ -55540,22 +55542,22 @@ void v__gen__c__Gen_write_tests_definitions(v__gen__c__Gen* g) {
 }
 
 void v__gen__c__Gen_gen_failing_error_propagation_for_test_fn(v__gen__c__Gen* g, v__ast__OrExpr or_block, string cvar_name) {
-	multi_return_int_string_string_string mr_4703 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-	int paline = mr_4703.arg0;
-	string pafile = mr_4703.arg1;
-	string pamod = mr_4703.arg2;
-	string pafn = mr_4703.arg3;
+	multi_return_int_string_string_string mr_4690 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+	int paline = mr_4690.arg0;
+	string pafile = mr_4690.arg1;
+	string pamod = mr_4690.arg2;
+	string pafn = mr_4690.arg3;
 	v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\tmain__cb_propagate_test_error("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *("), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg) );"), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_writeln(g, _SLIT("\tg_test_fails++;"));
 	v__gen__c__Gen_writeln(g, _SLIT("\tlongjmp(g_jump_buffer, 1);"));
 }
 
 void v__gen__c__Gen_gen_failing_return_error_for_test_fn(v__gen__c__Gen* g, v__ast__Return return_stmt, string cvar_name) {
-	multi_return_int_string_string_string mr_5291 = v__gen__c__Gen_panic_debug_info(g, return_stmt.pos);
-	int paline = mr_5291.arg0;
-	string pafile = mr_5291.arg1;
-	string pamod = mr_5291.arg2;
-	string pafn = mr_5291.arg3;
+	multi_return_int_string_string_string mr_5278 = v__gen__c__Gen_panic_debug_info(g, return_stmt.pos);
+	int paline = mr_5278.arg0;
+	string pafile = mr_5278.arg1;
+	string pamod = mr_5278.arg2;
+	string pafn = mr_5278.arg3;
 	v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\tmain__cb_propagate_test_error("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *("), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg) );"), 0, { .d_c = 0 }}})) );
 	v__gen__c__Gen_writeln(g, _SLIT("\tg_test_fails++;"));
 	v__gen__c__Gen_writeln(g, _SLIT("\tlongjmp(g_jump_buffer, 1);"));
@@ -55565,7 +55567,7 @@ void v__gen__c__Gen_gen_c_main_for_tests(v__gen__c__Gen* g) {
 	int main_fn_start_pos = g->out.len;
 	v__gen__c__Gen_writeln(g, _SLIT(""));
 	v__gen__c__Gen_gen_c_main_function_header(g);
-	if ((g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak)) {
+	if ((g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak)) {
 		v__gen__c__Gen_writeln(g, _SLIT("#if defined(_VGCBOEHM)"));
 		if (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_leak) {
 			v__gen__c__Gen_writeln(g, _SLIT("\tGC_set_find_leak(1);"));
@@ -56952,7 +56954,7 @@ bool v__gen__c__Gen_call_expr_defer_0 = false;
 	}
 	g->inside_call = true;
 	v__gen__c__Gen_call_expr_defer_0 = true;
-	bool gen_keep_alive = node.is_keep_alive && !v__ast__Type_alias_eq(node.return_type, _const_v__ast__void_type) && (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm);
+	bool gen_keep_alive = node.is_keep_alive && !v__ast__Type_alias_eq(node.return_type, _const_v__ast__void_type) && (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt);
 	bool gen_or = node.or_block.kind != v__ast__OrKind_absent;
 	bool is_gen_or_and_assign_rhs = gen_or && !g->discard_or_result;
 	string _t4604;
@@ -57391,11 +57393,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_28460 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_28460.arg0;
-			string pafile = mr_28460.arg1;
-			string pamod = mr_28460.arg2;
-			string pafn = mr_28460.arg3;
+			multi_return_int_string_string_string mr_28452 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_28452.arg0;
+			string pafile = mr_28452.arg1;
+			string pamod = mr_28452.arg2;
+			string pafn = mr_28452.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})) );
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
@@ -57409,7 +57411,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 			if (g->is_json_fn) {
 				v__gen__c__Gen_write(g, json_obj);
 			} else {
-				if (node.is_keep_alive && (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm)) {
+				if (node.is_keep_alive && (g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_full_opt || g->pref->gc_mode == v__pref__GarbageCollectionMode_boehm_incr_opt)) {
 					string cur_line = v__gen__c__Gen_go_before_stmt(g, 0);
 					tmp_cnt_save = v__gen__c__Gen_keep_alive_call_pregen(g, node);
 					v__gen__c__Gen_write(g, cur_line);
