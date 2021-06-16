@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b2e2a53"
+#define V_COMMIT_HASH "eacdd0d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7b52dbf"
+	#define V_COMMIT_HASH "b2e2a53"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b2e2a53"
+	#define V_CURRENT_COMMIT_HASH "eacdd0d"
 #endif
 
 // V comptime_defines:
@@ -2587,6 +2587,7 @@ struct FieldData {
 	Array_string attrs;
 	bool is_pub;
 	bool is_mut;
+	bool is_shared;
 	int typ;
 };
 
@@ -8694,6 +8695,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_assert_stmt(v__checker__Checker* c, v__
 VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__Block node);
 VV_LOCAL_SYMBOL void v__checker__Checker_branch_stmt(v__checker__Checker* c, v__ast__BranchStmt node);
 VV_LOCAL_SYMBOL void v__checker__Checker_for_c_stmt(v__checker__Checker* c, v__ast__ForCStmt node);
+VV_LOCAL_SYMBOL void v__checker__Checker_comp_for(v__checker__Checker* c, v__ast__CompFor node);
 VV_LOCAL_SYMBOL void v__checker__Checker_for_in_stmt(v__checker__Checker* c, v__ast__ForInStmt* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_for_stmt(v__checker__Checker* c, v__ast__ForStmt* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_global_decl(v__checker__Checker* c, v__ast__GlobalDecl node);
@@ -30748,7 +30750,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7b52dbf"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b2e2a53"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -57213,6 +57215,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comp_for(v__gen__c__Gen* g, v__ast__CompFor 
 				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = node.val_var}}, {_SLIT(".typ = "), 0xfe07, {.d_i32 = styp}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
 				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = node.val_var}}, {_SLIT(".is_pub = "), 0xfe10, {.d_s = field.is_pub ? _SLIT("true") : _SLIT("false")}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
 				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = node.val_var}}, {_SLIT(".is_mut = "), 0xfe10, {.d_s = field.is_mut ? _SLIT("true") : _SLIT("false")}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
+				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = node.val_var}}, {_SLIT(".is_shared = "), 0xfe10, {.d_s = v__ast__Type_has_flag(field.typ, v__ast__TypeFlag_shared_f) ? _SLIT("true") : _SLIT("false")}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
 				map_set(&g->comptime_var_type_map, &(string[]){ str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = node.val_var}}, {_SLIT(".typ"), 0, { .d_c = 0 }}})) }, &(v__ast__Type[]) { styp });
 				v__gen__c__Gen_stmts(g, node.stmts);
 				i++;
@@ -70599,12 +70602,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__St
 		v__checker__Checker_branch_stmt(c, (*node._v__ast__BranchStmt));
 	}
 	else if (node._typ == 265 /* v.ast.CompFor */) {
-		v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*node._v__ast__CompFor).typ);
-		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, typ);
-		if (sym->kind == v__ast__Kind_placeholder || v__ast__Type_has_flag(typ, v__ast__TypeFlag_generic)) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown type `"), 0xfe10, {.d_s = sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , (*node._v__ast__CompFor).typ_pos);
-		}
-		v__checker__Checker_stmts(c, (*node._v__ast__CompFor).stmts);
+		v__checker__Checker_comp_for(c, (*node._v__ast__CompFor));
 	}
 	else if (node._typ == 266 /* v.ast.ConstDecl */) {
 		c->inside_const = true;
@@ -70765,6 +70763,18 @@ VV_LOCAL_SYMBOL void v__checker__Checker_for_c_stmt(v__checker__Checker* c, v__a
 	v__checker__Checker_stmts(c, node.stmts);
 	c->loop_label = prev_loop_label;
 	c->in_for_count--;
+}
+
+VV_LOCAL_SYMBOL void v__checker__Checker_comp_for(v__checker__Checker* c, v__ast__CompFor node) {
+	v__ast__Type typ = v__checker__Checker_unwrap_generic(c, node.typ);
+	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, typ);
+	if (sym->kind == v__ast__Kind_placeholder || v__ast__Type_has_flag(typ, v__ast__TypeFlag_generic)) {
+		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown type `"), 0xfe10, {.d_s = sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})) , node.typ_pos);
+	}
+	if (node.kind == v__ast__CompForKind_fields) {
+		map_set(&c->comptime_fields_type, &(string[]){node.val_var}, &(v__ast__Type[]) { node.typ });
+	}
+	v__checker__Checker_stmts(c, node.stmts);
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_for_in_stmt(v__checker__Checker* c, v__ast__ForInStmt* node) {
@@ -73356,8 +73366,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})) , node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_209266 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_209266.arg0;
+		multi_return_string_v__token__Position mr_209405 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_209405.arg0;
 	}
 	return typ;
 }
@@ -74410,10 +74420,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5703 = 0; _t5703 < sym_app->methods.len; ++_t5703) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5703];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_239502 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_239502.arg0;
-				int nroute_attributes = mr_239502.arg1;
-				int nargs = mr_239502.arg2;
+				multi_return_bool_int_int mr_239641 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_239641.arg0;
+				int nroute_attributes = mr_239641.arg1;
+				int nargs = mr_239641.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
