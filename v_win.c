@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6a19a13"
+#define V_COMMIT_HASH "c2a7a84"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ae014ad"
+	#define V_COMMIT_HASH "6a19a13"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6a19a13"
+	#define V_CURRENT_COMMIT_HASH "c2a7a84"
 #endif
 
 // V comptime_defines:
@@ -30054,7 +30054,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ae014ad"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6a19a13"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42952,6 +42952,9 @@ VV_LOCAL_SYMBOL v__ast__Attr v__parser__Parser_parse_attr(v__parser__Parser* p) 
 		kind = v__ast__AttrKind_comptime_define;
 		v__parser__Parser_next(p);
 		v__parser__Parser_check(p, v__token__Kind_name);
+		if (p->tok.kind == v__token__Kind_question) {
+			v__parser__Parser_next(p);
+		}
 		name = p->prev_tok.lit;
 	} else if (p->tok.kind == v__token__Kind_string) {
 		name = p->tok.lit;
@@ -43104,9 +43107,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parse
 	v__token__Position pos = v__token__Token_position(&tok);
 	Array_v__ast__Ident defer_vars = p->defer_vars;
 	p->defer_vars = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_42394 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_42394.arg0;
-	Array_v__ast__Comment left_comments = mr_42394.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_42569 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_42569.arg0;
+	Array_v__ast__Comment left_comments = mr_42569.arg1;
 	if (!(p->inside_defer && p->tok.kind == v__token__Kind_decl_assign)) {
 		_PUSH_MANY(&defer_vars, (p->defer_vars), _t3782, Array_v__ast__Ident);
 	}
@@ -44095,9 +44098,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t3876 = (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t3876;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_71076 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_71076.arg0;
-	Array_v__ast__Comment comments2 = mr_71076.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_71251 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_71251.arg0;
+	Array_v__ast__Comment comments2 = mr_71251.arg1;
 	_PUSH_MANY(&comments, (comments2), _t3877, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3878 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
