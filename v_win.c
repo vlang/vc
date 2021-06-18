@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a98d644"
+#define V_COMMIT_HASH "3f5aa5e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "751f295"
+	#define V_COMMIT_HASH "a98d644"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a98d644"
+	#define V_CURRENT_COMMIT_HASH "3f5aa5e"
 #endif
 
 // V comptime_defines:
@@ -23883,7 +23883,7 @@ time__Time time__Time_local(time__Time t) {
 }
 
 VV_LOCAL_SYMBOL time__Time time__win_now(void) {
-	struct _FILETIME ft_utc = (struct _FILETIME){EMPTY_STRUCT_INITIALIZATION};
+	struct _FILETIME ft_utc = (struct _FILETIME){.dwLowDateTime = 0,.dwHighDateTime = 0,};
 	GetSystemTimeAsFileTime(&ft_utc);
 	time__SystemTime st_utc = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
 	FileTimeToSystemTime(&ft_utc, &st_utc);
@@ -23903,7 +23903,7 @@ VV_LOCAL_SYMBOL time__Time time__win_now(void) {
 }
 
 VV_LOCAL_SYMBOL time__Time time__win_utc(void) {
-	struct _FILETIME ft_utc = (struct _FILETIME){EMPTY_STRUCT_INITIALIZATION};
+	struct _FILETIME ft_utc = (struct _FILETIME){.dwLowDateTime = 0,.dwHighDateTime = 0,};
 	GetSystemTimeAsFileTime(&ft_utc);
 	time__SystemTime st_utc = (time__SystemTime){.year = 0,.month = 0,.day_of_week = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.millisecond = 0,};
 	FileTimeToSystemTime(&ft_utc, &st_utc);
@@ -30058,7 +30058,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("751f295"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a98d644"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
