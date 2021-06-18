@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2298063"
+#define V_COMMIT_HASH "9f6ddb4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "05f0f3e"
+	#define V_COMMIT_HASH "2298063"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2298063"
+	#define V_CURRENT_COMMIT_HASH "9f6ddb4"
 #endif
 
 // V comptime_defines:
@@ -4059,7 +4059,7 @@ struct v__ast__CharLiteral {
 struct v__ast__Comment {
 	string text;
 	bool is_multi;
-	int line_nr;
+	bool is_inline;
 	v__token__Position pos;
 };
 
@@ -10022,7 +10022,7 @@ static string indent_v__ast__Comment_str(v__ast__Comment it, int indent_count) {
 		{_SLIT("v.ast.Comment{\n"), 0, {.d_c=0}},
 		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    text: "), 0, {.d_c=0}}, {_SLIT("'"), 16, {.d_s=it.text}}, {_SLIT("'"), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_multi: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_multi ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    line_nr: "), 0, {.d_c=0}}, {_SLIT(""), 7, {.d_i32=it.line_nr}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_inline: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_inline ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    pos: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Position_str(it.pos)}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("}"), 0, {.d_c=0}},
 	}));
@@ -30083,7 +30083,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("05f0f3e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2298063"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42272,16 +42272,18 @@ v__ast__Comment v__parser__Parser_check_comment(v__parser__Parser* p) {
 		v__ast__Comment _t3682 = v__parser__Parser_comment(p);
 		return _t3682;
 	}
-	v__ast__Comment _t3683 = (v__ast__Comment){.text = (string){.str=(byteptr)"", .is_lit=1},.is_multi = 0,.line_nr = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},};
+	v__ast__Comment _t3683 = (v__ast__Comment){.text = (string){.str=(byteptr)"", .is_lit=1},.is_multi = 0,.is_inline = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},};
 	return _t3683;
 }
 
 v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	string text = p->tok.lit;
-	pos.last_line = pos.line_nr + string_count(text, _SLIT("\n"));
+	int num_newlines = string_count(text, _SLIT("\n"));
+	bool is_multi = num_newlines > 0;
+	bool is_inline = text.len + 4 == p->tok.len;
+	pos.last_line = pos.line_nr + num_newlines;
 	v__parser__Parser_next(p);
-	bool is_multi = string_contains(text, _SLIT("\n"));
 	if (p->vet_errors.len > 0 && is_multi) {
 		Array_v__vet__Error _t3684_orig = p->vet_errors;
 		int _t3684_len = _t3684_orig.len;
@@ -42296,7 +42298,7 @@ v__ast__Comment v__parser__Parser_comment(v__parser__Parser* p) {
 		
 		p->vet_errors = _t3684;
 	}
-	v__ast__Comment _t3686 = (v__ast__Comment){.text = text,.is_multi = is_multi,.line_nr = 0,.pos = pos,};
+	v__ast__Comment _t3686 = (v__ast__Comment){.text = text,.is_multi = is_multi,.is_inline = is_inline,.pos = pos,};
 	return _t3686;
 }
 
@@ -43182,9 +43184,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parse
 	v__token__Position pos = v__token__Token_position(&tok);
 	Array_v__ast__Ident defer_vars = p->defer_vars;
 	p->defer_vars = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_43301 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_43301.arg0;
-	Array_v__ast__Comment left_comments = mr_43301.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_43413 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_43413.arg0;
+	Array_v__ast__Comment left_comments = mr_43413.arg1;
 	if (!(p->inside_defer && p->tok.kind == v__token__Kind_decl_assign)) {
 		_PUSH_MANY(&defer_vars, (p->defer_vars), _t3778, Array_v__ast__Ident);
 	}
@@ -44173,9 +44175,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t3872 = (v__ast__Return){.pos = first_pos,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = comments,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t3872;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_71983 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_71983.arg0;
-	Array_v__ast__Comment comments2 = mr_71983.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_72095 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_72095.arg0;
+	Array_v__ast__Comment comments2 = mr_72095.arg1;
 	_PUSH_MANY(&comments, (comments2), _t3873, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3874 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.exprs = exprs,.comments = comments,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
