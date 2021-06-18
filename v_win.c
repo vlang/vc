@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "751f295"
+#define V_COMMIT_HASH "a98d644"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "64f34f6"
+	#define V_COMMIT_HASH "751f295"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "751f295"
+	#define V_CURRENT_COMMIT_HASH "a98d644"
 #endif
 
 // V comptime_defines:
@@ -30058,7 +30058,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("64f34f6"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("751f295"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -57406,6 +57406,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		string arg_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_arg_expr_"), 0xfe10, {.d_s = fn_name}}, {_SLIT("_0_"), 0xfe07, {.d_i32 = node.pos.pos}}, {_SLIT0, 0, { .d_c = 0 }}})) ;
 		v__gen__c__Gen_write(g, string__plus(_SLIT("/*af receiver arg*/"), arg_name));
 	} else {
+		if (left_sym->kind == v__ast__Kind_array && v__ast__Expr_is_auto_deref_var(node.left) && (string__eq(node.name, _SLIT("first")) || string__eq(node.name, _SLIT("last")) || string__eq(node.name, _SLIT("repeat")))) {
+			v__gen__c__Gen_write(g, _SLIT("*"));
+		}
 		v__gen__c__Gen_expr(g, node.left);
 		if (node.from_embed_type != 0) {
 			string embed_name = v__ast__TypeSymbol_embed_name(typ_sym);
@@ -57561,11 +57564,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_28451 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_28451.arg0;
-			string pafile = mr_28451.arg1;
-			string pamod = mr_28451.arg2;
-			string pafn = mr_28451.arg3;
+			multi_return_int_string_string_string mr_28582 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_28582.arg0;
+			string pafile = mr_28582.arg1;
+			string pamod = mr_28582.arg2;
+			string pafn = mr_28582.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})) );
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
