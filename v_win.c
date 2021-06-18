@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d56ae2d"
+#define V_COMMIT_HASH "acf9d16"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "de384f1"
+	#define V_COMMIT_HASH "d56ae2d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d56ae2d"
+	#define V_CURRENT_COMMIT_HASH "acf9d16"
 #endif
 
 // V comptime_defines:
@@ -21684,7 +21684,7 @@ u64 os__file_size(string path) {
 			#if defined(_WIN32)
 			{
 				struct __stat64 swin = (struct __stat64){.st_size = 0,.st_mode = 0,.st_mtime = 0,};
-				if (_wstat64(((char*)(string_to_wide(path))), ((voidptr)(&swin))) != 0U) {
+				if (_wstat64(string_to_wide(path), ((voidptr)(&swin))) != 0U) {
 					os__eprintln_unknown_file_size();
 					return 0U;
 				}
@@ -21918,7 +21918,7 @@ Option_void os__rm(string path) {
 Option_void os__rmdir(string path) {
 	#if defined(_WIN32)
 	{
-		int rc = RemoveDirectory(((char*)(string_to_wide(path))));
+		int rc = RemoveDirectory(string_to_wide(path));
 		if (rc == 0) {
 			return (Option_void){ .state=2, .err=v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to remove \""), 0xfe10, {.d_s = path}}, {_SLIT("\": "), 0, { .d_c = 0 }}})) , os__posix_get_error_msg(errno))), .data={0} };
 		}
@@ -22106,11 +22106,10 @@ string os__getwd(void) {
 
 // Attr: [manualfree]
 string os__real_path(string fpath) {
-	byte* fullpath = ((byte*)(0));
 	string res = _SLIT("");
 	#if defined(_WIN32)
 	{
-		fullpath = ((u16*)(vcalloc_noscan(_const_os__max_path_len * 2)));
+		u16* fullpath = ((u16*)(vcalloc_noscan(_const_os__max_path_len * 2)));
 		u32 ret = GetFullPathName(string_to_wide(fpath), _const_os__max_path_len, fullpath, 0);
 		if (ret == 0U) {
 			v_free(fullpath);
@@ -30083,7 +30082,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de384f1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d56ae2d"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
