@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "22214c7"
+#define V_COMMIT_HASH "6171e12"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aea23e8"
+	#define V_COMMIT_HASH "22214c7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "22214c7"
+	#define V_CURRENT_COMMIT_HASH "6171e12"
 #endif
 
 // V comptime_defines:
@@ -30778,7 +30778,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("aea23e8"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22214c7"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -60676,6 +60676,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_select_expr(v__gen__c__Gen* g, v__ast__
 			v__gen__c__Gen_writeln(g, _SLIT("};"));
 		}
 		string fields = v__gen__c__Gen_new_tmp_var(g);
+		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = rows}}, {_SLIT(".len > 0) {"), 0, { .d_c = 0 }}})) );
 		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("Array_string "), 0xfe10, {.d_s = fields}}, {_SLIT(" = (*(pg__Row*) array_get("), 0xfe10, {.d_s = rows}}, {_SLIT(", "), 0xfe10, {.d_s = tmp_i}}, {_SLIT(")).vals;"), 0, { .d_c = 0 }}})) );
 		string fld = v__gen__c__Gen_new_tmp_var(g);
 		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = fld}}, {_SLIT(";"), 0, { .d_c = 0 }}})) );
@@ -60731,6 +60732,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_select_expr(v__gen__c__Gen* g, v__ast__
 			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t array_push((array*)&"), 0xfe10, {.d_s = tmp}}, {_SLIT("_array, _MOV(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("[]) { "), 0xfe10, {.d_s = tmp}}, {_SLIT(" }));\n"), 0, { .d_c = 0 }}})) );
 			v__gen__c__Gen_writeln(g, _SLIT("}"));
 		}
+		v__gen__c__Gen_writeln(g, _SLIT("}"));
 		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string_free(&"), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})) );
 		if (node.is_array) {
 			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array; "), 0, { .d_c = 0 }}})) );
