@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "81fe702"
+#define V_COMMIT_HASH "45c6b64"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8f2f377"
+	#define V_COMMIT_HASH "81fe702"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "81fe702"
+	#define V_CURRENT_COMMIT_HASH "45c6b64"
 #endif
 
 // V comptime_defines:
@@ -7766,7 +7766,12 @@ VV_LOCAL_SYMBOL void v__util__trace_mod_path_to_full_name(string line, string mo
 string v__util__qualify_import(v__pref__Preferences* pref, string mod, string file_path);
 string v__util__qualify_module(v__pref__Preferences* pref, string mod, string file_path);
 Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string mod, string path);
-Array_string _const_v__util__invalid_escapes; // inited later
+Array_byte _const_v__util__invalid_escapes; // inited later
+#define _const_v__util__backslash 92
+#define _const_v__util__backslash_r 13
+#define _const_v__util__backslash_n 10
+#define _const_v__util__double_quote 34
+string _const_v__util__double_escape; // a string literal, inited later
 string v__util__smart_quote(string str, bool raw);
 bool v__util__is_name_char(byte c);
 bool v__util__is_func_char(byte c);
@@ -9788,6 +9793,7 @@ void vinit_string_literals(){
 	_const_rand__ascii_chars = _SLIT("!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}~");
 	_const_rand__ulid_encoding = _SLIT("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
 	_const_help__unknown_topic = _SLIT("`v help`: unknown help topic provided. Use `v help` for usage information.");
+	_const_v__util__double_escape = _SLIT("\\\\");
 	_const_v__util__v_version = _SLIT("0.2.2");
 	_const_v__util__map_prefix = _SLIT("map[string]");
 	_const_v__parser__tmpl_str_start = _SLIT("sb.write_string('");
@@ -11788,7 +11794,7 @@ inline byte strings__Builder_byte_at(strings__Builder* b, int n) {
 
 // Attr: [inline]
 inline void strings__Builder_write_string(strings__Builder* b, string s) {
-	if ((s).len == 0) {
+	if (s.len == 0) {
 		return;
 	}
 	array_push_many(b, s.str, s.len);
@@ -30122,7 +30128,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8f2f377"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("81fe702"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31605,81 +31611,101 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 	return (Option_string){ .state=2, .err=v_error(_SLIT("module not found")), .data={0} };
 }
 
-// Attr: [direct_array_access]
 string v__util__smart_quote(string str, bool raw) {
 	int len = str.len;
 	if (len == 0) {
-		return str;
+		string _t2341 = _SLIT("");
+		return _t2341;
 	}
 	strings__Builder result = strings__new_builder(len);
 	int pos = -1;
-	string last = _SLIT("");
-	string next = _SLIT("");
+	byte last = ((byte)(0));
+	byte current = ((byte)(0));
+	byte next = ((byte)(0));
 	bool skip_next = false;
 	for (;;) {
-		pos = pos + 1;
+		pos++;
 		if (skip_next) {
 			skip_next = false;
-			pos = pos + 1;
+			pos++;
 		}
 		if (pos >= len) {
 			break;
 		}
 		if (pos + 1 < len) {
-			next = byte_ascii_str(str.str[ pos + 1]);
+			next = string_at(str, pos + 1);
 		}
-		string current = str;
-		string toadd = str;
-		if (len > 1) {
-			current = byte_ascii_str(str.str[ pos]);
-			toadd = current;
+		current = string_at(str, pos);
+		if (current == _const_v__util__double_quote) {
+			current = 0;
+			last = current;
+			strings__Builder_write_b(&result, _const_v__util__backslash);
+			strings__Builder_write_b(&result, _const_v__util__double_quote);
+			continue;
 		}
-		if (string__eq(current, _SLIT("\""))) {
-			toadd = _SLIT("\\\"");
-			current = _SLIT("");
-		}
-		if (string__eq(current, _SLIT("\\"))) {
+		if (current == _const_v__util__backslash) {
 			if (raw) {
-				toadd = _SLIT("\\\\");
+				last = current;
+				strings__Builder_write_string(&result, _const_v__util__double_escape);
+				continue;
 			} else {
-				if (string__eq(next, _SLIT("\\"))) {
-					toadd = _SLIT("\\\\");
+				if (next == _const_v__util__backslash) {
 					skip_next = true;
-				} else if ((next).len != 0) {
+					last = current;
+					strings__Builder_write_string(&result, _const_v__util__double_escape);
+					continue;
+				} else if (next != 0) {
 					if (raw) {
-						toadd = string__plus(_SLIT("\\\\"), next);
 						skip_next = true;
-					} else if (!(Array_string_contains(_const_v__util__invalid_escapes, next))) {
-						toadd = string__plus(_SLIT("\\"), next);
+						last = current;
+						strings__Builder_write_string(&result, _const_v__util__double_escape);
+						continue;
+					} else if ((Array_byte_contains(_const_v__util__invalid_escapes, next))) {
 						skip_next = true;
+						last = current;
+						strings__Builder_write_b(&result, next);
+						continue;
 					} else {
-						toadd = next;
 						skip_next = true;
+						last = current;
+						strings__Builder_write_b(&result, current);
+						strings__Builder_write_b(&result, next);
+						continue;
 					}
 				}
 			}
 		}
-		if (string__eq(current, _SLIT("\n"))) {
-			toadd = _SLIT("\\n");
-			current = _SLIT("");
-		} else if (string__eq(current, _SLIT("\r")) && string__eq(next, _SLIT("\n"))) {
-			toadd = _SLIT("\r\n");
-			current = _SLIT("");
+		if (current == _const_v__util__backslash_n) {
+			current = 0;
+			last = current;
+			strings__Builder_write_b(&result, _const_v__util__backslash);
+			strings__Builder_write_b(&result, 'n');
+			continue;
+		} else if (current == _const_v__util__backslash_r && next == _const_v__util__backslash_n) {
+			strings__Builder_write_b(&result, current);
+			strings__Builder_write_b(&result, next);
+			current = 0;
 			skip_next = true;
+			last = current;
+			continue;
 		}
-		if (!raw && string__eq(current, _SLIT("$"))) {
-			if (string__eq(last, _SLIT("\\"))) {
-				toadd = _SLIT("\\$");
+		if (!raw && current == '$') {
+			if (last == _const_v__util__backslash) {
+				strings__Builder_write_b(&result, last);
+				strings__Builder_write_b(&result, current);
+				last = current;
+				continue;
 			}
 		}
-		if (!raw && string__eq(current, _SLIT("\r"))) {
-			if (string__eq(next, _SLIT("\n"))) {
-				skip_next = true;
-				toadd = _SLIT("\\n");
-			}
+		if (!raw && current == _const_v__util__backslash_r && next == _const_v__util__backslash_n) {
+			skip_next = true;
+			strings__Builder_write_b(&result, _const_v__util__backslash);
+			strings__Builder_write_b(&result, 'n');
+			last = current;
+			continue;
 		}
-		strings__Builder_write_string(&result, toadd);
 		last = current;
+		strings__Builder_write_b(&result, current);
 	}
 	string _t2342 = strings__Builder_str(&result);
 	return _t2342;
@@ -76666,7 +76692,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	// Initializations for module help :
 	// Initializations for module v.util :
 	_const_v__util__emanager = v__util__new_error_manager();
-	_const_v__util__invalid_escapes = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("("), _SLIT("{"), _SLIT("$"), _SLIT("`"), _SLIT(".")}));
+	_const_v__util__invalid_escapes = string_bytes(_SLIT("({$`."));
 	_const_v__util__timers = v__util__new_timers(false);
 	_const_v__util__builtin_module_parts = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("math.bits"), _SLIT("strconv"), _SLIT("strconv.ftoa"), _SLIT("strings"), _SLIT("builtin")}));
 	_const_v__util__bundle_modules = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("clipboard"), _SLIT("fontstash"), _SLIT("gg"), _SLIT("gx"), _SLIT("sokol"), _SLIT("szip"), _SLIT("ui")}));
