@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "809aa9a"
+#define V_COMMIT_HASH "e9de303"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e3ea5c1"
+	#define V_COMMIT_HASH "809aa9a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "809aa9a"
+	#define V_CURRENT_COMMIT_HASH "e9de303"
 #endif
 
 // V comptime_defines:
@@ -31004,7 +31004,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e3ea5c1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("809aa9a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35877,6 +35877,11 @@ VV_LOCAL_SYMBOL bool v__ast__Fn_method_equals(v__ast__Fn* f, v__ast__Fn* o) {
 v__ast__Fn v__ast__Fn_new_method_with_receiver_type(v__ast__Fn* f, v__ast__Type new_type) {
 	v__ast__Fn new_method = *f;
 	new_method.params = array_clone_to_depth(&f->params, 0);
+	for (int i = 1; i < new_method.params.len; ++i) {
+		if (v__ast__Type_alias_eq((*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, i)).typ, (*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, 0)).typ)) {
+			(*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, i)).typ = new_type;
+		}
+	}
 	(*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, 0)).typ = new_type;
 	return new_method;
 }
@@ -35884,6 +35889,11 @@ v__ast__Fn v__ast__Fn_new_method_with_receiver_type(v__ast__Fn* f, v__ast__Type 
 v__ast__FnDecl v__ast__FnDecl_new_method_with_receiver_type(v__ast__FnDecl* f, v__ast__Type new_type) {
 	v__ast__FnDecl new_method = *f;
 	new_method.params = array_clone_to_depth(&f->params, 0);
+	for (int i = 1; i < new_method.params.len; ++i) {
+		if (v__ast__Type_alias_eq((*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, i)).typ, (*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, 0)).typ)) {
+			(*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, i)).typ = new_type;
+		}
+	}
 	(*(v__ast__Param*)/*ee elem_typ */array_get(new_method.params, 0)).typ = new_type;
 	return new_method;
 }
