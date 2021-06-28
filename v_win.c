@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4af4f2b"
+#define V_COMMIT_HASH "63638fd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8067197"
+	#define V_COMMIT_HASH "4af4f2b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4af4f2b"
+	#define V_CURRENT_COMMIT_HASH "63638fd"
 #endif
 
 // V comptime_defines:
@@ -15539,9 +15539,10 @@ void Array_int_sort(Array_int* a) {
 	array_sort_with_compare(a, compare_ints);
 }
 
+// Attr: [direct_array_access]
 int Array_string_index(Array_string a, string v) {
 	for (int i = 0; i < a.len; ++i) {
-		if (string__eq((*(string*)/*ee elem_typ */array_get(a, i)), v)) {
+		if (string__eq(((string*)a.data)[i], v)) {
 			return i;
 		}
 	}
@@ -30217,7 +30218,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8067197"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4af4f2b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -47594,22 +47595,23 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_index_method(v__gen__c__Gen* g, 
 		strings__Builder_writeln(&g->type_definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("static int "), 0xfe10, {.d_s = fn_name}}, {_SLIT("("), 0xfe10, {.d_s = left_type_str}}, {_SLIT(" a, "), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(" v); // auto"), 0, { .d_c = 0 }}})) );
 		strings__Builder fn_builder = strings__new_builder(512);
 		strings__Builder_writeln(&fn_builder,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("static int "), 0xfe10, {.d_s = fn_name}}, {_SLIT("("), 0xfe10, {.d_s = left_type_str}}, {_SLIT(" a, "), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(" v) {"), 0, { .d_c = 0 }}})) );
-		strings__Builder_writeln(&fn_builder, _SLIT("\tfor (int i = 0; i < a.len; ++i) {"));
+		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("* pelem = a.data;"), 0, { .d_c = 0 }}})) );
+		strings__Builder_writeln(&fn_builder, _SLIT("\tfor (int i = 0; i < a.len; ++i, ++pelem) {"));
 		if (elem_sym->kind == v__ast__Kind__string) {
-			strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (fast_string_eq(((string*)a.data)[i], v)) {"));
+			strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (fast_string_eq(( *pelem, v))) {"));
 		} else if (elem_sym->kind == v__ast__Kind__array && !v__ast__Type_is_ptr(info.elem_type)) {
 			string ptr_typ = v__gen__c__Gen_gen_array_equality_fn(g, info.elem_type);
-			strings__Builder_writeln(&fn_builder,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t\tif ("), 0xfe10, {.d_s = ptr_typ}}, {_SLIT("_arr_eq((("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)a.data)[i], v)) {"), 0, { .d_c = 0 }}})) );
+			strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif ("), 0xfe10, {.d_s = ptr_typ}}, {_SLIT("_arr_eq( *pelem, v)) {"), 0, { .d_c = 0 }}})) );
 		} else if (elem_sym->kind == v__ast__Kind__function && !v__ast__Type_is_ptr(info.elem_type)) {
-			strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (((voidptr*)a.data)[i] == v) {"));
+			strings__Builder_writeln(&fn_builder, _SLIT("\t\tif ( pelem == v) {"));
 		} else if (elem_sym->kind == v__ast__Kind__map && !v__ast__Type_is_ptr(info.elem_type)) {
 			string ptr_typ = v__gen__c__Gen_gen_map_equality_fn(g, info.elem_type);
-			strings__Builder_writeln(&fn_builder,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t\tif ("), 0xfe10, {.d_s = ptr_typ}}, {_SLIT("_map_eq((("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)a.data)[i], v)) {"), 0, { .d_c = 0 }}})) );
+			strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif ("), 0xfe10, {.d_s = ptr_typ}}, {_SLIT("_map_eq(( *pelem, v))) {"), 0, { .d_c = 0 }}})) );
 		} else if (elem_sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(info.elem_type)) {
 			string ptr_typ = v__gen__c__Gen_gen_struct_equality_fn(g, info.elem_type);
-			strings__Builder_writeln(&fn_builder,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t\tif ("), 0xfe10, {.d_s = ptr_typ}}, {_SLIT("_struct_eq((("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)a.data)[i], v)) {"), 0, { .d_c = 0 }}})) );
+			strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif ("), 0xfe10, {.d_s = ptr_typ}}, {_SLIT("_struct_eq( *pelem, v)) {"), 0, { .d_c = 0 }}})) );
 		} else {
-			strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif ((("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)a.data)[i] == v) {"), 0, { .d_c = 0 }}})) );
+			strings__Builder_writeln(&fn_builder, _SLIT("\t\tif (*pelem == v) {"));
 		}
 		strings__Builder_writeln(&fn_builder, _SLIT("\t\t\treturn i;"));
 		strings__Builder_writeln(&fn_builder, _SLIT("\t\t}"));
