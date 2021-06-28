@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "63638fd"
+#define V_COMMIT_HASH "06a6a8e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4af4f2b"
+	#define V_COMMIT_HASH "63638fd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "63638fd"
+	#define V_CURRENT_COMMIT_HASH "06a6a8e"
 #endif
 
 // V comptime_defines:
@@ -4738,6 +4738,7 @@ struct v__ast__MatchBranch {
 	v__token__Position pos;
 	bool is_else;
 	Array_v__ast__Comment post_comments;
+	v__token__Position branch_pos;
 	Array_v__ast__Expr exprs;
 	v__ast__Scope* scope;
 };
@@ -30218,7 +30219,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4af4f2b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("63638fd"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40636,6 +40637,7 @@ VV_LOCAL_SYMBOL v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser
 		v__parser__Parser_close_scope(p);
 		p->inside_match_body = false;
 		v__token__Position pos = v__token__Position_extend_with_last_line(branch_first_pos, branch_last_pos, p->prev_tok.line_nr);
+		v__token__Position branch_pos = v__token__Position_extend_with_last_line(branch_first_pos, v__token__Token_position(&p->tok), p->tok.line_nr);
 		Array_v__ast__Comment post_comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,});
 		array_push((array*)&branches, _MOV((v__ast__MatchBranch[]){ (v__ast__MatchBranch){
 			.ecmnts = ecmnts,
@@ -40643,6 +40645,7 @@ VV_LOCAL_SYMBOL v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser
 			.pos = pos,
 			.is_else = is_else,
 			.post_comments = post_comments,
+			.branch_pos = branch_pos,
 			.exprs = exprs,
 			.scope = branch_scope,
 		} }));
@@ -40715,9 +40718,9 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 		} else {
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8494 = v__parser__Parser_expr_list(p);
-			Array_v__ast__Expr exprs = mr_8494.arg0;
-			Array_v__ast__Comment comments = mr_8494.arg1;
+			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8608 = v__parser__Parser_expr_list(p);
+			Array_v__ast__Expr exprs = mr_8608.arg0;
+			Array_v__ast__Comment comments = mr_8608.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, _SLIT("only one expression allowed as `select` key"));
 				v__ast__SelectExpr _t3559 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
@@ -71108,23 +71111,28 @@ v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Matc
 	node->is_sum_type = (cond_type_sym->kind == v__ast__Kind__interface_ || cond_type_sym->kind == v__ast__Kind__sum_type);
 	v__checker__Checker_match_exprs(c, node, *cond_type_sym);
 	c->expected_type = cond_type;
+	bool first_iteration = true;
 	v__ast__Type ret_type = _const_v__ast__void_type;
 	int nbranches_with_return = 0;
 	int nbranches_without_return = 0;
 	for (int _t5436 = 0; _t5436 < node->branches.len; ++_t5436) {
 		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node->branches.data)[_t5436];
 		v__checker__Checker_stmts(c, branch.stmts);
-		if (node->is_expr && branch.stmts.len > 0) {
-			Array_v__ast__Stmt _t5437 = array_slice(branch.stmts, 0, branch.stmts.len - 1);
-			for (int _t5438 = 0; _t5438 < _t5437.len; ++_t5438) {
-				v__ast__Stmt st = ((v__ast__Stmt*)_t5437.data)[_t5438];
-				Option_void _t5439 = v__ast__Stmt_check_c_expr(st);
-				if (_t5439.state != 0 && _t5439.err._typ != _IError_None___index) {
-					IError err = _t5439.err;
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`match` expression branch has "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , (*(st.pos)));
-				;
+		if (node->is_expr) {
+			if (branch.stmts.len > 0) {
+				Array_v__ast__Stmt _t5437 = array_slice(branch.stmts, 0, branch.stmts.len - 1);
+				for (int _t5438 = 0; _t5438 < _t5437.len; ++_t5438) {
+					v__ast__Stmt st = ((v__ast__Stmt*)_t5437.data)[_t5438];
+					Option_void _t5439 = v__ast__Stmt_check_c_expr(st);
+					if (_t5439.state != 0 && _t5439.err._typ != _IError_None___index) {
+						IError err = _t5439.err;
+						v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`match` expression branch has "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})) , (*(st.pos)));
+					;
+					}
+					;
 				}
-				;
+			} else if (!v__ast__Type_alias_eq(ret_type, _const_v__ast__void_type)) {
+				v__checker__Checker_error(c, _SLIT("`match` expression requires an expression as the last statement of every branch"), branch.branch_pos);
 			}
 		}
 		if (branch.stmts.len > 0) {
@@ -71134,7 +71142,7 @@ v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Matc
 					c->expected_type = node->expected_type;
 				}
 				v__ast__Type expr_type = v__checker__Checker_expr(c, (*stmt._v__ast__ExprStmt).expr);
-				if (v__ast__Type_alias_eq(ret_type, _const_v__ast__void_type)) {
+				if (first_iteration) {
 					if (node->is_expr && !v__ast__Type_has_flag(node->expected_type, v__ast__TypeFlag__optional) && v__ast__Table_get_type_symbol(c->table, node->expected_type)->kind == v__ast__Kind__sum_type) {
 						ret_type = node->expected_type;
 					} else {
@@ -71152,9 +71160,13 @@ v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__Matc
 			}
 			
 			else {
+				if (node->is_expr && !v__ast__Type_alias_eq(ret_type, _const_v__ast__void_type)) {
+					v__checker__Checker_error(c, _SLIT("`match` expression requires an expression as the last statement of every branch"), (*(stmt.pos)));
+				}
 			}
 			;
 		}
+		first_iteration = false;
 		Option_bool _t5440;
 		if (_t5440 = v__checker__Checker_has_return(c, branch.stmts), _t5440.state == 0) {
 			bool has_return = *(bool*)_t5440.data;
@@ -72142,8 +72154,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})) , node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_212732 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_212732.arg0;
+		multi_return_string_v__token__Position mr_212933 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_212933.arg0;
 	}
 	return typ;
 }
@@ -73259,10 +73271,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t5622 = 0; _t5622 < sym_app->methods.len; ++_t5622) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t5622];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_245754 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_245754.arg0;
-				int nroute_attributes = mr_245754.arg1;
-				int nargs = mr_245754.arg2;
+				multi_return_bool_int_int mr_245955 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_245955.arg0;
+				int nroute_attributes = mr_245955.arg1;
+				int nargs = mr_245955.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
