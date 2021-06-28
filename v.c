@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cdb3111"
+#define V_COMMIT_HASH "003f60f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1492eae"
+	#define V_COMMIT_HASH "cdb3111"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cdb3111"
+	#define V_CURRENT_COMMIT_HASH "003f60f"
 #endif
 
 // V comptime_defines:
@@ -27058,11 +27058,8 @@ VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode(x__json2__Parser* p
 }
 
 VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode_value(x__json2__Parser* p) {
-	if (p->n_level == 500) {
+	if (p->n_level + 1 == 500) {
 		return (Option_x__json2__Any){ .state=2, .err=v_error(x__json2__Parser_emit_error(/*rec*/*p, _SLIT("reached maximum nesting level of 500"))), .data={0} };
-	}
-	if ((p->tok.kind == x__json2__TokenKind__lsbr && p->n_tok.kind == x__json2__TokenKind__lcbr) || (p->p_tok.kind == p->tok.kind && p->tok.kind == x__json2__TokenKind__lsbr)) {
-		p->n_level++;
 	}
 
 	if (p->tok.kind == (x__json2__TokenKind__lsbr)) {
@@ -27162,6 +27159,7 @@ VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode_array(x__json2__Par
 		return _t1720;
 	}
 	;
+	p->n_level++;
 	for (;;) {
 		if (!(p->tok.kind != x__json2__TokenKind__rsbr)) break;
 		Option_x__json2__Any _t1721 = x__json2__Parser_decode_value(p);
@@ -27197,6 +27195,7 @@ VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode_array(x__json2__Par
 		return _t1729;
 	}
 	;
+	p->n_level--;
 	Option_x__json2__Any _t1730;
 	opt_ok(&(x__json2__Any[]) { Array_x__json2__Any_to_sumtype_x__json2__Any(&items) }, (Option*)(&_t1730), sizeof(x__json2__Any));
 	return _t1730;
@@ -27211,6 +27210,7 @@ VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode_object(x__json2__Pa
 		return _t1732;
 	}
 	;
+	p->n_level++;
 	for (;;) {
 		if (!(p->tok.kind != x__json2__TokenKind__rcbr)) break;
 		bool is_key = p->tok.kind == x__json2__TokenKind__str_ && p->n_tok.kind == x__json2__TokenKind__colon;
@@ -27260,6 +27260,7 @@ VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode_object(x__json2__Pa
 		return _t1744;
 	}
 	;
+	p->n_level--;
 	Option_x__json2__Any _t1745;
 	opt_ok(&(x__json2__Any[]) { Map_string_x__json2__Any_to_sumtype_x__json2__Any(&fields) }, (Option*)(&_t1745), sizeof(x__json2__Any));
 	return _t1745;
@@ -30887,7 +30888,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1492eae"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("cdb3111"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
