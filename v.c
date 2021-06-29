@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1b5d0ba"
+#define V_COMMIT_HASH "ab5a4cf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d5ee60b"
+	#define V_COMMIT_HASH "1b5d0ba"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1b5d0ba"
+	#define V_CURRENT_COMMIT_HASH "ab5a4cf"
 #endif
 
 // V comptime_defines:
@@ -6571,7 +6571,6 @@ bool string_is_capital(string s);
 string string_title(string s);
 bool string_is_title(string s);
 string string_find_between(string s, string start, string end);
-bool byte_is_space(byte c);
 string string_trim_space(string s);
 string string_trim(string s, string cutset);
 string string_trim_left(string s, string cutset);
@@ -6601,6 +6600,7 @@ string ustring_right(ustring u, int pos);
 VV_LOCAL_SYMBOL byte string_at(string s, int idx);
 string ustring_at(ustring u, int idx);
 VV_LOCAL_SYMBOL void ustring_free(ustring* u);
+bool byte_is_space(byte c);
 bool byte_is_digit(byte c);
 bool byte_is_hex_digit(byte c);
 bool byte_is_oct_digit(byte c);
@@ -18815,11 +18815,6 @@ string string_find_between(string s, string start, string end) {
 	return string_substr(val, 0, end_pos);
 }
 
-// Attr: [inline]
-inline bool byte_is_space(byte c) {
-	return c == 32 || (c > 8 && c < 14) || (c == 0x85) || (c == 0xa0);
-}
-
 string string_trim_space(string s) {
 	return string_trim(s, _SLIT(" \n\t\v\f\r"));
 }
@@ -18835,16 +18830,16 @@ string string_trim(string s, string cutset) {
 	for (;;) {
 		if (!(pos_left <= s.len && pos_right >= -1 && cs_match)) break;
 		cs_match = false;
-		for (int _t603 = 0; _t603 < cutset.len; ++_t603) {
-			byte cs = cutset.str[_t603];
+		for (int _t602 = 0; _t602 < cutset.len; ++_t602) {
+			byte cs = cutset.str[_t602];
 			if (s.str[ pos_left] == cs) {
 				pos_left++;
 				cs_match = true;
 				break;
 			}
 		}
-		for (int _t604 = 0; _t604 < cutset.len; ++_t604) {
-			byte cs = cutset.str[_t604];
+		for (int _t603 = 0; _t603 < cutset.len; ++_t603) {
+			byte cs = cutset.str[_t603];
 			if (s.str[ pos_right] == cs) {
 				pos_right--;
 				cs_match = true;
@@ -18867,8 +18862,8 @@ string string_trim_left(string s, string cutset) {
 	for (;;) {
 		if (!(pos < s.len)) break;
 		bool found = false;
-		for (int _t608 = 0; _t608 < cutset.len; ++_t608) {
-			byte cs = cutset.str[_t608];
+		for (int _t607 = 0; _t607 < cutset.len; ++_t607) {
+			byte cs = cutset.str[_t607];
 			if (s.str[ pos] == cs) {
 				found = true;
 				break;
@@ -18891,8 +18886,8 @@ string string_trim_right(string s, string cutset) {
 	for (;;) {
 		if (!(pos >= 0)) break;
 		bool found = false;
-		for (int _t611 = 0; _t611 < cutset.len; ++_t611) {
-			byte cs = cutset.str[_t611];
+		for (int _t610 = 0; _t610 < cutset.len; ++_t610) {
+			byte cs = cutset.str[_t610];
 			if (s.str[ pos] == cs) {
 				found = true;
 			}
@@ -19174,23 +19169,33 @@ VV_LOCAL_SYMBOL void ustring_free(ustring* u) {
 	}
 }
 
-bool byte_is_digit(byte c) {
+// Attr: [inline]
+inline bool byte_is_space(byte c) {
+	return c == 32 || (c > 8 && c < 14) || (c == 0x85) || (c == 0xa0);
+}
+
+// Attr: [inline]
+inline bool byte_is_digit(byte c) {
 	return c >= '0' && c <= '9';
 }
 
-bool byte_is_hex_digit(byte c) {
+// Attr: [inline]
+inline bool byte_is_hex_digit(byte c) {
 	return byte_is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
-bool byte_is_oct_digit(byte c) {
+// Attr: [inline]
+inline bool byte_is_oct_digit(byte c) {
 	return c >= '0' && c <= '7';
 }
 
-bool byte_is_bin_digit(byte c) {
+// Attr: [inline]
+inline bool byte_is_bin_digit(byte c) {
 	return c == '0' || c == '1';
 }
 
-bool byte_is_letter(byte c) {
+// Attr: [inline]
+inline bool byte_is_letter(byte c) {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
@@ -30893,7 +30898,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d5ee60b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1b5d0ba"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
