@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2bcc733"
+#define V_COMMIT_HASH "0422147"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "06a6a8e"
+	#define V_COMMIT_HASH "2bcc733"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2bcc733"
+	#define V_CURRENT_COMMIT_HASH "0422147"
 #endif
 
 // V comptime_defines:
@@ -30890,7 +30890,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("06a6a8e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2bcc733"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -55672,12 +55672,28 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_go_expr(v__gen__c__Gen* g, v__ast__GoExpr no
 		} else {
 			strings__Builder_write_string(&g->gowrappers, _SLIT("\t"));
 		}
-		strings__Builder_write_string(&g->gowrappers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("("), 0, { .d_c = 0 }}})) );
 		if (expr.is_method) {
-			strings__Builder_write_string(&g->gowrappers, _SLIT("arg->arg0"));
+			v__ast__Type unwrapped_rec_type = v__gen__c__Gen_unwrap_generic(g, expr.receiver_type);
+			v__ast__TypeSymbol* typ_sym = v__ast__Table_get_type_symbol(g->table, unwrapped_rec_type);
+			if (typ_sym->kind == v__ast__Kind__interface_ && v__ast__Interface_defines_method((/* as */ *(v__ast__Interface*)__as_cast((typ_sym->info)._v__ast__Interface,(typ_sym->info)._typ, 390) /*expected idx: 390, name: v.ast.Interface */ ), expr.name)) {
+				string rec_cc_type = v__gen__c__Gen_cc_type(g, unwrapped_rec_type, false);
+				string receiver_type_name = v__util__no_dots(rec_cc_type);
+				strings__Builder_write_string(&g->gowrappers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__c__c_name(receiver_type_name)}}, {_SLIT("_name_table["), 0, { .d_c = 0 }}})) );
+				strings__Builder_write_string(&g->gowrappers, _SLIT("arg->arg0"));
+				string dot = (v__ast__Type_is_ptr(expr.left_type) ? (_SLIT("->")) : (_SLIT(".")));
+				string mname = v__gen__c__c_name(expr.name);
+				strings__Builder_write_string(&g->gowrappers,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dot}}, {_SLIT("_typ]._method_"), 0xfe10, {.d_s = mname}}, {_SLIT("("), 0, { .d_c = 0 }}})) );
+				strings__Builder_write_string(&g->gowrappers, _SLIT("arg->arg0"));
+				strings__Builder_write_string(&g->gowrappers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dot}}, {_SLIT("_object"), 0, { .d_c = 0 }}})) );
+			} else {
+				strings__Builder_write_string(&g->gowrappers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("("), 0, { .d_c = 0 }}})) );
+				strings__Builder_write_string(&g->gowrappers, _SLIT("arg->arg0"));
+			}
 			if (expr.args.len > 0) {
 				strings__Builder_write_string(&g->gowrappers, _SLIT(", "));
 			}
+		} else {
+			strings__Builder_write_string(&g->gowrappers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("("), 0, { .d_c = 0 }}})) );
 		}
 		if (expr.args.len > 0) {
 			bool has_cast = false;
@@ -55912,8 +55928,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_183593 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_183593.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_184356 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_184356.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
