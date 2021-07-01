@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "41e8842"
+#define V_COMMIT_HASH "8b901df"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3881e97"
+	#define V_COMMIT_HASH "41e8842"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "41e8842"
+	#define V_CURRENT_COMMIT_HASH "8b901df"
 #endif
 
 // V comptime_defines:
@@ -7975,7 +7975,7 @@ bool v__ast__Table_register_fn_concrete_types(v__ast__Table* t, string fn_name, 
 bool v__ast__Table_sumtype_has_variant(v__ast__Table* t, v__ast__Type parent, v__ast__Type variant);
 Array_string v__ast__Table_known_type_names(v__ast__Table* t);
 bool v__ast__Table_has_deep_child_no_ref(v__ast__Table* t, v__ast__TypeSymbol* ts, string name);
-void v__ast__Table_complete_interface_check(v__ast__Table* table);
+void v__ast__Table_complete_interface_check(v__ast__Table* t);
 v__ast__Type v__ast__Table_bitsize_to_type(v__ast__Table* t, int bit_size);
 VV_LOCAL_SYMBOL bool v__ast__Table_does_type_implement_interface(v__ast__Table* table, v__ast__Type typ, v__ast__Type inter_typ);
 Option_v__ast__Type v__ast__Table_resolve_generic_to_concrete(v__ast__Table* t, v__ast__Type generic_type, Array_string generic_names, Array_v__ast__Type concrete_types);
@@ -30309,7 +30309,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3881e97"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("41e8842"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35957,17 +35957,17 @@ bool v__ast__Table_has_deep_child_no_ref(v__ast__Table* t, v__ast__TypeSymbol* t
 	return _t3065;
 }
 
-void v__ast__Table_complete_interface_check(v__ast__Table* table) {
+void v__ast__Table_complete_interface_check(v__ast__Table* t) {
 bool v__ast__Table_complete_interface_check_defer_0 = false;
 	v__util__timing_start(_SLIT("Table.complete_interface_check"));
 	v__ast__Table_complete_interface_check_defer_0 = true;
-	for (int tk = 0; tk < table->type_symbols.len; ++tk) {
-		v__ast__TypeSymbol* tsym = ((v__ast__TypeSymbol*)table->type_symbols.data) + tk;
+	for (int tk = 0; tk < t->type_symbols.len; ++tk) {
+		v__ast__TypeSymbol* tsym = ((v__ast__TypeSymbol*)t->type_symbols.data) + tk;
 		if (tsym->kind != v__ast__Kind__struct_) {
 			continue;
 		}
 		v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((tsym->info)._v__ast__Struct,(tsym->info)._typ, 414) /*expected idx: 414, name: v.ast.Struct */ ;
-		Map_int_v__ast__InterfaceDecl _t3066 = table->interfaces;
+		Map_int_v__ast__InterfaceDecl _t3066 = t->interfaces;
 		int _t3068 = _t3066.key_values.len;
 		for (int _t3067 = 0; _t3067 < _t3068; ++_t3067 ) {
 			int _t3069 = _t3066.key_values.len - _t3068;
@@ -35984,7 +35984,10 @@ bool v__ast__Table_complete_interface_check_defer_0 = false;
 			if (idecl->fields.len > info.fields.len) {
 				continue;
 			}
-			v__ast__Table_does_type_implement_interface(table, tk, idecl->typ);
+			if (idecl->methods.len == 0 && idecl->fields.len == 0 && !string__eq(tsym->mod, v__ast__Table_get_type_symbol(t, idecl->typ)->mod)) {
+				continue;
+			}
+			v__ast__Table_does_type_implement_interface(t, tk, idecl->typ);
 		}
 	}
 // Defer begin
