@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3881e97"
+#define V_COMMIT_HASH "41e8842"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9d02ca5"
+	#define V_COMMIT_HASH "3881e97"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3881e97"
+	#define V_CURRENT_COMMIT_HASH "41e8842"
 #endif
 
 // V comptime_defines:
@@ -15388,7 +15388,7 @@ array array_clone_to_depth(array* a, int depth) {
 		}
 		return arr;
 	} else {
-		if (a->data != 0) {
+		if (!isnil(a->data)) {
 			memcpy(((byte*)(arr.data)), a->data, a->cap * a->element_size);
 		}
 		return arr;
@@ -15421,13 +15421,13 @@ VV_LOCAL_SYMBOL void array_push(array* a, voidptr val) {
 
 // Attr: [unsafe]
 void array_push_many(array* a3, voidptr val, int size) {
-	if (a3->data == val && val != 0) {
+	if (a3->data == val && !isnil(a3->data)) {
 		array copy = array_clone(a3);
 		array_ensure_cap(a3, a3->len + size);
 		memcpy(array_get_unsafe(/*rec*/*a3, a3->len), copy.data, a3->element_size * size);
 	} else {
 		array_ensure_cap(a3, a3->len + size);
-		if (a3->data != 0 && val != 0) {
+		if (!isnil(a3->data) && !isnil(val)) {
 			memcpy(array_get_unsafe(/*rec*/*a3, a3->len), val, a3->element_size * size);
 		}
 	}
@@ -17529,7 +17529,7 @@ VV_LOCAL_SYMBOL void SortedMap_set(SortedMap* m, string key, voidptr value) {
 	mapnode* parent = ((mapnode*)(0));
 	for (;;) {
 		if (node->len == _const_max_len) {
-			if (parent != 0) {
+			if (isnil(parent)) {
 				parent = new_node();
 				m->root = parent;
 			}
@@ -17553,7 +17553,7 @@ VV_LOCAL_SYMBOL void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			memcpy(node->values[v_fixed_index(i, 11)], value, m->value_bytes);
 			return;
 		}
-		if (node->children == 0) {
+		if (isnil(node->children)) {
 			int j = node->len - 1;
 			for (;;) {
 				if (!(j >= 0 && string__lt(key, node->keys[v_fixed_index(j, 11)]))) break;
@@ -17584,7 +17584,7 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 		z->keys[v_fixed_index(j, 11)] = y->keys[v_fixed_index(j + _const_degree, 11)];
 		z->values[v_fixed_index(j, 11)] = y->values[v_fixed_index(j + _const_degree, 11)];
 	}
-	if (y->children != 0) {
+	if (!isnil(y->children)) {
 		z->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
 		for (int jj = _const_degree - 1; jj >= 0; jj--) {
 			{ // Unsafe block
@@ -17593,7 +17593,7 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 		}
 	}
 	{ // Unsafe block
-		if (n->children == 0) {
+		if (isnil(n->children)) {
 			n->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
 		}
 		n->children[n->len + 1] = n->children[n->len];
@@ -17626,7 +17626,7 @@ VV_LOCAL_SYMBOL bool SortedMap_get(SortedMap m, string key, voidptr out) {
 			memcpy(out, node->values[v_fixed_index(i, 11)], m.value_bytes);
 			return true;
 		}
-		if (node->children == 0) {
+		if (isnil(node->children)) {
 			break;
 		}
 		node = ((mapnode*)(node->children[i + 1]));
@@ -17635,7 +17635,7 @@ VV_LOCAL_SYMBOL bool SortedMap_get(SortedMap m, string key, voidptr out) {
 }
 
 VV_LOCAL_SYMBOL bool SortedMap_exists(SortedMap m, string key) {
-	if (m.root == 0) {
+	if (isnil(m.root)) {
 		return false;
 	}
 	mapnode* node = m.root;
@@ -17648,7 +17648,7 @@ VV_LOCAL_SYMBOL bool SortedMap_exists(SortedMap m, string key) {
 		if (i != -1 && string__eq(key, node->keys[v_fixed_index(i, 11)])) {
 			return true;
 		}
-		if (node->children == 0) {
+		if (isnil(node->children)) {
 			break;
 		}
 		node = ((mapnode*)(node->children[i + 1]));
@@ -17668,14 +17668,14 @@ VV_LOCAL_SYMBOL int mapnode_find_key(mapnode* n, string k) {
 VV_LOCAL_SYMBOL bool mapnode_remove_key(mapnode* n, string k) {
 	int idx = mapnode_find_key(n, k);
 	if (idx < n->len && string__eq(n->keys[v_fixed_index(idx, 11)], k)) {
-		if (n->children == 0) {
+		if (isnil(n->children)) {
 			mapnode_remove_from_leaf(n, idx);
 		} else {
 			mapnode_remove_from_non_leaf(n, idx);
 		}
 		return true;
 	} else {
-		if (n->children == 0) {
+		if (isnil(n->children)) {
 			return false;
 		}
 		bool flag = (idx == n->len ? (true) : (false));
@@ -17706,7 +17706,7 @@ VV_LOCAL_SYMBOL void mapnode_remove_from_non_leaf(mapnode* n, int idx) {
 	if (((mapnode*)(n->children[idx]))->len >= _const_degree) {
 		mapnode* current = ((mapnode*)(n->children[idx]));
 		for (;;) {
-			if (!(current->children != 0)) break;
+			if (!(!isnil(current->children))) break;
 			current = ((mapnode*)(current->children[current->len]));
 		}
 		string predecessor = current->keys[v_fixed_index(current->len - 1, 11)];
@@ -17717,7 +17717,7 @@ VV_LOCAL_SYMBOL void mapnode_remove_from_non_leaf(mapnode* n, int idx) {
 	} else if (((mapnode*)(n->children[idx + 1]))->len >= _const_degree) {
 		mapnode* current = ((mapnode*)(n->children[idx + 1]));
 		for (;;) {
-			if (!(current->children != 0)) break;
+			if (!(!isnil(current->children))) break;
 			current = ((mapnode*)(current->children[0]));
 		}
 		string successor = current->keys[0];
@@ -17751,7 +17751,7 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_prev(mapnode* n, int idx) {
 		child->keys[v_fixed_index(i + 1, 11)] = child->keys[v_fixed_index(i, 11)];
 		child->values[v_fixed_index(i + 1, 11)] = child->values[v_fixed_index(i, 11)];
 	}
-	if (child->children != 0) {
+	if (!isnil(child->children)) {
 		for (int i = child->len; i >= 0; i--) {
 			{ // Unsafe block
 				child->children[i + 1] = child->children[i];
@@ -17760,7 +17760,7 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_prev(mapnode* n, int idx) {
 	}
 	child->keys[0] = n->keys[v_fixed_index(idx - 1, 11)];
 	child->values[0] = n->values[v_fixed_index(idx - 1, 11)];
-	if (child->children != 0) {
+	if (!isnil(child->children)) {
 		{ // Unsafe block
 			child->children[0] = sibling->children[sibling->len];
 		}
@@ -17776,7 +17776,7 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_next(mapnode* n, int idx) {
 	mapnode* sibling = ((mapnode*)(n->children[idx + 1]));
 	child->keys[v_fixed_index(child->len, 11)] = n->keys[v_fixed_index(idx, 11)];
 	child->values[v_fixed_index(child->len, 11)] = n->values[v_fixed_index(idx, 11)];
-	if (child->children != 0) {
+	if (!isnil(child->children)) {
 		{ // Unsafe block
 			child->children[child->len + 1] = sibling->children[0];
 		}
@@ -17787,7 +17787,7 @@ VV_LOCAL_SYMBOL void mapnode_borrow_from_next(mapnode* n, int idx) {
 		sibling->keys[v_fixed_index(i - 1, 11)] = sibling->keys[v_fixed_index(i, 11)];
 		sibling->values[v_fixed_index(i - 1, 11)] = sibling->values[v_fixed_index(i, 11)];
 	}
-	if (sibling->children != 0) {
+	if (!isnil(sibling->children)) {
 		for (int i = 1; i <= sibling->len; i++) {
 			{ // Unsafe block
 				sibling->children[i - 1] = sibling->children[i];
@@ -17807,7 +17807,7 @@ VV_LOCAL_SYMBOL void mapnode_merge(mapnode* n, int idx) {
 		child->keys[v_fixed_index(i + _const_degree, 11)] = sibling->keys[v_fixed_index(i, 11)];
 		child->values[v_fixed_index(i + _const_degree, 11)] = sibling->values[v_fixed_index(i, 11)];
 	}
-	if (child->children != 0) {
+	if (!isnil(child->children)) {
 		for (int i = 0; i <= sibling->len; i++) {
 			{ // Unsafe block
 				child->children[i + _const_degree] = sibling->children[i];
@@ -17836,16 +17836,17 @@ void SortedMap_delete(SortedMap* m, string key) {
 		m->len--;
 	}
 	if (m->root->len == 0) {
-		if (m->root->children == 0) {
+		if (isnil(m->root->children)) {
 			return;
+		} else {
+			m->root = ((mapnode*)(m->root->children[0]));
 		}
-		m->root = ((mapnode*)(m->root->children[0]));
 	}
 }
 
 VV_LOCAL_SYMBOL int mapnode_subkeys(mapnode* n, Array_string* keys, int at) {
 	int position = at;
-	if (n->children != 0) {
+	if (!isnil(n->children)) {
 		for (int i = 0; i < n->len; ++i) {
 			mapnode* child = ((mapnode*)(n->children[i]));
 			position += mapnode_subkeys(child, keys, position);
@@ -17865,7 +17866,7 @@ VV_LOCAL_SYMBOL int mapnode_subkeys(mapnode* n, Array_string* keys, int at) {
 
 Array_string SortedMap_keys(SortedMap* m) {
 	Array_string keys = __new_array_with_default(m->len, 0, sizeof(string), &(string[]){_SLIT("")});
-	if (m->root == 0 || m->root->len == 0) {
+	if (isnil(m->root) || m->root->len == 0) {
 		return keys;
 	}
 	mapnode_subkeys(m->root, &/*arr*/keys, 0);
@@ -17877,7 +17878,7 @@ VV_LOCAL_SYMBOL void mapnode_free(mapnode* n) {
 }
 
 void SortedMap_free(SortedMap* m) {
-	if (m->root == 0) {
+	if (isnil(m->root)) {
 		return;
 	}
 	mapnode_free(m->root);
@@ -30308,7 +30309,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9d02ca5"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3881e97"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34134,7 +34135,7 @@ void v__ast__Scope_free(v__ast__Scope* s) {
 }
 
 VV_LOCAL_SYMBOL bool v__ast__Scope_dont_lookup_parent(v__ast__Scope* s) {
-	bool _t2774 = s->parent == 0 || s->detached_from_parent;
+	bool _t2774 = isnil(s->parent) || s->detached_from_parent;
 	return _t2774;
 }
 
@@ -51858,7 +51859,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_trace_autofree(v__gen__c__Gen* g, string lin
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_autofree_scope_vars2(v__gen__c__Gen* g, v__ast__Scope* scope, int start_pos, int end_pos, int line_nr, bool free_parent_scopes, int stop_pos) {
-	if (scope == 0) {
+	if (isnil(scope)) {
 		return;
 	}
 	Map_string_v__ast__ScopeObject _t4350 = scope->objects;
@@ -52845,11 +52846,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_115181 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_115181.arg0;
-	string key_eq_fn = mr_115181.arg1;
-	string clone_fn = mr_115181.arg2;
-	string free_fn = mr_115181.arg3;
+	multi_return_string_string_string_string mr_115183 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_115183.arg0;
+	string key_eq_fn = mr_115183.arg1;
+	string clone_fn = mr_115183.arg2;
+	string free_fn = mr_115183.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -54177,9 +54178,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t4416 = 0; _t4416 < (*typ.info._v__ast__Struct).fields.len; ++_t4416) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t4416];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_155240 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_155240.arg0;
-						string base = mr_155240.arg1;
+						multi_return_string_string mr_155242 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_155242.arg0;
+						string base = mr_155242.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -54415,11 +54416,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_163615 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_163615.arg0;
-				string pafile = mr_163615.arg1;
-				string pamod = mr_163615.arg2;
-				string pafn = mr_163615.arg3;
+				multi_return_int_string_string_string mr_163617 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_163617.arg0;
+				string pafile = mr_163617.arg1;
+				string pamod = mr_163617.arg2;
+				string pafn = mr_163617.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})) );
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})) );
@@ -54512,11 +54513,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind__map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_166244 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_166244.arg0;
-		string key_eq_fn = mr_166244.arg1;
-		string clone_fn = mr_166244.arg2;
-		string free_fn = mr_166244.arg3;
+		multi_return_string_string_string_string mr_166246 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_166246.arg0;
+		string key_eq_fn = mr_166246.arg1;
+		string clone_fn = mr_166246.arg2;
+		string free_fn = mr_166246.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -55042,8 +55043,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_184462 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_184462.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_184464 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_184464.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
