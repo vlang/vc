@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c4b5805"
+#define V_COMMIT_HASH "0f72bc9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "972542d"
+	#define V_COMMIT_HASH "c4b5805"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c4b5805"
+	#define V_CURRENT_COMMIT_HASH "0f72bc9"
 #endif
 
 // V comptime_defines:
@@ -31013,7 +31013,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("972542d"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c4b5805"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40948,6 +40948,7 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 	bool is_unsafe = false;
 	bool is_trusted = false;
 	bool is_noreturn = false;
+	bool is_c2v_variadic = false;
 	for (int _t3601 = 0; _t3601 < p->attrs.len; ++_t3601) {
 		v__ast__Attr fna = ((v__ast__Attr*)p->attrs.data)[_t3601];
 
@@ -40974,6 +40975,9 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 		}
 		else if (string__eq(fna.name, _SLIT("trusted"))) {
 			is_trusted = true;
+		}
+		else if (string__eq(fna.name, _SLIT("c2v_variadic"))) {
+			is_c2v_variadic = true;
 		}
 		else {
 		};
@@ -41085,10 +41089,13 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			generic_names = _t3610;
 		}
 	}
-	multi_return_Array_v__ast__Param_bool_bool mr_8522 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args2 = mr_8522.arg0;
-	bool are_args_type_only = mr_8522.arg1;
-	bool is_variadic = mr_8522.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_8601 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args2 = mr_8601.arg0;
+	bool are_args_type_only = mr_8601.arg1;
+	bool is_variadic = mr_8601.arg2;
+	if (is_c2v_variadic) {
+		is_variadic = true;
+	}
 	_PUSH_MANY(&params, (args2), _t3612, Array_v__ast__Param);
 	if (!are_args_type_only) {
 		for (int _t3613 = 0; _t3613 < params.len; ++_t3613) {
@@ -41395,9 +41402,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	if (p->pref->backend != v__pref__Backend__js) {
 		p->scope->detached_from_parent = true;
 	}
-	multi_return_Array_v__ast__Param_bool_bool mr_17742 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_17742.arg0;
-	bool is_variadic = mr_17742.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_17867 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_17867.arg0;
+	bool is_variadic = mr_17867.arg2;
 	for (int _t3627 = 0; _t3627 < args.len; ++_t3627) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t3627];
 		if (arg.name.len == 0) {
