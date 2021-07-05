@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0f72bc9"
+#define V_COMMIT_HASH "d307ab2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c4b5805"
+	#define V_COMMIT_HASH "0f72bc9"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0f72bc9"
+	#define V_CURRENT_COMMIT_HASH "d307ab2"
 #endif
 
 // V comptime_defines:
@@ -30320,7 +30320,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c4b5805"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0f72bc9"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})) , string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})) ,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}})) })));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -46464,9 +46464,9 @@ bool v__markused__mark_used_defer_0 = false;
 	}
 	if ((pref->gc_mode == v__pref__GarbageCollectionMode__boehm_full_opt || pref->gc_mode == v__pref__GarbageCollectionMode__boehm_incr_opt)) {
 		_PUSH_MANY(&all_fn_root_names, (new_array_from_c_array(19, 19, sizeof(string), _MOV((string[19]){
-				_SLIT("memdup_noscan"), _SLIT("__new_array_noscan"), _SLIT("__new_array_with_default_noscan"), _SLIT("__new_array_with_array_default_noscan"), _SLIT("new_array_from_c_array_noscan"), _SLIT("21.clone_static_to_depth_noscan"), _SLIT("21.clone_to_depth_noscan"), _SLIT("21.reverse_noscan"), _SLIT("21.repeat_to_depth_noscan"),
-				_SLIT("65557.pop_noscan"), _SLIT("65557.push_noscan"), _SLIT("65557.push_many_noscan"), _SLIT("65557.insert_noscan"), _SLIT("65557.insert_many_noscan"), _SLIT("65557.prepend_noscan"), _SLIT("65557.prepend_many_noscan"), _SLIT("65557.reverse_noscan"),
-				_SLIT("65557.grow_cap_noscan"), _SLIT("65557.grow_len_noscan")}))), _t4037, Array_string);
+				_SLIT("memdup_noscan"), _SLIT("__new_array_noscan"), _SLIT("__new_array_with_default_noscan"), _SLIT("__new_array_with_array_default_noscan"), _SLIT("new_array_from_c_array_noscan"), _SLIT("20.clone_static_to_depth_noscan"), _SLIT("20.clone_to_depth_noscan"), _SLIT("20.reverse_noscan"), _SLIT("20.repeat_to_depth_noscan"),
+				_SLIT("65556.pop_noscan"), _SLIT("65556.push_noscan"), _SLIT("65556.push_many_noscan"), _SLIT("65556.insert_noscan"), _SLIT("65556.insert_many_noscan"), _SLIT("65556.prepend_noscan"), _SLIT("65556.prepend_many_noscan"), _SLIT("65556.reverse_noscan"),
+				_SLIT("65556.grow_cap_noscan"), _SLIT("65556.grow_len_noscan")}))), _t4037, Array_string);
 	}
 	int _t4039 = all_fns.key_values.len;
 	for (int _t4038 = 0; _t4038 < _t4039; ++_t4038 ) {
