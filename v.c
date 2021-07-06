@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9f8c3cc"
+#define V_COMMIT_HASH "55eeb70"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6dde9f7"
+	#define V_COMMIT_HASH "9f8c3cc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9f8c3cc"
+	#define V_CURRENT_COMMIT_HASH "55eeb70"
 #endif
 
 // V comptime_defines:
@@ -7102,9 +7102,9 @@ void time__wait(time__Duration duration);
 void time__sleep(time__Duration duration);
 int time__Duration_sys_milliseconds(time__Duration d);
 time__Time time__unix(int abs);
-time__Time time__unix2(int abs, int microsecond);
-VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int day_offset_);
-VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(int second_offset_);
+time__Time time__unix2(i64 abs, int microsecond);
+VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(i64 day_offset_);
+VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(i64 second_offset_);
 void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
 void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
 Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, string name);
@@ -24466,7 +24466,7 @@ Option_time__Time time__parse_iso8601(string s) {
 	} else if (unix_offset > 0) {
 		unix_time += ((u64)(unix_offset));
 	}
-	t = time__unix2(((int)(unix_time)), t.microsecond);
+	t = time__unix2(((i64)(unix_time)), t.microsecond);
 	Option_time__Time _t8;
 	opt_ok(&(time__Time[]) { t }, (Option*)(&_t8), sizeof(time__Time));
 	return _t8;
@@ -24579,7 +24579,7 @@ time__Time time__utc(void) {
 	#endif
 	time_t t = time(0);
 	time(&t);
-	time__Time _t5 = time__unix2(((int)(t)), 0);
+	time__Time _t5 = time__unix2(((i64)(t)), 0);
 	return _t5;
 }
 
@@ -24629,7 +24629,7 @@ time__Time time__Time_add(time__Time t, time__Duration d) {
 	i64 microseconds = ((i64)(t.v_unix)) * 1000 * 1000 + t.microsecond + time__Duration_microseconds(d);
 	i64 v_unix = microseconds / (1000 * 1000);
 	i64 micro = microseconds % (1000 * 1000);
-	time__Time _t1 = time__unix2(((int)(v_unix)), ((int)(micro)));
+	time__Time _t1 = time__unix2(v_unix, ((int)(micro)));
 	return _t1;
 }
 
@@ -24934,7 +24934,7 @@ VV_LOCAL_SYMBOL time__Time time__linux_now(void) {
 VV_LOCAL_SYMBOL time__Time time__linux_utc(void) {
 	struct timespec ts = (struct timespec){.tv_sec = 0,.tv_nsec = 0,};
 	clock_gettime(CLOCK_REALTIME, &ts);
-	time__Time _t1 = time__unix2(((int)(ts.tv_sec)), ((int)(ts.tv_nsec / 1000)));
+	time__Time _t1 = time__unix2(((i64)(ts.tv_sec)), ((int)(ts.tv_nsec / 1000)));
 	return _t1;
 }
 
@@ -25026,8 +25026,8 @@ time__Time time__unix(int abs) {
 	return _t1;
 }
 
-time__Time time__unix2(int abs, int microsecond) {
-	int day_offset = abs / _const_time__seconds_per_day;
+time__Time time__unix2(i64 abs, int microsecond) {
+	i64 day_offset = abs / _const_time__seconds_per_day;
 	if (abs % _const_time__seconds_per_day < 0) {
 		day_offset--;
 	}
@@ -25052,31 +25052,31 @@ time__Time time__unix2(int abs, int microsecond) {
 	return _t1;
 }
 
-VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int day_offset_) {
-	int day_offset = day_offset_;
+VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(i64 day_offset_) {
+	i64 day_offset = day_offset_;
 	int year = 2001;
 	day_offset -= 31 * 365 + 8;
-	year += (day_offset / _const_time__days_per_400_years) * 400;
+	year += ((int)(day_offset / _const_time__days_per_400_years)) * 400;
 	day_offset %= _const_time__days_per_400_years;
 	if (day_offset == _const_time__days_per_100_years * 4) {
 		year += 300;
 		day_offset -= _const_time__days_per_100_years * 3;
 	} else {
-		year += (day_offset / _const_time__days_per_100_years) * 100;
+		year += ((int)(day_offset / _const_time__days_per_100_years)) * 100;
 		day_offset %= _const_time__days_per_100_years;
 	}
 	if (day_offset == _const_time__days_per_4_years * 25) {
 		year += 96;
 		day_offset -= _const_time__days_per_4_years * 24;
 	} else {
-		year += (day_offset / _const_time__days_per_4_years) * 4;
+		year += ((int)(day_offset / _const_time__days_per_4_years)) * 4;
 		day_offset %= _const_time__days_per_4_years;
 	}
 	if (day_offset == 365 * 4) {
 		year += 3;
 		day_offset -= 365 * 3;
 	} else {
-		year += (day_offset / 365);
+		year += ((int)(day_offset / 365));
 		day_offset %= 365;
 	}
 	if (day_offset < 0) {
@@ -25094,7 +25094,7 @@ VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int da
 			return (multi_return_int_int_int){.arg0=year, .arg1=2, .arg2=29};
 		}
 	}
-	int estimated_month = day_offset / 31;
+	i64 estimated_month = day_offset / 31;
 	for (;;) {
 		if (!(day_offset >= (*(int*)/*ee elem_typ */array_get(_const_time__days_before, estimated_month + 1)))) break;
 		estimated_month++;
@@ -25107,19 +25107,19 @@ VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(int da
 		estimated_month--;
 	}
 	day_offset -= (*(int*)/*ee elem_typ */array_get(_const_time__days_before, estimated_month));
-	return (multi_return_int_int_int){.arg0=year, .arg1=estimated_month + 1, .arg2=day_offset + 1};
+	return (multi_return_int_int_int){.arg0=year, .arg1=((int)(estimated_month + 1)), .arg2=((int)(day_offset + 1))};
 }
 
-VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(int second_offset_) {
-	int second_offset = second_offset_;
+VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(i64 second_offset_) {
+	i64 second_offset = second_offset_;
 	if (second_offset < 0) {
 		second_offset += _const_time__seconds_per_day;
 	}
-	int hour_ = second_offset / _const_time__seconds_per_hour;
+	i64 hour_ = second_offset / _const_time__seconds_per_hour;
 	second_offset %= _const_time__seconds_per_hour;
-	int min = second_offset / _const_time__seconds_per_minute;
+	i64 min = second_offset / _const_time__seconds_per_minute;
 	second_offset %= _const_time__seconds_per_minute;
-	return (multi_return_int_int_int){.arg0=hour_, .arg1=min, .arg2=second_offset};
+	return (multi_return_int_int_int){.arg0=((int)(hour_)), .arg1=((int)(min)), .arg2=((int)(second_offset))};
 }
 
 void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
@@ -31037,7 +31037,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6dde9f7"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9f8c3cc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
