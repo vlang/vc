@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "806d617"
+#define V_COMMIT_HASH "7b4c342"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6436d9a"
+	#define V_COMMIT_HASH "806d617"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "806d617"
+	#define V_CURRENT_COMMIT_HASH "7b4c342"
 #endif
 
 // V comptime_defines:
@@ -22935,13 +22935,18 @@ Option_void os__execve(string cmdpath, Array_string args, Array_string envs) {
 }
 
 Option_Array_string os__glob(Array_string patterns) {
+	#if defined(__ANDROID__)
+	{
+		return (Option_Array_string){ .state=2, .err=v_error(_SLIT("os.glob() is not supported on android yet")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	}
+	#endif
 	Array_string matches = __new_array_with_default(0, 0, sizeof(string), 0);
 	if (patterns.len == 0) {
-		Option_Array_string _t1;
-		opt_ok(&(Array_string[]) { matches }, (Option*)(&_t1), sizeof(Array_string));
-		return _t1;
+		Option_Array_string _t2;
+		opt_ok(&(Array_string[]) { matches }, (Option*)(&_t2), sizeof(Array_string));
+		return _t2;
 	}
-	glob_t globdata = (glob_t){.gl_pathc = 0,.gl_pathv = 0,.gl_offs = 0,};
+	glob_t globdata = (glob_t){.gl_pathc = ((size_t)(0)),.gl_pathv = 0,.gl_offs = ((size_t)(0)),};
 	int flags = ((int)((GLOB_DOOFFS | GLOB_MARK)));
 	for (int i = 0; i < patterns.len; ++i) {
 		string pattern = ((string*)patterns.data)[i];
@@ -22949,18 +22954,26 @@ Option_Array_string os__glob(Array_string patterns) {
 			flags |= GLOB_APPEND;
 		}
 		{ // Unsafe block
-			if (glob(((char*)(pattern.str)), flags, NULL, &globdata) != 0) {
-				return (Option_Array_string){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
+			#if !defined(__ANDROID__)
+			{
+				if (glob(((char*)(pattern.str)), flags, NULL, &globdata) != 0) {
+					return (Option_Array_string){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
+				}
 			}
+			#endif
 		}
 	}
 	for (int i = 0; i < ((int)(globdata.gl_pathc)); i++) {
 		array_push((array*)&matches, _MOV((string[]){ cstring_to_vstring(globdata.gl_pathv[i]) }));
 	}
-	globfree(&globdata);
-	Option_Array_string _t4;
-	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t4), sizeof(Array_string));
-	return _t4;
+	#if !defined(__ANDROID__)
+	{
+		globfree(&globdata);
+	}
+	#endif
+	Option_Array_string _t5;
+	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t5), sizeof(Array_string));
+	return _t5;
 }
 
 Option_void os__utime(string path, int actime, int modtime) {
@@ -31039,7 +31052,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6436d9a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("806d617"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
