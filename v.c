@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d14de5f"
+#define V_COMMIT_HASH "f070222"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9eee663"
+	#define V_COMMIT_HASH "d14de5f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d14de5f"
+	#define V_CURRENT_COMMIT_HASH "f070222"
 #endif
 
 // V comptime_defines:
@@ -31039,7 +31039,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9eee663"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d14de5f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -74530,10 +74530,21 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 				}
 			}
 		}
+		v__ast__TypeSymbol* return_sym = v__ast__Table_get_type_symbol(c->table, node->return_type);
+		if ((return_sym->info)._typ == 398 /* v.ast.MultiReturn */) {
+			for (int _t4 = 0; _t4 < (*return_sym->info._v__ast__MultiReturn).types.len; ++_t4) {
+				v__ast__Type multi_type = ((v__ast__Type*)(*return_sym->info._v__ast__MultiReturn).types.data)[_t4];
+				if (v__ast__Type_alias_eq(multi_type, _const_v__ast__error_type)) {
+					v__checker__Checker_error(c, _SLIT("type `IError` cannot be used in multi-return, return an option instead"), node->return_type_pos);
+				} else if (v__ast__Type_has_flag(multi_type, v__ast__TypeFlag__optional)) {
+					v__checker__Checker_error(c, _SLIT("option cannot be used in multi-return, return an option instead"), node->return_type_pos);
+				}
+			}
+		}
 	}
 	if (v__ast__Type_alias_eq(node->return_type, _const_v__ast__void_type)) {
-		for (int _t4 = 0; _t4 < node->attrs.len; ++_t4) {
-			v__ast__Attr* a = ((v__ast__Attr*)node->attrs.data) + _t4;
+		for (int _t5 = 0; _t5 < node->attrs.len; ++_t5) {
+			v__ast__Attr* a = ((v__ast__Attr*)node->attrs.data) + _t5;
 			if (a->kind == v__ast__AttrKind__comptime_define) {
 				v__checker__Checker_evaluate_once_comptime_if_attribute(c, a);
 			}
@@ -74567,11 +74578,11 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 		}
 	}
 	if (node->language == v__ast__Language__v) {
-		for (int _t5 = 0; _t5 < node->params.len; ++_t5) {
-			v__ast__Param arg = ((v__ast__Param*)node->params.data)[_t5];
-			Option_void _t6 = v__checker__Checker_ensure_type_exists(c, arg.typ, arg.type_pos);
-			if (_t6.state != 0 && _t6.err._typ != _IError_None___index) {
-				IError err = _t6.err;
+		for (int _t6 = 0; _t6 < node->params.len; ++_t6) {
+			v__ast__Param arg = ((v__ast__Param*)node->params.data)[_t6];
+			Option_void _t7 = v__checker__Checker_ensure_type_exists(c, arg.typ, arg.type_pos);
+			if (_t7.state != 0 && _t7.err._typ != _IError_None___index) {
+				IError err = _t7.err;
 				return;
 			}
 			;
@@ -74580,13 +74591,13 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 				if (arg_typ_sym->kind == v__ast__Kind__struct_) {
 					v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((arg_typ_sym->info)._v__ast__Struct,(arg_typ_sym->info)._typ, 379) /*expected idx: 379, name: v.ast.Struct */ ;
 					if (info.is_heap) {
-						Option_v__ast__Var_ptr _t7 = v__ast__Scope_find_var(node->scope, arg.name);
-						if (_t7.state != 0) { /*or block*/ 
-							IError err = _t7.err;
+						Option_v__ast__Var_ptr _t8 = v__ast__Scope_find_var(node->scope, arg.name);
+						if (_t8.state != 0) { /*or block*/ 
+							IError err = _t8.err;
 							continue;
 						}
 						
- 						v__ast__Var* v =  (*(v__ast__Var**)_t7.data);
+ 						v__ast__Var* v =  (*(v__ast__Var**)_t8.data);
 						v->is_auto_heap = true;
 					}
 				}
@@ -74602,9 +74613,9 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 		}
 	}
 	if (!v__ast__Type_alias_eq(node->return_type, ((v__ast__Type)(0)))) {
-		Option_void _t8 = v__checker__Checker_ensure_type_exists(c, node->return_type, node->return_type_pos);
-		if (_t8.state != 0 && _t8.err._typ != _IError_None___index) {
-			IError err = _t8.err;
+		Option_void _t9 = v__checker__Checker_ensure_type_exists(c, node->return_type, node->return_type_pos);
+		if (_t9.state != 0 && _t9.err._typ != _IError_None___index) {
+			IError err = _t9.err;
 			return;
 		}
 		;
@@ -74644,8 +74655,8 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 	}
 	if (node->language == v__ast__Language__v && !node->is_method && node->params.len == 0 && node->is_test) {
 		if (!c->pref->is_test) {
-			for (int _t9 = 0; _t9 < node->stmts.len; ++_t9) {
-				v__ast__Stmt st = ((v__ast__Stmt*)node->stmts.data)[_t9];
+			for (int _t10 = 0; _t10 < node->stmts.len; ++_t10) {
+				v__ast__Stmt st = ((v__ast__Stmt*)node->stmts.data)[_t10];
 				if ((st)._typ == 262 /* v.ast.AssertStmt */) {
 					v__checker__Checker_warn(c, _SLIT("tests will not be run, because filename does not end with `_test.v`"), node->pos);
 					break;
@@ -74757,10 +74768,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_249913 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_249913.arg0;
-				int nroute_attributes = mr_249913.arg1;
-				int nargs = mr_249913.arg2;
+				multi_return_bool_int_int mr_250381 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_250381.arg0;
+				int nroute_attributes = mr_250381.arg1;
+				int nargs = mr_250381.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
