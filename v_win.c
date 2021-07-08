@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fb9b2e8"
+#define V_COMMIT_HASH "f5d3a6e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eac8f77"
+	#define V_COMMIT_HASH "fb9b2e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fb9b2e8"
+	#define V_CURRENT_COMMIT_HASH "f5d3a6e"
 #endif
 
 // V comptime_defines:
@@ -7785,6 +7785,7 @@ v__pref__Arch v__pref__get_host_arch();
 VV_LOCAL_SYMBOL void v__pref__parse_define(v__pref__Preferences* prefs, string define);
 Array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, Array_string files_);
 VV_LOCAL_SYMBOL string v__pref__fname_without_platform_postfix(string file);
+bool v__pref__Preferences_should_compile_native(v__pref__Preferences* prefs, string file);
 bool v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string file);
 bool v__pref__Preferences_should_compile_asm(v__pref__Preferences* prefs, string path);
 bool v__pref__Preferences_should_compile_js(v__pref__Preferences* prefs, string file);
@@ -30351,7 +30352,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("eac8f77"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fb9b2e8"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31274,6 +31275,9 @@ Array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Prefere
 		if (prefs->backend == v__pref__Backend__js && !v__pref__Preferences_should_compile_js(prefs, file)) {
 			continue;
 		}
+		if (prefs->backend == v__pref__Backend__native && !v__pref__Preferences_should_compile_native(prefs, file)) {
+			continue;
+		}
 		if (prefs->backend != v__pref__Backend__js && !v__pref__Preferences_should_compile_asm(prefs, file)) {
 			continue;
 		}
@@ -31350,6 +31354,11 @@ VV_LOCAL_SYMBOL string v__pref__fname_without_platform_postfix(string file) {
 			_SLIT("_"), _SLIT("macos.c.v"), _SLIT("_"), _SLIT("android.c.v"), _SLIT("_"), _SLIT("freebsd.c.v"), _SLIT("_"), _SLIT("netbsd.c.v"),
 			_SLIT("_"), _SLIT("dragonfly.c.v"), _SLIT("_"), _SLIT("solaris.c.v"), _SLIT("_"), _SLIT("native.v"), _SLIT("_")})));
 	return res;
+}
+
+bool v__pref__Preferences_should_compile_native(v__pref__Preferences* prefs, string file) {
+	bool _t1 = v__pref__Preferences_should_compile_c(prefs, file);
+	return _t1;
 }
 
 bool v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string file) {
