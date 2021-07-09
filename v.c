@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "075e09b"
+#define V_COMMIT_HASH "a108827"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "477d442"
+	#define V_COMMIT_HASH "075e09b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "075e09b"
+	#define V_CURRENT_COMMIT_HASH "a108827"
 #endif
 
 // V comptime_defines:
@@ -31233,7 +31233,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("477d442"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("075e09b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -66852,6 +66852,11 @@ v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast
 	for (int i = 0; i < node->exprs.len; ++i) {
 		v__ast__Expr expr = ((v__ast__Expr*)node->exprs.data)[i];
 		v__ast__Type ftyp = v__checker__Checker_expr(c, expr);
+		if (v__ast__Type_alias_eq(ftyp, _const_v__ast__void_type)) {
+			v__checker__Checker_error(c, _SLIT("expression does not return a value"), v__ast__Expr_position(expr));
+		} else if (v__ast__Type_alias_eq(ftyp, _const_v__ast__char_type) && v__ast__Type_nr_muls(ftyp) == 0) {
+			v__checker__Checker_error(c, _SLIT("expression returning type `char` cannot be used in string interpolation directly, print its address or cast it to an integer instead"), v__ast__Expr_position(expr));
+		}
 		v__checker__Checker_fail_if_unreadable(c, expr, ftyp, _SLIT("interpolation object"));
 		array_push((array*)&node->expr_types, _MOV((v__ast__Type[]){ ftyp }));
 		v__ast__Type typ = v__ast__Table_unalias_num_type(c->table, ftyp);
