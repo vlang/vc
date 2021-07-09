@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "151cd0b"
+#define V_COMMIT_HASH "47bf644"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "13917dc"
+	#define V_COMMIT_HASH "151cd0b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "151cd0b"
+	#define V_CURRENT_COMMIT_HASH "47bf644"
 #endif
 
 // V comptime_defines:
@@ -1077,20 +1077,6 @@ static inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; 
 
 #if defined(__has_include)
 
-#if __has_include(<glob.h>)
-#include <glob.h>
-#else
-#error VERROR_MESSAGE Header file <glob.h>, needed for module `os` was not found. Please install the corresponding development headers.
-#endif
-
-#else
-#include <glob.h>
-#endif
-
-// added by module `os`:
-
-#if defined(__has_include)
-
 #if __has_include(<utime.h>)
 #include <utime.h>
 #else
@@ -1238,6 +1224,15 @@ typedef enum {
 	os__FileType__symbolic_link, // +5
 	os__FileType__socket, // +6
 } os__FileType;
+
+typedef enum {
+	os__GlobMatch__exact, // 
+	os__GlobMatch__ends_with, // +1
+	os__GlobMatch__starts_with, // +2
+	os__GlobMatch__start_and_ends_with, // +3
+	os__GlobMatch__contains, // +4
+	os__GlobMatch__any, // +5
+} os__GlobMatch;
 
 typedef enum {
 	os__ProcessState__not_started, // 
@@ -6835,6 +6830,7 @@ Array_string os__vmodules_paths();
 string os__resource_abs_path(string path);
 os__Result os__execute_or_panic(string cmd);
 int os__is_atty(int fd);
+Option_Array_string os__glob(Array_string patterns);
 Option_Array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 Option_void os__truncate(string path, u64 len);
@@ -6904,7 +6900,8 @@ string _const_os__path_delimiter; // a string literal, inited later
 #define _const_os__s_iroth 00004
 #define _const_os__s_iwoth 00002
 #define _const_os__s_ixoth 00001
-Option_Array_string os__glob(Array_string patterns);
+VV_LOCAL_SYMBOL Array_string os__glob_match(string dir, string pattern, string next_pattern, Array_string* matches);
+VV_LOCAL_SYMBOL Option_void os__native_glob_pattern(string pattern, Array_string* matches);
 Option_void os__utime(string path, int actime, int modtime);
 os__Uname os__uname();
 string os__hostname();
@@ -21939,6 +21936,24 @@ int os__is_atty(int fd) {
 	return 0;
 }
 
+Option_Array_string os__glob(Array_string patterns) {
+	Array_string matches = __new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < patterns.len; ++_t1) {
+		string pattern = ((string*)patterns.data)[_t1];
+		Option_void _t2 = os__native_glob_pattern(pattern, &/*arr*/matches);
+		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
+			Option_Array_string _t3;
+			memcpy(&_t3, &_t2, sizeof(Option));
+			return _t3;
+		}
+		;
+	}
+	qsort(matches.data, matches.len, matches.element_size, (int (*)(const void *, const void *))&compare_strings);
+	Option_Array_string _t4;
+	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t4), sizeof(Array_string));
+	return _t4;
+}
+
 // TypeDecl
 // Attr: [manualfree]
 Option_Array_byte os__read_bytes(string path) {
@@ -22941,46 +22956,117 @@ Option_void os__execve(string cmdpath, Array_string args, Array_string envs) {
 	return (Option_void){0};
 }
 
-Option_Array_string os__glob(Array_string patterns) {
-	#if defined(__ANDROID__)
-	{
-		return (Option_Array_string){ .state=2, .err=v_error(_SLIT("os.glob() is not supported on android yet")), .data={EMPTY_STRUCT_INITIALIZATION} };
+VV_LOCAL_SYMBOL Array_string os__glob_match(string dir, string pattern, string next_pattern, Array_string* matches) {
+	Array_string subdirs = __new_array_with_default(0, 0, sizeof(string), 0);
+	if (os__is_file(dir)) {
+		return subdirs;
 	}
-	#endif
-	Array_string matches = __new_array_with_default(0, 0, sizeof(string), 0);
-	if (patterns.len == 0) {
-		Option_Array_string _t2;
-		opt_ok(&(Array_string[]) { matches }, (Option*)(&_t2), sizeof(Array_string));
-		return _t2;
+	Option_Array_string _t2 = os__ls(dir);
+	if (_t2.state != 0) { /*or block*/ 
+		IError err = _t2.err;
+		return subdirs;
 	}
-	glob_t globdata = (glob_t){.gl_pathc = ((size_t)(0)),.gl_pathv = 0,.gl_offs = ((size_t)(0)),};
-	int flags = ((int)((GLOB_DOOFFS | GLOB_MARK)));
-	for (int i = 0; i < patterns.len; ++i) {
-		string pattern = ((string*)patterns.data)[i];
-		if (i > 0) {
-			flags |= GLOB_APPEND;
-		}
-		{ // Unsafe block
-			#if !defined(__ANDROID__)
-			{
-				if (glob(((char*)(pattern.str)), flags, NULL, &globdata) != 0) {
-					return (Option_Array_string){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
+	
+ 	Array_string files =  (*(Array_string*)_t2.data);
+	os__GlobMatch mode = os__GlobMatch__exact;
+	string pat = pattern;
+	if (string__eq(pat, _SLIT("*"))) {
+		mode = os__GlobMatch__any;
+		if (!string__eq(next_pattern, pattern) && (next_pattern).len != 0) {
+			for (int _t4 = 0; _t4 < files.len; ++_t4) {
+				string file = ((string*)files.data)[_t4];
+				if (os__is_dir( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dir}}, {_SLIT("/"), 0xfe10, {.d_s = file}}, {_SLIT0, 0, { .d_c = 0 }}})))) {
+					array_push((array*)&subdirs, _MOV((string[]){  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dir}}, {_SLIT("/"), 0xfe10, {.d_s = file}}, {_SLIT0, 0, { .d_c = 0 }}})) }));
 				}
 			}
-			#endif
+			return subdirs;
 		}
 	}
-	for (int i = 0; i < ((int)(globdata.gl_pathc)); i++) {
-		array_push((array*)&matches, _MOV((string[]){ cstring_to_vstring(globdata.gl_pathv[i]) }));
+	if (string__eq(pat, _SLIT("**"))) {
+		files = os__walk_ext(dir, _SLIT(""));
+		pat = next_pattern;
 	}
-	#if !defined(__ANDROID__)
-	{
-		globfree(&globdata);
+	if (string_starts_with(pat, _SLIT("*"))) {
+		mode = os__GlobMatch__ends_with;
+		pat = string_substr(pat, 1, pat.len);
 	}
-	#endif
-	Option_Array_string _t5;
-	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t5), sizeof(Array_string));
-	return _t5;
+	if (string_ends_with(pat, _SLIT("*"))) {
+		mode = (mode == os__GlobMatch__ends_with ? (os__GlobMatch__contains) : (os__GlobMatch__starts_with));
+		pat = string_substr(pat, 0, pat.len - 1);
+	}
+	if (string_contains(pat, _SLIT("*"))) {
+		mode = os__GlobMatch__start_and_ends_with;
+	}
+	for (int _t7 = 0; _t7 < files.len; ++_t7) {
+		string file = ((string*)files.data)[_t7];
+		string fpath = file;
+		Array_string _t8;
+		string f = (string_contains(file, _const_os__path_separator) ? (			_t8 = string_split(file, _const_os__path_separator),(*(string*)/*ee elem_typ */array_get(_t8, _t8.len - 1))) : (fpath = (string__eq(dir, _SLIT(".")) ? (file) : ( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dir}}, {_SLIT("/"), 0xfe10, {.d_s = file}}, {_SLIT0, 0, { .d_c = 0 }}})))),file));
+		if ((string__eq(f, _SLIT(".")) || string__eq(f, _SLIT(".."))) || (f).len == 0) {
+			continue;
+		}
+		bool _t9;
+		
+		if (mode == (os__GlobMatch__any)) {
+			_t9 = true;
+		}
+		else if (mode == (os__GlobMatch__exact)) {
+			_t9 = string__eq(f, pat);
+		}
+		else if (mode == (os__GlobMatch__starts_with)) {
+			_t9 = string_starts_with(f, pat);
+		}
+		else if (mode == (os__GlobMatch__ends_with)) {
+			_t9 = string_ends_with(f, pat);
+		}
+		else if (mode == (os__GlobMatch__start_and_ends_with)) {
+			Array_string p = string_split(pat, _SLIT("*"));
+			_t9 = string_starts_with(f, (*(string*)/*ee elem_typ */array_get(p, 0))) && string_ends_with(f, (*(string*)/*ee elem_typ */array_get(p, 1)));
+		}
+		else if (mode == (os__GlobMatch__contains)) {
+			_t9 = string_contains(f, pat);
+		}bool hit = _t9;
+		if (hit) {
+			if (os__is_dir(fpath)) {
+				array_push((array*)&subdirs, _MOV((string[]){ fpath }));
+				if (string__eq(next_pattern, pattern) && (next_pattern).len != 0) {
+					array_push((array*)matches, _MOV((string[]){  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fpath}}, {_SLIT0, 0xfe10, {.d_s = _const_os__path_separator}}, {_SLIT0, 0, { .d_c = 0 }}})) }));
+				}
+			} else {
+				array_push((array*)matches, _MOV((string[]){ fpath }));
+			}
+		}
+	}
+	return subdirs;
+}
+
+VV_LOCAL_SYMBOL Option_void os__native_glob_pattern(string pattern, Array_string* matches) {
+	Array_string steps = string_split(pattern, _const_os__path_separator);
+	string cwd = (string_starts_with(pattern, _const_os__path_separator) ? (_const_os__path_separator) : (_SLIT(".")));
+	Array_string subdirs = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){cwd}));
+	for (int i = 0; i < steps.len; i++) {
+		string step = (*(string*)/*ee elem_typ */array_get(steps, i));
+		string step2 = (i + 1 == steps.len ? (step) : ((*(string*)/*ee elem_typ */array_get(steps, i + 1))));
+		if ((step).len == 0) {
+			continue;
+		}
+		if (os__is_dir( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cwd}}, {_SLIT0, 0xfe10, {.d_s = _const_os__path_separator}}, {_SLIT0, 0xfe10, {.d_s = step}}, {_SLIT0, 0, { .d_c = 0 }}})))) {
+			string dd = (string__eq(cwd, _SLIT("/")) ? (step) : ((string__eq(cwd, _SLIT(".")) || (cwd).len == 0 ? (step) : ((string__eq(step, _SLIT(".")) || string__eq(step, _SLIT("/")) ? (cwd) : ( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cwd}}, {_SLIT("/"), 0xfe10, {.d_s = step}}, {_SLIT0, 0, { .d_c = 0 }}}))))))));
+			if (i + 1 != steps.len) {
+				if (!(Array_string_contains(subdirs, dd))) {
+					array_push((array*)&subdirs, _MOV((string[]){ dd }));
+				}
+			}
+		}
+		Array_string subs = __new_array_with_default(0, 0, sizeof(string), 0);
+		for (int _t2 = 0; _t2 < subdirs.len; ++_t2) {
+			string sd = ((string*)subdirs.data)[_t2];
+			string d = (string__eq(cwd, _SLIT("/")) ? (sd) : ((string__eq(cwd, _SLIT(".")) || (cwd).len == 0 ? (sd) : ((string__eq(sd, _SLIT(".")) || string__eq(sd, _SLIT("/")) ? (cwd) : ( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cwd}}, {_SLIT("/"), 0xfe10, {.d_s = sd}}, {_SLIT0, 0, { .d_c = 0 }}}))))))));
+			_PUSH_MANY(&subs, (os__glob_match(string_replace(d, _SLIT("//"), _SLIT("/")), step, step2, matches)), _t3, Array_string);
+		}
+		subdirs = array_clone_to_depth(&subs, 0);
+	}
+	return (Option_void){0};
 }
 
 Option_void os__utime(string path, int actime, int modtime) {
@@ -31059,7 +31145,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("13917dc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("151cd0b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}

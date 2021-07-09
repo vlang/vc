@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "151cd0b"
+#define V_COMMIT_HASH "47bf644"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "13917dc"
+	#define V_COMMIT_HASH "151cd0b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "151cd0b"
+	#define V_CURRENT_COMMIT_HASH "47bf644"
 #endif
 
 // V comptime_defines:
@@ -7018,6 +7018,7 @@ Array_string os__vmodules_paths();
 string os__resource_abs_path(string path);
 os__Result os__execute_or_panic(string cmd);
 int os__is_atty(int fd);
+Option_Array_string os__glob(Array_string patterns);
 Option_Array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 Option_void os__truncate(string path, u64 len);
@@ -7061,8 +7062,7 @@ Option_void os__execve(string cmdpath, Array_string args, Array_string envs);
 string _const_os__path_separator; // a string literal, inited later
 string _const_os__path_delimiter; // a string literal, inited later
 VV_LOCAL_SYMBOL Array_string os__init_os_args_wide(int argc, byte** argv);
-Option_Array_string os__glob(Array_string patterns);
-VV_LOCAL_SYMBOL Option_void os__windows_glob_pattern(string pattern, Array_string* matches);
+VV_LOCAL_SYMBOL Option_void os__native_glob_pattern(string pattern, Array_string* matches);
 Option_void os__utime(string path, int actime, int modtime);
 Option_Array_string os__ls(string path);
 Option_bool os__mkdir(string path);
@@ -21587,6 +21587,24 @@ int os__is_atty(int fd) {
 	return 0;
 }
 
+Option_Array_string os__glob(Array_string patterns) {
+	Array_string matches = __new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < patterns.len; ++_t1) {
+		string pattern = ((string*)patterns.data)[_t1];
+		Option_void _t2 = os__native_glob_pattern(pattern, &/*arr*/matches);
+		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
+			Option_Array_string _t3;
+			memcpy(&_t3, &_t2, sizeof(Option));
+			return _t3;
+		}
+		;
+	}
+	qsort(matches.data, matches.len, matches.element_size, (int (*)(const void *, const void *))&compare_strings);
+	Option_Array_string _t4;
+	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t4), sizeof(Array_string));
+	return _t4;
+}
+
 // TypeDecl
 // Attr: [manualfree]
 Option_Array_byte os__read_bytes(string path) {
@@ -22335,34 +22353,17 @@ VV_LOCAL_SYMBOL Array_string os__init_os_args_wide(int argc, byte** argv) {
 	return args_;
 }
 
-Option_Array_string os__glob(Array_string patterns) {
-	Array_string matches = __new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t1 = 0; _t1 < patterns.len; ++_t1) {
-		string pattern = ((string*)patterns.data)[_t1];
-		Option_void _t2 = os__windows_glob_pattern(pattern, &/*arr*/matches);
-		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
-			Option_Array_string _t3;
-			memcpy(&_t3, &_t2, sizeof(Option));
-			return _t3;
-		}
-		;
-	}
-	Option_Array_string _t4;
-	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t4), sizeof(Array_string));
-	return _t4;
-}
-
-VV_LOCAL_SYMBOL Option_void os__windows_glob_pattern(string pattern, Array_string* matches) {
-bool os__windows_glob_pattern_defer_0 = false;
+VV_LOCAL_SYMBOL Option_void os__native_glob_pattern(string pattern, Array_string* matches) {
+bool os__native_glob_pattern_defer_0 = false;
 voidptr h_find_files;
 	os__Win32finddata find_file_data = (os__Win32finddata){.dw_file_attributes = 0,.ft_creation_time = (os__Filetime){.dw_low_date_time = 0,.dw_high_date_time = 0,},.ft_last_access_time = (os__Filetime){.dw_low_date_time = 0,.dw_high_date_time = 0,},.ft_last_write_time = (os__Filetime){.dw_low_date_time = 0,.dw_high_date_time = 0,},.n_file_size_high = 0,.n_file_size_low = 0,.dw_reserved0 = 0,.dw_reserved1 = 0,.c_file_name = {0},.c_alternate_file_name = {0},.dw_file_type = 0,.dw_creator_type = 0,.w_finder_flags = 0,};
 	u16* wpattern = string_to_wide(string_replace(pattern, _SLIT("/"), _SLIT("\\")));
 	h_find_files = FindFirstFile(wpattern, ((voidptr)(&find_file_data)));
-	os__windows_glob_pattern_defer_0 = true;
+	os__native_glob_pattern_defer_0 = true;
 	if (h_find_files == INVALID_HANDLE_VALUE) {
 		Option_void _t1 = (Option_void){ .state=2, .err=v_error(string__plus(_SLIT("os.glob(): Could not get a file handle: "), os__get_error_msg(((int)(GetLastError()))))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
-		if (os__windows_glob_pattern_defer_0) {
+		if (os__native_glob_pattern_defer_0) {
 			FindClose(h_find_files);
 		}
 		// Defer end
@@ -22388,7 +22389,7 @@ voidptr h_find_files;
 		array_push((array*)matches, _MOV((string[]){ fpath }));
 	}
 	// Defer begin
-	if (os__windows_glob_pattern_defer_0) {
+	if (os__native_glob_pattern_defer_0) {
 		FindClose(h_find_files);
 	}
 	// Defer end
@@ -30353,7 +30354,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("13917dc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("151cd0b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
