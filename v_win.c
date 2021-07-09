@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "13917dc"
+#define V_COMMIT_HASH "151cd0b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bfafdb6"
+	#define V_COMMIT_HASH "13917dc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "13917dc"
+	#define V_CURRENT_COMMIT_HASH "151cd0b"
 #endif
 
 // V comptime_defines:
@@ -1443,9 +1443,10 @@ typedef enum {
 	v__pref__OS__js, // +9
 	v__pref__OS__android, // +10
 	v__pref__OS__solaris, // +11
-	v__pref__OS__haiku, // +12
-	v__pref__OS__raw, // +13
-	v__pref__OS__all, // +14
+	v__pref__OS__serenity, // +12
+	v__pref__OS__haiku, // +13
+	v__pref__OS__raw, // +14
+	v__pref__OS__all, // +15
 } v__pref__OS;
 
 typedef enum {
@@ -30352,7 +30353,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("bfafdb6"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("13917dc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -30473,30 +30474,35 @@ Option_v__pref__OS v__pref__os_from_string(string os_str) {
 		opt_ok(&(v__pref__OS[]) { v__pref__OS__solaris }, (Option*)(&_t10), sizeof(v__pref__OS));
 		return _t10;
 	}
-	else if (string__eq(os_str, _SLIT("android"))) {
+	else if (string__eq(os_str, _SLIT("serenity"))) {
 		Option_v__pref__OS _t11;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__android }, (Option*)(&_t11), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__serenity }, (Option*)(&_t11), sizeof(v__pref__OS));
 		return _t11;
 	}
-	else if (string__eq(os_str, _SLIT("haiku"))) {
+	else if (string__eq(os_str, _SLIT("android"))) {
 		Option_v__pref__OS _t12;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__haiku }, (Option*)(&_t12), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__android }, (Option*)(&_t12), sizeof(v__pref__OS));
 		return _t12;
 	}
-	else if (string__eq(os_str, _SLIT("raw"))) {
+	else if (string__eq(os_str, _SLIT("haiku"))) {
 		Option_v__pref__OS _t13;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__raw }, (Option*)(&_t13), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__haiku }, (Option*)(&_t13), sizeof(v__pref__OS));
 		return _t13;
 	}
-	else if (string__eq(os_str, _SLIT("nix"))) {
+	else if (string__eq(os_str, _SLIT("raw"))) {
 		Option_v__pref__OS _t14;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__linux }, (Option*)(&_t14), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__raw }, (Option*)(&_t14), sizeof(v__pref__OS));
 		return _t14;
 	}
-	else if (string__eq(os_str, _SLIT(""))) {
+	else if (string__eq(os_str, _SLIT("nix"))) {
 		Option_v__pref__OS _t15;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS___auto }, (Option*)(&_t15), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__linux }, (Option*)(&_t15), sizeof(v__pref__OS));
 		return _t15;
+	}
+	else if (string__eq(os_str, _SLIT(""))) {
+		Option_v__pref__OS _t16;
+		opt_ok(&(v__pref__OS[]) { v__pref__OS___auto }, (Option*)(&_t16), sizeof(v__pref__OS));
+		return _t16;
 	}
 	else {
 		return (Option_v__pref__OS){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad OS "), 0xfe10, {.d_s = os_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -30554,17 +30560,21 @@ string v__pref__OS_str(v__pref__OS o) {
 		string _t12 = _SLIT("Solaris");
 		return _t12;
 	}
-	else if (o == (v__pref__OS__haiku)) {
-		string _t13 = _SLIT("Haiku");
+	else if (o == (v__pref__OS__serenity)) {
+		string _t13 = _SLIT("serenity");
 		return _t13;
 	}
-	else if (o == (v__pref__OS__raw)) {
-		string _t14 = _SLIT("Raw");
+	else if (o == (v__pref__OS__haiku)) {
+		string _t14 = _SLIT("Haiku");
 		return _t14;
 	}
-	else if (o == (v__pref__OS__all)) {
-		string _t15 = _SLIT("all");
+	else if (o == (v__pref__OS__raw)) {
+		string _t15 = _SLIT("Raw");
 		return _t15;
+	}
+	else if (o == (v__pref__OS__all)) {
+		string _t16 = _SLIT("all");
+		return _t16;
 	};
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
@@ -56123,161 +56133,166 @@ VV_LOCAL_SYMBOL Option_string v__gen__c__Gen_comp_if_to_ifdef(v__gen__c__Gen* g,
 		opt_ok(&(string[]) { _SLIT("__linux__") }, (Option*)(&_t9), sizeof(string));
 		return _t9;
 	}
-	else if (string__eq(name, _SLIT("freebsd"))) {
+	else if (string__eq(name, _SLIT("serenity"))) {
 		Option_string _t10;
-		opt_ok(&(string[]) { _SLIT("__FreeBSD__") }, (Option*)(&_t10), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__serenity__") }, (Option*)(&_t10), sizeof(string));
 		return _t10;
 	}
-	else if (string__eq(name, _SLIT("openbsd"))) {
+	else if (string__eq(name, _SLIT("freebsd"))) {
 		Option_string _t11;
-		opt_ok(&(string[]) { _SLIT("__OpenBSD__") }, (Option*)(&_t11), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__FreeBSD__") }, (Option*)(&_t11), sizeof(string));
 		return _t11;
 	}
-	else if (string__eq(name, _SLIT("netbsd"))) {
+	else if (string__eq(name, _SLIT("openbsd"))) {
 		Option_string _t12;
-		opt_ok(&(string[]) { _SLIT("__NetBSD__") }, (Option*)(&_t12), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__OpenBSD__") }, (Option*)(&_t12), sizeof(string));
 		return _t12;
 	}
-	else if (string__eq(name, _SLIT("bsd"))) {
+	else if (string__eq(name, _SLIT("netbsd"))) {
 		Option_string _t13;
-		opt_ok(&(string[]) { _SLIT("__BSD__") }, (Option*)(&_t13), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__NetBSD__") }, (Option*)(&_t13), sizeof(string));
 		return _t13;
 	}
-	else if (string__eq(name, _SLIT("dragonfly"))) {
+	else if (string__eq(name, _SLIT("bsd"))) {
 		Option_string _t14;
-		opt_ok(&(string[]) { _SLIT("__DragonFly__") }, (Option*)(&_t14), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__BSD__") }, (Option*)(&_t14), sizeof(string));
 		return _t14;
 	}
-	else if (string__eq(name, _SLIT("android"))) {
+	else if (string__eq(name, _SLIT("dragonfly"))) {
 		Option_string _t15;
-		opt_ok(&(string[]) { _SLIT("__ANDROID__") }, (Option*)(&_t15), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__DragonFly__") }, (Option*)(&_t15), sizeof(string));
 		return _t15;
 	}
-	else if (string__eq(name, _SLIT("solaris"))) {
+	else if (string__eq(name, _SLIT("android"))) {
 		Option_string _t16;
-		opt_ok(&(string[]) { _SLIT("__sun") }, (Option*)(&_t16), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__ANDROID__") }, (Option*)(&_t16), sizeof(string));
 		return _t16;
 	}
-	else if (string__eq(name, _SLIT("haiku"))) {
+	else if (string__eq(name, _SLIT("solaris"))) {
 		Option_string _t17;
-		opt_ok(&(string[]) { _SLIT("__haiku__") }, (Option*)(&_t17), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__sun") }, (Option*)(&_t17), sizeof(string));
 		return _t17;
 	}
-	else if (string__eq(name, _SLIT("js"))) {
+	else if (string__eq(name, _SLIT("haiku"))) {
 		Option_string _t18;
-		opt_ok(&(string[]) { _SLIT("_VJS") }, (Option*)(&_t18), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__haiku__") }, (Option*)(&_t18), sizeof(string));
 		return _t18;
 	}
-	else if (string__eq(name, _SLIT("gcc"))) {
+	else if (string__eq(name, _SLIT("js"))) {
 		Option_string _t19;
-		opt_ok(&(string[]) { _SLIT("__V_GCC__") }, (Option*)(&_t19), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VJS") }, (Option*)(&_t19), sizeof(string));
 		return _t19;
 	}
-	else if (string__eq(name, _SLIT("tinyc"))) {
+	else if (string__eq(name, _SLIT("gcc"))) {
 		Option_string _t20;
-		opt_ok(&(string[]) { _SLIT("__TINYC__") }, (Option*)(&_t20), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__V_GCC__") }, (Option*)(&_t20), sizeof(string));
 		return _t20;
 	}
-	else if (string__eq(name, _SLIT("clang"))) {
+	else if (string__eq(name, _SLIT("tinyc"))) {
 		Option_string _t21;
-		opt_ok(&(string[]) { _SLIT("__clang__") }, (Option*)(&_t21), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__TINYC__") }, (Option*)(&_t21), sizeof(string));
 		return _t21;
 	}
-	else if (string__eq(name, _SLIT("mingw"))) {
+	else if (string__eq(name, _SLIT("clang"))) {
 		Option_string _t22;
-		opt_ok(&(string[]) { _SLIT("__MINGW32__") }, (Option*)(&_t22), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__clang__") }, (Option*)(&_t22), sizeof(string));
 		return _t22;
 	}
-	else if (string__eq(name, _SLIT("msvc"))) {
+	else if (string__eq(name, _SLIT("mingw"))) {
 		Option_string _t23;
-		opt_ok(&(string[]) { _SLIT("_MSC_VER") }, (Option*)(&_t23), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__MINGW32__") }, (Option*)(&_t23), sizeof(string));
 		return _t23;
 	}
-	else if (string__eq(name, _SLIT("cplusplus"))) {
+	else if (string__eq(name, _SLIT("msvc"))) {
 		Option_string _t24;
-		opt_ok(&(string[]) { _SLIT("__cplusplus") }, (Option*)(&_t24), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_MSC_VER") }, (Option*)(&_t24), sizeof(string));
 		return _t24;
 	}
-	else if (string__eq(name, _SLIT("threads"))) {
+	else if (string__eq(name, _SLIT("cplusplus"))) {
 		Option_string _t25;
-		opt_ok(&(string[]) { _SLIT("__VTHREADS__") }, (Option*)(&_t25), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__cplusplus") }, (Option*)(&_t25), sizeof(string));
 		return _t25;
 	}
-	else if (string__eq(name, _SLIT("gcboehm"))) {
+	else if (string__eq(name, _SLIT("threads"))) {
 		Option_string _t26;
-		opt_ok(&(string[]) { _SLIT("_VGCBOEHM") }, (Option*)(&_t26), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__VTHREADS__") }, (Option*)(&_t26), sizeof(string));
 		return _t26;
 	}
-	else if (string__eq(name, _SLIT("debug"))) {
+	else if (string__eq(name, _SLIT("gcboehm"))) {
 		Option_string _t27;
-		opt_ok(&(string[]) { _SLIT("_VDEBUG") }, (Option*)(&_t27), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VGCBOEHM") }, (Option*)(&_t27), sizeof(string));
 		return _t27;
 	}
-	else if (string__eq(name, _SLIT("prod"))) {
+	else if (string__eq(name, _SLIT("debug"))) {
 		Option_string _t28;
-		opt_ok(&(string[]) { _SLIT("_VPROD") }, (Option*)(&_t28), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VDEBUG") }, (Option*)(&_t28), sizeof(string));
 		return _t28;
 	}
-	else if (string__eq(name, _SLIT("test"))) {
+	else if (string__eq(name, _SLIT("prod"))) {
 		Option_string _t29;
-		opt_ok(&(string[]) { _SLIT("_VTEST") }, (Option*)(&_t29), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VPROD") }, (Option*)(&_t29), sizeof(string));
 		return _t29;
 	}
-	else if (string__eq(name, _SLIT("glibc"))) {
+	else if (string__eq(name, _SLIT("test"))) {
 		Option_string _t30;
-		opt_ok(&(string[]) { _SLIT("__GLIBC__") }, (Option*)(&_t30), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VTEST") }, (Option*)(&_t30), sizeof(string));
 		return _t30;
 	}
-	else if (string__eq(name, _SLIT("prealloc"))) {
+	else if (string__eq(name, _SLIT("glibc"))) {
 		Option_string _t31;
-		opt_ok(&(string[]) { _SLIT("_VPREALLOC") }, (Option*)(&_t31), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__GLIBC__") }, (Option*)(&_t31), sizeof(string));
 		return _t31;
 	}
-	else if (string__eq(name, _SLIT("no_bounds_checking"))) {
+	else if (string__eq(name, _SLIT("prealloc"))) {
 		Option_string _t32;
-		opt_ok(&(string[]) { _SLIT("CUSTOM_DEFINE_no_bounds_checking") }, (Option*)(&_t32), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VPREALLOC") }, (Option*)(&_t32), sizeof(string));
 		return _t32;
 	}
-	else if (string__eq(name, _SLIT("freestanding"))) {
+	else if (string__eq(name, _SLIT("no_bounds_checking"))) {
 		Option_string _t33;
-		opt_ok(&(string[]) { _SLIT("_VFREESTANDING") }, (Option*)(&_t33), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("CUSTOM_DEFINE_no_bounds_checking") }, (Option*)(&_t33), sizeof(string));
 		return _t33;
 	}
-	else if (string__eq(name, _SLIT("amd64"))) {
+	else if (string__eq(name, _SLIT("freestanding"))) {
 		Option_string _t34;
-		opt_ok(&(string[]) { _SLIT("__V_amd64") }, (Option*)(&_t34), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VFREESTANDING") }, (Option*)(&_t34), sizeof(string));
 		return _t34;
 	}
-	else if (string__eq(name, _SLIT("aarch64")) || string__eq(name, _SLIT("arm64"))) {
+	else if (string__eq(name, _SLIT("amd64"))) {
 		Option_string _t35;
-		opt_ok(&(string[]) { _SLIT("__V_arm64") }, (Option*)(&_t35), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__V_amd64") }, (Option*)(&_t35), sizeof(string));
 		return _t35;
 	}
-	else if (string__eq(name, _SLIT("x64"))) {
+	else if (string__eq(name, _SLIT("aarch64")) || string__eq(name, _SLIT("arm64"))) {
 		Option_string _t36;
-		opt_ok(&(string[]) { _SLIT("TARGET_IS_64BIT") }, (Option*)(&_t36), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__V_arm64") }, (Option*)(&_t36), sizeof(string));
 		return _t36;
 	}
-	else if (string__eq(name, _SLIT("x32"))) {
+	else if (string__eq(name, _SLIT("x64"))) {
 		Option_string _t37;
-		opt_ok(&(string[]) { _SLIT("TARGET_IS_32BIT") }, (Option*)(&_t37), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("TARGET_IS_64BIT") }, (Option*)(&_t37), sizeof(string));
 		return _t37;
 	}
-	else if (string__eq(name, _SLIT("little_endian"))) {
+	else if (string__eq(name, _SLIT("x32"))) {
 		Option_string _t38;
-		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_LITTLE") }, (Option*)(&_t38), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("TARGET_IS_32BIT") }, (Option*)(&_t38), sizeof(string));
 		return _t38;
 	}
-	else if (string__eq(name, _SLIT("big_endian"))) {
+	else if (string__eq(name, _SLIT("little_endian"))) {
 		Option_string _t39;
-		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_BIG") }, (Option*)(&_t39), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_LITTLE") }, (Option*)(&_t39), sizeof(string));
 		return _t39;
+	}
+	else if (string__eq(name, _SLIT("big_endian"))) {
+		Option_string _t40;
+		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_BIG") }, (Option*)(&_t40), sizeof(string));
+		return _t40;
 	}
 	else {
 		if (is_comptime_optional || (g->pref->compile_defines_all.len > 0 && (Array_string_contains(g->pref->compile_defines_all, name)))) {
-			Option_string _t40;
-			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t40), sizeof(string));
-			return _t40;
+			Option_string _t41;
+			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t41), sizeof(string));
+			return _t41;
 		}
 		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
