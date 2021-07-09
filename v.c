@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "47bf644"
+#define V_COMMIT_HASH "f62b6b3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "151cd0b"
+	#define V_COMMIT_HASH "47bf644"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "47bf644"
+	#define V_CURRENT_COMMIT_HASH "f62b6b3"
 #endif
 
 // V comptime_defines:
@@ -3521,6 +3521,9 @@ struct v__pkgconfig__Options {
 
 
 struct flag__FlagParser {
+	Array_string original_args;
+	int idx_dashdash;
+	Array_string all_after_dashdash;
 	Array_string args;
 	int max_free_args;
 	Array_flag__Flag flags;
@@ -25929,7 +25932,7 @@ VV_LOCAL_SYMBOL void flag__Flag_free(flag__Flag* f) {
 }
 
 string flag__Flag_str(flag__Flag f) {
-	string _t1 = string__plus(string__plus(string__plus(string__plus(string__plus(_SLIT(""), _SLIT("    flag:\n")),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            name: "), 0xfe10, {.d_s = f.name}}, {_SLIT("\n"), 0, { .d_c = 0 }}}))),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            abbr: "), 0xfe02, {.d_u8 = f.abbr}}, {_SLIT("\n"), 0, { .d_c = 0 }}}))),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            usag: "), 0xfe10, {.d_s = f.usage}}, {_SLIT("\n"), 0, { .d_c = 0 }}}))),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            desc: "), 0xfe10, {.d_s = f.val_desc}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	string _t1 = string__plus(string__plus(string__plus(string__plus(string__plus(_SLIT(""), _SLIT("    flag:\n")),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            name: "), 0xfe10, {.d_s = f.name}}, {_SLIT("\n"), 0, { .d_c = 0 }}}))),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            abbr: `"), 0xfe10, {.d_s = byte_ascii_str(f.abbr)}}, {_SLIT("`\n"), 0, { .d_c = 0 }}}))),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            usag: "), 0xfe10, {.d_s = f.usage}}, {_SLIT("\n"), 0, { .d_c = 0 }}}))),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("            desc: "), 0xfe10, {.d_s = f.val_desc}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	return _t1;
 }
 
@@ -25966,7 +25969,17 @@ VV_LOCAL_SYMBOL void flag__FlagParser_free(flag__FlagParser* f) {
 }
 
 flag__FlagParser* flag__new_flag_parser(Array_string args) {
-	flag__FlagParser* _t1 = (flag__FlagParser*)memdup(&(flag__FlagParser){.args = array_clone_to_depth(&args, 0),.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 0, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},.allow_unknown_args = 0,}, sizeof(flag__FlagParser));
+	Array_string original_args = array_clone_to_depth(&args, 0);
+	int idx_dashdash = Array_string_index(args, _SLIT("--"));
+	Array_string all_before_dashdash = array_clone_to_depth(&args, 0);
+	Array_string all_after_dashdash = __new_array_with_default(0, 0, sizeof(string), 0);
+	if (idx_dashdash >= 0) {
+		array_trim(&all_before_dashdash, idx_dashdash);
+		if (idx_dashdash < original_args.len) {
+			all_after_dashdash = array_slice(original_args, idx_dashdash + 1, original_args.len);
+		}
+	}
+	flag__FlagParser* _t1 = (flag__FlagParser*)memdup(&(flag__FlagParser){.original_args = original_args,.idx_dashdash = idx_dashdash,.all_after_dashdash = all_after_dashdash,.args = all_before_dashdash,.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 0, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},.allow_unknown_args = 0,}, sizeof(flag__FlagParser));
 	return _t1;
 }
 
@@ -26011,9 +26024,6 @@ Array_int to_delete;
 		if (should_skip_one) {
 			should_skip_one = false;
 			continue;
-		}
-		if (string__eq(arg, _SLIT("--"))) {
-			break;
 		}
 		if (string_at(arg, 0) != '-') {
 			continue;
@@ -26087,9 +26097,6 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 		string full =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("--"), 0xfe10, {.d_s = longhand}}, {_SLIT0, 0, { .d_c = 0 }}}));
 		for (int i = 0; i < fs->args.len; ++i) {
 			string arg = ((string*)fs->args.data)[i];
-			if (string__eq(arg, _SLIT("--"))) {
-				break;
-			}
 			if (arg.len == 0) {
 				continue;
 			}
@@ -26373,26 +26380,28 @@ string flag__FlagParser_usage(flag__FlagParser* fs) {
 }
 
 Option_Array_string flag__FlagParser_finalize(flag__FlagParser* fs) {
+	Array_string remaining = array_clone_to_depth(&fs->args, 0);
 	if (!fs->allow_unknown_args) {
-		for (int _t1 = 0; _t1 < fs->args.len; ++_t1) {
-			string a = ((string*)fs->args.data)[_t1];
+		for (int _t1 = 0; _t1 < remaining.len; ++_t1) {
+			string a = ((string*)remaining.data)[_t1];
 			if ((a.len >= 2 && string__eq(string_substr(a, 0, 2), _SLIT("--"))) || (a.len == 2 && string_at(a, 0) == '-')) {
 				return (Option_Array_string){ .state=2, .err=I_flag__UnkownFlagError_to_Interface_IError((flag__UnkownFlagError*)memdup(&(flag__UnkownFlagError){.msg =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Unknown flag `"), 0xfe10, {.d_s = a}}, {_SLIT("`"), 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__UnkownFlagError))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 	}
-	if (fs->args.len < fs->min_free_args && fs->min_free_args > 0) {
-		return (Option_Array_string){ .state=2, .err=I_flag__MinimumArgsCountError_to_Interface_IError((flag__MinimumArgsCountError*)memdup(&(flag__MinimumArgsCountError){.msg =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Expected at least "), 0xfe07, {.d_i32 = fs->min_free_args}}, {_SLIT(" arguments, but given "), 0xfe07, {.d_i32 = fs->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__MinimumArgsCountError))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	if (remaining.len < fs->min_free_args && fs->min_free_args > 0) {
+		return (Option_Array_string){ .state=2, .err=I_flag__MinimumArgsCountError_to_Interface_IError((flag__MinimumArgsCountError*)memdup(&(flag__MinimumArgsCountError){.msg =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Expected at least "), 0xfe07, {.d_i32 = fs->min_free_args}}, {_SLIT(" arguments, but given "), 0xfe07, {.d_i32 = remaining.len}}, {_SLIT0, 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__MinimumArgsCountError))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
-	if (fs->args.len > fs->max_free_args && fs->max_free_args > 0) {
-		return (Option_Array_string){ .state=2, .err=I_flag__MaximumArgsCountError_to_Interface_IError((flag__MaximumArgsCountError*)memdup(&(flag__MaximumArgsCountError){.msg =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Expected at most "), 0xfe07, {.d_i32 = fs->max_free_args}}, {_SLIT(" arguments, but given "), 0xfe07, {.d_i32 = fs->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__MaximumArgsCountError))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	if (remaining.len > fs->max_free_args && fs->max_free_args > 0) {
+		return (Option_Array_string){ .state=2, .err=I_flag__MaximumArgsCountError_to_Interface_IError((flag__MaximumArgsCountError*)memdup(&(flag__MaximumArgsCountError){.msg =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Expected at most "), 0xfe07, {.d_i32 = fs->max_free_args}}, {_SLIT(" arguments, but given "), 0xfe07, {.d_i32 = remaining.len}}, {_SLIT0, 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__MaximumArgsCountError))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
-	if (fs->args.len > 0 && fs->max_free_args == 0 && fs->min_free_args == 0) {
-		return (Option_Array_string){ .state=2, .err=I_flag__NoArgsExpectedError_to_Interface_IError((flag__NoArgsExpectedError*)memdup(&(flag__NoArgsExpectedError){.msg =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Expected no arguments, but given "), 0xfe07, {.d_i32 = fs->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__NoArgsExpectedError))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	if (remaining.len > 0 && fs->max_free_args == 0 && fs->min_free_args == 0) {
+		return (Option_Array_string){ .state=2, .err=I_flag__NoArgsExpectedError_to_Interface_IError((flag__NoArgsExpectedError*)memdup(&(flag__NoArgsExpectedError){.msg =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Expected no arguments, but given "), 0xfe07, {.d_i32 = remaining.len}}, {_SLIT0, 0, { .d_c = 0 }}})),.code = 0,}, sizeof(flag__NoArgsExpectedError))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
-	Option_Array_string _t6;
-	opt_ok(&(Array_string[]) { fs->args }, (Option*)(&_t6), sizeof(Array_string));
-	return _t6;
+	_PUSH_MANY(&remaining, (fs->all_after_dashdash), _t6, Array_string);
+	Option_Array_string _t7;
+	opt_ok(&(Array_string[]) { remaining }, (Option*)(&_t7), sizeof(Array_string));
+	return _t7;
 }
 
 // Attr: [inline]
@@ -31145,7 +31154,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("151cd0b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("47bf644"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
