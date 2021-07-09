@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "477d442"
+#define V_COMMIT_HASH "075e09b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eb96ad1"
+	#define V_COMMIT_HASH "477d442"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "477d442"
+	#define V_CURRENT_COMMIT_HASH "075e09b"
 #endif
 
 // V comptime_defines:
@@ -21625,6 +21625,8 @@ Option_Array_string os__glob(Array_string patterns) {
 // TypeDecl
 // Attr: [manualfree]
 Option_Array_byte os__read_bytes(string path) {
+bool os__read_bytes_defer_0 = false;
+FILE* fp;
 	Option_FILE_ptr _t1 = os__vfopen(path, _SLIT("rb"));
 	if (_t1.state != 0) { /*or block*/ 
 		Option_Array_byte _t2;
@@ -21632,25 +21634,48 @@ Option_Array_byte os__read_bytes(string path) {
 		return _t2;
 	}
 	
- 	FILE* fp =  (*(FILE**)_t1.data);
+ 	fp =  (*(FILE**)_t1.data);
+	os__read_bytes_defer_0 = true;
 	int cseek = fseek(fp, 0, SEEK_END);
 	if (cseek != 0) {
-		return (Option_Array_byte){ .state=2, .err=v_error(_SLIT("fseek failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_Array_byte _t3 = (Option_Array_byte){ .state=2, .err=v_error(_SLIT("fseek failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		// Defer begin
+		if (os__read_bytes_defer_0) {
+			fclose(fp);
+		}
+		// Defer end
+		return _t3;
 	}
 	int fsize = ftell(fp);
 	if (fsize < 0) {
-		return (Option_Array_byte){ .state=2, .err=v_error(_SLIT("ftell failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_Array_byte _t4 = (Option_Array_byte){ .state=2, .err=v_error(_SLIT("ftell failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		// Defer begin
+		if (os__read_bytes_defer_0) {
+			fclose(fp);
+		}
+		// Defer end
+		return _t4;
 	}
 	rewind(fp);
 	Array_byte res = __new_array_with_default(fsize, 0, sizeof(byte), 0);
 	int nr_read_elements = ((int)(fread(res.data, fsize, 1, fp)));
 	if (nr_read_elements == 0 && fsize > 0) {
-		return (Option_Array_byte){ .state=2, .err=v_error(_SLIT("fread failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_Array_byte _t5 = (Option_Array_byte){ .state=2, .err=v_error(_SLIT("fread failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		// Defer begin
+		if (os__read_bytes_defer_0) {
+			fclose(fp);
+		}
+		// Defer end
+		return _t5;
 	}
-	fclose(fp);
 	array_trim(&res, nr_read_elements * fsize);
 	Option_Array_byte _t6;
 	opt_ok(&(Array_byte[]) { res }, (Option*)(&_t6), sizeof(Array_byte));
+	// Defer begin
+	if (os__read_bytes_defer_0) {
+		fclose(fp);
+	}
+	// Defer end
 	return _t6;
 }
 
@@ -30417,7 +30442,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("eb96ad1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("477d442"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
