@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "71e8237"
+#define V_COMMIT_HASH "fd644e4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b222e4e"
+	#define V_COMMIT_HASH "71e8237"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "71e8237"
+	#define V_CURRENT_COMMIT_HASH "fd644e4"
 #endif
 
 // V comptime_defines:
@@ -3547,6 +3547,7 @@ struct flag__FlagParser {
 	Array_string original_args;
 	int idx_dashdash;
 	Array_string all_after_dashdash;
+	Array_string usage_examples;
 	string default_help_label;
 	string default_version_label;
 	Array_string args;
@@ -3558,6 +3559,7 @@ struct flag__FlagParser {
 	int min_free_args;
 	string args_description;
 	bool allow_unknown_args;
+	Array_string footers;
 };
 
 
@@ -7381,6 +7383,8 @@ string _const_flag__space; // a string literal, inited later
 string _const_flag__underline; // a string literal, inited later
 #define _const_flag__max_args_number 4048
 flag__FlagParser* flag__new_flag_parser(Array_string args);
+void flag__FlagParser_usage_example(flag__FlagParser* fs, string example);
+void flag__FlagParser_footer(flag__FlagParser* fs, string footer);
 void flag__FlagParser_application(flag__FlagParser* fs, string name);
 void flag__FlagParser_version(flag__FlagParser* fs, string vers);
 void flag__FlagParser_description(flag__FlagParser* fs, string desc);
@@ -7408,6 +7412,7 @@ string flag__FlagParser_usage(flag__FlagParser* fs);
 VV_LOCAL_SYMBOL Option_flag__Flag flag__FlagParser_find_existing_flag(flag__FlagParser* fs, string fname);
 VV_LOCAL_SYMBOL void flag__FlagParser_handle_builtin_options(flag__FlagParser* fs);
 Option_Array_string flag__FlagParser_finalize(flag__FlagParser* fs);
+Array_string flag__FlagParser_remaining_parameters(flag__FlagParser* fs);
 VV_LOCAL_SYMBOL bool semver__version_satisfies(semver__Version ver, string input);
 VV_LOCAL_SYMBOL bool semver__compare_eq(semver__Version v1, semver__Version v2);
 VV_LOCAL_SYMBOL bool semver__compare_gt(semver__Version v1, semver__Version v2);
@@ -25361,8 +25366,16 @@ flag__FlagParser* flag__new_flag_parser(Array_string args) {
 			all_after_dashdash = array_slice(original_args, idx_dashdash + 1, original_args.len);
 		}
 	}
-	flag__FlagParser* _t1 = (flag__FlagParser*)memdup(&(flag__FlagParser){.original_args = original_args,.idx_dashdash = idx_dashdash,.all_after_dashdash = all_after_dashdash,.default_help_label = _SLIT("display this help and exit"),.default_version_label = _SLIT("output version information and exit"),.args = all_before_dashdash,.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 0, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},.allow_unknown_args = 0,}, sizeof(flag__FlagParser));
+	flag__FlagParser* _t1 = (flag__FlagParser*)memdup(&(flag__FlagParser){.original_args = original_args,.idx_dashdash = idx_dashdash,.all_after_dashdash = all_after_dashdash,.usage_examples = __new_array(0, 0, sizeof(string)),.default_help_label = _SLIT("display this help and exit"),.default_version_label = _SLIT("output version information and exit"),.args = all_before_dashdash,.max_free_args = _const_flag__max_args_number,.flags = __new_array(0, 0, sizeof(flag__Flag)),.application_name = (string){.str=(byteptr)"", .is_lit=1},.application_version = (string){.str=(byteptr)"", .is_lit=1},.application_description = (string){.str=(byteptr)"", .is_lit=1},.min_free_args = 0,.args_description = (string){.str=(byteptr)"", .is_lit=1},.allow_unknown_args = 0,.footers = __new_array(0, 0, sizeof(string)),}, sizeof(flag__FlagParser));
 	return _t1;
+}
+
+void flag__FlagParser_usage_example(flag__FlagParser* fs, string example) {
+	array_push((array*)&fs->usage_examples, _MOV((string[]){ string_clone(example) }));
+}
+
+void flag__FlagParser_footer(flag__FlagParser* fs, string footer) {
+	array_push((array*)&fs->footers, _MOV((string[]){ string_clone(footer) }));
 }
 
 void flag__FlagParser_application(flag__FlagParser* fs, string name) {
@@ -25374,7 +25387,11 @@ void flag__FlagParser_version(flag__FlagParser* fs, string vers) {
 }
 
 void flag__FlagParser_description(flag__FlagParser* fs, string desc) {
-	fs->application_description = desc;
+	if (fs->application_description.len == 0) {
+		fs->application_description = desc;
+	} else {
+		fs->application_description = /*f*/string__plus(fs->application_description,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = desc}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	}
 }
 
 void flag__FlagParser_skip_executable(flag__FlagParser* fs) {
@@ -25704,11 +25721,21 @@ string flag__FlagParser_usage(flag__FlagParser* fs) {
 		array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fs->application_name}}, {_SLIT(" "), 0xfe10, {.d_s = fs->application_version}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
 		array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_flag__underline}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
 	}
-	array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Usage: "), 0xfe10, {.d_s = fs->application_name}}, {_SLIT(" [options] "), 0xfe10, {.d_s = adesc}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+	if (fs->usage_examples.len == 0) {
+		array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Usage: "), 0xfe10, {.d_s = fs->application_name}}, {_SLIT(" [options] "), 0xfe10, {.d_s = adesc}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+	} else {
+		for (int i = 0; i < fs->usage_examples.len; ++i) {
+			string example = ((string*)fs->usage_examples.data)[i];
+			if (i == 0) {
+				array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Usage: "), 0xfe10, {.d_s = fs->application_name}}, {_SLIT(" "), 0xfe10, {.d_s = example}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+			} else {
+				array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT("   or: "), 0xfe10, {.d_s = fs->application_name}}, {_SLIT(" "), 0xfe10, {.d_s = example}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+			}
+		}
+	}
 	array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
 	if ((fs->application_description).len != 0) {
 		array_push((array*)&use, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Description: "), 0xfe10, {.d_s = fs->application_description}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
-		array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
 		array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("")) }));
 	}
 	if (positive_min_arg || positive_max_arg || no_arguments) {
@@ -25733,8 +25760,8 @@ string flag__FlagParser_usage(flag__FlagParser* fs) {
 	}
 	if (fs->flags.len > 0) {
 		array_push((array*)&use, _MOV((string[]){ string_clone(_SLIT("Options:")) }));
-		for (int _t15 = 0; _t15 < fs->flags.len; ++_t15) {
-			flag__Flag f = ((flag__Flag*)fs->flags.data)[_t15];
+		for (int _t16 = 0; _t16 < fs->flags.len; ++_t16) {
+			flag__Flag f = ((flag__Flag*)fs->flags.data)[_t16];
 			Array_string onames = __new_array_with_default(0, 0, sizeof(string), 0);
 			if (f.abbr != 0) {
 				array_push((array*)&onames, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-"), 0xfe10, {.d_s = byte_ascii_str(f.abbr)}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
@@ -25757,8 +25784,12 @@ string flag__FlagParser_usage(flag__FlagParser* fs) {
 			array_push((array*)&use, _MOV((string[]){ string_clone(fdesc) }));
 		}
 	}
-	string _t20 = string_replace(Array_string_join(use, _SLIT("\n")), _SLIT("- ,"), _SLIT("   "));
-	return _t20;
+	for (int _t21 = 0; _t21 < fs->footers.len; ++_t21) {
+		string footer = ((string*)fs->footers.data)[_t21];
+		array_push((array*)&use, _MOV((string[]){ string_clone(footer) }));
+	}
+	string _t23 = string_replace(Array_string_join(use, _SLIT("\n")), _SLIT("- ,"), _SLIT("   "));
+	return _t23;
 }
 
 VV_LOCAL_SYMBOL Option_flag__Flag flag__FlagParser_find_existing_flag(flag__FlagParser* fs, string fname) {
@@ -25824,6 +25855,21 @@ Option_Array_string flag__FlagParser_finalize(flag__FlagParser* fs) {
 	Option_Array_string _t7;
 	opt_ok(&(Array_string[]) { remaining }, (Option*)(&_t7), sizeof(Array_string));
 	return _t7;
+}
+
+Array_string flag__FlagParser_remaining_parameters(flag__FlagParser* fs) {
+	Option_Array_string _t2 = flag__FlagParser_finalize(fs);
+	if (_t2.state != 0) { /*or block*/ 
+		IError err = _t2.err;
+		eprintln((*(err.msg)));
+		println(flag__FlagParser_usage(fs));
+		v_exit(1);
+		VUNREACHABLE();
+	;
+	}
+	
+ 	Array_string _t1 =  (*(Array_string*)_t2.data);
+	return _t1;
 }
 
 // Attr: [inline]
@@ -30442,7 +30488,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b222e4e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("71e8237"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
