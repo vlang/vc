@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "533f09f"
+#define V_COMMIT_HASH "938e9b6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c65bfc1"
+	#define V_COMMIT_HASH "533f09f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "533f09f"
+	#define V_CURRENT_COMMIT_HASH "938e9b6"
 #endif
 
 // V comptime_defines:
@@ -31279,7 +31279,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c65bfc1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("533f09f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -39781,7 +39781,7 @@ VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parse
 		for (int _t1 = 0; _t1 < exprs.len; ++_t1) {
 			v__ast__Expr expr = ((v__ast__Expr*)exprs.data)[_t1];
 			if ((expr)._typ == 231 /* v.ast.Ident */) {
-				if (string__eq((*expr._v__ast__Ident).name, (*val._v__ast__Ident).name)) {
+				if (string__eq((*expr._v__ast__Ident).name, (*val._v__ast__Ident).name) && (*expr._v__ast__Ident).kind != v__ast__IdentKind__blank_ident) {
 					v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*val._v__ast__Ident).pos);
 					return (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 				}
@@ -39816,77 +39816,109 @@ VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parse
 			}
 			;
 		}
+		for (int _t9 = 0; _t9 < (*val._v__ast__ArrayInit).exprs.len; ++_t9) {
+			v__ast__Expr expr = ((v__ast__Expr*)(*val._v__ast__ArrayInit).exprs.data)[_t9];
+			Option_void _t10 = v__parser__Parser_check_undefined_variables(p, exprs, expr);
+			if (_t10.state != 0 && _t10.err._typ != _IError_None___index) {
+				Option_void _t11;
+				memcpy(&_t11, &_t10, sizeof(Option));
+				return _t11;
+			}
+			;
+		}
 	}
 	else if (val._typ == 218 /* v.ast.CallExpr */) {
-		Option_void _t9 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__CallExpr).left);
-		if (_t9.state != 0 && _t9.err._typ != _IError_None___index) {
-			Option_void _t10;
-			memcpy(&_t10, &_t9, sizeof(Option));
-			return _t10;
+		Option_void _t12 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__CallExpr).left);
+		if (_t12.state != 0 && _t12.err._typ != _IError_None___index) {
+			Option_void _t13;
+			memcpy(&_t13, &_t12, sizeof(Option));
+			return _t13;
 		}
 		;
-		for (int _t11 = 0; _t11 < (*val._v__ast__CallExpr).args.len; ++_t11) {
-			v__ast__CallArg arg = ((v__ast__CallArg*)(*val._v__ast__CallExpr).args.data)[_t11];
-			Option_void _t12 = v__parser__Parser_check_undefined_variables(p, exprs, arg.expr);
-			if (_t12.state != 0 && _t12.err._typ != _IError_None___index) {
-				Option_void _t13;
-				memcpy(&_t13, &_t12, sizeof(Option));
-				return _t13;
+		for (int _t14 = 0; _t14 < (*val._v__ast__CallExpr).args.len; ++_t14) {
+			v__ast__CallArg arg = ((v__ast__CallArg*)(*val._v__ast__CallExpr).args.data)[_t14];
+			Option_void _t15 = v__parser__Parser_check_undefined_variables(p, exprs, arg.expr);
+			if (_t15.state != 0 && _t15.err._typ != _IError_None___index) {
+				Option_void _t16;
+				memcpy(&_t16, &_t15, sizeof(Option));
+				return _t16;
 			}
 			;
 		}
 	}
 	else if (val._typ == 235 /* v.ast.InfixExpr */) {
-		Option_void _t14 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).left);
-		if (_t14.state != 0 && _t14.err._typ != _IError_None___index) {
-			Option_void _t15;
-			memcpy(&_t15, &_t14, sizeof(Option));
-			return _t15;
+		Option_void _t17 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).left);
+		if (_t17.state != 0 && _t17.err._typ != _IError_None___index) {
+			Option_void _t18;
+			memcpy(&_t18, &_t17, sizeof(Option));
+			return _t18;
 		}
 		;
-		Option_void _t16 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).right);
-		if (_t16.state != 0 && _t16.err._typ != _IError_None___index) {
-			Option_void _t17;
-			memcpy(&_t17, &_t16, sizeof(Option));
-			return _t17;
-		}
-		;
-	}
-	else if (val._typ == 246 /* v.ast.ParExpr */) {
-		Option_void _t18 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ParExpr).expr);
-		if (_t18.state != 0 && _t18.err._typ != _IError_None___index) {
-			Option_void _t19;
-			memcpy(&_t19, &_t18, sizeof(Option));
-			return _t19;
+		Option_void _t19 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).right);
+		if (_t19.state != 0 && _t19.err._typ != _IError_None___index) {
+			Option_void _t20;
+			memcpy(&_t20, &_t19, sizeof(Option));
+			return _t20;
 		}
 		;
 	}
-	else if (val._typ == 247 /* v.ast.PostfixExpr */) {
-		Option_void _t20 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PostfixExpr).expr);
-		if (_t20.state != 0 && _t20.err._typ != _IError_None___index) {
-			Option_void _t21;
-			memcpy(&_t21, &_t20, sizeof(Option));
-			return _t21;
+	else if (val._typ == 240 /* v.ast.MapInit */) {
+		for (int _t21 = 0; _t21 < (*val._v__ast__MapInit).keys.len; ++_t21) {
+			v__ast__Expr key = ((v__ast__Expr*)(*val._v__ast__MapInit).keys.data)[_t21];
+			Option_void _t22 = v__parser__Parser_check_undefined_variables(p, exprs, key);
+			if (_t22.state != 0 && _t22.err._typ != _IError_None___index) {
+				Option_void _t23;
+				memcpy(&_t23, &_t22, sizeof(Option));
+				return _t23;
+			}
+			;
 		}
-		;
-	}
-	else if (val._typ == 248 /* v.ast.PrefixExpr */) {
-		Option_void _t22 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PrefixExpr).right);
-		if (_t22.state != 0 && _t22.err._typ != _IError_None___index) {
-			Option_void _t23;
-			memcpy(&_t23, &_t22, sizeof(Option));
-			return _t23;
-		}
-		;
-	}
-	else if (val._typ == 254 /* v.ast.StringInterLiteral */) {
-		for (int _t24 = 0; _t24 < (*val._v__ast__StringInterLiteral).exprs.len; ++_t24) {
-			v__ast__Expr expr_ = ((v__ast__Expr*)(*val._v__ast__StringInterLiteral).exprs.data)[_t24];
-			Option_void _t25 = v__parser__Parser_check_undefined_variables(p, exprs, expr_);
+		for (int _t24 = 0; _t24 < (*val._v__ast__MapInit).vals.len; ++_t24) {
+			v__ast__Expr value = ((v__ast__Expr*)(*val._v__ast__MapInit).vals.data)[_t24];
+			Option_void _t25 = v__parser__Parser_check_undefined_variables(p, exprs, value);
 			if (_t25.state != 0 && _t25.err._typ != _IError_None___index) {
 				Option_void _t26;
 				memcpy(&_t26, &_t25, sizeof(Option));
 				return _t26;
+			}
+			;
+		}
+	}
+	else if (val._typ == 246 /* v.ast.ParExpr */) {
+		Option_void _t27 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ParExpr).expr);
+		if (_t27.state != 0 && _t27.err._typ != _IError_None___index) {
+			Option_void _t28;
+			memcpy(&_t28, &_t27, sizeof(Option));
+			return _t28;
+		}
+		;
+	}
+	else if (val._typ == 247 /* v.ast.PostfixExpr */) {
+		Option_void _t29 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PostfixExpr).expr);
+		if (_t29.state != 0 && _t29.err._typ != _IError_None___index) {
+			Option_void _t30;
+			memcpy(&_t30, &_t29, sizeof(Option));
+			return _t30;
+		}
+		;
+	}
+	else if (val._typ == 248 /* v.ast.PrefixExpr */) {
+		Option_void _t31 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PrefixExpr).right);
+		if (_t31.state != 0 && _t31.err._typ != _IError_None___index) {
+			Option_void _t32;
+			memcpy(&_t32, &_t31, sizeof(Option));
+			return _t32;
+		}
+		;
+	}
+	else if (val._typ == 254 /* v.ast.StringInterLiteral */) {
+		for (int _t33 = 0; _t33 < (*val._v__ast__StringInterLiteral).exprs.len; ++_t33) {
+			v__ast__Expr expr_ = ((v__ast__Expr*)(*val._v__ast__StringInterLiteral).exprs.data)[_t33];
+			Option_void _t34 = v__parser__Parser_check_undefined_variables(p, exprs, expr_);
+			if (_t34.state != 0 && _t34.err._typ != _IError_None___index) {
+				Option_void _t35;
+				memcpy(&_t35, &_t34, sizeof(Option));
+				return _t35;
 			}
 			;
 		}
@@ -39959,9 +39991,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 	_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t2, Array_v__ast__Comment);
 	Array_v__ast__Comment right_comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	Array_v__ast__Expr right = __new_array_with_default(0, left.len, sizeof(v__ast__Expr), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_2891 = v__parser__Parser_expr_list(p);
-	right = mr_2891.arg0;
-	right_comments = mr_2891.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3175 = v__parser__Parser_expr_list(p);
+	right = mr_3175.arg0;
+	right_comments = mr_3175.arg1;
 	_PUSH_MANY(&comments, (right_comments), _t3, Array_v__ast__Comment);
 	Array_v__ast__Comment end_comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = true,.follow_up = 0,});
 	bool has_cross_var = false;
