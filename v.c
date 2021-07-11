@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "938e9b6"
+#define V_COMMIT_HASH "a3ed9c1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "533f09f"
+	#define V_COMMIT_HASH "938e9b6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "938e9b6"
+	#define V_CURRENT_COMMIT_HASH "a3ed9c1"
 #endif
 
 // V comptime_defines:
@@ -31279,7 +31279,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("533f09f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("938e9b6"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -50318,13 +50318,14 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_str_for_array_fixed(v__gen__c__Gen* g, v
 	strings__Builder_writeln(&g->auto_str_funcs,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("static string indent_"), 0xfe10, {.d_s = str_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = styp}}, {_SLIT(" a, int indent_count) {"), 0, { .d_c = 0 }}})));
 	strings__Builder_writeln(&g->auto_str_funcs,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tstrings__Builder sb = strings__new_builder("), 0xfe07, {.d_i32 = info.size}}, {_SLIT(" * 10);"), 0, { .d_c = 0 }}})));
 	strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\tstrings__Builder_write_string(&sb, _SLIT(\"[\"));"));
+	strings__Builder_writeln(&g->auto_str_funcs,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tfor (int i = 0; i < "), 0xfe07, {.d_i32 = info.size}}, {_SLIT("; ++i) {"), 0, { .d_c = 0 }}})));
 	if (sym->kind == v__ast__Kind__function) {
 		strings__Builder_writeln(&g->auto_str_funcs,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tstring x = "), 0xfe10, {.d_s = elem_str_fn_name}}, {_SLIT("();"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&g->auto_str_funcs, _SLIT("\t\tstrings__Builder_write_string(&sb, x);"));
 	} else {
-		multi_return_string_string mr_22752 = v__gen__c__deref_kind(str_method_expects_ptr, is_elem_ptr, typ);
-		string deref = mr_22752.arg0;
-		string deref_label = mr_22752.arg1;
-		strings__Builder_writeln(&g->auto_str_funcs,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tfor (int i = 0; i < "), 0xfe07, {.d_i32 = info.size}}, {_SLIT("; ++i) {"), 0, { .d_c = 0 }}})));
+		multi_return_string_string mr_22895 = v__gen__c__deref_kind(str_method_expects_ptr, is_elem_ptr, typ);
+		string deref = mr_22895.arg0;
+		string deref_label = mr_22895.arg1;
 		if (v__gen__c__should_use_indent_func(sym->kind) && !sym_has_str_method) {
 			if (is_elem_ptr) {
 				strings__Builder_writeln(&g->auto_str_funcs,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tstrings__Builder_write_string(&sb, _SLIT(\""), 0xfe10, {.d_s = deref_label}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
@@ -50577,9 +50578,9 @@ if (v__gen__c__Gen_gen_str_for_struct_defer_0) {
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__struct_auto_str_func1(v__ast__TypeSymbol* sym, v__ast__Type field_type, string fn_name, string field_name) {
-	multi_return_bool_bool_int mr_33914 = v__ast__TypeSymbol_str_method_info(sym);
-	bool has_custom_str = mr_33914.arg0;
-	bool expects_ptr = mr_33914.arg1;
+	multi_return_bool_bool_int mr_33986 = v__ast__TypeSymbol_str_method_info(sym);
+	bool has_custom_str = mr_33986.arg0;
+	bool expects_ptr = mr_33986.arg1;
 	if (sym->kind == v__ast__Kind__enum_) {
 		string _t1 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fn_name}}, {_SLIT("(it."), 0xfe10, {.d_s = v__gen__c__c_name(field_name)}}, {_SLIT(")"), 0, { .d_c = 0 }}}));
 		return _t1;
