@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fd644e4"
+#define V_COMMIT_HASH "9d241f7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "71e8237"
+	#define V_COMMIT_HASH "fd644e4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fd644e4"
+	#define V_CURRENT_COMMIT_HASH "9d241f7"
 #endif
 
 // V comptime_defines:
@@ -31279,7 +31279,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("71e8237"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fd644e4"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -47708,17 +47708,18 @@ bool v__markused__mark_used_defer_0 = false;
 	Map_string_v__ast__ConstField all_consts = mr_421.arg1;
 	v__util__timing_start(_SLIT("mark_used"));
 	v__markused__mark_used_defer_0 = true;
-	Array_string all_fn_root_names = new_array_from_c_array(81, 81, sizeof(string), _MOV((string[81]){
+	Array_string all_fn_root_names = new_array_from_c_array(82, 82, sizeof(string), _MOV((string[82]){
 			_SLIT("main.main"), _SLIT("__new_array"), _SLIT("str_intp"), _SLIT("format_sb"), _SLIT("__new_array_with_default"), _SLIT("__new_array_with_array_default"), _SLIT("v_realloc"), _SLIT("malloc"), _SLIT("malloc_noscan"),
 			_SLIT("vcalloc"), _SLIT("vcalloc_noscan"), _SLIT("new_array_from_c_array"), _SLIT("v_fixed_index"), _SLIT("memdup"), _SLIT("vstrlen"), _SLIT("__as_cast"), _SLIT("tos"),
 			_SLIT("tos2"), _SLIT("tos3"), _SLIT("isnil"), _SLIT("opt_ok"), _SLIT("error"), _SLIT("__print_assert_failure"), _SLIT("utf8_str_visible_length"), _SLIT("compare_ints"),
 			_SLIT("compare_u64s"), _SLIT("compare_strings"), _SLIT("compare_ints_reverse"), _SLIT("compare_u64s_reverse"), _SLIT("compare_strings_reverse"), _SLIT("builtin_init"), _SLIT("3.vstring"), _SLIT("3.vstring_with_len"),
 			_SLIT("4.vstring"), _SLIT("4.vstring_with_len"), _SLIT("9.str_escaped"), _SLIT("18.add"), _SLIT("18.trim_space"), _SLIT("18.repeat"), _SLIT("18.replace"), _SLIT("18.clone"),
-			_SLIT("18.clone_static"), _SLIT("18.trim"), _SLIT("18.substr"), _SLIT("18.at"), _SLIT("18.index_kmp"), _SLIT("18.eq"), _SLIT("18.ne"), _SLIT("18.lt"),
-			_SLIT("18.gt"), _SLIT("18.le"), _SLIT("18.ge"), _SLIT("fast_string_eq"), _SLIT("20.get"), _SLIT("20.set"), _SLIT("20.get_unsafe"), _SLIT("20.set_unsafe"),
-			_SLIT("20.get_with_check"), _SLIT("20.clone_static_to_depth"), _SLIT("20.clone_to_depth"), _SLIT("20.first"), _SLIT("20.last"), _SLIT("20.pointers"), _SLIT("20.reverse"), _SLIT("20.repeat_to_depth"),
-			_SLIT("20.slice"), _SLIT("20.slice2"), _SLIT("59.get"), _SLIT("59.set"), _SLIT("65556.last"), _SLIT("65556.pop"), _SLIT("65556.push"), _SLIT("65556.insert_many"),
-			_SLIT("65556.prepend_many"), _SLIT("65556.reverse"), _SLIT("65556.set"), _SLIT("65556.set_unsafe"), _SLIT("json__decode_string"), _SLIT("os.getwd"), _SLIT("os.init_os_args"), _SLIT("os.init_os_args_wide")}));
+			_SLIT("18.clone_static"), _SLIT("18.trim"), _SLIT("18.substr"), _SLIT("18.at"), _SLIT("18.at_with_check"), _SLIT("18.index_kmp"), _SLIT("18.eq"), _SLIT("18.ne"),
+			_SLIT("18.lt"), _SLIT("18.gt"), _SLIT("18.le"), _SLIT("18.ge"), _SLIT("fast_string_eq"), _SLIT("20.get"), _SLIT("20.set"), _SLIT("20.get_unsafe"),
+			_SLIT("20.set_unsafe"), _SLIT("20.get_with_check"), _SLIT("20.clone_static_to_depth"), _SLIT("20.clone_to_depth"), _SLIT("20.first"), _SLIT("20.last"), _SLIT("20.pointers"), _SLIT("20.reverse"),
+			_SLIT("20.repeat_to_depth"), _SLIT("20.slice"), _SLIT("20.slice2"), _SLIT("59.get"), _SLIT("59.set"), _SLIT("65556.last"), _SLIT("65556.pop"), _SLIT("65556.push"),
+			_SLIT("65556.insert_many"), _SLIT("65556.prepend_many"), _SLIT("65556.reverse"), _SLIT("65556.set"), _SLIT("65556.set_unsafe"), _SLIT("json__decode_string"), _SLIT("os.getwd"), _SLIT("os.init_os_args"),
+			_SLIT("os.init_os_args_wide")}));
 	if (pref->is_bare) {
 		_PUSH_MANY(&all_fn_root_names, (new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("strlen"), _SLIT("memcmp"), _SLIT("memcpy"), _SLIT("realloc"), _SLIT("vsnprintf"), _SLIT("vsprintf")}))), _t1, Array_string);
 	}
