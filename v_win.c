@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a3ed9c1"
+#define V_COMMIT_HASH "ba9b53c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "938e9b6"
+	#define V_COMMIT_HASH "a3ed9c1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a3ed9c1"
+	#define V_CURRENT_COMMIT_HASH "ba9b53c"
 #endif
 
 // V comptime_defines:
@@ -30488,7 +30488,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("938e9b6"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a3ed9c1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35359,9 +35359,10 @@ string v__ast__Table_fn_type_signature(v__ast__Table* t, v__ast__Fn* f) {
 		v__ast__Param arg = ((v__ast__Param*)f->params.data)[i];
 		v__ast__Type typ = v__ast__Type_set_nr_muls(arg.typ, 0);
 		v__ast__TypeSymbol* arg_type_sym = v__ast__Table_get_type_symbol(t, typ);
-		sig = /*f*/string__plus(sig, string_replace_each(string_to_lower(v__ast__TypeSymbol_str(arg_type_sym)), new_array_from_c_array(12, 12, sizeof(string), _MOV((string[12]){
+		sig = /*f*/string__plus(sig, string_replace_each(string_to_lower(v__ast__TypeSymbol_str(arg_type_sym)), new_array_from_c_array(18, 18, sizeof(string), _MOV((string[18]){
 				_SLIT("."), _SLIT("__"), _SLIT("&"), _SLIT(""), _SLIT("[]"), _SLIT("arr_"), _SLIT("chan "), _SLIT("chan_"), _SLIT("map["),
-				_SLIT("map_of_"), _SLIT("]"), _SLIT("_to_")}))));
+				_SLIT("map_of_"), _SLIT("]"), _SLIT("_to_"), _SLIT("<"), _SLIT("_T_"), _SLIT(","), _SLIT("_"), _SLIT(">"),
+				_SLIT("")}))));
 		if (i < f->params.len - 1) {
 			sig = /*f*/string__plus(sig, _SLIT("_"));
 		}
@@ -73817,7 +73818,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast_
 			v__checker__Checker_error(c, _SLIT("generic function declaration must specify generic type names, e.g. foo<T>"), node->pos);
 		}
 	}
-	if (node->language == v__ast__Language__v && !c->is_builtin_mod) {
+	if (node->language == v__ast__Language__v && !c->is_builtin_mod && !node->is_anon) {
 		v__checker__Checker_check_valid_snake_case(c, node->name, _SLIT("function name"), node->pos);
 	}
 	if (string__eq(node->name, _SLIT("main.main"))) {
@@ -74076,10 +74077,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_251303 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_251303.arg0;
-				int nroute_attributes = mr_251303.arg1;
-				int nargs = mr_251303.arg2;
+				multi_return_bool_int_int mr_251320 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_251320.arg0;
+				int nroute_attributes = mr_251320.arg1;
+				int nargs = mr_251320.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
