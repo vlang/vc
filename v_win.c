@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b5f1cf8"
+#define V_COMMIT_HASH "581280e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "974737f"
+	#define V_COMMIT_HASH "b5f1cf8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b5f1cf8"
+	#define V_CURRENT_COMMIT_HASH "581280e"
 #endif
 
 // V comptime_defines:
@@ -30488,7 +30488,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("974737f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b5f1cf8"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -39035,43 +39035,43 @@ VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parse
 }
 
 VV_LOCAL_SYMBOL bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, Array_v__ast__Expr exprs, v__ast__Expr val) {
-	v__ast__Expr val_ = val;
-	if (val_._typ == 265 /* v.ast.Ident */) {
+	string val_str = v__ast__Expr_str(val);
+	if (val._typ == 265 /* v.ast.Ident */) {
 		for (int _t1 = 0; _t1 < exprs.len; ++_t1) {
 			v__ast__Expr expr = ((v__ast__Expr*)exprs.data)[_t1];
 			if ((expr)._typ == 265 /* v.ast.Ident */) {
-				if (string__eq((*expr._v__ast__Ident).name, (*val_._v__ast__Ident).name)) {
+				if (string__eq((*expr._v__ast__Ident).name, (*val._v__ast__Ident).name)) {
 					bool _t2 = true;
 					return _t2;
 				}
 			}
 		}
 	}
-	else if (val_._typ == 268 /* v.ast.IndexExpr */) {
+	else if (val._typ == 268 /* v.ast.IndexExpr */) {
 		for (int _t3 = 0; _t3 < exprs.len; ++_t3) {
 			v__ast__Expr expr = ((v__ast__Expr*)exprs.data)[_t3];
-			if (string__eq(v__ast__Expr_str(expr), v__ast__Expr_str(val))) {
+			if (string__eq(v__ast__Expr_str(expr), val_str)) {
 				bool _t4 = true;
 				return _t4;
 			}
 		}
 	}
-	else if (val_._typ == 269 /* v.ast.InfixExpr */) {
-		bool _t5 = v__parser__Parser_check_cross_variables(p, exprs, (*val_._v__ast__InfixExpr).left) || v__parser__Parser_check_cross_variables(p, exprs, (*val_._v__ast__InfixExpr).right);
+	else if (val._typ == 269 /* v.ast.InfixExpr */) {
+		bool _t5 = v__parser__Parser_check_cross_variables(p, exprs, (*val._v__ast__InfixExpr).left) || v__parser__Parser_check_cross_variables(p, exprs, (*val._v__ast__InfixExpr).right);
 		return _t5;
 	}
-	else if (val_._typ == 282 /* v.ast.PrefixExpr */) {
-		bool _t6 = v__parser__Parser_check_cross_variables(p, exprs, (*val_._v__ast__PrefixExpr).right);
+	else if (val._typ == 282 /* v.ast.PrefixExpr */) {
+		bool _t6 = v__parser__Parser_check_cross_variables(p, exprs, (*val._v__ast__PrefixExpr).right);
 		return _t6;
 	}
-	else if (val_._typ == 281 /* v.ast.PostfixExpr */) {
-		bool _t7 = v__parser__Parser_check_cross_variables(p, exprs, (*val_._v__ast__PostfixExpr).expr);
+	else if (val._typ == 281 /* v.ast.PostfixExpr */) {
+		bool _t7 = v__parser__Parser_check_cross_variables(p, exprs, (*val._v__ast__PostfixExpr).expr);
 		return _t7;
 	}
-	else if (val_._typ == 285 /* v.ast.SelectorExpr */) {
+	else if (val._typ == 285 /* v.ast.SelectorExpr */) {
 		for (int _t8 = 0; _t8 < exprs.len; ++_t8) {
 			v__ast__Expr expr = ((v__ast__Expr*)exprs.data)[_t8];
-			if (string__eq(v__ast__Expr_str(expr), v__ast__Expr_str(val))) {
+			if (string__eq(v__ast__Expr_str(expr), val_str)) {
 				bool _t9 = true;
 				return _t9;
 			}
@@ -39095,9 +39095,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 	_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t2, Array_v__ast__Comment);
 	Array_v__ast__Comment right_comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	Array_v__ast__Expr right = __new_array_with_default(0, left.len, sizeof(v__ast__Expr), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3175 = v__parser__Parser_expr_list(p);
-	right = mr_3175.arg0;
-	right_comments = mr_3175.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3174 = v__parser__Parser_expr_list(p);
+	right = mr_3174.arg0;
+	right_comments = mr_3174.arg1;
 	_PUSH_MANY(&comments, (right_comments), _t3, Array_v__ast__Comment);
 	Array_v__ast__Comment end_comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = true,.follow_up = 0,});
 	bool has_cross_var = false;
