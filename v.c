@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2a9d6fe"
+#define V_COMMIT_HASH "85564b7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d1f1c5a"
+	#define V_COMMIT_HASH "2a9d6fe"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2a9d6fe"
+	#define V_CURRENT_COMMIT_HASH "85564b7"
 #endif
 
 // V comptime_defines:
@@ -707,22 +707,7 @@ voidptr memdup(voidptr src, int sz);
 	#error Cygwin is not supported, please use MinGW or Visual Studio.
 #endif
 
-#ifdef __linux__
-	#include <sys/types.h>
-	#include <sys/wait.h> // os__wait uses wait on nix
-#endif
-
-#ifdef __FreeBSD__
-	#include <sys/types.h>
-	#include <sys/wait.h> // os__wait uses wait on nix
-#endif
-
-#ifdef __DragonFly__
-	#include <sys/types.h>
-	#include <sys/wait.h> // os__wait uses wait on nix
-#endif
-
-#ifdef __serenity__
+#ifdef defined(__linux__) || defined(__FreeBSD__) || defined(__DragonFly__) || defined(__vinix__) || defined(__serenity__) || defined(__sun)
 	#include <sys/types.h>
 	#include <sys/wait.h> // os__wait uses wait on nix
 #endif
@@ -734,11 +719,6 @@ voidptr memdup(voidptr src, int sz);
 #endif
 
 #ifdef __NetBSD__
-	#include <sys/wait.h> // os__wait uses wait on nix
-#endif
-
-#ifdef __sun
-	#include <sys/types.h>
 	#include <sys/wait.h> // os__wait uses wait on nix
 #endif
 
@@ -1539,9 +1519,10 @@ typedef enum {
 	v__pref__OS__android, // +10
 	v__pref__OS__solaris, // +11
 	v__pref__OS__serenity, // +12
-	v__pref__OS__haiku, // +13
-	v__pref__OS__raw, // +14
-	v__pref__OS__all, // +15
+	v__pref__OS__vinix, // +13
+	v__pref__OS__haiku, // +14
+	v__pref__OS__raw, // +15
+	v__pref__OS__all, // +16
 } v__pref__OS;
 
 typedef enum {
@@ -31281,7 +31262,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d1f1c5a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("2a9d6fe"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31421,30 +31402,35 @@ Option_v__pref__OS v__pref__os_from_string(string os_str) {
 		opt_ok(&(v__pref__OS[]) { v__pref__OS__serenity }, (Option*)(&_t11), sizeof(v__pref__OS));
 		return _t11;
 	}
-	else if (string__eq(os_str, _SLIT("android"))) {
+	else if (string__eq(os_str, _SLIT("vinix"))) {
 		Option_v__pref__OS _t12;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__android }, (Option*)(&_t12), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__vinix }, (Option*)(&_t12), sizeof(v__pref__OS));
 		return _t12;
 	}
-	else if (string__eq(os_str, _SLIT("haiku"))) {
+	else if (string__eq(os_str, _SLIT("android"))) {
 		Option_v__pref__OS _t13;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__haiku }, (Option*)(&_t13), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__android }, (Option*)(&_t13), sizeof(v__pref__OS));
 		return _t13;
 	}
-	else if (string__eq(os_str, _SLIT("raw"))) {
+	else if (string__eq(os_str, _SLIT("haiku"))) {
 		Option_v__pref__OS _t14;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__raw }, (Option*)(&_t14), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__haiku }, (Option*)(&_t14), sizeof(v__pref__OS));
 		return _t14;
 	}
-	else if (string__eq(os_str, _SLIT("nix"))) {
+	else if (string__eq(os_str, _SLIT("raw"))) {
 		Option_v__pref__OS _t15;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__linux }, (Option*)(&_t15), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__raw }, (Option*)(&_t15), sizeof(v__pref__OS));
 		return _t15;
 	}
-	else if (string__eq(os_str, _SLIT(""))) {
+	else if (string__eq(os_str, _SLIT("nix"))) {
 		Option_v__pref__OS _t16;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS___auto }, (Option*)(&_t16), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__linux }, (Option*)(&_t16), sizeof(v__pref__OS));
 		return _t16;
+	}
+	else if (string__eq(os_str, _SLIT(""))) {
+		Option_v__pref__OS _t17;
+		opt_ok(&(v__pref__OS[]) { v__pref__OS___auto }, (Option*)(&_t17), sizeof(v__pref__OS));
+		return _t17;
 	}
 	else {
 		return (Option_v__pref__OS){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad OS "), 0xfe10, {.d_s = os_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -31506,17 +31492,21 @@ string v__pref__OS_str(v__pref__OS o) {
 		string _t13 = _SLIT("SerenityOS");
 		return _t13;
 	}
-	else if (o == (v__pref__OS__haiku)) {
-		string _t14 = _SLIT("Haiku");
+	else if (o == (v__pref__OS__vinix)) {
+		string _t14 = _SLIT("Vinix");
 		return _t14;
 	}
-	else if (o == (v__pref__OS__raw)) {
-		string _t15 = _SLIT("Raw");
+	else if (o == (v__pref__OS__haiku)) {
+		string _t15 = _SLIT("Haiku");
 		return _t15;
 	}
-	else if (o == (v__pref__OS__all)) {
-		string _t16 = _SLIT("all");
+	else if (o == (v__pref__OS__raw)) {
+		string _t16 = _SLIT("Raw");
 		return _t16;
+	}
+	else if (o == (v__pref__OS__all)) {
+		string _t17 = _SLIT("all");
+		return _t17;
 	};
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
@@ -32450,8 +32440,12 @@ bool v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string f
 		bool _t18 = false;
 		return _t18;
 	}
-	bool _t19 = true;
-	return _t19;
+	if (prefs->os != v__pref__OS__vinix && string_ends_with(file, _SLIT("_vinix.c.v"))) {
+		bool _t19 = false;
+		return _t19;
+	}
+	bool _t20 = true;
+	return _t20;
 }
 
 bool v__pref__Preferences_should_compile_asm(v__pref__Preferences* prefs, string path) {
@@ -57465,161 +57459,166 @@ VV_LOCAL_SYMBOL Option_string v__gen__c__Gen_comp_if_to_ifdef(v__gen__c__Gen* g,
 		opt_ok(&(string[]) { _SLIT("__serenity__") }, (Option*)(&_t10), sizeof(string));
 		return _t10;
 	}
-	else if (string__eq(name, _SLIT("freebsd"))) {
+	else if (string__eq(name, _SLIT("vinix"))) {
 		Option_string _t11;
-		opt_ok(&(string[]) { _SLIT("__FreeBSD__") }, (Option*)(&_t11), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__vinix__") }, (Option*)(&_t11), sizeof(string));
 		return _t11;
 	}
-	else if (string__eq(name, _SLIT("openbsd"))) {
+	else if (string__eq(name, _SLIT("freebsd"))) {
 		Option_string _t12;
-		opt_ok(&(string[]) { _SLIT("__OpenBSD__") }, (Option*)(&_t12), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__FreeBSD__") }, (Option*)(&_t12), sizeof(string));
 		return _t12;
 	}
-	else if (string__eq(name, _SLIT("netbsd"))) {
+	else if (string__eq(name, _SLIT("openbsd"))) {
 		Option_string _t13;
-		opt_ok(&(string[]) { _SLIT("__NetBSD__") }, (Option*)(&_t13), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__OpenBSD__") }, (Option*)(&_t13), sizeof(string));
 		return _t13;
 	}
-	else if (string__eq(name, _SLIT("bsd"))) {
+	else if (string__eq(name, _SLIT("netbsd"))) {
 		Option_string _t14;
-		opt_ok(&(string[]) { _SLIT("__BSD__") }, (Option*)(&_t14), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__NetBSD__") }, (Option*)(&_t14), sizeof(string));
 		return _t14;
 	}
-	else if (string__eq(name, _SLIT("dragonfly"))) {
+	else if (string__eq(name, _SLIT("bsd"))) {
 		Option_string _t15;
-		opt_ok(&(string[]) { _SLIT("__DragonFly__") }, (Option*)(&_t15), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__BSD__") }, (Option*)(&_t15), sizeof(string));
 		return _t15;
 	}
-	else if (string__eq(name, _SLIT("android"))) {
+	else if (string__eq(name, _SLIT("dragonfly"))) {
 		Option_string _t16;
-		opt_ok(&(string[]) { _SLIT("__ANDROID__") }, (Option*)(&_t16), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__DragonFly__") }, (Option*)(&_t16), sizeof(string));
 		return _t16;
 	}
-	else if (string__eq(name, _SLIT("solaris"))) {
+	else if (string__eq(name, _SLIT("android"))) {
 		Option_string _t17;
-		opt_ok(&(string[]) { _SLIT("__sun") }, (Option*)(&_t17), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__ANDROID__") }, (Option*)(&_t17), sizeof(string));
 		return _t17;
 	}
-	else if (string__eq(name, _SLIT("haiku"))) {
+	else if (string__eq(name, _SLIT("solaris"))) {
 		Option_string _t18;
-		opt_ok(&(string[]) { _SLIT("__haiku__") }, (Option*)(&_t18), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__sun") }, (Option*)(&_t18), sizeof(string));
 		return _t18;
 	}
-	else if (string__eq(name, _SLIT("js"))) {
+	else if (string__eq(name, _SLIT("haiku"))) {
 		Option_string _t19;
-		opt_ok(&(string[]) { _SLIT("_VJS") }, (Option*)(&_t19), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__haiku__") }, (Option*)(&_t19), sizeof(string));
 		return _t19;
 	}
-	else if (string__eq(name, _SLIT("gcc"))) {
+	else if (string__eq(name, _SLIT("js"))) {
 		Option_string _t20;
-		opt_ok(&(string[]) { _SLIT("__V_GCC__") }, (Option*)(&_t20), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VJS") }, (Option*)(&_t20), sizeof(string));
 		return _t20;
 	}
-	else if (string__eq(name, _SLIT("tinyc"))) {
+	else if (string__eq(name, _SLIT("gcc"))) {
 		Option_string _t21;
-		opt_ok(&(string[]) { _SLIT("__TINYC__") }, (Option*)(&_t21), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__V_GCC__") }, (Option*)(&_t21), sizeof(string));
 		return _t21;
 	}
-	else if (string__eq(name, _SLIT("clang"))) {
+	else if (string__eq(name, _SLIT("tinyc"))) {
 		Option_string _t22;
-		opt_ok(&(string[]) { _SLIT("__clang__") }, (Option*)(&_t22), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__TINYC__") }, (Option*)(&_t22), sizeof(string));
 		return _t22;
 	}
-	else if (string__eq(name, _SLIT("mingw"))) {
+	else if (string__eq(name, _SLIT("clang"))) {
 		Option_string _t23;
-		opt_ok(&(string[]) { _SLIT("__MINGW32__") }, (Option*)(&_t23), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__clang__") }, (Option*)(&_t23), sizeof(string));
 		return _t23;
 	}
-	else if (string__eq(name, _SLIT("msvc"))) {
+	else if (string__eq(name, _SLIT("mingw"))) {
 		Option_string _t24;
-		opt_ok(&(string[]) { _SLIT("_MSC_VER") }, (Option*)(&_t24), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__MINGW32__") }, (Option*)(&_t24), sizeof(string));
 		return _t24;
 	}
-	else if (string__eq(name, _SLIT("cplusplus"))) {
+	else if (string__eq(name, _SLIT("msvc"))) {
 		Option_string _t25;
-		opt_ok(&(string[]) { _SLIT("__cplusplus") }, (Option*)(&_t25), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_MSC_VER") }, (Option*)(&_t25), sizeof(string));
 		return _t25;
 	}
-	else if (string__eq(name, _SLIT("threads"))) {
+	else if (string__eq(name, _SLIT("cplusplus"))) {
 		Option_string _t26;
-		opt_ok(&(string[]) { _SLIT("__VTHREADS__") }, (Option*)(&_t26), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__cplusplus") }, (Option*)(&_t26), sizeof(string));
 		return _t26;
 	}
-	else if (string__eq(name, _SLIT("gcboehm"))) {
+	else if (string__eq(name, _SLIT("threads"))) {
 		Option_string _t27;
-		opt_ok(&(string[]) { _SLIT("_VGCBOEHM") }, (Option*)(&_t27), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__VTHREADS__") }, (Option*)(&_t27), sizeof(string));
 		return _t27;
 	}
-	else if (string__eq(name, _SLIT("debug"))) {
+	else if (string__eq(name, _SLIT("gcboehm"))) {
 		Option_string _t28;
-		opt_ok(&(string[]) { _SLIT("_VDEBUG") }, (Option*)(&_t28), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VGCBOEHM") }, (Option*)(&_t28), sizeof(string));
 		return _t28;
 	}
-	else if (string__eq(name, _SLIT("prod"))) {
+	else if (string__eq(name, _SLIT("debug"))) {
 		Option_string _t29;
-		opt_ok(&(string[]) { _SLIT("_VPROD") }, (Option*)(&_t29), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VDEBUG") }, (Option*)(&_t29), sizeof(string));
 		return _t29;
 	}
-	else if (string__eq(name, _SLIT("test"))) {
+	else if (string__eq(name, _SLIT("prod"))) {
 		Option_string _t30;
-		opt_ok(&(string[]) { _SLIT("_VTEST") }, (Option*)(&_t30), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VPROD") }, (Option*)(&_t30), sizeof(string));
 		return _t30;
 	}
-	else if (string__eq(name, _SLIT("glibc"))) {
+	else if (string__eq(name, _SLIT("test"))) {
 		Option_string _t31;
-		opt_ok(&(string[]) { _SLIT("__GLIBC__") }, (Option*)(&_t31), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VTEST") }, (Option*)(&_t31), sizeof(string));
 		return _t31;
 	}
-	else if (string__eq(name, _SLIT("prealloc"))) {
+	else if (string__eq(name, _SLIT("glibc"))) {
 		Option_string _t32;
-		opt_ok(&(string[]) { _SLIT("_VPREALLOC") }, (Option*)(&_t32), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__GLIBC__") }, (Option*)(&_t32), sizeof(string));
 		return _t32;
 	}
-	else if (string__eq(name, _SLIT("no_bounds_checking"))) {
+	else if (string__eq(name, _SLIT("prealloc"))) {
 		Option_string _t33;
-		opt_ok(&(string[]) { _SLIT("CUSTOM_DEFINE_no_bounds_checking") }, (Option*)(&_t33), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VPREALLOC") }, (Option*)(&_t33), sizeof(string));
 		return _t33;
 	}
-	else if (string__eq(name, _SLIT("freestanding"))) {
+	else if (string__eq(name, _SLIT("no_bounds_checking"))) {
 		Option_string _t34;
-		opt_ok(&(string[]) { _SLIT("_VFREESTANDING") }, (Option*)(&_t34), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("CUSTOM_DEFINE_no_bounds_checking") }, (Option*)(&_t34), sizeof(string));
 		return _t34;
 	}
-	else if (string__eq(name, _SLIT("amd64"))) {
+	else if (string__eq(name, _SLIT("freestanding"))) {
 		Option_string _t35;
-		opt_ok(&(string[]) { _SLIT("__V_amd64") }, (Option*)(&_t35), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("_VFREESTANDING") }, (Option*)(&_t35), sizeof(string));
 		return _t35;
 	}
-	else if (string__eq(name, _SLIT("aarch64")) || string__eq(name, _SLIT("arm64"))) {
+	else if (string__eq(name, _SLIT("amd64"))) {
 		Option_string _t36;
-		opt_ok(&(string[]) { _SLIT("__V_arm64") }, (Option*)(&_t36), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__V_amd64") }, (Option*)(&_t36), sizeof(string));
 		return _t36;
 	}
-	else if (string__eq(name, _SLIT("x64"))) {
+	else if (string__eq(name, _SLIT("aarch64")) || string__eq(name, _SLIT("arm64"))) {
 		Option_string _t37;
-		opt_ok(&(string[]) { _SLIT("TARGET_IS_64BIT") }, (Option*)(&_t37), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("__V_arm64") }, (Option*)(&_t37), sizeof(string));
 		return _t37;
 	}
-	else if (string__eq(name, _SLIT("x32"))) {
+	else if (string__eq(name, _SLIT("x64"))) {
 		Option_string _t38;
-		opt_ok(&(string[]) { _SLIT("TARGET_IS_32BIT") }, (Option*)(&_t38), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("TARGET_IS_64BIT") }, (Option*)(&_t38), sizeof(string));
 		return _t38;
 	}
-	else if (string__eq(name, _SLIT("little_endian"))) {
+	else if (string__eq(name, _SLIT("x32"))) {
 		Option_string _t39;
-		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_LITTLE") }, (Option*)(&_t39), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("TARGET_IS_32BIT") }, (Option*)(&_t39), sizeof(string));
 		return _t39;
 	}
-	else if (string__eq(name, _SLIT("big_endian"))) {
+	else if (string__eq(name, _SLIT("little_endian"))) {
 		Option_string _t40;
-		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_BIG") }, (Option*)(&_t40), sizeof(string));
+		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_LITTLE") }, (Option*)(&_t40), sizeof(string));
 		return _t40;
+	}
+	else if (string__eq(name, _SLIT("big_endian"))) {
+		Option_string _t41;
+		opt_ok(&(string[]) { _SLIT("TARGET_ORDER_IS_BIG") }, (Option*)(&_t41), sizeof(string));
+		return _t41;
 	}
 	else {
 		if (is_comptime_optional || (g->pref->compile_defines_all.len > 0 && (Array_string_contains(g->pref->compile_defines_all, name)))) {
-			Option_string _t41;
-			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t41), sizeof(string));
-			return _t41;
+			Option_string _t42;
+			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t42), sizeof(string));
+			return _t42;
 		}
 		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
@@ -68584,8 +68583,8 @@ v__ast__Type former_expected_type;
 				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), node->pos);
 			}
 			v__checker__Checker_check_expr_opt_call(c, node->right, right_type);
-			multi_return_string_v__token__Position mr_46198 = v__checker__Checker_fail_if_immutable(c, node->left);
-			node->auto_locked = mr_46198.arg0;
+			multi_return_string_v__token__Position mr_46207 = v__checker__Checker_fail_if_immutable(c, node->left);
+			node->auto_locked = mr_46207.arg0;
 			v__ast__Type left_value_type = v__ast__Table_value_type(c->table, left_type);
 			v__ast__TypeSymbol* left_value_sym = v__ast__Table_get_type_symbol(c->table, left_value_type);
 			if (left_value_sym->kind == v__ast__Kind__interface_) {
@@ -68826,19 +68825,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__shared_f)) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("you have to create a handle and `lock` it to modify `shared` "), 0xfe10, {.d_s = kind}}, {_SLIT(" element"), 0, { .d_c = 0 }}})), v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_54289 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_54289.arg0;
-		pos = mr_54289.arg1;
+		multi_return_string_v__token__Position mr_54298 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_54298.arg0;
+		pos = mr_54298.arg1;
 	}
 	else if (expr._typ == 246 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_54358 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_54358.arg0;
-		pos = mr_54358.arg1;
+		multi_return_string_v__token__Position mr_54367 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_54367.arg0;
+		pos = mr_54367.arg1;
 	}
 	else if (expr._typ == 248 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_54430 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_54430.arg0;
-		pos = mr_54430.arg1;
+		multi_return_string_v__token__Position mr_54439 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_54439.arg0;
+		pos = mr_54439.arg1;
 	}
 	else if (expr._typ == 251 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -68900,9 +68899,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 					string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*expr._v__ast__SelectorExpr).field_name}}, {_SLIT("` of struct `"), 0xfe10, {.d_s = type_str}}, {_SLIT("` is immutable"), 0, { .d_c = 0 }}})), (*expr._v__ast__SelectorExpr).pos);
 				}
-				multi_return_string_v__token__Position mr_56231 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-				to_lock = mr_56231.arg0;
-				pos = mr_56231.arg1;
+				multi_return_string_v__token__Position mr_56240 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+				to_lock = mr_56240.arg0;
+				pos = mr_56240.arg1;
 			}
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
@@ -68939,9 +68938,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 218 /* v.ast.CallExpr */) {
 		if (string__eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_57350 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_57350.arg0;
-			pos = mr_57350.arg1;
+			multi_return_string_v__token__Position mr_57359 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_57359.arg0;
+			pos = mr_57359.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -69204,9 +69203,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_68891 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_68891.arg0;
-			v__token__Position pos = mr_68891.arg1;
+			multi_return_string_v__token__Position mr_68900 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_68900.arg0;
+			v__token__Position pos = mr_68900.arg1;
 			if ((to_lock).len != 0 && rec_share != v__ast__ShareType__shared_t) {
 				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = to_lock}}, {_SLIT(" is `shared` and must be `lock`ed to be passed as `mut`"), 0, { .d_c = 0 }}})), pos);
 			}
@@ -69296,9 +69295,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg->pos);
 			}
 			if (arg->is_mut) {
-				multi_return_string_v__token__Position mr_73480 = v__checker__Checker_fail_if_immutable(c, arg->expr);
-				string to_lock = mr_73480.arg0;
-				v__token__Position pos = mr_73480.arg1;
+				multi_return_string_v__token__Position mr_73489 = v__checker__Checker_fail_if_immutable(c, arg->expr);
+				string to_lock = mr_73489.arg0;
+				v__token__Position pos = mr_73489.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg->share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(arg->expr));
@@ -69822,9 +69821,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg->pos);
 		}
 		if (call_arg->is_mut && func.language == v__ast__Language__v) {
-			multi_return_string_v__token__Position mr_94158 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
-			string to_lock = mr_94158.arg0;
-			v__token__Position pos = mr_94158.arg1;
+			multi_return_string_v__token__Position mr_94167 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
+			string to_lock = mr_94167.arg0;
+			v__token__Position pos = mr_94167.arg1;
 			if (!v__ast__Expr_is_lvalue(call_arg->expr)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_arg->expr));
 			}
@@ -74148,8 +74147,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_217476 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_217476.arg0;
+		multi_return_string_v__token__Position mr_217485 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_217485.arg0;
 	}
 	return typ;
 }
@@ -75303,10 +75302,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_251446 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_251446.arg0;
-				int nroute_attributes = mr_251446.arg1;
-				int nargs = mr_251446.arg2;
+				multi_return_bool_int_int mr_251455 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_251455.arg0;
+				int nroute_attributes = mr_251455.arg1;
+				int nargs = mr_251455.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -78706,7 +78705,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__gen__c__cmp_rev = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("eq"), _SLIT("ne"), _SLIT("lt"), _SLIT("gt"), _SLIT("le"), _SLIT("ge")}));
 	_const_v__gen__c__skip_struct_init = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("struct stat"), _SLIT("struct addrinfo")}));
 	_const_v__gen__c__builtins = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("string"), _SLIT("array"), _SLIT("DenseArray"), _SLIT("map"), _SLIT("Error"), _SLIT("IError"), _SLIT("Option")}));
-	_const_v__gen__c__c_headers = string__plus(string__plus(string__plus(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#include <string.h>\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#ifdef ARM\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((externally_visible,visibility(\"default\")))\n		#else\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((visibility(\"default\")))\n		#endif\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#if defined(__TINYC__) && defined(__has_include)\n// tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n#include <stdarg.h> // for va_list\n\n//================================== GLOBALS =================================*/\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG 1\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE 1\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef __linux__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __FreeBSD__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __DragonFly__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __serenity__\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __sun\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#ifndef WIN32_FULL\n	#define WIN32_LEAN_AND_MEAN\n	#endif\n	#ifndef _UNICODE\n	#define _UNICODE\n	#endif\n	#ifndef UNICODE\n	#define UNICODE\n	#endif\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION char __pad\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp\")\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nstatic void* g_live_info = NULL;\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n#ifdef _VFREESTANDING\n#undef _VFREESTANDING\n#endif\n"));
+	_const_v__gen__c__c_headers = string__plus(string__plus(string__plus(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#include <stdio.h>  // TODO remove all these includes, define all function signatures and types manually\n#include <stdlib.h>\n#include <string.h>\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#ifdef ARM\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((externally_visible,visibility(\"default\")))\n		#else\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((visibility(\"default\")))\n		#endif\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#if defined(__TINYC__) && defined(__has_include)\n// tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n\n#ifndef _WIN32\n	#if defined __has_include\n		#if __has_include (<execinfo.h>)\n			#include <execinfo.h>\n		#else\n			// Most probably musl OR __ANDROID__ ...\n			int backtrace (void **__array, int __size) { return 0; }\n			char **backtrace_symbols (void *const *__array, int __size){ return 0; }\n			void backtrace_symbols_fd (void *const *__array, int __size, int __fd){}\n		#endif\n	#endif\n#endif\n\n#include <stdarg.h> // for va_list\n\n//================================== GLOBALS =================================*/\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\n\n#if INTPTR_MAX == INT32_MAX\n	#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n	#define TARGET_IS_64BIT 1\n#else\n	#error \"The environment is not 32 or 64-bit.\"\n#endif\n\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n	#define TARGET_ORDER_IS_BIG 1\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_X64) || defined(_M_IX86)\n	#define TARGET_ORDER_IS_LITTLE 1\n#else\n	#error \"Unknown architecture endianness\"\n#endif\n\n#ifndef _WIN32\n	#include <ctype.h>\n	#include <locale.h> // tolower\n	#include <sys/time.h>\n	#include <unistd.h> // sleep\n	extern char **environ;\n#endif\n\n#if defined(__CYGWIN__) && !defined(_WIN32)\n	#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n\n#ifdef defined(__linux__) || defined(__FreeBSD__) || defined(__DragonFly__) || defined(__vinix__) || defined(__serenity__) || defined(__sun)\n	#include <sys/types.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __OpenBSD__\n	#include <sys/types.h>\n	#include <sys/resource.h>\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef __NetBSD__\n	#include <sys/wait.h> // os__wait uses wait on nix\n#endif\n\n#ifdef _WIN32\n	#define WINVER 0x0600\n	#ifdef _WIN32_WINNT\n		#undef _WIN32_WINNT\n	#endif\n	#define _WIN32_WINNT 0x0600\n	#ifndef WIN32_FULL\n	#define WIN32_LEAN_AND_MEAN\n	#endif\n	#ifndef _UNICODE\n	#define _UNICODE\n	#endif\n	#ifndef UNICODE\n	#define UNICODE\n	#endif\n	#include <windows.h>\n\n	#include <io.h> // _waccess\n	#include <direct.h> // _wgetcwd\n\n	#ifdef _MSC_VER\n		// On MSVC these are the same (as long as /volatile:ms is passed)\n		#define _Atomic volatile\n\n		// MSVC cannot parse some things properly\n		#undef EMPTY_STRUCT_DECLARATION\n		#undef OPTION_CAST\n\n		#define EMPTY_STRUCT_DECLARATION char __pad\n		#define OPTION_CAST(x)\n		#undef __NOINLINE\n		#undef __IRQHANDLER\n		#define __NOINLINE __declspec(noinline)\n		#define __IRQHANDLER __declspec(naked)\n\n		#include <dbghelp.h>\n		#pragma comment(lib, \"Dbghelp\")\n	#endif\n#else\n	#include <pthread.h>\n	#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n		// musl does not have that\n		#define pthread_rwlockattr_setkind_np(a, b)\n	#endif\n#endif\n\n// g_live_info is used by live.info()\nstatic void* g_live_info = NULL;\n\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__))\n	#undef PRId64\n	#undef PRIi64\n	#undef PRIo64\n	#undef PRIu64\n	#undef PRIx64\n	#undef PRIX64\n	#define PRId64 \"lld\"\n	#define PRIi64 \"lli\"\n	#define PRIo64 \"llo\"\n	#define PRIu64 \"llu\"\n	#define PRIx64 \"llx\"\n	#define PRIX64 \"llX\"\n#endif\n\n#ifdef _VFREESTANDING\n#undef _VFREESTANDING\n#endif\n"));
 	_const_v__gen__c__c_bare_headers = string__plus(string__plus(string__plus(_const_v__gen__c__c_helper_macros, _const_v__gen__c__c_unsigned_comparison_functions), _const_v__gen__c__c_common_macros), _SLIT("\n#define _VFREESTANDING\n\ntypedef long unsigned int size_t;\n\n// Memory allocation related headers\nvoid *malloc(size_t size);\nvoid *calloc(size_t nitems, size_t size);\nvoid *realloc(void *ptr, size_t size);\nvoid *memcpy(void *dest, void *src, size_t n);\nvoid *memset(void *s, int c, size_t n);\nvoid *memmove(void *dest, void *src, size_t n);\n\n// varargs implementation, TODO: works on tcc and gcc, but is very unportable and hacky\ntypedef __builtin_va_list va_list;\n#define va_start(a, b) __builtin_va_start(a, b)\n#define va_end(a)      __builtin_va_end(a)\n#define va_arg(a, b)   __builtin_va_arg(a, b)\n#define va_copy(a, b)  __builtin_va_copy(a, b)\n\n//================================== GLOBALS =================================*/\nint load_so(byteptr);\nvoid reload_so();\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup();\n#define sigaction_size sizeof(sigaction);\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n\nvoid v_free(voidptr ptr);\nvoidptr memdup(voidptr src, int sz);\n\n"));
 	// Initializations for module v.gen.js :
 	_const_v__gen__js__js_reserved = new_array_from_c_array(48, 48, sizeof(string), _MOV((string[48]){
@@ -78729,10 +78728,10 @@ void _vinit(int ___argc, voidptr ___argv) {
 	// Initializations for module v.checker :
 	_const_v__checker__int_min = ((int)(0x80000000));
 	_const_v__checker__int_max = ((int)(0x7FFFFFFF));
-	_const_v__checker__valid_comp_if_os = new_array_from_c_array(18, 18, sizeof(string), _MOV((string[18]){
+	_const_v__checker__valid_comp_if_os = new_array_from_c_array(19, 19, sizeof(string), _MOV((string[19]){
 		_SLIT("windows"), _SLIT("ios"), _SLIT("macos"), _SLIT("mach"), _SLIT("darwin"), _SLIT("hpux"), _SLIT("gnu"), _SLIT("qnx"), _SLIT("linux"),
 		_SLIT("freebsd"), _SLIT("openbsd"), _SLIT("netbsd"), _SLIT("bsd"), _SLIT("dragonfly"), _SLIT("android"), _SLIT("solaris"), _SLIT("haiku"),
-		_SLIT("serenity")}));
+		_SLIT("serenity"), _SLIT("vinix")}));
 	_const_v__checker__valid_comp_if_compilers = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("gcc"), _SLIT("tinyc"), _SLIT("clang"), _SLIT("mingw"), _SLIT("msvc"), _SLIT("cplusplus")}));
 	_const_v__checker__valid_comp_if_platforms = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("amd64"), _SLIT("i386"), _SLIT("aarch64"), _SLIT("arm64"), _SLIT("arm32"), _SLIT("rv64"), _SLIT("rv32")}));
 	_const_v__checker__valid_comp_if_cpu_features = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("x64"), _SLIT("x32"), _SLIT("little_endian"), _SLIT("big_endian")}));
