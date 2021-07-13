@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ed78e63"
+#define V_COMMIT_HASH "5322a25"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "78a4196"
+	#define V_COMMIT_HASH "ed78e63"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ed78e63"
+	#define V_CURRENT_COMMIT_HASH "5322a25"
 #endif
 
 // V comptime_defines:
@@ -8926,7 +8926,6 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 VV_LOCAL_SYMBOL Array_string v__builder__Builder_all_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions);
 VV_LOCAL_SYMBOL Array_string v__builder__Builder_thirdparty_object_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions, Array_string middle);
 VV_LOCAL_SYMBOL void v__builder__Builder_setup_output_name(v__builder__Builder* v);
-VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v);
 VV_LOCAL_SYMBOL void v__builder__Builder_dump_c_options(v__builder__Builder* v, Array_string all_args);
 VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v);
 VV_LOCAL_SYMBOL void v__builder__Builder_ensure_linuxroot_exists(v__builder__Builder* b, string sysroot);
@@ -31272,7 +31271,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("78a4196"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ed78e63"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -76443,54 +76442,6 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_output_name(v__builder__Builder* 
 	array_push((array*)&v->ccoptions.o_args, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-o \""), 0xfe10, {.d_s = v->pref->out_name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))) }));
 }
 
-VV_LOCAL_SYMBOL bool v__builder__Builder_vjs_cc(v__builder__Builder* v) {
-	string vexe = v__pref__vexe_path();
-	string vdir = os__dir(vexe);
-	bool ends_with_c = string_ends_with(v->pref->out_name, _SLIT(".c"));
-	bool ends_with_js = string_ends_with(v->pref->out_name, _SLIT(".js"));
-	if (ends_with_c || ends_with_js) {
-		v->pref->skip_running = true;
-		#if !defined(_VJS)
-		{
-			if (ends_with_js) {
-				string vjs_path = string__plus(vexe, _SLIT("js"));
-				if (!os__exists(vjs_path)) {
-					println(_SLIT("V.js compiler not found, building..."));
-					int ret = os__system( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vexe}}, {_SLIT(" -o "), 0xfe10, {.d_s = vjs_path}}, {_SLIT(" -os js "), 0xfe10, {.d_s = vdir}}, {_SLIT("/cmd/v"), 0, { .d_c = 0 }}})));
-					if (ret == 0) {
-						println(_SLIT("Done."));
-					} else {
-						println(_SLIT("Failed."));
-						v_exit(1);
-						VUNREACHABLE();
-					}
-				}
-				int ret = os__system( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vjs_path}}, {_SLIT(" -o "), 0xfe10, {.d_s = v->pref->out_name}}, {_SLIT(" "), 0xfe10, {.d_s = v->pref->path}}, {_SLIT0, 0, { .d_c = 0 }}})));
-				if (ret == 0) {
-					println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Done. Run it with `node "), 0xfe10, {.d_s = v->pref->out_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-					println(_SLIT("JS backend is at a very early stage."));
-				}
-			}
-		}
-		#endif
-		string msg_mv =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("os.mv_by_cp "), 0xfe10, {.d_s = v->out_name_c}}, {_SLIT(" => "), 0xfe10, {.d_s = v->pref->out_name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-		v__util__timing_start(msg_mv);
-		Option_void _t1 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
-		if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
-			IError err = _t1.err;
-			v_panic(IError_str(err));
-			VUNREACHABLE();
-		;
-		}
-		;
-		v__util__timing_measure(msg_mv);
-		bool _t2 = true;
-		return _t2;
-	}
-	bool _t3 = false;
-	return _t3;
-}
-
 VV_LOCAL_SYMBOL void v__builder__Builder_dump_c_options(v__builder__Builder* v, Array_string all_args) {
 	if ((v->pref->dump_c_flags).len != 0) {
 		Array_string _t1_orig = all_args;
@@ -76533,7 +76484,21 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		}
 		return;
 	}
-	if (v__builder__Builder_vjs_cc(v)) {
+	bool ends_with_c = string_ends_with(v->pref->out_name, _SLIT(".c"));
+	bool ends_with_js = string_ends_with(v->pref->out_name, _SLIT(".js"));
+	if (ends_with_c || ends_with_js) {
+		v->pref->skip_running = true;
+		string msg_mv =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("os.mv_by_cp "), 0xfe10, {.d_s = v->out_name_c}}, {_SLIT(" => "), 0xfe10, {.d_s = v->pref->out_name}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		v__util__timing_start(msg_mv);
+		Option_void _t1 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
+		if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
+			IError err = _t1.err;
+			v_panic(IError_str(err));
+			VUNREACHABLE();
+		;
+		}
+		;
+		v__util__timing_measure(msg_mv);
 		return;
 	}
 	if (v->pref->os == v__pref__OS__windows) {
@@ -76576,24 +76541,24 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 			Array_string built_modules = __new_array_with_default(0, 0, sizeof(string), 0);
 			string builtin_obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, _SLIT("vlib/builtin"));
 			array_push((array*)&libs, _MOV((string[]){ string_clone(builtin_obj_path) }));
-			for (int _t3 = 0; _t3 < v->parsed_files.len; ++_t3) {
-				v__ast__File* ast_file = ((v__ast__File**)v->parsed_files.data)[_t3];
+			for (int _t4 = 0; _t4 < v->parsed_files.len; ++_t4) {
+				v__ast__File* ast_file = ((v__ast__File**)v->parsed_files.data)[_t4];
 				if (v->pref->is_test && !string__eq(ast_file->mod.name, _SLIT("main"))) {
-					Option_string _t4 = v__builder__Builder_find_module_path(v, ast_file->mod.name, ast_file->path);
-					if (_t4.state != 0) { /*or block*/ 
-						IError err = _t4.err;
+					Option_string _t5 = v__builder__Builder_find_module_path(v, ast_file->mod.name, ast_file->path);
+					if (_t5.state != 0) { /*or block*/ 
+						IError err = _t5.err;
 						v__builder__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot import module \""), 0xfe10, {.d_s = ast_file->mod.name}}, {_SLIT("\" (not found)"), 0, { .d_c = 0 }}})));
 						VUNREACHABLE();
 						break;
 					}
 					
- 					string imp_path =  (*(string*)_t4.data);
+ 					string imp_path =  (*(string*)_t5.data);
 					string obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, imp_path);
 					array_push((array*)&libs, _MOV((string[]){ string_clone(obj_path) }));
 					array_push((array*)&built_modules, _MOV((string[]){ string_clone(ast_file->mod.name) }));
 				}
-				for (int _t7 = 0; _t7 < ast_file->imports.len; ++_t7) {
-					v__ast__Import imp_stmt = ((v__ast__Import*)ast_file->imports.data)[_t7];
+				for (int _t8 = 0; _t8 < ast_file->imports.len; ++_t8) {
+					v__ast__Import imp_stmt = ((v__ast__Import*)ast_file->imports.data)[_t8];
 					string imp = imp_stmt.mod;
 					if ((string__eq(imp, _SLIT("strconv")) || string__eq(imp, _SLIT("strings")))) {
 						continue;
@@ -76610,15 +76575,15 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 					if (string__eq(imp, _SLIT("help"))) {
 						continue;
 					}
-					Option_string _t8 = v__builder__Builder_find_module_path(v, imp, ast_file->path);
-					if (_t8.state != 0) { /*or block*/ 
-						IError err = _t8.err;
+					Option_string _t9 = v__builder__Builder_find_module_path(v, imp, ast_file->path);
+					if (_t9.state != 0) { /*or block*/ 
+						IError err = _t9.err;
 						v__builder__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot import module \""), 0xfe10, {.d_s = imp}}, {_SLIT("\" (not found)"), 0, { .d_c = 0 }}})));
 						VUNREACHABLE();
 						break;
 					}
 					
- 					string imp_path =  (*(string*)_t8.data);
+ 					string imp_path =  (*(string*)_t9.data);
 					string obj_path = v__builder__Builder_rebuild_cached_module(v, vexe, imp_path);
 					array_push((array*)&libs, _MOV((string[]){ string_clone(obj_path) }));
 					if (string_ends_with(obj_path, _SLIT("vlib/ui.o"))) {
@@ -76628,7 +76593,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 					array_push((array*)&built_modules, _MOV((string[]){ string_clone(imp) }));
 				}
 			}
-			_PUSH_MANY(&v->ccoptions.post_args, (libs), _t13, Array_string);
+			_PUSH_MANY(&v->ccoptions.post_args, (libs), _t14, Array_string);
 		}
 		#if defined(_WIN32)
 		{
@@ -76643,9 +76608,9 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		string str_args = Array_string_join(all_args, _SLIT(" "));
 		string response_file =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v->out_name_c}}, {_SLIT(".rsp"), 0, { .d_c = 0 }}}));
 		string response_file_content = string_replace(str_args, _SLIT("\\"), _SLIT("\\\\"));
-		Option_void _t14 = os__write_file(response_file, response_file_content);
-		if (_t14.state != 0 && _t14.err._typ != _IError_None___index) {
-			IError err = _t14.err;
+		Option_void _t15 = os__write_file(response_file, response_file_content);
+		if (_t15.state != 0 && _t15.err._typ != _IError_None___index) {
+			IError err = _t15.err;
 			v__builder__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Unable to write response file \""), 0xfe10, {.d_s = response_file}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
@@ -76682,8 +76647,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 			if (string_contains(ccompiler, _SLIT("tcc.exe"))) {
 				if (tried_compilation_commands.len > 1) {
 					eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Recompilation loop detected (ccompiler: "), 0xfe10, {.d_s = ccompiler}}, {_SLIT("):"), 0, { .d_c = 0 }}})));
-					for (int _t19 = 0; _t19 < tried_compilation_commands.len; ++_t19) {
-						string recompile_command = ((string*)tried_compilation_commands.data)[_t19];
+					for (int _t20 = 0; _t20 < tried_compilation_commands.len; ++_t20) {
+						string recompile_command = ((string*)tried_compilation_commands.data)[_t20];
 						eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("   "), 0xfe10, {.d_s = recompile_command}}, {_SLIT0, 0, { .d_c = 0 }}})));
 					}
 					v_exit(101);
@@ -76788,10 +76753,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_24603 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_24603.arg0;
-	Array_string others = mr_24603.arg1;
-	Array_string libs = mr_24603.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_23699 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_23699.arg0;
+	Array_string others = mr_23699.arg1;
+	Array_string libs = mr_23699.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
