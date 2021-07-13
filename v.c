@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1bf6743"
+#define V_COMMIT_HASH "5089eb4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "05466ce"
+	#define V_COMMIT_HASH "1bf6743"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1bf6743"
+	#define V_CURRENT_COMMIT_HASH "5089eb4"
 #endif
 
 // V comptime_defines:
@@ -3995,7 +3995,6 @@ struct v__ast__CastExpr {
 	string typname;
 	v__ast__Type expr_type;
 	bool has_arg;
-	bool in_prexpr;
 };
 
 
@@ -8054,7 +8053,7 @@ v__ast__Expr v__parser__Parser_expr_with_left(v__parser__Parser* p, v__ast__Expr
 VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, v__ast__Expr left);
 VV_LOCAL_SYMBOL v__ast__GoExpr v__parser__Parser_go_expr(v__parser__Parser* p);
 VV_LOCAL_SYMBOL bool v__parser__Parser_fileis(v__parser__Parser* p, string s);
-VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p);
+VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_prefix_expr(v__parser__Parser* p);
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__ast__Language language, string mod);
 Array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p);
@@ -10826,11 +10825,6 @@ static inline v__ast__Expr v__ast__CharLiteral_to_sumtype_v__ast__Expr(v__ast__C
 	return (v__ast__Expr){ ._v__ast__CharLiteral = ptr, ._typ = 221};
 }
 
-static inline v__ast__Expr v__ast__PrefixExpr_to_sumtype_v__ast__Expr(v__ast__PrefixExpr* x) {
-	v__ast__PrefixExpr* ptr = memdup(x, sizeof(v__ast__PrefixExpr));
-	return (v__ast__Expr){ ._v__ast__PrefixExpr = ptr, ._typ = 248};
-}
-
 static inline v__ast__Expr v__ast__GoExpr_to_sumtype_v__ast__Expr(v__ast__GoExpr* x) {
 	v__ast__GoExpr* ptr = memdup(x, sizeof(v__ast__GoExpr));
 	return (v__ast__Expr){ ._v__ast__GoExpr = ptr, ._typ = 230};
@@ -10934,6 +10928,11 @@ static inline v__ast__Expr v__ast__InfixExpr_to_sumtype_v__ast__Expr(v__ast__Inf
 static inline v__ast__Expr v__ast__PostfixExpr_to_sumtype_v__ast__Expr(v__ast__PostfixExpr* x) {
 	v__ast__PostfixExpr* ptr = memdup(x, sizeof(v__ast__PostfixExpr));
 	return (v__ast__Expr){ ._v__ast__PostfixExpr = ptr, ._typ = 247};
+}
+
+static inline v__ast__Expr v__ast__PrefixExpr_to_sumtype_v__ast__Expr(v__ast__PrefixExpr* x) {
+	v__ast__PrefixExpr* ptr = memdup(x, sizeof(v__ast__PrefixExpr));
+	return (v__ast__Expr){ ._v__ast__PrefixExpr = ptr, ._typ = 248};
 }
 
 static inline v__ast__Expr v__ast__ArrayDecompose_to_sumtype_v__ast__Expr(v__ast__ArrayDecompose* x) {
@@ -31272,7 +31271,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("05466ce"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1bf6743"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40774,13 +40773,13 @@ bool inside_array_lit;
 		v__parser__Parser_next(p);
 	}
 	else if (p->tok.kind == (v__token__Kind__amp) || p->tok.kind == (v__token__Kind__mul) || p->tok.kind == (v__token__Kind__not) || p->tok.kind == (v__token__Kind__bit_not) || p->tok.kind == (v__token__Kind__arrow)) {
-		node = v__ast__PrefixExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__PrefixExpr, (v__parser__Parser_prefix_expr(p))));
+		node = v__parser__Parser_prefix_expr(p);
 	}
 	else if (p->tok.kind == (v__token__Kind__minus)) {
 		if (p->peek_tok.kind == v__token__Kind__number) {
 			node = v__parser__Parser_parse_number_literal(p);
 		} else {
-			node = v__ast__PrefixExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__PrefixExpr, (v__parser__Parser_prefix_expr(p))));
+			node = v__parser__Parser_prefix_expr(p);
 		}
 	}
 	else if (p->tok.kind == (v__token__Kind__key_go)) {
@@ -40844,7 +40843,7 @@ bool inside_array_lit;
 			v__parser__Parser_check(p, v__token__Kind__lpar);
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 			v__parser__Parser_check(p, v__token__Kind__rpar);
-			node = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, ((v__ast__CastExpr){.arg = {0},.typ = typ,.pos = pos,.expr = expr,.typname = (string){.str=(byteptr)"", .is_lit=1},.expr_type = 0,.has_arg = 0,.in_prexpr = 0,})));
+			node = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, ((v__ast__CastExpr){.arg = {0},.typ = typ,.pos = pos,.expr = expr,.typname = (string){.str=(byteptr)"", .is_lit=1},.expr_type = 0,.has_arg = 0,})));
 		} else {
 			node = v__ast__ArrayInit_to_sumtype_v__ast__Expr(ADDR(v__ast__ArrayInit, (v__parser__Parser_array_init(p))));
 		}
@@ -41173,7 +41172,7 @@ VV_LOCAL_SYMBOL bool v__parser__Parser_fileis(v__parser__Parser* p, string s) {
 	return _t1;
 }
 
-VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Parser* p) {
+VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_prefix_expr(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__token__Kind op = p->tok.kind;
 	if (op == v__token__Kind__amp) {
@@ -41186,8 +41185,9 @@ VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Pars
 	v__parser__Parser_next(p);
 	v__ast__Expr right = v__parser__Parser_expr(p, ((int)(v__token__Precedence__prefix)));
 	p->is_amp = false;
-	if ((right)._typ == 219 /* v.ast.CastExpr */) {
-		(*right._v__ast__CastExpr).in_prexpr = true;
+	if ((right)._typ == 219 /* v.ast.CastExpr */ && op == v__token__Kind__amp) {
+		v__ast__Expr _t1 = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, ((v__ast__CastExpr){(*right._v__ast__CastExpr).arg,(*right._v__ast__CastExpr).typ,.pos = v__token__Position_extend(pos, (*right._v__ast__CastExpr).pos),(*right._v__ast__CastExpr).expr,(*right._v__ast__CastExpr).typname,(*right._v__ast__CastExpr).expr_type,(*right._v__ast__CastExpr).has_arg,})));
+		return _t1;
 	}
 	Array_v__ast__Stmt or_stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	v__ast__OrKind or_kind = v__ast__OrKind__absent;
@@ -41209,8 +41209,8 @@ VV_LOCAL_SYMBOL v__ast__PrefixExpr v__parser__Parser_prefix_expr(v__parser__Pars
 		p->or_is_handled = false;
 	}
 	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
-	v__ast__PrefixExpr _t1 = (v__ast__PrefixExpr){.op = op,.pos = pos,.right_type = 0,.right = right,.or_block = (v__ast__OrExpr){.stmts = or_stmts,.kind = or_kind,.pos = or_pos,},.is_option = 0,};
-	return _t1;
+	v__ast__Expr _t2 = v__ast__PrefixExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__PrefixExpr, ((v__ast__PrefixExpr){.op = op,.pos = pos,.right_type = 0,.right = right,.or_block = (v__ast__OrExpr){.stmts = or_stmts,.kind = or_kind,.pos = or_pos,},.is_option = 0,})));
+	return _t2;
 }
 
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__ast__Language language, string mod) {
@@ -45449,7 +45449,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			}
 			v__token__Position end_pos = v__token__Token_position(&p->tok);
 			v__parser__Parser_check(p, v__token__Kind__rpar);
-			node = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, ((v__ast__CastExpr){.arg = arg,.typ = to_typ,.pos = v__token__Position_extend(start_pos, end_pos),.expr = expr,.typname = (string){.str=(byteptr)"", .is_lit=1},.expr_type = 0,.has_arg = has_arg,.in_prexpr = 0,})));
+			node = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, ((v__ast__CastExpr){.arg = arg,.typ = to_typ,.pos = v__token__Position_extend(start_pos, end_pos),.expr = expr,.typname = (string){.str=(byteptr)"", .is_lit=1},.expr_type = 0,.has_arg = has_arg,})));
 			p->expr_mod = _SLIT("");
 			return node;
 		} else {
@@ -72628,17 +72628,11 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 		}
 		;
 	}
-	int n_e_t_idx = v__ast__Type_idx(node->expr_type);
-	bool expr_is_ptr = v__ast__Type_is_ptr(node->expr_type) || (Array_int_contains(_const_v__ast__pointer_type_idxs, n_e_t_idx));
+	if (from_type_sym->kind == v__ast__Kind__byte && v__ast__Type_is_ptr(node->expr_type) && to_type_sym->kind == v__ast__Kind__string && !v__ast__Type_is_ptr(node->typ)) {
+		v__checker__Checker_error(c, _SLIT("to convert a C string buffer pointer to a V string, use x.vstring() instead of string(x)"), node->pos);
+	}
 	if (v__ast__Type_alias_eq(node->expr_type, _const_v__ast__void_type)) {
 		v__checker__Checker_error(c, _SLIT("expression does not return a value so it cannot be cast"), v__ast__Expr_position(node->expr));
-	}
-	if (expr_is_ptr && to_type_sym->kind == v__ast__Kind__string && !node->in_prexpr) {
-		if (node->has_arg) {
-			v__checker__Checker_warn(c, _SLIT("to convert a C string buffer pointer to a V string, use x.vstring_with_len(len) instead of string(x,len)"), node->pos);
-		} else {
-			v__checker__Checker_warn(c, _SLIT("to convert a C string buffer pointer to a V string, use x.vstring() instead of string(x)"), node->pos);
-		}
 	}
 	if (v__ast__Type_alias_eq(node->expr_type, _const_v__ast__byte_type) && to_type_sym->kind == v__ast__Kind__string) {
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("can not cast type `byte` to string, use `"), 0xfe10, {.d_s = v__ast__Expr_str(node->expr)}}, {_SLIT(".str()` instead."), 0, { .d_c = 0 }}})), node->pos);
@@ -74163,8 +74157,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_217485 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_217485.arg0;
+		multi_return_string_v__token__Position mr_217252 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_217252.arg0;
 	}
 	return typ;
 }
@@ -75318,10 +75312,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_251455 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_251455.arg0;
-				int nroute_attributes = mr_251455.arg1;
-				int nargs = mr_251455.arg2;
+				multi_return_bool_int_int mr_251222 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_251222.arg0;
+				int nroute_attributes = mr_251222.arg1;
+				int nargs = mr_251222.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
