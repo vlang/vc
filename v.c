@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "de6918b"
+#define V_COMMIT_HASH "54dd510"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "646c1e1"
+	#define V_COMMIT_HASH "de6918b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "de6918b"
+	#define V_CURRENT_COMMIT_HASH "54dd510"
 #endif
 
 // V comptime_defines:
@@ -12863,7 +12863,9 @@ string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, i
 	Array_byte buf = __new_array_with_default(((int)(out_len + 5 + 1 + 1)), 0, sizeof(byte), 0);
 	int i = 0;
 	if (neg) {
-		((byte*)buf.data)[i] = '-';
+		if (buf.data != 0) {
+			((byte*)buf.data)[i] = '-';
+		}
 		i++;
 	}
 	int disp = 0;
@@ -13069,9 +13071,9 @@ string strconv__f32_to_str(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec32_bool mr_8568 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_8568.arg0;
-	bool ok = mr_8568.arg1;
+	multi_return_strconv__Dec32_bool mr_8773 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_8773.arg0;
+	bool ok = mr_8773.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -13088,9 +13090,9 @@ string strconv__f32_to_str_pad(f32 f, int n_digit) {
 	if ((exp == _const_strconv__maxexp32) || (exp == 0U && mant == 0U)) {
 		return strconv__get_string_special(neg, exp == 0U, mant == 0U);
 	}
-	multi_return_strconv__Dec32_bool mr_9342 = strconv__f32_to_decimal_exact_int(mant, exp);
-	strconv__Dec32 d = mr_9342.arg0;
-	bool ok = mr_9342.arg1;
+	multi_return_strconv__Dec32_bool mr_9547 = strconv__f32_to_decimal_exact_int(mant, exp);
+	strconv__Dec32 d = mr_9547.arg0;
+	bool ok = mr_9547.arg1;
 	if (!ok) {
 		d = strconv__f32_to_decimal(mant, exp);
 	}
@@ -31281,7 +31283,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("646c1e1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de6918b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
