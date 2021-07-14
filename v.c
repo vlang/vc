@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "646c1e1"
+#define V_COMMIT_HASH "de6918b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fe1cf2e"
+	#define V_COMMIT_HASH "646c1e1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "646c1e1"
+	#define V_CURRENT_COMMIT_HASH "de6918b"
 #endif
 
 // V comptime_defines:
@@ -8773,6 +8773,7 @@ bool v__checker__Checker_symmetric_check(v__checker__Checker* c, v__ast__Type le
 byte v__checker__Checker_get_default_fmt(v__checker__Checker* c, v__ast__Type ftyp, v__ast__Type typ);
 void v__checker__Checker_fail_if_unreadable(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type typ, string what);
 v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast__StringInterLiteral* node);
+string _const_v__checker__hex_lit_overflow_message; // a string literal, inited later
 v__ast__Type v__checker__Checker_string_lit(v__checker__Checker* c, v__ast__StringLiteral* node);
 v__ast__Type v__checker__Checker_int_lit(v__checker__Checker* c, v__ast__IntegerLiteral* node);
 void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__Fn f, v__ast__CallExpr* call_expr);
@@ -9699,6 +9700,7 @@ void vinit_string_literals(){
 	_const_v__gen__c__windows_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
 	_const_v__gen__c__dbtype = _SLIT("sqlite");
 	_const_v__gen__js__fast_deep_eq_fn = _SLIT("// https://www.npmjs.com/package/fast-deep-equal - 3/3/2021\nconst envHasBigInt64Array = typeof BigInt64Array !== 'undefined';\nfunction vEq(a, b) {\n	if (a === b) return true;\n\n	if (a && b && typeof a == 'object' && typeof b == 'object') {\n		if (a.constructor !== b.constructor) return false;\n\n		var length, i, keys;\n		if (Array.isArray(a)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (!vEq(a[i], b[i])) return false;\n			return true;\n		}\n\n\n		if ((a instanceof Map) && (b instanceof Map)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			for (i of a.entries())\n				if (!vEq(i[1], b.get(i[0]))) return false;\n			return true;\n		}\n\n		if ((a instanceof Set) && (b instanceof Set)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			return true;\n		}\n\n		if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (a[i] !== b[i]) return false;\n			return true;\n		}\n\n\n		if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;\n		if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();\n		if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();\n\n		keys = Object.keys(a);\n		length = keys.length;\n		if (length !== Object.keys(b).length) return false;\n\n		for (i = length; i-- !== 0;)\n			if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;\n\n		for (i = length; i-- !== 0;) {\n			var key = keys[i];\n\n			if (!vEq(a[key], b[key])) return false;\n		}\n\n		return true;\n	}\n\n	// true if both NaN, false otherwise\n	return a!==a && b!==b;\n};\n");
+	_const_v__checker__hex_lit_overflow_message = _SLIT("hex character literal overflows string");
 	_const_v__checker__vroot_is_deprecated_message = _SLIT("@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead");
 	_const_v__builder__c_verror_message_marker = _SLIT("VERROR_MESSAGE ");
 	_const_v__builder__c_error_info = _SLIT("\n==================\nC error. This should never happen.\n\nIf you were not working with C interop, this is a compiler bug, please report the bug using `v bug file.v`.\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
@@ -31279,7 +31281,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fe1cf2e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("646c1e1"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -67125,10 +67127,22 @@ v__ast__Type v__checker__Checker_string_lit(v__checker__Checker* c, v__ast__Stri
 				for (;;) {
 					if (!(byte_is_hex_digit(ch))) break;
 					hex_char_count++;
-					if (hex_char_count > 4) {
-						v__token__Position end_pos = (v__token__Position){.len = idx + 1 - start_idx,start_pos.line_nr,start_pos.pos,start_pos.col,start_pos.last_line,};
-						v__checker__Checker_error(c, _SLIT("hex character literal overflows string"), end_pos);
+					v__token__Position end_pos = (v__token__Position){.len = idx + 1 - start_idx,start_pos.line_nr,start_pos.pos,start_pos.col,start_pos.last_line,};
+
+					if ((hex_char_count >= 1 && hex_char_count <= 5)) {
 					}
+					else if (hex_char_count == (6)) {
+						byte first_digit = string_at(node->val, idx - 5) - 48;
+						byte second_digit = string_at(node->val, idx - 4) - 48;
+						if (first_digit > 1) {
+							v__checker__Checker_error(c, _const_v__checker__hex_lit_overflow_message, end_pos);
+						} else if (first_digit == 1 && second_digit > 0) {
+							v__checker__Checker_error(c, _const_v__checker__hex_lit_overflow_message, end_pos);
+						}
+					}
+					else {
+						v__checker__Checker_error(c, _const_v__checker__hex_lit_overflow_message, end_pos);
+					};
 					idx++;
 					Option_byte _t6 = string_at_with_check(node->val, idx);
 					;
