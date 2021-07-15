@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c0be62"
+#define V_COMMIT_HASH "027be2e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6e942bf"
+	#define V_COMMIT_HASH "7c0be62"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c0be62"
+	#define V_CURRENT_COMMIT_HASH "027be2e"
 #endif
 
 // V comptime_defines:
@@ -7437,6 +7437,7 @@ void term__clear_previous_line();
 #define _const_term__default_rows_size 25
 bool term__can_show_color_on_stdout();
 bool term__can_show_color_on_stderr();
+string term__failed(string s);
 string term__ok_message(string s);
 string term__fail_message(string s);
 string term__warn_message(string s);
@@ -28896,6 +28897,14 @@ bool term__can_show_color_on_stderr(void) {
 	return _t1;
 }
 
+string term__failed(string s) {
+	if (term__can_show_color_on_stdout()) {
+		string _t1 = term__bg_red(term__bold(term__white(s)));
+		return _t1;
+	}
+	return s;
+}
+
 string term__ok_message(string s) {
 	if (term__can_show_color_on_stdout()) {
 		string _t1 = term__green( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = s}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
@@ -28905,11 +28914,8 @@ string term__ok_message(string s) {
 }
 
 string term__fail_message(string s) {
-	if (term__can_show_color_on_stdout()) {
-		string _t1 = term__inverse(term__bg_white(term__bold(term__red( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = s}}, {_SLIT(" "), 0, { .d_c = 0 }}}))))));
-		return _t1;
-	}
-	return s;
+	string _t1 = term__failed( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = s}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+	return _t1;
 }
 
 string term__warn_message(string s) {
@@ -28971,8 +28977,8 @@ string term__strip_ansi(string text) {
 }
 
 string term__h_divider(string divider) {
-	multi_return_int_int mr_2779 = term__get_terminal_size();
-	int cols = mr_2779.arg0;
+	multi_return_int_int mr_2941 = term__get_terminal_size();
+	int cols = mr_2941.arg0;
 	string result = _SLIT("");
 	if (divider.len > 0) {
 		result = string_repeat(divider, 1 + (cols / divider.len));
@@ -28985,8 +28991,8 @@ string term__h_divider(string divider) {
 
 string term__header_left(string text, string divider) {
 	string plain_text = term__strip_ansi(text);
-	multi_return_int_int mr_3224 = term__get_terminal_size();
-	int xcols = mr_3224.arg0;
+	multi_return_int_int mr_3386 = term__get_terminal_size();
+	int xcols = mr_3386.arg0;
 	int cols = term__imax(1, xcols);
 	string relement = (divider.len > 0 ? (divider) : (_SLIT(" ")));
 	string hstart = string_substr(string_repeat(relement, 4), 0, 4);
@@ -29001,8 +29007,8 @@ string term__header(string text, string divider) {
 		string _t1 = term__h_divider(divider);
 		return _t1;
 	}
-	multi_return_int_int mr_3810 = term__get_terminal_size();
-	int xcols = mr_3810.arg0;
+	multi_return_int_int mr_3972 = term__get_terminal_size();
+	int xcols = mr_3972.arg0;
 	int cols = term__imax(1, xcols);
 	int tlimit = term__imax(1, (cols > text.len + 2 + 2 * divider.len ? (text.len) : (cols - 3 - 2 * divider.len)));
 	int tlimit_alligned = ((tlimit % 2) != (cols % 2) ? (tlimit + 1) : (tlimit));
@@ -31311,7 +31317,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6e942bf"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7c0be62"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
