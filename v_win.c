@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "027be2e"
+#define V_COMMIT_HASH "06edbc8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7c0be62"
+	#define V_COMMIT_HASH "027be2e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "027be2e"
+	#define V_CURRENT_COMMIT_HASH "06edbc8"
 #endif
 
 // V comptime_defines:
@@ -30516,7 +30516,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7c0be62"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("027be2e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -62291,6 +62291,9 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 		v__depgraph__DepGraph_add(graph, g->file->mod.name, imports);
 		if (string__eq(g->file->mod.name, _SLIT("builtin")) && !g->generated_builtin) {
 			v__gen__js__JsGen_gen_builtin_type_defs(g);
+			v__gen__js__JsGen_writeln(g, _SLIT("Object.defineProperty(array.prototype,\"len\", { get: function() {return this.arr.length;}, set: function(l) { this.arr.length = l; } }); "));
+			v__gen__js__JsGen_writeln(g, _SLIT("Object.defineProperty(map.prototype,\"len\", { get: function() {return this.map.length;}, set: function(l) { this.map.length = l; } }); "));
+			v__gen__js__JsGen_writeln(g, _SLIT("Object.defineProperty(array.prototype,\"length\", { get: function() {return this.arr.length;}, set: function(l) { this.arr.length = l; } }); "));
 			g->generated_builtin = true;
 		}
 		v__gen__js__JsGen_stmts(g, file->stmts);
@@ -63158,6 +63161,14 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__
 		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).name}}, {_SLIT(" = this"), 0, { .d_c = 0 }}})));
 	}
 	v__gen__js__JsGen_writeln(g, _SLIT(") {"));
+	for (int i = 0; i < args.len; ++i) {
+		v__ast__Param arg = ((v__ast__Param*)args.data)[i];
+		bool is_varg = i == args.len - 1 && it.is_variadic;
+		if (is_varg) {
+			string name = v__gen__js__JsGen_js_name(g, arg.name);
+			v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT(" = new array("), 0xfe10, {.d_s = name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		}
+	}
 	v__gen__js__JsGen_stmts(g, it.stmts);
 	v__gen__js__JsGen_write(g, _SLIT("}"));
 	if (is_main) {
@@ -63425,6 +63436,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_array_init_expr(v__gen__js__JsGen* g, v__ast__ArrayInit it) {
+	v__gen__js__JsGen_write(g, _SLIT("new array("));
+	v__gen__js__JsGen_inc_indent(g);
 	if (it.has_len) {
 		string t1 = v__gen__js__JsGen_new_tmp_var(g);
 		string t2 = v__gen__js__JsGen_new_tmp_var(g);
@@ -63451,6 +63464,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_array_init_expr(v__gen__js__JsGen* g,
 	} else {
 		v__gen__js__JsGen_gen_array_init_values(g, it.exprs);
 	}
+	v__gen__js__JsGen_dec_indent(g);
+	v__gen__js__JsGen_write(g, _SLIT(")"));
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_array_init_values(v__gen__js__JsGen* g, Array_v__ast__Expr exprs) {
@@ -63640,9 +63655,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_expr(g, expr.left);
 		if (expr.is_setter) {
 			g->inside_map_set = true;
-			v__gen__js__JsGen_write(g, _SLIT(".set("));
+			v__gen__js__JsGen_write(g, _SLIT(".map.set("));
 		} else {
-			v__gen__js__JsGen_write(g, _SLIT(".get("));
+			v__gen__js__JsGen_write(g, _SLIT(".map.get("));
 		}
 		v__gen__js__JsGen_expr(g, expr.index);
 		v__gen__js__JsGen_write(g, _SLIT(".toString()"));
@@ -63659,6 +63674,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 		}
 	} else {
 		v__gen__js__JsGen_expr(g, expr.left);
+		v__gen__js__JsGen_write(g, _SLIT(".arr"));
 		v__gen__js__JsGen_write(g, _SLIT("["));
 		array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ _const_v__ast__int_type_idx }));
 		v__gen__js__JsGen_expr(g, expr.index);
@@ -63690,8 +63706,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		}
 	} else if (l_sym->kind == v__ast__Kind__array && it.op == v__token__Kind__left_shift) {
+		v__gen__js__JsGen_write(g, _SLIT("Array.prototype.push.call("));
 		v__gen__js__JsGen_expr(g, it.left);
-		v__gen__js__JsGen_write(g, _SLIT(".push("));
+		v__gen__js__JsGen_write(g, _SLIT(".arr,"));
 		if (r_sym->kind == v__ast__Kind__array) {
 			v__gen__js__JsGen_write(g, _SLIT("..."));
 		}
@@ -63700,11 +63717,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 	} else if ((r_sym->kind == v__ast__Kind__array || r_sym->kind == v__ast__Kind__map || r_sym->kind == v__ast__Kind__string) && (it.op == v__token__Kind__key_in || it.op == v__token__Kind__not_in)) {
 		v__gen__js__JsGen_expr(g, it.right);
 		if (r_sym->kind == v__ast__Kind__map) {
-			v__gen__js__JsGen_write(g, _SLIT(".has("));
+			v__gen__js__JsGen_write(g, _SLIT(".map.has("));
 		} else if (r_sym->kind == v__ast__Kind__string) {
 			v__gen__js__JsGen_write(g, _SLIT(".str.includes("));
 		} else {
-			v__gen__js__JsGen_write(g, _SLIT(".includes("));
+			v__gen__js__JsGen_write(g, _SLIT(".arr.includes("));
 		}
 		v__gen__js__JsGen_expr(g, it.left);
 		if (l_sym->kind == v__ast__Kind__string) {
@@ -63804,6 +63821,8 @@ VV_LOCAL_SYMBOL v__ast__Type v__gen__js__JsGen_greater_typ(v__gen__js__JsGen* g,
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__MapInit it) {
+	v__gen__js__JsGen_writeln(g, _SLIT("new map("));
+	v__gen__js__JsGen_inc_indent(g);
 	if (it.vals.len > 0) {
 		v__gen__js__JsGen_writeln(g, _SLIT("new Map(["));
 		v__gen__js__JsGen_inc_indent(g);
@@ -63825,6 +63844,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v
 	} else {
 		v__gen__js__JsGen_write(g, _SLIT("new Map()"));
 	}
+	v__gen__js__JsGen_dec_indent(g);
+	v__gen__js__JsGen_write(g, _SLIT(")"));
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it) {
@@ -63964,12 +63985,14 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_integer_literal_expr(v__gen__js__JsGe
 	v__ast__Type typ = ((v__ast__Type)(_const_v__ast__int_type));
 	if (g->call_stack.len > 0) {
 		v__ast__CallExpr call = (*(v__ast__CallExpr*)/*ee elem_typ */array_get(g->call_stack, g->call_stack.len - 1));
-		for (int _t1 = 0; _t1 < call.args.len; ++_t1) {
-			v__ast__CallArg t = ((v__ast__CallArg*)call.args.data)[_t1];
-			if ((t.expr)._typ == 270 /* v.ast.IntegerLiteral */) {
-				if (v__ast__IntegerLiteral_struct_eq((*t.expr._v__ast__IntegerLiteral), it)) {
-					v__gen__js__JsGen_write(g, it.val);
-					return;
+		if (call.language == v__ast__Language__js) {
+			for (int _t1 = 0; _t1 < call.args.len; ++_t1) {
+				v__ast__CallArg t = ((v__ast__CallArg*)call.args.data)[_t1];
+				if ((t.expr)._typ == 270 /* v.ast.IntegerLiteral */) {
+					if (v__ast__IntegerLiteral_struct_eq((*t.expr._v__ast__IntegerLiteral), it)) {
+						v__gen__js__JsGen_write(g, it.val);
+						return;
+					}
 				}
 			}
 		}
