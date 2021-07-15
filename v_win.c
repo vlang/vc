@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ddaac5a"
+#define V_COMMIT_HASH "aca66d5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "06edbc8"
+	#define V_COMMIT_HASH "ddaac5a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ddaac5a"
+	#define V_CURRENT_COMMIT_HASH "aca66d5"
 #endif
 
 // V comptime_defines:
@@ -30516,7 +30516,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("06edbc8"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ddaac5a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40757,16 +40757,16 @@ string old_expr_mod;
 		string full_generic_fn_name = (string_contains(fn_name, _SLIT(".")) ? (fn_name) : (v__parser__Parser_prepend_mod(p, fn_name)));
 		Array_v__ast__Type _t1_orig = concrete_types;
 		int _t1_len = _t1_orig.len;
-		Array_v__ast__Type _t1 = __new_array(0, _t1_len, sizeof(v__ast__Type));
-
+		bool _t1 = false;
 		for (int _t2 = 0; _t2 < _t1_len; ++_t2) {
 			v__ast__Type it = ((v__ast__Type*) _t1_orig.data)[_t2];
 			if (v__ast__Type_has_flag(it, v__ast__TypeFlag__generic)) {
-				array_push((array*)&_t1, &it); 
+				_t1 = true;
+			break;
 		}
 		}
 		
-		bool has_generic = _t1.len > 0;
+		bool has_generic = _t1;
 		if (!has_generic) {
 			v__ast__Table_register_fn_concrete_types(p->table, full_generic_fn_name, concrete_types);
 		}
@@ -41036,10 +41036,10 @@ VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			generic_names = _t10;
 		}
 	}
-	multi_return_Array_v__ast__Param_bool_bool mr_8601 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args2 = mr_8601.arg0;
-	bool are_args_type_only = mr_8601.arg1;
-	bool is_variadic = mr_8601.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_8590 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args2 = mr_8590.arg0;
+	bool are_args_type_only = mr_8590.arg1;
+	bool is_variadic = mr_8590.arg2;
 	if (is_c2v_variadic) {
 		is_variadic = true;
 	}
@@ -41350,9 +41350,9 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	if (p->pref->backend != v__pref__Backend__js) {
 		p->scope->detached_from_parent = true;
 	}
-	multi_return_Array_v__ast__Param_bool_bool mr_17890 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_17890.arg0;
-	bool is_variadic = mr_17890.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_17879 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_17879.arg0;
+	bool is_variadic = mr_17879.arg2;
 	for (int _t2 = 0; _t2 < args.len; ++_t2) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t2];
 		if (arg.name.len == 0) {
