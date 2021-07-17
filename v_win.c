@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ec47cda"
+#define V_COMMIT_HASH "22fcbe7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "51dd830"
+	#define V_COMMIT_HASH "ec47cda"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ec47cda"
+	#define V_CURRENT_COMMIT_HASH "22fcbe7"
 #endif
 
 // V comptime_defines:
@@ -9013,6 +9013,7 @@ v__ast__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__Infi
 VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast__Expr expr);
 v__ast__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__CallExpr* call_expr);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_map_and_filter(v__checker__Checker* c, bool is_map, v__ast__Type elem_typ, v__ast__CallExpr call_expr);
+Option_void v__checker__Checker_check_expected_arg_count(v__checker__Checker* c, v__ast__CallExpr* call_expr, v__ast__Fn* f);
 v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__CallExpr* call_expr);
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_map_builtin_method_call(v__checker__Checker* c, v__ast__CallExpr* call_expr, v__ast__Type left_type, v__ast__TypeSymbol left_type_sym);
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_array_builtin_method_call(v__checker__Checker* c, v__ast__CallExpr* call_expr, v__ast__Type left_type, v__ast__TypeSymbol left_type_sym);
@@ -30518,7 +30519,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("51dd830"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ec47cda"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -69016,6 +69017,38 @@ VV_LOCAL_SYMBOL void v__checker__Checker_check_map_and_filter(v__checker__Checke
 	;
 }
 
+Option_void v__checker__Checker_check_expected_arg_count(v__checker__Checker* c, v__ast__CallExpr* call_expr, v__ast__Fn* f) {
+	int nr_args = call_expr->args.len;
+	int nr_params = (call_expr->is_method && f->params.len > 0 ? (f->params.len - 1) : (f->params.len));
+	int min_required_params = f->params.len;
+	if (call_expr->is_method) {
+		min_required_params--;
+	}
+	if (f->is_variadic) {
+		min_required_params--;
+	}
+	if (min_required_params < 0) {
+		min_required_params = 0;
+	}
+	if (nr_args < min_required_params) {
+		if (min_required_params == nr_args + 1) {
+			v__ast__Type last_typ = (*(v__ast__Param*)array_last(f->params)).typ;
+			v__ast__TypeSymbol* last_sym = v__ast__Table_get_type_symbol(c->table, last_typ);
+			if (last_sym->kind == v__ast__Kind__struct_) {
+				array_push((array*)&call_expr->args, _MOV((v__ast__CallArg[]){ (v__ast__CallArg){.is_mut = 0,.share = 0,.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.expr = v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, ((v__ast__StructInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_short = 0,.unresolved = 0,.pre_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ = last_typ,.update_expr = {0},.update_expr_type = 0,.update_expr_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_update_expr = 0,.fields = __new_array(0, 0, sizeof(v__ast__StructInitField)),.embeds = __new_array(0, 0, sizeof(v__ast__StructInitEmbed)),}))),.typ = last_typ,.is_tmp_autofree = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},} }));
+				return (Option_void){0};
+			}
+		}
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_params}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = nr_args}}, {_SLIT0, 0, { .d_c = 0 }}})), call_expr->pos);
+		return (Option_void){ .state=2, .err=v_error(_SLIT("")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	} else if (!f->is_variadic && nr_args > nr_params) {
+		v__token__Position unexpected_args_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, min_required_params)).pos, (*(v__ast__CallArg*)array_last(call_expr->args)).pos);
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_params}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = nr_args}}, {_SLIT0, 0, { .d_c = 0 }}})), unexpected_args_pos);
+		return (Option_void){ .state=2, .err=v_error(_SLIT("")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	}
+	return (Option_void){0};
+}
+
 v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__CallExpr* call_expr) {
 	v__ast__Type left_type = v__checker__Checker_expr(c, call_expr->left);
 	c->expected_type = left_type;
@@ -69158,9 +69191,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_73335 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_73335.arg0;
-			v__token__Position pos = mr_73335.arg1;
+			multi_return_string_v__token__Position mr_74540 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_74540.arg0;
+			v__token__Position pos = mr_74540.arg1;
 			if (!v__ast__Expr_is_lvalue(call_expr->left)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_expr->left));
 			}
@@ -69176,17 +69209,13 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 		if (v__ast__Type_alias_eq(method.return_type, _const_v__ast__void_type) && method.is_conditional && method.ctdefine_idx != -1) {
 			call_expr->should_be_skipped = v__checker__Checker_evaluate_once_comptime_if_attribute(c, (voidptr)&/*qq*/(*(v__ast__Attr*)/*ee elem_typ */array_get(method.attrs, method.ctdefine_idx)));
 		}
-		int nr_args = (method.params.len == 0 ? (0) : (method.params.len - 1));
-		int min_required_args = method.params.len - (method.is_variadic && method.params.len > 1 ? (2) : (1));
-		if (call_expr->args.len < min_required_args) {
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_args}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = call_expr->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})), call_expr->pos);
-		} else if (!method.is_variadic && call_expr->args.len > nr_args) {
-			Array_v__ast__CallArg unexpected_arguments = array_slice(call_expr->args, min_required_args, call_expr->args.len);
-			v__token__Position unexpected_arguments_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(unexpected_arguments, 0)).pos, (*(v__ast__CallArg*)array_last(unexpected_arguments)).pos);
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = nr_args}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = call_expr->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})), unexpected_arguments_pos);
-			v__ast__Type _t20 = method.return_type;
-			return _t20;
+		Option_void _t20 = v__checker__Checker_check_expected_arg_count(c, call_expr, (voidptr)&/*qq*/method);
+		if (_t20.state != 0 && _t20.err._typ != _IError_None___index) {
+			IError err = _t20.err;
+			v__ast__Type _t21 = method.return_type;
+			return _t21;
 		}
+		;
 		v__ast__Type exp_arg_typ = ((v__ast__Type)(0));
 		bool param_is_mut = false;
 		bool no_type_promotion = false;
@@ -69237,9 +69266,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			if (v__ast__Type_has_flag(exp_arg_typ, v__ast__TypeFlag__generic)) {
 				continue;
 			}
-			Option_void _t21 = v__checker__Checker_check_expected_call_arg(c, got_arg_typ, v__checker__Checker_unwrap_generic(c, exp_arg_typ), call_expr->language);
-			if (_t21.state != 0 && _t21.err._typ != _IError_None___index) {
-				IError err = _t21.err;
+			Option_void _t22 = v__checker__Checker_check_expected_call_arg(c, got_arg_typ, v__checker__Checker_unwrap_generic(c, exp_arg_typ), call_expr->language);
+			if (_t22.state != 0 && _t22.err._typ != _IError_None___index) {
+				IError err = _t22.err;
 				if (!v__ast__Type_alias_eq(got_arg_typ, _const_v__ast__void_type)) {
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT(" in argument "), 0xfe07, {.d_i32 = i + 1}}, {_SLIT(" to `"), 0xfe10, {.d_s = left_type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = method_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), arg->pos);
 				}
@@ -69253,9 +69282,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg->pos);
 			}
 			if (arg->is_mut) {
-				multi_return_string_v__token__Position mr_78039 = v__checker__Checker_fail_if_immutable(c, arg->expr);
-				string to_lock = mr_78039.arg0;
-				v__token__Position pos = mr_78039.arg1;
+				multi_return_string_v__token__Position mr_78632 = v__checker__Checker_fail_if_immutable(c, arg->expr);
+				string to_lock = mr_78632.arg0;
+				v__token__Position pos = mr_78632.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg->share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(arg->expr));
@@ -69304,9 +69333,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			call_expr->return_type = method.return_type;
 		}
 		if (call_expr->concrete_types.len > 0 && method.return_type != 0) {
-			Option_v__ast__Type _t23;
-			if (_t23 = v__ast__Table_resolve_generic_to_concrete(c->table, method.return_type, method.generic_names, concrete_types), _t23.state == 0) {
-				v__ast__Type typ = *(v__ast__Type*)_t23.data;
+			Option_v__ast__Type _t24;
+			if (_t24 = v__ast__Table_resolve_generic_to_concrete(c->table, method.return_type, method.generic_names, concrete_types), _t24.state == 0) {
+				v__ast__Type typ = *(v__ast__Type*)_t24.data;
 				call_expr->return_type = typ;
 				return typ;
 			}
@@ -69318,11 +69347,11 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("too many generic parameters got "), 0xfe07, {.d_i32 = call_expr->concrete_types.len}}, {_SLIT(", expected "), 0xfe07, {.d_i32 = method.generic_names.len}}, {_SLIT0, 0, { .d_c = 0 }}})), call_expr->concrete_list_pos);
 		}
 		if (method.generic_names.len > 0) {
-			v__ast__Type _t25 = call_expr->return_type;
-			return _t25;
+			v__ast__Type _t26 = call_expr->return_type;
+			return _t26;
 		}
-		v__ast__Type _t26 = method.return_type;
-		return _t26;
+		v__ast__Type _t27 = method.return_type;
+		return _t27;
 	}
 	if (string__eq(method_name, _SLIT("str"))) {
 		if (left_type_sym->kind == v__ast__Kind__interface_) {
@@ -69337,38 +69366,38 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 		v__checker__Checker_fail_if_unreadable(c, call_expr->left, left_type, _SLIT("receiver"));
 		return _const_v__ast__string_type;
 	}
-	Option_v__ast__StructField _t28;
-	if (_t28 = v__ast__Table_find_field(c->table, left_type_sym, method_name), _t28.state == 0) {
-		v__ast__StructField field = *(v__ast__StructField*)_t28.data;
+	Option_v__ast__StructField _t29;
+	if (_t29 = v__ast__Table_find_field(c->table, left_type_sym, method_name), _t29.state == 0) {
+		v__ast__StructField field = *(v__ast__StructField*)_t29.data;
 		v__ast__TypeSymbol* field_type_sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, field.typ));
 		if (field_type_sym->kind == v__ast__Kind__function) {
 			call_expr->is_field = true;
 			v__ast__FnType info = /* as */ *(v__ast__FnType*)__as_cast((field_type_sym->info)._v__ast__FnType,(field_type_sym->info)._typ, 433) /*expected idx: 433, name: v.ast.FnType */ ;
 			call_expr->return_type = info.func.return_type;
 			Array_v__ast__Type earg_types = __new_array_with_default(0, 0, sizeof(v__ast__Type), 0);
-			for (int _t29 = 0; _t29 < call_expr->args.len; ++_t29) {
-				v__ast__CallArg* arg = ((v__ast__CallArg*)call_expr->args.data) + _t29;
+			for (int _t30 = 0; _t30 < call_expr->args.len; ++_t30) {
+				v__ast__CallArg* arg = ((v__ast__CallArg*)call_expr->args.data) + _t30;
 				v__ast__Type targ = v__checker__Checker_check_expr_opt_call(c, arg->expr, v__checker__Checker_expr(c, arg->expr));
 				arg->typ = targ;
 				array_push((array*)&earg_types, _MOV((v__ast__Type[]){ targ }));
 			}
 			call_expr->expected_arg_types = earg_types;
-			v__ast__Type _t31 = info.func.return_type;
-			return _t31;
+			v__ast__Type _t32 = info.func.return_type;
+			return _t32;
 		}
 	}
 	if (!v__ast__Type_alias_eq(left_type, _const_v__ast__void_type)) {
-		Array_v__ast__Fn _t32_orig = left_type_sym->methods;
-		int _t32_len = _t32_orig.len;
-		Array_string _t32 = __new_array(0, _t32_len, sizeof(string));
+		Array_v__ast__Fn _t33_orig = left_type_sym->methods;
+		int _t33_len = _t33_orig.len;
+		Array_string _t33 = __new_array(0, _t33_len, sizeof(string));
 
-		for (int _t33 = 0; _t33 < _t32_len; ++_t33) {
-			v__ast__Fn it = ((v__ast__Fn*) _t32_orig.data)[_t33];
+		for (int _t34 = 0; _t34 < _t33_len; ++_t34) {
+			v__ast__Fn it = ((v__ast__Fn*) _t33_orig.data)[_t34];
 			string ti = it.name;
-			array_push((array*)&_t32, &ti);
+			array_push((array*)&_t33, &ti);
 		}
 		
-		v__util__Suggestion suggestion = v__util__new_suggestion(method_name, _t32);
+		v__util__Suggestion suggestion = v__util__new_suggestion(method_name, _t33);
 		v__checker__Checker_error(c, v__util__Suggestion_say(suggestion, unknown_method_msg), call_expr->pos);
 	}
 	return _const_v__ast__void_type;
@@ -69718,16 +69747,13 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 		call_expr->should_be_skipped = v__checker__Checker_evaluate_once_comptime_if_attribute(c, (voidptr)&/*qq*/(*(v__ast__Attr*)/*ee elem_typ */array_get(func.attrs, func.ctdefine_idx)));
 	}
 	if (call_expr->language != v__ast__Language__js) {
-		int min_required_args = (func.is_variadic ? (func.params.len - 1) : (func.params.len));
-		if (call_expr->args.len < min_required_args) {
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_args}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = call_expr->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})), call_expr->pos);
-		} else if (!func.is_variadic && call_expr->args.len > func.params.len) {
-			Array_v__ast__CallArg unexpected_arguments = array_slice(call_expr->args, min_required_args, call_expr->args.len);
-			v__token__Position unexpected_arguments_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(unexpected_arguments, 0)).pos, (*(v__ast__CallArg*)array_last(unexpected_arguments)).pos);
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_args}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = call_expr->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})), unexpected_arguments_pos);
-			v__ast__Type _t22 = func.return_type;
-			return _t22;
+		Option_void _t22 = v__checker__Checker_check_expected_arg_count(c, call_expr, (voidptr)&/*qq*/func);
+		if (_t22.state != 0 && _t22.err._typ != _IError_None___index) {
+			IError err = _t22.err;
+			v__ast__Type _t23 = func.return_type;
+			return _t23;
 		}
+		;
 	}
 	if ((string__eq(fn_name, _SLIT("println")) || string__eq(fn_name, _SLIT("print")) || string__eq(fn_name, _SLIT("eprintln")) || string__eq(fn_name, _SLIT("eprint")) || string__eq(fn_name, _SLIT("panic"))) && call_expr->args.len > 0) {
 		c->inside_println_arg = true;
@@ -69742,8 +69768,8 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 		}
 		v__checker__Checker_fail_if_unreadable(c, arg.expr, arg.typ, _SLIT("argument to print"));
 		c->inside_println_arg = false;
-		v__ast__Type _t23 = func.return_type;
-		return _t23;
+		v__ast__Type _t24 = func.return_type;
+		return _t24;
 	}
 	if (string__eq(fn_name, _SLIT("error")) && call_expr->args.len == 1) {
 		v__ast__CallArg arg = (*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, 0));
@@ -69753,8 +69779,8 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 		}
 	}
 	if (call_expr->expected_arg_types.len == 0) {
-		for (int _t24 = 0; _t24 < func.params.len; ++_t24) {
-			v__ast__Param param = ((v__ast__Param*)func.params.data)[_t24];
+		for (int _t25 = 0; _t25 < func.params.len; ++_t25) {
+			v__ast__Param param = ((v__ast__Param*)func.params.data)[_t25];
 			array_push((array*)&call_expr->expected_arg_types, _MOV((v__ast__Type[]){ param.typ }));
 		}
 	}
@@ -69779,9 +69805,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg->pos);
 		}
 		if (call_arg->is_mut && func.language == v__ast__Language__v) {
-			multi_return_string_v__token__Position mr_98715 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
-			string to_lock = mr_98715.arg0;
-			v__token__Position pos = mr_98715.arg1;
+			multi_return_string_v__token__Position mr_98775 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
+			string to_lock = mr_98775.arg0;
+			v__token__Position pos = mr_98775.arg1;
 			if (!v__ast__Expr_is_lvalue(call_arg->expr)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_arg->expr));
 			}
@@ -69816,9 +69842,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			}
 			continue;
 		}
-		Option_void _t26 = v__checker__Checker_check_expected_call_arg(c, typ, v__checker__Checker_unwrap_generic(c, param.typ), call_expr->language);
-		if (_t26.state != 0 && _t26.err._typ != _IError_None___index) {
-			IError err = _t26.err;
+		Option_void _t27 = v__checker__Checker_check_expected_call_arg(c, typ, v__checker__Checker_unwrap_generic(c, param.typ), call_expr->language);
+		if (_t27.state != 0 && _t27.err._typ != _IError_None___index) {
+			IError err = _t27.err;
 			if (typ_sym->kind == v__ast__Kind__void && param_typ_sym->kind == v__ast__Kind__string) {
 				continue;
 			}
@@ -69852,9 +69878,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			c->expected_type = param.typ;
 			v__ast__Type typ = v__checker__Checker_check_expr_opt_call(c, call_arg->expr, v__checker__Checker_expr(c, call_arg->expr));
 			if (v__ast__Type_has_flag(param.typ, v__ast__TypeFlag__generic) && func.generic_names.len == call_expr->concrete_types.len) {
-				Option_v__ast__Type _t27;
-				if (_t27 = v__ast__Table_resolve_generic_to_concrete(c->table, param.typ, func.generic_names, concrete_types), _t27.state == 0) {
-					v__ast__Type unwrap_typ = *(v__ast__Type*)_t27.data;
+				Option_v__ast__Type _t28;
+				if (_t28 = v__ast__Table_resolve_generic_to_concrete(c->table, param.typ, func.generic_names, concrete_types), _t28.state == 0) {
+					v__ast__Type unwrap_typ = *(v__ast__Type*)_t28.data;
 					v__ast__Type utyp = v__checker__Checker_unwrap_generic(c, typ);
 					v__ast__TypeSymbol* unwrap_sym = v__ast__Table_get_type_symbol(c->table, unwrap_typ);
 					if (unwrap_sym->kind == v__ast__Kind__interface_) {
@@ -69865,9 +69891,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 						}
 						continue;
 					}
-					Option_void _t28 = v__checker__Checker_check_expected_call_arg(c, utyp, unwrap_typ, call_expr->language);
-					if (_t28.state != 0 && _t28.err._typ != _IError_None___index) {
-						IError err = _t28.err;
+					Option_void _t29 = v__checker__Checker_check_expected_call_arg(c, utyp, unwrap_typ, call_expr->language);
+					if (_t29.state != 0 && _t29.err._typ != _IError_None___index) {
+						IError err = _t29.err;
 						v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT(" in argument "), 0xfe07, {.d_i32 = i + 1}}, {_SLIT(" to `"), 0xfe10, {.d_s = fn_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), call_arg->pos);
 					;
 					}
@@ -69882,9 +69908,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 		call_expr->return_type = func.return_type;
 	}
 	if (call_expr->concrete_types.len > 0 && func.return_type != 0) {
-		Option_v__ast__Type _t29;
-		if (_t29 = v__ast__Table_resolve_generic_to_concrete(c->table, func.return_type, func.generic_names, concrete_types), _t29.state == 0) {
-			v__ast__Type typ = *(v__ast__Type*)_t29.data;
+		Option_v__ast__Type _t30;
+		if (_t30 = v__ast__Table_resolve_generic_to_concrete(c->table, func.return_type, func.generic_names, concrete_types), _t30.state == 0) {
+			v__ast__Type typ = *(v__ast__Type*)_t30.data;
 			call_expr->return_type = typ;
 			return typ;
 		}
@@ -69896,11 +69922,11 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("too many generic parameters got "), 0xfe07, {.d_i32 = call_expr->concrete_types.len}}, {_SLIT(", expected "), 0xfe07, {.d_i32 = func.generic_names.len}}, {_SLIT0, 0, { .d_c = 0 }}})), call_expr->concrete_list_pos);
 	}
 	if (func.generic_names.len > 0) {
-		v__ast__Type _t31 = call_expr->return_type;
-		return _t31;
+		v__ast__Type _t32 = call_expr->return_type;
+		return _t32;
 	}
-	v__ast__Type _t32 = func.return_type;
-	return _t32;
+	v__ast__Type _t33 = func.return_type;
+	return _t33;
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_deprecate_fnmethod(v__checker__Checker* c, string kind, string name, v__ast__Fn the_fn, v__ast__CallExpr call_expr) {
@@ -74206,8 +74232,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_225538 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_225538.arg0;
+		multi_return_string_v__token__Position mr_225598 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_225598.arg0;
 	}
 	return typ;
 }
@@ -75353,10 +75379,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_259508 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_259508.arg0;
-				int nroute_attributes = mr_259508.arg1;
-				int nargs = mr_259508.arg2;
+				multi_return_bool_int_int mr_259568 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_259568.arg0;
+				int nroute_attributes = mr_259568.arg1;
+				int nargs = mr_259568.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
