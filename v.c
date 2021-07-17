@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "355f46f"
+#define V_COMMIT_HASH "51dd830"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "05284c4"
+	#define V_COMMIT_HASH "355f46f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "355f46f"
+	#define V_CURRENT_COMMIT_HASH "51dd830"
 #endif
 
 // V comptime_defines:
@@ -7740,6 +7740,7 @@ void v__util__recompile_file(string vexe, string file);
 string v__util__get_vtmp_folder();
 bool v__util__should_bundle_module(string mod);
 Option_Array_string v__util__find_all_v_files(Array_string roots);
+string v__util__pretty_print(string command);
 v__ast__Expr v__ast__empty_expr();
 v__ast__Stmt v__ast__empty_stmt();
 v__ast__Node v__ast__empty_node();
@@ -31318,7 +31319,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("05284c4"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("355f46f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33737,9 +33738,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_16318 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_16318.arg0;
-	string tool_exe = mr_16318.arg1;
+	multi_return_string_string mr_16330 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_16330.arg0;
+	string tool_exe = mr_16330.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
@@ -33806,6 +33807,11 @@ Option_Array_string v__util__find_all_v_files(Array_string roots) {
 	Option_Array_string _t7;
 	opt_ok(&(Array_string[]) { files }, (Option*)(&_t7), sizeof(Array_string));
 	return _t7;
+}
+
+string v__util__pretty_print(string command) {
+	string _t1 = term__bright_white(term__bg_cyan( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = command}}, {_SLIT(" "), 0, { .d_c = 0 }}}))));
+	return _t1;
 }
 
 // TypeDecl
@@ -79083,9 +79089,13 @@ v__util__Timers* timers;
 	if (args.len == 0 || (string__eq((*(string*)/*ee elem_typ */array_get(args, 0)), _SLIT("-")) || string__eq((*(string*)/*ee elem_typ */array_get(args, 0)), _SLIT("repl")))) {
 		if (args.len == 0) {
 			if (os__is_atty(0) != 0) {
-				println(_SLIT("Welcome to the V REPL (for help with V itself, type `exit`, then run `v help`)."));
+				string cmd_exit = v__util__pretty_print(_SLIT("exit"));
+				string cmd_help = v__util__pretty_print(_SLIT("v help"));
+				string file_main = v__util__pretty_print(_SLIT("main.v"));
+				string cmd_run = v__util__pretty_print(_SLIT("v run main.v"));
+				println( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Welcome to the V REPL (for help with V itself, type "), 0xfe10, {.d_s = cmd_exit}}, {_SLIT(", then run "), 0xfe10, {.d_s = cmd_help}}, {_SLIT(")."), 0, { .d_c = 0 }}})));
 				eprintln(_SLIT("  NB: the REPL is highly experimental. For best V experience, use a text editor,"));
-				eprintln(_SLIT("  save your code in a `main.v` file and do: `v run main.v`"));
+				eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("  save your code in a "), 0xfe10, {.d_s = file_main}}, {_SLIT(" file and execute: "), 0xfe10, {.d_s = cmd_run}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			} else {
 				Array_string args_and_flags = array_clone_static_to_depth(array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len), 0);
 				_PUSH_MANY(&args_and_flags, (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("run"), _SLIT("-")}))), _t1, Array_string);
@@ -79101,9 +79111,9 @@ v__util__Timers* timers;
 		return;
 	}
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_1862 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
-	v__pref__Preferences* prefs = mr_1862.arg0;
-	string command = mr_1862.arg1;
+	multi_return_v__pref__Preferences_string mr_2047 = v__pref__parse_args(_const_main__external_tools, args_and_flags);
+	v__pref__Preferences* prefs = mr_2047.arg0;
+	string command = mr_2047.arg1;
 	if (prefs->use_cache && string__eq(os__user_os(), _SLIT("windows"))) {
 		eprintln(_SLIT("-usecache is currently disabled on windows"));
 		v_exit(1);
@@ -79177,7 +79187,7 @@ v__util__Timers* timers;
 	if (prefs->is_help) {
 		main__invoke_help_and_exit(args);
 	}
-	eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("v "), 0xfe10, {.d_s = command}}, {_SLIT(": unknown command\nRun \"v help\" for usage."), 0, { .d_c = 0 }}})));
+	eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("v "), 0xfe10, {.d_s = command}}, {_SLIT(": unknown command\nRun "), 0xfe10, {.d_s = v__util__pretty_print(_SLIT("v help"))}}, {_SLIT(" for usage."), 0, { .d_c = 0 }}})));
 	v_exit(1);
 	VUNREACHABLE();
 }
@@ -79192,8 +79202,8 @@ VV_LOCAL_SYMBOL void main__invoke_help_and_exit(Array_string remaining) {
 	}
 	else {
 	};
-	println(_SLIT("`v help`: provide only one help topic."));
-	println(_SLIT("For usage information, use `v help`."));
+	println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__util__pretty_print(_SLIT("v help"))}}, {_SLIT(": provide only one help topic."), 0, { .d_c = 0 }}})));
+	println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("For usage information, use "), 0xfe10, {.d_s = v__util__pretty_print(_SLIT("v help"))}}, {_SLIT("."), 0, { .d_c = 0 }}})));
 	v_exit(1);
 	VUNREACHABLE();
 }
