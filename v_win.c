@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fc8a8e3"
+#define V_COMMIT_HASH "6edfb2c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "568aa74"
+	#define V_COMMIT_HASH "fc8a8e3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fc8a8e3"
+	#define V_CURRENT_COMMIT_HASH "6edfb2c"
 #endif
 
 // V comptime_defines:
@@ -8262,6 +8262,7 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_infix_expr(v__parser__Parser* p, 
 VV_LOCAL_SYMBOL v__ast__GoExpr v__parser__Parser_go_expr(v__parser__Parser* p);
 VV_LOCAL_SYMBOL bool v__parser__Parser_fileis(v__parser__Parser* p, string s);
 VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_prefix_expr(v__parser__Parser* p);
+VV_LOCAL_SYMBOL void v__parser__Parser_recast_as_pointer(v__parser__Parser* p, v__ast__CastExpr* cast_expr, v__token__Position pos);
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__ast__Language language, string mod);
 Array_v__ast__CallArg v__parser__Parser_call_args(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p);
@@ -30508,7 +30509,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("568aa74"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fc8a8e3"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -40723,11 +40724,23 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_prefix_expr(v__parser__Parser* p)
 	v__parser__Parser_next(p);
 	v__ast__Expr right = v__parser__Parser_expr(p, ((int)(v__token__Precedence__prefix)));
 	p->is_amp = false;
-	if ((right)._typ == 253 /* v.ast.CastExpr */ && op == v__token__Kind__amp) {
-		v__ast__Type new_cast_type = v__ast__Type_to_ptr((*right._v__ast__CastExpr).typ);
-		v__ast__TypeSymbol* nct_sym = v__ast__Table_get_type_symbol(p->table, new_cast_type);
-		v__ast__Expr _t1 = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, ((v__ast__CastExpr){(*right._v__ast__CastExpr).arg,.typ = new_cast_type,.pos = v__token__Position_extend(pos, (*right._v__ast__CastExpr).pos),(*right._v__ast__CastExpr).expr,.typname = nct_sym->name,(*right._v__ast__CastExpr).expr_type,(*right._v__ast__CastExpr).has_arg,})));
-		return _t1;
+	if (op == v__token__Kind__amp) {
+		if ((right)._typ == 253 /* v.ast.CastExpr */) {
+			v__parser__Parser_recast_as_pointer(p, (voidptr)&/*qq*/(*right._v__ast__CastExpr), pos);
+			return right;
+		}
+		if ((right)._typ == 285 /* v.ast.SelectorExpr */) {
+			if (((*right._v__ast__SelectorExpr).expr)._typ == 253 /* v.ast.CastExpr */) {
+				v__parser__Parser_recast_as_pointer(p, (voidptr)&/*qq*/(*(*right._v__ast__SelectorExpr).expr._v__ast__CastExpr), pos);
+				return right;
+			}
+		}
+		if ((right)._typ == 268 /* v.ast.IndexExpr */) {
+			if (((*right._v__ast__IndexExpr).left)._typ == 253 /* v.ast.CastExpr */) {
+				v__parser__Parser_recast_as_pointer(p, (voidptr)&/*qq*/(*(*right._v__ast__IndexExpr).left._v__ast__CastExpr), pos);
+				return right;
+			}
+		}
 	}
 	Array_v__ast__Stmt or_stmts = __new_array_with_default(0, 0, sizeof(v__ast__Stmt), 0);
 	v__ast__OrKind or_kind = v__ast__OrKind__absent;
@@ -40749,8 +40762,14 @@ VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_prefix_expr(v__parser__Parser* p)
 		p->or_is_handled = false;
 	}
 	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
-	v__ast__Expr _t2 = v__ast__PrefixExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__PrefixExpr, ((v__ast__PrefixExpr){.op = op,.pos = pos,.right_type = 0,.right = right,.or_block = (v__ast__OrExpr){.stmts = or_stmts,.kind = or_kind,.pos = or_pos,},.is_option = 0,})));
-	return _t2;
+	v__ast__Expr _t4 = v__ast__PrefixExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__PrefixExpr, ((v__ast__PrefixExpr){.op = op,.pos = pos,.right_type = 0,.right = right,.or_block = (v__ast__OrExpr){.stmts = or_stmts,.kind = or_kind,.pos = or_pos,},.is_option = 0,})));
+	return _t4;
+}
+
+VV_LOCAL_SYMBOL void v__parser__Parser_recast_as_pointer(v__parser__Parser* p, v__ast__CastExpr* cast_expr, v__token__Position pos) {
+	cast_expr->typ = v__ast__Type_to_ptr(cast_expr->typ);
+	cast_expr->typname = v__ast__Table_get_type_symbol(p->table, cast_expr->typ)->name;
+	cast_expr->pos = v__token__Position_extend(pos, cast_expr->pos);
 }
 
 v__ast__CallExpr v__parser__Parser_call_expr(v__parser__Parser* p, v__ast__Language language, string mod) {
