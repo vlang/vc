@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d84ffbf"
+#define V_COMMIT_HASH "3a0fa55"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "22fcbe7"
+	#define V_COMMIT_HASH "d84ffbf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d84ffbf"
+	#define V_CURRENT_COMMIT_HASH "3a0fa55"
 #endif
 
 // V comptime_defines:
@@ -31320,7 +31320,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("22fcbe7"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d84ffbf"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -43468,7 +43468,7 @@ v__ast__Type v__parser__Parser_parse_map_type(v__parser__Parser* p) {
 		v__ast__Type _t2 = 0;
 		return _t2;
 	}
-	bool key_type_supported = (key_type == _const_v__ast__string_type_idx || key_type == _const_v__ast__voidptr_type_idx) || key_sym->kind == v__ast__Kind__enum_ || key_sym->kind == v__ast__Kind__placeholder || ((v__ast__Type_is_int(key_type) || v__ast__Type_is_float(key_type) || is_alias) && !v__ast__Type_is_ptr(key_type));
+	bool key_type_supported = (key_type == _const_v__ast__string_type_idx || key_type == _const_v__ast__voidptr_type_idx) || (key_sym->kind == v__ast__Kind__enum_ || key_sym->kind == v__ast__Kind__placeholder || key_sym->kind == v__ast__Kind__any) || ((v__ast__Type_is_int(key_type) || v__ast__Type_is_float(key_type) || is_alias) && !v__ast__Type_is_ptr(key_type));
 	if (!key_type_supported) {
 		if (is_alias) {
 			v__parser__Parser_error(p, _SLIT("cannot use the alias type as the parent type is unsupported"));
@@ -43586,9 +43586,9 @@ v__ast__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) 
 	v__parser__Parser_check(p, v__token__Kind__key_fn);
 	bool has_generic = false;
 	int line_nr = p->tok.line_nr;
-	multi_return_Array_v__ast__Param_bool_bool mr_5606 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_5606.arg0;
-	bool is_variadic = mr_5606.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_5596 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_5596.arg0;
+	bool is_variadic = mr_5596.arg2;
 	for (int _t1 = 0; _t1 < args.len; ++_t1) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t1];
 		if (v__ast__Type_has_flag(arg.typ, v__ast__TypeFlag__generic)) {
@@ -67994,6 +67994,15 @@ void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__
 							to_set = arg_elem_info.elem_type;
 							break;
 						}
+					}
+				} else if (arg_sym->kind == v__ast__Kind__map && param_type_sym->kind == v__ast__Kind__map) {
+					v__ast__Map arg_map_info = /* as */ *(v__ast__Map*)__as_cast((arg_sym->info)._v__ast__Map,(arg_sym->info)._typ, 375) /*expected idx: 375, name: v.ast.Map */ ;
+					v__ast__Map param_map_info = /* as */ *(v__ast__Map*)__as_cast((param_type_sym->info)._v__ast__Map,(param_type_sym->info)._typ, 375) /*expected idx: 375, name: v.ast.Map */ ;
+					if (v__ast__Type_has_flag(param_map_info.key_type, v__ast__TypeFlag__generic) && string__eq(v__ast__Table_get_type_symbol(c->table, param_map_info.key_type)->name, gt_name)) {
+						typ = arg_map_info.key_type;
+					}
+					if (v__ast__Type_has_flag(param_map_info.value_type, v__ast__TypeFlag__generic) && string__eq(v__ast__Table_get_type_symbol(c->table, param_map_info.value_type)->name, gt_name)) {
+						typ = arg_map_info.value_type;
 					}
 				} else if (v__ast__Type_has_flag(param.typ, v__ast__TypeFlag__variadic)) {
 					to_set = v__ast__Table_mktyp(c->table, arg.typ);
