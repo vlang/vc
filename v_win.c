@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8b8f496"
+#define V_COMMIT_HASH "d5e0fa6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "11a7899"
+	#define V_COMMIT_HASH "8b8f496"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8b8f496"
+	#define V_CURRENT_COMMIT_HASH "d5e0fa6"
 #endif
 
 // V comptime_defines:
@@ -8082,6 +8082,7 @@ bool v__ast__Type_is_unsigned(v__ast__Type typ);
 bool v__ast__Type_is_int_literal(v__ast__Type typ);
 bool v__ast__Type_is_number(v__ast__Type typ);
 bool v__ast__Type_is_string(v__ast__Type typ);
+bool v__ast__Type_is_bool(v__ast__Type typ);
 #define _const_v__ast__void_type_idx 1
 #define _const_v__ast__voidptr_type_idx 2
 #define _const_v__ast__byteptr_type_idx 3
@@ -30509,7 +30510,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("11a7899"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8b8f496"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -36922,6 +36923,12 @@ inline bool v__ast__Type_is_number(v__ast__Type typ) {
 // Attr: [inline]
 inline bool v__ast__Type_is_string(v__ast__Type typ) {
 	bool _t1 = (Array_int_contains(_const_v__ast__string_type_idxs, v__ast__Type_idx(typ)));
+	return _t1;
+}
+
+// Attr: [inline]
+inline bool v__ast__Type_is_bool(v__ast__Type typ) {
+	bool _t1 = v__ast__Type_idx(typ) == _const_v__ast__bool_type_idx;
 	return _t1;
 }
 
@@ -62238,7 +62245,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 				.default_value = _SLIT("new Number(0)"),
 				.constructor = _SLIT("this.val = typeof(val) == \"string\" ? val.charCodeAt() : (val | 0)"),
 				.value_of = _SLIT("this.val | 0"),
-				.to_string = _SLIT("String.fromCharCode(this.val)"),
+				.to_string = _SLIT("new string(this.val + \"\")"),
 				.eq = _SLIT("this.valueOf() === other.valueOf()"),
 				.extras = (string){.str=(byteptr)"", .is_lit=1},
 				.has_strfn = 0,
@@ -62914,6 +62921,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 		} else {
 			v__gen__js__JsGen_write(g, v__token__Kind_str((*node._v__ast__PrefixExpr).op));
 			v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
+			v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
 		}
 	}
 	else if (node._typ == 283 /* v.ast.RangeExpr */) {
@@ -63661,6 +63669,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast_
 			}
 			if (i < node.branches.len - 1 || !node.has_else) {
 				v__gen__js__JsGen_expr(g, branch.cond);
+				v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
 				v__gen__js__JsGen_write(g, _SLIT(" ? "));
 			}
 			v__gen__js__JsGen_stmts(g, branch.stmts);
@@ -63680,6 +63689,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast_
 						v__gen__js__JsGen_write(g, _SLIT("true"));
 					} else {
 						v__gen__js__JsGen_expr(g, branch.cond);
+						v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
 					}
 					v__gen__js__JsGen_writeln(g, _SLIT(") {"));
 				}
@@ -63687,6 +63697,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast_
 			} else if (i < node.branches.len - 1 || !node.has_else) {
 				v__gen__js__JsGen_write(g, _SLIT("} else if ("));
 				v__gen__js__JsGen_expr(g, branch.cond);
+				v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
 				v__gen__js__JsGen_writeln(g, _SLIT(") {"));
 			} else if (i == node.branches.len - 1 && node.has_else) {
 				v__gen__js__JsGen_writeln(g, _SLIT("} else {"));
@@ -63732,10 +63743,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 	} else if (left_typ->kind == v__ast__Kind__string) {
 		if (expr.is_setter) {
 		} else {
+			v__gen__js__JsGen_write(g, _SLIT("new byte("));
 			v__gen__js__JsGen_expr(g, expr.left);
 			v__gen__js__JsGen_write(g, _SLIT(".str.charCodeAt("));
 			v__gen__js__JsGen_expr(g, expr.index);
-			v__gen__js__JsGen_write(g, _SLIT(")"));
+			v__gen__js__JsGen_write(g, _SLIT("))"));
 		}
 	} else {
 		v__gen__js__JsGen_expr(g, expr.left);
@@ -63959,14 +63971,14 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_inter_literal(v__gen__js__JsGe
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_literal(v__gen__js__JsGen* g, v__ast__StringLiteral it) {
 	string text = string_replace(it.val, _SLIT("'"), _SLIT("\\'"));
 	bool should_cast = !(g->cast_stack.len > 0 && (*(v__ast__Type*)array_last(g->cast_stack)) == _const_v__ast__string_type_idx);
-	if (should_cast) {
+	if (true || should_cast) {
 		if (string__eq(g->file->mod.name, _SLIT("builtin"))) {
 			v__gen__js__JsGen_write(g, _SLIT("new "));
 		}
 		v__gen__js__JsGen_write(g, _SLIT("string("));
 	}
 	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("'"), 0xfe10, {.d_s = text}}, {_SLIT("'"), 0, { .d_c = 0 }}})));
-	if (should_cast) {
+	if (true || should_cast) {
 		v__gen__js__JsGen_write(g, _SLIT(")"));
 	}
 }
