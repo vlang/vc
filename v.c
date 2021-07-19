@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fdba360"
+#define V_COMMIT_HASH "cf82bd3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "11161f4"
+	#define V_COMMIT_HASH "fdba360"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fdba360"
+	#define V_CURRENT_COMMIT_HASH "cf82bd3"
 #endif
 
 // V comptime_defines:
@@ -6268,7 +6268,7 @@ multi_return_u64_u64 math__bits__add_64(u64 x, u64 y, u64 carry);
 multi_return_u32_u32 math__bits__sub_32(u32 x, u32 y, u32 borrow);
 multi_return_u64_u64 math__bits__sub_64(u64 x, u64 y, u64 borrow);
 u64 _const_math__bits__two32 = 4294967296U; // precomputed
-u64 _const_math__bits__mask32; // inited later
+u64 _const_math__bits__mask32 = 4294967295; // precomputed
 string _const_math__bits__overflow_error; // a string literal, inited later
 string _const_math__bits__divide_error; // a string literal, inited later
 multi_return_u32_u32 math__bits__mul_32(u32 x, u32 y);
@@ -31388,7 +31388,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("11161f4"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fdba360"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -72932,7 +72932,7 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 		}
 		;
 		if (fixed_size <= 0) {
-			v__checker__Checker_error(c, _SLIT("fixed size cannot be zero or negative"), v__ast__Expr_position(init_expr));
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fixed size cannot be zero or negative (fixed_size: "), 0xfe09, {.d_i64 = fixed_size}}, {_SLIT(")"), 0, { .d_c = 0 }}})), v__ast__Expr_position(init_expr));
 		}
 		int idx = v__ast__Table_find_or_register_array_fixed(c->table, array_init->elem_type, ((int)(fixed_size)), init_expr);
 		if (v__ast__Type_has_flag(array_init->elem_type, v__ast__TypeFlag__generic)) {
@@ -75798,8 +75798,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_226818 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_226818.arg0;
+		multi_return_string_v__token__Position mr_226848 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_226848.arg0;
 	}
 	return typ;
 }
@@ -76953,10 +76953,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_260788 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_260788.arg0;
-				int nroute_attributes = mr_260788.arg1;
-				int nargs = mr_260788.arg2;
+				multi_return_bool_int_int mr_260818 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_260818.arg0;
+				int nroute_attributes = mr_260818.arg1;
+				int nargs = mr_260818.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -77143,57 +77143,167 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 			};
-		} else if ((left)._typ == 12 /* u64 */ && (right)._typ == 12 /* u64 */) {
+		} else if ((left)._typ == 12 /* u64 */ && (right)._typ == 8 /* i64 */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
 				Option_v__ast__ComptTimeConstValue _t25;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) + (*right._u64)))) }, (Option*)(&_t25), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) + ((i64)((*right._i64)))))) }, (Option*)(&_t25), sizeof(v__ast__ComptTimeConstValue));
 				return _t25;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
 				Option_v__ast__ComptTimeConstValue _t26;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) - (*right._u64)))) }, (Option*)(&_t26), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) - ((i64)((*right._i64)))))) }, (Option*)(&_t26), sizeof(v__ast__ComptTimeConstValue));
 				return _t26;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
 				Option_v__ast__ComptTimeConstValue _t27;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) * (*right._u64)))) }, (Option*)(&_t27), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) * ((i64)((*right._i64)))))) }, (Option*)(&_t27), sizeof(v__ast__ComptTimeConstValue));
 				return _t27;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
 				Option_v__ast__ComptTimeConstValue _t28;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) / (*right._u64)))) }, (Option*)(&_t28), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) / ((i64)((*right._i64)))))) }, (Option*)(&_t28), sizeof(v__ast__ComptTimeConstValue));
 				return _t28;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
 				Option_v__ast__ComptTimeConstValue _t29;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) % (*right._u64)))) }, (Option*)(&_t29), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) % ((i64)((*right._i64)))))) }, (Option*)(&_t29), sizeof(v__ast__ComptTimeConstValue));
 				return _t29;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
 				Option_v__ast__ComptTimeConstValue _t30;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) ^ (*right._u64))))) }, (Option*)(&_t30), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) ^ ((i64)((*right._i64))))))) }, (Option*)(&_t30), sizeof(v__ast__ComptTimeConstValue));
 				return _t30;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
 				Option_v__ast__ComptTimeConstValue _t31;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) | (*right._u64))))) }, (Option*)(&_t31), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) | ((i64)((*right._i64))))))) }, (Option*)(&_t31), sizeof(v__ast__ComptTimeConstValue));
 				return _t31;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
 				Option_v__ast__ComptTimeConstValue _t32;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) & (*right._u64))))) }, (Option*)(&_t32), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) & ((i64)((*right._i64))))))) }, (Option*)(&_t32), sizeof(v__ast__ComptTimeConstValue));
 				return _t32;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
 				Option_v__ast__ComptTimeConstValue _t33;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) << (*right._u64)))) }, (Option*)(&_t33), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) << ((i64)((*right._i64)))))) }, (Option*)(&_t33), sizeof(v__ast__ComptTimeConstValue));
 				return _t33;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
 				Option_v__ast__ComptTimeConstValue _t34;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) >> (*right._u64)))) }, (Option*)(&_t34), sizeof(v__ast__ComptTimeConstValue));
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) >> ((i64)((*right._i64)))))) }, (Option*)(&_t34), sizeof(v__ast__ComptTimeConstValue));
 				return _t34;
+			}
+			else {
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			};
+		} else if ((left)._typ == 8 /* i64 */ && (right)._typ == 12 /* u64 */) {
+
+			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
+				Option_v__ast__ComptTimeConstValue _t36;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) + ((i64)((*right._u64)))))) }, (Option*)(&_t36), sizeof(v__ast__ComptTimeConstValue));
+				return _t36;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
+				Option_v__ast__ComptTimeConstValue _t37;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) - ((i64)((*right._u64)))))) }, (Option*)(&_t37), sizeof(v__ast__ComptTimeConstValue));
+				return _t37;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
+				Option_v__ast__ComptTimeConstValue _t38;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) * ((i64)((*right._u64)))))) }, (Option*)(&_t38), sizeof(v__ast__ComptTimeConstValue));
+				return _t38;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
+				Option_v__ast__ComptTimeConstValue _t39;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) / ((i64)((*right._u64)))))) }, (Option*)(&_t39), sizeof(v__ast__ComptTimeConstValue));
+				return _t39;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
+				Option_v__ast__ComptTimeConstValue _t40;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) % ((i64)((*right._u64)))))) }, (Option*)(&_t40), sizeof(v__ast__ComptTimeConstValue));
+				return _t40;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
+				Option_v__ast__ComptTimeConstValue _t41;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) ^ ((i64)((*right._u64))))))) }, (Option*)(&_t41), sizeof(v__ast__ComptTimeConstValue));
+				return _t41;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
+				Option_v__ast__ComptTimeConstValue _t42;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) | ((i64)((*right._u64))))))) }, (Option*)(&_t42), sizeof(v__ast__ComptTimeConstValue));
+				return _t42;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
+				Option_v__ast__ComptTimeConstValue _t43;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) & ((i64)((*right._u64))))))) }, (Option*)(&_t43), sizeof(v__ast__ComptTimeConstValue));
+				return _t43;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
+				Option_v__ast__ComptTimeConstValue _t44;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) << ((i64)((*right._u64)))))) }, (Option*)(&_t44), sizeof(v__ast__ComptTimeConstValue));
+				return _t44;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
+				Option_v__ast__ComptTimeConstValue _t45;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) >> ((i64)((*right._u64)))))) }, (Option*)(&_t45), sizeof(v__ast__ComptTimeConstValue));
+				return _t45;
+			}
+			else {
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			};
+		} else if ((left)._typ == 12 /* u64 */ && (right)._typ == 12 /* u64 */) {
+
+			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
+				Option_v__ast__ComptTimeConstValue _t47;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) + (*right._u64)))) }, (Option*)(&_t47), sizeof(v__ast__ComptTimeConstValue));
+				return _t47;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
+				Option_v__ast__ComptTimeConstValue _t48;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) - (*right._u64)))) }, (Option*)(&_t48), sizeof(v__ast__ComptTimeConstValue));
+				return _t48;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
+				Option_v__ast__ComptTimeConstValue _t49;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) * (*right._u64)))) }, (Option*)(&_t49), sizeof(v__ast__ComptTimeConstValue));
+				return _t49;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
+				Option_v__ast__ComptTimeConstValue _t50;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) / (*right._u64)))) }, (Option*)(&_t50), sizeof(v__ast__ComptTimeConstValue));
+				return _t50;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
+				Option_v__ast__ComptTimeConstValue _t51;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) % (*right._u64)))) }, (Option*)(&_t51), sizeof(v__ast__ComptTimeConstValue));
+				return _t51;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
+				Option_v__ast__ComptTimeConstValue _t52;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) ^ (*right._u64))))) }, (Option*)(&_t52), sizeof(v__ast__ComptTimeConstValue));
+				return _t52;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
+				Option_v__ast__ComptTimeConstValue _t53;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) | (*right._u64))))) }, (Option*)(&_t53), sizeof(v__ast__ComptTimeConstValue));
+				return _t53;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
+				Option_v__ast__ComptTimeConstValue _t54;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) & (*right._u64))))) }, (Option*)(&_t54), sizeof(v__ast__ComptTimeConstValue));
+				return _t54;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
+				Option_v__ast__ComptTimeConstValue _t55;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) << (*right._u64)))) }, (Option*)(&_t55), sizeof(v__ast__ComptTimeConstValue));
+				return _t55;
+			}
+			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
+				Option_v__ast__ComptTimeConstValue _t56;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) >> (*right._u64)))) }, (Option*)(&_t56), sizeof(v__ast__ComptTimeConstValue));
+				return _t56;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -77201,54 +77311,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 8 /* i64 */ && (right)._typ == 8 /* i64 */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t36;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) + (*right._i64)))) }, (Option*)(&_t36), sizeof(v__ast__ComptTimeConstValue));
-				return _t36;
+				Option_v__ast__ComptTimeConstValue _t58;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) + (*right._i64)))) }, (Option*)(&_t58), sizeof(v__ast__ComptTimeConstValue));
+				return _t58;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t37;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) - (*right._i64)))) }, (Option*)(&_t37), sizeof(v__ast__ComptTimeConstValue));
-				return _t37;
+				Option_v__ast__ComptTimeConstValue _t59;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) - (*right._i64)))) }, (Option*)(&_t59), sizeof(v__ast__ComptTimeConstValue));
+				return _t59;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t38;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) * (*right._i64)))) }, (Option*)(&_t38), sizeof(v__ast__ComptTimeConstValue));
-				return _t38;
+				Option_v__ast__ComptTimeConstValue _t60;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) * (*right._i64)))) }, (Option*)(&_t60), sizeof(v__ast__ComptTimeConstValue));
+				return _t60;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t39;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) / (*right._i64)))) }, (Option*)(&_t39), sizeof(v__ast__ComptTimeConstValue));
-				return _t39;
+				Option_v__ast__ComptTimeConstValue _t61;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) / (*right._i64)))) }, (Option*)(&_t61), sizeof(v__ast__ComptTimeConstValue));
+				return _t61;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t40;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) % (*right._i64)))) }, (Option*)(&_t40), sizeof(v__ast__ComptTimeConstValue));
-				return _t40;
+				Option_v__ast__ComptTimeConstValue _t62;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) % (*right._i64)))) }, (Option*)(&_t62), sizeof(v__ast__ComptTimeConstValue));
+				return _t62;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t41;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) ^ (*right._i64))))) }, (Option*)(&_t41), sizeof(v__ast__ComptTimeConstValue));
-				return _t41;
+				Option_v__ast__ComptTimeConstValue _t63;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) ^ (*right._i64))))) }, (Option*)(&_t63), sizeof(v__ast__ComptTimeConstValue));
+				return _t63;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t42;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) | (*right._i64))))) }, (Option*)(&_t42), sizeof(v__ast__ComptTimeConstValue));
-				return _t42;
+				Option_v__ast__ComptTimeConstValue _t64;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) | (*right._i64))))) }, (Option*)(&_t64), sizeof(v__ast__ComptTimeConstValue));
+				return _t64;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t43;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) & (*right._i64))))) }, (Option*)(&_t43), sizeof(v__ast__ComptTimeConstValue));
-				return _t43;
+				Option_v__ast__ComptTimeConstValue _t65;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) & (*right._i64))))) }, (Option*)(&_t65), sizeof(v__ast__ComptTimeConstValue));
+				return _t65;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t44;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) << (*right._i64)))) }, (Option*)(&_t44), sizeof(v__ast__ComptTimeConstValue));
-				return _t44;
+				Option_v__ast__ComptTimeConstValue _t66;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) << (*right._i64)))) }, (Option*)(&_t66), sizeof(v__ast__ComptTimeConstValue));
+				return _t66;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t45;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) >> (*right._i64)))) }, (Option*)(&_t45), sizeof(v__ast__ComptTimeConstValue));
-				return _t45;
+				Option_v__ast__ComptTimeConstValue _t67;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) >> (*right._i64)))) }, (Option*)(&_t67), sizeof(v__ast__ComptTimeConstValue));
+				return _t67;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -77256,54 +77366,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 9 /* byte */ && (right)._typ == 9 /* byte */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t47;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) + (*right._byte)))) }, (Option*)(&_t47), sizeof(v__ast__ComptTimeConstValue));
-				return _t47;
+				Option_v__ast__ComptTimeConstValue _t69;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) + (*right._byte)))) }, (Option*)(&_t69), sizeof(v__ast__ComptTimeConstValue));
+				return _t69;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t48;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) - (*right._byte)))) }, (Option*)(&_t48), sizeof(v__ast__ComptTimeConstValue));
-				return _t48;
+				Option_v__ast__ComptTimeConstValue _t70;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) - (*right._byte)))) }, (Option*)(&_t70), sizeof(v__ast__ComptTimeConstValue));
+				return _t70;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t49;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) * (*right._byte)))) }, (Option*)(&_t49), sizeof(v__ast__ComptTimeConstValue));
-				return _t49;
+				Option_v__ast__ComptTimeConstValue _t71;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) * (*right._byte)))) }, (Option*)(&_t71), sizeof(v__ast__ComptTimeConstValue));
+				return _t71;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t50;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) / (*right._byte)))) }, (Option*)(&_t50), sizeof(v__ast__ComptTimeConstValue));
-				return _t50;
+				Option_v__ast__ComptTimeConstValue _t72;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) / (*right._byte)))) }, (Option*)(&_t72), sizeof(v__ast__ComptTimeConstValue));
+				return _t72;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t51;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) % (*right._byte)))) }, (Option*)(&_t51), sizeof(v__ast__ComptTimeConstValue));
-				return _t51;
+				Option_v__ast__ComptTimeConstValue _t73;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) % (*right._byte)))) }, (Option*)(&_t73), sizeof(v__ast__ComptTimeConstValue));
+				return _t73;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t52;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) ^ (*right._byte))))) }, (Option*)(&_t52), sizeof(v__ast__ComptTimeConstValue));
-				return _t52;
+				Option_v__ast__ComptTimeConstValue _t74;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) ^ (*right._byte))))) }, (Option*)(&_t74), sizeof(v__ast__ComptTimeConstValue));
+				return _t74;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t53;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) | (*right._byte))))) }, (Option*)(&_t53), sizeof(v__ast__ComptTimeConstValue));
-				return _t53;
+				Option_v__ast__ComptTimeConstValue _t75;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) | (*right._byte))))) }, (Option*)(&_t75), sizeof(v__ast__ComptTimeConstValue));
+				return _t75;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t54;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) & (*right._byte))))) }, (Option*)(&_t54), sizeof(v__ast__ComptTimeConstValue));
-				return _t54;
+				Option_v__ast__ComptTimeConstValue _t76;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) & (*right._byte))))) }, (Option*)(&_t76), sizeof(v__ast__ComptTimeConstValue));
+				return _t76;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t55;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) << (*right._byte)))) }, (Option*)(&_t55), sizeof(v__ast__ComptTimeConstValue));
-				return _t55;
+				Option_v__ast__ComptTimeConstValue _t77;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) << (*right._byte)))) }, (Option*)(&_t77), sizeof(v__ast__ComptTimeConstValue));
+				return _t77;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t56;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) >> (*right._byte)))) }, (Option*)(&_t56), sizeof(v__ast__ComptTimeConstValue));
-				return _t56;
+				Option_v__ast__ComptTimeConstValue _t78;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) >> (*right._byte)))) }, (Option*)(&_t78), sizeof(v__ast__ComptTimeConstValue));
+				return _t78;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -80063,7 +80173,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 		26, 40, 15, 34, 20, 31, 10, 25,
 		14, 19, 9, 13, 8, 7, 6}));
 	_const_math__bits__max_u32 = ((u32)(4294967295U));
-	_const_math__bits__mask32 = _const_math__bits__two32 - 1U;
 	_const_math__bits__ntz_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
 		((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03,
 		0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04,
