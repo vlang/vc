@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8e99a01"
+#define V_COMMIT_HASH "425ca5e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "dbba46b"
+	#define V_COMMIT_HASH "8e99a01"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8e99a01"
+	#define V_CURRENT_COMMIT_HASH "425ca5e"
 #endif
 
 // V comptime_defines:
@@ -1429,14 +1429,16 @@ typedef enum {
 	v__pref__OS__openbsd, // +6
 	v__pref__OS__netbsd, // +7
 	v__pref__OS__dragonfly, // +8
-	v__pref__OS__js, // +9
-	v__pref__OS__android, // +10
-	v__pref__OS__solaris, // +11
-	v__pref__OS__serenity, // +12
-	v__pref__OS__vinix, // +13
-	v__pref__OS__haiku, // +14
-	v__pref__OS__raw, // +15
-	v__pref__OS__all, // +16
+	v__pref__OS__js_node, // +9
+	v__pref__OS__js_browser, // +10
+	v__pref__OS__js_freestanding, // +11
+	v__pref__OS__android, // +12
+	v__pref__OS__solaris, // +13
+	v__pref__OS__serenity, // +14
+	v__pref__OS__vinix, // +15
+	v__pref__OS__haiku, // +16
+	v__pref__OS__raw, // +17
+	v__pref__OS__all, // +18
 } v__pref__OS;
 
 typedef enum {
@@ -1472,8 +1474,10 @@ typedef enum {
 
 typedef enum {
 	v__pref__Backend__c, // 
-	v__pref__Backend__js, // +1
-	v__pref__Backend__native, // +2
+	v__pref__Backend__js_node, // +1
+	v__pref__Backend__js_browser, // +2
+	v__pref__Backend__js_freestanding, // +3
+	v__pref__Backend__native, // +4
 } v__pref__Backend;
 
 typedef enum {
@@ -5637,8 +5641,8 @@ struct v__gen__js__sourcemap__SourceMap {
 
 
 struct v__gen__js__JsGen {
-	v__ast__Table* table;
 	v__pref__Preferences* pref;
+	v__ast__Table* table;
 	strings__Builder definitions;
 	v__gen__js__Namespace* ns;
 	Map_string_v__gen__js__Namespace_ptr namespaces;
@@ -5664,6 +5668,8 @@ struct v__gen__js__JsGen {
 	Array_v__ast__CallExpr call_stack;
 	bool is_vlines_enabled;
 	v__gen__js__sourcemap__SourceMap sourcemap;
+	Map_string_v__ast__Type comptime_var_type_map;
+	string defer_ifdef;
 };
 
 
@@ -7835,6 +7841,7 @@ string v__pref__vexe_path();
 Option_v__pref__OS v__pref__os_from_string(string os_str);
 string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os();
+bool v__pref__Backend_is_js(v__pref__Backend b);
 Array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args);
 void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
@@ -8782,6 +8789,9 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_fn_typ(v__gen__js__JsGen* g, Array_v__a
 VV_LOCAL_SYMBOL string v__gen__js__JsGen_struct_typ(v__gen__js__JsGen* g, string s);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_prototype(v__gen__js__JsGen* g, v__gen__js__BuiltinPrototypeConfig c);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* g);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_comp_if(v__gen__js__JsGen* g, v__ast__IfExpr node);
+VV_LOCAL_SYMBOL bool v__gen__js__JsGen_comp_if_cond(v__gen__js__JsGen* g, v__ast__Expr cond, bool pkg_exist);
+VV_LOCAL_SYMBOL Option_string v__gen__js__JsGen_comp_if_to_ifdef(v__gen__js__JsGen* g, string name, bool is_comptime_optional);
 Array_string _const_v__gen__js__js_reserved; // inited later
 Array_string _const_v__gen__js__v_types; // inited later
 Array_v__ast__Kind _const_v__gen__js__shallow_equatables; // inited later
@@ -8848,6 +8858,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_typeof_expr(v__gen__js__JsGen* g, v__
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_type_cast_expr(v__gen__js__JsGen* g, v__ast__CastExpr it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_integer_literal_expr(v__gen__js__JsGen* g, v__ast__IntegerLiteral it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_float_literal_expr(v__gen__js__JsGen* g, v__ast__FloatLiteral it);
+VV_LOCAL_SYMBOL v__ast__Type v__gen__js__JsGen_unwrap_generic(v__gen__js__JsGen* g, v__ast__Type typ);
 VV_LOCAL_SYMBOL v__gen__js__JsDoc* v__gen__js__new_jsdoc(v__gen__js__JsGen* gen);
 VV_LOCAL_SYMBOL void v__gen__js__JsDoc_write(v__gen__js__JsDoc* d, string s);
 VV_LOCAL_SYMBOL void v__gen__js__JsDoc_writeln(v__gen__js__JsDoc* d, string s);
@@ -10031,7 +10042,9 @@ static string indent_Array_byte_str(Array_byte a, int indent_count) {
 static string v__pref__Backend_str(v__pref__Backend it) { /* gen_str_for_enum */
 	switch(it) {
 		case v__pref__Backend__c: return _SLIT("c");
-		case v__pref__Backend__js: return _SLIT("js");
+		case v__pref__Backend__js_node: return _SLIT("js_node");
+		case v__pref__Backend__js_browser: return _SLIT("js_browser");
+		case v__pref__Backend__js_freestanding: return _SLIT("js_freestanding");
 		case v__pref__Backend__native: return _SLIT("native");
 		default: return _SLIT("unknown enum value");
 	}
@@ -30599,7 +30612,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("dbba46b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8e99a01"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -30710,50 +30723,60 @@ Option_v__pref__OS v__pref__os_from_string(string os_str) {
 		opt_ok(&(v__pref__OS[]) { v__pref__OS__dragonfly }, (Option*)(&_t8), sizeof(v__pref__OS));
 		return _t8;
 	}
-	else if (string__eq(os_str, _SLIT("js"))) {
+	else if (string__eq(os_str, _SLIT("js")) || string__eq(os_str, _SLIT("js_node"))) {
 		Option_v__pref__OS _t9;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__js }, (Option*)(&_t9), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__js_node }, (Option*)(&_t9), sizeof(v__pref__OS));
 		return _t9;
 	}
-	else if (string__eq(os_str, _SLIT("solaris"))) {
+	else if (string__eq(os_str, _SLIT("js_freestanding"))) {
 		Option_v__pref__OS _t10;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__solaris }, (Option*)(&_t10), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__js_freestanding }, (Option*)(&_t10), sizeof(v__pref__OS));
 		return _t10;
 	}
-	else if (string__eq(os_str, _SLIT("serenity"))) {
+	else if (string__eq(os_str, _SLIT("js_browser"))) {
 		Option_v__pref__OS _t11;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__serenity }, (Option*)(&_t11), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__js_browser }, (Option*)(&_t11), sizeof(v__pref__OS));
 		return _t11;
 	}
-	else if (string__eq(os_str, _SLIT("vinix"))) {
+	else if (string__eq(os_str, _SLIT("solaris"))) {
 		Option_v__pref__OS _t12;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__vinix }, (Option*)(&_t12), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__solaris }, (Option*)(&_t12), sizeof(v__pref__OS));
 		return _t12;
 	}
-	else if (string__eq(os_str, _SLIT("android"))) {
+	else if (string__eq(os_str, _SLIT("serenity"))) {
 		Option_v__pref__OS _t13;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__android }, (Option*)(&_t13), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__serenity }, (Option*)(&_t13), sizeof(v__pref__OS));
 		return _t13;
 	}
-	else if (string__eq(os_str, _SLIT("haiku"))) {
+	else if (string__eq(os_str, _SLIT("vinix"))) {
 		Option_v__pref__OS _t14;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__haiku }, (Option*)(&_t14), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__vinix }, (Option*)(&_t14), sizeof(v__pref__OS));
 		return _t14;
 	}
-	else if (string__eq(os_str, _SLIT("raw"))) {
+	else if (string__eq(os_str, _SLIT("android"))) {
 		Option_v__pref__OS _t15;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__raw }, (Option*)(&_t15), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__android }, (Option*)(&_t15), sizeof(v__pref__OS));
 		return _t15;
 	}
-	else if (string__eq(os_str, _SLIT("nix"))) {
+	else if (string__eq(os_str, _SLIT("haiku"))) {
 		Option_v__pref__OS _t16;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS__linux }, (Option*)(&_t16), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__haiku }, (Option*)(&_t16), sizeof(v__pref__OS));
 		return _t16;
 	}
-	else if (string__eq(os_str, _SLIT(""))) {
+	else if (string__eq(os_str, _SLIT("raw"))) {
 		Option_v__pref__OS _t17;
-		opt_ok(&(v__pref__OS[]) { v__pref__OS___auto }, (Option*)(&_t17), sizeof(v__pref__OS));
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__raw }, (Option*)(&_t17), sizeof(v__pref__OS));
 		return _t17;
+	}
+	else if (string__eq(os_str, _SLIT("nix"))) {
+		Option_v__pref__OS _t18;
+		opt_ok(&(v__pref__OS[]) { v__pref__OS__linux }, (Option*)(&_t18), sizeof(v__pref__OS));
+		return _t18;
+	}
+	else if (string__eq(os_str, _SLIT(""))) {
+		Option_v__pref__OS _t19;
+		opt_ok(&(v__pref__OS[]) { v__pref__OS___auto }, (Option*)(&_t19), sizeof(v__pref__OS));
+		return _t19;
 	}
 	else {
 		return (Option_v__pref__OS){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad OS "), 0xfe10, {.d_s = os_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -30799,37 +30822,45 @@ string v__pref__OS_str(v__pref__OS o) {
 		string _t9 = _SLIT("Dragonfly");
 		return _t9;
 	}
-	else if (o == (v__pref__OS__js)) {
-		string _t10 = _SLIT("JavaScript");
+	else if (o == (v__pref__OS__js_node)) {
+		string _t10 = _SLIT("NodeJS");
 		return _t10;
 	}
-	else if (o == (v__pref__OS__android)) {
-		string _t11 = _SLIT("Android");
+	else if (o == (v__pref__OS__js_freestanding)) {
+		string _t11 = _SLIT("JavaScript");
 		return _t11;
 	}
-	else if (o == (v__pref__OS__solaris)) {
-		string _t12 = _SLIT("Solaris");
+	else if (o == (v__pref__OS__js_browser)) {
+		string _t12 = _SLIT("JavaScript(Browser)");
 		return _t12;
 	}
-	else if (o == (v__pref__OS__serenity)) {
-		string _t13 = _SLIT("SerenityOS");
+	else if (o == (v__pref__OS__android)) {
+		string _t13 = _SLIT("Android");
 		return _t13;
 	}
-	else if (o == (v__pref__OS__vinix)) {
-		string _t14 = _SLIT("Vinix");
+	else if (o == (v__pref__OS__solaris)) {
+		string _t14 = _SLIT("Solaris");
 		return _t14;
 	}
-	else if (o == (v__pref__OS__haiku)) {
-		string _t15 = _SLIT("Haiku");
+	else if (o == (v__pref__OS__serenity)) {
+		string _t15 = _SLIT("SerenityOS");
 		return _t15;
 	}
-	else if (o == (v__pref__OS__raw)) {
-		string _t16 = _SLIT("Raw");
+	else if (o == (v__pref__OS__vinix)) {
+		string _t16 = _SLIT("Vinix");
 		return _t16;
 	}
-	else if (o == (v__pref__OS__all)) {
-		string _t17 = _SLIT("all");
+	else if (o == (v__pref__OS__haiku)) {
+		string _t17 = _SLIT("Haiku");
 		return _t17;
+	}
+	else if (o == (v__pref__OS__raw)) {
+		string _t18 = _SLIT("Raw");
+		return _t18;
+	}
+	else if (o == (v__pref__OS__all)) {
+		string _t19 = _SLIT("all");
+		return _t19;
 	};
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
@@ -30839,6 +30870,19 @@ v__pref__OS v__pref__get_host_os(void) {
 	return _t1;
 	v_panic(_SLIT("unknown host OS"));
 	VUNREACHABLE();
+	return 0;
+}
+
+bool v__pref__Backend_is_js(v__pref__Backend b) {
+
+	if (b == (v__pref__Backend__js_node) || b == (v__pref__Backend__js_browser) || b == (v__pref__Backend__js_freestanding)) {
+		bool _t1 = true;
+		return _t1;
+	}
+	else {
+		bool _t2 = false;
+		return _t2;
+	};
 	return 0;
 }
 
@@ -31185,7 +31229,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		else if (string__eq(arg, _SLIT("-o")) || string__eq(arg, _SLIT("-output"))) {
 			res->out_name = os__cmdline__option(current_args, arg, _SLIT(""));
 			if (string_ends_with(res->out_name, _SLIT(".js"))) {
-				res->backend = v__pref__Backend__js;
+				res->backend = v__pref__Backend__js_node;
 			}
 			if (!os__is_abs_path(res->out_name)) {
 				res->out_name = os__join_path(os__getwd(), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){res->out_name})));
@@ -31202,6 +31246,9 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			}
 			
  			v__pref__Backend b =  (*(v__pref__Backend*)_t22.data);
+			if (v__pref__Backend_is_js(b)) {
+				res->output_cross_c = true;
+			}
 			res->backend = b;
 			i++;
 		}
@@ -31436,13 +31483,28 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 	}
 	else if (string__eq(s, _SLIT("js"))) {
 		Option_v__pref__Backend _t2;
-		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__js }, (Option*)(&_t2), sizeof(v__pref__Backend));
+		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__js_node }, (Option*)(&_t2), sizeof(v__pref__Backend));
 		return _t2;
 	}
-	else if (string__eq(s, _SLIT("native"))) {
+	else if (string__eq(s, _SLIT("js_node"))) {
 		Option_v__pref__Backend _t3;
-		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__native }, (Option*)(&_t3), sizeof(v__pref__Backend));
+		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__js_node }, (Option*)(&_t3), sizeof(v__pref__Backend));
 		return _t3;
+	}
+	else if (string__eq(s, _SLIT("js_browser"))) {
+		Option_v__pref__Backend _t4;
+		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__js_browser }, (Option*)(&_t4), sizeof(v__pref__Backend));
+		return _t4;
+	}
+	else if (string__eq(s, _SLIT("js_freestanding"))) {
+		Option_v__pref__Backend _t5;
+		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__js_freestanding }, (Option*)(&_t5), sizeof(v__pref__Backend));
+		return _t5;
+	}
+	else if (string__eq(s, _SLIT("native"))) {
+		Option_v__pref__Backend _t6;
+		opt_ok(&(v__pref__Backend[]) { v__pref__Backend__native }, (Option*)(&_t6), sizeof(v__pref__Backend));
+		return _t6;
 	}
 	else {
 		return (Option_v__pref__Backend){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Unknown backend type "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -31537,13 +31599,13 @@ Array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Prefere
 		if (prefs->backend == v__pref__Backend__c && !v__pref__Preferences_should_compile_c(prefs, file)) {
 			continue;
 		}
-		if (prefs->backend == v__pref__Backend__js && !v__pref__Preferences_should_compile_js(prefs, file)) {
+		if (v__pref__Backend_is_js(prefs->backend) && !v__pref__Preferences_should_compile_js(prefs, file)) {
 			continue;
 		}
 		if (prefs->backend == v__pref__Backend__native && !v__pref__Preferences_should_compile_native(prefs, file)) {
 			continue;
 		}
-		if (prefs->backend != v__pref__Backend__js && !v__pref__Preferences_should_compile_asm(prefs, file)) {
+		if (!v__pref__Backend_is_js(prefs->backend) && !v__pref__Preferences_should_compile_asm(prefs, file)) {
 			continue;
 		}
 		if (string_starts_with(file, _SLIT(".#"))) {
@@ -41811,12 +41873,12 @@ VV_LOCAL_SYMBOL v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 	bool old_inside_defer = p->inside_defer;
 	p->inside_defer = false;
 	v__parser__Parser_open_scope(p);
-	if (p->pref->backend != v__pref__Backend__js) {
+	if (!v__pref__Backend_is_js(p->pref->backend)) {
 		p->scope->detached_from_parent = true;
 	}
-	multi_return_Array_v__ast__Param_bool_bool mr_17879 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_17879.arg0;
-	bool is_variadic = mr_17879.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_17881 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_17881.arg0;
+	bool is_variadic = mr_17881.arg2;
 	for (int _t2 = 0; _t2 < args.len; ++_t2) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t2];
 		if (arg.name.len == 0) {
@@ -62770,9 +62832,389 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 	v__gen__js__JsGen_dec_indent(g);
 }
 
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_comp_if(v__gen__js__JsGen* g, v__ast__IfExpr node) {
+	if (!node.is_expr && !node.has_else && node.branches.len == 1) {
+		if ((*(v__ast__IfBranch*)/*ee elem_typ */array_get(node.branches, 0)).stmts.len == 0) {
+			return;
+		}
+	}
+	for (int i = 0; i < node.branches.len; ++i) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[i];
+		if (i == node.branches.len - 1 && node.has_else) {
+			v__gen__js__JsGen_writeln(g, _SLIT("else"));
+		} else {
+			if (i == 0) {
+				v__gen__js__JsGen_write(g, _SLIT("if ("));
+			} else {
+				v__gen__js__JsGen_write(g, _SLIT("else if ("));
+			}
+			v__gen__js__JsGen_comp_if_cond(g, branch.cond, branch.pkg_exist);
+			v__gen__js__JsGen_writeln(g, _SLIT(")"));
+		}
+		if (node.is_expr) {
+			print( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_v__ast__Stmt_str(branch.stmts)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			int len = branch.stmts.len;
+			if (len > 0) {
+				v__ast__ExprStmt last = /* as */ *(v__ast__ExprStmt*)__as_cast(((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, len - 1)))._v__ast__ExprStmt,((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, len - 1)))._typ, 304) /*expected idx: 304, name: v.ast.ExprStmt */ ;
+				if (len > 1) {
+					string tmp = v__gen__js__JsGen_new_tmp_var(g);
+					v__gen__js__JsGen_inc_indent(g);
+					v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = tmp}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_writeln(g, _SLIT("{"));
+					v__gen__js__JsGen_stmts(g, array_slice(branch.stmts, 0, len - 1));
+					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_stmt(g, v__ast__ExprStmt_to_sumtype_v__ast__Stmt(&last));
+					v__gen__js__JsGen_writeln(g, _SLIT("}"));
+					v__gen__js__JsGen_dec_indent(g);
+					v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+				} else {
+					v__gen__js__JsGen_stmt(g, v__ast__ExprStmt_to_sumtype_v__ast__Stmt(&last));
+				}
+			}
+		} else {
+			v__gen__js__JsGen_writeln(g, _SLIT("{"));
+			v__gen__js__JsGen_stmts(g, branch.stmts);
+			v__gen__js__JsGen_writeln(g, _SLIT("}"));
+		}
+	}
+}
+
+VV_LOCAL_SYMBOL bool v__gen__js__JsGen_comp_if_cond(v__gen__js__JsGen* g, v__ast__Expr cond, bool pkg_exist) {
+	if (cond._typ == 249 /* v.ast.BoolLiteral */) {
+		v__gen__js__JsGen_expr(g, cond);
+		bool _t1 = true;
+		return _t1;
+	}
+	else if (cond._typ == 279 /* v.ast.ParExpr */) {
+		v__gen__js__JsGen_write(g, _SLIT("("));
+		bool is_cond_true = v__gen__js__JsGen_comp_if_cond(g, (*cond._v__ast__ParExpr).expr, pkg_exist);
+		v__gen__js__JsGen_write(g, _SLIT(")"));
+		return is_cond_true;
+	}
+	else if (cond._typ == 281 /* v.ast.PrefixExpr */) {
+		v__gen__js__JsGen_write(g, v__token__Kind_str((*cond._v__ast__PrefixExpr).op));
+		bool _t3 = v__gen__js__JsGen_comp_if_cond(g, (*cond._v__ast__PrefixExpr).right, pkg_exist);
+		return _t3;
+	}
+	else if (cond._typ == 280 /* v.ast.PostfixExpr */) {
+		Option_string _t4 = v__gen__js__JsGen_comp_if_to_ifdef(g, (/* as */ *(v__ast__Ident*)__as_cast(((*cond._v__ast__PostfixExpr).expr)._v__ast__Ident,((*cond._v__ast__PostfixExpr).expr)._typ, 264) /*expected idx: 264, name: v.ast.Ident */ ).name, true);
+		if (_t4.state != 0) { /*or block*/ 
+			IError err = _t4.err;
+			v__gen__js__verror((*(err.msg)));
+			VUNREACHABLE();
+			bool _t5 = false;
+			return _t5;
+		}
+		
+ 		string ifdef =  (*(string*)_t4.data);
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ifdef}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		bool _t6 = true;
+		return _t6;
+	}
+	else if (cond._typ == 268 /* v.ast.InfixExpr */) {
+
+		if ((*cond._v__ast__InfixExpr).op == (v__token__Kind__and) || (*cond._v__ast__InfixExpr).op == (v__token__Kind__logical_or)) {
+			bool l = v__gen__js__JsGen_comp_if_cond(g, (*cond._v__ast__InfixExpr).left, pkg_exist);
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str((*cond._v__ast__InfixExpr).op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+			bool r = v__gen__js__JsGen_comp_if_cond(g, (*cond._v__ast__InfixExpr).right, pkg_exist);
+			bool _t7 = ((*cond._v__ast__InfixExpr).op == v__token__Kind__and ? (l && r) : (l || r));
+			return _t7;
+		}
+		else if ((*cond._v__ast__InfixExpr).op == (v__token__Kind__key_is) || (*cond._v__ast__InfixExpr).op == (v__token__Kind__not_is)) {
+			v__ast__Expr left = (*cond._v__ast__InfixExpr).left;
+			string name = _SLIT("");
+			v__ast__Type exp_type = ((v__ast__Type)(0));
+			v__ast__Type got_type = (/* as */ *(v__ast__TypeNode*)__as_cast(((*cond._v__ast__InfixExpr).right)._v__ast__TypeNode,((*cond._v__ast__InfixExpr).right)._typ, 290) /*expected idx: 290, name: v.ast.TypeNode */ ).typ;
+			if ((left)._typ == 290 /* v.ast.TypeNode */ && ((*cond._v__ast__InfixExpr).right)._typ == 290 /* v.ast.TypeNode */ && v__ast__Table_get_type_symbol(g->table, got_type)->kind == v__ast__Kind__interface_) {
+				v__ast__TypeSymbol* interface_sym = v__ast__Table_get_type_symbol(g->table, got_type);
+				if ((interface_sym->info)._typ == 426 /* v.ast.Interface */) {
+					v__ast__Type checked_type = v__gen__js__JsGen_unwrap_generic(g, (*left._v__ast__TypeNode).typ);
+					bool is_true = v__ast__Table_does_type_implement_interface(g->table, checked_type, got_type);
+					if ((*cond._v__ast__InfixExpr).op == v__token__Kind__key_is) {
+						if (is_true) {
+							v__gen__js__JsGen_write(g, _SLIT("1"));
+						} else {
+							v__gen__js__JsGen_write(g, _SLIT("0"));
+						}
+						return is_true;
+					} else if ((*cond._v__ast__InfixExpr).op == v__token__Kind__not_is) {
+						if (is_true) {
+							v__gen__js__JsGen_write(g, _SLIT("0"));
+						} else {
+							v__gen__js__JsGen_write(g, _SLIT("1"));
+						}
+						bool _t9 = !is_true;
+						return _t9;
+					}
+				}
+			} else if ((left)._typ == 284 /* v.ast.SelectorExpr */) {
+				name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str((*left._v__ast__SelectorExpr).expr)}}, {_SLIT("."), 0xfe10, {.d_s = (*left._v__ast__SelectorExpr).field_name}}, {_SLIT0, 0, { .d_c = 0 }}}));
+				exp_type = (*(v__ast__Type*)map_get(ADDR(map, g->comptime_var_type_map), &(string[]){name}, &(v__ast__Type[]){ 0 }));
+			} else if ((left)._typ == 290 /* v.ast.TypeNode */) {
+				name = v__ast__TypeNode_str((*left._v__ast__TypeNode));
+				exp_type = v__gen__js__JsGen_unwrap_generic(g, (*left._v__ast__TypeNode).typ);
+			}
+			if ((*cond._v__ast__InfixExpr).op == v__token__Kind__key_is) {
+				v__gen__js__JsGen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = exp_type}}, {_SLIT(" == "), 0xfe07, {.d_i32 = got_type}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				bool _t10 = v__ast__Type_alias_eq(exp_type, got_type);
+				return _t10;
+			} else {
+				v__gen__js__JsGen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = exp_type}}, {_SLIT(" != "), 0xfe07, {.d_i32 = got_type}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				bool _t11 = !v__ast__Type_alias_eq(exp_type, got_type);
+				return _t11;
+			}
+		}
+		else if ((*cond._v__ast__InfixExpr).op == (v__token__Kind__eq) || (*cond._v__ast__InfixExpr).op == (v__token__Kind__ne)) {
+			v__gen__js__JsGen_write(g, _SLIT("1"));
+			bool _t12 = true;
+			return _t12;
+		}
+		else {
+			bool _t13 = true;
+			return _t13;
+		};
+	}
+	else if (cond._typ == 264 /* v.ast.Ident */) {
+		Option_string _t14 = v__gen__js__JsGen_comp_if_to_ifdef(g, (*cond._v__ast__Ident).name, false);
+		if (_t14.state != 0) { /*or block*/ 
+			IError err = _t14.err;
+			*(string*) _t14.data = _SLIT("true");
+		}
+		
+ 		string ifdef =  (*(string*)_t14.data);
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ifdef}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		bool _t15 = true;
+		return _t15;
+	}
+	else if (cond._typ == 256 /* v.ast.ComptimeCall */) {
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = pkg_exist ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		bool _t16 = true;
+		return _t16;
+	}
+	
+	else {
+		v__gen__js__JsGen_write(g, _SLIT("1"));
+		bool _t17 = true;
+		return _t17;
+	}
+	;
+	return 0;
+}
+
+VV_LOCAL_SYMBOL Option_string v__gen__js__JsGen_comp_if_to_ifdef(v__gen__js__JsGen* g, string name, bool is_comptime_optional) {
+
+	if (string__eq(name, _SLIT("windows"))) {
+		Option_string _t1;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"windows\")") }, (Option*)(&_t1), sizeof(string));
+		return _t1;
+	}
+	else if (string__eq(name, _SLIT("ios"))) {
+		Option_string _t2;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"darwin\")") }, (Option*)(&_t2), sizeof(string));
+		return _t2;
+	}
+	else if (string__eq(name, _SLIT("macos"))) {
+		Option_string _t3;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"darwin\")") }, (Option*)(&_t3), sizeof(string));
+		return _t3;
+	}
+	else if (string__eq(name, _SLIT("mach"))) {
+		Option_string _t4;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"darwin\")") }, (Option*)(&_t4), sizeof(string));
+		return _t4;
+	}
+	else if (string__eq(name, _SLIT("darwin"))) {
+		Option_string _t5;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"darwin\")") }, (Option*)(&_t5), sizeof(string));
+		return _t5;
+	}
+	else if (string__eq(name, _SLIT("linux"))) {
+		Option_string _t6;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"linux\")") }, (Option*)(&_t6), sizeof(string));
+		return _t6;
+	}
+	else if (string__eq(name, _SLIT("freebsd"))) {
+		Option_string _t7;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"freebsd\")") }, (Option*)(&_t7), sizeof(string));
+		return _t7;
+	}
+	else if (string__eq(name, _SLIT("openbsd"))) {
+		Option_string _t8;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"openbsd\")") }, (Option*)(&_t8), sizeof(string));
+		return _t8;
+	}
+	else if (string__eq(name, _SLIT("bsd"))) {
+		Option_string _t9;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"freebsd\" || ($process.platform == \"openbsd\"))") }, (Option*)(&_t9), sizeof(string));
+		return _t9;
+	}
+	else if (string__eq(name, _SLIT("android"))) {
+		Option_string _t10;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"android\")") }, (Option*)(&_t10), sizeof(string));
+		return _t10;
+	}
+	else if (string__eq(name, _SLIT("solaris"))) {
+		Option_string _t11;
+		opt_ok(&(string[]) { _SLIT("($process.platform == \"sunos\")") }, (Option*)(&_t11), sizeof(string));
+		return _t11;
+	}
+	else if (string__eq(name, _SLIT("js_node"))) {
+		if (g->pref->backend == v__pref__Backend__js_node) {
+			Option_string _t12;
+			opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t12), sizeof(string));
+			return _t12;
+		} else {
+			Option_string _t13;
+			opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t13), sizeof(string));
+			return _t13;
+		}
+	}
+	else if (string__eq(name, _SLIT("js_freestanding"))) {
+		if (g->pref->backend == v__pref__Backend__js_freestanding) {
+			Option_string _t14;
+			opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t14), sizeof(string));
+			return _t14;
+		} else {
+			Option_string _t15;
+			opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t15), sizeof(string));
+			return _t15;
+		}
+	}
+	else if (string__eq(name, _SLIT("js_browser"))) {
+		if (g->pref->backend == v__pref__Backend__js_browser) {
+			Option_string _t16;
+			opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t16), sizeof(string));
+			return _t16;
+		} else {
+			Option_string _t17;
+			opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t17), sizeof(string));
+			return _t17;
+		}
+	}
+	else if (string__eq(name, _SLIT("js"))) {
+		Option_string _t18;
+		opt_ok(&(string[]) { _SLIT("true") }, (Option*)(&_t18), sizeof(string));
+		return _t18;
+	}
+	else if (string__eq(name, _SLIT("gcc"))) {
+		Option_string _t19;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t19), sizeof(string));
+		return _t19;
+	}
+	else if (string__eq(name, _SLIT("tinyc"))) {
+		Option_string _t20;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t20), sizeof(string));
+		return _t20;
+	}
+	else if (string__eq(name, _SLIT("clang"))) {
+		Option_string _t21;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t21), sizeof(string));
+		return _t21;
+	}
+	else if (string__eq(name, _SLIT("mingw"))) {
+		Option_string _t22;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t22), sizeof(string));
+		return _t22;
+	}
+	else if (string__eq(name, _SLIT("msvc"))) {
+		Option_string _t23;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t23), sizeof(string));
+		return _t23;
+	}
+	else if (string__eq(name, _SLIT("cplusplus"))) {
+		Option_string _t24;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t24), sizeof(string));
+		return _t24;
+	}
+	else if (string__eq(name, _SLIT("threads"))) {
+		Option_string _t25;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t25), sizeof(string));
+		return _t25;
+	}
+	else if (string__eq(name, _SLIT("gcboehm"))) {
+		Option_string _t26;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t26), sizeof(string));
+		return _t26;
+	}
+	else if (string__eq(name, _SLIT("debug"))) {
+		Option_string _t27;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t27), sizeof(string));
+		return _t27;
+	}
+	else if (string__eq(name, _SLIT("prod"))) {
+		Option_string _t28;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t28), sizeof(string));
+		return _t28;
+	}
+	else if (string__eq(name, _SLIT("test"))) {
+		Option_string _t29;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t29), sizeof(string));
+		return _t29;
+	}
+	else if (string__eq(name, _SLIT("glibc"))) {
+		Option_string _t30;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t30), sizeof(string));
+		return _t30;
+	}
+	else if (string__eq(name, _SLIT("prealloc"))) {
+		Option_string _t31;
+		opt_ok(&(string[]) { _SLIT("false") }, (Option*)(&_t31), sizeof(string));
+		return _t31;
+	}
+	else if (string__eq(name, _SLIT("no_bounds_checking"))) {
+		Option_string _t32;
+		opt_ok(&(string[]) { _SLIT("CUSTOM_DEFINE_no_bounds_checking") }, (Option*)(&_t32), sizeof(string));
+		return _t32;
+	}
+	else if (string__eq(name, _SLIT("freestanding"))) {
+		Option_string _t33;
+		opt_ok(&(string[]) { _SLIT("_VFREESTANDING") }, (Option*)(&_t33), sizeof(string));
+		return _t33;
+	}
+	else if (string__eq(name, _SLIT("amd64"))) {
+		Option_string _t34;
+		opt_ok(&(string[]) { _SLIT("($process.arch == \"x64\")") }, (Option*)(&_t34), sizeof(string));
+		return _t34;
+	}
+	else if (string__eq(name, _SLIT("aarch64")) || string__eq(name, _SLIT("arm64"))) {
+		Option_string _t35;
+		opt_ok(&(string[]) { _SLIT("($process.arch == \"arm64)") }, (Option*)(&_t35), sizeof(string));
+		return _t35;
+	}
+	else if (string__eq(name, _SLIT("x64"))) {
+		Option_string _t36;
+		opt_ok(&(string[]) { _SLIT("($process.arch == \"x64\")") }, (Option*)(&_t36), sizeof(string));
+		return _t36;
+	}
+	else if (string__eq(name, _SLIT("x32"))) {
+		Option_string _t37;
+		opt_ok(&(string[]) { _SLIT("($process.arch == \"x32\")") }, (Option*)(&_t37), sizeof(string));
+		return _t37;
+	}
+	else if (string__eq(name, _SLIT("little_endian"))) {
+		Option_string _t38;
+		opt_ok(&(string[]) { _SLIT("($os.endianess == \"LE\")") }, (Option*)(&_t38), sizeof(string));
+		return _t38;
+	}
+	else if (string__eq(name, _SLIT("big_endian"))) {
+		Option_string _t39;
+		opt_ok(&(string[]) { _SLIT("($os.endianess == \"BE\")") }, (Option*)(&_t39), sizeof(string));
+		return _t39;
+	}
+	else {
+		if (is_comptime_optional || (g->pref->compile_defines_all.len > 0 && (Array_string_contains(g->pref->compile_defines_all, name)))) {
+			Option_string _t40;
+			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t40), sizeof(string));
+			return _t40;
+		}
+		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	};
+	return (Option_string){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
 string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pref__Preferences* pref) {
-	v__gen__js__JsGen* g = (v__gen__js__JsGen*)memdup(&(v__gen__js__JsGen){.table = table,
-		.pref = pref,
+	v__gen__js__JsGen* g = (v__gen__js__JsGen*)memdup(&(v__gen__js__JsGen){.pref = pref,
+		.table = table,
 		.definitions = strings__new_builder(100),
 		.ns = 0,
 		.namespaces = new_map(sizeof(string), sizeof(v__gen__js__Namespace*), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
@@ -62798,6 +63240,8 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 		.call_stack = __new_array(0, 0, sizeof(v__ast__CallExpr)),
 		.is_vlines_enabled = 0,
 		.sourcemap = (v__gen__js__sourcemap__SourceMap){.version = 0,.file = (string){.str=(byteptr)"", .is_lit=1},.source_root = (string){.str=(byteptr)"", .is_lit=1},.sources = (v__gen__js__sourcemap__Sets){.value = new_map(sizeof(string), sizeof(u32), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.sources_content = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.names = (v__gen__js__sourcemap__Sets){.value = new_map(sizeof(string), sizeof(u32), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.mappings = (v__gen__js__sourcemap__Mappings){.sorted = 0,.last = (v__gen__js__sourcemap__Mapping){.GenPosition = (v__gen__js__sourcemap__GenPosition){.gen_line = 0,.gen_column = 0,},.sources_ind = 0,},.values = __new_array(0, 0, sizeof(v__gen__js__sourcemap__Mapping)),},.sources_content_inline = 0,},
+		.comptime_var_type_map = new_map(sizeof(string), sizeof(v__ast__Type), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
+		.defer_ifdef = (string){.str=(byteptr)"", .is_lit=1},
 	}, sizeof(v__gen__js__JsGen));
 	g->doc = v__gen__js__new_jsdoc(g);
 	if (pref->is_prod) {
@@ -63019,6 +63463,22 @@ void v__gen__js__JsGen_init(v__gen__js__JsGen* g) {
 	strings__Builder_writeln(&g->definitions, _SLIT("\"use strict\";"));
 	strings__Builder_writeln(&g->definitions, _SLIT(""));
 	strings__Builder_writeln(&g->definitions, _SLIT("var $global = (new Function(\"return this\"))();"));
+	if (g->pref->backend != v__pref__Backend__js_node) {
+		strings__Builder_writeln(&g->definitions, _SLIT("const $process = {"));
+		strings__Builder_writeln(&g->definitions, _SLIT("  arch: \"js\","));
+		if (g->pref->backend == v__pref__Backend__js_freestanding) {
+			strings__Builder_writeln(&g->definitions, _SLIT("  platform: \"freestanding\""));
+		} else {
+			strings__Builder_writeln(&g->definitions, _SLIT("  platform: \"browser\""));
+		}
+		strings__Builder_writeln(&g->definitions, _SLIT("}"));
+		strings__Builder_writeln(&g->definitions, _SLIT("const $os = {"));
+		strings__Builder_writeln(&g->definitions, _SLIT("  endianess: \"LE\","));
+		strings__Builder_writeln(&g->definitions, _SLIT("}"));
+	} else {
+		strings__Builder_writeln(&g->definitions, _SLIT("const $os = require(\"os\");"));
+		strings__Builder_writeln(&g->definitions, _SLIT("const $process = process;"));
+	}
 }
 
 string v__gen__js__JsGen_hashes(v__gen__js__JsGen* g) {
@@ -64126,6 +64586,10 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_lock_expr(v__gen__js__JsGen* g, v__as
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr node) {
+	if (node.is_comptime) {
+		v__gen__js__JsGen_comp_if(g, node);
+		return;
+	}
 	v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(g->table, node.typ);
 	if (node.is_expr && node.branches.len >= 2 && node.has_else && type_sym->kind != v__ast__Kind__void) {
 		v__gen__js__JsGen_write(g, _SLIT("("));
@@ -64585,6 +65049,17 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_float_literal_expr(v__gen__js__JsGen*
 		v__gen__js__JsGen_write(g, _SLIT("new "));
 	}
 	v__gen__js__JsGen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, typ)}}, {_SLIT("("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+}
+
+VV_LOCAL_SYMBOL v__ast__Type v__gen__js__JsGen_unwrap_generic(v__gen__js__JsGen* g, v__ast__Type typ) {
+	if (v__ast__Type_has_flag(typ, v__ast__TypeFlag__generic)) {
+		Option_v__ast__Type _t1;
+		if (_t1 = v__ast__Table_resolve_generic_to_concrete(g->table, typ, g->table->cur_fn->generic_names, g->table->cur_concrete_types), _t1.state == 0) {
+			v__ast__Type t_typ = *(v__ast__Type*)_t1.data;
+			return t_typ;
+		}
+	}
+	return typ;
 }
 
 VV_LOCAL_SYMBOL v__gen__js__JsDoc* v__gen__js__new_jsdoc(v__gen__js__JsGen* gen) {
@@ -69062,8 +69537,8 @@ v__ast__Type former_expected_type;
 				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), node->pos);
 			}
 			v__checker__Checker_check_expr_opt_call(c, node->right, right_type);
-			multi_return_string_v__token__Position mr_50403 = v__checker__Checker_fail_if_immutable(c, node->left);
-			node->auto_locked = mr_50403.arg0;
+			multi_return_string_v__token__Position mr_50436 = v__checker__Checker_fail_if_immutable(c, node->left);
+			node->auto_locked = mr_50436.arg0;
 			v__ast__Type left_value_type = v__ast__Table_value_type(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 			v__ast__TypeSymbol* left_value_sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, left_value_type));
 			if (left_value_sym->kind == v__ast__Kind__interface_) {
@@ -69305,19 +69780,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__shared_f)) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("you have to create a handle and `lock` it to modify `shared` "), 0xfe10, {.d_s = kind}}, {_SLIT(" element"), 0, { .d_c = 0 }}})), v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_58607 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_58607.arg0;
-		pos = mr_58607.arg1;
+		multi_return_string_v__token__Position mr_58640 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_58640.arg0;
+		pos = mr_58640.arg1;
 	}
 	else if (expr._typ == 279 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_58676 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_58676.arg0;
-		pos = mr_58676.arg1;
+		multi_return_string_v__token__Position mr_58709 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_58709.arg0;
+		pos = mr_58709.arg1;
 	}
 	else if (expr._typ == 281 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_58748 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_58748.arg0;
-		pos = mr_58748.arg1;
+		multi_return_string_v__token__Position mr_58781 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_58781.arg0;
+		pos = mr_58781.arg1;
 	}
 	else if (expr._typ == 284 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -69379,9 +69854,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 					string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*expr._v__ast__SelectorExpr).field_name}}, {_SLIT("` of struct `"), 0xfe10, {.d_s = type_str}}, {_SLIT("` is immutable"), 0, { .d_c = 0 }}})), (*expr._v__ast__SelectorExpr).pos);
 				}
-				multi_return_string_v__token__Position mr_60549 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-				to_lock = mr_60549.arg0;
-				pos = mr_60549.arg1;
+				multi_return_string_v__token__Position mr_60582 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+				to_lock = mr_60582.arg0;
+				pos = mr_60582.arg1;
 			}
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
@@ -69418,9 +69893,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 251 /* v.ast.CallExpr */) {
 		if (string__eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_61682 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_61682.arg0;
-			pos = mr_61682.arg1;
+			multi_return_string_v__token__Position mr_61715 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_61715.arg0;
+			pos = mr_61715.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -69721,9 +70196,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_74667 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_74667.arg0;
-			v__token__Position pos = mr_74667.arg1;
+			multi_return_string_v__token__Position mr_74700 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_74700.arg0;
+			v__token__Position pos = mr_74700.arg1;
 			if (!v__ast__Expr_is_lvalue(call_expr->left)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_expr->left));
 			}
@@ -69812,9 +70287,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg->pos);
 			}
 			if (arg->is_mut) {
-				multi_return_string_v__token__Position mr_78759 = v__checker__Checker_fail_if_immutable(c, arg->expr);
-				string to_lock = mr_78759.arg0;
-				v__token__Position pos = mr_78759.arg1;
+				multi_return_string_v__token__Position mr_78792 = v__checker__Checker_fail_if_immutable(c, arg->expr);
+				string to_lock = mr_78792.arg0;
+				v__token__Position pos = mr_78792.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg->share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(arg->expr));
@@ -70335,9 +70810,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg->pos);
 		}
 		if (call_arg->is_mut && func.language == v__ast__Language__v) {
-			multi_return_string_v__token__Position mr_98902 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
-			string to_lock = mr_98902.arg0;
-			v__token__Position pos = mr_98902.arg1;
+			multi_return_string_v__token__Position mr_98935 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
+			string to_lock = mr_98935.arg0;
+			v__token__Position pos = mr_98935.arg1;
 			if (!v__ast__Expr_is_lvalue(call_arg->expr)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_arg->expr));
 			}
@@ -72248,7 +72723,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_asm_stmt(v__checker__Checker* c, v__ast
 	if (stmt->is_goto) {
 		v__checker__Checker_warn(c, _SLIT("inline assembly goto is not supported, it will most likely not work"), stmt->pos);
 	}
-	if (c->pref->backend == v__pref__Backend__js) {
+	if (v__pref__Backend_is_js(c->pref->backend)) {
 		v__checker__Checker_error(c, _SLIT("inline assembly is not supported in the js backend"), stmt->pos);
 	}
 	if (c->pref->backend == v__pref__Backend__c && c->pref->ccompiler_type == v__pref__CompilerType__msvc) {
@@ -72343,7 +72818,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_hash_stmt(v__checker__Checker* c, v__as
 	if (c->skip_flags) {
 		return;
 	}
-	if (c->pref->backend == v__pref__Backend__js) {
+	if (v__pref__Backend_is_js(c->pref->backend)) {
 		if (!string_ends_with(c->file->path, _SLIT(".js.v"))) {
 			v__checker__Checker_error(c, _SLIT("hash statements are only allowed in backend specific files such \"x.js.v\""), node->pos);
 		}
@@ -74532,7 +75007,7 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 		} else if ((Array_string_contains(_const_v__checker__valid_comp_if_other, cname))) {
 
 			if (string__eq(cname, _SLIT("js"))) {
-				bool _t23 = c->pref->backend != v__pref__Backend__js;
+				bool _t23 = !v__pref__Backend_is_js(c->pref->backend);
 				return _t23;
 			}
 			else if (string__eq(cname, _SLIT("debug"))) {
@@ -74716,8 +75191,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_226961 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_226961.arg0;
+		multi_return_string_v__token__Position mr_226998 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_226998.arg0;
 	}
 	return typ;
 }
@@ -75863,10 +76338,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_260931 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_260931.arg0;
-				int nroute_attributes = mr_260931.arg1;
-				int nargs = mr_260931.arg2;
+				multi_return_bool_int_int mr_260968 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_260968.arg0;
+				int nroute_attributes = mr_260968.arg1;
+				int nargs = mr_260968.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -77918,7 +78393,7 @@ void v__builder__compile(string command, v__pref__Preferences* pref) {
 	if (pref->backend == (v__pref__Backend__c)) {
 		v__builder__Builder_compile_c(&b);
 	}
-	else if (pref->backend == (v__pref__Backend__js)) {
+	else if (pref->backend == (v__pref__Backend__js_node) || pref->backend == (v__pref__Backend__js_freestanding) || pref->backend == (v__pref__Backend__js_browser)) {
 		v__builder__Builder_compile_js(&b);
 	}
 	else if (pref->backend == (v__pref__Backend__native)) {
@@ -77997,7 +78472,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 	}
 	string exefile = os__real_path(b->pref->out_name);
 	string cmd =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = exefile}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
-	if (b->pref->backend == v__pref__Backend__js) {
+	if (v__pref__Backend_is_js(b->pref->backend)) {
 		exefile = os__real_path( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = b->pref->out_name}}, {_SLIT(".js"), 0, { .d_c = 0 }}})));
 		cmd =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("node \""), 0xfe10, {.d_s = exefile}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
 	}
@@ -78062,7 +78537,7 @@ Array_string v__builder__Builder_get_builtin_files(v__builder__Builder* v) {
 		string location = ((string*)v->pref->lookup_path.data)[_t1];
 		if (os__exists(os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("builtin")}))))) {
 			Array_string builtin_files = __new_array_with_default(0, 0, sizeof(string), 0);
-			if (v->pref->backend == v__pref__Backend__js) {
+			if (v__pref__Backend_is_js(v->pref->backend)) {
 				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("builtin"), _SLIT("js")}))))), _t2, Array_string);
 			} else {
 				_PUSH_MANY(&builtin_files, (v__builder__Builder_v_files_from_dir(v, os__join_path(location, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("builtin")}))))), _t3, Array_string);
@@ -79534,8 +80009,9 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__checker__valid_comp_if_compilers = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("gcc"), _SLIT("tinyc"), _SLIT("clang"), _SLIT("mingw"), _SLIT("msvc"), _SLIT("cplusplus")}));
 	_const_v__checker__valid_comp_if_platforms = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("amd64"), _SLIT("i386"), _SLIT("aarch64"), _SLIT("arm64"), _SLIT("arm32"), _SLIT("rv64"), _SLIT("rv32")}));
 	_const_v__checker__valid_comp_if_cpu_features = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("x64"), _SLIT("x32"), _SLIT("little_endian"), _SLIT("big_endian")}));
-	_const_v__checker__valid_comp_if_other = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
-		_SLIT("js"), _SLIT("debug"), _SLIT("prod"), _SLIT("test"), _SLIT("glibc"), _SLIT("prealloc"), _SLIT("no_bounds_checking"), _SLIT("freestanding"), _SLIT("threads")}));
+	_const_v__checker__valid_comp_if_other = new_array_from_c_array(11, 11, sizeof(string), _MOV((string[11]){
+		_SLIT("js"), _SLIT("debug"), _SLIT("prod"), _SLIT("test"), _SLIT("glibc"), _SLIT("prealloc"), _SLIT("no_bounds_checking"), _SLIT("freestanding"), _SLIT("threads"),
+		_SLIT("js_browser"), _SLIT("js_freestanding")}));
 	_const_v__checker__valid_comp_not_user_defined = v__checker__all_valid_comptime_idents();
 	_const_v__checker__array_builtin_methods = new_array_from_c_array(15, 15, sizeof(string), _MOV((string[15]){
 		_SLIT("filter"), _SLIT("clone"), _SLIT("repeat"), _SLIT("reverse"), _SLIT("map"), _SLIT("slice"), _SLIT("sort"), _SLIT("contains"), _SLIT("index"),
