@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "eed4f50"
+#define V_COMMIT_HASH "de39bba"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1db354c"
+	#define V_COMMIT_HASH "eed4f50"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "eed4f50"
+	#define V_CURRENT_COMMIT_HASH "de39bba"
 #endif
 
 // V comptime_defines:
@@ -17126,7 +17126,7 @@ VV_LOCAL_SYMBOL void map_clone_int_8(voidptr dest, voidptr pkey) {
 }
 
 VV_LOCAL_SYMBOL void map_free_string(voidptr pkey) {
-	string_free(&(*((string*)(pkey))));
+	string_free(ADDR(string, (*((string*)(pkey)))));
 }
 
 VV_LOCAL_SYMBOL void map_free_nop(voidptr _d1) {
@@ -30613,7 +30613,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1db354c"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("eed4f50"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -58670,7 +58670,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 	}
 	if (v__ast__Type_is_ptr(node.receiver_type) && (!v__ast__Type_is_ptr(node.left_type) || node.from_embed_type != 0 || (v__ast__Type_has_flag(node.left_type, v__ast__TypeFlag__shared_f) && !string__eq(node.name, _SLIT("str"))))) {
 		if (!is_range_slice) {
-			v__gen__c__Gen_write(g, _SLIT("&"));
+			if (!v__ast__Expr_is_lvalue(node.left)) {
+				v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("ADDR("), 0xfe10, {.d_s = rec_cc_type}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+				has_cast = true;
+			} else {
+				v__gen__c__Gen_write(g, _SLIT("&"));
+			}
 		}
 	} else if (!v__ast__Type_is_ptr(node.receiver_type) && v__ast__Type_is_ptr(node.left_type) && !string__eq(node.name, _SLIT("str")) && node.from_embed_type == 0) {
 		if (!v__ast__Type_has_flag(node.left_type, v__ast__TypeFlag__shared_f)) {
@@ -58850,11 +58855,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_29278 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_29278.arg0;
-			string pafile = mr_29278.arg1;
-			string pamod = mr_29278.arg2;
-			string pafn = mr_29278.arg3;
+			multi_return_int_string_string_string mr_29382 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_29382.arg0;
+			string pafile = mr_29382.arg1;
+			string pamod = mr_29382.arg2;
+			string pafn = mr_29382.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
