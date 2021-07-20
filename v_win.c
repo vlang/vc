@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "85658bc"
+#define V_COMMIT_HASH "60b705b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b9d418f"
+	#define V_COMMIT_HASH "85658bc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "85658bc"
+	#define V_CURRENT_COMMIT_HASH "60b705b"
 #endif
 
 // V comptime_defines:
@@ -30613,7 +30613,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b9d418f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("85658bc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -55377,12 +55377,71 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_struct_init(v__gen__c__Gen* g, v__ast__Struc
 			VUNREACHABLE();
 		}
 		if (!info.is_union) {
-			for (int _t1 = 0; _t1 < info.embeds.len; ++_t1) {
-				v__ast__Type embed = ((v__ast__Type*)info.embeds.data)[_t1];
+			Array_string used_embed_fields = __new_array_with_default(0, 0, sizeof(string), 0);
+			Array_v__ast__StructField _t1_orig = info.fields;
+			int _t1_len = _t1_orig.len;
+			Array_string _t1 = __new_array(0, _t1_len, sizeof(string));
+
+			for (int _t2 = 0; _t2 < _t1_len; ++_t2) {
+				v__ast__StructField it = ((v__ast__StructField*) _t1_orig.data)[_t2];
+				string ti = it.name;
+				array_push((array*)&_t1, &ti);
+			}
+			
+			Array_string init_field_names = _t1;
+			Array_v__ast__StructInitField _t3_orig = struct_init.fields;
+			int _t3_len = _t3_orig.len;
+			Array_v__ast__StructInitField _t3 = __new_array(0, _t3_len, sizeof(v__ast__StructInitField));
+
+			for (int _t4 = 0; _t4 < _t3_len; ++_t4) {
+				v__ast__StructInitField it = ((v__ast__StructInitField*) _t3_orig.data)[_t4];
+				if (!(Array_string_contains(init_field_names, it.name))) {
+					array_push((array*)&_t3, &it); 
+		}
+			}
+			
+			Array_v__ast__StructInitField init_fields_to_embed = _t3;
+			for (int _t5 = 0; _t5 < info.embeds.len; ++_t5) {
+				v__ast__Type embed = ((v__ast__Type*)info.embeds.data)[_t5];
 				v__ast__TypeSymbol* embed_sym = v__ast__Table_get_type_symbol(g->table, embed);
 				string embed_name = v__ast__TypeSymbol_embed_name(embed_sym);
 				if (!_IN_MAP(ADDR(string, embed_name), ADDR(map, inited_fields))) {
-					v__ast__StructInit default_init = (v__ast__StructInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_short = 0,.unresolved = 0,.pre_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ = embed,.update_expr = {0},.update_expr_type = 0,.update_expr_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_update_expr = 0,.fields = __new_array(0, 0, sizeof(v__ast__StructInitField)),.embeds = __new_array(0, 0, sizeof(v__ast__StructInitEmbed)),};
+					v__ast__Struct embed_info = /* as */ *(v__ast__Struct*)__as_cast((embed_sym->info)._v__ast__Struct,(embed_sym->info)._typ, 414) /*expected idx: 414, name: v.ast.Struct */ ;
+					Array_v__ast__StructField _t6_orig = embed_info.fields;
+					int _t6_len = _t6_orig.len;
+					Array_string _t6 = __new_array(0, _t6_len, sizeof(string));
+
+					for (int _t7 = 0; _t7 < _t6_len; ++_t7) {
+						v__ast__StructField it = ((v__ast__StructField*) _t6_orig.data)[_t7];
+						string ti = it.name;
+						array_push((array*)&_t6, &ti);
+					}
+					
+					Array_string embed_field_names = _t6;
+					Array_v__ast__StructInitField _t8_orig = init_fields_to_embed;
+					int _t8_len = _t8_orig.len;
+					Array_v__ast__StructInitField _t8 = __new_array(0, _t8_len, sizeof(v__ast__StructInitField));
+
+					for (int _t9 = 0; _t9 < _t8_len; ++_t9) {
+						v__ast__StructInitField it = ((v__ast__StructInitField*) _t8_orig.data)[_t9];
+						if (!(Array_string_contains(used_embed_fields, it.name)) && (Array_string_contains(embed_field_names, it.name))) {
+							array_push((array*)&_t8, &it); 
+		}
+					}
+					
+					Array_v__ast__StructInitField fields_to_embed = _t8;
+					Array_v__ast__StructInitField _t11_orig = fields_to_embed;
+					int _t11_len = _t11_orig.len;
+					Array_string _t11 = __new_array(0, _t11_len, sizeof(string));
+
+					for (int _t12 = 0; _t12 < _t11_len; ++_t12) {
+						v__ast__StructInitField it = ((v__ast__StructInitField*) _t11_orig.data)[_t12];
+						string ti = it.name;
+						array_push((array*)&_t11, &ti);
+					}
+					
+					_PUSH_MANY(&used_embed_fields, (_t11), _t10, Array_string);
+					v__ast__StructInit default_init = (v__ast__StructInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_short = 0,.unresolved = 0,.pre_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ = embed,.update_expr = {0},.update_expr_type = 0,.update_expr_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_update_expr = 0,.fields = fields_to_embed,.embeds = __new_array(0, 0, sizeof(v__ast__StructInitEmbed)),};
 					v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("."), 0xfe10, {.d_s = embed_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
 					v__gen__c__Gen_struct_init(g, default_init);
 					if (is_multiline) {
@@ -55394,12 +55453,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_struct_init(v__gen__c__Gen* g, v__ast__Struc
 				}
 			}
 		}
-		for (int _t2 = 0; _t2 < info.fields.len; ++_t2) {
-			v__ast__StructField* field = ((v__ast__StructField*)info.fields.data) + _t2;
+		for (int _t13 = 0; _t13 < info.fields.len; ++_t13) {
+			v__ast__StructField* field = ((v__ast__StructField*)info.fields.data) + _t13;
 			if ((sym->info)._typ == 414 /* v.ast.Struct */) {
 				int found_equal_fields = 0;
-				for (int _t3 = 0; _t3 < (*sym->info._v__ast__Struct).fields.len; ++_t3) {
-					v__ast__StructField* sifield = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data) + _t3;
+				for (int _t14 = 0; _t14 < (*sym->info._v__ast__Struct).fields.len; ++_t14) {
+					v__ast__StructField* sifield = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data) + _t14;
 					if (string__eq(sifield->name, field->name)) {
 						found_equal_fields++;
 						break;
@@ -55694,9 +55753,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*typ.info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_160197 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_160197.arg0;
-						string base = mr_160197.arg1;
+						multi_return_string_string mr_160740 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_160740.arg0;
+						string base = mr_160740.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -55929,11 +55988,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_168486 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_168486.arg0;
-				string pafile = mr_168486.arg1;
-				string pamod = mr_168486.arg2;
-				string pafn = mr_168486.arg3;
+				multi_return_int_string_string_string mr_169029 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_169029.arg0;
+				string pafile = mr_169029.arg1;
+				string pamod = mr_169029.arg2;
+				string pafn = mr_169029.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -56026,11 +56085,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind__map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_171115 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_171115.arg0;
-		string key_eq_fn = mr_171115.arg1;
-		string clone_fn = mr_171115.arg2;
-		string free_fn = mr_171115.arg3;
+		multi_return_string_string_string_string mr_171658 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_171658.arg0;
+		string key_eq_fn = mr_171658.arg1;
+		string clone_fn = mr_171658.arg2;
+		string free_fn = mr_171658.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -56633,8 +56692,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_190171 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_190171.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_190714 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_190714.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -69119,7 +69178,7 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 		Array_string inited_fields = __new_array_with_default(0, 0, sizeof(string), 0);
 		for (int i = 0; i < node->fields.len; ++i) {
 			v__ast__StructInitField* field = ((v__ast__StructInitField*)node->fields.data) + i;
-			v__ast__StructField info_field = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
+			v__ast__StructField field_info = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
 			v__ast__Type embed_type = ((v__ast__Type)(0));
 			bool is_embed = false;
 			string field_name = _SLIT("");
@@ -69127,20 +69186,20 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 				if (i >= info.fields.len) {
 					break;
 				}
-				info_field = (*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i));
-				field_name = info_field.name;
+				field_info = (*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i));
+				field_name = field_info.name;
 				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).name = field_name;
 			} else {
 				field_name = field->name;
-				bool exists = false;
-				for (int _t9 = 0; _t9 < info.fields.len; ++_t9) {
-					v__ast__StructField f = ((v__ast__StructField*)info.fields.data)[_t9];
-					if (string__eq(f.name, field_name)) {
-						info_field = f;
-						exists = true;
-						break;
-					}
+				bool exists = true;
+				Option_v__ast__StructField _t9 = v__ast__Struct_find_field(&info, field_name);
+				if (_t9.state != 0) { /*or block*/ 
+					IError err = _t9.err;
+					exists = false;
+					*(v__ast__StructField*) _t9.data = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
 				}
+				
+ 				field_info =  (*(v__ast__StructField*)_t9.data);
 				if (!exists) {
 					for (int _t10 = 0; _t10 < info.embeds.len; ++_t10) {
 						v__ast__Type embed = ((v__ast__Type*)info.embeds.data)[_t10];
@@ -69149,6 +69208,14 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 							exists = true;
 							embed_type = embed;
 							is_embed = true;
+							break;
+						}
+						v__ast__Struct embed_struct_info = /* as */ *(v__ast__Struct*)__as_cast((embed_sym->info)._v__ast__Struct,(embed_sym->info)._typ, 414) /*expected idx: 414, name: v.ast.Struct */ ;
+						Option_v__ast__StructField _t11;
+						if (_t11 = v__ast__Struct_find_field(&embed_struct_info, field_name), _t11.state == 0) {
+							v__ast__StructField embed_field_info = *(v__ast__StructField*)_t11.data;
+							exists = true;
+							field_info = embed_field_info;
 							break;
 						}
 					}
@@ -69170,10 +69237,10 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 				expr_type = v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, field->expr));
 				v__ast__TypeSymbol* expr_type_sym = v__ast__Table_get_type_symbol(c->table, expr_type);
 				if (!v__ast__Type_alias_eq(expr_type, _const_v__ast__void_type) && expr_type_sym->kind != v__ast__Kind__placeholder) {
-					Option_void _t11 = v__checker__Checker_check_expected(c, expr_type, embed_type);
-					if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
-						IError err = _t11.err;
-						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot assign to field `"), 0xfe10, {.d_s = info_field.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), field->pos);
+					Option_void _t12 = v__checker__Checker_check_expected(c, expr_type, embed_type);
+					if (_t12.state != 0 && _t12.err._typ != _IError_None___index) {
+						IError err = _t12.err;
+						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot assign to field `"), 0xfe10, {.d_s = field_info.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), field->pos);
 					;
 					}
 					;
@@ -69182,53 +69249,53 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).expected_type = embed_type;
 			} else {
 				array_push((array*)&inited_fields, _MOV((string[]){ string_clone(field_name) }));
-				v__ast__TypeSymbol* field_type_sym = v__ast__Table_get_type_symbol(c->table, info_field.typ);
-				expected_type = info_field.typ;
+				v__ast__TypeSymbol* field_type_sym = v__ast__Table_get_type_symbol(c->table, field_info.typ);
+				expected_type = field_info.typ;
 				c->expected_type = expected_type;
 				expr_type = v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, field->expr));
-				if (!v__ast__Type_has_flag(info_field.typ, v__ast__TypeFlag__optional)) {
+				if (!v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__optional)) {
 					expr_type = v__checker__Checker_check_expr_opt_call(c, field->expr, expr_type);
 				}
 				v__ast__TypeSymbol* expr_type_sym = v__ast__Table_get_type_symbol(c->table, expr_type);
 				if (field_type_sym->kind == v__ast__Kind__interface_) {
-					if (v__checker__Checker_type_implements(c, expr_type, info_field.typ, field->pos)) {
+					if (v__checker__Checker_type_implements(c, expr_type, field_info.typ, field->pos)) {
 						if (!v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && expr_type_sym->kind != v__ast__Kind__interface_ && !c->inside_unsafe) {
 							v__checker__Checker_mark_as_referenced(c, &field->expr, true);
 						}
 					}
 				} else if (!v__ast__Type_alias_eq(expr_type, _const_v__ast__void_type) && expr_type_sym->kind != v__ast__Kind__placeholder) {
-					Option_void _t13 = v__checker__Checker_check_expected(c, expr_type, info_field.typ);
-					if (_t13.state != 0 && _t13.err._typ != _IError_None___index) {
-						IError err = _t13.err;
-						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot assign to field `"), 0xfe10, {.d_s = info_field.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), field->pos);
+					Option_void _t14 = v__checker__Checker_check_expected(c, expr_type, field_info.typ);
+					if (_t14.state != 0 && _t14.err._typ != _IError_None___index) {
+						IError err = _t14.err;
+						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot assign to field `"), 0xfe10, {.d_s = field_info.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), field->pos);
 					;
 					}
 					;
 				}
-				if (v__ast__Type_has_flag(info_field.typ, v__ast__TypeFlag__shared_f)) {
+				if (v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__shared_f)) {
 					if (!v__ast__Type_has_flag(expr_type, v__ast__TypeFlag__shared_f) && v__ast__Type_is_ptr(expr_type)) {
 						v__checker__Checker_error(c, _SLIT("`shared` field must be initialized with `shared` or value"), field->pos);
 					}
 				} else {
-					if (v__ast__Type_is_ptr(info_field.typ) && !v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && !v__ast__Type_is_number(expr_type)) {
+					if (v__ast__Type_is_ptr(field_info.typ) && !v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && !v__ast__Type_is_number(expr_type)) {
 						v__checker__Checker_error(c, _SLIT("reference field must be initialized with reference"), field->pos);
 					}
 				}
 				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).typ = expr_type;
-				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).expected_type = info_field.typ;
+				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).expected_type = field_info.typ;
 			}
 			if (v__ast__Type_is_ptr(expr_type) && v__ast__Type_is_ptr(expected_type)) {
 				if ((field->expr)._typ == 264 /* v.ast.Ident */) {
 					if (((*field->expr._v__ast__Ident).obj)._typ == 322 /* v.ast.Var */) {
 						v__ast__Var* obj = &(*(*field->expr._v__ast__Ident).obj._v__ast__Var);
 						if (c->fn_scope != ((voidptr)(0))) {
-							Option_v__ast__Var_ptr _t14 = v__ast__Scope_find_var(c->fn_scope, obj->name);
-							if (_t14.state != 0) { /*or block*/ 
-								IError err = _t14.err;
-								*(v__ast__Var**) _t14.data = obj;
+							Option_v__ast__Var_ptr _t15 = v__ast__Scope_find_var(c->fn_scope, obj->name);
+							if (_t15.state != 0) { /*or block*/ 
+								IError err = _t15.err;
+								*(v__ast__Var**) _t15.data = obj;
 							}
 							
- 							obj =  (*(v__ast__Var**)_t14.data);
+ 							obj =  (*(v__ast__Var**)_t15.data);
 						}
 						if (obj->is_stack_obj && !c->inside_unsafe) {
 							v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, v__ast__Type_set_nr_muls(obj->typ, 0));
@@ -69241,8 +69308,8 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 				}
 			}
 		}
-		for (int _t15 = 0; _t15 < info.fields.len; ++_t15) {
-			v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[_t15];
+		for (int _t16 = 0; _t16 < info.fields.len; ++_t16) {
+			v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[_t16];
 			if (field.has_default_expr || (Array_string_contains(inited_fields, field.name))) {
 				continue;
 			}
@@ -69251,8 +69318,8 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 			}
 			if (Array_v__ast__Attr_contains(field.attrs, _SLIT("required")) && !node->is_short && !node->has_update_expr) {
 				bool found = false;
-				for (int _t16 = 0; _t16 < node->fields.len; ++_t16) {
-					v__ast__StructInitField init_field = ((v__ast__StructInitField*)node->fields.data)[_t16];
+				for (int _t17 = 0; _t17 < node->fields.len; ++_t17) {
+					v__ast__StructInitField init_field = ((v__ast__StructInitField*)node->fields.data)[_t17];
 					if (string__eq(field.name, init_field.name)) {
 						found = true;
 						break;
@@ -69556,8 +69623,8 @@ v__ast__Type former_expected_type;
 				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), node->pos);
 			}
 			v__checker__Checker_check_expr_opt_call(c, node->right, right_type);
-			multi_return_string_v__token__Position mr_50436 = v__checker__Checker_fail_if_immutable(c, node->left);
-			node->auto_locked = mr_50436.arg0;
+			multi_return_string_v__token__Position mr_50620 = v__checker__Checker_fail_if_immutable(c, node->left);
+			node->auto_locked = mr_50620.arg0;
 			v__ast__Type left_value_type = v__ast__Table_value_type(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 			v__ast__TypeSymbol* left_value_sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, left_value_type));
 			if (left_value_sym->kind == v__ast__Kind__interface_) {
@@ -69799,19 +69866,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__shared_f)) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("you have to create a handle and `lock` it to modify `shared` "), 0xfe10, {.d_s = kind}}, {_SLIT(" element"), 0, { .d_c = 0 }}})), v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_58640 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_58640.arg0;
-		pos = mr_58640.arg1;
+		multi_return_string_v__token__Position mr_58824 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_58824.arg0;
+		pos = mr_58824.arg1;
 	}
 	else if (expr._typ == 279 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_58709 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_58709.arg0;
-		pos = mr_58709.arg1;
+		multi_return_string_v__token__Position mr_58893 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_58893.arg0;
+		pos = mr_58893.arg1;
 	}
 	else if (expr._typ == 281 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_58781 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_58781.arg0;
-		pos = mr_58781.arg1;
+		multi_return_string_v__token__Position mr_58965 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_58965.arg0;
+		pos = mr_58965.arg1;
 	}
 	else if (expr._typ == 284 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -69873,9 +69940,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 					string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*expr._v__ast__SelectorExpr).field_name}}, {_SLIT("` of struct `"), 0xfe10, {.d_s = type_str}}, {_SLIT("` is immutable"), 0, { .d_c = 0 }}})), (*expr._v__ast__SelectorExpr).pos);
 				}
-				multi_return_string_v__token__Position mr_60582 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-				to_lock = mr_60582.arg0;
-				pos = mr_60582.arg1;
+				multi_return_string_v__token__Position mr_60766 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+				to_lock = mr_60766.arg0;
+				pos = mr_60766.arg1;
 			}
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
@@ -69912,9 +69979,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 251 /* v.ast.CallExpr */) {
 		if (string__eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_61715 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_61715.arg0;
-			pos = mr_61715.arg1;
+			multi_return_string_v__token__Position mr_61899 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_61899.arg0;
+			pos = mr_61899.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -70215,9 +70282,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_74711 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_74711.arg0;
-			v__token__Position pos = mr_74711.arg1;
+			multi_return_string_v__token__Position mr_74895 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_74895.arg0;
+			v__token__Position pos = mr_74895.arg1;
 			if (!v__ast__Expr_is_lvalue(call_expr->left)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_expr->left));
 			}
@@ -70306,9 +70373,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg->pos);
 			}
 			if (arg->is_mut) {
-				multi_return_string_v__token__Position mr_78803 = v__checker__Checker_fail_if_immutable(c, arg->expr);
-				string to_lock = mr_78803.arg0;
-				v__token__Position pos = mr_78803.arg1;
+				multi_return_string_v__token__Position mr_78987 = v__checker__Checker_fail_if_immutable(c, arg->expr);
+				string to_lock = mr_78987.arg0;
+				v__token__Position pos = mr_78987.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg->share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(arg->expr));
@@ -70829,9 +70896,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg->pos);
 		}
 		if (call_arg->is_mut && func.language == v__ast__Language__v) {
-			multi_return_string_v__token__Position mr_98946 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
-			string to_lock = mr_98946.arg0;
-			v__token__Position pos = mr_98946.arg1;
+			multi_return_string_v__token__Position mr_99130 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
+			string to_lock = mr_99130.arg0;
+			v__token__Position pos = mr_99130.arg1;
 			if (!v__ast__Expr_is_lvalue(call_arg->expr)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_arg->expr));
 			}
@@ -75210,8 +75277,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_227009 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_227009.arg0;
+		multi_return_string_v__token__Position mr_227193 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_227193.arg0;
 	}
 	return typ;
 }
@@ -76357,10 +76424,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_260979 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_260979.arg0;
-				int nroute_attributes = mr_260979.arg1;
-				int nargs = mr_260979.arg2;
+				multi_return_bool_int_int mr_261163 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_261163.arg0;
+				int nroute_attributes = mr_261163.arg1;
+				int nargs = mr_261163.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
