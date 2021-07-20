@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "850a715"
+#define V_COMMIT_HASH "5098334"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f457b94"
+	#define V_COMMIT_HASH "850a715"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "850a715"
+	#define V_CURRENT_COMMIT_HASH "5098334"
 #endif
 
 // V comptime_defines:
@@ -7078,6 +7078,7 @@ string os__vmodules_dir();
 Array_string os__vmodules_paths();
 string os__resource_abs_path(string path);
 os__Result os__execute_or_panic(string cmd);
+os__Result os__execute_or_exit(string cmd);
 int os__is_atty(int fd);
 Option_Array_string os__glob(Array_string patterns);
 Option_Array_byte os__read_bytes(string path);
@@ -21715,6 +21716,18 @@ os__Result os__execute_or_panic(string cmd) {
 	return res;
 }
 
+os__Result os__execute_or_exit(string cmd) {
+	os__Result res = os__execute(cmd);
+	if (res.exit_code != 0) {
+		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed    cmd: "), 0xfe10, {.d_s = cmd}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed   code: "), 0xfe07, {.d_i32 = res.exit_code}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		eprintln(res.output);
+		v_exit(1);
+		VUNREACHABLE();
+	}
+	return res;
+}
+
 int os__is_atty(int fd) {
 	#if defined(_WIN32)
 	{
@@ -30614,7 +30627,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f457b94"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("850a715"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32707,7 +32720,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, Array_string args) 
 		if (is_verbose) {
 			println( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Compiling "), 0xfe10, {.d_s = tool_name}}, {_SLIT(" with: \""), 0xfe10, {.d_s = compilation_command}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
 		}
-		os__Result tool_compilation = os__execute_or_panic(compilation_command);
+		os__Result tool_compilation = os__execute_or_exit(compilation_command);
 		if (tool_compilation.exit_code != 0) {
 			eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot compile `"), 0xfe10, {.d_s = tool_source}}, {_SLIT("`: \n"), 0xfe10, {.d_s = tool_compilation.output}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			v_exit(1);
@@ -32986,9 +32999,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_16330 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_16330.arg0;
-	string tool_exe = mr_16330.arg1;
+	multi_return_string_string mr_16329 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_16329.arg0;
+	string tool_exe = mr_16329.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
@@ -78046,7 +78059,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		string ccompiler = v->pref->ccompiler;
 		if (v->pref->os == v__pref__OS__ios) {
 			string ios_sdk = (v->pref->is_ios_simulator ? (_SLIT("iphonesimulator")) : (_SLIT("iphoneos")));
-			os__Result ios_sdk_path_res = os__execute_or_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("xcrun --sdk "), 0xfe10, {.d_s = ios_sdk}}, {_SLIT(" --show-sdk-path"), 0, { .d_c = 0 }}})));
+			os__Result ios_sdk_path_res = os__execute_or_exit( str_intp(2, _MOV((StrIntpData[]){{_SLIT("xcrun --sdk "), 0xfe10, {.d_s = ios_sdk}}, {_SLIT(" --show-sdk-path"), 0, { .d_c = 0 }}})));
 			string isysroot = string_replace(ios_sdk_path_res.output, _SLIT("\n"), _SLIT(""));
 			string arch = (v->pref->is_ios_simulator ? (_SLIT("-arch x86_64")) : (_SLIT("-arch armv7 -arch armv7s -arch arm64")));
 			ccompiler =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("xcrun --sdk iphoneos clang -isysroot "), 0xfe10, {.d_s = isysroot}}, {_SLIT(" "), 0xfe10, {.d_s = arch}}, {_SLIT0, 0, { .d_c = 0 }}}));
@@ -78251,10 +78264,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_23876 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_23876.arg0;
-	Array_string others = mr_23876.arg1;
-	Array_string libs = mr_23876.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_23875 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_23875.arg0;
+	Array_string others = mr_23875.arg1;
+	Array_string libs = mr_23875.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
