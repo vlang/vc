@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f457b94"
+#define V_COMMIT_HASH "850a715"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "05d0288"
+	#define V_COMMIT_HASH "f457b94"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f457b94"
+	#define V_CURRENT_COMMIT_HASH "850a715"
 #endif
 
 // V comptime_defines:
@@ -31403,7 +31403,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("05d0288"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f457b94"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37693,16 +37693,15 @@ v__ast__Type v__ast__Table_bitsize_to_type(v__ast__Table* t, int bit_size) {
 }
 
 bool v__ast__Table_does_type_implement_interface(v__ast__Table* t, v__ast__Type typ, v__ast__Type inter_typ) {
-	v__ast__Type utyp = typ;
-	if (v__ast__Type_idx(utyp) == v__ast__Type_idx(inter_typ)) {
+	if (v__ast__Type_idx(typ) == v__ast__Type_idx(inter_typ)) {
 		bool _t1 = true;
 		return _t1;
 	}
-	if (v__ast__Type_idx(inter_typ) == _const_v__ast__error_type_idx && v__ast__Type_idx(utyp) == _const_v__ast__none_type_idx) {
+	if (v__ast__Type_idx(inter_typ) == _const_v__ast__error_type_idx && v__ast__Type_idx(typ) == _const_v__ast__none_type_idx) {
 		bool _t2 = true;
 		return _t2;
 	}
-	v__ast__TypeSymbol* typ_sym = v__ast__Table_get_type_symbol(t, utyp);
+	v__ast__TypeSymbol* typ_sym = v__ast__Table_get_type_symbol(t, typ);
 	if (typ_sym->language != v__ast__Language__v) {
 		bool _t3 = false;
 		return _t3;
@@ -37715,7 +37714,7 @@ bool v__ast__Table_does_type_implement_interface(v__ast__Table* t, v__ast__Type 
 	if ((inter_sym->info)._typ == 392 /* v.ast.Interface */) {
 		for (int _t5 = 0; _t5 < (*inter_sym->info._v__ast__Interface).types.len; ++_t5) {
 			v__ast__Type tt = ((v__ast__Type*)(*inter_sym->info._v__ast__Interface).types.data)[_t5];
-			if (v__ast__Type_idx(tt) == v__ast__Type_idx(utyp)) {
+			if (v__ast__Type_idx(tt) == v__ast__Type_idx(typ)) {
 				bool _t6 = true;
 				return _t6;
 			}
@@ -37760,7 +37759,7 @@ bool v__ast__Table_does_type_implement_interface(v__ast__Table* t, v__ast__Type 
 			bool _t16 = false;
 			return _t16;
 		}
-		array_push((array*)&(*inter_sym->info._v__ast__Interface).types, _MOV((v__ast__Type[]){ utyp }));
+		array_push((array*)&(*inter_sym->info._v__ast__Interface).types, _MOV((v__ast__Type[]){ typ }));
 		if (!Array_v__ast__Type_contains((*inter_sym->info._v__ast__Interface).types, _const_v__ast__voidptr_type)) {
 			array_push((array*)&(*inter_sym->info._v__ast__Interface).types, _MOV((v__ast__Type[]){ _const_v__ast__voidptr_type }));
 		}
