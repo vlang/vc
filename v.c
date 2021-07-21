@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "be7c396"
+#define V_COMMIT_HASH "4198205"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "de6784a"
+	#define V_COMMIT_HASH "be7c396"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "be7c396"
+	#define V_CURRENT_COMMIT_HASH "4198205"
 #endif
 
 // V comptime_defines:
@@ -6425,6 +6425,7 @@ void array_insert_many(array* a, int i, voidptr val, int size);
 void array_prepend(array* a, voidptr val);
 void array_prepend_many(array* a, voidptr val, int size);
 void array_delete(array* a, int i);
+void array_delete_many(array* a, int i, int size);
 void array_clear(array* a);
 void array_trim(array* a, int index);
 VV_LOCAL_SYMBOL voidptr array_get_unsafe(array a, int i);
@@ -15286,16 +15287,27 @@ void array_prepend_many(array* a, voidptr val, int size) {
 }
 
 void array_delete(array* a, int i) {
+	array_delete_many(a, i, 1);
+}
+
+void array_delete_many(array* a, int i, int size) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
-		if (i < 0 || i >= a->len) {
-			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.delete: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+		if (i < 0 || i + size > a->len) {
+			string endidx = (size > 1 ? ( str_intp(2, _MOV((StrIntpData[]){{_SLIT(".."), 0xfe07, {.d_i32 = i + size}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (_SLIT("")));
+			_v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT("array.delete: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT0, 0xfe10, {.d_s = endidx}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
 	#endif
-	memmove(array_get_unsafe(/*rec*/*a, i), array_get_unsafe(/*rec*/*a, i + 1), (a->len - i - 1) * a->element_size);
-	a->len--;
+	voidptr old_data = a->data;
+	int new_size = a->len - size;
+	int new_cap = (new_size == 0 ? (1) : (new_size));
+	a->data = vcalloc(new_cap * a->element_size);
+	memcpy(a->data, old_data, i * a->element_size);
+	memcpy(((byte*)(a->data)) + i * a->element_size, ((byte*)(old_data)) + (i + size) * a->element_size, (a->len - i - size) * a->element_size);
+	a->len = new_size;
+	a->cap = new_cap;
 }
 
 void array_clear(array* a) {
@@ -31416,7 +31428,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("de6784a"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("be7c396"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
