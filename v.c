@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "591af86"
+#define V_COMMIT_HASH "aebb028"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c12cd0c"
+	#define V_COMMIT_HASH "591af86"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "591af86"
+	#define V_CURRENT_COMMIT_HASH "aebb028"
 #endif
 
 // V comptime_defines:
@@ -3054,7 +3054,7 @@ struct time__Time {
 	int minute;
 	int second;
 	int microsecond;
-	u64 v_unix;
+	u64 _v_unix;
 };
 
 
@@ -3470,7 +3470,7 @@ struct v__gen__native__SectionConfig {
 	voidptr data;
 	bool is_saa;
 	i64 datalen;
-	int v_link;
+	int _v_link;
 	int info;
 	i64 align;
 	i64 entsize;
@@ -6463,11 +6463,11 @@ Array_byte voidptr_vbytes(voidptr data, int len);
 Array_byte byte_vbytes(byte* data, int len);
 VV_LOCAL_SYMBOL array __new_array_noscan(int mylen, int cap, int elm_size);
 VV_LOCAL_SYMBOL void vhalt();
-void v_exit(int code);
+void _v_exit(int code);
 VV_LOCAL_SYMBOL string vcommithash();
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s);
 void panic_optional_not_set(string s);
-void v_panic(string s);
+void _v_panic(string s);
 void eprintln(string s);
 void eprint(string s);
 void print(string s);
@@ -6475,13 +6475,13 @@ void println(string s);
 VV_LOCAL_SYMBOL void _writeln_to_fd(int fd, string s);
 VV_LOCAL_SYMBOL void _write_buf_to_fd(int fd, byte* buf, int buf_len);
 i64 total_m = 0; // global
-byte* v_malloc(int n);
+byte* _v_malloc(int n);
 byte* malloc_noscan(int n);
 byte* v_realloc(byte* b, int n);
 byte* realloc_data(byte* old_data, int old_size, int new_size);
 byte* vcalloc(int n);
 byte* vcalloc_noscan(int n);
-void v_free(voidptr ptr);
+void _v_free(voidptr ptr);
 voidptr memdup(voidptr src, int sz);
 voidptr memdup_noscan(voidptr src, int sz);
 VV_LOCAL_SYMBOL int v_fixed_index(int i, int len);
@@ -6609,7 +6609,7 @@ string IError_str(IError err);
 IError _const_none__; // inited later
 VV_LOCAL_SYMBOL string None___str(None__ _d2);
 VV_LOCAL_SYMBOL void trace_error(string x);
-IError v_error(string message);
+IError _v_error(string message);
 IError error_with_code(string message, int code);
 VV_LOCAL_SYMBOL void opt_ok(voidptr data, Option* option, int size);
 void Error_free(Error* e);
@@ -7774,7 +7774,7 @@ string v__util__strip_mod_name(string name);
 string v__util__strip_main_name(string name);
 string v__util__no_dots(string s);
 string _const_v__util__map_prefix; // a string literal, inited later
-string v__util__no_cur_mod(string v_typename, string cur_mod);
+string v__util__no_cur_mod(string _v_typename, string cur_mod);
 void v__util__prepare_tool_when_needed(string source_name);
 void v__util__recompile_file(string vexe, string file);
 string v__util__get_vtmp_folder();
@@ -8216,7 +8216,7 @@ v__ast__NodeError v__parser__Parser_error(v__parser__Parser* p, string s);
 void v__parser__Parser_warn(v__parser__Parser* p, string s);
 void v__parser__Parser_note(v__parser__Parser* p, string s);
 v__ast__NodeError v__parser__Parser_error_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
-void v__parser__Parser_error_with_error(v__parser__Parser* p, v__errors__Error v_error);
+void v__parser__Parser_error_with_error(v__parser__Parser* p, v__errors__Error _v_error);
 void v__parser__Parser_warn_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
 void v__parser__Parser_note_with_pos(v__parser__Parser* p, string s, v__token__Position pos);
 void v__parser__Parser_vet_error(v__parser__Parser* p, string msg, int line, v__vet__FixKind fix, v__vet__ErrorType typ);
@@ -9322,7 +9322,7 @@ struct _rand__PRNG_interface_methods {
 	u64 (*_method_u64n)(void* _, u64 max);
 	u32 (*_method_u32_in_range)(void* _, u32 min, u32 max);
 	u64 (*_method_u64_in_range)(void* _, u64 min, u64 max);
-	int (*_method_v_int)(void* _);
+	int (*_method__v_int)(void* _);
 	i64 (*_method_i64)(void* _);
 	int (*_method_int31)(void* _);
 	i64 (*_method_int63)(void* _);
@@ -9347,7 +9347,7 @@ struct _rand__PRNG_interface_methods rand__PRNG_name_table[1] = {
 		._method_u64n = (void*) rand__wyrand__WyRandRNG_u64n,
 		._method_u32_in_range = (void*) rand__wyrand__WyRandRNG_u32_in_range,
 		._method_u64_in_range = (void*) rand__wyrand__WyRandRNG_u64_in_range,
-		._method_v_int = (void*) rand__wyrand__WyRandRNG_int,
+		._method__v_int = (void*) rand__wyrand__WyRandRNG_int,
 		._method_i64 = (void*) rand__wyrand__WyRandRNG_i64,
 		._method_int31 = (void*) rand__wyrand__WyRandRNG_int31,
 		._method_int63 = (void*) rand__wyrand__WyRandRNG_int63,
@@ -11898,7 +11898,7 @@ string strings__Builder_str(strings__Builder* b) {
 
 // Attr: [unsafe]
 void strings__Builder_free(strings__Builder* b) {
-	v_free(b->data);
+	_v_free(b->data);
 }
 
 int strings__levenshtein_distance(string a, string b) {
@@ -12256,7 +12256,7 @@ multi_return_u64_u64 math__bits__mul_64(u64 x, u64 y) {
 
 multi_return_u32_u32 math__bits__div_32(u32 hi, u32 lo, u32 y) {
 	if (y != 0U && y <= hi) {
-		v_panic(_const_math__bits__overflow_error);
+		_v_panic(_const_math__bits__overflow_error);
 		VUNREACHABLE();
 	}
 	u64 z = ((((u64)(hi)) << 32U) | ((u64)(lo)));
@@ -12268,11 +12268,11 @@ multi_return_u32_u32 math__bits__div_32(u32 hi, u32 lo, u32 y) {
 multi_return_u64_u64 math__bits__div_64(u64 hi, u64 lo, u64 y1) {
 	u64 y = y1;
 	if (y == 0U) {
-		v_panic(_const_math__bits__overflow_error);
+		_v_panic(_const_math__bits__overflow_error);
 		VUNREACHABLE();
 	}
 	if (y <= hi) {
-		v_panic(_const_math__bits__overflow_error);
+		_v_panic(_const_math__bits__overflow_error);
 		VUNREACHABLE();
 	}
 	u32 s = ((u32)(math__bits__leading_zeros_64(y)));
@@ -12758,16 +12758,16 @@ Option_u64 strconv__common_parse_uint(string s, int _base, int _bit_size, bool e
 	if (err != 0 && (error_on_non_digit || error_on_high_digit)) {
 
 		if (err == (-1)) {
-			return (Option_u64){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: wrong base "), 0xfe07, {.d_i32 = _base}}, {_SLIT(" for "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_u64){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: wrong base "), 0xfe07, {.d_i32 = _base}}, {_SLIT(" for "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		else if (err == (-2)) {
-			return (Option_u64){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: wrong bit size "), 0xfe07, {.d_i32 = _bit_size}}, {_SLIT(" for "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_u64){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: wrong bit size "), 0xfe07, {.d_i32 = _bit_size}}, {_SLIT(" for "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		else if (err == (-3)) {
-			return (Option_u64){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: integer overflow "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_u64){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: integer overflow "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		else {
-			return (Option_u64){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: syntax error "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_u64){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("common_parse_uint: syntax error "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		};
 	}
 	Option_u64 _t5;
@@ -12905,21 +12905,21 @@ Option_i64 strconv__parse_int(string _s, int base, int _bit_size) {
 
 Option_int strconv__atoi(string s) {
 	if ((s).len == 0) {
-		return (Option_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("strconv.atoi: parsing \""), 0xfe10, {.d_s = s}}, {_SLIT("\": invalid syntax "), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("strconv.atoi: parsing \""), 0xfe10, {.d_s = s}}, {_SLIT("\": invalid syntax "), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if ((_const_strconv__int_size == 32 && (0 < s.len && s.len < 10)) || (_const_strconv__int_size == 64 && (0 < s.len && s.len < 19))) {
 		int start_idx = 0;
 		if (string_at(s, 0) == '-' || string_at(s, 0) == '+') {
 			start_idx++;
 			if (s.len - start_idx < 1) {
-				return (Option_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("strconv.atoi: parsing \""), 0xfe10, {.d_s = s}}, {_SLIT("\": invalid syntax "), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("strconv.atoi: parsing \""), 0xfe10, {.d_s = s}}, {_SLIT("\": invalid syntax "), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 		int n = 0;
 		for (int i = start_idx; i < s.len; ++i) {
 			rune ch = string_at(s, i) - '0';
 			if (ch > 9) {
-				return (Option_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("strconv.atoi: parsing \""), 0xfe10, {.d_s = s}}, {_SLIT("\": invalid syntax "), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("strconv.atoi: parsing \""), 0xfe10, {.d_s = s}}, {_SLIT("\": invalid syntax "), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			n = n * 10 + ((int)(ch));
 		}
@@ -13968,7 +13968,7 @@ inline string strconv__ftoa_long_32(f32 f) {
 string strconv__format_int(i64 n, int radix) {
 	{ // Unsafe block
 		if (radix < 2 || radix > 36) {
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid radix: "), 0xfe07, {.d_i32 = radix}}, {_SLIT(" . It should be => 2 and <= 36"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid radix: "), 0xfe07, {.d_i32 = radix}}, {_SLIT(" . It should be => 2 and <= 36"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 		if (n == 0) {
@@ -13999,7 +13999,7 @@ string strconv__format_int(i64 n, int radix) {
 string strconv__format_uint(u64 n, int radix) {
 	{ // Unsafe block
 		if (radix < 2 || radix > 36) {
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid radix: "), 0xfe07, {.d_i32 = radix}}, {_SLIT(" . It should be => 2 and <= 36"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid radix: "), 0xfe07, {.d_i32 = radix}}, {_SLIT(" . It should be => 2 and <= 36"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 		if (n == 0U) {
@@ -14025,7 +14025,7 @@ string strconv__format_uint(u64 n, int radix) {
 // Attr: [debug_strconv ?]
 VV_LOCAL_SYMBOL void strconv__assert1(bool t, string msg) {
 	if (!t) {
-		v_panic(msg);
+		_v_panic(msg);
 		VUNREACHABLE();
 	}
 }
@@ -14912,7 +14912,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 		i++;
 	}
 	if (p_index != pt.len) {
-		v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = p_index}}, {_SLIT(" % conversion specifiers, but given "), 0xfe07, {.d_i32 = pt.len}}, {_SLIT(" args"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = p_index}}, {_SLIT(" % conversion specifiers, but given "), 0xfe07, {.d_i32 = pt.len}}, {_SLIT(" args"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	return strings__Builder_str(&res);
@@ -14921,7 +14921,7 @@ string strconv__v_sprintf(string str, Array_voidptr pt) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL void strconv__v_sprintf_panic(int idx, int len) {
 	if (idx >= len) {
-		v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = idx + 1}}, {_SLIT(" % conversion specifiers, but given only "), 0xfe07, {.d_i32 = len}}, {_SLIT(" args"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = idx + 1}}, {_SLIT(" % conversion specifiers, but given only "), 0xfe07, {.d_i32 = len}}, {_SLIT(" args"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 }
@@ -15207,7 +15207,7 @@ array array_repeat(array a, int count) {
 // Attr: [unsafe]
 array array_repeat_to_depth(array a, int count, int depth) {
 	if (count < 0) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("array.repeat: count is negative: "), 0xfe07, {.d_i32 = count}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("array.repeat: count is negative: "), 0xfe07, {.d_i32 = count}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	int size = count * a.len * a.element_size;
@@ -15243,7 +15243,7 @@ void array_insert(array* a, int i, voidptr val) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (i < 0 || i > a->len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.insert: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.insert: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -15261,7 +15261,7 @@ void array_insert_many(array* a, int i, voidptr val, int size) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (i < 0 || i > a->len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.insert_many: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.insert_many: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -15289,7 +15289,7 @@ void array_delete(array* a, int i) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (i < 0 || i >= a->len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.delete: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.delete: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -15321,7 +15321,7 @@ VV_LOCAL_SYMBOL voidptr array_get(array a, int i) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (i < 0 || i >= a.len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.get: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a.len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.get: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a.len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -15346,7 +15346,7 @@ voidptr array_first(array a) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (a.len == 0) {
-			v_panic(_SLIT("array.first: array is empty"));
+			_v_panic(_SLIT("array.first: array is empty"));
 			VUNREACHABLE();
 		}
 	}
@@ -15358,7 +15358,7 @@ voidptr array_last(array a) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (a.len == 0) {
-			v_panic(_SLIT("array.last: array is empty"));
+			_v_panic(_SLIT("array.last: array is empty"));
 			VUNREACHABLE();
 		}
 	}
@@ -15373,7 +15373,7 @@ voidptr array_pop(array* a) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (a->len == 0) {
-			v_panic(_SLIT("array.pop: array is empty"));
+			_v_panic(_SLIT("array.pop: array is empty"));
 			VUNREACHABLE();
 		}
 	}
@@ -15388,7 +15388,7 @@ void array_delete_last(array* a) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (a->len == 0) {
-			v_panic(_SLIT("array.pop: array is empty"));
+			_v_panic(_SLIT("array.pop: array is empty"));
 			VUNREACHABLE();
 		}
 	}
@@ -15401,15 +15401,15 @@ VV_LOCAL_SYMBOL array array_slice(array a, int start, int _end) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (start > end) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.slice: invalid slice index ("), 0xfe07, {.d_i32 = start}}, {_SLIT(" > "), 0xfe07, {.d_i32 = end}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.slice: invalid slice index ("), 0xfe07, {.d_i32 = start}}, {_SLIT(" > "), 0xfe07, {.d_i32 = end}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 		if (end > a.len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.slice: slice bounds out of range ("), 0xfe07, {.d_i32 = end}}, {_SLIT(" >= "), 0xfe07, {.d_i32 = a.len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.slice: slice bounds out of range ("), 0xfe07, {.d_i32 = end}}, {_SLIT(" >= "), 0xfe07, {.d_i32 = a.len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 		if (start < 0) {
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("array.slice: slice bounds out of range ("), 0xfe07, {.d_i32 = start}}, {_SLIT(" < 0)"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("array.slice: slice bounds out of range ("), 0xfe07, {.d_i32 = start}}, {_SLIT(" < 0)"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -15468,7 +15468,7 @@ VV_LOCAL_SYMBOL void array_set(array* a, int i, voidptr val) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (i < 0 || i >= a->len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.set: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("array.set: index out of range (i == "), 0xfe07, {.d_i32 = i}}, {_SLIT(", a.len == "), 0xfe07, {.d_i32 = a->len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -15502,13 +15502,13 @@ void array_reverse_in_place(array* a) {
 		return;
 	}
 	{ // Unsafe block
-		byte* tmp_value = v_malloc(a->element_size);
+		byte* tmp_value = _v_malloc(a->element_size);
 		for (int i = 0; i < a->len / 2; ++i) {
 			memcpy(tmp_value, ((byte*)(a->data)) + i * a->element_size, a->element_size);
 			memcpy(((byte*)(a->data)) + i * a->element_size, ((byte*)(a->data)) + (a->len - 1 - i) * a->element_size, a->element_size);
 			memcpy(((byte*)(a->data)) + (a->len - 1 - i) * a->element_size, tmp_value, a->element_size);
 		}
-		v_free(tmp_value);
+		_v_free(tmp_value);
 	}
 }
 
@@ -15530,7 +15530,7 @@ void array_free(array* a) {
 		return;
 	}
 	#endif
-	v_free(((byte*)(a->data)) - a->offset);
+	_v_free(((byte*)(a->data)) - a->offset);
 }
 
 // Attr: [unsafe]
@@ -15544,7 +15544,7 @@ void Array_string_free(Array_string* a) {
 		string s = ((string*)a->data)[_t1];
 		string_free(&s);
 	}
-	v_free(a->data);
+	_v_free(a->data);
 }
 
 // Attr: [manualfree]
@@ -15567,7 +15567,7 @@ string Array_string_str(Array_string a) {
 }
 
 string Array_byte_hex(Array_byte b) {
-	byte* hex = v_malloc(b.len * 2 + 1);
+	byte* hex = _v_malloc(b.len * 2 + 1);
 	int dst_i = 0;
 	for (int _t1 = 0; _t1 < b.len; ++_t1) {
 		byte i = ((byte*)b.data)[_t1];
@@ -15699,7 +15699,7 @@ VNORETURN VV_LOCAL_SYMBOL void vhalt(void) {
 }
 
 // Attr: [noreturn]
-VNORETURN void v_exit(int code) {
+VNORETURN void _v_exit(int code) {
 	exit(code);
 	VUNREACHABLE();
 	while(1);
@@ -15769,13 +15769,13 @@ VNORETURN VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod,
 
 // Attr: [noreturn]
 VNORETURN void panic_optional_not_set(string s) {
-	v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("optional not set ("), 0xfe10, {.d_s = s}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+	_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("optional not set ("), 0xfe10, {.d_s = s}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 	VUNREACHABLE();
 	while(1);
 }
 
 // Attr: [noreturn]
-VNORETURN void v_panic(string s) {
+VNORETURN void _v_panic(string s) {
 	#if defined(_VFREESTANDING)
 	{
 	}
@@ -15936,7 +15936,7 @@ bool _writeln_to_fd_defer_0 = false;
 byte* buf;
 	{ // Unsafe block
 		int buf_len = s.len + 1;
-		buf = v_malloc(buf_len);
+		buf = _v_malloc(buf_len);
 		_writeln_to_fd_defer_0 = true;
 		memcpy(buf, s.str, s.len);
 		buf[s.len] = '\n';
@@ -15944,7 +15944,7 @@ byte* buf;
 	}
 // Defer begin
 if (_writeln_to_fd_defer_0) {
-	v_free(buf);
+	_v_free(buf);
 }
 // Defer end
 }
@@ -15967,19 +15967,19 @@ VV_LOCAL_SYMBOL void _write_buf_to_fd(int fd, byte* buf, int buf_len) {
 }
 
 // Attr: [unsafe]
-byte* v_malloc(int n) {
+byte* _v_malloc(int n) {
 	if (n <= 0) {
-		v_panic(_SLIT("> V malloc(<=0)"));
+		_v_panic(_SLIT("> V malloc(<=0)"));
 		VUNREACHABLE();
 	}
 	#if defined(CUSTOM_DEFINE_vplayground)
 	{
 		if (n > 10000) {
-			v_panic(_SLIT("allocating more than 10 KB at once is not allowed in the V playground"));
+			_v_panic(_SLIT("allocating more than 10 KB at once is not allowed in the V playground"));
 			VUNREACHABLE();
 		}
 		if (total_m > 50 * 1024 * 1024) {
-			v_panic(_SLIT("allocating more than 50 MB is not allowed in the V playground"));
+			_v_panic(_SLIT("allocating more than 50 MB is not allowed in the V playground"));
 			VUNREACHABLE();
 		}
 	}
@@ -15987,7 +15987,7 @@ byte* v_malloc(int n) {
 	#if defined(CUSTOM_DEFINE_trace_malloc)
 	{
 		total_m += n;
-		fprintf(stderr, "v_malloc %6d total %10d\n", n, total_m);
+		fprintf(stderr, "_v_malloc %6d total %10d\n", n, total_m);
 	}
 	#endif
 	byte* res = ((byte*)(0));
@@ -16010,7 +16010,7 @@ byte* v_malloc(int n) {
 	}
 	#endif
 	if (res == 0) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("malloc("), 0xfe07, {.d_i32 = n}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("malloc("), 0xfe07, {.d_i32 = n}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	#if defined(CUSTOM_DEFINE_debug_malloc)
@@ -16024,17 +16024,17 @@ byte* v_malloc(int n) {
 // Attr: [unsafe]
 byte* malloc_noscan(int n) {
 	if (n <= 0) {
-		v_panic(_SLIT("> V malloc(<=0)"));
+		_v_panic(_SLIT("> V malloc(<=0)"));
 		VUNREACHABLE();
 	}
 	#if defined(CUSTOM_DEFINE_vplayground)
 	{
 		if (n > 10000) {
-			v_panic(_SLIT("allocating more than 10 KB at once is not allowed in the V playground"));
+			_v_panic(_SLIT("allocating more than 10 KB at once is not allowed in the V playground"));
 			VUNREACHABLE();
 		}
 		if (total_m > 50 * 1024 * 1024) {
-			v_panic(_SLIT("allocating more than 50 MB is not allowed in the V playground"));
+			_v_panic(_SLIT("allocating more than 50 MB is not allowed in the V playground"));
 			VUNREACHABLE();
 		}
 	}
@@ -16042,7 +16042,7 @@ byte* malloc_noscan(int n) {
 	#if defined(CUSTOM_DEFINE_trace_malloc)
 	{
 		total_m += n;
-		fprintf(stderr, "v_malloc %6d total %10d\n", n, total_m);
+		fprintf(stderr, "_v_malloc %6d total %10d\n", n, total_m);
 	}
 	#endif
 	byte* res = ((byte*)(0));
@@ -16075,7 +16075,7 @@ byte* malloc_noscan(int n) {
 	}
 	#endif
 	if (res == 0) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("malloc("), 0xfe07, {.d_i32 = n}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("malloc("), 0xfe07, {.d_i32 = n}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	#if defined(CUSTOM_DEFINE_debug_malloc)
@@ -16097,7 +16097,7 @@ byte* v_realloc(byte* b, int n) {
 	#if defined(_VPREALLOC)
 	{
 		{ // Unsafe block
-			new_ptr = v_malloc(n);
+			new_ptr = _v_malloc(n);
 			memcpy(new_ptr, b, n);
 		}
 		return new_ptr;
@@ -16112,7 +16112,7 @@ byte* v_realloc(byte* b, int n) {
 	}
 	#endif
 	if (new_ptr == 0) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("realloc("), 0xfe07, {.d_i32 = n}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("realloc("), 0xfe07, {.d_i32 = n}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	return new_ptr;
@@ -16133,11 +16133,11 @@ byte* realloc_data(byte* old_data, int old_size, int new_size) {
 	#if defined(CUSTOM_DEFINE_debug_realloc)
 	{
 		{ // Unsafe block
-			byte* new_ptr = v_malloc(new_size);
+			byte* new_ptr = _v_malloc(new_size);
 			int min_size = (old_size < new_size ? (old_size) : (new_size));
 			memcpy(new_ptr, old_data, min_size);
 			memset(old_data, 0x57, old_size);
-			v_free(old_data);
+			_v_free(old_data);
 			return new_ptr;
 		}
 	}
@@ -16153,7 +16153,7 @@ byte* realloc_data(byte* old_data, int old_size, int new_size) {
 	}
 	#endif
 	if (nptr == 0) {
-		v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT("realloc_data("), 0xfe11, {.d_p = (void*)(old_data)}}, {_SLIT(", "), 0xfe07, {.d_i32 = old_size}}, {_SLIT(", "), 0xfe07, {.d_i32 = new_size}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT("realloc_data("), 0xfe11, {.d_p = (void*)(old_data)}}, {_SLIT(", "), 0xfe07, {.d_i32 = old_size}}, {_SLIT(", "), 0xfe07, {.d_i32 = new_size}}, {_SLIT(") failed"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	return nptr;
@@ -16161,7 +16161,7 @@ byte* realloc_data(byte* old_data, int old_size, int new_size) {
 
 byte* vcalloc(int n) {
 	if (n < 0) {
-		v_panic(_SLIT("calloc(<0)"));
+		_v_panic(_SLIT("calloc(<0)"));
 		VUNREACHABLE();
 	} else if (n == 0) {
 		return ((byte*)(0));
@@ -16204,13 +16204,13 @@ byte* vcalloc_noscan(int n) {
 		#if defined(CUSTOM_DEFINE_vplayground)
 		{
 			if (n > 10000) {
-				v_panic(_SLIT("allocating more than 10 KB is not allowed in the playground"));
+				_v_panic(_SLIT("allocating more than 10 KB is not allowed in the playground"));
 				VUNREACHABLE();
 			}
 		}
 		#endif
 		if (n < 0) {
-			v_panic(_SLIT("calloc(<0)"));
+			_v_panic(_SLIT("calloc(<0)"));
 			VUNREACHABLE();
 		}
 		#if defined(CUSTOM_DEFINE_gcboehm_opt)
@@ -16229,7 +16229,7 @@ byte* vcalloc_noscan(int n) {
 }
 
 // Attr: [unsafe]
-void v_free(voidptr ptr) {
+void _v_free(voidptr ptr) {
 	#if defined(_VPREALLOC)
 	{
 		return;
@@ -16255,7 +16255,7 @@ voidptr memdup(voidptr src, int sz) {
 		return vcalloc(1);
 	}
 	{ // Unsafe block
-		byte* mem = v_malloc(sz);
+		byte* mem = _v_malloc(sz);
 		return memcpy(mem, src, sz);
 	}
 	return 0;
@@ -16279,7 +16279,7 @@ inline VV_LOCAL_SYMBOL int v_fixed_index(int i, int len) {
 	{
 		if (i < 0 || i >= len) {
 			string s =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("fixed array index out of range (index: "), 0xfe07, {.d_i32 = i}}, {_SLIT(", len: "), 0xfe07, {.d_i32 = len}}, {_SLIT(")"), 0, { .d_c = 0 }}}));
-			v_panic(s);
+			_v_panic(s);
 			VUNREACHABLE();
 		}
 	}
@@ -16294,7 +16294,7 @@ inline bool isnil(voidptr v) {
 
 // Attr: [deprecated]
 int is_atty(int fd) {
-	v_panic(_SLIT("use os.is_atty(x) instead"));
+	_v_panic(_SLIT("use os.is_atty(x) instead"));
 	VUNREACHABLE();
 	return 0;
 }
@@ -16335,7 +16335,7 @@ VV_LOCAL_SYMBOL voidptr __as_cast(voidptr obj, int obj_type, int expected_type) 
 				expected_name = string_clone(x.tname);
 			}
 		}
-		v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("as cast: cannot cast `"), 0xfe10, {.d_s = obj_name}}, {_SLIT("` to `"), 0xfe10, {.d_s = expected_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("as cast: cannot cast `"), 0xfe10, {.d_s = obj_name}}, {_SLIT("` to `"), 0xfe10, {.d_s = expected_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	return obj;
@@ -17075,8 +17075,8 @@ inline VV_LOCAL_SYMBOL DenseArray new_dense_array(int key_bytes, int value_bytes
 		.len = 0,
 		.deletes = 0U,
 		.all_deleted = 0,
-		.values = v_malloc(cap * value_bytes),
-		.keys = v_malloc(cap * key_bytes),
+		.values = _v_malloc(cap * value_bytes),
+		.keys = _v_malloc(cap * key_bytes),
 	};
 }
 
@@ -17122,8 +17122,8 @@ inline VV_LOCAL_SYMBOL int DenseArray_expand(DenseArray* d) {
 }
 
 VV_LOCAL_SYMBOL void DenseArray_zeros_to_end(DenseArray* d) {
-	byte* tmp_value = v_malloc(d->value_bytes);
-	byte* tmp_key = v_malloc(d->key_bytes);
+	byte* tmp_value = _v_malloc(d->value_bytes);
+	byte* tmp_key = _v_malloc(d->key_bytes);
 	int count = 0;
 	for (int i = 0; i < d->len; ++i) {
 		if (DenseArray_has_index(d, i)) {
@@ -17141,10 +17141,10 @@ VV_LOCAL_SYMBOL void DenseArray_zeros_to_end(DenseArray* d) {
 		}
 	}
 	{ // Unsafe block
-		v_free(tmp_value);
-		v_free(tmp_key);
+		_v_free(tmp_value);
+		_v_free(tmp_key);
 		d->deletes = 0U;
-		v_free(d->all_deleted);
+		_v_free(d->all_deleted);
 	}
 	d->len = count;
 	int old_cap = d->cap;
@@ -17340,7 +17340,7 @@ inline VV_LOCAL_SYMBOL void map_ensure_extra_metas(map* m, u32 probe_count) {
 			memset(m->metas + mem_size - _const_extra_metas_inc, 0, ((int)(/*SizeOf*/ sizeof(u32) * _const_extra_metas_inc)));
 		}
 		if (probe_count == 252U) {
-			v_panic(_SLIT("Probe overflow"));
+			_v_panic(_SLIT("Probe overflow"));
 			VUNREACHABLE();
 		}
 	}
@@ -17437,7 +17437,7 @@ VV_LOCAL_SYMBOL void map_cached_rehash(map* m, u32 old_cap) {
 		u32 kv_index = old_metas[i + 1U];
 		map_meta_greater(m, index, meta, kv_index);
 	}
-	v_free(old_metas);
+	_v_free(old_metas);
 }
 
 VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, voidptr key, voidptr zero) {
@@ -17470,7 +17470,7 @@ VV_LOCAL_SYMBOL voidptr map_get_and_set(map* m, voidptr key, voidptr zero) {
 		v_assert_meta_info__t2.fn_name = _SLIT("get_and_set");
 		v_assert_meta_info__t2.src = _SLIT("false");
 		__print_assert_failure(&v_assert_meta_info__t2);
-		v_panic(_SLIT("Assertion failed..."));
+		_v_panic(_SLIT("Assertion failed..."));
 	}
 	return ((voidptr)(0));
 }
@@ -17651,7 +17651,7 @@ map map_clone(map* m) {
 		.cached_hashbits = m->cached_hashbits,
 		.shift = m->shift,
 		.key_values = DenseArray_clone(&m->key_values),
-		.metas = ((u32*)(v_malloc(metasize))),
+		.metas = ((u32*)(_v_malloc(metasize))),
 		.extra_metas = m->extra_metas,
 		.has_string_keys = m->has_string_keys,
 		.hash_fn = (voidptr)m->hash_fn,
@@ -17675,7 +17675,7 @@ map map_clone(map* m) {
 
 // Attr: [unsafe]
 void map_free(map* m) {
-	v_free(m->metas);
+	_v_free(m->metas);
 	if (m->key_values.deletes == 0U) {
 		for (int i = 0; i < m->key_values.len; i++) {
 			{ // Unsafe block
@@ -17693,11 +17693,11 @@ void map_free(map* m) {
 				m->free_fn(pkey);
 			}
 		}
-		v_free(m->key_values.all_deleted);
+		_v_free(m->key_values.all_deleted);
 	}
 	{ // Unsafe block
-		v_free(m->key_values.keys);
-		v_free(m->key_values.values);
+		_v_free(m->key_values.keys);
+		_v_free(m->key_values.values);
 	}
 }
 
@@ -17715,7 +17715,7 @@ VV_LOCAL_SYMBOL void trace_error(string x) {
 }
 
 // Attr: [inline]
-inline IError v_error(string message) {
+inline IError _v_error(string message) {
 	;
 	return /*&IError*/I_Error_to_Interface_IError((Error*)memdup(&(Error){.msg = message,.code = 0,}, sizeof(Error)));
 }
@@ -17748,7 +17748,7 @@ void IError_free(IError* ie) {
 	{ // Unsafe block
 		string_free(&(*(ie->msg)));
 		IError* cie = ((IError*)(ie));
-		v_free(cie->_object);
+		_v_free(cie->_object);
 	}
 }
 
@@ -17930,7 +17930,7 @@ VV_LOCAL_SYMBOL void SortedMap_set(SortedMap* m, string key, voidptr value) {
 			}
 			node->keys[v_fixed_index(j + 1, 11)] = key;
 			{ // Unsafe block
-				node->values[v_fixed_index(j + 1, 11)] = v_malloc(m->value_bytes);
+				node->values[v_fixed_index(j + 1, 11)] = _v_malloc(m->value_bytes);
 				memcpy(node->values[v_fixed_index(j + 1, 11)], value, m->value_bytes);
 			}
 			node->len++;
@@ -17952,7 +17952,7 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 		z->values[v_fixed_index(j, 11)] = y->values[v_fixed_index(j + _const_degree, 11)];
 	}
 	if (!isnil(y->children)) {
-		z->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
+		z->children = ((voidptr*)(_v_malloc(((int)(_const_children_bytes)))));
 		for (int jj = _const_degree - 1; jj >= 0; jj--) {
 			{ // Unsafe block
 				z->children[jj] = y->children[jj + _const_degree];
@@ -17961,7 +17961,7 @@ VV_LOCAL_SYMBOL void mapnode_split_child(mapnode* n, int child_index, mapnode* y
 	}
 	{ // Unsafe block
 		if (isnil(n->children)) {
-			n->children = ((voidptr*)(v_malloc(((int)(_const_children_bytes)))));
+			n->children = ((voidptr*)(_v_malloc(((int)(_const_children_bytes)))));
 		}
 		n->children[n->len + 1] = n->children[n->len];
 	}
@@ -18279,7 +18279,7 @@ Array_rune string_runes(string s) {
 // Attr: [unsafe]
 string tos(byte* s, int len) {
 	if (s == 0) {
-		v_panic(_SLIT("tos(): nil string"));
+		_v_panic(_SLIT("tos(): nil string"));
 		VUNREACHABLE();
 	}
 	return (string){.str = s, .len = len};
@@ -18293,7 +18293,7 @@ string tos_clone(byte* s) {
 // Attr: [unsafe]
 string tos2(byte* s) {
 	if (s == 0) {
-		v_panic(_SLIT("tos2: nil string"));
+		_v_panic(_SLIT("tos2: nil string"));
 		VUNREACHABLE();
 	}
 	return (string){.str = s, .len = vstrlen(s)};
@@ -18302,7 +18302,7 @@ string tos2(byte* s) {
 // Attr: [unsafe]
 string tos3(char* s) {
 	if (s == 0) {
-		v_panic(_SLIT("tos3: nil string"));
+		_v_panic(_SLIT("tos3: nil string"));
 		VUNREACHABLE();
 	}
 	return (string){.str = ((byte*)(s)), .len = strlen(s)};
@@ -18636,7 +18636,7 @@ u64 string_u64(string s) {
 // Attr: [direct_array_access]
 VV_LOCAL_SYMBOL bool string__eq(string s, string a) {
 	if (s.str == 0) {
-		v_panic(_SLIT("string.eq(): nil string"));
+		_v_panic(_SLIT("string.eq(): nil string"));
 		VUNREACHABLE();
 	}
 	if (s.len != a.len) {
@@ -18788,7 +18788,7 @@ string string_substr(string s, int start, int end) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (start > end || start > s.len || end > s.len || start < 0 || end < 0) {
-			v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT("substr("), 0xfe07, {.d_i32 = start}}, {_SLIT(", "), 0xfe07, {.d_i32 = end}}, {_SLIT(") out of bounds (len="), 0xfe07, {.d_i32 = s.len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT("substr("), 0xfe07, {.d_i32 = start}}, {_SLIT(", "), 0xfe07, {.d_i32 = end}}, {_SLIT(") out of bounds (len="), 0xfe07, {.d_i32 = s.len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -19341,7 +19341,7 @@ VV_LOCAL_SYMBOL byte string_at(string s, int idx) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (idx < 0 || idx >= s.len) {
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("string index out of range: "), 0xfe07, {.d_i32 = idx}}, {_SLIT(" / "), 0xfe07, {.d_i32 = s.len}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("string index out of range: "), 0xfe07, {.d_i32 = idx}}, {_SLIT(" / "), 0xfe07, {.d_i32 = s.len}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
 	}
@@ -19354,7 +19354,7 @@ VV_LOCAL_SYMBOL byte string_at(string s, int idx) {
 
 VV_LOCAL_SYMBOL Option_byte string_at_with_check(string s, int idx) {
 	if (idx < 0 || idx >= s.len) {
-		return (Option_byte){ .state=2, .err=v_error(_SLIT("string index out of range")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_byte){ .state=2, .err=_v_error(_SLIT("string index out of range")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	{ // Unsafe block
 		Option_byte _t2;
@@ -19418,7 +19418,7 @@ void string_free(string* s) {
 	if (s->is_lit == 1 || s->str == 0) {
 		return;
 	}
-	v_free(s->str);
+	_v_free(s->str);
 	s->is_lit = -98761234;
 }
 
@@ -19562,7 +19562,7 @@ Array_byte string_bytes(string s) {
 
 string string_repeat(string s, int count) {
 	if (count < 0) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("string.repeat: count is negative: "), 0xfe07, {.d_i32 = count}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("string.repeat: count is negative: "), 0xfe07, {.d_i32 = count}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	} else if (count == 0) {
 		return _SLIT("");
@@ -20272,7 +20272,7 @@ string str_intp_sub(string base_str, string in_str) {
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
 		eprintln(_SLIT("No strin interpolation %% parameteres"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
@@ -20720,7 +20720,7 @@ multi_return_string_int os__fd_read(int fd, int maxbytes) {
 		byte* buf = malloc_noscan(maxbytes + 1);
 		int nbytes = read(fd, buf, maxbytes);
 		if (nbytes < 0) {
-			v_free(buf);
+			_v_free(buf);
 			return (multi_return_string_int){.arg0=_SLIT(""), .arg1=nbytes};
 		}
 		buf[nbytes] = 0;
@@ -20791,11 +20791,11 @@ Option_os__File os__open_file(string path, string mode, Array_int options) {
 	#endif
 	int fd = open(((char*)(p.str)), flags, permission);
 	if (fd == -1) {
-		return (Option_os__File){ .state=2, .err=v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_os__File){ .state=2, .err=_v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	FILE* cfile = fdopen(fd, ((char*)(mode.str)));
 	if (isnil(cfile)) {
-		return (Option_os__File){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to open or create file \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_os__File){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to open or create file \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_os__File _t4;
 	opt_ok(&(os__File[]) { (os__File){.cfile = cfile,.fd = fd,.is_opened = true,} }, (Option*)(&_t4), sizeof(os__File));
@@ -20869,7 +20869,7 @@ Option_int os__File_write(os__File* f, Array_byte buf) {
 	}
 	int written = ((int)(fwrite(buf.data, 1, buf.len, f->cfile)));
 	if (written == 0 && buf.len != 0) {
-		return (Option_int){ .state=2, .err=v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_int){ .state=2, .err=_v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_int _t3;
 	opt_ok(&(int[]) { written }, (Option*)(&_t3), sizeof(int));
@@ -20882,11 +20882,11 @@ Option_int os__File_writeln(os__File* f, string s) {
 	}
 	int written = ((int)(fwrite(s.str, 1, s.len, f->cfile)));
 	if (written == 0 && s.len != 0) {
-		return (Option_int){ .state=2, .err=v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_int){ .state=2, .err=_v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	int x = fputs("\n", f->cfile);
 	if (x < 0) {
-		return (Option_int){ .state=2, .err=v_error(_SLIT("could not add newline")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_int){ .state=2, .err=_v_error(_SLIT("could not add newline")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_int _t4;
 	opt_ok(&(int[]) { (written + 1) }, (Option*)(&_t4), sizeof(int));
@@ -20918,7 +20918,7 @@ Option_int os__File_write_to(os__File* f, u64 pos, Array_byte buf) {
 			_fseeki64(f->cfile, pos, SEEK_SET);
 			int res = ((int)(fwrite(buf.data, 1, buf.len, f->cfile)));
 			if (res == 0 && buf.len != 0) {
-				return (Option_int){ .state=2, .err=v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_int){ .state=2, .err=_v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			_fseeki64(f->cfile, 0U, SEEK_END);
 			Option_int _t3;
@@ -20930,7 +20930,7 @@ Option_int os__File_write_to(os__File* f, u64 pos, Array_byte buf) {
 			fseeko(f->cfile, pos, SEEK_SET);
 			int res = ((int)(fwrite(buf.data, 1, buf.len, f->cfile)));
 			if (res == 0 && buf.len != 0) {
-				return (Option_int){ .state=2, .err=v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_int){ .state=2, .err=_v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			fseeko(f->cfile, 0U, SEEK_END);
 			Option_int _t5;
@@ -20945,7 +20945,7 @@ Option_int os__File_write_to(os__File* f, u64 pos, Array_byte buf) {
 		fseek(f->cfile, pos, SEEK_SET);
 		int res = ((int)(fwrite(buf.data, 1, buf.len, f->cfile)));
 		if (res == 0 && buf.len != 0) {
-			return (Option_int){ .state=2, .err=v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_int){ .state=2, .err=_v_error(_SLIT("0 bytes written")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		fseek(f->cfile, 0, SEEK_END);
 		Option_int _t7;
@@ -20953,7 +20953,7 @@ Option_int os__File_write_to(os__File* f, u64 pos, Array_byte buf) {
 		return _t7;
 	}
 	#endif
-	return (Option_int){ .state=2, .err=v_error(_SLIT("Could not write to file")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_int){ .state=2, .err=_v_error(_SLIT("Could not write to file")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 // Attr: [unsafe]
@@ -20978,7 +20978,7 @@ Option_void os__File_write_full_buffer(os__File* f, voidptr buffer, size_t buffe
 			ptr += x;
 			remaining_bytes -= x;
 			if (x <= 0) {
-				return (Option_void){ .state=2, .err=v_error(_SLIT("C.fwrite returned 0")), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_void){ .state=2, .err=_v_error(_SLIT("C.fwrite returned 0")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 	}
@@ -21024,7 +21024,7 @@ VV_LOCAL_SYMBOL Option_int os__fread(voidptr ptr, int item_size, int items, FILE
 			return (Option_int){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		if (ferror(stream) != 0) {
-			return (Option_int){ .state=2, .err=v_error(_SLIT("file read error")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_int){ .state=2, .err=_v_error(_SLIT("file read error")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	}
 	Option_int _t3;
@@ -21050,7 +21050,7 @@ Array_byte os__File_read_bytes_at(os__File* f, int size, u64 pos) {
 
 Option_int os__File_read_bytes_into_newline(os__File* f, Array_byte* buf) {
 	if (buf->len == 0) {
-		v_panic(string__plus(_SLIT("read_bytes_into_newline"), _SLIT(": `buf.len` == 0")));
+		_v_panic(string__plus(_SLIT("read_bytes_into_newline"), _SLIT(": `buf.len` == 0")));
 		VUNREACHABLE();
 	}
 	int newline = 10;
@@ -21069,7 +21069,7 @@ Option_int os__File_read_bytes_into_newline(os__File* f, Array_byte* buf) {
 				return _t1;
 			}
 			if (ferror(stream) != 0) {
-				return (Option_int){ .state=2, .err=v_error(_SLIT("file read error")), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_int){ .state=2, .err=_v_error(_SLIT("file read error")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 		else if (c == (newline)) {
@@ -21092,7 +21092,7 @@ Option_int os__File_read_bytes_into_newline(os__File* f, Array_byte* buf) {
 
 Option_int os__File_read_bytes_into(os__File* f, u64 pos, Array_byte* buf) {
 	if (buf->len == 0) {
-		v_panic(string__plus(_SLIT("read_bytes_into"), _SLIT(": `buf.len` == 0")));
+		_v_panic(string__plus(_SLIT("read_bytes_into"), _SLIT(": `buf.len` == 0")));
 		VUNREACHABLE();
 	}
 	#if defined(TARGET_IS_64BIT)
@@ -21161,7 +21161,7 @@ Option_int os__File_read_bytes_into(os__File* f, u64 pos, Array_byte* buf) {
 		return _t9;
 	}
 	#endif
-	return (Option_int){ .state=2, .err=v_error(_SLIT("Could not read file")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_int){ .state=2, .err=_v_error(_SLIT("Could not read file")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 Option_int os__File_read_from(os__File* f, u64 pos, Array_byte* buf) {
@@ -21210,7 +21210,7 @@ Option_int os__File_read_from(os__File* f, u64 pos, Array_byte* buf) {
 		return _t7;
 	}
 	#endif
-	return (Option_int){ .state=2, .err=v_error(_SLIT("Could not read file")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_int){ .state=2, .err=_v_error(_SLIT("Could not read file")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 void os__File_flush(os__File* f) {
@@ -21279,7 +21279,7 @@ Option_void os__cp_all(string src, string dst, bool overwrite) {
 	string source_path = os__real_path(src);
 	string dest_path = os__real_path(dst);
 	if (!os__exists(source_path)) {
-		return (Option_void){ .state=2, .err=v_error(_SLIT("Source path doesn't exist")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("Source path doesn't exist")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (!os__is_dir(source_path)) {
 		string adjusted_path = (os__is_dir(dest_path) ? (os__join_path(dest_path, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){os__file_name(source_path)})))) : (dest_path));
@@ -21293,7 +21293,7 @@ Option_void os__cp_all(string src, string dst, bool overwrite) {
 				}
 				;
 			} else {
-				return (Option_void){ .state=2, .err=v_error(_SLIT("Destination file path already exist")), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_void){ .state=2, .err=_v_error(_SLIT("Destination file path already exist")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 		Option_void _t5 = os__cp(source_path, adjusted_path);
@@ -21315,7 +21315,7 @@ Option_void os__cp_all(string src, string dst, bool overwrite) {
 		;
 	}
 	if (!os__is_dir(dest_path)) {
-		return (Option_void){ .state=2, .err=v_error(_SLIT("Destination path is not a valid directory")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("Destination path is not a valid directory")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_Array_string _t10 = os__ls(source_path);
 	if (_t10.state != 0) { /*or block*/ 
@@ -21503,7 +21503,7 @@ Option_void os__rmdir_all(string path) {
 	}
 	;
 	if (ret_err.len > 0) {
-		return (Option_void){ .state=2, .err=v_error(ret_err), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(ret_err), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
 }
@@ -21804,7 +21804,7 @@ VV_LOCAL_SYMBOL string os__executable_fallback(void) {
 
 Option_string os__find_abs_path_of_executable(string exepath) {
 	if ((exepath).len == 0) {
-		return (Option_string){ .state=2, .err=v_error(_SLIT("expected non empty `exepath`")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error(_SLIT("expected non empty `exepath`")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (os__is_abs_path(exepath)) {
 		Option_string _t2;
@@ -21826,7 +21826,7 @@ Option_string os__find_abs_path_of_executable(string exepath) {
 		opt_ok(&(string[]) { os__real_path(res) }, (Option*)(&_t4), sizeof(string));
 		return _t4;
 	}
-	return (Option_string){ .state=2, .err=v_error(_SLIT("failed to find executable")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error(_SLIT("failed to find executable")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 bool os__exists_in_system_path(string prog) {
@@ -21939,7 +21939,7 @@ Option_void os__mkdir_all(string path) {
 		Option_bool _t2 = os__mkdir(p);
 		if (_t2.state != 0) { /*or block*/ 
 			IError err = _t2.err;
-			return (Option_void){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("folder: "), 0xfe10, {.d_s = p}}, {_SLIT(", error: "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_void){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("folder: "), 0xfe10, {.d_s = p}}, {_SLIT(", error: "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		;
 	}
@@ -21960,7 +21960,7 @@ string os__cache_dir(void) {
 		Option_bool _t2 = os__mkdir(cdir);
 		if (_t2.state != 0) { /*or block*/ 
 			IError err = _t2.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -22056,7 +22056,7 @@ os__Result os__execute_or_panic(string cmd) {
 	if (res.exit_code != 0) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed    cmd: "), 0xfe10, {.d_s = cmd}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed   code: "), 0xfe07, {.d_i32 = res.exit_code}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		v_panic(res.output);
+		_v_panic(res.output);
 		VUNREACHABLE();
 	}
 	return res;
@@ -22068,7 +22068,7 @@ os__Result os__execute_or_exit(string cmd) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed    cmd: "), 0xfe10, {.d_s = cmd}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed   code: "), 0xfe07, {.d_i32 = res.exit_code}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		eprintln(res.output);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	return res;
@@ -22124,7 +22124,7 @@ FILE* fp;
 	os__read_bytes_defer_0 = true;
 	int cseek = fseek(fp, 0, SEEK_END);
 	if (cseek != 0) {
-		Option_Array_byte _t3 = (Option_Array_byte){ .state=2, .err=v_error(_SLIT("fseek failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_Array_byte _t3 = (Option_Array_byte){ .state=2, .err=_v_error(_SLIT("fseek failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
 		if (os__read_bytes_defer_0) {
 			fclose(fp);
@@ -22134,7 +22134,7 @@ FILE* fp;
 	}
 	int fsize = ftell(fp);
 	if (fsize < 0) {
-		Option_Array_byte _t4 = (Option_Array_byte){ .state=2, .err=v_error(_SLIT("ftell failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_Array_byte _t4 = (Option_Array_byte){ .state=2, .err=_v_error(_SLIT("ftell failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
 		if (os__read_bytes_defer_0) {
 			fclose(fp);
@@ -22146,7 +22146,7 @@ FILE* fp;
 	Array_byte res = __new_array_with_default(fsize, 0, sizeof(byte), 0);
 	int nr_read_elements = ((int)(fread(res.data, fsize, 1, fp)));
 	if (nr_read_elements == 0 && fsize > 0) {
-		Option_Array_byte _t5 = (Option_Array_byte){ .state=2, .err=v_error(_SLIT("fread failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_Array_byte _t5 = (Option_Array_byte){ .state=2, .err=_v_error(_SLIT("fread failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
 		if (os__read_bytes_defer_0) {
 			fclose(fp);
@@ -22180,7 +22180,7 @@ FILE* fp;
 	os__read_file_defer_0 = true;
 	int cseek = fseek(fp, 0, SEEK_END);
 	if (cseek != 0) {
-		Option_string _t3 = (Option_string){ .state=2, .err=v_error(_SLIT("fseek failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_string _t3 = (Option_string){ .state=2, .err=_v_error(_SLIT("fseek failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
 		if (os__read_file_defer_0) {
 			fclose(fp);
@@ -22190,7 +22190,7 @@ FILE* fp;
 	}
 	int fsize = ftell(fp);
 	if (fsize < 0) {
-		Option_string _t4 = (Option_string){ .state=2, .err=v_error(_SLIT("ftell failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_string _t4 = (Option_string){ .state=2, .err=_v_error(_SLIT("ftell failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
 		if (os__read_file_defer_0) {
 			fclose(fp);
@@ -22205,8 +22205,8 @@ FILE* fp;
 		int is_eof = ((int)(feof(fp)));
 		int is_error = ((int)(ferror(fp)));
 		if (is_eof == 0 && is_error != 0) {
-			v_free(str);
-			Option_string _t5 = (Option_string){ .state=2, .err=v_error(_SLIT("fread failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			_v_free(str);
+			Option_string _t5 = (Option_string){ .state=2, .err=_v_error(_SLIT("fread failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			// Defer begin
 			if (os__read_file_defer_0) {
 				fclose(fp);
@@ -22418,7 +22418,7 @@ Option_void os__cp(string src, string dst) {
 
 Option_FILE_ptr os__vfopen(string path, string mode) {
 	if (path.len == 0) {
-		return (Option_FILE_ptr){ .state=2, .err=v_error(_SLIT("vfopen called with \"\"")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_FILE_ptr){ .state=2, .err=_v_error(_SLIT("vfopen called with \"\"")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	voidptr fp = ((voidptr)(0));
 	#if defined(_WIN32)
@@ -22431,7 +22431,7 @@ Option_FILE_ptr os__vfopen(string path, string mode) {
 	}
 	#endif
 	if (isnil(fp)) {
-		return (Option_FILE_ptr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed to open file \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_FILE_ptr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed to open file \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	} else {
 		Option_FILE_ptr _t3;
 		opt_ok(&(FILE*[]) { fp }, (Option*)(&_t3), sizeof(FILE*));
@@ -22641,7 +22641,7 @@ Option_void os__rm(string path) {
 	}
 	#endif
 	if (rc == -1) {
-		return (Option_void){ .state=2, .err=v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to remove \""), 0xfe10, {.d_s = path}}, {_SLIT("\": "), 0, { .d_c = 0 }}})), os__posix_get_error_msg(errno))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to remove \""), 0xfe10, {.d_s = path}}, {_SLIT("\": "), 0, { .d_c = 0 }}})), os__posix_get_error_msg(errno))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
 }
@@ -22651,14 +22651,14 @@ Option_void os__rmdir(string path) {
 	{
 		int rc = RemoveDirectory(string_to_wide(path));
 		if (rc == 0) {
-			return (Option_void){ .state=2, .err=v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to remove \""), 0xfe10, {.d_s = path}}, {_SLIT("\": "), 0, { .d_c = 0 }}})), os__posix_get_error_msg(errno))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_void){ .state=2, .err=_v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to remove \""), 0xfe10, {.d_s = path}}, {_SLIT("\": "), 0, { .d_c = 0 }}})), os__posix_get_error_msg(errno))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	}
 	#else
 	{
 		int rc = rmdir(((char*)(path.str)));
 		if (rc == -1) {
-			return (Option_void){ .state=2, .err=v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_void){ .state=2, .err=_v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	}
 	#endif
@@ -22913,7 +22913,7 @@ string os__getwd(void) {
 		{ // Unsafe block
 			u16* buf = ((u16*)(vcalloc_noscan(max * 2)));
 			if (_wgetcwd(buf, max) == 0) {
-				v_free(buf);
+				_v_free(buf);
 				return _SLIT("");
 			}
 			return string_from_wide(buf);
@@ -22924,7 +22924,7 @@ string os__getwd(void) {
 		byte* buf = vcalloc_noscan(_const_os__max_path_len);
 		{ // Unsafe block
 			if (getcwd(((char*)(buf)), _const_os__max_path_len) == 0) {
-				v_free(buf);
+				_v_free(buf);
 				return _SLIT("");
 			}
 			return byte_vstring(buf);
@@ -22949,7 +22949,7 @@ string os__real_path(string fpath) {
 				string rt = string_from_wide2(fullpath, final_len);
 				res = string_substr(rt, 4, rt.len);
 			} else {
-				v_free(fullpath);
+				_v_free(fullpath);
 				eprintln(_SLIT("os.real_path() saw that the file path was too long"));
 				return string_clone(fpath);
 			}
@@ -22957,7 +22957,7 @@ string os__real_path(string fpath) {
 			u16* fullpath = ((u16*)(vcalloc_noscan(_const_os__max_path_len * 2)));
 			u32 ret = GetFullPathName(string_to_wide(fpath), _const_os__max_path_len, fullpath, 0);
 			if (ret == 0U) {
-				v_free(fullpath);
+				_v_free(fullpath);
 				return string_clone(fpath);
 			}
 			res = string_from_wide(fullpath);
@@ -22968,7 +22968,7 @@ string os__real_path(string fpath) {
 		byte* fullpath = vcalloc_noscan(_const_os__max_path_len);
 		char* ret = ((char*)(realpath(((char*)(fpath.str)), ((char*)(fullpath)))));
 		if (ret == 0) {
-			v_free(fullpath);
+			_v_free(fullpath);
 			return string_clone(fpath);
 		}
 		res = byte_vstring(fullpath);
@@ -23004,7 +23004,7 @@ int os__fork(void) {
 	#endif
 	#if defined(_WIN32)
 	{
-		v_panic(_SLIT("os.fork not supported in windows"));
+		_v_panic(_SLIT("os.fork not supported in windows"));
 		VUNREACHABLE();
 	}
 	#endif
@@ -23020,7 +23020,7 @@ int os__wait(void) {
 	#endif
 	#if defined(_WIN32)
 	{
-		v_panic(_SLIT("os.wait not supported in windows"));
+		_v_panic(_SLIT("os.wait not supported in windows"));
 		VUNREACHABLE();
 	}
 	#endif
@@ -23039,7 +23039,7 @@ void os__flush(void) {
 
 void os__chmod(string path, int mode) {
 	if (chmod(((char*)(path.str)), mode) != 0) {
-		v_panic(string__plus(_SLIT("chmod failed: "), os__posix_get_error_msg(errno)));
+		_v_panic(string__plus(_SLIT("chmod failed: "), os__posix_get_error_msg(errno)));
 		VUNREACHABLE();
 	}
 }
@@ -23047,7 +23047,7 @@ void os__chmod(string path, int mode) {
 Option_void os__chown(string path, int owner, int group) {
 	#if defined(_WIN32)
 	{
-		return (Option_void){ .state=2, .err=v_error(_SLIT("os.chown() not implemented for Windows")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("os.chown() not implemented for Windows")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	#else
 	{
@@ -23074,7 +23074,7 @@ Option_os__File os__open_append(string path) {
 	}
 	#endif
 	if (isnil(file.cfile)) {
-		return (Option_os__File){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed to create(append) file \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_os__File){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed to create(append) file \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	file.is_opened = true;
 	Option_os__File _t2;
@@ -23102,7 +23102,7 @@ Option_void os__execvp(string cmdpath, Array_string args) {
 	if (res == -1) {
 		return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
-	v_exit(res);
+	_v_exit(res);
 	VUNREACHABLE();
 	return (Option_void){0};
 }
@@ -23269,7 +23269,7 @@ os__Uname os__uname(void) {
 			u.version = cstring_to_vstring(d->version);
 			u.machine = cstring_to_vstring(d->machine);
 		}
-		v_free(d);
+		_v_free(d);
 	}
 	return u;
 }
@@ -23280,7 +23280,7 @@ string os__hostname(void) {
 	char* buf = ((char*)(malloc_noscan(size)));
 	if (gethostname(buf, size) == 0) {
 		hstnme = cstring_to_vstring(buf);
-		v_free(buf);
+		_v_free(buf);
 		return hstnme;
 	}
 	return _SLIT("");
@@ -23306,7 +23306,7 @@ Option_Array_string os__ls(string path) {
 	Array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	voidptr dir = opendir(((char*)(path.str)));
 	if (isnil(dir)) {
-		return (Option_Array_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("ls() couldnt open dir \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_Array_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("ls() couldnt open dir \""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	struct dirent* ent = ((struct dirent*)(0));
 	for (;;) {
@@ -23337,7 +23337,7 @@ Option_bool os__mkdir(string path) {
 	string apath = os__real_path(path);
 	int r = mkdir(((char*)(apath.str)), 511U);
 	if (r == -1) {
-		return (Option_bool){ .state=2, .err=v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_bool){ .state=2, .err=_v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_bool _t3;
 	opt_ok(&(bool[]) { true }, (Option*)(&_t3), sizeof(bool));
@@ -23366,7 +23366,7 @@ strings__Builder res;
 	}
 	string soutput = strings__Builder_str(&res);
 	int exit_code = os__vpclose(f);
-	v_free(buf);
+	_v_free(buf);
 	os__Result _t2 = (os__Result){.exit_code = exit_code,.output = soutput,};
 	// Defer begin
 	if (os__execute_defer_0) {
@@ -23384,7 +23384,7 @@ string pcmd;
 	os__Command_start_defer_0 = true;
 	c->f = os__vpopen(pcmd);
 	if (isnil(c->f)) {
-		Option_void _t1 = (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("exec(\""), 0xfe10, {.d_s = c->path}}, {_SLIT("\") failed"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		Option_void _t1 = (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("exec(\""), 0xfe10, {.d_s = c->path}}, {_SLIT("\") failed"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		// Defer begin
 		if (os__Command_start_defer_0) {
 			string_free(&pcmd);
@@ -23452,7 +23452,7 @@ Option_bool os__symlink(string origin, string target) {
 		opt_ok(&(bool[]) { true }, (Option*)(&_t1), sizeof(bool));
 		return _t1;
 	}
-	return (Option_bool){ .state=2, .err=v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_bool){ .state=2, .err=_v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 Option_bool os__link(string origin, string target) {
@@ -23462,7 +23462,7 @@ Option_bool os__link(string origin, string target) {
 		opt_ok(&(bool[]) { true }, (Option*)(&_t1), sizeof(bool));
 		return _t1;
 	}
-	return (Option_bool){ .state=2, .err=v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_bool){ .state=2, .err=_v_error(os__posix_get_error_msg(errno)), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 string os__get_error_msg(int code) {
@@ -23494,16 +23494,16 @@ inline bool os__debugger_present(void) {
 
 Option_bool os__is_writable_folder(string folder) {
 	if (!os__exists(folder)) {
-		return (Option_bool){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = folder}}, {_SLIT("` does not exist"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_bool){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = folder}}, {_SLIT("` does not exist"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (!os__is_dir(folder)) {
-		return (Option_bool){ .state=2, .err=v_error(_SLIT("`folder` is not a folder")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_bool){ .state=2, .err=_v_error(_SLIT("`folder` is not a folder")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	string tmp_perm_check = os__join_path(folder, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("XXXXXX")})));
 	{ // Unsafe block
 		int x = mkstemp(((char*)(tmp_perm_check.str)));
 		if (-1 == x) {
-			return (Option_bool){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("folder `"), 0xfe10, {.d_s = folder}}, {_SLIT("` is not writable"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_bool){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("folder `"), 0xfe10, {.d_s = folder}}, {_SLIT("` is not writable"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		close(x);
 	}
@@ -23808,11 +23808,11 @@ string os__Process_stderr_read(os__Process* p) {
 
 VV_LOCAL_SYMBOL void os__Process__check_redirection_call(os__Process* p, string fn_name) {
 	if (!p->use_stdio_ctl) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Call p.set_redirect_stdio() before calling p."), 0xfe10, {.d_s = fn_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Call p.set_redirect_stdio() before calling p."), 0xfe10, {.d_s = fn_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	if (p->status == os__ProcessState__not_started) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Call p."), 0xfe10, {.d_s = fn_name}}, {_SLIT("() after you have called p.run()"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Call p."), 0xfe10, {.d_s = fn_name}}, {_SLIT("() after you have called p.run()"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 }
@@ -23927,7 +23927,7 @@ VV_LOCAL_SYMBOL int os__Process_unix_spawn_process(os__Process* p) {
 	if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
 		IError err = _t2.err;
 		eprintln(IError_str(err));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
@@ -24561,20 +24561,20 @@ string time__Time_utc_string(time__Time t) {
 
 // Attr: [inline]
 inline bool time__Time__eq(time__Time t1, time__Time t2) {
-	bool _t1 = t1.v_unix == t2.v_unix && t1.microsecond == t2.microsecond;
+	bool _t1 = t1._v_unix == t2._v_unix && t1.microsecond == t2.microsecond;
 	return _t1;
 }
 
 // Attr: [inline]
 inline bool time__Time__lt(time__Time t1, time__Time t2) {
-	bool _t1 = t1.v_unix < t2.v_unix || (t1.v_unix == t2.v_unix && t1.microsecond < t2.microsecond);
+	bool _t1 = t1._v_unix < t2._v_unix || (t1._v_unix == t2._v_unix && t1.microsecond < t2.microsecond);
 	return _t1;
 }
 
 // Attr: [inline]
 inline time__Duration time__Time__minus(time__Time lhs, time__Time rhs) {
-	u64 lhs_micro = lhs.v_unix * 1000U * 1000U + ((u64)(lhs.microsecond));
-	u64 rhs_micro = rhs.v_unix * 1000U * 1000U + ((u64)(rhs.microsecond));
+	u64 lhs_micro = lhs._v_unix * 1000U * 1000U + ((u64)(lhs.microsecond));
+	u64 rhs_micro = rhs._v_unix * 1000U * 1000U + ((u64)(rhs.microsecond));
 	time__Duration _t1 = (((i64)(lhs_micro)) - ((i64)(rhs_micro))) * _const_time__microsecond;
 	return _t1;
 }
@@ -24583,14 +24583,14 @@ Option_time__Time time__parse(string s) {
 	Option_int _t1 = string_index(s, _SLIT(" "));
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		return (Option_time__Time){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_time__Time){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	int pos =  (*(int*)_t1.data);
 	string symd = string_substr(s, 0, pos);
 	Array_string ymd = string_split(symd, _SLIT("-"));
 	if (ymd.len != 3) {
-		return (Option_time__Time){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_time__Time){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	string shms = string_substr(s, pos, s.len);
 	Array_string hms = string_split(shms, _SLIT(":"));
@@ -24605,7 +24605,7 @@ Option_time__Time time__parse(string s) {
 		.minute = string_int(minute_),
 		.second = string_int(second_),
 		.microsecond = 0,
-		.v_unix = 0,
+		._v_unix = 0,
 	});
 	Option_time__Time _t4;
 	opt_ok(&(time__Time[]) { res }, (Option*)(&_t4), sizeof(time__Time));
@@ -24615,12 +24615,12 @@ Option_time__Time time__parse(string s) {
 Option_time__Time time__parse_rfc2822(string s) {
 	Array_string fields = string_split(s, _SLIT(" "));
 	if (fields.len < 5) {
-		return (Option_time__Time){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_time__Time){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_int _t2 = string_index(_const_time__months_string, (*(string*)/*ee elem_typ */array_get(fields, 2)));
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
-		return (Option_time__Time){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_time__Time){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid time format: "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	int pos =  (*(int*)_t2.data);
@@ -24641,7 +24641,7 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int time__parse_iso8601_date(string 
 	byte dummy = ((byte)(0));
 	int count = sscanf(((char*)(s.str)), "%4d-%2d-%2d%c", &year, &month, &day, &dummy);
 	if (count != 3) {
-		return (Option_multi_return_int_int_int){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_multi_return_int_int_int){ .state=2, .err=_v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_multi_return_int_int_int _t2;
 	opt_ok(&(multi_return_int_int_int/*X*/[]) { (multi_return_int_int_int){.arg0=year, .arg1=month, .arg2=day} }, (Option*)(&_t2), sizeof(multi_return_int_int_int));
@@ -24662,15 +24662,15 @@ VV_LOCAL_SYMBOL Option_multi_return_int_int_int_int_i64_bool time__parse_iso8601
 		count++;
 	}
 	if (count < 4) {
-		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	bool is_local_time = plus_min_z == 'a' && count == 4;
 	bool is_utc = plus_min_z == 'Z' && count == 5;
 	if (!(count == 7 || is_local_time || is_utc)) {
-		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (plus_min_z != '+' && plus_min_z != '-' && !is_utc && !is_local_time) {
-		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=v_error(_SLIT("Invalid 8601 format, expected `Z` or `+` or `-` as time separator")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_multi_return_int_int_int_int_i64_bool){ .state=2, .err=_v_error(_SLIT("Invalid 8601 format, expected `Z` or `+` or `-` as time separator")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	int unix_offset = 0;
 	if (offset_hour > 0) {
@@ -24697,7 +24697,7 @@ Option_time__Time time__parse_iso8601(string s) {
  	int t_i =  (*(int*)_t1.data);
 	Array_string parts = (t_i != -1 ? (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){string_substr(s, 0, t_i), string_substr(s, t_i + 1, s.len)}))) : (string_split(s, _SLIT(" "))));
 	if (!(parts.len == 1 || parts.len == 2)) {
-		return (Option_time__Time){ .state=2, .err=v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_time__Time){ .state=2, .err=_v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_multi_return_int_int_int _t3 = time__parse_iso8601_date((*(string*)/*ee elem_typ */array_get(parts, 0)));
 	if (_t3.state != 0) { /*or block*/ 
@@ -24740,14 +24740,14 @@ Option_time__Time time__parse_iso8601(string s) {
 		.minute = minute_,
 		.second = second_,
 		.microsecond = microsecond_,
-		.v_unix = 0,
+		._v_unix = 0,
 	});
 	if (is_local_time) {
 		Option_time__Time _t7;
 		opt_ok(&(time__Time[]) { t }, (Option*)(&_t7), sizeof(time__Time));
 		return _t7;
 	}
-	u64 unix_time = t.v_unix;
+	u64 unix_time = t._v_unix;
 	if (unix_offset < 0) {
 		unix_time -= ((u64)(-unix_offset));
 	} else if (unix_offset > 0) {
@@ -24881,7 +24881,7 @@ string time__Time_smonth(time__Time t) {
 }
 
 time__Time time__new_time(time__Time t) {
-	if (t.v_unix != 0U) {
+	if (t._v_unix != 0U) {
 		return t;
 	}
 	struct tm tt = (struct tm){
@@ -24896,27 +24896,27 @@ time__Time time__new_time(time__Time t) {
 		.tm_isdst = 0,
 	};
 	u64 utime = ((u64)(time__make_unix_time(tt)));
-	time__Time _t2 = (time__Time){t.year,t.month,t.day,t.hour,t.minute,t.second,t.microsecond,.v_unix = utime,};
+	time__Time _t2 = (time__Time){t.year,t.month,t.day,t.hour,t.minute,t.second,t.microsecond,._v_unix = utime,};
 	return _t2;
 }
 
 // Attr: [inline]
 inline int time__Time_unix_time(time__Time t) {
-	int _t1 = ((int)(t.v_unix));
+	int _t1 = ((int)(t._v_unix));
 	return _t1;
 }
 
 // Attr: [inline]
 inline u64 time__Time_unix_time_milli(time__Time t) {
-	u64 _t1 = t.v_unix * 1000U + ((u64)(t.microsecond / 1000));
+	u64 _t1 = t._v_unix * 1000U + ((u64)(t.microsecond / 1000));
 	return _t1;
 }
 
 time__Time time__Time_add(time__Time t, time__Duration d) {
-	i64 microseconds = ((i64)(t.v_unix)) * 1000 * 1000 + t.microsecond + time__Duration_microseconds(d);
-	i64 v_unix = microseconds / (1000 * 1000);
+	i64 microseconds = ((i64)(t._v_unix)) * 1000 * 1000 + t.microsecond + time__Duration_microseconds(d);
+	i64 _v_unix = microseconds / (1000 * 1000);
 	i64 micro = microseconds % (1000 * 1000);
-	time__Time _t1 = time__unix2(v_unix, ((int)(micro)));
+	time__Time _t1 = time__unix2(_v_unix, ((int)(micro)));
 	return _t1;
 }
 
@@ -24937,7 +24937,7 @@ VV_LOCAL_SYMBOL int time__since(time__Time t) {
 
 string time__Time_relative(time__Time t) {
 	time__Time znow = time__now();
-	u64 secs = znow.v_unix - t.v_unix;
+	u64 secs = znow._v_unix - t._v_unix;
 	if (secs <= 30U) {
 		string _t1 = _SLIT("now");
 		return _t1;
@@ -24983,7 +24983,7 @@ string time__Time_relative(time__Time t) {
 
 string time__Time_relative_short(time__Time t) {
 	time__Time znow = time__now();
-	u64 secs = znow.v_unix - t.v_unix;
+	u64 secs = znow._v_unix - t._v_unix;
 	if (secs <= 30U) {
 		string _t1 = _SLIT("now");
 		return _t1;
@@ -25075,7 +25075,7 @@ bool time__is_leap_year(int year) {
 
 Option_int time__days_in_month(int month, int year) {
 	if (month > 12 || month < 1) {
-		return (Option_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid month: "), 0xfe07, {.d_i32 = month}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid month: "), 0xfe07, {.d_i32 = month}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	int extra = (month == 2 && time__is_leap_year(year) ? (1) : (0));
 	int res = (*(int*)/*ee elem_typ */array_get(_const_time__month_days, month - 1)) + extra;
@@ -25098,7 +25098,7 @@ VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
 		.minute = t.tm_min,
 		.second = t.tm_sec,
 		.microsecond = microsecond,
-		.v_unix = ((u64)(time__make_unix_time(t))),
+		._v_unix = ((u64)(time__make_unix_time(t))),
 	};
 	return _t1;
 }
@@ -25143,7 +25143,7 @@ f64 time__Duration_hours(time__Duration d) {
 int time__offset(void) {
 	time__Time t = time__now();
 	time__Time local = time__Time_local(t);
-	int _t1 = ((int)(local.v_unix - t.v_unix));
+	int _t1 = ((int)(local._v_unix - t._v_unix));
 	return _t1;
 }
 
@@ -25153,22 +25153,22 @@ VV_LOCAL_SYMBOL u64 time__sys_mono_now_darwin(void) {
 }
 
 time__Time time__darwin_now(void) {
-	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
 }
 
 time__Time time__solaris_now(void) {
-	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
 }
 
 time__Time time__darwin_utc(void) {
-	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
 }
 
 time__Time time__solaris_utc(void) {
-	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
 }
 
@@ -25179,7 +25179,7 @@ VV_LOCAL_SYMBOL int time__make_unix_time(struct tm t) {
 
 time__Time time__Time_local(time__Time t) {
 	struct tm loc_tm = (struct tm){.tm_sec = 0,.tm_min = 0,.tm_hour = 0,.tm_mday = 0,.tm_mon = 0,.tm_year = 0,.tm_wday = 0,.tm_yday = 0,.tm_isdst = 0,};
-	localtime_r(((voidptr)(&t.v_unix)), &loc_tm);
+	localtime_r(((voidptr)(&t._v_unix)), &loc_tm);
 	time__Time _t1 = time__convert_ctime(loc_tm, t.microsecond);
 	return _t1;
 }
@@ -25226,12 +25226,12 @@ VV_LOCAL_SYMBOL time__Time time__linux_utc(void) {
 }
 
 time__Time time__win_now(void) {
-	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
 }
 
 time__Time time__win_utc(void) {
-	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,.v_unix = 0,};
+	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
 }
 
@@ -25308,7 +25308,7 @@ time__Time time__unix(int abs) {
 		.minute = min,
 		.second = sec,
 		.microsecond = 0,
-		.v_unix = ((u64)(abs)),
+		._v_unix = ((u64)(abs)),
 	};
 	return _t1;
 }
@@ -25334,7 +25334,7 @@ time__Time time__unix2(i64 abs, int microsecond) {
 		.minute = min,
 		.second = sec,
 		.microsecond = microsecond,
-		.v_unix = ((u64)(abs)),
+		._v_unix = ((u64)(abs)),
 	};
 	return _t1;
 }
@@ -25434,7 +25434,7 @@ Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, strin
 	if (_t2) {
 		*((Array_string*)&_t1.data) = *((Array_string*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t1.state != 0) { /*or block*/ 
@@ -25448,7 +25448,7 @@ Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, strin
 
 void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name) {
 	if (!_IN_MAP(ADDR(string, name), ADDR(map, o->data))) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("delete: no such key: "), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("delete: no such key: "), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	for (int i = 0; i < o->keys.len; ++i) {
@@ -25908,7 +25908,7 @@ Array_byte encoding__base64__decode(string data) {
 		return _t1;
 	}
 	{ // Unsafe block
-		byte* buffer = v_malloc(size);
+		byte* buffer = _v_malloc(size);
 		int n = encoding__base64__decode_in_buffer((voidptr)&/*qq*/data, buffer);
 		Array_byte _t2 = byte_vbytes(buffer, n);
 		return _t2;
@@ -26320,7 +26320,7 @@ VV_LOCAL_SYMBOL Option_string flag__FlagParser_parse_bool_value(flag__FlagParser
 			}
 		}
 	}
-	return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = longhand}}, {_SLIT("' not found"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = longhand}}, {_SLIT("' not found"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 Option_bool flag__FlagParser_bool_opt(flag__FlagParser* fs, string name, byte abbr, string usage) {
@@ -26330,7 +26330,7 @@ Option_bool flag__FlagParser_bool_opt(flag__FlagParser* fs, string name, byte ab
 		Option_string _t1 = flag__FlagParser_parse_bool_value(fs, name, abbr);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			return (Option_bool){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_bool){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
  		string parsed =  (*(string*)_t1.data);
@@ -26369,7 +26369,7 @@ Option_int flag__FlagParser_int_opt(flag__FlagParser* fs, string name, byte abbr
 		flag__FlagParser_add_flag(fs, name, abbr, usage, _SLIT("<int>"));
 		Array_string parsed = flag__FlagParser_parse_value(fs, name, abbr);
 		if (parsed.len == 0) {
-			return (Option_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		string parsed0 = (*(string*)/*ee elem_typ */array_get(parsed, 0));
 		res = string_int(parsed0);
@@ -26407,7 +26407,7 @@ Option_f64 flag__FlagParser_float_opt(flag__FlagParser* fs, string name, byte ab
 		flag__FlagParser_add_flag(fs, name, abbr, usage, _SLIT("<float>"));
 		Array_string parsed = flag__FlagParser_parse_value(fs, name, abbr);
 		if (parsed.len == 0) {
-			return (Option_f64){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_f64){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		res = string_f64((*(string*)/*ee elem_typ */array_get(parsed, 0)));
 	}
@@ -26439,7 +26439,7 @@ Option_string flag__FlagParser_string_opt(flag__FlagParser* fs, string name, byt
 		flag__FlagParser_add_flag(fs, name, abbr, usage, _SLIT("<string>"));
 		Array_string parsed = flag__FlagParser_parse_value(fs, name, abbr);
 		if (parsed.len == 0) {
-			return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("parameter '"), 0xfe10, {.d_s = name}}, {_SLIT("' not provided"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		res = (*(string*)/*ee elem_typ */array_get(parsed, 0));
 	}
@@ -26461,11 +26461,11 @@ string flag__FlagParser_string(flag__FlagParser* fs, string name, byte abbr, str
 
 void flag__FlagParser_limit_free_args_to_at_least(flag__FlagParser* fs, int n) {
 	if (n > _const_flag__max_args_number) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("flag.limit_free_args_to_at_least expect n to be smaller than "), 0xfe07, {.d_i32 = _const_flag__max_args_number}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("flag.limit_free_args_to_at_least expect n to be smaller than "), 0xfe07, {.d_i32 = _const_flag__max_args_number}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	if (n <= 0) {
-		v_panic(_SLIT("flag.limit_free_args_to_at_least expect n to be a positive number"));
+		_v_panic(_SLIT("flag.limit_free_args_to_at_least expect n to be a positive number"));
 		VUNREACHABLE();
 	}
 	fs->min_free_args = n;
@@ -26473,11 +26473,11 @@ void flag__FlagParser_limit_free_args_to_at_least(flag__FlagParser* fs, int n) {
 
 void flag__FlagParser_limit_free_args_to_exactly(flag__FlagParser* fs, int n) {
 	if (n > _const_flag__max_args_number) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("flag.limit_free_args_to_exactly expect n to be smaller than "), 0xfe07, {.d_i32 = _const_flag__max_args_number}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("flag.limit_free_args_to_exactly expect n to be smaller than "), 0xfe07, {.d_i32 = _const_flag__max_args_number}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	if (n < 0) {
-		v_panic(_SLIT("flag.limit_free_args_to_exactly expect n to be a non negative number"));
+		_v_panic(_SLIT("flag.limit_free_args_to_exactly expect n to be a non negative number"));
 		VUNREACHABLE();
 	}
 	fs->min_free_args = n;
@@ -26486,7 +26486,7 @@ void flag__FlagParser_limit_free_args_to_exactly(flag__FlagParser* fs, int n) {
 
 void flag__FlagParser_limit_free_args(flag__FlagParser* fs, int min, int max) {
 	if (min > max) {
-		v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("flag.limit_free_args expect min < max, got "), 0xfe07, {.d_i32 = min}}, {_SLIT(" >= "), 0xfe07, {.d_i32 = max}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("flag.limit_free_args expect min < max, got "), 0xfe07, {.d_i32 = min}}, {_SLIT(" >= "), 0xfe07, {.d_i32 = max}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	fs->min_free_args = min;
@@ -26590,7 +26590,7 @@ VV_LOCAL_SYMBOL Option_flag__Flag flag__FlagParser_find_existing_flag(flag__Flag
 			return _t2;
 		}
 	}
-	return (Option_flag__Flag){ .state=2, .err=v_error(_SLIT("no such flag")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_flag__Flag){ .state=2, .err=_v_error(_SLIT("no such flag")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 VV_LOCAL_SYMBOL void flag__FlagParser_handle_builtin_options(flag__FlagParser* fs) {
@@ -26610,12 +26610,12 @@ VV_LOCAL_SYMBOL void flag__FlagParser_handle_builtin_options(flag__FlagParser* f
 	;
 	if (show_help) {
 		println(flag__FlagParser_usage(fs));
-		v_exit(0);
+		_v_exit(0);
 		VUNREACHABLE();
 	}
 	if (show_version) {
 		println( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fs->application_name}}, {_SLIT(" "), 0xfe10, {.d_s = fs->application_version}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		v_exit(0);
+		_v_exit(0);
 		VUNREACHABLE();
 	}
 }
@@ -26652,7 +26652,7 @@ Array_string flag__FlagParser_remaining_parameters(flag__FlagParser* fs) {
 		IError err = _t2.err;
 		eprintln((*(err.msg)));
 		println(flag__FlagParser_usage(fs));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
@@ -26788,7 +26788,7 @@ VV_LOCAL_SYMBOL bool semver__RawVersion_is_missing(semver__RawVersion ver, int t
 VV_LOCAL_SYMBOL Option_semver__Version semver__RawVersion_coerce(semver__RawVersion raw_ver) {
 	semver__RawVersion ver = semver__RawVersion_complete(raw_ver);
 	if (!semver__is_valid_number((*(string*)/*ee elem_typ */array_get(ver.raw_ints, _const_semver__ver_major)))) {
-		return (Option_semver__Version){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid major version: "), 0xfe10, {.d_s = Array_string_str(ver.raw_ints)}}, {_SLIT("[ver_major]"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_semver__Version){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid major version: "), 0xfe10, {.d_s = Array_string_str(ver.raw_ints)}}, {_SLIT("[ver_major]"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_semver__Version _t2;
 	opt_ok(&(semver__Version[]) { semver__RawVersion_to_version(ver) }, (Option*)(&_t2), sizeof(semver__Version));
@@ -27195,7 +27195,7 @@ inline VV_LOCAL_SYMBOL Option_semver__Version semver__coerce_version(string inpu
 	Option_semver__Version _t1 = semver__RawVersion_coerce(raw_ver);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		return (Option_semver__Version){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid version for input \""), 0xfe10, {.d_s = input}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_semver__Version){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Invalid version for input \""), 0xfe10, {.d_s = input}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	semver__Version ver =  (*(semver__Version*)_t1.data);
@@ -27252,7 +27252,7 @@ VV_LOCAL_SYMBOL bool semver__is_valid_number(string input) {
 
 io__BufferedReader* io__new_buffered_reader(io__BufferedReaderConfig o) {
 	if (o.cap <= 0) {
-		v_panic(_SLIT("new_buffered_reader should be called with a positive `cap`"));
+		_v_panic(_SLIT("new_buffered_reader should be called with a positive `cap`"));
 		VUNREACHABLE();
 	}
 	io__BufferedReader* r = (io__BufferedReader*)memdup(&(io__BufferedReader){.reader = o.reader,.buf = __new_array_with_default(o.cap, o.cap, sizeof(byte), 0),.offset = 0,.len = 0,.fails = 0,.mfails = o.retries,.end_of_stream = 0,}, sizeof(io__BufferedReader));
@@ -27398,7 +27398,7 @@ Option_int io__MultiWriter_write(io__MultiWriter* m, Array_byte buf) {
 		
  		int n =  (*(int*)_t2.data);
 		if (n != buf.len) {
-			return (Option_int){ .state=2, .err=v_error(_SLIT("io: incomplete write to writer of MultiWriter")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_int){ .state=2, .err=_v_error(_SLIT("io: incomplete write to writer of MultiWriter")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	}
 	Option_int _t5;
@@ -27487,7 +27487,7 @@ VV_LOCAL_SYMBOL void x__json2__Parser_next(x__json2__Parser* p) {
 VV_LOCAL_SYMBOL Option_void x__json2__Parser_next_with_err(x__json2__Parser* p) {
 	x__json2__Parser_next(p);
 	if (p->tok.kind == x__json2__TokenKind__error) {
-		return (Option_void){ .state=2, .err=v_error(x__json2__Parser_emit_error(/*rec*/*p, Array_byte_bytestr(p->tok.lit))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(x__json2__Parser_emit_error(/*rec*/*p, Array_byte_bytestr(p->tok.lit))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
 }
@@ -27546,7 +27546,7 @@ VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode(x__json2__Parser* p
 
 VV_LOCAL_SYMBOL Option_x__json2__Any x__json2__Parser_decode_value(x__json2__Parser* p) {
 	if (p->n_level + 1 == 500) {
-		return (Option_x__json2__Any){ .state=2, .err=v_error(x__json2__Parser_emit_error(/*rec*/*p, _SLIT("reached maximum nesting level of 500"))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_x__json2__Any){ .state=2, .err=_v_error(x__json2__Parser_emit_error(/*rec*/*p, _SLIT("reached maximum nesting level of 500"))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 
 	if (p->tok.kind == (x__json2__TokenKind__lsbr)) {
@@ -28433,7 +28433,7 @@ v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
 		Option_void _t1 = os__mkdir_all(vcache_basepath);
 		if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 			IError err = _t1.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -28442,7 +28442,7 @@ v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
 		Option_void _t2 = os__write_file(os__join_path(vcache_basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("README.md")}))), readme_content);
 		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
 			IError err = _t2.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -28464,7 +28464,7 @@ string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key
 	if (_t2) {
 		*((string*)&_t1.data) = *((string*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t1.state != 0) { /*or block*/ 
@@ -28485,7 +28485,7 @@ string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key
 			Option_void _t3 = os__mkdir_all(cprefix_folder);
 			if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 				IError err = _t3.err;
-				v_panic(IError_str(err));
+				_v_panic(IError_str(err));
 				VUNREACHABLE();
 			;
 			}
@@ -28512,7 +28512,7 @@ Option_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string
 	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
 	v__vcache__dlog(_SLIT("exists"),  str_intp(4, _MOV((StrIntpData[]){{_SLIT("postfix: "), 0xfe10, {.d_s = postfix}}, {_SLIT(" | key: "), 0xfe10, {.d_s = key}}, {_SLIT(" | fpath: "), 0xfe10, {.d_s = fpath}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	if (!os__exists(fpath)) {
-		return (Option_string){ .state=2, .err=v_error(_SLIT("does not exist yet")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error(_SLIT("does not exist yet")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_string _t2;
 	opt_ok(&(string[]) { fpath }, (Option*)(&_t2), sizeof(string));
@@ -28597,7 +28597,7 @@ Option_string v__util__diff__find_working_diff_command(void) {
 			continue;
 		}
 		if (p.exit_code == 127 && string__eq(diffcmd, env_difftool)) {
-			return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not find specified VDIFF_TOOL "), 0xfe10, {.d_s = diffcmd}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not find specified VDIFF_TOOL "), 0xfe10, {.d_s = diffcmd}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		if (p.exit_code == 0) {
 			if ((string__eq(diffcmd, _SLIT("code")) || string__eq(diffcmd, _SLIT("code.cmd")))) {
@@ -28610,7 +28610,7 @@ Option_string v__util__diff__find_working_diff_command(void) {
 			return _t8;
 		}
 	}
-	return (Option_string){ .state=2, .err=v_error(_SLIT("No working \"diff\" command found")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error(_SLIT("No working \"diff\" command found")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 VV_LOCAL_SYMBOL bool v__util__diff__opendiff_exists(void) {
@@ -28657,7 +28657,7 @@ string v__util__diff__color_compare_strings(string diff_cmd, string unique_prefi
 	Option_void _t2 = os__write_file(e_file, expected);
 	if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
 		IError err = _t2.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -28665,7 +28665,7 @@ string v__util__diff__color_compare_strings(string diff_cmd, string unique_prefi
 	Option_void _t3 = os__write_file(f_file, found);
 	if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 		IError err = _t3.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -29194,7 +29194,7 @@ term__Coord term__get_cursor_position(void) {
 		byte b = ((byte)(ch));
 		i++;
 		if (i >= 15) {
-			v_panic(_SLIT("C.getchar() called too many times"));
+			_v_panic(_SLIT("C.getchar() called too many times"));
 			VUNREACHABLE();
 		}
 		if (b == 'R') {
@@ -29243,12 +29243,12 @@ void term__clear(void) {
 
 Option_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
 	if (!os__exists(vmod_path)) {
-		return (Option_v__vmod__Manifest){ .state=2, .err=v_error(_SLIT("v.mod: v.mod file not found.")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__vmod__Manifest){ .state=2, .err=_v_error(_SLIT("v.mod: v.mod file not found.")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_string _t2 = os__read_file(vmod_path);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
-		v_panic(_SLIT("v.mod: cannot parse v.mod"));
+		_v_panic(_SLIT("v.mod: cannot parse v.mod"));
 		VUNREACHABLE();
 	;
 	}
@@ -29372,7 +29372,7 @@ VV_LOCAL_SYMBOL Option_multi_return_Array_string_int v__vmod__get_array_content(
 	Array_string vals = __new_array_with_default(0, 0, sizeof(string), 0);
 	int idx = st_idx;
 	if ((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, idx)).typ != v__vmod__TokenKind__labr) {
-		return (Option_multi_return_Array_string_int){ .state=2, .err=v_error(_SLIT("vmod: not a valid array")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_multi_return_Array_string_int){ .state=2, .err=_v_error(_SLIT("vmod: not a valid array")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	idx++;
 	for (;;) {
@@ -29381,7 +29381,7 @@ VV_LOCAL_SYMBOL Option_multi_return_Array_string_int v__vmod__get_array_content(
 		if (tok.typ == (v__vmod__TokenKind__str)) {
 			array_push((array*)&vals, _MOV((string[]){ string_clone(tok.val) }));
 			if (!((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, idx + 1)).typ == v__vmod__TokenKind__comma || (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, idx + 1)).typ == v__vmod__TokenKind__rabr)) {
-				return (Option_multi_return_Array_string_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("vmod: invalid separator \""), 0xfe10, {.d_s = (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, idx + 1)).val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_multi_return_Array_string_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("vmod: invalid separator \""), 0xfe10, {.d_s = (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, idx + 1)).val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			idx += ((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, idx + 1)).typ == v__vmod__TokenKind__comma ? (2) : (1));
 		}
@@ -29390,7 +29390,7 @@ VV_LOCAL_SYMBOL Option_multi_return_Array_string_int v__vmod__get_array_content(
 			break;
 		}
 		else {
-			return (Option_multi_return_Array_string_int){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("vmod: invalid token \""), 0xfe10, {.d_s = tok.val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_multi_return_Array_string_int){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("vmod: invalid token \""), 0xfe10, {.d_s = tok.val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		};
 	}
 	Option_multi_return_Array_string_int _t5;
@@ -29401,13 +29401,13 @@ VV_LOCAL_SYMBOL Option_multi_return_Array_string_int v__vmod__get_array_content(
 VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* p) {
 	string err_label = _SLIT("vmod:");
 	if (p->scanner.text.len == 0) {
-		return (Option_v__vmod__Manifest){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" no content."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__vmod__Manifest){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" no content."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	v__vmod__Scanner_scan_all(&p->scanner);
 	Array_v__vmod__Token tokens = p->scanner.tokens;
 	v__vmod__Manifest mn = (v__vmod__Manifest){.name = (string){.str=(byteptr)"", .is_lit=1},.version = (string){.str=(byteptr)"", .is_lit=1},.description = (string){.str=(byteptr)"", .is_lit=1},.dependencies = __new_array(0, 0, sizeof(string)),.license = (string){.str=(byteptr)"", .is_lit=1},.repo_url = (string){.str=(byteptr)"", .is_lit=1},.author = (string){.str=(byteptr)"", .is_lit=1},.unknown = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
 	if ((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, 0)).typ != v__vmod__TokenKind__module_keyword) {
-		v_panic(_SLIT("not a valid v.mod"));
+		_v_panic(_SLIT("not a valid v.mod"));
 		VUNREACHABLE();
 	}
 	int i = 1;
@@ -29417,7 +29417,7 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 
 		if (tok.typ == (v__vmod__TokenKind__lcbr)) {
 			if (!((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).typ == v__vmod__TokenKind__field_key || (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).typ == v__vmod__TokenKind__rcbr)) {
-				return (Option_v__vmod__Manifest){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid content after opening brace"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_v__vmod__Manifest){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid content after opening brace"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			i++;
 			continue;
@@ -29428,7 +29428,7 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 		else if (tok.typ == (v__vmod__TokenKind__field_key)) {
 			string field_name = string_trim_right(tok.val, _SLIT(":"));
 			if (!((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).typ == v__vmod__TokenKind__str || (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).typ == v__vmod__TokenKind__labr)) {
-				return (Option_v__vmod__Manifest){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" value of field \""), 0xfe10, {.d_s = field_name}}, {_SLIT("\" must be either string or an array of strings"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_v__vmod__Manifest){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" value of field \""), 0xfe10, {.d_s = field_name}}, {_SLIT("\" must be either string or an array of strings"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			string field_value = (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).val;
 
@@ -29488,13 +29488,13 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 		}
 		else if (tok.typ == (v__vmod__TokenKind__comma)) {
 			if (!((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i - 1)).typ == v__vmod__TokenKind__str || (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i - 1)).typ == v__vmod__TokenKind__rabr) || (*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).typ != v__vmod__TokenKind__field_key) {
-				return (Option_v__vmod__Manifest){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid comma placement"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_v__vmod__Manifest){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid comma placement"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			i++;
 			continue;
 		}
 		else {
-			return (Option_v__vmod__Manifest){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid token \""), 0xfe10, {.d_s = tok.val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__vmod__Manifest){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid token \""), 0xfe10, {.d_s = tok.val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		};
 	}
 	Option_v__vmod__Manifest _t10;
@@ -29667,7 +29667,7 @@ void v__util__recompilation__must_be_enabled(string vroot, string error_message)
 	if (is_recompilation_disabled) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Recompilation is disabled, since there is a \""), 0xfe10, {.d_s = file}}, {_SLIT("\" file present."), 0, { .d_c = 0 }}})));
 		eprintln(error_message);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 }
@@ -29705,7 +29705,7 @@ string v__cflag__CFlag_eval(v__cflag__CFlag* cf) {
 						goto cflag_eval_outer_loop__continue;
 					}
 				}
-				v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT(">> error: none of the paths "), 0xfe10, {.d_s = Array_string_str(svalues)}}, {_SLIT(" exist"), 0, { .d_c = 0 }}})));
+				_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT(">> error: none of the paths "), 0xfe10, {.d_s = Array_string_str(svalues)}}, {_SLIT(" exist"), 0, { .d_c = 0 }}})));
 				VUNREACHABLE();
 				continue;
 			}
@@ -29842,7 +29842,7 @@ VV_LOCAL_SYMBOL Option_string v__pkgconfig__desc(string mod) {
 	Option_v__pkgconfig__PkgConfig_ptr _t1 = v__pkgconfig__load(mod, options);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		return (Option_string){ .state=2, .err=v_error(_SLIT("cannot parse")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error(_SLIT("cannot parse")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	v__pkgconfig__PkgConfig* pc =  (*(v__pkgconfig__PkgConfig**)_t1.data);
@@ -29881,7 +29881,7 @@ Option_v__pkgconfig__Main_ptr v__pkgconfig__main(Array_string args) {
 			m->res = Array_string_join(modules, _SLIT("\n"));
 		}
 	} else if (opt->args.len == 0) {
-		return (Option_v__pkgconfig__Main_ptr){ .state=2, .err=v_error(_SLIT("No packages given")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__pkgconfig__Main_ptr){ .state=2, .err=_v_error(_SLIT("No packages given")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_v__pkgconfig__Main_ptr _t4;
 	opt_ok(&(v__pkgconfig__Main*[]) { m }, (Option*)(&_t4), sizeof(v__pkgconfig__Main*));
@@ -29930,7 +29930,7 @@ Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m) {
 	}
 	if ((opt->exactversion).len != 0) {
 		if (!string__eq(pc->version, opt->exactversion)) {
-			return (Option_string){ .state=2, .err=v_error(_SLIT("version mismatch")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error(_SLIT("version mismatch")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		Option_string _t8;
 		opt_ok(&(string[]) { res }, (Option*)(&_t8), sizeof(string));
@@ -29938,7 +29938,7 @@ Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m) {
 	}
 	if ((opt->atleast).len != 0) {
 		if (v__pkgconfig__PkgConfig_atleast(pc, opt->atleast)) {
-			return (Option_string){ .state=2, .err=v_error(_SLIT("version mismatch")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error(_SLIT("version mismatch")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		Option_string _t10;
 		opt_ok(&(string[]) { res }, (Option*)(&_t10), sizeof(string));
@@ -29946,7 +29946,7 @@ Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m) {
 	}
 	if ((opt->atleastpc).len != 0) {
 		if (v__pkgconfig__atleast(opt->atleastpc)) {
-			return (Option_string){ .state=2, .err=v_error(_SLIT("version mismatch")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error(_SLIT("version mismatch")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		Option_string _t12;
 		opt_ok(&(string[]) { res }, (Option*)(&_t12), sizeof(string));
@@ -30175,7 +30175,7 @@ VV_LOCAL_SYMBOL Option_string v__pkgconfig__PkgConfig_resolve(v__pkgconfig__PkgC
 			}
 		}
 	}
-	return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Cannot find \""), 0xfe10, {.d_s = pkgname}}, {_SLIT("\" pkgconfig file"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Cannot find \""), 0xfe10, {.d_s = pkgname}}, {_SLIT("\" pkgconfig file"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 bool v__pkgconfig__atleast(string v) {
@@ -30274,12 +30274,12 @@ VV_LOCAL_SYMBOL Option_void v__pkgconfig__PkgConfig_load_require(v__pkgconfig__P
 		if (pc->options.debug) {
 			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot resolve "), 0xfe10, {.d_s = dep}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
-		return (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not resolve dependency "), 0xfe10, {.d_s = dep}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not resolve dependency "), 0xfe10, {.d_s = dep}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	string depfile =  (*(string*)_t1.data);
 	if (!v__pkgconfig__PkgConfig_parse(&pcdep, depfile)) {
-		return (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("required file \""), 0xfe10, {.d_s = depfile}}, {_SLIT("\" could not be parsed"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("required file \""), 0xfe10, {.d_s = depfile}}, {_SLIT("\" could not be parsed"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_void _t4 = v__pkgconfig__PkgConfig_load_requires(&pcdep);
 	if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
@@ -30341,7 +30341,7 @@ Option_v__pkgconfig__PkgConfig_ptr v__pkgconfig__load(string pkgname, v__pkgconf
 	
  	string file =  (*(string*)_t1.data);
 	if (!v__pkgconfig__PkgConfig_parse(pc, file)) {
-		return (Option_v__pkgconfig__PkgConfig_ptr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("file \""), 0xfe10, {.d_s = file}}, {_SLIT("\" could not be parsed"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__pkgconfig__PkgConfig_ptr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("file \""), 0xfe10, {.d_s = file}}, {_SLIT("\" could not be parsed"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (!options.norecurse) {
 		Option_void _t4 = v__pkgconfig__PkgConfig_load_requires(pc);
@@ -30406,7 +30406,7 @@ inline VV_LOCAL_SYMBOL byte v__gen__js__sourcemap__vlq__decode64(byte input) {
 			v_assert_meta_info__t1.lvalue = byte_str(input) /* typeof: v.ast.Ident type: ast.Type(0x9 = 9) */ ;
 			v_assert_meta_info__t1.rvalue = byte_str(_const_v__gen__js__sourcemap__vlq__enc_char_special_plus) /* typeof: v.ast.Ident type: ast.Type(0x9 = 9) */ ;
 			__print_assert_failure(&v_assert_meta_info__t1);
-			v_panic(_SLIT("Assertion failed..."));
+			_v_panic(_SLIT("Assertion failed..."));
 		}
 		// assert
 		if (!(input <= _const_v__gen__js__sourcemap__vlq__enc_char_end_zl)) {
@@ -30421,7 +30421,7 @@ inline VV_LOCAL_SYMBOL byte v__gen__js__sourcemap__vlq__decode64(byte input) {
 			v_assert_meta_info__t2.lvalue = byte_str(input) /* typeof: v.ast.Ident type: ast.Type(0x9 = 9) */ ;
 			v_assert_meta_info__t2.rvalue = byte_str(_const_v__gen__js__sourcemap__vlq__enc_char_end_zl) /* typeof: v.ast.Ident type: ast.Type(0x9 = 9) */ ;
 			__print_assert_failure(&v_assert_meta_info__t2);
-			v_panic(_SLIT("Assertion failed..."));
+			_v_panic(_SLIT("Assertion failed..."));
 		}
 	}
 	#endif
@@ -30440,12 +30440,12 @@ Option_i64 v__gen__js__sourcemap__vlq__decode(io__Reader* input) {
 		Option_int _t1 = io__Reader_name_table[input->_typ]._method_read(input->_object, &/*arr*/buf);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			return (Option_i64){ .state=2, .err=v_error(_SLIT("Unexpected EOF")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_i64){ .state=2, .err=_v_error(_SLIT("Unexpected EOF")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
  		int len =  (*(int*)_t1.data);
 		if (len == 0) {
-			return (Option_i64){ .state=2, .err=v_error(_SLIT("no content")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_i64){ .state=2, .err=_v_error(_SLIT("no content")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		digit = v__gen__js__sourcemap__vlq__decode64((*(byte*)/*ee elem_typ */array_get(buf, 0)));
 		keep_going = ((digit & _const_v__gen__js__sourcemap__vlq__continued)) != 0;
@@ -30455,7 +30455,7 @@ Option_i64 v__gen__js__sourcemap__vlq__decode(io__Reader* input) {
 	}
 	u64 abs_value = accum / 2U;
 	if (abs_value > _const_v__gen__js__sourcemap__vlq__max_i64) {
-		return (Option_i64){ .state=2, .err=v_error(_SLIT("Overflow")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_i64){ .state=2, .err=_v_error(_SLIT("Overflow")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_i64 _t6; /* if prepend */
 	if (((accum & 1U)) != 0U) {
@@ -30484,7 +30484,7 @@ inline VV_LOCAL_SYMBOL byte v__gen__js__sourcemap__vlq__encode64(byte input) {
 			v_assert_meta_info__t1.lvalue = byte_str(input) /* typeof: v.ast.Ident type: ast.Type(0x9 = 9) */ ;
 			v_assert_meta_info__t1.rvalue = byte_str(64) /* typeof: v.ast.IntegerLiteral type: ast.Type(0x9 = 9) */ ;
 			__print_assert_failure(&v_assert_meta_info__t1);
-			v_panic(_SLIT("Assertion failed..."));
+			_v_panic(_SLIT("Assertion failed..."));
 		}
 	}
 	#endif
@@ -30493,9 +30493,9 @@ inline VV_LOCAL_SYMBOL byte v__gen__js__sourcemap__vlq__encode64(byte input) {
 }
 
 Option_void v__gen__js__sourcemap__vlq__encode(i64 value, io__Writer* output) {
-	bool v_signed = value < 0;
+	bool _v_signed = value < 0;
 	u64 value_u64 = v__gen__js__sourcemap__vlq__abs64(value) << 1U;
-	if (v_signed) {
+	if (_v_signed) {
 		if (value_u64 == 0U) {
 			value_u64 = _const_v__gen__js__sourcemap__vlq__max_i64 + 1U;
 		}
@@ -30511,7 +30511,7 @@ Option_void v__gen__js__sourcemap__vlq__encode(i64 value, io__Writer* output) {
 		Option_int _t1 = io__Writer_name_table[output->_typ]._method_write(output->_object, bytes);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			return (Option_void){ .state=2, .err=v_error(_SLIT("Write failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_void){ .state=2, .err=_v_error(_SLIT("Write failed")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		;
 		if (value_u64 == 0U) {
@@ -30524,7 +30524,7 @@ Option_void v__gen__js__sourcemap__vlq__encode(i64 value, io__Writer* output) {
 void rand__wyrand__WyRandRNG_seed(rand__wyrand__WyRandRNG* rng, Array_u32 seed_data) {
 	if (seed_data.len != 2) {
 		eprintln(_SLIT("WyRandRNG needs 2 32-bit unsigned integers as the seed."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	rng->state = ((*(u32*)/*ee elem_typ */array_get(seed_data, 0)) | (((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 1)))) << 32U));
@@ -30563,7 +30563,7 @@ inline u64 rand__wyrand__WyRandRNG_u64(rand__wyrand__WyRandRNG* rng) {
 inline u32 rand__wyrand__WyRandRNG_u32n(rand__wyrand__WyRandRNG* rng, u32 max) {
 	if (max == 0U) {
 		eprintln(_SLIT("max must be positive integer"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	int bit_len = math__bits__len_32(max);
@@ -30591,7 +30591,7 @@ inline u32 rand__wyrand__WyRandRNG_u32n(rand__wyrand__WyRandRNG* rng, u32 max) {
 inline u64 rand__wyrand__WyRandRNG_u64n(rand__wyrand__WyRandRNG* rng, u64 max) {
 	if (max == 0U) {
 		eprintln(_SLIT("max must be positive integer"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	int bit_len = math__bits__len_64(max);
@@ -30619,7 +30619,7 @@ inline u64 rand__wyrand__WyRandRNG_u64n(rand__wyrand__WyRandRNG* rng, u64 max) {
 inline u32 rand__wyrand__WyRandRNG_u32_in_range(rand__wyrand__WyRandRNG* rng, u32 min, u32 max) {
 	if (max <= min) {
 		eprintln(_SLIT("max must be greater than min"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	u32 _t1 = min + rand__wyrand__WyRandRNG_u32n(rng, max - min);
@@ -30630,7 +30630,7 @@ inline u32 rand__wyrand__WyRandRNG_u32_in_range(rand__wyrand__WyRandRNG* rng, u3
 inline u64 rand__wyrand__WyRandRNG_u64_in_range(rand__wyrand__WyRandRNG* rng, u64 min, u64 max) {
 	if (max <= min) {
 		eprintln(_SLIT("max must be greater than min"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	u64 _t1 = min + rand__wyrand__WyRandRNG_u64n(rng, max - min);
@@ -30665,7 +30665,7 @@ inline i64 rand__wyrand__WyRandRNG_int63(rand__wyrand__WyRandRNG* rng) {
 inline int rand__wyrand__WyRandRNG_intn(rand__wyrand__WyRandRNG* rng, int max) {
 	if (max <= 0) {
 		eprintln(_SLIT("max has to be positive."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	int _t1 = ((int)(rand__wyrand__WyRandRNG_u32n(rng, ((u32)(max)))));
@@ -30676,7 +30676,7 @@ inline int rand__wyrand__WyRandRNG_intn(rand__wyrand__WyRandRNG* rng, int max) {
 inline i64 rand__wyrand__WyRandRNG_i64n(rand__wyrand__WyRandRNG* rng, i64 max) {
 	if (max <= 0) {
 		eprintln(_SLIT("max has to be positive."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	i64 _t1 = ((i64)(rand__wyrand__WyRandRNG_u64n(rng, ((u64)(max)))));
@@ -30687,7 +30687,7 @@ inline i64 rand__wyrand__WyRandRNG_i64n(rand__wyrand__WyRandRNG* rng, i64 max) {
 inline int rand__wyrand__WyRandRNG_int_in_range(rand__wyrand__WyRandRNG* rng, int min, int max) {
 	if (max <= min) {
 		eprintln(_SLIT("max must be greater than min"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	int _t1 = min + rand__wyrand__WyRandRNG_intn(rng, max - min);
@@ -30698,7 +30698,7 @@ inline int rand__wyrand__WyRandRNG_int_in_range(rand__wyrand__WyRandRNG* rng, in
 inline i64 rand__wyrand__WyRandRNG_i64_in_range(rand__wyrand__WyRandRNG* rng, i64 min, i64 max) {
 	if (max <= min) {
 		eprintln(_SLIT("max must be greater than min"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	i64 _t1 = min + rand__wyrand__WyRandRNG_i64n(rng, max - min);
@@ -30721,7 +30721,7 @@ inline f64 rand__wyrand__WyRandRNG_f64(rand__wyrand__WyRandRNG* rng) {
 inline f32 rand__wyrand__WyRandRNG_f32n(rand__wyrand__WyRandRNG* rng, f32 max) {
 	if (max <= 0) {
 		eprintln(_SLIT("max has to be positive."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	f32 _t1 = rand__wyrand__WyRandRNG_f32(rng) * max;
@@ -30732,7 +30732,7 @@ inline f32 rand__wyrand__WyRandRNG_f32n(rand__wyrand__WyRandRNG* rng, f32 max) {
 inline f64 rand__wyrand__WyRandRNG_f64n(rand__wyrand__WyRandRNG* rng, f64 max) {
 	if (max <= 0) {
 		eprintln(_SLIT("max has to be positive."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	f64 _t1 = rand__wyrand__WyRandRNG_f64(rng) * max;
@@ -30743,7 +30743,7 @@ inline f64 rand__wyrand__WyRandRNG_f64n(rand__wyrand__WyRandRNG* rng, f64 max) {
 inline f32 rand__wyrand__WyRandRNG_f32_in_range(rand__wyrand__WyRandRNG* rng, f32 min, f32 max) {
 	if (max <= min) {
 		eprintln(_SLIT("max must be greater than min"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	f32 _t1 = min + rand__wyrand__WyRandRNG_f32n(rng, max - min);
@@ -30754,7 +30754,7 @@ inline f32 rand__wyrand__WyRandRNG_f32_in_range(rand__wyrand__WyRandRNG* rng, f3
 inline f64 rand__wyrand__WyRandRNG_f64_in_range(rand__wyrand__WyRandRNG* rng, f64 min, f64 max) {
 	if (max <= min) {
 		eprintln(_SLIT("max must be greater than min"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	f64 _t1 = min + rand__wyrand__WyRandRNG_f64n(rng, max - min);
@@ -30778,7 +30778,7 @@ VV_LOCAL_SYMBOL void v__gen__js__sourcemap__Mappings_add_mapping(v__gen__js__sou
 
 VV_LOCAL_SYMBOL Array_v__gen__js__sourcemap__Mapping v__gen__js__sourcemap__Mappings_get_sorted_array(v__gen__js__sourcemap__Mappings* m) {
 	if (!m->sorted) {
-		v_panic(_SLIT("not implemented"));
+		_v_panic(_SLIT("not implemented"));
 		VUNREACHABLE();
 	}
 	Array_v__gen__js__sourcemap__Mapping _t1 = m->values;
@@ -30801,7 +30801,7 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 			Option_int _t1 = io__Writer_name_table[output->_typ]._method_write(output->_object, string_bytes(string_repeat(_SLIT(";"), ((int)(cloned_generated_line - previous_generated_line)))));
 			if (_t1.state != 0) { /*or block*/ 
 				IError err = _t1.err;
-				v_panic(_SLIT("Writing vql failed!"));
+				_v_panic(_SLIT("Writing vql failed!"));
 				VUNREACHABLE();
 			;
 			}
@@ -30818,7 +30818,7 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 				Option_int _t2 = io__Writer_name_table[output->_typ]._method_write(output->_object, string_bytes(_SLIT(",")));
 				if (_t2.state != 0) { /*or block*/ 
 					IError err = _t2.err;
-					v_panic(_SLIT("Writing vql failed!"));
+					_v_panic(_SLIT("Writing vql failed!"));
 					VUNREACHABLE();
 				;
 				}
@@ -30919,7 +30919,7 @@ VV_LOCAL_SYMBOL u32 v__gen__js__sourcemap__Sets_add(v__gen__js__sourcemap__Sets*
 	if (_t2) {
 		*((u32*)&_t1.data) = *((u32*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t1.state != 0) { /*or block*/ 
@@ -30953,7 +30953,7 @@ void v__gen__js__sourcemap__SourceMap_add_mapping(v__gen__js__sourcemap__SourceM
 		v_assert_meta_info__t1.lvalue = int_str(source_name.len) /* typeof: v.ast.SelectorExpr type: ast.Type(0x7 = 7) */ ;
 		v_assert_meta_info__t1.rvalue = int_str(0) /* typeof: v.ast.IntegerLiteral type: ast.Type(0x7 = 7) */ ;
 		__print_assert_failure(&v_assert_meta_info__t1);
-		v_panic(_SLIT("Assertion failed..."));
+		_v_panic(_SLIT("Assertion failed..."));
 	}
 	u32 sources_ind = v__gen__js__sourcemap__Sets_add(&sm->sources, source_name);
 	v__gen__js__sourcemap__NameIndexType names_ind = (name.len != 0 ? (v__gen__js__sourcemap__IndexNumber_to_sumtype_v__gen__js__sourcemap__NameIndexType(ADDR(v__gen__js__sourcemap__IndexNumber, (((v__gen__js__sourcemap__Sets_add(&sm->names, name))))))) : (v__gen__js__sourcemap__Empty_to_sumtype_v__gen__js__sourcemap__NameIndexType(ADDR(v__gen__js__sourcemap__Empty, ((v__gen__js__sourcemap__Empty){EMPTY_STRUCT_INITIALIZATION})))));
@@ -30974,7 +30974,7 @@ Option_void v__gen__js__sourcemap__SourceMap_add_mapping_list(v__gen__js__source
 		v_assert_meta_info__t1.lvalue = int_str(source_name.len) /* typeof: v.ast.SelectorExpr type: ast.Type(0x7 = 7) */ ;
 		v_assert_meta_info__t1.rvalue = int_str(0) /* typeof: v.ast.IntegerLiteral type: ast.Type(0x7 = 7) */ ;
 		__print_assert_failure(&v_assert_meta_info__t1);
-		v_panic(_SLIT("Assertion failed..."));
+		_v_panic(_SLIT("Assertion failed..."));
 	}
 	u32 sources_ind = v__gen__js__sourcemap__Sets_add(&sm->sources, source_name);
 	for (int _t2 = 0; _t2 < mapping_list.len; ++_t2) {
@@ -30993,7 +30993,7 @@ VV_LOCAL_SYMBOL void v__gen__js__sourcemap__SourceMap_export_mappings(v__gen__js
 	Option_void _t1 = v__gen__js__sourcemap__Mappings_export_mappings(&sm->mappings, writer);
 	if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 		IError err = _t1.err;
-		v_panic(_SLIT("export failed"));
+		_v_panic(_SLIT("export failed"));
 		VUNREACHABLE();
 	;
 	}
@@ -31005,7 +31005,7 @@ VV_LOCAL_SYMBOL string v__gen__js__sourcemap__SourceMap_export_mappings_string(v
 	Option_void _t1 = v__gen__js__sourcemap__Mappings_export_mappings(&sm->mappings, HEAP(io__Writer, /*&io.Writer*/I_v__gen__js__sourcemap__StringWriter_to_Interface_io__Writer(&(*(output)))));
 	if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 		IError err = _t1.err;
-		v_panic(_SLIT("export failed"));
+		_v_panic(_SLIT("export failed"));
 		VUNREACHABLE();
 	;
 	}
@@ -31150,7 +31150,7 @@ u64 rand__u64_in_range(u64 min, u64 max) {
 }
 
 int rand__int(void) {
-	int _t1 = rand__PRNG_name_table[default_rng->_typ]._method_v_int(default_rng->_object);
+	int _t1 = rand__PRNG_name_table[default_rng->_typ]._method__v_int(default_rng->_object);
 	return _t1;
 }
 
@@ -31416,7 +31416,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c12cd0c"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("591af86"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -31597,7 +31597,7 @@ Option_v__pref__OS v__pref__os_from_string(string os_str) {
 		return _t19;
 	}
 	else {
-		return (Option_v__pref__OS){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad OS "), 0xfe10, {.d_s = os_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__pref__OS){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad OS "), 0xfe10, {.d_s = os_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
 	return (Option_v__pref__OS){0};
 }
@@ -31756,7 +31756,7 @@ v__pref__OS v__pref__get_host_os(void) {
 		return _t12;
 	}
 	#endif
-	v_panic(_SLIT("unknown host OS"));
+	_v_panic(_SLIT("unknown host OS"));
 	VUNREACHABLE();
 	return 0;
 }
@@ -31798,7 +31798,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			if (_t2.state != 0) { /*or block*/ 
 				IError err = _t2.err;
 				eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown architecture target `"), 0xfe10, {.d_s = target_arch}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			;
 			}
@@ -31820,7 +31820,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 				eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown assert mode `-gc "), 0xfe10, {.d_s = assert_mode}}, {_SLIT("`, supported modes are:`"), 0, { .d_c = 0 }}})));
 				eprintln(_SLIT("  `-assert aborts`     .... calls abort() after assertion failure"));
 				eprintln(_SLIT("  `-assert backtraces` .... calls print_backtrace() after assertion failure"));
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			};
 			i++;
@@ -31904,7 +31904,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 				eprintln(_SLIT("  `-gc boehm_incr_opt` ... optimized incremental collection"));
 				eprintln(_SLIT("  `-gc boehm_leak` ....... leak detection (for debugging)"));
 				eprintln(_SLIT("  `-gc none` ............. no garbage collection"));
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			};
 			i++;
@@ -32060,7 +32060,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		}
 		else if (string__eq(arg, _SLIT("-watch"))) {
 			eprintln(_SLIT("The -watch option is deprecated. Please use the watch command `v watch file.v` instead."));
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 		else if (string__eq(arg, _SLIT("-print-v-files"))) {
@@ -32080,7 +32080,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 					continue;
 				}
 				eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown operating system target `"), 0xfe10, {.d_s = target_os}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			;
 			}
@@ -32159,7 +32159,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			if (_t26.state != 0) { /*or block*/ 
 				IError err = _t26.err;
 				eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot open custom prelude file: "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			;
 			}
@@ -32171,7 +32171,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		else {
 			if (string__eq(command, _SLIT("build")) && v__pref__is_source_file(arg)) {
 				eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Use `v "), 0xfe10, {.d_s = arg}}, {_SLIT("` instead."), 0, { .d_c = 0 }}})));
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			}
 			if (string_at(arg, 0) == '-') {
@@ -32188,7 +32188,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 					}
 				} else if (v__pref__is_source_file(command) && v__pref__is_source_file(arg) && !(Array_string_contains(known_external_commands, command))) {
 					eprintln(_SLIT("Too many targets. Specify just one target: <target.v|target_directory>."));
-					v_exit(1);
+					_v_exit(1);
 					VUNREACHABLE();
 				}
 				continue;
@@ -32203,7 +32203,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			}
 			string extension = (command.len == 0 ? (_SLIT("")) : ( str_intp(2, _MOV((StrIntpData[]){{_SLIT(" for command `"), 0xfe10, {.d_s = command}}, {_SLIT("`"), 0, { .d_c = 0 }}}))));
 			eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Unknown argument `"), 0xfe10, {.d_s = arg}}, {_SLIT("`"), 0xfe10, {.d_s = extension}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		};
 	}
@@ -32212,7 +32212,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 	}
 	if (!string__eq(command, _SLIT("doc")) && string_ends_with(res->out_name, _SLIT(".v"))) {
 		eprintln(_SLIT("Cannot save output binary in a .v file."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	if (v__pref__is_source_file(command)) {
@@ -32221,7 +32221,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		res->is_run = true;
 		if (command_pos + 2 > args.len) {
 			eprintln(_SLIT("v run: no v files listed"));
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 		res->path = (*(string*)/*ee elem_typ */array_get(args, command_pos + 1));
@@ -32239,7 +32239,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			Option_void _t27 = os__write_file(tmp_v_file_path, contents);
 			if (_t27.state != 0 && _t27.err._typ != _IError_None___index) {
 				IError err = _t27.err;
-				v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to create temporary file "), 0xfe10, {.d_s = tmp_v_file_path}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Failed to create temporary file "), 0xfe10, {.d_s = tmp_v_file_path}}, {_SLIT0, 0, { .d_c = 0 }}})));
 				VUNREACHABLE();
 			;
 			}
@@ -32263,12 +32263,12 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			Option_void _t29 = os__rm(tmp_v_file_path);
 			if (_t29.state != 0 && _t29.err._typ != _IError_None___index) {
 				IError err = _t29.err;
-				v_panic(IError_str(err));
+				_v_panic(IError_str(err));
 				VUNREACHABLE();
 			;
 			}
 			;
-			v_exit(tmp_result);
+			_v_exit(tmp_result);
 			VUNREACHABLE();
 		}
 		v__pref__must_exist(res->path);
@@ -32284,7 +32284,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		res->build_mode = v__pref__BuildMode__build_module;
 		if (command_pos + 1 >= args.len) {
 			eprintln(_SLIT("v build-module: no module specified"));
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 		res->path = (*(string*)/*ee elem_typ */array_get(args, command_pos + 1));
@@ -32343,7 +32343,7 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 		return _t7;
 	}
 	else {
-		return (Option_v__pref__Arch){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid arch: "), 0xfe10, {.d_s = arch_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__pref__Arch){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid arch: "), 0xfe10, {.d_s = arch_str}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
 	return (Option_v__pref__Arch){0};
 }
@@ -32351,7 +32351,7 @@ Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
 VV_LOCAL_SYMBOL void v__pref__must_exist(string path) {
 	if (!os__exists(path)) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("v expects that `"), 0xfe10, {.d_s = path}}, {_SLIT("` exists, but it does not"), 0, { .d_c = 0 }}})));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 }
@@ -32395,7 +32395,7 @@ Option_v__pref__Backend v__pref__backend_from_string(string s) {
 		return _t6;
 	}
 	else {
-		return (Option_v__pref__Backend){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Unknown backend type "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__pref__Backend){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Unknown backend type "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
 	return (Option_v__pref__Backend){0};
 }
@@ -32461,13 +32461,13 @@ VV_LOCAL_SYMBOL void v__pref__parse_define(v__pref__Preferences* prefs, string d
 		}
 		else {
 			println(string__plus( str_intp(3, _MOV((StrIntpData[]){{_SLIT("V error: Unknown define argument value `"), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(define_parts, 1))}}, {_SLIT("` for "), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(define_parts, 0))}}, {_SLIT("."), 0, { .d_c = 0 }}})), _SLIT(" Expected `0` or `1`.")));
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		};
 		return;
 	}
 	println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("V error: Unknown define argument: "), 0xfe10, {.d_s = define}}, {_SLIT(". Expected at most one `=`."), 0, { .d_c = 0 }}})));
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 }
 
@@ -32707,7 +32707,7 @@ void help__print_and_exit(string topic) {
 			continue;
 		}
 		eprintln(_const_help__unknown_topic);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	string name = (string__eq(topic, _SLIT("init")) ? (_SLIT("new")) : (topic));
@@ -32716,14 +32716,14 @@ void help__print_and_exit(string topic) {
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
 		eprintln(_const_help__unknown_topic);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
 	
  	string content =  (*(string*)_t2.data);
 	println(content);
-	v_exit(0);
+	_v_exit(0);
 	VUNREACHABLE();
 }
 
@@ -32848,7 +32848,7 @@ Array_string v__util__source_context(string kind, string source, v__token__Posit
 VNORETURN void v__util__verror(string kind, string s) {
 	string final_kind = v__util__bold(v__util__color(kind, kind));
 	eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = final_kind}}, {_SLIT(": "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}})));
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 	while(1);
 }
@@ -32985,7 +32985,7 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 			return _t10;
 		}
 	}
-	return (Option_string){ .state=2, .err=v_error(_SLIT("module not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error(_SLIT("module not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 // Attr: [direct_array_access]
@@ -33264,7 +33264,7 @@ void v__util__Timers_start(v__util__Timers* t, string name) {
 	if (_t2) {
 		*((time__StopWatch*)&_t1.data) = *((time__StopWatch*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t1.state != 0) { /*or block*/ 
@@ -33476,7 +33476,7 @@ Option_string v__util__resolve_vmodroot(string str, string dir) {
 	v__vmod__ModFileCacher* mcache = v__vmod__get_cache();
 	v__vmod__ModFileAndFolder vmod_file_location = v__vmod__ModFileCacher_get_by_folder(mcache, dir);
 	if (vmod_file_location.vmod_file.len == 0) {
-		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("To use @VMODROOT, you need to have a \"v.mod\" file in "), 0xfe10, {.d_s = dir}}, {_SLIT(", or in one of its parent folders."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("To use @VMODROOT, you need to have a \"v.mod\" file in "), 0xfe10, {.d_s = dir}}, {_SLIT(", or in one of its parent folders."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	string vmod_path = vmod_file_location.vmod_folder;
 	Option_string _t2;
@@ -33489,7 +33489,7 @@ Option_string v__util__resolve_env_value(string str, bool check_for_presence) {
 	Option_int _t1 = string_index(str, env_ident);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		return (Option_string){ .state=2, .err=v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("no \""), 0xfe10, {.d_s = env_ident}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("...\')\" could be found in \""), 0xfe10, {.d_s = str}}, {_SLIT("\"."), 0, { .d_c = 0 }}})))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("no \""), 0xfe10, {.d_s = env_ident}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("...\')\" could be found in \""), 0xfe10, {.d_s = str}}, {_SLIT("\"."), 0, { .d_c = 0 }}})))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	int at =  (*(int*)_t1.data);
@@ -33502,14 +33502,14 @@ Option_string v__util__resolve_env_value(string str, bool check_for_presence) {
 		} else {
 			if (!(ch == '\'' || ch == ')')) {
 				if (ch == '$') {
-					return (Option_string){ .state=2, .err=v_error(_SLIT("cannot use string interpolation in compile time $env() expression")), .data={EMPTY_STRUCT_INITIALIZATION} };
+					return (Option_string){ .state=2, .err=_v_error(_SLIT("cannot use string interpolation in compile time $env() expression")), .data={EMPTY_STRUCT_INITIALIZATION} };
 				}
-				return (Option_string){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid environment variable name in \""), 0xfe10, {.d_s = str}}, {_SLIT("\", invalid character \""), 0xfe10, {.d_s = byte_ascii_str(ch)}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_string){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid environment variable name in \""), 0xfe10, {.d_s = str}}, {_SLIT("\", invalid character \""), 0xfe10, {.d_s = byte_ascii_str(ch)}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 	}
 	if ((env_lit).len == 0) {
-		return (Option_string){ .state=2, .err=v_error(_SLIT("supply an env variable name like HOME, PATH or USER")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error(_SLIT("supply an env variable name like HOME, PATH or USER")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	string env_value = _SLIT("");
 	if (check_for_presence) {
@@ -33518,17 +33518,17 @@ Option_string v__util__resolve_env_value(string str, bool check_for_presence) {
 		if (_t7) {
 			*((string*)&_t6.data) = *((string*)_t7);
 		} else {
-			_t6.state = 2; _t6.err = v_error(_SLIT("array index out of range"));
+			_t6.state = 2; _t6.err = _v_error(_SLIT("array index out of range"));
 		}
 		;
 		if (_t6.state != 0) { /*or block*/ 
 			IError err = _t6.err;
-			return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("the environment variable \""), 0xfe10, {.d_s = env_lit}}, {_SLIT("\" does not exist."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("the environment variable \""), 0xfe10, {.d_s = env_lit}}, {_SLIT("\" does not exist."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
 		env_value = *(string*)_t6.data;
 		if ((env_value).len == 0) {
-			return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("the environment variable \""), 0xfe10, {.d_s = env_lit}}, {_SLIT("\" is empty."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("the environment variable \""), 0xfe10, {.d_s = env_lit}}, {_SLIT("\" is empty."), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	} else {
 		env_value = os__getenv(env_lit);
@@ -33579,7 +33579,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, Array_string args) 
 			Option_bool _t2 = v__util__check_module_is_installed(emodule, is_verbose);
 			if (_t2.state != 0) { /*or block*/ 
 				IError err = _t2.err;
-				v_panic(IError_str(err));
+				_v_panic(IError_str(err));
 				VUNREACHABLE();
 			;
 			}
@@ -33596,13 +33596,13 @@ void v__util__launch_tool(bool is_verbose, string tool_name, Array_string args) 
 		os__Result tool_compilation = os__execute_or_exit(compilation_command);
 		if (tool_compilation.exit_code != 0) {
 			eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot compile `"), 0xfe10, {.d_s = tool_source}}, {_SLIT("`: \n"), 0xfe10, {.d_s = tool_compilation.output}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 	}
 	#if defined(_WIN32)
 	{
-		v_exit(os__system( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = tool_exe}}, {_SLIT("\" "), 0xfe10, {.d_s = tool_args}}, {_SLIT0, 0, { .d_c = 0 }}}))));
+		_v_exit(os__system( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = tool_exe}}, {_SLIT("\" "), 0xfe10, {.d_s = tool_args}}, {_SLIT0, 0, { .d_c = 0 }}}))));
 		VUNREACHABLE();
 	}
 	#else
@@ -33610,7 +33610,7 @@ void v__util__launch_tool(bool is_verbose, string tool_name, Array_string args) 
 		Option_void _t3 = os__execvp(tool_exe, args);
 		if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 			IError err = _t3.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -33701,7 +33701,7 @@ Option_string v__util__read_file(string file_path) {
 	Option_string _t1 = os__read_file(file_path);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed to open "), 0xfe10, {.d_s = file_path}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("failed to open "), 0xfe10, {.d_s = file_path}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
  	string raw_text =  (*(string*)_t1.data);
@@ -33782,7 +33782,7 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 		}
 		os__Result update_res = os__execute(update_cmd);
 		if (update_res.exit_code < 0) {
-			return (Option_bool){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("can not start "), 0xfe10, {.d_s = update_cmd}}, {_SLIT(", error: "), 0xfe10, {.d_s = update_res.output}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_bool){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("can not start "), 0xfe10, {.d_s = update_cmd}}, {_SLIT(", error: "), 0xfe10, {.d_s = update_res.output}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		if (update_res.exit_code != 0) {
 			eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Warning: `"), 0xfe10, {.d_s = modulename}}, {_SLIT("` exists, but is not updated.\nV will continue, since updates can fail due to temporary network problems,\nand the existing module `"), 0xfe10, {.d_s = modulename}}, {_SLIT("` may still work."), 0, { .d_c = 0 }}})));
@@ -33807,7 +33807,7 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 		return (Option_bool){ .state=2, .err=error_with_code( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cloning failed, details: "), 0xfe10, {.d_s = cloning_res.output}}, {_SLIT0, 0, { .d_c = 0 }}})), cloning_res.exit_code), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (!os__exists(mod_v_file)) {
-		return (Option_bool){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("even after cloning, "), 0xfe10, {.d_s = mod_v_file}}, {_SLIT(" is still missing"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_bool){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("even after cloning, "), 0xfe10, {.d_s = mod_v_file}}, {_SLIT(" is still missing"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (is_verbose) {
 		eprintln(_SLIT("check_module_is_installed: done"));
@@ -33838,7 +33838,7 @@ void v__util__ensure_modules_for_all_tools_are_installed(bool is_verbose) {
 			Option_bool _t5 = v__util__check_module_is_installed(emodule, is_verbose);
 			if (_t5.state != 0) { /*or block*/ 
 				IError err = _t5.err;
-				v_panic(IError_str(err));
+				_v_panic(IError_str(err));
 				VUNREACHABLE();
 			;
 			}
@@ -33862,8 +33862,8 @@ string v__util__no_dots(string s) {
 	return _t1;
 }
 
-string v__util__no_cur_mod(string v_typename, string cur_mod) {
-	string res = v_typename;
+string v__util__no_cur_mod(string _v_typename, string cur_mod) {
+	string res = _v_typename;
 	string mod_prefix = string__plus(cur_mod, _SLIT("."));
 	bool has_map_prefix = string_starts_with(res, _const_v__util__map_prefix);
 	if (has_map_prefix) {
@@ -33903,7 +33903,7 @@ void v__util__recompile_file(string vexe, string file) {
 	int recompile_result = os__system(cmd);
 	if (recompile_result != 0) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not recompile "), 0xfe10, {.d_s = file}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		v_exit(2);
+		_v_exit(2);
 		VUNREACHABLE();
 	}
 }
@@ -33918,7 +33918,7 @@ string v__util__get_vtmp_folder(void) {
 		Option_void _t2 = os__mkdir_all(vtmp);
 		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
 			IError err = _t2.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -33943,10 +33943,10 @@ Option_Array_string v__util__find_all_v_files(Array_string roots) {
 			continue;
 		}
 		if (!string_ends_with(file, _SLIT(".v")) && !string_ends_with(file, _SLIT(".vv")) && !string_ends_with(file, _SLIT(".vsh"))) {
-			return (Option_Array_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("v fmt can only be used on .v files.\nOffending file: \""), 0xfe10, {.d_s = file}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_Array_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("v fmt can only be used on .v files.\nOffending file: \""), 0xfe10, {.d_s = file}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		if (!os__exists(file)) {
-			return (Option_Array_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = file}}, {_SLIT("\" does not exist"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_Array_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = file}}, {_SLIT("\" does not exist"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		array_push((array*)&files, _MOV((string[]){ string_clone(file) }));
 	}
@@ -34021,7 +34021,7 @@ v__ast__IdentVar v__ast__Ident_var_info(v__ast__Ident* i) {
 	}
 	
 	else {
-		v_panic(_SLIT("Ident.var_info(): info is not IdentVar variant"));
+		_v_panic(_SLIT("Ident.var_info(): info is not IdentVar variant"));
 		VUNREACHABLE();
 	}
 	;
@@ -34367,13 +34367,13 @@ Option_void v__ast__Stmt_check_c_expr(v__ast__Stmt stmt) {
 		if (v__ast__Expr_is_expr((*stmt._v__ast__ExprStmt).expr)) {
 			return (Option_void){0};
 		}
-		return (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported statement (`"), 0xfe10, {.d_s = tos3( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( ((*stmt._v__ast__ExprStmt).expr)._typ ))}}, {_SLIT("`)"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported statement (`"), 0xfe10, {.d_s = tos3( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( ((*stmt._v__ast__ExprStmt).expr)._typ ))}}, {_SLIT("`)"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
 	else {
 	}
 	;
-	return (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported statement (`"), 0xfe10, {.d_s = tos3( /* v.ast.Stmt */ v_typeof_sumtype_v__ast__Stmt( (stmt)._typ ))}}, {_SLIT("`)"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported statement (`"), 0xfe10, {.d_s = tos3( /* v.ast.Stmt */ v_typeof_sumtype_v__ast__Stmt( (stmt)._typ ))}}, {_SLIT("`)"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 v__token__Position v__ast__Node_position(v__ast__Node node) {
@@ -35154,7 +35154,7 @@ Map_string_v__ast__ScopeObject v__ast__all_registers(v__ast__Table* t, v__pref__
 					Option_int _t11 = string_index(name, _SLIT("#"));
 					if (_t11.state != 0) { /*or block*/ 
 						IError err = _t11.err;
-						v_panic(_SLIT("all_registers: no hashtag found"));
+						_v_panic(_SLIT("all_registers: no hashtag found"));
 						VUNREACHABLE();
 					;
 					}
@@ -35235,7 +35235,7 @@ Map_string_v__ast__ScopeObject v__ast__all_registers(v__ast__Table* t, v__pref__
 		}
 	}
 	else {
-		v_panic(_SLIT("all_registers: unhandled arch"));
+		_v_panic(_SLIT("all_registers: unhandled arch"));
 		VUNREACHABLE();
 	};
 	return res;
@@ -35263,7 +35263,7 @@ VV_LOCAL_SYMBOL Map_string_v__ast__ScopeObject v__ast__gen_all_registers(v__ast_
 			Option_int _t5 = string_index(name, _SLIT("#"));
 			if (_t5.state != 0) { /*or block*/ 
 				IError err = _t5.err;
-				v_panic(_SLIT("all_registers: no hashtag found"));
+				_v_panic(_SLIT("all_registers: no hashtag found"));
 				VUNREACHABLE();
 			;
 			}
@@ -35396,7 +35396,7 @@ Option_bool v__ast__Table_parse_cflag(v__ast__Table* t, string cflg, string mod,
 		}
 		if (((string__eq(name, _SLIT("-I")) || string__eq(name, _SLIT("-l")) || string__eq(name, _SLIT("-L")))) && (value).len == 0) {
 			string hint = (string__eq(name, _SLIT("-l")) ? (_SLIT("library name")) : (_SLIT("path")));
-			return (Option_bool){ .state=2, .err=v_error( str_intp(4, _MOV((StrIntpData[]){{_SLIT("bad #flag `"), 0xfe10, {.d_s = flag_orig}}, {_SLIT("`: missing "), 0xfe10, {.d_s = hint}}, {_SLIT(" after `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_bool){ .state=2, .err=_v_error( str_intp(4, _MOV((StrIntpData[]){{_SLIT("bad #flag `"), 0xfe10, {.d_s = flag_orig}}, {_SLIT("`: missing "), 0xfe10, {.d_s = hint}}, {_SLIT(" after `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		v__cflag__CFlag cf = (v__cflag__CFlag){.mod = mod,.os = fos,.name = name,.value = value,.cached = (string){.str=(byteptr)"", .is_lit=1},};
 		if (!v__ast__Table_has_cflag(t, cf)) {
@@ -35800,7 +35800,7 @@ Option_v__ast__ScopeStructField v__ast__Scope_find_struct_field(v__ast__Scope* s
 		if (_t2) {
 			*((v__ast__ScopeStructField*)&_t1.data) = *((v__ast__ScopeStructField*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+			_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 		}
 		
 		if (_t1.state == 0) {
@@ -35895,7 +35895,7 @@ void v__ast__Scope_register_struct_field(v__ast__Scope* s, string name, v__ast__
 	if (_t2) {
 		*((v__ast__ScopeStructField*)&_t1.data) = *((v__ast__ScopeStructField*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	
 	if (_t1.state == 0) {
@@ -36700,7 +36700,7 @@ void v__ast__Table_free(v__ast__Table* t) {
 
 // TypeDecl
 VV_LOCAL_SYMBOL void v__ast__default_table_panic_handler(v__ast__Table* t, string message) {
-	v_panic(message);
+	_v_panic(message);
 	VUNREACHABLE();
 }
 
@@ -36854,7 +36854,7 @@ Option_v__ast__Fn v__ast__Table_find_fn(v__ast__Table* t, string name) {
 	if (_t2) {
 		*((v__ast__Fn*)&_t1.data) = *((v__ast__Fn*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	
 	if (_t1.state == 0) {
@@ -36909,11 +36909,11 @@ Option_v__ast__Fn v__ast__Table_register_aggregate_method(v__ast__Table* t, v__a
 				found_once = true;
 				new_fn = type_method;
 			} else if (!v__ast__Fn_method_equals(&new_fn, (voidptr)&/*qq*/type_method)) {
-				return (Option_v__ast__Fn){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("method `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("` signature is different"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_v__ast__Fn){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("method `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("` signature is different"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		} else {
 			IError err = _t2.err;
-			return (Option_v__ast__Fn){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unknown method: `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__ast__Fn){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unknown method: `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	}
 	v__ast__TypeSymbol_register_method(sym, new_fn);
@@ -36971,11 +36971,11 @@ VV_LOCAL_SYMBOL Option_v__ast__StructField v__ast__Table_register_aggregate_fiel
 				found_once = true;
 				new_field = type_field;
 			} else if (!v__ast__StructField_equals(&new_field, (voidptr)&/*qq*/type_field)) {
-				return (Option_v__ast__StructField){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("` type is different"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_v__ast__StructField){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("` type is different"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		} else {
 			IError err = _t2.err;
-			return (Option_v__ast__StructField){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("type `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("` has no field or method `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__ast__StructField){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("type `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("` has no field or method `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 	}
 	array_push((array*)&agg_info.fields, _MOV((v__ast__StructField[]){ new_field }));
@@ -37043,7 +37043,7 @@ Option_v__ast__StructField v__ast__Table_find_field(v__ast__Table* t, v__ast__Ty
 				opt_ok(&(v__ast__StructField[]) { field }, (Option*)(&_t11), sizeof(v__ast__StructField));
 				return _t11;
 			}
-			return (Option_v__ast__StructField){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = name}}, {_SLIT("` does not exist or have the same type in all sumtype variants"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__ast__StructField){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = name}}, {_SLIT("` does not exist or have the same type in all sumtype variants"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
 		else {
@@ -37084,7 +37084,7 @@ Option_v__ast__StructField v__ast__Table_find_field_with_embeds(v__ast__Table* t
 				opt_ok(&(v__ast__StructField[]) { (*(v__ast__StructField*)/*ee elem_typ */array_get(found_fields, 0)) }, (Option*)(&_t7), sizeof(v__ast__StructField));
 				return _t7;
 			} else if (found_fields.len > 1) {
-				return (Option_v__ast__StructField){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("ambiguous field `"), 0xfe10, {.d_s = field_name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_v__ast__StructField){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("ambiguous field `"), 0xfe10, {.d_s = field_name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 		}
 		return (Option_v__ast__StructField){ .state=2, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -38086,7 +38086,7 @@ inline bool v__ast__Type_is_any_kind_of_pointer(v__ast__Type t) {
 // Attr: [inline]
 inline v__ast__Type v__ast__Type_set_nr_muls(v__ast__Type t, int nr_muls) {
 	if (nr_muls < 0 || nr_muls > 255) {
-		v_panic(_SLIT("set_nr_muls: nr_muls must be between 0 & 255"));
+		_v_panic(_SLIT("set_nr_muls: nr_muls must be between 0 & 255"));
 		VUNREACHABLE();
 	}
 	v__ast__Type _t1 = ((((int)(t)) & 0xff00ffff) | (nr_muls << 16));
@@ -38097,7 +38097,7 @@ inline v__ast__Type v__ast__Type_set_nr_muls(v__ast__Type t, int nr_muls) {
 inline v__ast__Type v__ast__Type_to_ptr(v__ast__Type t) {
 	int nr_muls = ((((int)(t)) >> 16) & 0xff);
 	if (nr_muls == 255) {
-		v_panic(_SLIT("to_ptr: nr_muls is already at max of 255"));
+		_v_panic(_SLIT("to_ptr: nr_muls is already at max of 255"));
 		VUNREACHABLE();
 	}
 	v__ast__Type _t1 = ((((int)(t)) & 0xff00ffff) | ((nr_muls + 1) << 16));
@@ -38108,7 +38108,7 @@ inline v__ast__Type v__ast__Type_to_ptr(v__ast__Type t) {
 inline v__ast__Type v__ast__Type_deref(v__ast__Type t) {
 	int nr_muls = ((((int)(t)) >> 16) & 0xff);
 	if (nr_muls == 0) {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("deref: type `"), 0xfe07, {.d_i32 = t}}, {_SLIT("` is not a pointer"), 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("deref: type `"), 0xfe07, {.d_i32 = t}}, {_SLIT("` is not a pointer"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	v__ast__Type _t1 = ((((int)(t)) & 0xff00ffff) | ((nr_muls - 1) << 16));
@@ -38217,7 +38217,7 @@ inline v__ast__Type v__ast__Type_derive_add_muls(v__ast__Type t, v__ast__Type t_
 // Attr: [inline]
 inline v__ast__Type v__ast__new_type(int idx) {
 	if (idx < 1 || idx > 65535) {
-		v_panic(_SLIT("new_type: idx must be between 1 & 65535"));
+		_v_panic(_SLIT("new_type: idx must be between 1 & 65535"));
 		VUNREACHABLE();
 	}
 	return idx;
@@ -38226,11 +38226,11 @@ inline v__ast__Type v__ast__new_type(int idx) {
 // Attr: [inline]
 inline v__ast__Type v__ast__new_type_ptr(int idx, int nr_muls) {
 	if (idx < 1 || idx > 65535) {
-		v_panic(_SLIT("new_type_ptr: idx must be between 1 & 65535"));
+		_v_panic(_SLIT("new_type_ptr: idx must be between 1 & 65535"));
 		VUNREACHABLE();
 	}
 	if (nr_muls < 0 || nr_muls > 255) {
-		v_panic(_SLIT("new_type_ptr: nr_muls must be between 0 & 255"));
+		_v_panic(_SLIT("new_type_ptr: nr_muls must be between 0 & 255"));
 		VUNREACHABLE();
 	}
 	v__ast__Type _t1 = ((nr_muls << 16) | ((u16)(idx)));
@@ -38346,7 +38346,7 @@ inline v__ast__Enum v__ast__TypeSymbol_enum_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.enum_info(): no enum info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.enum_info(): no enum info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38361,7 +38361,7 @@ inline v__ast__MultiReturn v__ast__TypeSymbol_mr_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.mr_info(): no multi return info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.mr_info(): no multi return info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38376,7 +38376,7 @@ inline v__ast__Array v__ast__TypeSymbol_array_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.array_info(): no array info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.array_info(): no array info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38391,7 +38391,7 @@ inline v__ast__ArrayFixed v__ast__TypeSymbol_array_fixed_info(v__ast__TypeSymbol
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.array_fixed(): no array fixed info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.array_fixed(): no array fixed info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38406,7 +38406,7 @@ inline v__ast__Chan v__ast__TypeSymbol_chan_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.chan_info(): no chan info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.chan_info(): no chan info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38421,7 +38421,7 @@ inline v__ast__Thread v__ast__TypeSymbol_thread_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.thread_info(): no thread info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.thread_info(): no thread info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38436,7 +38436,7 @@ inline v__ast__Map v__ast__TypeSymbol_map_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.map_info(): no map info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.map_info(): no map info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38451,7 +38451,7 @@ inline v__ast__Struct v__ast__TypeSymbol_struct_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.struct_info(): no struct info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.struct_info(): no struct info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -38466,7 +38466,7 @@ inline v__ast__SumType v__ast__TypeSymbol_sumtype_info(v__ast__TypeSymbol* t) {
 	}
 	
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.sumtype_info(): no sumtype info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("TypeSymbol.sumtype_info(): no sumtype info for type: "), 0xfe10, {.d_s = t->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 	;
@@ -39344,7 +39344,7 @@ v__ast__StructField v__ast__Struct_get_field(v__ast__Struct* s, string name) {
 		v__ast__StructField field = *(v__ast__StructField*)_t1.data;
 		return field;
 	}
-	v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown field `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
+	_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown field `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
 	VUNREACHABLE();
 	return (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
 }
@@ -39851,7 +39851,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_end_of_file(v__scanner__Scan
 	s->eofs++;
 	if (s->eofs > 50) {
 		s->line_nr--;
-		v_panic(string__plus(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("the end of file `"), 0xfe10, {.d_s = s->file_path}}, {_SLIT("` has been reached 50 times already, the v parser is probably stuck.\n"), 0, { .d_c = 0 }}})), _SLIT("This should not happen. Please report the bug here, and include the last 2-3 lines of your source code:\n")), _SLIT("https://github.com/vlang/v/issues/new?labels=Bug&template=bug_report.md")));
+		_v_panic(string__plus(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("the end of file `"), 0xfe10, {.d_s = s->file_path}}, {_SLIT("` has been reached 50 times already, the v parser is probably stuck.\n"), 0, { .d_c = 0 }}})), _SLIT("This should not happen. Please report the bug here, and include the last 2-3 lines of your source code:\n")), _SLIT("https://github.com/vlang/v/issues/new?labels=Bug&template=bug_report.md")));
 		VUNREACHABLE();
 	}
 	if (s->pos != s->text.len && s->eofs == 1) {
@@ -40708,11 +40708,11 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
 	v__token__Position pos = (v__token__Position){.len = 0,.line_nr = s->line_nr,.pos = s->pos,.col = v__scanner__Scanner_current_column(s) - 1,.last_line = 0,};
 	if (s->pref->output_mode == v__pref__OutputMode__stdout) {
 		eprintln(v__util__formatted_error(_SLIT("error:"), msg, s->file_path, pos));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	} else {
 		if (s->pref->fatal_errors) {
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 		array_push((array*)&s->errors, _MOV((v__errors__Error[]){ (v__errors__Error){.message = msg,.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = s->file_path,.pos = pos,.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__scanner,} }));
@@ -40782,7 +40782,7 @@ VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parse
 			if ((expr)._typ == 230 /* v.ast.Ident */) {
 				if (string__eq((*expr._v__ast__Ident).name, (*val._v__ast__Ident).name) && (*expr._v__ast__Ident).kind != v__ast__IdentKind__blank_ident) {
 					v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*val._v__ast__Ident).pos);
-					return (Option_void){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+					return (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 				}
 			}
 		}
@@ -42740,12 +42740,12 @@ VV_LOCAL_SYMBOL Option_void v__parser__Parser_fn_receiver(v__parser__Parser* p, 
 	rec->type_pos = v__token__Token_position(&p->tok);
 	rec->typ = v__parser__Parser_parse_type_with_mut(p, rec->is_mut);
 	if (v__ast__Type_idx(rec->typ) == 0) {
-		return (Option_void){ .state=2, .err=v_error(_SLIT("void receiver type")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("void receiver type")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	rec->type_pos = v__token__Position_extend(rec->type_pos, v__token__Token_position(&p->prev_tok));
 	if (is_amp && rec->is_mut) {
 		v__parser__Parser_error_with_pos(p, _SLIT("use `(mut f Foo)` or `(f &Foo)` instead of `(mut f &Foo)`"), v__token__Position_extend(lpar_pos, v__token__Token_position(&p->tok)));
-		return (Option_void){ .state=2, .err=v_error(_SLIT("invalid `mut f &Foo`")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("invalid `mut f &Foo`")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if (is_shared) {
 		rec->typ = v__ast__Type_set_flag(rec->typ, v__ast__TypeFlag__shared_f);
@@ -45978,7 +45978,7 @@ void v__parser__Parser_note(v__parser__Parser* p, string s) {
 
 v__ast__NodeError v__parser__Parser_error_with_pos(v__parser__Parser* p, string s, v__token__Position pos) {
 	if (p->pref->fatal_errors) {
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	string kind = _SLIT("error:");
@@ -45989,7 +45989,7 @@ v__ast__NodeError v__parser__Parser_error_with_pos(v__parser__Parser* p, string 
 		}
 		string ferror = v__util__formatted_error(kind, s, p->file_name, pos);
 		eprintln(ferror);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	} else {
 		array_push((array*)&p->errors, _MOV((v__errors__Error[]){ (v__errors__Error){.message = s,.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = p->file_name,.pos = pos,.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__parser,} }));
@@ -46001,9 +46001,9 @@ v__ast__NodeError v__parser__Parser_error_with_pos(v__parser__Parser* p, string 
 	return _t2;
 }
 
-void v__parser__Parser_error_with_error(v__parser__Parser* p, v__errors__Error v_error) {
+void v__parser__Parser_error_with_error(v__parser__Parser* p, v__errors__Error _v_error) {
 	if (p->pref->fatal_errors) {
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	string kind = _SLIT("error:");
@@ -46012,12 +46012,12 @@ void v__parser__Parser_error_with_error(v__parser__Parser* p, v__errors__Error v
 			print_backtrace();
 			kind = _SLIT("parser error:");
 		}
-		string ferror = v__util__formatted_error(kind, v_error.message, v_error.file_path, v_error.pos);
+		string ferror = v__util__formatted_error(kind, _v_error.message, _v_error.file_path, _v_error.pos);
 		eprintln(ferror);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	} else {
-		array_push((array*)&p->errors, _MOV((v__errors__Error[]){ v_error }));
+		array_push((array*)&p->errors, _MOV((v__errors__Error[]){ _v_error }));
 	}
 	if (p->pref->output_mode == v__pref__OutputMode__silent) {
 		v__parser__Parser_next(p);
@@ -46468,7 +46468,7 @@ v__ast__Expr v__parser__Parser_name_expr(v__parser__Parser* p) {
 			if (_t21) {
 				*((string*)&_t20.data) = *((string*)_t21);
 			} else {
-				_t20.state = 2; _t20.err = v_error(_SLIT("array index out of range"));
+				_t20.state = 2; _t20.err = _v_error(_SLIT("array index out of range"));
 			}
 			;
 			if (_t20.state != 0) { /*or block*/ 
@@ -48703,15 +48703,15 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 			strings__Builder_writeln(&source, string__plus(string__plus(_SLIT("for "), string_substr(line, pos + 4, line.len)), _SLIT("{")));
 			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_start);
 		} else if (state == v__parser__State__html && string_contains(line, _SLIT("span.")) && string_ends_with(line, _SLIT("{"))) {
-			string v_class = string_trim_space(string_find_between(line, _SLIT("span."), _SLIT("{")));
-			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<span class=\""), 0xfe10, {.d_s = v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
+			string _v_class = string_trim_space(string_find_between(line, _SLIT("span."), _SLIT("{")));
+			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<span class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
 			in_span = true;
 		} else if (state == v__parser__State__html && string_contains(line, _SLIT(".")) && string_ends_with(line, _SLIT("{"))) {
-			string v_class = string_trim_space(string_find_between(line, _SLIT("."), _SLIT("{")));
-			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div class=\""), 0xfe10, {.d_s = v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
+			string _v_class = string_trim_space(string_find_between(line, _SLIT("."), _SLIT("{")));
+			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
 		} else if (state == v__parser__State__html && string_contains(line, _SLIT("#")) && string_ends_with(line, _SLIT("{"))) {
-			string v_class = string_trim_space(string_find_between(line, _SLIT("#"), _SLIT("{")));
-			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div id=\""), 0xfe10, {.d_s = v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
+			string _v_class = string_trim_space(string_find_between(line, _SLIT("#"), _SLIT("{")));
+			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div id=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
 		} else if (state == v__parser__State__html && string__eq(line, _SLIT("}"))) {
 			if (in_span) {
 				strings__Builder_writeln(&source, _SLIT("</span>"));
@@ -49048,7 +49048,7 @@ void v__markused__Walker_mark_const_as_used(v__markused__Walker* w, string ckey)
 	if (_t2) {
 		*((v__ast__ConstField*)&_t1.data) = *((v__ast__ConstField*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t1.state != 0) { /*or block*/ 
@@ -49477,7 +49477,7 @@ void v__markused__Walker_call_expr(v__markused__Walker* w, v__ast__CallExpr* nod
 	if (_t3) {
 		*((v__ast__FnDecl*)&_t2.data) = *((v__ast__FnDecl*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = v_error(_SLIT("array index out of range"));
+		_t2.state = 2; _t2.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t2.state != 0) { /*or block*/ 
@@ -49502,7 +49502,7 @@ void v__markused__Walker_fn_by_name(v__markused__Walker* w, string fn_name) {
 	if (_t2) {
 		*((v__ast__FnDecl*)&_t1.data) = *((v__ast__FnDecl*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
 	if (_t1.state != 0) { /*or block*/ 
@@ -50260,7 +50260,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_assert_stmt(v__gen__c__Gen* g, v__ast__A
 		string metaname_panic = v__gen__c__Gen_gen_assert_metainfo(g, node);
 		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t__print_assert_failure(&"), 0xfe10, {.d_s = metaname_panic}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 		v__gen__c__Gen_gen_assert_postfailure_mode(g, node);
-		v__gen__c__Gen_writeln(g, _SLIT("\tv_panic(_SLIT(\"Assertion failed...\"));"));
+		v__gen__c__Gen_writeln(g, _SLIT("\t_v_panic(_SLIT(\"Assertion failed...\"));"));
 		v__gen__c__Gen_writeln(g, _SLIT("}"));
 	}
 }
@@ -52260,7 +52260,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_register_thread_array_wait_call(v__gen__c_
 VV_LOCAL_SYMBOL void v__gen__c__Gen_register_chan_pop_optional_call(v__gen__c__Gen* g, string opt_el_type, string styp) {
 	if (!(Array_string_contains(g->chan_pop_optionals, opt_el_type))) {
 		array_push((array*)&g->chan_pop_optionals, _MOV((string[]){ string_clone(opt_el_type) }));
-		strings__Builder_writeln(&g->channel_definitions,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\nstatic inline "), 0xfe10, {.d_s = opt_el_type}}, {_SLIT(" __Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("_popval("), 0xfe10, {.d_s = styp}}, {_SLIT(" ch) {\n	"), 0xfe10, {.d_s = opt_el_type}}, {_SLIT(" _tmp = {0};\n	if (sync__Channel_try_pop_priv(ch, _tmp.data, false)) {\n		return ("), 0xfe10, {.d_s = opt_el_type}}, {_SLIT("){ .state = 2, .err = v_error(_SLIT(\"channel closed\")), .data = {EMPTY_STRUCT_INITIALIZATION} };\n	}\n	return _tmp;\n}"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&g->channel_definitions,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\nstatic inline "), 0xfe10, {.d_s = opt_el_type}}, {_SLIT(" __Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("_popval("), 0xfe10, {.d_s = styp}}, {_SLIT(" ch) {\n	"), 0xfe10, {.d_s = opt_el_type}}, {_SLIT(" _tmp = {0};\n	if (sync__Channel_try_pop_priv(ch, _tmp.data, false)) {\n		return ("), 0xfe10, {.d_s = opt_el_type}}, {_SLIT("){ .state = 2, .err = _v_error(_SLIT(\"channel closed\")), .data = {EMPTY_STRUCT_INITIALIZATION} };\n	}\n	return _tmp;\n}"), 0, { .d_c = 0 }}})));
 	}
 }
 
@@ -52268,7 +52268,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_register_chan_push_optional_call(v__gen__c__
 	if (!(Array_string_contains(g->chan_push_optionals, styp))) {
 		array_push((array*)&g->chan_push_optionals, _MOV((string[]){ string_clone(styp) }));
 		v__gen__c__Gen_register_optional(g, v__ast__Type_set_flag(_const_v__ast__void_type, v__ast__TypeFlag__optional));
-		strings__Builder_writeln(&g->channel_definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\nstatic inline Option_void __Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("_pushval("), 0xfe10, {.d_s = styp}}, {_SLIT(" ch, "), 0xfe10, {.d_s = el_type}}, {_SLIT(" e) {\n	if (sync__Channel_try_push_priv(ch, &e, false)) {\n		return (Option_void){ .state = 2, .err = v_error(_SLIT(\"channel closed\")), .data = {EMPTY_STRUCT_INITIALIZATION} };\n	}\n	return (Option_void){0};\n}"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&g->channel_definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\nstatic inline Option_void __Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("_pushval("), 0xfe10, {.d_s = styp}}, {_SLIT(" ch, "), 0xfe10, {.d_s = el_type}}, {_SLIT(" e) {\n	if (sync__Channel_try_push_priv(ch, &e, false)) {\n		return (Option_void){ .state = 2, .err = _v_error(_SLIT(\"channel closed\")), .data = {EMPTY_STRUCT_INITIALIZATION} };\n	}\n	return (Option_void){0};\n}"), 0, { .d_c = 0 }}})));
 	}
 }
 
@@ -52734,12 +52734,12 @@ bool v__gen__c__Gen_stmt_defer_0 = false;
 			if (_t3) {
 				*((v__ast__Stmt**)&_t2.data) = *((v__ast__Stmt**)_t3);
 			} else {
-				_t2.state = 2; _t2.err = v_error(_SLIT("array index out of range"));
+				_t2.state = 2; _t2.err = _v_error(_SLIT("array index out of range"));
 			}
 			;
 			if (_t2.state != 0) { /*or block*/ 
 				IError err = _t2.err;
-				v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*node._v__ast__BranchStmt).label}}, {_SLIT(" doesn\'t exist "), 0xfe10, {.d_s = g->file->path}}, {_SLIT(", "), 0xfe10, {.d_s = v__token__Position_str((*node._v__ast__BranchStmt).pos)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				_v_panic( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*node._v__ast__BranchStmt).label}}, {_SLIT(" doesn\'t exist "), 0xfe10, {.d_s = g->file->path}}, {_SLIT(", "), 0xfe10, {.d_s = v__token__Position_str((*node._v__ast__BranchStmt).pos)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 				VUNREACHABLE();
 			;
 			}
@@ -53516,32 +53516,32 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_asm_stmt(v__gen__c__Gen* g, v__ast__AsmS
 	g->indent++;
 	for (int _t1 = 0; _t1 < stmt.templates.len; ++_t1) {
 		v__ast__AsmTemplate template_tmp = ((v__ast__AsmTemplate*)stmt.templates.data)[_t1];
-		v__ast__AsmTemplate v_template = template_tmp;
+		v__ast__AsmTemplate _v_template = template_tmp;
 		v__gen__c__Gen_write(g, _SLIT("\""));
-		if (v_template.is_directive) {
+		if (_v_template.is_directive) {
 			v__gen__c__Gen_write(g, _SLIT("."));
 		}
-		v__gen__c__Gen_write(g, v_template.name);
-		if (v_template.is_label) {
+		v__gen__c__Gen_write(g, _v_template.name);
+		if (_v_template.is_label) {
 			v__gen__c__Gen_write(g, _SLIT(":"));
 		} else {
 			v__gen__c__Gen_write(g, _SLIT(" "));
 		}
-		if (v_template.args.len != 0 && !v_template.is_directive) {
-			array_prepend(&v_template.args, &(v__ast__AsmArg[]){(*(v__ast__AsmArg*)/*ee elem_typ */array_get(v_template.args, v_template.args.len - 1))});
-			array_delete(&v_template.args, v_template.args.len - 1);
+		if (_v_template.args.len != 0 && !_v_template.is_directive) {
+			array_prepend(&_v_template.args, &(v__ast__AsmArg[]){(*(v__ast__AsmArg*)/*ee elem_typ */array_get(_v_template.args, _v_template.args.len - 1))});
+			array_delete(&_v_template.args, _v_template.args.len - 1);
 		}
-		for (int i = 0; i < v_template.args.len; ++i) {
-			v__ast__AsmArg arg = ((v__ast__AsmArg*)v_template.args.data)[i];
-			if (stmt.arch == v__pref__Arch__amd64 && (string__eq(v_template.name, _SLIT("call")) || string_at(v_template.name, 0) == 'j') && (arg)._typ == 285 /* v.ast.AsmRegister */) {
+		for (int i = 0; i < _v_template.args.len; ++i) {
+			v__ast__AsmArg arg = ((v__ast__AsmArg*)_v_template.args.data)[i];
+			if (stmt.arch == v__pref__Arch__amd64 && (string__eq(_v_template.name, _SLIT("call")) || string_at(_v_template.name, 0) == 'j') && (arg)._typ == 285 /* v.ast.AsmRegister */) {
 				v__gen__c__Gen_write(g, _SLIT("*"));
 			}
 			v__gen__c__Gen_asm_arg(g, arg, stmt);
-			if (i + 1 < v_template.args.len) {
+			if (i + 1 < _v_template.args.len) {
 				v__gen__c__Gen_write(g, _SLIT(", "));
 			}
 		}
-		if (!v_template.is_label) {
+		if (!_v_template.is_label) {
 			v__gen__c__Gen_write(g, _SLIT(";"));
 		}
 		v__gen__c__Gen_writeln(g, _SLIT("\""));
@@ -53662,7 +53662,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_asm_arg(v__gen__c__Gen* g, v__ast__AsmArg ar
 				v__gen__c__Gen_asm_arg(g, displacement, stmt);
 				v__gen__c__Gen_write(g, _SLIT(","));
 			} else {
-				v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected "), 0xfe10, {.d_s = tos3( /* v.ast.AsmArg */ v_typeof_sumtype_v__ast__AsmArg( (displacement)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected "), 0xfe10, {.d_s = tos3( /* v.ast.AsmArg */ v_typeof_sumtype_v__ast__AsmArg( (displacement)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})));
 				VUNREACHABLE();
 			}
 			v__gen__c__Gen_asm_arg(g, index, stmt);
@@ -55391,11 +55391,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_118902 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_118902.arg0;
-	string key_eq_fn = mr_118902.arg1;
-	string clone_fn = mr_118902.arg2;
-	string free_fn = mr_118902.arg3;
+	multi_return_string_string_string_string mr_118904 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_118904.arg0;
+	string key_eq_fn = mr_118904.arg1;
+	string clone_fn = mr_118904.arg2;
+	string free_fn = mr_118904.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -55677,12 +55677,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_ident(v__gen__c__Gen* g, v__ast__Ident node)
 			if (_t4) {
 				*((string*)&_t3.data) = *((string*)_t4);
 			} else {
-				_t3.state = 2; _t3.err = v_error(_SLIT("array index out of range"));
+				_t3.state = 2; _t3.err = _v_error(_SLIT("array index out of range"));
 			}
 			;
 			if (_t3.state != 0) { /*or block*/ 
 				IError err = _t3.err;
-				v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
+				_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
 				VUNREACHABLE();
 			;
 			}
@@ -56720,7 +56720,7 @@ VNORETURN VV_LOCAL_SYMBOL void v__gen__c__verror(string s) {
 VNORETURN VV_LOCAL_SYMBOL void v__gen__c__Gen_error(v__gen__c__Gen* g, string s, v__token__Position pos) {
 	string ferror = v__util__formatted_error(_SLIT("cgen error:"), s, g->file->path, pos);
 	eprintln(ferror);
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 	while(1);
 }
@@ -56857,9 +56857,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*typ.info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_161470 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_161470.arg0;
-						string base = mr_161470.arg1;
+						multi_return_string_string mr_161472 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_161472.arg0;
+						string base = mr_161472.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -57092,11 +57092,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_169759 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_169759.arg0;
-				string pafile = mr_169759.arg1;
-				string pamod = mr_169759.arg2;
-				string pafn = mr_169759.arg3;
+				multi_return_int_string_string_string mr_169761 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_169761.arg0;
+				string pafile = mr_169761.arg1;
+				string pamod = mr_169761.arg2;
+				string pafn = mr_169761.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -57128,7 +57128,7 @@ if (v__gen__c__Gen_or_block_defer_0) {
 inline VV_LOCAL_SYMBOL string v__gen__c__c_name(string name_) {
 	string name = v__util__no_dots(name_);
 	if (_IN_MAP(ADDR(string, name), ADDR(map, _const_v__gen__c__c_reserved_map))) {
-		string _t1 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("v_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		string _t1 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_v_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}}));
 		return _t1;
 	}
 	return name;
@@ -57189,11 +57189,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind__map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_172388 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_172388.arg0;
-		string key_eq_fn = mr_172388.arg1;
-		string clone_fn = mr_172388.arg2;
-		string free_fn = mr_172388.arg3;
+		multi_return_string_string_string_string mr_172391 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_172391.arg0;
+		string key_eq_fn = mr_172391.arg1;
+		string clone_fn = mr_172391.arg2;
+		string free_fn = mr_172391.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -57337,12 +57337,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_go_expr(v__gen__c__Gen* g, v__ast__GoExpr no
 		if (_t2) {
 			*((string*)&_t1.data) = *((string*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+			_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 		}
 		;
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
@@ -57417,7 +57417,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_go_expr(v__gen__c__Gen* g, v__ast__GoExpr no
 			} else {
 				strings__Builder_writeln(&g->gowrappers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tint stat = pthread_join(thread, (void **)"), 0xfe10, {.d_s = c_ret_ptr_ptr}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 			}
-			strings__Builder_writeln(&g->gowrappers, _SLIT("\tif (stat != 0) { v_panic(_SLIT(\"unable to join thread\")); }"));
+			strings__Builder_writeln(&g->gowrappers, _SLIT("\tif (stat != 0) { _v_panic(_SLIT(\"unable to join thread\")); }"));
 			if (g->pref->os == v__pref__OS__windows) {
 				if (v__ast__Type_alias_eq(node.call_expr.return_type, _const_v__ast__void_type)) {
 					strings__Builder_writeln(&g->gowrappers, _SLIT("\tCloseHandle(thread);"));
@@ -57801,8 +57801,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_191444 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_191444.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_191448 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_191448.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -58890,7 +58890,7 @@ VV_LOCAL_SYMBOL Option_string v__gen__c__Gen_comp_if_to_ifdef(v__gen__c__Gen* g,
 			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t42), sizeof(string));
 			return _t42;
 		}
-		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
 	return (Option_string){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
@@ -59028,7 +59028,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_embedded_data(v__gen__c__Gen* g) {
 		Option_Array_byte _t1 = os__read_bytes(emfile.apath);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Error while embedding file: "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Error while embedding file: "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
@@ -59091,7 +59091,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_process_fn_decl(v__gen__c__Gen* g, v__ast__F
 		return;
 	}
 	if (g->is_builtin_mod && g->pref->gc_mode == v__pref__GarbageCollectionMode__boehm_leak && string__eq(node.name, _SLIT("malloc"))) {
-		strings__Builder_write_string(&g->definitions, _SLIT("#define v_malloc GC_MALLOC\n"));
+		strings__Builder_write_string(&g->definitions, _SLIT("#define _v_malloc GC_MALLOC\n"));
 		return;
 	}
 	v__gen__c__Gen_gen_attrs(g, node.attrs);
@@ -59256,12 +59256,12 @@ int ctmp;
 		if (_t8) {
 			*((string*)&_t7.data) = *((string*)_t8);
 		} else {
-			_t7.state = 2; _t7.err = v_error(_SLIT("array index out of range"));
+			_t7.state = 2; _t7.err = _v_error(_SLIT("array index out of range"));
 		}
 		;
 		if (_t7.state != 0) { /*or block*/ 
 			IError err = _t7.err;
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: fn_decl: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: fn_decl: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
@@ -59299,10 +59299,10 @@ int ctmp;
 		v__gen__c__Gen_write(g, fn_header);
 	}
 	int arg_start_pos = g->out.len;
-	multi_return_Array_string_Array_string_Array_bool mr_7876 = v__gen__c__Gen_fn_args(g, node->params, node->is_variadic, node->scope);
-	Array_string fargs = mr_7876.arg0;
-	Array_string fargtypes = mr_7876.arg1;
-	Array_bool heap_promoted = mr_7876.arg2;
+	multi_return_Array_string_Array_string_Array_bool mr_7877 = v__gen__c__Gen_fn_args(g, node->params, node->is_variadic, node->scope);
+	Array_string fargs = mr_7877.arg0;
+	Array_string fargtypes = mr_7877.arg1;
+	Array_bool heap_promoted = mr_7877.arg2;
 	string arg_str = strings__Builder_after(&g->out, arg_start_pos);
 	if (node->no_body || ((g->pref->use_cache && g->pref->build_mode != v__pref__BuildMode__build_module) && node->is_builtin && !g->is_test) || skip) {
 		strings__Builder_writeln(&g->definitions, _SLIT(");"));
@@ -59829,12 +59829,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		if (_t11) {
 			*((string*)&_t10.data) = *((string*)_t11);
 		} else {
-			_t10.state = 2; _t10.err = v_error(_SLIT("array index out of range"));
+			_t10.state = 2; _t10.err = _v_error(_SLIT("array index out of range"));
 		}
 		;
 		if (_t10.state != 0) { /*or block*/ 
 			IError err = _t10.err;
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
@@ -60008,12 +60008,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 		if (_t2) {
 			*((string*)&_t1.data) = *((string*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = v_error(_SLIT("array index out of range"));
+			_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
 		}
 		;
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
@@ -60051,11 +60051,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_29382 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_29382.arg0;
-			string pafile = mr_29382.arg1;
-			string pamod = mr_29382.arg2;
-			string pafn = mr_29382.arg3;
+			multi_return_int_string_string_string mr_29383 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_29383.arg0;
+			string pafile = mr_29383.arg1;
+			string pamod = mr_29383.arg2;
+			string pafn = mr_29383.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
@@ -60659,7 +60659,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_index_of_array(v__gen__c__Gen* g, v__ast__In
 			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp_opt_ptr}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\t*(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)&"), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".data) = *(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)"), 0xfe10, {.d_s = tmp_opt_ptr}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g, _SLIT("} else {"));
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".state = 2; "), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".err = v_error(_SLIT(\"array index out of range\"));"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".state = 2; "), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".err = _v_error(_SLIT(\"array index out of range\"));"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g, _SLIT("}"));
 			if (!node.is_option) {
 				v__gen__c__Gen_or_block(g, tmp_opt, node.or_expr, elem_type);
@@ -60818,7 +60818,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_index_of_map(v__gen__c__Gen* g, v__ast__Inde
 			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp_opt_ptr}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\t*(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)&"), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".data) = *(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("*)"), 0xfe10, {.d_s = tmp_opt_ptr}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g, _SLIT("} else {"));
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".state = 2; "), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".err = v_error(_SLIT(\"array index out of range\"));"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".state = 2; "), 0xfe10, {.d_s = tmp_opt}}, {_SLIT(".err = _v_error(_SLIT(\"array index out of range\"));"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g, _SLIT("}"));
 			if (!node.is_option) {
 				v__gen__c__Gen_or_block(g, tmp_opt, node.or_expr, elem_type);
@@ -61338,7 +61338,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_json_for_type(v__gen__c__Gen* g, v__ast_
 	string dec_fn_name = v__gen__c__js_dec_name(styp);
 	v__gen__c__Gen_register_optional(g, utyp);
 	string dec_fn_dec =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_"), 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = dec_fn_name}}, {_SLIT("(cJSON* root)"), 0, { .d_c = 0 }}}));
-	strings__Builder_writeln(&dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(" {\n	"), 0xfe10, {.d_s = styp}}, {_SLIT(" res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for "), 0xfe10, {.d_s = styp}}, {_SLIT(" error_ptr=: %s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%s\\n\", js.str);\n			return (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2,.err = v_error(tos2((byteptr)error_ptr)),.data = {0}};\n		}\n	}\n"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(&dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(" {\n	"), 0xfe10, {.d_s = styp}}, {_SLIT(" res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for "), 0xfe10, {.d_s = styp}}, {_SLIT(" error_ptr=: %s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%s\\n\", js.str);\n			return (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2,.err = _v_error(tos2((byteptr)error_ptr)),.data = {0}};\n		}\n	}\n"), 0, { .d_c = 0 }}})));
 	strings__Builder_writeln(&g->json_forward_decls,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
 	string enc_fn_name = v__gen__c__js_enc_name(styp);
 	string enc_fn_dec =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cJSON* "), 0xfe10, {.d_s = enc_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = styp}}, {_SLIT(" val)"), 0, { .d_c = 0 }}}));
@@ -61449,7 +61449,7 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_struct_enc_dec(v__gen__c__Gen* g,
 			strings__Builder_writeln(enc,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tcJSON_AddItemToObject(o, \""), 0xfe10, {.d_s = name}}, {_SLIT("\", json__encode_u64(val."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT("));\n"), 0, { .d_c = 0 }}})));
 		} else {
 			if (string__eq(field_sym->name, _SLIT("time.Time"))) {
-				strings__Builder_writeln(enc,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tcJSON_AddItemToObject(o, \""), 0xfe10, {.d_s = name}}, {_SLIT("\", json__encode_u64(val."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(".v_unix));"), 0, { .d_c = 0 }}})));
+				strings__Builder_writeln(enc,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tcJSON_AddItemToObject(o, \""), 0xfe10, {.d_s = name}}, {_SLIT("\", json__encode_u64(val."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT("._v_unix));"), 0, { .d_c = 0 }}})));
 			} else {
 				strings__Builder_writeln(enc,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tcJSON_AddItemToObject(o, \""), 0xfe10, {.d_s = name}}, {_SLIT("\", "), 0xfe10, {.d_s = enc_name}}, {_SLIT("(val."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT("));\n"), 0, { .d_c = 0 }}})));
 			}
@@ -61485,7 +61485,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_decode_array(v__gen__c__Gen* g, v__ast__Ty
 		s =  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\n		Option_"), 0xfe10, {.d_s = styp}}, {_SLIT(" val2 = "), 0xfe10, {.d_s = fn_name}}, {_SLIT(" ((cJSON *)jsval);\n		if(val2.state != 0) {\n			array_free(&res);\n			return *(Option_Array_"), 0xfe10, {.d_s = styp}}, {_SLIT("*)&val2;\n		}\n		"), 0xfe10, {.d_s = styp}}, {_SLIT(" val = *("), 0xfe10, {.d_s = styp}}, {_SLIT("*)val2.data;\n"), 0, { .d_c = 0 }}}));
 	}
 	string noscan = v__gen__c__Gen_check_noscan(g, value_type);
-	string _t1 =  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\n	if(root && !cJSON_IsArray(root) && !cJSON_IsNull(root)) {\n		return (Option_Array_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2, .err = v_error(string__plus(_SLIT(\"Json element is not an array: \"), tos2((byteptr)cJSON_PrintUnformatted(root)))), .data = {0}};\n	}\n	res = __new_array"), 0xfe10, {.d_s = noscan}}, {_SLIT("(0, 0, sizeof("), 0xfe10, {.d_s = styp}}, {_SLIT("));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	"), 0xfe10, {.d_s = s}}, {_SLIT("\n		array_push"), 0xfe10, {.d_s = noscan}}, {_SLIT("((array*)&res, &val);\n	}\n"), 0, { .d_c = 0 }}}));
+	string _t1 =  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\n	if(root && !cJSON_IsArray(root) && !cJSON_IsNull(root)) {\n		return (Option_Array_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2, .err = _v_error(string__plus(_SLIT(\"Json element is not an array: \"), tos2((byteptr)cJSON_PrintUnformatted(root)))), .data = {0}};\n	}\n	res = __new_array"), 0xfe10, {.d_s = noscan}}, {_SLIT("(0, 0, sizeof("), 0xfe10, {.d_s = styp}}, {_SLIT("));\n	const cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n	"), 0xfe10, {.d_s = s}}, {_SLIT("\n		array_push"), 0xfe10, {.d_s = noscan}}, {_SLIT("((array*)&res, &val);\n	}\n"), 0, { .d_c = 0 }}}));
 	return _t1;
 }
 
@@ -61500,11 +61500,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_decode_map(v__gen__c__Gen* g, v__ast__Type
 	string styp = v__gen__c__Gen_typ(g, key_type);
 	string styp_v = v__gen__c__Gen_typ(g, value_type);
 	v__ast__TypeSymbol* key_type_symbol = v__ast__Table_get_type_symbol(g->table, key_type);
-	multi_return_string_string_string_string mr_8421 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
-	string hash_fn = mr_8421.arg0;
-	string key_eq_fn = mr_8421.arg1;
-	string clone_fn = mr_8421.arg2;
-	string free_fn = mr_8421.arg3;
+	multi_return_string_string_string_string mr_8424 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
+	string hash_fn = mr_8424.arg0;
+	string key_eq_fn = mr_8424.arg1;
+	string clone_fn = mr_8424.arg2;
+	string free_fn = mr_8424.arg3;
 	string fn_name_v = v__gen__c__js_dec_name(styp_v);
 	string s = _SLIT("");
 	if (v__gen__c__is_js_prim(styp_v)) {
@@ -61512,7 +61512,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_decode_map(v__gen__c__Gen* g, v__ast__Type
 	} else {
 		s =  str_intp(7, _MOV((StrIntpData[]){{_SLIT("\n		Option_"), 0xfe10, {.d_s = styp_v}}, {_SLIT(" val2 = "), 0xfe10, {.d_s = fn_name_v}}, {_SLIT(" (js_get(root, jsval->string));\n		if(val2.state != 0) {\n			map_free(&res);\n			return *(Option_Map_"), 0xfe10, {.d_s = styp}}, {_SLIT("_"), 0xfe10, {.d_s = styp_v}}, {_SLIT("*)&val2;\n		}\n		"), 0xfe10, {.d_s = styp_v}}, {_SLIT(" val = *("), 0xfe10, {.d_s = styp_v}}, {_SLIT("*)val2.data;\n"), 0, { .d_c = 0 }}}));
 	}
-	string _t1 =  str_intp(10, _MOV((StrIntpData[]){{_SLIT("\n	if(!cJSON_IsObject(root) && !cJSON_IsNull(root)) {\n		return (Option_Map_"), 0xfe10, {.d_s = styp}}, {_SLIT("_"), 0xfe10, {.d_s = styp_v}}, {_SLIT("){ .state = 2, .err = v_error(string__plus(_SLIT(\"Json element is not an object: \"), tos2((byteptr)cJSON_PrintUnformatted(root)))), .data = {0}};\n	}\n	res = new_map(sizeof("), 0xfe10, {.d_s = styp}}, {_SLIT("), sizeof("), 0xfe10, {.d_s = styp_v}}, {_SLIT("), "), 0xfe10, {.d_s = hash_fn}}, {_SLIT(", "), 0xfe10, {.d_s = key_eq_fn}}, {_SLIT(", "), 0xfe10, {.d_s = clone_fn}}, {_SLIT(", "), 0xfe10, {.d_s = free_fn}}, {_SLIT(");\n	cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n		"), 0xfe10, {.d_s = s}}, {_SLIT("\n		string key = tos2((byteptr)jsval->string);\n		map_set(&res, &key, &val);\n	}\n"), 0, { .d_c = 0 }}}));
+	string _t1 =  str_intp(10, _MOV((StrIntpData[]){{_SLIT("\n	if(!cJSON_IsObject(root) && !cJSON_IsNull(root)) {\n		return (Option_Map_"), 0xfe10, {.d_s = styp}}, {_SLIT("_"), 0xfe10, {.d_s = styp_v}}, {_SLIT("){ .state = 2, .err = _v_error(string__plus(_SLIT(\"Json element is not an object: \"), tos2((byteptr)cJSON_PrintUnformatted(root)))), .data = {0}};\n	}\n	res = new_map(sizeof("), 0xfe10, {.d_s = styp}}, {_SLIT("), sizeof("), 0xfe10, {.d_s = styp_v}}, {_SLIT("), "), 0xfe10, {.d_s = hash_fn}}, {_SLIT(", "), 0xfe10, {.d_s = key_eq_fn}}, {_SLIT(", "), 0xfe10, {.d_s = clone_fn}}, {_SLIT(", "), 0xfe10, {.d_s = free_fn}}, {_SLIT(");\n	cJSON *jsval = NULL;\n	cJSON_ArrayForEach(jsval, root)\n	{\n		"), 0xfe10, {.d_s = s}}, {_SLIT("\n		string key = tos2((byteptr)jsval->string);\n		map_set(&res, &key, &val);\n	}\n"), 0, { .d_c = 0 }}}));
 	return _t1;
 }
 
@@ -63918,11 +63918,11 @@ string v__gen__js__JsGen_typ(v__gen__js__JsGen* g, v__ast__Type t) {
 		styp = _SLIT("any");
 	}
 	else if (sym->kind == (v__ast__Kind__aggregate)) {
-		v_panic(_SLIT("TODO: unhandled aggregate in JS"));
+		_v_panic(_SLIT("TODO: unhandled aggregate in JS"));
 		VUNREACHABLE();
 	}
 	else if (sym->kind == (v__ast__Kind__thread)) {
-		v_panic(_SLIT("TODO: unhandled thread in JS"));
+		_v_panic(_SLIT("TODO: unhandled thread in JS"));
 		VUNREACHABLE();
 	};
 	if (string_starts_with(styp, _SLIT("JS."))) {
@@ -64458,7 +64458,7 @@ VV_LOCAL_SYMBOL Option_string v__gen__js__JsGen_comp_if_to_ifdef(v__gen__js__JsG
 			opt_ok(&(string[]) {  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CUSTOM_DEFINE_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})) }, (Option*)(&_t40), sizeof(string));
 			return _t40;
 		}
-		return (Option_string){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_string){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("bad os ifdef name \""), 0xfe10, {.d_s = name}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
 	return (Option_string){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
@@ -64545,9 +64545,9 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 			out = /*f*/string__plus(out,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("/** @namespace "), 0xfe10, {.d_s = name}}, {_SLIT(" */\n"), 0, { .d_c = 0 }}})));
 		}
 		out = /*f*/string__plus(out,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("const "), 0xfe10, {.d_s = name}}, {_SLIT(" = (function ("), 0, { .d_c = 0 }}})));
-		v__gen__js__Namespace* v_namespace = (*(v__gen__js__Namespace**)map_get(ADDR(map, g->namespaces), &(string[]){node.name}, &(v__gen__js__Namespace*[]){ 0 }));
+		v__gen__js__Namespace* _v_namespace = (*(v__gen__js__Namespace**)map_get(ADDR(map, g->namespaces), &(string[]){node.name}, &(v__gen__js__Namespace*[]){ 0 }));
 		bool first = true;
-		Map_string_string _t6 = v_namespace->imports;
+		Map_string_string _t6 = _v_namespace->imports;
 		int _t8 = _t6.key_values.len;
 		for (int _t7 = 0; _t7 < _t8; ++_t7 ) {
 			int _t9 = _t6.key_values.len - _t8;
@@ -64565,12 +64565,12 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 			out = /*f*/string__plus(out, val);
 		}
 		out = /*f*/string__plus(out, _SLIT(") {\n\t"));
-		string namespace_code = strings__Builder_str(&v_namespace->out);
+		string namespace_code = strings__Builder_str(&_v_namespace->out);
 		if (g->pref->sourcemap) {
 			u32 current_line = ((u32)(string_count(out, _SLIT("\n")) + 1));
 			u32 sm_pos = ((u32)(0U));
-			for (int _t10 = 0; _t10 < v_namespace->sourcemap_helper.len; ++_t10) {
-				v__gen__js__SourcemapHelper sourcemap_ns_entry = ((v__gen__js__SourcemapHelper*)v_namespace->sourcemap_helper.data)[_t10];
+			for (int _t10 = 0; _t10 < _v_namespace->sourcemap_helper.len; ++_t10) {
+				v__gen__js__SourcemapHelper sourcemap_ns_entry = ((v__gen__js__SourcemapHelper*)_v_namespace->sourcemap_helper.data)[_t10];
 				string current_segment = string_substr(namespace_code, ((int)(sm_pos)), ((int)(sourcemap_ns_entry.ns_pos)));
 				current_line += ((u32)(string_count(current_segment, _SLIT("\n"))));
 				u32 _t11; /* if prepend */
@@ -64599,20 +64599,20 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 				out = /*f*/string__plus(out,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\n\t\t"), 0xfe10, {.d_s = typ}}, {_SLIT(","), 0, { .d_c = 0 }}})));
 			}
 		}
-		for (int i = 0; i < v_namespace->pub_vars.len; ++i) {
-			string pub_var = ((string*)v_namespace->pub_vars.data)[i];
+		for (int i = 0; i < _v_namespace->pub_vars.len; ++i) {
+			string pub_var = ((string*)_v_namespace->pub_vars.data)[i];
 			out = /*f*/string__plus(out,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\n\t\t"), 0xfe10, {.d_s = pub_var}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			if (i < v_namespace->pub_vars.len - 1) {
+			if (i < _v_namespace->pub_vars.len - 1) {
 				out = /*f*/string__plus(out, _SLIT(","));
 			}
 		}
-		if (v_namespace->pub_vars.len > 0) {
+		if (_v_namespace->pub_vars.len > 0) {
 			out = /*f*/string__plus(out, _SLIT("\n\t"));
 		}
 		out = /*f*/string__plus(out, _SLIT("};"));
 		out = /*f*/string__plus(out, _SLIT("\n})("));
 		first = true;
-		Map_string_string _t14 = v_namespace->imports;
+		Map_string_string _t14 = _v_namespace->imports;
 		int _t16 = _t14.key_values.len;
 		for (int _t15 = 0; _t15 < _t16; ++_t15 ) {
 			int _t17 = _t14.key_values.len - _t16;
@@ -64653,8 +64653,8 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 		}
 	}
 	if (pref->is_shared) {
-		string v_export = (*(v__depgraph__DepGraphNode*)/*ee elem_typ */array_get(nodes, nodes.len - 1)).name;
-		out = /*f*/string__plus(out,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if (typeof module === \"object\" && module.exports) module.exports = "), 0xfe10, {.d_s = v_export}}, {_SLIT(";\n"), 0, { .d_c = 0 }}})));
+		string _v_export = (*(v__depgraph__DepGraphNode*)/*ee elem_typ */array_get(nodes, nodes.len - 1)).name;
+		out = /*f*/string__plus(out,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if (typeof module === \"object\" && module.exports) module.exports = "), 0xfe10, {.d_s = _v_export}}, {_SLIT(";\n"), 0, { .d_c = 0 }}})));
 	}
 	out = /*f*/string__plus(out, _SLIT("\n"));
 	if (g->pref->sourcemap) {
@@ -64741,7 +64741,7 @@ string v__gen__js__JsGen_hashes(v__gen__js__JsGen* g) {
 // Attr: [noreturn]
 VNORETURN VV_LOCAL_SYMBOL void v__gen__js__verror(string msg) {
 	eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("jsgen error: "), 0xfe10, {.d_s = msg}}, {_SLIT0, 0, { .d_c = 0 }}})));
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 	while(1);
 }
@@ -64888,7 +64888,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt n
 	if (node._typ == 268 /* v.ast.EmptyStmt */) {
 	}
 	else if (node._typ == 260 /* v.ast.AsmStmt */) {
-		v_panic(_SLIT("inline asm is not supported by js"));
+		_v_panic(_SLIT("inline asm is not supported by js"));
 		VUNREACHABLE();
 	}
 	else if (node._typ == 261 /* v.ast.AssertStmt */) {
@@ -66421,7 +66421,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_dec(v__gen__native__Gen* g, v__gen__nat
 		v__gen__native__Gen_write8(g, 0xc4);
 	}
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled inc "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled inc "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
 }
@@ -66436,7 +66436,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_inc(v__gen__native__Gen* g, v__gen__nat
 		v__gen__native__Gen_write8(g, 0xc4);
 	}
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled inc "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled inc "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
 }
@@ -66451,7 +66451,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_cmp(v__gen__native__Gen* g, v__gen__nat
 		v__gen__native__Gen_write8(g, 0x81);
 	}
 	else {
-		v_panic(_SLIT("unhandled cmp"));
+		_v_panic(_SLIT("unhandled cmp"));
 		VUNREACHABLE();
 	};
 
@@ -66459,7 +66459,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_cmp(v__gen__native__Gen* g, v__gen__nat
 		v__gen__native__Gen_write8(g, 0xfc);
 	}
 	else {
-		v_panic(_SLIT("unhandled cmp"));
+		_v_panic(_SLIT("unhandled cmp"));
 		VUNREACHABLE();
 	};
 	v__gen__native__Gen_write8(g, ((int)(val)));
@@ -66687,7 +66687,7 @@ void v__gen__native__Gen_sub(v__gen__native__Gen* g, v__gen__native__Register re
 
 void v__gen__native__Gen_add(v__gen__native__Gen* g, v__gen__native__Register reg, int val) {
 	if (reg != v__gen__native__Register__rax) {
-		v_panic(_SLIT("add only works with .rax"));
+		_v_panic(_SLIT("add only works with .rax"));
 		VUNREACHABLE();
 	}
 	v__gen__native__Gen_write8(g, 0x48);
@@ -66738,7 +66738,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_div8_var(v__gen__native__Gen* g, v__gen
 		v__gen__native__Gen_div_reg(g, v__gen__native__Register__rax, v__gen__native__Register__rbx);
 		v__gen__native__Gen_mov_reg_to_var(g, var_offset, v__gen__native__Register__rax);
 	} else {
-		v_panic(_SLIT("div8_var invalid source register"));
+		_v_panic(_SLIT("div8_var invalid source register"));
 		VUNREACHABLE();
 	}
 }
@@ -66995,7 +66995,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov(v__gen__native__Gen* g, v__gen__nat
 			v__gen__native__Gen_write8(g, 0xbc);
 		}
 		else {
-			v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		};
 		v__gen__native__Gen_write32(g, val);
@@ -67005,7 +67005,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov(v__gen__native__Gen* g, v__gen__nat
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_mul_reg(v__gen__native__Gen* g, v__gen__native__Register a, v__gen__native__Register b) {
 	if (a != v__gen__native__Register__rax) {
-		v_panic(_SLIT("mul always operates on rax"));
+		_v_panic(_SLIT("mul always operates on rax"));
 		VUNREACHABLE();
 	}
 
@@ -67022,14 +67022,14 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mul_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mul "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_div_reg(v__gen__native__Gen* g, v__gen__native__Register a, v__gen__native__Register b) {
 	if (a != v__gen__native__Register__rax) {
-		v_panic(_SLIT("div always operates on rax"));
+		_v_panic(_SLIT("div always operates on rax"));
 		VUNREACHABLE();
 	}
 
@@ -67047,7 +67047,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_div_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else {
-		v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
 }
@@ -67059,7 +67059,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_sub_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0xd8);
 		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("sub "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	} else {
-		v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 }
@@ -67071,7 +67071,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_add_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0xd8);
 		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	} else {
-		v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
 }
@@ -67690,7 +67690,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_section_header(v__gen__native__Gen* g, 
 	v__gen__native__Gen_write64(g, g->offset);
 	g->offset += c.datalen + 1;
 	v__gen__native__Gen_write64(g, c.datalen);
-	v__gen__native__Gen_write32(g, c.v_link);
+	v__gen__native__Gen_write32(g, c._v_link);
 	v__gen__native__Gen_write32(g, c.info);
 	v__gen__native__Gen_write64(g, c.align);
 	v__gen__native__Gen_write64(g, c.entsize);
@@ -67713,7 +67713,7 @@ VV_LOCAL_SYMBOL Option_v__gen__native__CodeGen v__gen__native__Gen_get_backend(v
 	}
 	else {
 	};
-	return (Option_v__gen__native__CodeGen){ .state=2, .err=v_error(_SLIT("unsupported architecture")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_v__gen__native__CodeGen){ .state=2, .err=_v_error(_SLIT("unsupported architecture")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 multi_return_int_int v__gen__native__gen(Array_v__ast__File_ptr files, v__ast__Table* table, string out_name, v__pref__Preferences* pref) {
@@ -67722,7 +67722,7 @@ multi_return_int_int v__gen__native__gen(Array_v__ast__File_ptr files, v__ast__T
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
 		eprintln(_SLIT("No available backend for this configuration. Use `-a arm64` or `-a amd64`."));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	;
 	}
@@ -67767,7 +67767,7 @@ void v__gen__native__Gen_create_executable(v__gen__native__Gen* g) {
 	Option_os__File _t1 = os__create(g->out_name);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -68078,7 +68078,7 @@ void v__gen__native__Gen_error_with_pos(v__gen__native__Gen* g, string s, v__tok
 	if (g->pref->output_mode == v__pref__OutputMode__stdout) {
 		string ferror = v__util__formatted_error(kind, s, g->pref->path, pos);
 		eprintln(ferror);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	} else {
 		array_push((array*)&g->errors, _MOV((v__errors__Error[]){ (v__errors__Error){.message = s,.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = g->pref->path,.pos = pos,.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__gen,} }));
@@ -68466,7 +68466,7 @@ Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, 
 			return (Option_void){0};
 		}
 	}
-	return (Option_void){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot use `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, v__ast__Type_clear_flag(got, v__ast__TypeFlag__variadic))}}, {_SLIT("` as `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, v__ast__Type_clear_flag(expected, v__ast__TypeFlag__variadic))}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_void){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot use `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, v__ast__Type_clear_flag(got, v__ast__TypeFlag__variadic))}}, {_SLIT("` as `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, v__ast__Type_clear_flag(expected, v__ast__TypeFlag__variadic))}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 bool v__checker__Checker_check_basic(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected) {
@@ -68730,7 +68730,7 @@ bool v__checker__Checker_check_types(v__checker__Checker* c, v__ast__Type got, v
 
 Option_void v__checker__Checker_check_expected(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected) {
 	if (!v__checker__Checker_check_types(c, got, expected)) {
-		return (Option_void){ .state=2, .err=v_error(v__checker__Checker_expected_msg(c, got, expected)), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(v__checker__Checker_expected_msg(c, got, expected)), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
 }
@@ -69586,7 +69586,7 @@ Array_v__ast__InterfaceEmbedding v__checker__Checker_expand_iface_embeds(v__chec
 		if (_t5) {
 			*((v__ast__InterfaceDecl*)&_t4.data) = *((v__ast__InterfaceDecl*)_t5);
 		} else {
-			_t4.state = 2; _t4.err = v_error(_SLIT("array index out of range"));
+			_t4.state = 2; _t4.err = _v_error(_SLIT("array index out of range"));
 		}
 		
 		if (_t4.state == 0) {
@@ -69676,7 +69676,7 @@ void v__checker__Checker_interface_decl(v__checker__Checker* c, v__ast__Interfac
 				if (_t9) {
 					*((v__ast__InterfaceDecl*)&_t8.data) = *((v__ast__InterfaceDecl*)_t9);
 				} else {
-					_t8.state = 2; _t8.err = v_error(_SLIT("array index out of range"));
+					_t8.state = 2; _t8.err = _v_error(_SLIT("array index out of range"));
 				}
 				
 				if (_t8.state == 0) {
@@ -71309,11 +71309,11 @@ Option_void v__checker__Checker_check_expected_arg_count(v__checker__Checker* c,
 			}
 		}
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_params}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = nr_args}}, {_SLIT0, 0, { .d_c = 0 }}})), call_expr->pos);
-		return (Option_void){ .state=2, .err=v_error(_SLIT("")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	} else if (!f->is_variadic && nr_args > nr_params) {
 		v__token__Position unexpected_args_pos = v__token__Position_extend((*(v__ast__CallArg*)/*ee elem_typ */array_get(call_expr->args, min_required_params)).pos, (*(v__ast__CallArg*)array_last(call_expr->args)).pos);
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = min_required_params}}, {_SLIT(" arguments, but got "), 0xfe07, {.d_i32 = nr_args}}, {_SLIT0, 0, { .d_c = 0 }}})), unexpected_args_pos);
-		return (Option_void){ .state=2, .err=v_error(_SLIT("")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
 }
@@ -72289,7 +72289,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_resolve_generic_interface(v__ch
 					if (_t9) {
 						*((v__ast__Param*)&_t8.data) = *((v__ast__Param*)_t9);
 					} else {
-						_t8.state = 2; _t8.err = v_error(_SLIT("array index out of range"));
+						_t8.state = 2; _t8.err = _v_error(_SLIT("array index out of range"));
 					}
 					;
 					if (_t8.state != 0) { /*or block*/ 
@@ -74034,14 +74034,14 @@ VV_LOCAL_SYMBOL void v__checker__Checker_asm_stmt(v__checker__Checker* c, v__ast
 	Array_string aliases2 = v__checker__Checker_asm_ios(c, stmt->input, stmt->scope, false);
 	_PUSH_MANY(&aliases, (aliases2), _t1, Array_string);
 	for (int _t2 = 0; _t2 < stmt->templates.len; ++_t2) {
-		v__ast__AsmTemplate v_template = ((v__ast__AsmTemplate*)stmt->templates.data)[_t2];
-		if (v_template.is_directive) {
-			if (!(string__eq(v_template.name, _SLIT("skip")) || string__eq(v_template.name, _SLIT("space")) || string__eq(v_template.name, _SLIT("byte")) || string__eq(v_template.name, _SLIT("word")) || string__eq(v_template.name, _SLIT("short")) || string__eq(v_template.name, _SLIT("int")) || string__eq(v_template.name, _SLIT("long")) || string__eq(v_template.name, _SLIT("quad")) || string__eq(v_template.name, _SLIT("globl")) || string__eq(v_template.name, _SLIT("global")) || string__eq(v_template.name, _SLIT("section")) || string__eq(v_template.name, _SLIT("text")) || string__eq(v_template.name, _SLIT("data")) || string__eq(v_template.name, _SLIT("bss")) || string__eq(v_template.name, _SLIT("fill")) || string__eq(v_template.name, _SLIT("org")) || string__eq(v_template.name, _SLIT("previous")) || string__eq(v_template.name, _SLIT("string")) || string__eq(v_template.name, _SLIT("asciz")) || string__eq(v_template.name, _SLIT("ascii")))) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown assembler directive: `"), 0xfe10, {.d_s = v_template.name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v_template.pos);
+		v__ast__AsmTemplate _v_template = ((v__ast__AsmTemplate*)stmt->templates.data)[_t2];
+		if (_v_template.is_directive) {
+			if (!(string__eq(_v_template.name, _SLIT("skip")) || string__eq(_v_template.name, _SLIT("space")) || string__eq(_v_template.name, _SLIT("byte")) || string__eq(_v_template.name, _SLIT("word")) || string__eq(_v_template.name, _SLIT("short")) || string__eq(_v_template.name, _SLIT("int")) || string__eq(_v_template.name, _SLIT("long")) || string__eq(_v_template.name, _SLIT("quad")) || string__eq(_v_template.name, _SLIT("globl")) || string__eq(_v_template.name, _SLIT("global")) || string__eq(_v_template.name, _SLIT("section")) || string__eq(_v_template.name, _SLIT("text")) || string__eq(_v_template.name, _SLIT("data")) || string__eq(_v_template.name, _SLIT("bss")) || string__eq(_v_template.name, _SLIT("fill")) || string__eq(_v_template.name, _SLIT("org")) || string__eq(_v_template.name, _SLIT("previous")) || string__eq(_v_template.name, _SLIT("string")) || string__eq(_v_template.name, _SLIT("asciz")) || string__eq(_v_template.name, _SLIT("ascii")))) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown assembler directive: `"), 0xfe10, {.d_s = _v_template.name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), _v_template.pos);
 			}
 		}
-		for (int _t3 = 0; _t3 < v_template.args.len; ++_t3) {
-			v__ast__AsmArg* arg = ((v__ast__AsmArg*)v_template.args.data) + _t3;
+		for (int _t3 = 0; _t3 < _v_template.args.len; ++_t3) {
+			v__ast__AsmArg* arg = ((v__ast__AsmArg*)_v_template.args.data) + _t3;
 			v__checker__Checker_asm_arg(c, *arg, *stmt, aliases);
 		}
 	}
@@ -74458,7 +74458,7 @@ bool v__checker__Checker_expr_defer_0 = false;
 		Option_v__ast__Var_ptr _t9 = v__ast__Scope_find_var((*node._v__ast__Assoc).scope, (*node._v__ast__Assoc).var_name);
 		if (_t9.state != 0) { /*or block*/ 
 			IError err = _t9.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -76421,10 +76421,10 @@ VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_definition(v__check
 		return _t2;
 	}
 	else if (ident.kind == (v__ast__IdentKind__global)) {
-		return (Option_v__ast__Expr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ident.name}}, {_SLIT(" is a global variable"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__ast__Expr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ident.name}}, {_SLIT(" is a global variable"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	else if (ident.kind == (v__ast__IdentKind__function)) {
-		return (Option_v__ast__Expr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ident.name}}, {_SLIT(" is a function"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__ast__Expr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ident.name}}, {_SLIT(" is a function"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	};
 	return (Option_v__ast__Expr){0};
 }
@@ -76447,20 +76447,20 @@ VV_LOCAL_SYMBOL Option_v__ast__Expr v__checker__Checker_find_obj_definition(v__c
 	v__ast__Expr expr = v__ast__empty_expr();
 	if ((obj)._typ == 288 /* v.ast.Var */) {
 		if ((*obj._v__ast__Var).is_mut) {
-			return (Option_v__ast__Expr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = name}}, {_SLIT("` is mut and may have changed since its definition"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__ast__Expr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = name}}, {_SLIT("` is mut and may have changed since its definition"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		expr = (*obj._v__ast__Var).expr;
 	} else if ((obj)._typ == 286 /* v.ast.ConstField */) {
 		expr = (*obj._v__ast__ConstField).expr;
 	} else {
-		return (Option_v__ast__Expr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = name}}, {_SLIT("` is a global variable and is unknown at compile time"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__ast__Expr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = name}}, {_SLIT("` is a global variable and is unknown at compile time"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	if ((expr)._typ == 230 /* v.ast.Ident */) {
 		Option_v__ast__Expr _t3 = v__checker__Checker_find_definition(c, /* as */ *(v__ast__Ident*)__as_cast((expr)._v__ast__Ident,(expr)._typ, 230) /*expected idx: 230, name: v.ast.Ident */ );
 		return _t3;
 	}
 	if (!v__ast__Expr_is_lit(expr)) {
-		return (Option_v__ast__Expr){ .state=2, .err=v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("definition of `"), 0xfe10, {.d_s = name}}, {_SLIT("` is unknown at compile time"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__ast__Expr){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("definition of `"), 0xfe10, {.d_s = name}}, {_SLIT("` is unknown at compile time"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_v__ast__Expr _t5;
 	opt_ok(&(v__ast__Expr[]) { expr }, (Option*)(&_t5), sizeof(v__ast__Expr));
@@ -76994,7 +76994,7 @@ void v__checker__Checker_error(v__checker__Checker* c, string message, v__token_
 	{
 		eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\n\n>> checker error: "), 0xfe10, {.d_s = message}}, {_SLIT(", pos: "), 0xfe10, {.d_s = v__token__Position_str(pos)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		print_backtrace();
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	#endif
@@ -77076,7 +77076,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_warn_or_error(v__checker__Checker* c, s
 	}
 	if (!warn) {
 		if (c->pref->fatal_errors) {
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 		c->nr_errors++;
@@ -78304,7 +78304,7 @@ Option_void v__builder__Builder_front_stages(v__builder__Builder* b, Array_strin
 	v__util__Timers_show(timers, _SLIT("PARSE"));
 	v__util__Timers_show_if_exists(timers, _SLIT("PARSE stmt"));
 	if (b->pref->only_check_syntax) {
-		return (Option_void){ .state=2, .err=v_error(_SLIT("stop_after_parser")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_void){ .state=2, .err=_v_error(_SLIT("stop_after_parser")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
 }
@@ -78396,7 +78396,7 @@ void v__builder__Builder_parse_imports(v__builder__Builder* b) {
 			v__ast__File* p = ((v__ast__File**)b->parsed_files.data)[_t9];
 			println(p->path);
 		}
-		v_exit(0);
+		_v_exit(0);
 		VUNREACHABLE();
 	}
 }
@@ -78484,7 +78484,7 @@ Array_string v__builder__Builder_v_files_from_dir(v__builder__Builder* b, string
 	Option_Array_string _t1 = os__ls(dir);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -78563,7 +78563,7 @@ Option_string v__builder__Builder_find_module_path(v__builder__Builder* b, strin
 		}
 	}
 	string smodule_lookup_paths = Array_string_join(module_lookup_paths, _SLIT(", "));
-	return (Option_string){ .state=2, .err=v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("module \""), 0xfe10, {.d_s = mod}}, {_SLIT("\" not found in:\n"), 0xfe10, {.d_s = smodule_lookup_paths}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("module \""), 0xfe10, {.d_s = mod}}, {_SLIT("\" not found in:\n"), 0xfe10, {.d_s = smodule_lookup_paths}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 VV_LOCAL_SYMBOL void v__builder__Builder_show_total_warns_and_errors_stats(v__builder__Builder* b) {
@@ -78583,7 +78583,7 @@ bool v__builder__Builder_print_warnings_and_errors_defer_0 = false;
 	v__builder__Builder_print_warnings_and_errors_defer_0 = true;
 	if (b->pref->output_mode == v__pref__OutputMode__silent) {
 		if (b->checker->nr_errors > 0) {
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 		// Defer begin
@@ -78659,7 +78659,7 @@ bool v__builder__Builder_print_warnings_and_errors_defer_0 = false;
 			}
 		}
 		v__builder__Builder_show_total_warns_and_errors_stats(b);
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	if (b->table->redefined_fns.len > 0) {
@@ -78692,7 +78692,7 @@ bool v__builder__Builder_print_warnings_and_errors_defer_0 = false;
 		}
 		if (total_conflicts > 0) {
 			v__builder__Builder_show_total_warns_and_errors_stats(b);
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 	}
@@ -78706,7 +78706,7 @@ if (v__builder__Builder_print_warnings_and_errors_defer_0) {
 VV_LOCAL_SYMBOL void v__builder__error_with_pos(string s, string fpath, v__token__Position pos) {
 	string ferror = v__util__formatted_error(_SLIT("builder error:"), s, fpath, pos);
 	eprintln(ferror);
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 }
 
@@ -78739,7 +78739,7 @@ void v__builder__Builder_build_c(v__builder__Builder* b, Array_string v_files, s
 	Option_os__File _t1 = os__create(out_file);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -78748,7 +78748,7 @@ void v__builder__Builder_build_c(v__builder__Builder* b, Array_string v_files, s
 	Option_int _t2 = os__File_writeln(&f, output2);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -78819,7 +78819,7 @@ VV_LOCAL_SYMBOL Option_void v__builder__Builder_find_win_cc(v__builder__Builder*
 				if (v->pref->is_verbose) {
 					println(_SLIT("tcc not found"));
 				}
-				return (Option_void){ .state=2, .err=v_error(_SLIT("tcc not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
+				return (Option_void){ .state=2, .err=_v_error(_SLIT("tcc not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			v->pref->ccompiler = thirdparty_tcc;
 			v->pref->ccompiler_type = v__pref__CompilerType__tinyc;
@@ -78854,7 +78854,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_post_process_c_compiler_output(v__build
 				Option_void _t2 = os__rm(tmpfile);
 				if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
 					IError err = _t2.err;
-					v_panic(IError_str(err));
+					_v_panic(IError_str(err));
 					VUNREACHABLE();
 				;
 				}
@@ -78912,7 +78912,7 @@ VV_LOCAL_SYMBOL string v__builder__Builder_rebuild_cached_module(v__builder__Bui
 		Option_string _t2 = v__vcache__CacheManager_exists(&v->pref->cache_manager, _SLIT(".o"), imp_path);
 		if (_t2.state != 0) { /*or block*/ 
 			err = _t2.err;
-			v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("could not rebuild cache module for "), 0xfe10, {.d_s = imp_path}}, {_SLIT(", error: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("could not rebuild cache module for "), 0xfe10, {.d_s = imp_path}}, {_SLIT(", error: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
@@ -79142,7 +79142,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_output_name(v__builder__Builder* 
 		Option_string _t1 = v__vcache__CacheManager_save(&v->pref->cache_manager, _SLIT(".description.txt"), v->pref->path,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0x3cfe10, {.d_s = v->pref->path}}, {_SLIT(" @ "), 0xfe10, {.d_s = v->pref->cache_manager.vopts}}, {_SLIT("\n"), 0, { .d_c = 0 }}})));
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -79175,7 +79175,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_dump_c_options(v__builder__Builder* v, 
 			Option_void _t3 = os__write_file(v->pref->dump_c_flags, non_empty_args);
 			if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 				IError err = _t3.err;
-				v_panic(IError_str(err));
+				_v_panic(IError_str(err));
 				VUNREACHABLE();
 			;
 			}
@@ -79201,7 +79201,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		Option_string _t1 = os__read_file(v->out_name_c);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -79224,7 +79224,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		Option_void _t3 = os__mv_by_cp(v->out_name_c, v->pref->out_name);
 		if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 			IError err = _t3.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -79382,7 +79382,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 						string recompile_command = ((string*)tried_compilation_commands.data)[_t22];
 						eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("   "), 0xfe10, {.d_s = recompile_command}}, {_SLIT0, 0, { .d_c = 0 }}})));
 					}
-					v_exit(101);
+					_v_exit(101);
 					VUNREACHABLE();
 				}
 				if (v->pref->retry_compilation) {
@@ -79474,7 +79474,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 		Option_bool _t1 = os__mkdir(parent_dir);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -79582,7 +79582,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 	}
 	if (!(string__eq(os__user_os(), _SLIT("macos")) || string__eq(os__user_os(), _SLIT("linux")))) {
 		println(os__user_os());
-		v_panic(_SLIT("your platform is not supported yet"));
+		_v_panic(_SLIT("your platform is not supported yet"));
 		VUNREACHABLE();
 	}
 	Array_string all_args = __new_array_with_default(0, 0, sizeof(string), 0);
@@ -79608,7 +79608,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_windows_cross(v__builder__Builder* c
 			println(_SLIT("Try `sudo apt install -y mingw-w64` on Debian based distros, or `sudo pacman -S mingw-w64-gcc` on Arch, etc..."));
 		}
 		#endif
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	println(string__plus(c->pref->out_name, _SLIT(" has been successfully compiled")));
@@ -79646,7 +79646,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 		Option_void _t1 = os__cp(obj_path, opath);
 		if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 			IError err = _t1.err;
-			v_panic(IError_str(err));
+			_v_panic(IError_str(err));
 			VUNREACHABLE();
 		;
 		}
@@ -79679,7 +79679,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 	Option_string _t6 = v__vcache__CacheManager_save(&v->pref->cache_manager, _SLIT(".description.txt"), obj_path,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0x3cfe10, {.d_s = obj_path}}, {_SLIT(" @ "), 0xfe10, {.d_s = cmd}}, {_SLIT("\n"), 0, { .d_c = 0 }}})));
 	if (_t6.state != 0) { /*or block*/ 
 		IError err = _t6.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -79850,12 +79850,12 @@ VV_LOCAL_SYMBOL void v__builder__Builder_exit_on_invalid_syntax(v__builder__Buil
 		for (int _t1 = 0; _t1 < b->parsed_files.len; ++_t1) {
 			v__ast__File* pf = ((v__ast__File**)b->parsed_files.data)[_t1];
 			if (pf->errors.len > 0) {
-				v_exit(1);
+				_v_exit(1);
 				VUNREACHABLE();
 			}
 		}
 		if (b->checker->nr_errors > 0) {
-			v_exit(1);
+			_v_exit(1);
 			VUNREACHABLE();
 		}
 	}
@@ -79872,7 +79872,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 		return;
 	}
 	if (b->pref->os == v__pref__OS__ios) {
-		v_panic(_SLIT("Running iOS apps is not supported yet."));
+		_v_panic(_SLIT("Running iOS apps is not supported yet."));
 		VUNREACHABLE();
 	}
 	if (b->pref->is_verbose) {
@@ -79898,10 +79898,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 	if (b->pref->is_test || b->pref->is_run) {
 		int ret = os__system(cmd);
 		v__builder__Builder_cleanup_run_executable_after_exit(b, exefile);
-		v_exit(ret);
+		_v_exit(ret);
 		VUNREACHABLE();
 	}
-	v_exit(0);
+	_v_exit(0);
 	VUNREACHABLE();
 }
 
@@ -79914,7 +79914,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cleanup_run_executable_after_exit(v__bu
 	Option_void _t1 = os__rm(exefile);
 	if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 		IError err = _t1.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -80053,12 +80053,12 @@ Array_string v__builder__Builder_get_user_files(v__builder__Builder* v) {
 		println(_SLIT("usage: `v file.v` or `v directory`"));
 		string ext = os__file_ext(dir);
 		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown file extension `"), 0xfe10, {.d_s = ext}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	if (user_files.len == 0) {
 		println(_SLIT("No input .v files"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	if (v->pref->is_verbose) {
@@ -80088,7 +80088,7 @@ void v__builder__Builder_build_js(v__builder__Builder* b, Array_string v_files, 
 	Option_os__File _t1 = os__create(out_file);
 	if (_t1.state != 0) { /*or block*/ 
 		IError err = _t1.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -80097,7 +80097,7 @@ void v__builder__Builder_build_js(v__builder__Builder* b, Array_string v_files, 
 	Option_int _t2 = os__File_writeln(&f, output);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -80170,7 +80170,7 @@ VV_LOCAL_SYMBOL Option_string v__builder__find_windows_kit_internal(v__builder__
 		}
 	}
 	#endif
-	return (Option_string){ .state=2, .err=v_error(_SLIT("windows kit not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_string){ .state=2, .err=_v_error(_SLIT("windows kit not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root(string target_arch) {
@@ -80196,7 +80196,7 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root(
 	}
 	#else
 	{
-		return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Host OS does not support finding a windows kit")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__WindowsKit){ .state=2, .err=_v_error(_SLIT("Host OS does not support finding a windows kit")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	#endif
 	return (Option_v__builder__WindowsKit){0};
@@ -80209,13 +80209,13 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root_
 		string path = _SLIT("SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots");
 		voidptr rc = RegOpenKeyEx(_const_v__builder__hkey_local_machine, string_to_wide(path), 0U, ((_const_v__builder__key_query_value | _const_v__builder__key_wow64_32key) | _const_v__builder__key_enumerate_sub_keys), &root_key);
 		if (rc != 0) {
-			return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Unable to open root key")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__builder__WindowsKit){ .state=2, .err=_v_error(_SLIT("Unable to open root key")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		Option_string _t2 = v__builder__find_windows_kit_internal(root_key, new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("KitsRoot10"), _SLIT("KitsRoot81")})));
 		if (_t2.state != 0) { /*or block*/ 
 			IError err = _t2.err;
 			RegCloseKey(root_key);
-			return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Unable to find a windows kit")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__builder__WindowsKit){ .state=2, .err=_v_error(_SLIT("Unable to find a windows kit")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
  		string kit_root =  (*(string*)_t2.data);
@@ -80225,7 +80225,7 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root_
 	}
 	#else
 	{
-		return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("Host OS does not support finding a windows kit")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__WindowsKit){ .state=2, .err=_v_error(_SLIT("Host OS does not support finding a windows kit")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	#endif
 	return (Option_v__builder__WindowsKit){0};
@@ -80262,7 +80262,7 @@ VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__new_windows_kit(string
 VV_LOCAL_SYMBOL Option_v__builder__WindowsKit v__builder__find_windows_kit_root_by_env(string target_arch) {
 	string kit_root = os__getenv(_SLIT("WindowsSdkDir"));
 	if ((kit_root).len == 0) {
-		return (Option_v__builder__WindowsKit){ .state=2, .err=v_error(_SLIT("empty WindowsSdkDir")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__WindowsKit){ .state=2, .err=_v_error(_SLIT("empty WindowsSdkDir")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_v__builder__WindowsKit _t2 = v__builder__new_windows_kit(kit_root, target_arch);
 	return _t2;
@@ -80291,7 +80291,7 @@ VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs(string vsw
 	}
 	#else
 	{
-		return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("Host OS does not support finding a Visual Studio installation")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__VsInstallation){ .state=2, .err=_v_error(_SLIT("Host OS does not support finding a Visual Studio installation")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	#endif
 	return (Option_v__builder__VsInstallation){0};
@@ -80308,7 +80308,7 @@ VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs_by_reg(str
 		Option_string _t2 = os__read_file( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = res_output}}, {_SLIT("\\VC\\Auxiliary\\Build\\Microsoft.VCToolsVersion.default.txt"), 0, { .d_c = 0 }}})));
 		if (_t2.state != 0) { /*or block*/ 
 			IError err = _t2.err;
-			return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("Unable to find vs installation")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__builder__VsInstallation){ .state=2, .err=_v_error(_SLIT("Unable to find vs installation")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
  		string version =  (*(string*)_t2.data);
@@ -80323,11 +80323,11 @@ VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs_by_reg(str
 			return _t4;
 		}
 		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Unable to find vs installation (attempted to use lib path \""), 0xfe10, {.d_s = lib_path}}, {_SLIT("\")"), 0, { .d_c = 0 }}})));
-		return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("Unable to find vs exe folder")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__VsInstallation){ .state=2, .err=_v_error(_SLIT("Unable to find vs exe folder")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	#else
 	{
-		return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("Host OS does not support finding a Visual Studio installation")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__VsInstallation){ .state=2, .err=_v_error(_SLIT("Host OS does not support finding a Visual Studio installation")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	#endif
 	return (Option_v__builder__VsInstallation){0};
@@ -80336,11 +80336,11 @@ VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs_by_reg(str
 VV_LOCAL_SYMBOL Option_v__builder__VsInstallation v__builder__find_vs_by_env(string host_arch, string target_arch) {
 	string vs_dir = os__getenv(_SLIT("VSINSTALLDIR"));
 	if ((vs_dir).len == 0) {
-		return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("empty VSINSTALLDIR")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__VsInstallation){ .state=2, .err=_v_error(_SLIT("empty VSINSTALLDIR")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	string vc_tools_dir = os__getenv(_SLIT("VCToolsInstallDir"));
 	if ((vc_tools_dir).len == 0) {
-		return (Option_v__builder__VsInstallation){ .state=2, .err=v_error(_SLIT("empty VCToolsInstallDir")), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_v__builder__VsInstallation){ .state=2, .err=_v_error(_SLIT("empty VCToolsInstallDir")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	string bin_dir =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vc_tools_dir}}, {_SLIT("bin\\Host"), 0xfe10, {.d_s = host_arch}}, {_SLIT("\\"), 0xfe10, {.d_s = target_arch}}, {_SLIT0, 0, { .d_c = 0 }}}));
 	string lib_path =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vc_tools_dir}}, {_SLIT("lib\\"), 0xfe10, {.d_s = target_arch}}, {_SLIT0, 0, { .d_c = 0 }}}));
@@ -80369,14 +80369,14 @@ VV_LOCAL_SYMBOL Option_v__builder__MsvcResult v__builder__find_msvc(bool m64_tar
 		Option_v__builder__WindowsKit _t1 = v__builder__find_windows_kit_root(target_arch);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
-			return (Option_v__builder__MsvcResult){ .state=2, .err=v_error(_SLIT("Unable to find windows sdk")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__builder__MsvcResult){ .state=2, .err=_v_error(_SLIT("Unable to find windows sdk")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
  		v__builder__WindowsKit wk =  (*(v__builder__WindowsKit*)_t1.data);
 		Option_v__builder__VsInstallation _t3 = v__builder__find_vs(vswhere_dir, host_arch, target_arch);
 		if (_t3.state != 0) { /*or block*/ 
 			IError err = _t3.err;
-			return (Option_v__builder__MsvcResult){ .state=2, .err=v_error(_SLIT("Unable to find visual studio")), .data={EMPTY_STRUCT_INITIALIZATION} };
+			return (Option_v__builder__MsvcResult){ .state=2, .err=_v_error(_SLIT("Unable to find visual studio")), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
  		v__builder__VsInstallation vs =  (*(v__builder__VsInstallation*)_t3.data);
@@ -80500,7 +80500,7 @@ void v__builder__Builder_cc_msvc(v__builder__Builder* v) {
 	Option_void _t31 = os__rm(out_name_obj);
 	if (_t31.state != 0 && _t31.err._typ != _IError_None___index) {
 		IError err = _t31.err;
-		v_panic(IError_str(err));
+		_v_panic(IError_str(err));
 		VUNREACHABLE();
 	;
 	}
@@ -80657,7 +80657,7 @@ v__util__Timers* timers;
 	string command = mr_2047.arg1;
 	if (prefs->use_cache && string__eq(os__user_os(), _SLIT("windows"))) {
 		eprintln(_SLIT("-usecache is currently disabled on windows"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	v__util__Timers_show(timers, _SLIT("parse_CLI_args"));
@@ -80685,7 +80685,7 @@ v__util__Timers* timers;
 	}
 	else if (string__eq(command, _SLIT("translate"))) {
 		eprintln(_SLIT("Translating C to V will be available in V 0.3"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	else if (string__eq(command, _SLIT("install")) || string__eq(command, _SLIT("list")) || string__eq(command, _SLIT("outdated")) || string__eq(command, _SLIT("remove")) || string__eq(command, _SLIT("search")) || string__eq(command, _SLIT("show")) || string__eq(command, _SLIT("update")) || string__eq(command, _SLIT("upgrade"))) {
@@ -80702,7 +80702,7 @@ v__util__Timers* timers;
 	}
 	else if (string__eq(command, _SLIT("get"))) {
 		eprintln(_SLIT("V Error: Use `v install` to install modules from vpm.vlang.io"));
-		v_exit(1);
+		_v_exit(1);
 		VUNREACHABLE();
 	}
 	else if (string__eq(command, _SLIT("version"))) {
@@ -80729,7 +80729,7 @@ v__util__Timers* timers;
 		main__invoke_help_and_exit(args);
 	}
 	eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("v "), 0xfe10, {.d_s = command}}, {_SLIT(": unknown command\nRun "), 0xfe10, {.d_s = v__util__pretty_print(_SLIT("v help"))}}, {_SLIT(" for usage."), 0, { .d_c = 0 }}})));
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 }
 
@@ -80745,7 +80745,7 @@ VV_LOCAL_SYMBOL void main__invoke_help_and_exit(Array_string remaining) {
 	};
 	println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__util__pretty_print(_SLIT("v help"))}}, {_SLIT(": provide only one help topic."), 0, { .d_c = 0 }}})));
 	println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("For usage information, use "), 0xfe10, {.d_s = v__util__pretty_print(_SLIT("v help"))}}, {_SLIT("."), 0, { .d_c = 0 }}})));
-	v_exit(1);
+	_v_exit(1);
 	VUNREACHABLE();
 }
 
