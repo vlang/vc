@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e38b0d7"
+#define V_COMMIT_HASH "ec87f4e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f48f623"
+	#define V_COMMIT_HASH "e38b0d7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e38b0d7"
+	#define V_CURRENT_COMMIT_HASH "ec87f4e"
 #endif
 
 // V comptime_defines:
@@ -31416,7 +31416,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f48f623"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e38b0d7"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37719,68 +37719,74 @@ bool v__ast__Table_does_type_implement_interface(v__ast__Table* t, v__ast__Type 
 		bool _t3 = false;
 		return _t3;
 	}
+	if ((typ_sym->info)._typ == 380 /* v.ast.Struct */) {
+		if ((*typ_sym->info._v__ast__Struct).is_generic) {
+			bool _t4 = false;
+			return _t4;
+		}
+	}
 	v__ast__TypeSymbol* inter_sym = v__ast__Table_get_type_symbol(t, inter_typ);
 	if (typ_sym->kind == v__ast__Kind__interface_ && inter_sym->kind == v__ast__Kind__interface_) {
-		bool _t4 = false;
-		return _t4;
+		bool _t5 = false;
+		return _t5;
 	}
 	if ((inter_sym->info)._typ == 392 /* v.ast.Interface */) {
-		for (int _t5 = 0; _t5 < (*inter_sym->info._v__ast__Interface).types.len; ++_t5) {
-			v__ast__Type tt = ((v__ast__Type*)(*inter_sym->info._v__ast__Interface).types.data)[_t5];
+		for (int _t6 = 0; _t6 < (*inter_sym->info._v__ast__Interface).types.len; ++_t6) {
+			v__ast__Type tt = ((v__ast__Type*)(*inter_sym->info._v__ast__Interface).types.data)[_t6];
 			if (v__ast__Type_idx(tt) == v__ast__Type_idx(typ)) {
-				bool _t6 = true;
-				return _t6;
+				bool _t7 = true;
+				return _t7;
 			}
 		}
-		for (int _t7 = 0; _t7 < (*inter_sym->info._v__ast__Interface).methods.len; ++_t7) {
-			v__ast__Fn imethod = ((v__ast__Fn*)(*inter_sym->info._v__ast__Interface).methods.data)[_t7];
-			Option_v__ast__Fn _t8;
-			if (_t8 = v__ast__TypeSymbol_find_method(typ_sym, imethod.name), _t8.state == 0) {
-				v__ast__Fn method = *(v__ast__Fn*)_t8.data;
+		for (int _t8 = 0; _t8 < (*inter_sym->info._v__ast__Interface).methods.len; ++_t8) {
+			v__ast__Fn imethod = ((v__ast__Fn*)(*inter_sym->info._v__ast__Interface).methods.data)[_t8];
+			Option_v__ast__Fn _t9;
+			if (_t9 = v__ast__TypeSymbol_find_method(typ_sym, imethod.name), _t9.state == 0) {
+				v__ast__Fn method = *(v__ast__Fn*)_t9.data;
 				string msg = v__ast__Table_is_same_method(t, (voidptr)&/*qq*/imethod, (voidptr)&/*qq*/method);
 				if (msg.len > 0) {
-					bool _t9 = false;
-					return _t9;
+					bool _t10 = false;
+					return _t10;
 				}
 				continue;
 			}
-			bool _t10 = false;
-			return _t10;
+			bool _t11 = false;
+			return _t11;
 		}
-		for (int _t11 = 0; _t11 < (*inter_sym->info._v__ast__Interface).fields.len; ++_t11) {
-			v__ast__StructField ifield = ((v__ast__StructField*)(*inter_sym->info._v__ast__Interface).fields.data)[_t11];
+		for (int _t12 = 0; _t12 < (*inter_sym->info._v__ast__Interface).fields.len; ++_t12) {
+			v__ast__StructField ifield = ((v__ast__StructField*)(*inter_sym->info._v__ast__Interface).fields.data)[_t12];
 			if (v__ast__Type_alias_eq(ifield.typ, _const_v__ast__voidptr_type)) {
 				if (v__ast__Table_struct_has_field(t, typ_sym, ifield.name)) {
 					continue;
 				} else {
-					bool _t12 = false;
-					return _t12;
+					bool _t13 = false;
+					return _t13;
 				}
 			}
-			Option_v__ast__StructField _t13;
-			if (_t13 = v__ast__Table_find_field_with_embeds(t, typ_sym, ifield.name), _t13.state == 0) {
-				v__ast__StructField field = *(v__ast__StructField*)_t13.data;
+			Option_v__ast__StructField _t14;
+			if (_t14 = v__ast__Table_find_field_with_embeds(t, typ_sym, ifield.name), _t14.state == 0) {
+				v__ast__StructField field = *(v__ast__StructField*)_t14.data;
 				if (!v__ast__Type_alias_eq(ifield.typ, field.typ)) {
-					bool _t14 = false;
-					return _t14;
-				} else if (ifield.is_mut && !(field.is_mut || field.is_global)) {
 					bool _t15 = false;
 					return _t15;
+				} else if (ifield.is_mut && !(field.is_mut || field.is_global)) {
+					bool _t16 = false;
+					return _t16;
 				}
 				continue;
 			}
-			bool _t16 = false;
-			return _t16;
+			bool _t17 = false;
+			return _t17;
 		}
 		array_push((array*)&(*inter_sym->info._v__ast__Interface).types, _MOV((v__ast__Type[]){ typ }));
 		if (!Array_v__ast__Type_contains((*inter_sym->info._v__ast__Interface).types, _const_v__ast__voidptr_type)) {
 			array_push((array*)&(*inter_sym->info._v__ast__Interface).types, _MOV((v__ast__Type[]){ _const_v__ast__voidptr_type }));
 		}
-		bool _t19 = true;
-		return _t19;
+		bool _t20 = true;
+		return _t20;
 	}
-	bool _t20 = false;
-	return _t20;
+	bool _t21 = false;
+	return _t21;
 }
 
 Option_v__ast__Type v__ast__Table_resolve_generic_to_concrete(v__ast__Table* t, v__ast__Type generic_type, Array_string generic_names, Array_v__ast__Type concrete_types) {
