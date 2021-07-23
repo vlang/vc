@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1999850"
+#define V_COMMIT_HASH "1e5627e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "69cbdf9"
+	#define V_COMMIT_HASH "1999850"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1999850"
+	#define V_CURRENT_COMMIT_HASH "1e5627e"
 #endif
 
 // V comptime_defines:
@@ -31550,7 +31550,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("69cbdf9"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1999850"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -43828,34 +43828,22 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 			is_else = true;
 			has_else = true;
 			v__parser__Parser_next(p);
-		} else if (p->tok.kind == v__token__Kind__gt) {
-			if (has_else) {
-				v__parser__Parser_error_with_pos(p, _SLIT("`else` and timeout `> t` are mutually exclusive `select` keys"), v__token__Token_position(&p->tok));
-				v__ast__SelectExpr _t3 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-				return _t3;
-			}
-			if (has_timeout) {
-				v__parser__Parser_error_with_pos(p, _SLIT("at most one timeout `> t` branch allowed in `select` block"), v__token__Token_position(&p->tok));
-				v__ast__SelectExpr _t4 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-				return _t4;
-			}
-			is_timeout = true;
-			has_timeout = true;
-			v__parser__Parser_next(p);
-			p->inside_match = true;
-			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-			p->inside_match = false;
-			stmt = v__ast__ExprStmt_to_sumtype_v__ast__Stmt(ADDR(v__ast__ExprStmt, ((v__ast__ExprStmt){.expr = expr,.pos = v__ast__Expr_position(expr),.comments = new_array_from_c_array(1, 1, sizeof(v__ast__Comment), _MOV((v__ast__Comment[1]){comment})),.is_expr = true,.typ = 0,})));
 		} else {
+			bool is_gt = false;
+			if (p->tok.kind == v__token__Kind__gt) {
+				is_gt = true;
+				v__parser__Parser_note_with_pos(p, _SLIT("`>` is deprecated and will soon be forbidden - just state the timeout in nanoseconds"), v__token__Token_position(&p->tok));
+				v__parser__Parser_next(p);
+			}
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8586 = v__parser__Parser_expr_list(p);
-			Array_v__ast__Expr exprs = mr_8586.arg0;
-			Array_v__ast__Comment comments = mr_8586.arg1;
+			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8212 = v__parser__Parser_expr_list(p);
+			Array_v__ast__Expr exprs = mr_8212.arg0;
+			Array_v__ast__Comment comments = mr_8212.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, _SLIT("only one expression allowed as `select` key"));
-				v__ast__SelectExpr _t5 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-				return _t5;
+				v__ast__SelectExpr _t3 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+				return _t3;
 			}
 			if ((p->tok.kind == v__token__Kind__assign || p->tok.kind == v__token__Kind__decl_assign)) {
 				stmt = v__parser__Parser_partial_assign_stmt(p, exprs, comments);
@@ -43865,25 +43853,38 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 			p->inside_match = false;
 			p->inside_select = false;
 			if (stmt._typ == 271 /* v.ast.ExprStmt */) {
+				bool check_timeout = false;
 				if (!(*stmt._v__ast__ExprStmt).is_expr) {
 					v__parser__Parser_error_with_pos(p, _SLIT("select: invalid expression"), (*stmt._v__ast__ExprStmt).pos);
-					v__ast__SelectExpr _t6 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-					return _t6;
+					v__ast__SelectExpr _t4 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+					return _t4;
 				} else {
 					if ((*stmt._v__ast__ExprStmt).expr._typ == 235 /* v.ast.InfixExpr */) {
 						if ((*(*stmt._v__ast__ExprStmt).expr._v__ast__InfixExpr).op != v__token__Kind__arrow) {
-							v__parser__Parser_error_with_pos(p, _SLIT("select key: `<-` operator expected"), (*(*stmt._v__ast__ExprStmt).expr._v__ast__InfixExpr).pos);
-							v__ast__SelectExpr _t7 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-							return _t7;
+							check_timeout = true;
+						} else if (is_gt) {
+							v__parser__Parser_error_with_pos(p, _SLIT("send expression cannot be used as timeout"), (*stmt._v__ast__ExprStmt).pos);
 						}
 					}
 					
 					else {
-						v__parser__Parser_error_with_pos(p, _SLIT("select key: send expression (`ch <- x`) expected"), (*stmt._v__ast__ExprStmt).pos);
-						v__ast__SelectExpr _t8 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-						return _t8;
+						check_timeout = true;
 					}
 					;
+				}
+				if (check_timeout) {
+					if (has_else) {
+						v__parser__Parser_error_with_pos(p, _SLIT("`else` and timeout value are mutually exclusive `select` keys"), (*stmt._v__ast__ExprStmt).pos);
+						v__ast__SelectExpr _t5 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+						return _t5;
+					}
+					if (has_timeout) {
+						v__parser__Parser_error_with_pos(p, _SLIT("at most one timeout branch allowed in `select` block"), (*stmt._v__ast__ExprStmt).pos);
+						v__ast__SelectExpr _t6 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+						return _t6;
+					}
+					is_timeout = true;
+					has_timeout = true;
 				}
 			}
 			else if (stmt._typ == 263 /* v.ast.AssignStmt */) {
@@ -43891,23 +43892,23 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 				if (expr._typ == 248 /* v.ast.PrefixExpr */) {
 					if ((*expr._v__ast__PrefixExpr).op != v__token__Kind__arrow) {
 						v__parser__Parser_error_with_pos(p, _SLIT("select key: `<-` operator expected"), (*expr._v__ast__PrefixExpr).pos);
-						v__ast__SelectExpr _t9 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-						return _t9;
+						v__ast__SelectExpr _t7 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+						return _t7;
 					}
 				}
 				
 				else {
 					v__parser__Parser_error_with_pos(p, _SLIT("select key: receive expression expected"), v__ast__Expr_position((*(v__ast__Expr*)/*ee elem_typ */array_get((*stmt._v__ast__AssignStmt).right, 0))));
-					v__ast__SelectExpr _t10 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-					return _t10;
+					v__ast__SelectExpr _t8 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+					return _t8;
 				}
 				;
 			}
 			
 			else {
-				v__parser__Parser_error_with_pos(p, _SLIT("select: transmission statement expected"), (*(stmt.pos)));
-				v__ast__SelectExpr _t11 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
-				return _t11;
+				v__parser__Parser_error_with_pos(p, _SLIT("select: transmission statement, timeout (in ns) or `else` expected"), (*(stmt.pos)));
+				v__ast__SelectExpr _t9 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
+				return _t9;
 			}
 			;
 		}
@@ -43940,8 +43941,8 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 	if (p->tok.kind == v__token__Kind__rcbr) {
 		v__parser__Parser_check(p, v__token__Kind__rcbr);
 	}
-	v__ast__SelectExpr _t13 = (v__ast__SelectExpr){.branches = branches,.pos = v__token__Position_extend_with_last_line(pos, v__token__Token_position(&p->prev_tok), p->prev_tok.line_nr),.has_exception = has_else || has_timeout,.is_expr = 0,.expected_type = 0,};
-	return _t13;
+	v__ast__SelectExpr _t11 = (v__ast__SelectExpr){.branches = branches,.pos = v__token__Position_extend_with_last_line(pos, v__token__Token_position(&p->prev_tok), p->prev_tok.line_nr),.has_exception = has_else || has_timeout,.is_expr = 0,.expected_type = 0,};
+	return _t11;
 }
 
 VV_LOCAL_SYMBOL v__ast__Expr v__parser__Parser_lockable(v__parser__Parser* p) {
@@ -75249,7 +75250,7 @@ v__ast__Type v__checker__Checker_select_expr(v__checker__Checker* c, v__ast__Sel
 			if (branch.is_timeout) {
 				if (!v__ast__Type_is_int((*branch.stmt._v__ast__ExprStmt).typ)) {
 					v__ast__TypeSymbol* tsym = v__ast__Table_get_type_symbol(c->table, (*branch.stmt._v__ast__ExprStmt).typ);
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid type `"), 0xfe10, {.d_s = tsym->name}}, {_SLIT("` for timeout - expected integer type aka `time.Duration`"), 0, { .d_c = 0 }}})), (*branch.stmt._v__ast__ExprStmt).pos);
+					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid type `"), 0xfe10, {.d_s = tsym->name}}, {_SLIT("` for timeout - expected integer number of nanoseconds aka `time.Duration`"), 0, { .d_c = 0 }}})), (*branch.stmt._v__ast__ExprStmt).pos);
 				}
 			} else {
 				if (((*branch.stmt._v__ast__ExprStmt).expr)._typ == 235 /* v.ast.InfixExpr */) {
@@ -75915,8 +75916,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_228558 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_228558.arg0;
+		multi_return_string_v__token__Position mr_228575 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_228575.arg0;
 	}
 	return typ;
 }
@@ -77134,10 +77135,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_263330 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_263330.arg0;
-				int nroute_attributes = mr_263330.arg1;
-				int nargs = mr_263330.arg2;
+				multi_return_bool_int_int mr_263347 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_263347.arg0;
+				int nroute_attributes = mr_263347.arg1;
+				int nargs = mr_263347.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
