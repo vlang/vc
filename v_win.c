@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5e4cbcc"
+#define V_COMMIT_HASH "ad41cd5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3cc54d8"
+	#define V_COMMIT_HASH "5e4cbcc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5e4cbcc"
+	#define V_CURRENT_COMMIT_HASH "ad41cd5"
 #endif
 
 // V comptime_defines:
@@ -8711,7 +8711,7 @@ VV_LOCAL_SYMBOL v__ast__CTempVar v__gen__c__Gen_new_ctemp_var_then_gen(v__gen__c
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_ctemp_var(v__gen__c__Gen* g, v__ast__CTempVar tvar);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_dump_expr(v__gen__c__Gen* g, v__ast__DumpExpr node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_dump_expr_definitions(v__gen__c__Gen* g);
-VV_LOCAL_SYMBOL bool v__gen__c__Gen_writeln_fn_header(v__gen__c__Gen* g, string s);
+VV_LOCAL_SYMBOL bool v__gen__c__Gen_writeln_fn_header(v__gen__c__Gen* g, string s, strings__Builder* sb);
 VV_LOCAL_SYMBOL bool v__gen__c__Gen_embed_file_is_prod_mode(v__gen__c__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_embed_file_init(v__gen__c__Gen* g, v__ast__ComptimeCall _v_toheap_node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_embedded_data(v__gen__c__Gen* g);
@@ -9342,6 +9342,7 @@ v__ast__Return _v_dump_expr_v__ast__Return(string fpath, int line, string sexpr,
 	eprintln(v__ast__Return_str(x));
 	return x;
 }
+
 
 // V interface table:
 static IError I_None___to_Interface_IError(None__* x);
@@ -30720,7 +30721,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("3cc54d8"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5e4cbcc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -58045,68 +58046,75 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_dump_expr(v__gen__c__Gen* g, v__ast__DumpExp
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_dump_expr_definitions(v__gen__c__Gen* g) {
-	if (g->pref->build_mode == v__pref__BuildMode__build_module) {
-		Map_int_string _t1 = g->table->dumps;
-		int _t3 = _t1.key_values.len;
-		for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
-			int _t4 = _t1.key_values.len - _t3;
-			_t3 = _t1.key_values.len;
-			if (_t4 < 0) {
-				_t2 = -1;
-				continue;
-			}
-			if (!DenseArray_has_index(&_t1.key_values, _t2)) {continue;}
-			int dump_type = /*key*/ *(int*)DenseArray_key(&_t1.key_values, _t2);
-			string cname = (*(string*)DenseArray_value(&_t1.key_values, _t2));
-			bool is_ptr = v__ast__Type_is_ptr(((dump_type)));
-			string ptr_suffix = (is_ptr ? (_SLIT("*")) : (_SLIT("")));
-			string dump_fn_name = string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("_v_dump_expr_"), 0xfe10, {.d_s = cname}}, {_SLIT0, 0, { .d_c = 0 }}})), ((is_ptr ? (_SLIT("_ptr")) : (_SLIT("")))));
-			v__gen__c__Gen_writeln_fn_header(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cname}}, {_SLIT0, 0xfe10, {.d_s = ptr_suffix}}, {_SLIT(" "), 0xfe10, {.d_s = dump_fn_name}}, {_SLIT("(string fpath, int line, string sexpr, "), 0xfe10, {.d_s = cname}}, {_SLIT0, 0xfe10, {.d_s = ptr_suffix}}, {_SLIT(" x)"), 0, { .d_c = 0 }}})));
+	Map_string_bool dump_typedefs = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
+	strings__Builder dump_fns = strings__new_builder(100);
+	Map_int_string _t1 = g->table->dumps;
+	int _t3 = _t1.key_values.len;
+	for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
+		int _t4 = _t1.key_values.len - _t3;
+		_t3 = _t1.key_values.len;
+		if (_t4 < 0) {
+			_t2 = -1;
+			continue;
 		}
-	} else {
-		Map_int_string _t5 = g->table->dumps;
-		int _t7 = _t5.key_values.len;
-		for (int _t6 = 0; _t6 < _t7; ++_t6 ) {
-			int _t8 = _t5.key_values.len - _t7;
-			_t7 = _t5.key_values.len;
-			if (_t8 < 0) {
-				_t6 = -1;
-				continue;
-			}
-			if (!DenseArray_has_index(&_t5.key_values, _t6)) {continue;}
-			int dump_type = /*key*/ *(int*)DenseArray_key(&_t5.key_values, _t6);
-			string cname = (*(string*)DenseArray_value(&_t5.key_values, _t6));
-			string to_string_fn_name = v__gen__c__Gen_gen_str_for_type(g, dump_type);
-			bool is_ptr = v__ast__Type_is_ptr(((dump_type)));
-			string ptr_astarisk = (is_ptr ? (_SLIT("*")) : (_SLIT("")));
-			string dump_fn_name = string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("_v_dump_expr_"), 0xfe10, {.d_s = cname}}, {_SLIT0, 0, { .d_c = 0 }}})), ((is_ptr ? (_SLIT("_ptr")) : (_SLIT("")))));
-			if (v__gen__c__Gen_writeln_fn_header(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cname}}, {_SLIT0, 0xfe10, {.d_s = ptr_astarisk}}, {_SLIT(" "), 0xfe10, {.d_s = dump_fn_name}}, {_SLIT("(string fpath, int line, string sexpr, "), 0xfe10, {.d_s = cname}}, {_SLIT0, 0xfe10, {.d_s = ptr_astarisk}}, {_SLIT(" x)"), 0, { .d_c = 0 }}})))) {
-				continue;
-			}
-			strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT("["))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			strings__Builder_writeln(&g->definitions, _SLIT("\teprint(fpath);"));
-			strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT(":"))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			strings__Builder_writeln(&g->definitions, _SLIT("\teprint(int_str(line));"));
-			strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT("] "))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			strings__Builder_writeln(&g->definitions, _SLIT("\teprint(sexpr);"));
-			strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT(": "))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			if (is_ptr) {
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT("&"))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			}
-			strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\teprintln("), 0xfe10, {.d_s = to_string_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = ptr_astarisk}}, {_SLIT("x));"), 0, { .d_c = 0 }}})));
-			strings__Builder_writeln(&g->definitions, _SLIT("\treturn x;"));
-			strings__Builder_writeln(&g->definitions, _SLIT("}"));
+		if (!DenseArray_has_index(&_t1.key_values, _t2)) {continue;}
+		int dump_type = /*key*/ *(int*)DenseArray_key(&_t1.key_values, _t2);
+		string cname = (*(string*)DenseArray_value(&_t1.key_values, _t2));
+		string to_string_fn_name = v__gen__c__Gen_gen_str_for_type(g, dump_type);
+		bool is_ptr = v__ast__Type_is_ptr(((dump_type)));
+		string ptr_asterisk = (is_ptr ? (_SLIT("*")) : (_SLIT("")));
+		v__ast__TypeSymbol* dump_sym = v__ast__Table_get_type_symbol(g->table, dump_type);
+		string str_dumparg_type =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cname}}, {_SLIT0, 0xfe10, {.d_s = ptr_asterisk}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		if (dump_sym->kind == v__ast__Kind__function) {
+			v__ast__FnType fninfo = /* as */ *(v__ast__FnType*)__as_cast((dump_sym->info)._v__ast__FnType,(dump_sym->info)._typ, 438) /*expected idx: 438, name: v.ast.FnType */ ;
+			str_dumparg_type =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("DumpFNType_"), 0xfe10, {.d_s = cname}}, {_SLIT0, 0, { .d_c = 0 }}}));
+			int tdef_pos = g->out.len;
+			v__gen__c__Gen_write_fn_ptr_decl(g, &fninfo, str_dumparg_type);
+			string str_tdef = strings__Builder_after(&g->out, tdef_pos);
+			strings__Builder_go_back(&g->out, str_tdef.len);
+			map_set(&dump_typedefs, &(string[]){ str_intp(2, _MOV((StrIntpData[]){{_SLIT("typedef "), 0xfe10, {.d_s = str_tdef}}, {_SLIT(";"), 0, { .d_c = 0 }}}))}, &(bool[]) { true });
 		}
+		string dump_fn_name = string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("_v_dump_expr_"), 0xfe10, {.d_s = cname}}, {_SLIT0, 0, { .d_c = 0 }}})), ((is_ptr ? (_SLIT("_ptr")) : (_SLIT("")))));
+		if (v__gen__c__Gen_writeln_fn_header(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = str_dumparg_type}}, {_SLIT(" "), 0xfe10, {.d_s = dump_fn_name}}, {_SLIT("(string fpath, int line, string sexpr, "), 0xfe10, {.d_s = str_dumparg_type}}, {_SLIT(" x)"), 0, { .d_c = 0 }}})), (voidptr)&/*qq*/dump_fns)) {
+			continue;
+		}
+		strings__Builder_writeln(&dump_fns,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT("["))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&dump_fns, _SLIT("\teprint(fpath);"));
+		strings__Builder_writeln(&dump_fns,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT(":"))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&dump_fns, _SLIT("\teprint(int_str(line));"));
+		strings__Builder_writeln(&dump_fns,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT("] "))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&dump_fns, _SLIT("\teprint(sexpr);"));
+		strings__Builder_writeln(&dump_fns,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT(": "))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		if (is_ptr) {
+			strings__Builder_writeln(&dump_fns,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\teprint("), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT("&"))}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		}
+		strings__Builder_writeln(&dump_fns,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\teprintln("), 0xfe10, {.d_s = to_string_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = ptr_asterisk}}, {_SLIT("x));"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&dump_fns, _SLIT("\treturn x;"));
+		strings__Builder_writeln(&dump_fns, _SLIT("}"));
 	}
+	int _t6 = dump_typedefs.key_values.len;
+	for (int _t5 = 0; _t5 < _t6; ++_t5 ) {
+		int _t7 = dump_typedefs.key_values.len - _t6;
+		_t6 = dump_typedefs.key_values.len;
+		if (_t7 < 0) {
+			_t5 = -1;
+			continue;
+		}
+		if (!DenseArray_has_index(&dump_typedefs.key_values, _t5)) {continue;}
+		string tdef = /*key*/ *(string*)DenseArray_key(&dump_typedefs.key_values, _t5);
+		tdef = string_clone(tdef);
+		strings__Builder_writeln(&g->definitions, tdef);
+	}
+	strings__Builder_writeln(&g->definitions, strings__Builder_str(&dump_fns));
 }
 
-VV_LOCAL_SYMBOL bool v__gen__c__Gen_writeln_fn_header(v__gen__c__Gen* g, string s) {
+VV_LOCAL_SYMBOL bool v__gen__c__Gen_writeln_fn_header(v__gen__c__Gen* g, string s, strings__Builder* sb) {
 	if (g->pref->build_mode == v__pref__BuildMode__build_module) {
-		strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = s}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(sb,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = s}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
 		bool _t1 = true;
 		return _t1;
 	}
-	strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = s}}, {_SLIT(" {"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(sb,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = s}}, {_SLIT(" {"), 0, { .d_c = 0 }}})));
 	bool _t2 = false;
 	return _t2;
 }
