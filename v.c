@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ad41cd5"
+#define V_COMMIT_HASH "26db3b0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5e4cbcc"
+	#define V_COMMIT_HASH "ad41cd5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ad41cd5"
+	#define V_CURRENT_COMMIT_HASH "26db3b0"
 #endif
 
 // V comptime_defines:
@@ -5297,11 +5297,11 @@ struct v__ast__SelectBranch {
 
 struct v__ast__SqlStmtLine {
 	v__ast__SqlStmtKind kind;
-	string object_var_name;
 	v__token__Position pos;
 	v__ast__Expr where_expr;
-	Array_string updated_columns;
 	Array_v__ast__Expr update_exprs;
+	string object_var_name;
+	Array_string updated_columns;
 	v__ast__TypeNode table_expr;
 	Array_v__ast__StructField fields;
 	Map_int_v__ast__SqlStmtLine sub_structs;
@@ -8587,53 +8587,20 @@ string _const_v__gen__c__windows_hotcode_definitions_1; // a string literal, ini
 VV_LOCAL_SYMBOL void v__gen__c__Gen_generate_hotcode_reloading_main_caller(v__gen__c__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_profile_fn(v__gen__c__Gen* g, v__ast__FnDecl fn_decl);
 void v__gen__c__Gen_gen_vprint_profile_stats(v__gen__c__Gen* g);
-string _const_v__gen__c__dbtype; // a string literal, inited later
-#define _const_v__gen__c__default_unique_str_len 256
 VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt_line(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__ast__Expr expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__ast__Expr expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__ast__Expr expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind(v__gen__c__Gen* g, string val, string len, v__ast__Type real_type, v__gen__c__SqlType typ);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_sql_type_from_v(v__gen__c__Gen* g, v__gen__c__SqlType typ, v__ast__Type v_typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_stmt(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType sql_typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind(v__gen__c__Gen* g, string val, string len, v__ast__Type typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_int(v__gen__c__Gen* g, string val);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_string(v__gen__c__Gen* g, string val, string len);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_sqlite3_type_from_v(v__gen__c__Gen* g, v__ast__Type v_typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_stmt(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_bind(v__gen__c__Gen* g, string val, v__ast__Type typ);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_mysql_get_table_type(v__gen__c__Gen* g, v__ast__Type typ);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_mysql_buffer_typ_from_typ(v__gen__c__Gen* g, v__ast__Type typ);
-VV_LOCAL_SYMBOL multi_return_string_string v__gen__c__Gen_mysql_buffer_typ_from_field(v__gen__c__Gen* g, v__ast__StructField field);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_stmt(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_psql_get_table_type(v__gen__c__Gen* g, v__ast__Type typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_bind(v__gen__c__Gen* g, string val, v__ast__Type typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mssql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mssql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_mssql_get_table_type(v__gen__c__Gen* g, v__ast__Type typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_arr(v__gen__c__Gen* g, v__ast__StructField field, v__ast__SqlExpr node, string primary, string tmp);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_arr_stmt(v__gen__c__Gen* g, Array_v__ast__SqlStmtLine arr_stmt, Array_string arr_fkeys, Array_string arr_field_name, string id_name, v__ast__Expr db_expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_expr_defaults(v__gen__c__Gen* g, v__ast__SqlExpr node, v__gen__c__SqlType sql_typ);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_get_base_sql_select_query(v__gen__c__Gen* g, v__ast__SqlExpr node, v__gen__c__SqlType typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_defaults(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ);
-VV_LOCAL_SYMBOL string v__gen__c__Gen_table_gen(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr expr);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr expr, v__gen__c__SqlType typ);
-VV_LOCAL_SYMBOL v__ast__Type v__gen__c__Gen_get_struct_field_typ(v__gen__c__Gen* g, string f);
-VV_LOCAL_SYMBOL v__ast__Type v__gen__c__Gen_sql_get_real_type(v__gen__c__Gen* g, v__ast__Type typ);
-VV_LOCAL_SYMBOL void v__gen__c__Gen_inc_sql_i(v__gen__c__Gen* g, v__gen__c__SqlType typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt_line(v__gen__c__Gen* g, v__ast__SqlStmtLine nd, string expr);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_insert(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name, string last_ids_arr, string res, string pid, bool is_array, string fkey);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_update(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_delete(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_expr_to_orm_primitive(v__gen__c__Gen* g, v__ast__Expr expr);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_write_orm_primitive(v__gen__c__Gen* g, v__ast__Type t, v__ast__Expr expr);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_where_data(v__gen__c__Gen* g, v__ast__Expr expr, Array_string* fields, Array_string* kinds, Array_v__ast__Expr* data, Array_bool* is_and);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_gen_where_data(v__gen__c__Gen* g, v__ast__Expr where_expr);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExpr node, string expr, string left);
 VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_type(v__gen__c__Gen* g, v__ast__Expr expr);
 VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_from_type_string(v__gen__c__Gen* g, string name);
-VV_LOCAL_SYMBOL v__ast__Type v__gen__c__Gen_get_sql_field_type(v__gen__c__Gen* g, v__ast__StructField field);
 VV_LOCAL_SYMBOL string v__gen__c__Gen_get_table_name(v__gen__c__Gen* g, v__ast__TypeNode table_expr);
 VV_LOCAL_SYMBOL v__ast__StructField v__gen__c__Gen_get_struct_field(v__gen__c__Gen* g, string name);
 VV_LOCAL_SYMBOL string v__gen__c__Gen_get_field_name(v__gen__c__Gen* g, v__ast__StructField field);
@@ -9019,6 +8986,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_sql_expr(v__checker__Checker* c
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_sql_stmt(v__checker__Checker* c, v__ast__SqlStmt* node);
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_sql_stmt_line(v__checker__Checker* c, v__ast__SqlStmtLine* node);
 VV_LOCAL_SYMBOL Array_v__ast__StructField v__checker__Checker_fetch_and_verify_orm_fields(v__checker__Checker* c, v__ast__Struct info, v__token__Position pos, string table_name);
+VV_LOCAL_SYMBOL string v__checker__Checker_fetch_field_name(v__checker__Checker* c, v__ast__StructField field);
 VV_LOCAL_SYMBOL void v__checker__Checker_post_process_generic_fns(v__checker__Checker* c);
 VV_LOCAL_SYMBOL bool v__checker__Checker_evaluate_once_comptime_if_attribute(v__checker__Checker* c, v__ast__Attr* a);
 VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* node);
@@ -9826,7 +9794,6 @@ void vinit_string_literals(){
 	_const_v__gen__c__c_wyhash_headers = _SLIT("\n// ============== wyhash ==============\n#ifndef wyhash_final_version_3\n#define wyhash_final_version_3\n\n#ifndef WYHASH_CONDOM\n// protections that produce different results:\n// 1: normal valid behavior\n// 2: extra protection against entropy loss (probability=2^-63), aka. \"blind multiplication\"\n#define WYHASH_CONDOM 1\n#endif\n\n#ifndef WYHASH_32BIT_MUM\n// 0: normal version, slow on 32 bit systems\n// 1: faster on 32 bit systems but produces different results, incompatible with wy2u0k function\n#define WYHASH_32BIT_MUM 0\n#endif\n\n// includes\n#include <stdint.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n	#include <intrin.h>\n	#pragma intrinsic(_umul128)\n#endif\n\n// 128bit multiply function\nstatic inline uint64_t _wyrot(uint64_t x) { return (x>>32)|(x<<32); }\nstatic inline void _wymum(uint64_t *A, uint64_t *B){\n#if(WYHASH_32BIT_MUM)\n	uint64_t hh=(*A>>32)*(*B>>32), hl=(*A>>32)*(uint32_t)*B, lh=(uint32_t)*A*(*B>>32), ll=(uint64_t)(uint32_t)*A*(uint32_t)*B;\n	#if(WYHASH_CONDOM>1)\n	*A^=_wyrot(hl)^hh; *B^=_wyrot(lh)^ll;\n	#else\n	*A=_wyrot(hl)^hh; *B=_wyrot(lh)^ll;\n	#endif\n#elif defined(__SIZEOF_INT128__)\n	__uint128_t r=*A; r*=*B;\n	#if(WYHASH_CONDOM>1)\n	*A^=(uint64_t)r; *B^=(uint64_t)(r>>64);\n	#else\n	*A=(uint64_t)r; *B=(uint64_t)(r>>64);\n	#endif\n#elif defined(_MSC_VER) && defined(_M_X64)\n	#if(WYHASH_CONDOM>1)\n	uint64_t  a,  b;\n	a=_umul128(*A,*B,&b);\n	*A^=a;  *B^=b;\n	#else\n	*A=_umul128(*A,*B,B);\n	#endif\n#else\n	uint64_t ha=*A>>32, hb=*B>>32, la=(uint32_t)*A, lb=(uint32_t)*B, hi, lo;\n	uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n	lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n	#if(WYHASH_CONDOM>1)\n	*A^=lo;  *B^=hi;\n	#else\n	*A=lo;  *B=hi;\n	#endif\n#endif\n}\n\n// multiply and xor mix function, aka MUM\nstatic inline uint64_t _wymix(uint64_t A, uint64_t B){ _wymum(&A,&B); return A^B; }\n\n// endian macros\n#ifndef WYHASH_LITTLE_ENDIAN\n	#ifdef TARGET_ORDER_IS_LITTLE\n		#define WYHASH_LITTLE_ENDIAN 1\n	#else\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n#endif\n\n// read functions\n#if (WYHASH_LITTLE_ENDIAN)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return v;}\n#elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#else\n	static inline uint64_t _wyr8(const uint8_t *p) {\n		uint64_t v; memcpy(&v, p, 8);\n		return (((v >> 56) & 0xff)| ((v >> 40) & 0xff00)| ((v >> 24) & 0xff0000)| ((v >>  8) & 0xff000000)| ((v <<  8) & 0xff00000000)| ((v << 24) & 0xff0000000000)| ((v << 40) & 0xff000000000000)| ((v << 56) & 0xff00000000000000));\n	}\n	static inline uint64_t _wyr4(const uint8_t *p) {\n		uint32_t v; memcpy(&v, p, 4);\n		return (((v >> 24) & 0xff)| ((v >>  8) & 0xff00)| ((v <<  8) & 0xff0000)| ((v << 24) & 0xff000000));\n	}\n#endif\nstatic inline uint64_t _wyr3(const uint8_t *p, size_t k) { return (((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];}\n// wyhash main function\nstatic inline uint64_t wyhash(const void *key, size_t len, uint64_t seed, const uint64_t *secret){\n	const uint8_t *p=(const uint8_t *)key; seed^=*secret;	uint64_t a, b;\n	if (_likely_(len<=16)) {\n		if (_likely_(len>=4)) { a=(_wyr4(p)<<32)|_wyr4(p+((len>>3)<<2)); b=(_wyr4(p+len-4)<<32)|_wyr4(p+len-4-((len>>3)<<2)); }\n		else if (_likely_(len>0)) { a=_wyr3(p,len); b=0; }\n		else a=b=0;\n	} else {\n		size_t i=len;\n		if (_unlikely_(i>48)) {\n			uint64_t see1=seed, see2=seed;\n			do {\n				seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);\n				see1=_wymix(_wyr8(p+16)^secret[2],_wyr8(p+24)^see1);\n				see2=_wymix(_wyr8(p+32)^secret[3],_wyr8(p+40)^see2);\n				p+=48; i-=48;\n			} while(_likely_(i>48));\n			seed^=see1^see2;\n		}\n		while(_unlikely_(i>16)) { seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);  i-=16; p+=16; }\n		a=_wyr8(p+i-16);  b=_wyr8(p+i-8);\n	}\n	return _wymix(secret[1]^len,_wymix(a^secret[1],b^seed));\n}\n// the default secret parameters\nstatic const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};\n\n// a useful 64bit-64bit mix function to produce deterministic pseudo random numbers that can pass BigCrush and PractRand\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){ A^=0xa0761d6478bd642full; B^=0xe7037ed1a0b428dbull; _wymum(&A,&B); return _wymix(A^0xa0761d6478bd642full,B^0xe7037ed1a0b428dbull);}\n\n// the wyrand PRNG that pass BigCrush and PractRand\nstatic inline uint64_t wyrand(uint64_t *seed){ *seed+=0xa0761d6478bd642full; return _wymix(*seed,*seed^0xe7037ed1a0b428dbull);}\n\n// convert any 64 bit pseudo random numbers to uniform distribution [0,1). It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2u01(uint64_t r){ const double _wynorm=1.0/(1ull<<52); return (r>>12)*_wynorm;}\n\n// convert any 64 bit pseudo random numbers to APPROXIMATE Gaussian distribution. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2gau(uint64_t r){ const double _wynorm=1.0/(1ull<<20); return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;}\n\n#if(!WYHASH_32BIT_MUM)\n// fast range integer random number generation on [0,k) credit to Daniel Lemire. May not work when WYHASH_32BIT_MUM=1. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; }\n#endif\n#endif\n\n#define _IN_MAP(val, m) map_exists(m, val)\n\n");
 	_const_v__gen__c__posix_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
 	_const_v__gen__c__windows_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
-	_const_v__gen__c__dbtype = _SLIT("sqlite");
 	_const_v__gen__js__fast_deep_eq_fn = _SLIT("// https://www.npmjs.com/package/fast-deep-equal - 3/3/2021\nconst envHasBigInt64Array = typeof BigInt64Array !== 'undefined';\nfunction vEq(a, b) {\n	if (a === b) return true;\n\n	if (a && b && typeof a == 'object' && typeof b == 'object') {\n		if (a.constructor !== b.constructor) return false;\n\n		var length, i, keys;\n		if (Array.isArray(a)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (!vEq(a[i], b[i])) return false;\n			return true;\n		}\n\n\n		if ((a instanceof Map) && (b instanceof Map)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			for (i of a.entries())\n				if (!vEq(i[1], b.get(i[0]))) return false;\n			return true;\n		}\n\n		if ((a instanceof Set) && (b instanceof Set)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			return true;\n		}\n\n		if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (a[i] !== b[i]) return false;\n			return true;\n		}\n\n\n		if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;\n		if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();\n		if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();\n\n		keys = Object.keys(a);\n		length = keys.length;\n		if (length !== Object.keys(b).length) return false;\n\n		for (i = length; i-- !== 0;)\n			if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;\n\n		for (i = length; i-- !== 0;) {\n			var key = keys[i];\n\n			if (!vEq(a[key], b[key])) return false;\n		}\n\n		return true;\n	}\n\n	// true if both NaN, false otherwise\n	return a!==a && b!==b;\n};\n");
 	_const_v__checker__hex_lit_overflow_message = _SLIT("hex character literal overflows string");
 	_const_v__checker__vroot_is_deprecated_message = _SLIT("@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead");
@@ -31513,7 +31480,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("5e4cbcc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ad41cd5"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -47920,24 +47887,24 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 		string table = v__parser__Parser_check_name(p);
 		if (!string__eq(table, _SLIT("table"))) {
 			v__parser__Parser_error(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expected `table` got `"), 0xfe10, {.d_s = table}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-			v__ast__SqlStmtLine _t1 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+			v__ast__SqlStmtLine _t1 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 			return _t1;
 		}
 		v__ast__Type typ = v__parser__Parser_parse_type(p);
 		v__token__Position typ_pos = v__token__Token_position(&p->tok);
-		v__ast__SqlStmtLine _t2 = (v__ast__SqlStmtLine){.kind = kind,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = v__token__Position_extend(pos, v__token__Token_position(&p->prev_tok)),.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = typ,.pos = typ_pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+		v__ast__SqlStmtLine _t2 = (v__ast__SqlStmtLine){.kind = kind,.pos = v__token__Position_extend(pos, v__token__Token_position(&p->prev_tok)),.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = typ,.pos = typ_pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 		return _t2;
 	} else if (string__eq(n, _SLIT("drop"))) {
 		kind = v__ast__SqlStmtKind__drop;
 		string table = v__parser__Parser_check_name(p);
 		if (!string__eq(table, _SLIT("table"))) {
 			v__parser__Parser_error(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expected `table` got `"), 0xfe10, {.d_s = table}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-			v__ast__SqlStmtLine _t3 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+			v__ast__SqlStmtLine _t3 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 			return _t3;
 		}
 		v__ast__Type typ = v__parser__Parser_parse_type(p);
 		v__token__Position typ_pos = v__token__Token_position(&p->tok);
-		v__ast__SqlStmtLine _t4 = (v__ast__SqlStmtLine){.kind = kind,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = v__token__Position_extend(pos, v__token__Token_position(&p->prev_tok)),.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = typ,.pos = typ_pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+		v__ast__SqlStmtLine _t4 = (v__ast__SqlStmtLine){.kind = kind,.pos = v__token__Position_extend(pos, v__token__Token_position(&p->prev_tok)),.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = typ,.pos = typ_pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 		return _t4;
 	}
 	string inserted_var_name = _SLIT("");
@@ -47951,7 +47918,7 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 				inserted_var_name = (*expr._v__ast__Ident).name;
 			} else {
 				v__parser__Parser_error(p, _SLIT("can only insert variables"));
-				v__ast__SqlStmtLine _t5 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+				v__ast__SqlStmtLine _t5 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 				return _t5;
 			}
 		}
@@ -47961,12 +47928,12 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 	Array_v__ast__Expr update_exprs = __new_array_with_default(0, 5, sizeof(v__ast__Expr), 0);
 	if (kind == v__ast__SqlStmtKind__insert && !string__eq(n, _SLIT("into"))) {
 		v__parser__Parser_error(p, _SLIT("expecting `into`"));
-		v__ast__SqlStmtLine _t6 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+		v__ast__SqlStmtLine _t6 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 		return _t6;
 	} else if (kind == v__ast__SqlStmtKind__update) {
 		if (!string__eq(n, _SLIT("set"))) {
 			v__parser__Parser_error(p, _SLIT("expecting `set`"));
-			v__ast__SqlStmtLine _t7 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+			v__ast__SqlStmtLine _t7 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 			return _t7;
 		}
 		for (;;) {
@@ -47982,7 +47949,7 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 		}
 	} else if (kind == v__ast__SqlStmtKind__delete && !string__eq(n, _SLIT("from"))) {
 		v__parser__Parser_error(p, _SLIT("expecting `from`"));
-		v__ast__SqlStmtLine _t10 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+		v__ast__SqlStmtLine _t10 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 		return _t10;
 	}
 	v__token__Position table_pos = v__token__Token_position(&p->tok);
@@ -47994,7 +47961,7 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 		Option_bool _t11 = v__parser__Parser_check_sql_keyword(p, _SLIT("where"));
 		if (_t11.state != 0) { /*or block*/ 
 			IError err = _t11.err;
-			v__ast__SqlStmtLine _t12 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+			v__ast__SqlStmtLine _t12 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 			return _t12;
 		}
 		;
@@ -48005,7 +47972,7 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 		Option_bool _t13 = v__parser__Parser_check_sql_keyword(p, _SLIT("where"));
 		if (_t13.state != 0) { /*or block*/ 
 			IError err = _t13.err;
-			v__ast__SqlStmtLine _t14 = (v__ast__SqlStmtLine){.kind = 0,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+			v__ast__SqlStmtLine _t14 = (v__ast__SqlStmtLine){.kind = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 			return _t14;
 		}
 		;
@@ -48013,11 +47980,11 @@ VV_LOCAL_SYMBOL v__ast__SqlStmtLine v__parser__Parser_parse_sql_stmt_line(v__par
 	}
 	v__ast__SqlStmtLine _t15 = (v__ast__SqlStmtLine){
 		.kind = kind,
-		.object_var_name = inserted_var_name,
 		.pos = pos,
 		.where_expr = where_expr,
-		.updated_columns = updated_columns,
 		.update_exprs = update_exprs,
+		.object_var_name = inserted_var_name,
+		.updated_columns = updated_columns,
 		.table_expr = (v__ast__TypeNode){.typ = table_type,.pos = table_pos,},
 		.fields = __new_array(0, 0, sizeof(v__ast__StructField)),
 		.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),
@@ -55012,7 +54979,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr(v__gen__c__Gen* g, v__ast__Expr node) {
 		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("/*OffsetOf*/ (u32)(__offsetof("), 0xfe10, {.d_s = v__util__no_dots(styp)}}, {_SLIT(", "), 0xfe10, {.d_s = (*node._v__ast__OffsetOf).field}}, {_SLIT("))"), 0, { .d_c = 0 }}})));
 	}
 	else if (node._typ == 253 /* v.ast.SqlExpr */) {
-		v__gen__c__Gen_sql_select_expr(g, (*node._v__ast__SqlExpr), false, _SLIT(""));
+		v__gen__c__Gen_sql_select_expr(g, (*node._v__ast__SqlExpr));
 	}
 	else if (node._typ == 255 /* v.ast.StringLiteral */) {
 		v__gen__c__Gen_string_literal(g, (*node._v__ast__StringLiteral));
@@ -55591,11 +55558,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_119673 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_119673.arg0;
-	string key_eq_fn = mr_119673.arg1;
-	string clone_fn = mr_119673.arg2;
-	string free_fn = mr_119673.arg3;
+	multi_return_string_string_string_string mr_119662 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_119662.arg0;
+	string key_eq_fn = mr_119662.arg1;
+	string clone_fn = mr_119662.arg2;
+	string free_fn = mr_119662.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -57057,9 +57024,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*typ.info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_162378 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_162378.arg0;
-						string base = mr_162378.arg1;
+						multi_return_string_string mr_162367 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_162367.arg0;
+						string base = mr_162367.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -57292,11 +57259,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_170667 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_170667.arg0;
-				string pafile = mr_170667.arg1;
-				string pamod = mr_170667.arg2;
-				string pafn = mr_170667.arg3;
+				multi_return_int_string_string_string mr_170656 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_170656.arg0;
+				string pafile = mr_170656.arg1;
+				string pamod = mr_170656.arg2;
+				string pafn = mr_170656.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -57389,11 +57356,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind__map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_173297 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_173297.arg0;
-		string key_eq_fn = mr_173297.arg1;
-		string clone_fn = mr_173297.arg2;
-		string free_fn = mr_173297.arg3;
+		multi_return_string_string_string_string mr_173286 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_173286.arg0;
+		string key_eq_fn = mr_173286.arg1;
+		string clone_fn = mr_173286.arg2;
+		string free_fn = mr_173286.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -58001,8 +57968,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_192354 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_192354.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_192343 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_192343.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -61860,1642 +61827,739 @@ void v__gen__c__Gen_gen_vprint_profile_stats(v__gen__c__Gen* g) {
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt(v__gen__c__Gen* g, v__ast__SqlStmt node) {
-	for (int _t1 = 0; _t1 < node.lines.len; ++_t1) {
-		v__ast__SqlStmtLine line = ((v__ast__SqlStmtLine*)node.lines.data)[_t1];
-		v__gen__c__Gen_sql_stmt_line(g, line, node.db_expr);
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt_line(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__ast__Expr expr) {
-	if (node.kind == v__ast__SqlStmtKind__create) {
-		v__gen__c__Gen_sql_create_table(g, node, expr);
-		return;
-	} else if (node.kind == v__ast__SqlStmtKind__drop) {
-		v__gen__c__Gen_sql_drop_table(g, node, expr);
-		return;
-	}
-	g->sql_table_name = v__ast__Table_get_type_symbol(g->table, node.table_expr.typ)->name;
-	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, expr);
-
-	if (typ == (v__gen__c__SqlType__sqlite3)) {
-		v__gen__c__Gen_sqlite3_stmt(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__mysql)) {
-		v__gen__c__Gen_mysql_stmt(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__psql)) {
-		v__gen__c__Gen_psql_stmt(g, node, typ, expr);
-	}
-	else {
-		v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("This database type `"), 0xfe10, {.d_s = v__gen__c__SqlType_str(typ)}}, {_SLIT("` is not implemented yet in orm"), 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
-	};
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__ast__Expr expr) {
-	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, expr);
-
-	if (typ == (v__gen__c__SqlType__sqlite3)) {
-		v__gen__c__Gen_sqlite3_create_table(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__mysql)) {
-		v__gen__c__Gen_mysql_create_table(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__psql)) {
-		v__gen__c__Gen_psql_create_table(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__mssql)) {
-		v__gen__c__Gen_mssql_create_table(g, node, typ, expr);
-	}
-	else {
-		v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("This database type `"), 0xfe10, {.d_s = v__gen__c__SqlType_str(typ)}}, {_SLIT("` is not implemented yet in orm"), 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
-	};
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__ast__Expr expr) {
-	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, expr);
-
-	if (typ == (v__gen__c__SqlType__sqlite3)) {
-		v__gen__c__Gen_sqlite3_drop_table(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__mysql)) {
-		v__gen__c__Gen_mysql_drop_table(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__psql)) {
-		v__gen__c__Gen_psql_drop_table(g, node, typ, expr);
-	}
-	else if (typ == (v__gen__c__SqlType__mssql)) {
-		v__gen__c__Gen_mssql_drop_table(g, node, typ, expr);
-	}
-	else {
-		v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("This database type `"), 0xfe10, {.d_s = v__gen__c__SqlType_str(typ)}}, {_SLIT("` is not implemented yet in orm"), 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
-	};
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line) {
-	g->sql_table_name = v__ast__Table_get_type_symbol(g->table, node.table_expr.typ)->name;
+	string conn = v__gen__c__Gen_new_tmp_var(g);
+	v__gen__c__Gen_writeln(g, _SLIT(""));
+	v__gen__c__Gen_writeln(g, _SLIT("// orm"));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("orm__Connection "), 0xfe10, {.d_s = conn}}, {_SLIT(" = (orm__Connection){._"), 0, { .d_c = 0 }}})));
+	string fn_prefix = _SLIT("");
 	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, node.db_expr);
 
 	if (typ == (v__gen__c__SqlType__sqlite3)) {
-		v__gen__c__Gen_sqlite3_select_expr(g, node, sub, line, typ);
+		fn_prefix = _SLIT("sqlite__DB");
 	}
 	else if (typ == (v__gen__c__SqlType__mysql)) {
-		v__gen__c__Gen_mysql_select_expr(g, node, sub, line, typ);
+		fn_prefix = _SLIT("mysql__Connection");
 	}
-	else if (typ == (v__gen__c__SqlType__psql)) {
-		v__gen__c__Gen_psql_select_expr(g, node, sub, line, typ);
+	else if (typ == (v__gen__c__SqlType__mssql)) {
 	}
 	else {
 		v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("This database type `"), 0xfe10, {.d_s = v__gen__c__SqlType_str(typ)}}, {_SLIT("` is not implemented yet in orm"), 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_bind(v__gen__c__Gen* g, string val, string len, v__ast__Type real_type, v__gen__c__SqlType typ) {
-
-	if (typ == (v__gen__c__SqlType__sqlite3)) {
-		v__gen__c__Gen_sqlite3_bind(g, val, len, real_type);
-	}
-	else if (typ == (v__gen__c__SqlType__mysql)) {
-		v__gen__c__Gen_mysql_bind(g, val, real_type);
-	}
-	else if (typ == (v__gen__c__SqlType__psql)) {
-		v__gen__c__Gen_psql_bind(g, val, real_type);
-	}
-	else {
-	};
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_sql_type_from_v(v__gen__c__Gen* g, v__gen__c__SqlType typ, v__ast__Type v_typ) {
-
-	if (typ == (v__gen__c__SqlType__sqlite3)) {
-		string _t1 = v__gen__c__Gen_sqlite3_type_from_v(g, v_typ);
-		return _t1;
-	}
-	else if (typ == (v__gen__c__SqlType__mysql)) {
-		string _t2 = v__gen__c__Gen_mysql_get_table_type(g, v_typ);
-		return _t2;
-	}
-	else if (typ == (v__gen__c__SqlType__psql)) {
-		string _t3 = v__gen__c__Gen_psql_get_table_type(g, v_typ);
-		return _t3;
-	}
-	else if (typ == (v__gen__c__SqlType__mssql)) {
-		string _t4 = v__gen__c__Gen_mssql_get_table_type(g, v_typ);
-		return _t4;
-	}
-	else {
-	};
-	string _t5 = _SLIT("");
-	return _t5;
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_stmt(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	g->sql_i = 0;
-	v__gen__c__Gen_writeln(g, _SLIT("\n\t// sql insert"));
-	string db_name = v__gen__c__Gen_new_tmp_var(g);
-	g->sql_stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_v__gen__c__dbtype}}, {_SLIT("__DB "), 0xfe10, {.d_s = db_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("sqlite3_stmt* "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = "), 0xfe10, {.d_s = _const_v__gen__c__dbtype}}, {_SLIT("__DB_init_stmt("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\""), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_sql_defaults(g, node, typ);
-	v__gen__c__Gen_writeln(g, _SLIT(");"));
-	Array_v__ast__SqlStmtLine arr_stmt = __new_array_with_default(0, 0, sizeof(v__ast__SqlStmtLine), 0);
-	Array_string arr_fkeys = __new_array_with_default(0, 0, sizeof(string), 0);
-	Array_string arr_field_name = __new_array_with_default(0, 0, sizeof(string), 0);
-	if (node.kind == v__ast__SqlStmtKind__insert) {
-		for (int i = 0; i < node.fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[i];
-			if (v__ast__Type_alias_eq(v__gen__c__Gen_get_sql_field_type(g, field), ((v__ast__Type)(-1)))) {
-				continue;
-			}
-			if (string__eq(field.name, g->sql_fkey) && (g->sql_fkey).len != 0) {
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("sqlite3_bind_int("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i + 0}}, {_SLIT(" , "), 0xfe10, {.d_s = g->sql_parent_id}}, {_SLIT("); // parent id"), 0, { .d_c = 0 }}})));
-				continue;
-			}
-			string x =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = node.object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-			if (v__ast__Type_alias_eq(field.typ, _const_v__ast__string_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("sqlite3_bind_text("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i + 0}}, {_SLIT(", (char*)"), 0xfe10, {.d_s = x}}, {_SLIT(".str, "), 0xfe10, {.d_s = x}}, {_SLIT(".len, 0);"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				v__ast__SqlStmtLine expr = (*(v__ast__SqlStmtLine*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-				string tmp_sql_stmt_name = g->sql_stmt_name;
-				string tmp_sql_table_name = g->sql_table_name;
-				v__gen__c__Gen_sql_stmt_line(g, expr, db_expr);
-				g->sql_stmt_name = tmp_sql_stmt_name;
-				g->sql_table_name = tmp_sql_table_name;
-				string res = v__gen__c__Gen_new_tmp_var(g);
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Array_sqlite__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = sqlite__DB_exec("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\"SELECT last_insert_rowid()\")).arg0;"), 0, { .d_c = 0 }}})));
-				string id_name = v__gen__c__Gen_new_tmp_var(g);
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = string_int((*(string*)array_get((*(sqlite__Row*)array_get("), 0xfe10, {.d_s = res}}, {_SLIT(", 0)).vals, 0)));"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("sqlite3_bind_int("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i + 0}}, {_SLIT(" , "), 0xfe10, {.d_s = id_name}}, {_SLIT("); // id"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__ast__Type t = v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(g->table, field.typ)).elem_type;
-				if (v__ast__Table_get_type_symbol(g->table, t)->kind == v__ast__Kind__struct_) {
-					string fkey = _SLIT("");
-					for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-						v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-						if (string__eq(attr.name, _SLIT("fkey")) && (attr.arg).len != 0 && attr.kind == v__ast__AttrKind__string) {
-							fkey = attr.arg;
-							break;
-						}
-					}
-					if ((fkey).len == 0) {
-						v__gen__c__verror(_SLIT("fkey attribute has to be set for arrays in orm"));
-						VUNREACHABLE();
-						continue;
-					}
-					array_push((array*)&arr_stmt, _MOV((v__ast__SqlStmtLine[]){ (*(v__ast__SqlStmtLine*)map_get((map*)&node.sub_structs, &(int[]){((int)(t))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) }));
-					array_push((array*)&arr_fkeys, _MOV((string[]){ string_clone(fkey) }));
-					array_push((array*)&arr_field_name, _MOV((string[]){ string_clone(field.name) }));
-				}
-			} else {
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("sqlite3_bind_int("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i + 0}}, {_SLIT(" , "), 0xfe10, {.d_s = x}}, {_SLIT("); // stmt"), 0, { .d_c = 0 }}})));
-			}
-		}
-	}
-	string binds = strings__Builder_str(&g->sql_buf);
-	g->sql_buf = strings__new_builder(100);
-	v__gen__c__Gen_writeln(g, binds);
-	string step_res = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tint "), 0xfe10, {.d_s = step_res}}, {_SLIT(" = sqlite3_step("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tif( ("), 0xfe10, {.d_s = step_res}}, {_SLIT(" != SQLITE_OK) && ("), 0xfe10, {.d_s = step_res}}, {_SLIT(" != SQLITE_DONE)){ puts(sqlite3_errmsg("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); }"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tsqlite3_finalize("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	if (arr_stmt.len > 0) {
-		string res = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Array_sqlite__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = sqlite__DB_exec("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\"SELECT last_insert_rowid()\")).arg0;"), 0, { .d_c = 0 }}})));
-		string id_name = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = string_int((*(string*)array_get((*(sqlite__Row*)array_get("), 0xfe10, {.d_s = res}}, {_SLIT(", 0)).vals, 0)));"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_sql_arr_stmt(g, arr_stmt, arr_fkeys, arr_field_name, id_name, db_expr);
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType sql_typ) {
-	g->sql_i = 0;
-	string cur_line = line;
-	if (!sub) {
-		cur_line = v__gen__c__Gen_go_before_stmt(g, 0);
-	}
-	g->sql_stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	string db_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g, _SLIT("\n\t// sql select"));
-	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _const_v__gen__c__dbtype}}, {_SLIT("__DB "), 0xfe10, {.d_s = db_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fn_prefix}}, {_SLIT(" = &"), 0, { .d_c = 0 }}})));
 	v__gen__c__Gen_expr(g, node.db_expr);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	string stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = stmt_name}}, {_SLIT(" = _SLIT(\""), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_write(g, v__gen__c__Gen_get_base_sql_select_query(g, node, sql_typ));
-	v__gen__c__Gen_sql_expr_defaults(g, node, sql_typ);
-	v__gen__c__Gen_writeln(g, _SLIT("\");"));
-	v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("sqlite3_stmt* "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = "), 0xfe10, {.d_s = _const_v__gen__c__dbtype}}, {_SLIT("__DB_init_stmt("), 0xfe10, {.d_s = db_name}}, {_SLIT(", "), 0xfe10, {.d_s = stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	string binds = strings__Builder_str(&g->sql_buf);
-	g->sql_buf = strings__new_builder(100);
-	v__gen__c__Gen_writeln(g, binds);
-	string binding_res = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = binding_res}}, {_SLIT(" = sqlite3_extended_errcode("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn);"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = binding_res}}, {_SLIT(" != SQLITE_OK) { puts(sqlite3_errmsg("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); }"), 0, { .d_c = 0 }}})));
-	if (node.is_count) {
-		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = _const_v__gen__c__dbtype}}, {_SLIT("__get_int_from_stmt("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	} else {
-		string tmp = v__gen__c__Gen_new_tmp_var(g);
-		string styp = v__gen__c__Gen_typ(g, node.typ);
-		string elem_type_str = _SLIT("");
-		if (node.is_array) {
-			v__ast__TypeSymbol* array_sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-			v__ast__Array array_info = /* as */ *(v__ast__Array*)__as_cast((array_sym->info)._v__ast__Array,(array_sym->info)._typ, 376) /*expected idx: 376, name: v.ast.Array */ ;
-			elem_type_str = v__gen__c__Gen_typ(g, array_info.elem_type);
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array = __new_array(0, 10, sizeof("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g, _SLIT("while (1) {"));
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, array_info.elem_type);
-			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-			for (int i = 0; i < info.fields.len; ++i) {
-				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
-				v__gen__c__Gen_zero_struct_field(g, field);
-				if (i != info.fields.len - 1) {
-					v__gen__c__Gen_write(g, _SLIT(", "));
-				}
-			}
-			v__gen__c__Gen_writeln(g, _SLIT("};"));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = styp}}, {_SLIT("){"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-			for (int i = 0; i < info.fields.len; ++i) {
-				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
-				v__gen__c__Gen_zero_struct_field(g, field);
-				if (i != info.fields.len - 1) {
-					v__gen__c__Gen_write(g, _SLIT(", "));
-				}
-			}
-			v__gen__c__Gen_writeln(g, _SLIT("};"));
-		}
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int _step_res"), 0xfe10, {.d_s = tmp}}, {_SLIT(" = sqlite3_step("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif (_step_res"), 0xfe10, {.d_s = tmp}}, {_SLIT(" == SQLITE_DONE) break;"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif (_step_res"), 0xfe10, {.d_s = tmp}}, {_SLIT(" == SQLITE_ROW) ;"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\telse if (_step_res"), 0xfe10, {.d_s = tmp}}, {_SLIT(" != SQLITE_OK) break;"), 0, { .d_c = 0 }}})));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tif (_step_res"), 0xfe10, {.d_s = tmp}}, {_SLIT(" == SQLITE_OK || _step_res"), 0xfe10, {.d_s = tmp}}, {_SLIT(" == SQLITE_ROW) {"), 0, { .d_c = 0 }}})));
-		}
-		string primary = _SLIT("");
-		for (int i = 0; i < node.fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[i];
-			for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-				if (string__eq(attr.name, _SLIT("primary"))) {
-					primary =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-					break;
-				}
-			}
-			string func = _SLIT("sqlite3_column_int");
-			if (v__ast__Type_alias_eq(field.typ, _const_v__ast__string_type)) {
-				func = _SLIT("sqlite3_column_text");
-				string string_data = v__gen__c__Gen_new_tmp_var(g);
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("byte* "), 0xfe10, {.d_s = string_data}}, {_SLIT(" = (byte*)"), 0xfe10, {.d_s = func}}, {_SLIT("("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = string_data}}, {_SLIT(" != NULL) {"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = tos_clone("), 0xfe10, {.d_s = string_data}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g, _SLIT("}"));
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				string id_name = v__gen__c__Gen_new_tmp_var(g);
-				v__gen__c__Gen_writeln(g, _SLIT("//parse struct start"));
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = "), 0xfe10, {.d_s = func}}, {_SLIT("("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-				v__ast__SqlExpr expr = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-				v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((expr.where_expr)._v__ast__InfixExpr,(expr.where_expr)._typ, 235) /*expected idx: 235, name: v.ast.InfixExpr */ ;
-				v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
-				ident.name = id_name;
-				where_expr.right = v__ast__Ident_to_sumtype_v__ast__Expr(&ident);
-				expr.where_expr = v__ast__InfixExpr_to_sumtype_v__ast__Expr(&where_expr);
-				int tmp_sql_i = g->sql_i;
-				string tmp_sql_stmt_name = g->sql_stmt_name;
-				strings__Builder tmp_sql_buf = g->sql_buf;
-				string tmp_sql_table_name = g->sql_table_name;
-				v__gen__c__Gen_sql_select_expr(g, expr, true,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" ="), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g, _SLIT("//parse struct end"));
-				g->sql_stmt_name = tmp_sql_stmt_name;
-				g->sql_buf = tmp_sql_buf;
-				g->sql_i = tmp_sql_i;
-				g->sql_table_name = tmp_sql_table_name;
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__gen__c__Gen_sql_select_arr(g, field, node, primary, tmp);
-			} else {
-				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = "), 0xfe10, {.d_s = func}}, {_SLIT("("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = i}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			}
-		}
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t array_push((array*)&"), 0xfe10, {.d_s = tmp}}, {_SLIT("_array, _MOV(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("[]){ "), 0xfe10, {.d_s = tmp}}, {_SLIT(" }));\n"), 0, { .d_c = 0 }}})));
-		}
-		v__gen__c__Gen_writeln(g, _SLIT("}"));
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sqlite3_finalize("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array; "), 0, { .d_c = 0 }}})));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("; "), 0, { .d_c = 0 }}})));
-		}
+	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", ._typ = _orm__Connection_"), 0xfe10, {.d_s = fn_prefix}}, {_SLIT("_index};"), 0, { .d_c = 0 }}})));
+	for (int _t1 = 0; _t1 < node.lines.len; ++_t1) {
+		v__ast__SqlStmtLine line = ((v__ast__SqlStmtLine*)node.lines.data)[_t1];
+		v__gen__c__Gen_sql_stmt_line(g, line, conn);
 	}
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	v__gen__c__Gen_writeln(g, _SLIT("// sqlite3 table creator"));
-	string create_string = v__gen__c__Gen_table_gen(g, node, typ, db_expr);
-	v__gen__c__Gen_write(g, _SLIT("sqlite__DB_exec("));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = create_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_stmt_line(v__gen__c__Gen* g, v__ast__SqlStmtLine nd, string expr) {
+	v__ast__SqlStmtLine node = nd;
 	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	v__gen__c__Gen_writeln(g, _SLIT("// sqlite3 table drop"));
-	string drop_string =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("DROP TABLE `"), 0xfe10, {.d_s = table_name}}, {_SLIT("`;"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_write(g, _SLIT("sqlite__DB_exec("));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = drop_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind(v__gen__c__Gen* g, string val, string len, v__ast__Type typ) {
-	string _t1 = v__gen__c__Gen_sqlite3_type_from_v(g, typ);
-	
-	if (string__eq(_t1, _SLIT("INTEGER"))) {
-		v__gen__c__Gen_sqlite3_bind_int(g, val);
-	}
-	else if (string__eq(_t1, _SLIT("TEXT"))) {
-		v__gen__c__Gen_sqlite3_bind_string(g, val, len);
-	}
-	else {
-		v__gen__c__verror( str_intp(3, _MOV((StrIntpData[]){{_SLIT("bad sql type="), 0xfe07, {.d_i32 = typ}}, {_SLIT(" ident_name="), 0xfe10, {.d_s = val}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
-	};
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_int(v__gen__c__Gen* g, string val) {
-	strings__Builder_writeln(&g->sql_buf,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("sqlite3_bind_int("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT(", "), 0xfe10, {.d_s = val}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sqlite3_bind_string(v__gen__c__Gen* g, string val, string len) {
-	strings__Builder_writeln(&g->sql_buf,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("sqlite3_bind_text("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT(", (char*)"), 0xfe10, {.d_s = val}}, {_SLIT(", "), 0xfe10, {.d_s = len}}, {_SLIT(", 0);"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_sqlite3_type_from_v(v__gen__c__Gen* g, v__ast__Type v_typ) {
-	if (v__ast__Type_is_number(v_typ) || v__ast__Type_alias_eq(v_typ, _const_v__ast__bool_type) || v_typ == -1) {
-		string _t1 = _SLIT("INTEGER");
-		return _t1;
-	}
-	if (v__ast__Type_is_string(v_typ)) {
-		string _t2 = _SLIT("TEXT");
-		return _t2;
-	}
-	string _t3 = _SLIT("");
-	return _t3;
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_stmt(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	g->sql_i = 0;
-	v__gen__c__Gen_writeln(g, _SLIT("\n\t//mysql insert"));
-	string db_name = v__gen__c__Gen_new_tmp_var(g);
-	g->sql_stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql__Connection "), 0xfe10, {.d_s = db_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	string stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = stmt_name}}, {_SLIT(" = _SLIT(\""), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_sql_defaults(g, node, typ);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_STMT* "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = mysql_stmt_init("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn);"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("mysql_stmt_prepare("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe10, {.d_s = stmt_name}}, {_SLIT(".str, "), 0xfe10, {.d_s = stmt_name}}, {_SLIT(".len);"), 0, { .d_c = 0 }}})));
-	string bind = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_BIND "), 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT("];"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("memset("), 0xfe10, {.d_s = bind}}, {_SLIT(", 0, sizeof(MYSQL_BIND)*"), 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	Array_v__ast__SqlStmtLine arr_stmt = __new_array_with_default(0, 0, sizeof(v__ast__SqlStmtLine), 0);
-	Array_string arr_fkeys = __new_array_with_default(0, 0, sizeof(string), 0);
-	Array_string arr_field_name = __new_array_with_default(0, 0, sizeof(string), 0);
-	if (node.kind == v__ast__SqlStmtKind__insert) {
-		for (int i = 0; i < node.fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[i];
-			if (v__ast__Type_alias_eq(v__gen__c__Gen_get_sql_field_type(g, field), ((v__ast__Type)(-1)))) {
-				continue;
-			}
-			if (string__eq(field.name, g->sql_fkey) && (g->sql_fkey).len != 0) {
-				multi_return_string_string mr_13789 = v__gen__c__Gen_mysql_buffer_typ_from_field(g, field);
-				string t = mr_13789.arg0;
-				string sym = mr_13789.arg1;
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer_type = "), 0xfe10, {.d_s = t}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				if (string__eq(sym, _SLIT("char"))) {
-					v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer = ("), 0xfe10, {.d_s = sym}}, {_SLIT("*) "), 0xfe10, {.d_s = g->sql_parent_id}}, {_SLIT(".str;"), 0, { .d_c = 0 }}})));
-				} else {
-					v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer = ("), 0xfe10, {.d_s = sym}}, {_SLIT("*) &"), 0xfe10, {.d_s = g->sql_parent_id}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				}
-				if (string__eq(sym, _SLIT("char"))) {
-					v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer_length = "), 0xfe10, {.d_s = g->sql_parent_id}}, {_SLIT(".len;"), 0, { .d_c = 0 }}})));
-				}
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].is_null = 0;"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].length = 0;"), 0, { .d_c = 0 }}})));
-				continue;
-			}
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("//"), 0xfe10, {.d_s = field.name}}, {_SLIT(" ("), 0xfe07, {.d_i32 = field.typ}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
-			string x =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = node.object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-			if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				v__ast__SqlStmtLine expr = (*(v__ast__SqlStmtLine*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-				string tmp_sql_stmt_name = g->sql_stmt_name;
-				string tmp_sql_table_name = g->sql_table_name;
-				v__gen__c__Gen_sql_stmt_line(g, expr, db_expr);
-				g->sql_stmt_name = tmp_sql_stmt_name;
-				g->sql_table_name = tmp_sql_table_name;
-				string res = v__gen__c__Gen_new_tmp_var(g);
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = res}}, {_SLIT("_err = mysql_real_query("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn, \"SELECT LAST_INSERT_ID();\", 24);"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT("_err != 0) { puts(mysql_error("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); }"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_RES* "), 0xfe10, {.d_s = res}}, {_SLIT(" = mysql_store_result("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn);"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if (mysql_num_rows("), 0xfe10, {.d_s = res}}, {_SLIT(") != 1) { puts(\"Something went wrong\"); }"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_ROW "), 0xfe10, {.d_s = res}}, {_SLIT("_row = mysql_fetch_row("), 0xfe10, {.d_s = res}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = x}}, {_SLIT(".id = string_int(tos_clone("), 0xfe10, {.d_s = res}}, {_SLIT("_row[0]));"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql_free_result("), 0xfe10, {.d_s = res}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer_type = MYSQL_TYPE_LONG;"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer = &"), 0xfe10, {.d_s = x}}, {_SLIT(".id;"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].is_null = 0;"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].length = 0;"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__ast__Type t = v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(g->table, field.typ)).elem_type;
-				if (v__ast__Table_get_type_symbol(g->table, t)->kind == v__ast__Kind__struct_) {
-					string fkey = _SLIT("");
-					for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-						v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-						if (string__eq(attr.name, _SLIT("fkey")) && (attr.arg).len != 0 && attr.kind == v__ast__AttrKind__string) {
-							fkey = attr.arg;
-							break;
-						}
-					}
-					if ((fkey).len == 0) {
-						v__gen__c__verror(_SLIT("fkey attribute has to be set for arrays in orm"));
-						VUNREACHABLE();
-						continue;
-					}
-					array_push((array*)&arr_stmt, _MOV((v__ast__SqlStmtLine[]){ (*(v__ast__SqlStmtLine*)map_get((map*)&node.sub_structs, &(int[]){((int)(t))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) }));
-					array_push((array*)&arr_fkeys, _MOV((string[]){ string_clone(fkey) }));
-					array_push((array*)&arr_field_name, _MOV((string[]){ string_clone(field.name) }));
-				}
-			} else {
-				multi_return_string_string mr_16028 = v__gen__c__Gen_mysql_buffer_typ_from_field(g, field);
-				string t = mr_16028.arg0;
-				string sym = mr_16028.arg1;
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer_type = "), 0xfe10, {.d_s = t}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				if (string__eq(sym, _SLIT("char"))) {
-					v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer = ("), 0xfe10, {.d_s = sym}}, {_SLIT("*) "), 0xfe10, {.d_s = x}}, {_SLIT(".str;"), 0, { .d_c = 0 }}})));
-				} else {
-					v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer = ("), 0xfe10, {.d_s = sym}}, {_SLIT("*) &"), 0xfe10, {.d_s = x}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				}
-				if (string__eq(sym, _SLIT("char"))) {
-					v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].buffer_length = "), 0xfe10, {.d_s = x}}, {_SLIT(".len;"), 0, { .d_c = 0 }}})));
-				}
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].is_null = 0;"), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = bind}}, {_SLIT("["), 0xfe07, {.d_i32 = i - 1}}, {_SLIT("].length = 0;"), 0, { .d_c = 0 }}})));
-			}
-		}
-	}
-	string binds = strings__Builder_str(&g->sql_buf);
-	g->sql_buf = strings__new_builder(100);
-	v__gen__c__Gen_writeln(g, binds);
+	g->sql_table_name = v__ast__Table_get_type_symbol(g->table, node.table_expr.typ)->name;
 	string res = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = res}}, {_SLIT(" = mysql_stmt_bind_param("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", "), 0xfe10, {.d_s = bind}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(" != 0) { puts(mysql_error("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); }"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = res}}, {_SLIT(" = mysql_stmt_execute("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(" != 0) { puts(mysql_error("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); puts(mysql_stmt_error("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(")); }"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql_stmt_close("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql_stmt_free_result("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	if (arr_stmt.len > 0) {
-		string rs = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = rs}}, {_SLIT("_err = mysql_real_query("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn, \"SELECT LAST_INSERT_ID();\", 24);"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = rs}}, {_SLIT("_err != 0) { puts(mysql_error("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); }"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_RES* "), 0xfe10, {.d_s = rs}}, {_SLIT(" = mysql_store_result("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn);"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if (mysql_num_rows("), 0xfe10, {.d_s = rs}}, {_SLIT(") != 1) { puts(\"Something went wrong\"); }"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_ROW "), 0xfe10, {.d_s = rs}}, {_SLIT("_row = mysql_fetch_row("), 0xfe10, {.d_s = rs}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		string id_name = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = string_int(tos_clone("), 0xfe10, {.d_s = rs}}, {_SLIT("_row[0]));"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql_free_result("), 0xfe10, {.d_s = rs}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_sql_arr_stmt(g, arr_stmt, arr_fkeys, arr_field_name, id_name, db_expr);
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType typ) {
-	g->sql_i = 0;
-	string cur_line = line;
-	if (!sub) {
-		cur_line = v__gen__c__Gen_go_before_stmt(g, 0);
-	}
-	g->sql_stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	g->sql_bind_name = v__gen__c__Gen_new_tmp_var(g);
-	string db_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g, _SLIT("\n\t// sql select"));
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql__Connection "), 0xfe10, {.d_s = db_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, node.db_expr);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = _SLIT(\""), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_write(g, v__gen__c__Gen_get_base_sql_select_query(g, node, typ));
-	v__gen__c__Gen_sql_expr_defaults(g, node, typ);
-	v__gen__c__Gen_writeln(g, _SLIT("\");"));
-	string rplc = strings__Builder_str(&g->sql_buf);
-	g->sql_buf = strings__new_builder(100);
-	v__gen__c__Gen_writeln(g, rplc);
-	string query = v__gen__c__Gen_new_tmp_var(g);
-	string res = v__gen__c__Gen_new_tmp_var(g);
-	string fields = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = query}}, {_SLIT(" = mysql_real_query("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn, "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(".str, "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(".len);"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = query}}, {_SLIT(" != 0) { puts(mysql_error("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn)); }"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_RES* "), 0xfe10, {.d_s = res}}, {_SLIT(" = mysql_store_result("), 0xfe10, {.d_s = db_name}}, {_SLIT(".conn);"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("MYSQL_ROW "), 0xfe10, {.d_s = fields}}, {_SLIT(" = mysql_fetch_row("), 0xfe10, {.d_s = res}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	if (node.is_count) {
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" string_int(tos_clone("), 0xfe10, {.d_s = fields}}, {_SLIT("[0]));"), 0, { .d_c = 0 }}})));
-	} else {
-		string tmp = v__gen__c__Gen_new_tmp_var(g);
-		string styp = v__gen__c__Gen_typ(g, node.typ);
-		string tmp_i = v__gen__c__Gen_new_tmp_var(g);
-		string elem_type_str = _SLIT("");
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = tmp_i}}, {_SLIT(" = 0;"), 0, { .d_c = 0 }}})));
-		if (node.is_array) {
-			v__ast__TypeSymbol* array_sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-			v__ast__Array array_info = /* as */ *(v__ast__Array*)__as_cast((array_sym->info)._v__ast__Array,(array_sym->info)._typ, 376) /*expected idx: 376, name: v.ast.Array */ ;
-			elem_type_str = v__gen__c__Gen_typ(g, array_info.elem_type);
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array = __new_array(0, 10, sizeof("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("for ("), 0xfe10, {.d_s = tmp_i}}, {_SLIT(" = 0; "), 0xfe10, {.d_s = tmp_i}}, {_SLIT(" < mysql_num_rows("), 0xfe10, {.d_s = res}}, {_SLIT("); "), 0xfe10, {.d_s = tmp_i}}, {_SLIT("++) {"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, array_info.elem_type);
-			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-			for (int i = 0; i < info.fields.len; ++i) {
-				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
-				v__gen__c__Gen_zero_struct_field(g, field);
-				if (i != info.fields.len - 1) {
-					v__gen__c__Gen_write(g, _SLIT(", "));
-				}
-			}
-			v__gen__c__Gen_writeln(g, _SLIT("};"));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = styp}}, {_SLIT("){"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-			for (int i = 0; i < info.fields.len; ++i) {
-				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
-				v__gen__c__Gen_zero_struct_field(g, field);
-				if (i != info.fields.len - 1) {
-					v__gen__c__Gen_write(g, _SLIT(", "));
-				}
-			}
-			v__gen__c__Gen_writeln(g, _SLIT("};"));
-		}
-		string char_ptr = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("char* "), 0xfe10, {.d_s = char_ptr}}, {_SLIT(" = \"\";"), 0, { .d_c = 0 }}})));
-		string primary = _SLIT("");
-		for (int i = 0; i < node.fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[i];
-			for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
+	bool subs = false;
+	bool dcheck = false;
+	if (node.kind != v__ast__SqlStmtKind__create) {
+		Array_v__ast__StructField fields = __new_array_with_default(0, 0, sizeof(v__ast__StructField), 0);
+		for (int _t1 = 0; _t1 < node.fields.len; ++_t1) {
+			v__ast__StructField f = ((v__ast__StructField*)node.fields.data)[_t1];
+			bool skip = false;
+			bool primary = false;
+			for (int _t2 = 0; _t2 < f.attrs.len; ++_t2) {
+				v__ast__Attr attr = ((v__ast__Attr*)f.attrs.data)[_t2];
 				if (string__eq(attr.name, _SLIT("primary"))) {
-					primary =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-					break;
+					primary = true;
+				}
+				if (string__eq(attr.name, _SLIT("skip"))) {
+					skip = true;
 				}
 			}
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = char_ptr}}, {_SLIT(" = "), 0xfe10, {.d_s = fields}}, {_SLIT("["), 0xfe07, {.d_i32 = i}}, {_SLIT("];"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = char_ptr}}, {_SLIT(" == NULL) { "), 0xfe10, {.d_s = char_ptr}}, {_SLIT(" = \"\"; }"), 0, { .d_c = 0 }}})));
-			string name = v__ast__Table_get_type_symbol(g->table, field.typ)->cname;
-			if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				v__gen__c__Gen_writeln(g, _SLIT("//parse struct start"));
-				v__ast__SqlExpr expr = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-				v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((expr.where_expr)._v__ast__InfixExpr,(expr.where_expr)._typ, 235) /*expected idx: 235, name: v.ast.InfixExpr */ ;
-				v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
-				ident.name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = char_ptr}}, {_SLIT("["), 0xfe07, {.d_i32 = i}}, {_SLIT("]"), 0, { .d_c = 0 }}}));
-				where_expr.right = v__ast__Ident_to_sumtype_v__ast__Expr(&ident);
-				expr.where_expr = v__ast__InfixExpr_to_sumtype_v__ast__Expr(&where_expr);
-				int tmp_sql_i = g->sql_i;
-				string tmp_sql_stmt_name = g->sql_stmt_name;
-				strings__Builder tmp_sql_buf = g->sql_buf;
-				string tmp_sql_table_name = g->sql_table_name;
-				v__gen__c__Gen_sql_select_expr(g, expr, true,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" ="), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g, _SLIT("//parse struct end"));
-				g->sql_stmt_name = tmp_sql_stmt_name;
-				g->sql_buf = tmp_sql_buf;
-				g->sql_i = tmp_sql_i;
-				g->sql_table_name = tmp_sql_table_name;
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__gen__c__Gen_sql_select_arr(g, field, node, primary, tmp);
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__string_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = tos_clone("), 0xfe10, {.d_s = char_ptr}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__byte_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = (byte) string_"), 0xfe10, {.d_s = name}}, {_SLIT("(tos_clone("), 0xfe10, {.d_s = char_ptr}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__i8_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = (i8) string_"), 0xfe10, {.d_s = name}}, {_SLIT("(tos_clone("), 0xfe10, {.d_s = char_ptr}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-			} else {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = string_"), 0xfe10, {.d_s = name}}, {_SLIT("(tos_clone("), 0xfe10, {.d_s = char_ptr}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
+			if (!skip && !primary) {
+				array_push((array*)&fields, _MOV((v__ast__StructField[]){ f }));
 			}
 		}
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t array_push((array*)&"), 0xfe10, {.d_s = tmp}}, {_SLIT("_array, _MOV(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("[]) { "), 0xfe10, {.d_s = tmp}}, {_SLIT(" }));\n"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t "), 0xfe10, {.d_s = fields}}, {_SLIT(" = mysql_fetch_row("), 0xfe10, {.d_s = res}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g, _SLIT("}"));
-		}
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string_free(&"), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mysql_free_result("), 0xfe10, {.d_s = res}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array; "), 0, { .d_c = 0 }}})));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("; "), 0, { .d_c = 0 }}})));
-		}
+		node.fields = array_clone_to_depth(&fields, 0);
+		array_free(&fields);
 	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	v__gen__c__Gen_writeln(g, _SLIT("// mysql table creator"));
-	string create_string = v__gen__c__Gen_table_gen(g, node, typ, db_expr);
-	string tmp = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_mysql__Result "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = mysql__Connection_query(&"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = create_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	v__gen__c__Gen_writeln(g, _SLIT("// mysql table drop"));
-	string drop_string =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("DROP TABLE `"), 0xfe10, {.d_s = table_name}}, {_SLIT("`;"), 0, { .d_c = 0 }}}));
-	string tmp = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_mysql__Result "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = mysql__Connection_query(&"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = drop_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mysql_bind(v__gen__c__Gen* g, string val, v__ast__Type typ) {
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT0, 0, { .d_c = 0 }}})));
-	string sym = v__ast__Table_get_type_symbol(g->table, typ)->cname;
-	strings__Builder_write_string(&g->sql_buf,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = string_replace("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", _SLIT(\"?"), 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT("\"), "), 0, { .d_c = 0 }}})));
-	if (!string__eq(sym, _SLIT("string"))) {
-		bool num = false;
-		if (!string__eq(sym, _SLIT("bool"))) {
-			num = true;
-			strings__Builder_write_string(&g->sql_buf,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = sym}}, {_SLIT("_str("), 0, { .d_c = 0 }}})));
-		}
-		strings__Builder_write_string(&g->sql_buf,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("(("), 0xfe10, {.d_s = sym}}, {_SLIT(") "), 0xfe10, {.d_s = val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
-		if (string__eq(sym, _SLIT("bool"))) {
-			strings__Builder_write_string(&g->sql_buf, _SLIT("? _SLIT(\"1\") : _SLIT(\"0\")"));
-		}
-		if (num) {
-			strings__Builder_write_string(&g->sql_buf, _SLIT(")"));
-		}
-	} else {
-		strings__Builder_write_string(&g->sql_buf,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string__plus(_SLIT(\"\'\"), string__plus(((string) "), 0xfe10, {.d_s = val}}, {_SLIT("), _SLIT(\"\'\")))"), 0, { .d_c = 0 }}})));
-	}
-	strings__Builder_writeln(&g->sql_buf, _SLIT(");"));
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_mysql_get_table_type(v__gen__c__Gen* g, v__ast__Type typ) {
-	string table_typ = _SLIT("");
-
-	if (typ == (_const_v__ast__i8_type) || typ == (_const_v__ast__byte_type) || typ == (_const_v__ast__bool_type)) {
-		table_typ = _SLIT("TINYINT");
-	}
-	else if (typ == (_const_v__ast__i16_type) || typ == (_const_v__ast__u16_type)) {
-		table_typ = _SLIT("SMALLINT");
-	}
-	else if (typ == (_const_v__ast__int_type) || typ == (_const_v__ast__u32_type)) {
-		table_typ = _SLIT("INT");
-	}
-	else if (typ == (_const_v__ast__i64_type) || typ == (_const_v__ast__u64_type)) {
-		table_typ = _SLIT("BIGINT");
-	}
-	else if (typ == (_const_v__ast__f32_type)) {
-		table_typ = _SLIT("FLOAT");
-	}
-	else if (typ == (_const_v__ast__f64_type)) {
-		table_typ = _SLIT("DOUBLE");
-	}
-	else if (typ == (_const_v__ast__string_type)) {
-		table_typ = _SLIT("TEXT");
-	}
-	else if (typ == (-1)) {
-		table_typ = _SLIT("SERIAL");
-	}
-	else {
-	};
-	return table_typ;
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_mysql_buffer_typ_from_typ(v__gen__c__Gen* g, v__ast__Type typ) {
-	string buf_typ = _SLIT("");
-
-	if (typ == (_const_v__ast__i8_type) || typ == (_const_v__ast__byte_type) || typ == (_const_v__ast__bool_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_TINY");
-	}
-	else if (typ == (_const_v__ast__i16_type) || typ == (_const_v__ast__u16_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_SHORT");
-	}
-	else if (typ == (_const_v__ast__int_type) || typ == (_const_v__ast__u32_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_LONG");
-	}
-	else if (typ == (_const_v__ast__i64_type) || typ == (_const_v__ast__u64_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_LONGLONG");
-	}
-	else if (typ == (_const_v__ast__f32_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_FLOAT");
-	}
-	else if (typ == (_const_v__ast__f64_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_DOUBLE");
-	}
-	else if (typ == (_const_v__ast__string_type)) {
-		buf_typ = _SLIT("MYSQL_TYPE_STRING");
-	}
-	else {
-		buf_typ = _SLIT("MYSQL_TYPE_NULL");
-	};
-	return buf_typ;
-}
-
-VV_LOCAL_SYMBOL multi_return_string_string v__gen__c__Gen_mysql_buffer_typ_from_field(v__gen__c__Gen* g, v__ast__StructField field) {
-	v__ast__Type typ = v__gen__c__Gen_get_sql_field_type(g, field);
-	string sym = v__ast__Table_get_type_symbol(g->table, typ)->cname;
-	string buf_typ = v__gen__c__Gen_mysql_buffer_typ_from_typ(g, typ);
-	if (v__ast__Type_alias_eq(typ, _const_v__ast__string_type)) {
-		sym = _SLIT("char");
-	}
-	return (multi_return_string_string){.arg0=buf_typ, .arg1=sym};
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_stmt(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	g->sql_i = 0;
-	g->sql_idents = __new_array_with_default(0, 0, sizeof(string), 0);
-	v__gen__c__Gen_writeln(g, _SLIT("\n\t//psql insert"));
-	string db_name = v__gen__c__Gen_new_tmp_var(g);
-	g->sql_stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("pg__DB "), 0xfe10, {.d_s = db_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = _SLIT(\""), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_sql_defaults(g, node, typ);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	Array_v__ast__SqlStmtLine arr_stmt = __new_array_with_default(0, 0, sizeof(v__ast__SqlStmtLine), 0);
-	Array_string arr_fkeys = __new_array_with_default(0, 0, sizeof(string), 0);
-	Array_string arr_field_name = __new_array_with_default(0, 0, sizeof(string), 0);
-	if (node.kind == v__ast__SqlStmtKind__insert) {
-		for (int i = 0; i < node.fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[i];
-			if (v__ast__Type_alias_eq(v__gen__c__Gen_get_sql_field_type(g, field), ((v__ast__Type)(-1)))) {
-				continue;
-			}
-			g->sql_i = i;
-			v__ast__Type field_type = v__gen__c__Gen_get_sql_field_type(g, field);
-			if (string__eq(field.name, g->sql_fkey) && (g->sql_fkey).len != 0) {
-				g->sql_buf = strings__new_builder(100);
-				v__gen__c__Gen_sql_bind(g, g->sql_parent_id, _SLIT(""), field_type, typ);
-				v__gen__c__Gen_writeln(g, strings__Builder_str(&g->sql_buf));
-				continue;
-			}
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("//"), 0xfe10, {.d_s = field.name}}, {_SLIT(" ("), 0xfe07, {.d_i32 = field.typ}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
-			string x =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = node.object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-			if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				v__ast__SqlStmtLine expr = (*(v__ast__SqlStmtLine*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-				string tmp_sql_stmt_name = g->sql_stmt_name;
-				string tmp_sql_table_name = g->sql_table_name;
-				v__gen__c__Gen_sql_stmt_line(g, expr, db_expr);
-				g->sql_stmt_name = tmp_sql_stmt_name;
-				g->sql_table_name = tmp_sql_table_name;
-				string res = v__gen__c__Gen_new_tmp_var(g);
-				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_pg__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = pg__DB_exec_one("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\"SELECT LASTVAL();\"));"), 0, { .d_c = 0 }}})));
-				string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT0, "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = res}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-				g->sql_buf = strings__new_builder(100);
-				v__gen__c__Gen_sql_bind(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string_int((*(string*)array_get((*(pg__Row*)"), 0xfe10, {.d_s = res}}, {_SLIT(".data).vals, 0)))"), 0, { .d_c = 0 }}})), _SLIT(""), _const_v__ast__int_type, typ);
-				v__gen__c__Gen_writeln(g, strings__Builder_str(&g->sql_buf));
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__ast__Type t = v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(g->table, field.typ)).elem_type;
-				if (v__ast__Table_get_type_symbol(g->table, t)->kind == v__ast__Kind__struct_) {
-					string fkey = _SLIT("");
-					for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-						v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-						if (string__eq(attr.name, _SLIT("fkey")) && (attr.arg).len != 0 && attr.kind == v__ast__AttrKind__string) {
-							fkey = attr.arg;
-							break;
-						}
-					}
-					if ((fkey).len == 0) {
-						v__gen__c__verror(_SLIT("fkey attribute has to be set for arrays in orm"));
-						VUNREACHABLE();
-						continue;
-					}
-					array_push((array*)&arr_stmt, _MOV((v__ast__SqlStmtLine[]){ (*(v__ast__SqlStmtLine*)map_get((map*)&node.sub_structs, &(int[]){((int)(t))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) }));
-					array_push((array*)&arr_fkeys, _MOV((string[]){ string_clone(fkey) }));
-					array_push((array*)&arr_field_name, _MOV((string[]){ string_clone(field.name) }));
-				}
-			} else {
-				g->sql_buf = strings__new_builder(100);
-				v__gen__c__Gen_sql_bind(g, x, _SLIT(""), field_type, typ);
-				v__gen__c__Gen_writeln(g, strings__Builder_str(&g->sql_buf));
-			}
-		}
-	}
-	string binds = strings__Builder_str(&g->sql_buf);
-	g->sql_buf = strings__new_builder(100);
-	v__gen__c__Gen_writeln(g, binds);
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("pg__DB_exec("), 0xfe10, {.d_s = db_name}}, {_SLIT(", "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	if (arr_stmt.len > 0) {
-		string res = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_pg__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = pg__DB_exec_one("), 0xfe10, {.d_s = db_name}}, {_SLIT(", _SLIT(\"SELECT LASTVAL();\"));"), 0, { .d_c = 0 }}})));
-		string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT0, "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = res}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-		string id_name = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = string_int((*(string*)array_get((*(pg__Row*)"), 0xfe10, {.d_s = res}}, {_SLIT(".data).vals, 0)));"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_sql_arr_stmt(g, arr_stmt, arr_fkeys, arr_field_name, id_name, db_expr);
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node, bool sub, string line, v__gen__c__SqlType typ) {
-	g->sql_i = 0;
-	string cur_line = line;
-	if (!sub) {
-		cur_line = v__gen__c__Gen_go_before_stmt(g, 0);
-	}
-	g->sql_stmt_name = v__gen__c__Gen_new_tmp_var(g);
-	string db_name = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g, _SLIT("\n\t// psql select"));
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("pg__DB "), 0xfe10, {.d_s = db_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, node.db_expr);
-	v__gen__c__Gen_writeln(g, _SLIT(";"));
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = _SLIT(\""), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_write(g, v__gen__c__Gen_get_base_sql_select_query(g, node, typ));
-	v__gen__c__Gen_sql_expr_defaults(g, node, typ);
-	v__gen__c__Gen_writeln(g, _SLIT("\");"));
-	string buf = strings__Builder_str(&g->sql_buf);
-	g->sql_buf = strings__new_builder(100);
-	v__gen__c__Gen_writeln(g, buf);
-	string res = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("Option_Array_pg__Row "), 0xfe10, {.d_s = res}}, {_SLIT(" = pg__DB_exec("), 0xfe10, {.d_s = db_name}}, {_SLIT(", "), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = res}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-	string rows = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Array_pg__Row "), 0xfe10, {.d_s = rows}}, {_SLIT(" = *(Array_pg__Row*) "), 0xfe10, {.d_s = res}}, {_SLIT(".data;"), 0, { .d_c = 0 }}})));
-	if (node.is_count) {
-		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" string_int((*(string*)array_get(array_get("), 0xfe10, {.d_s = rows}}, {_SLIT(", 0).vals), 0)));"), 0, { .d_c = 0 }}})));
-	} else {
-		string tmp = v__gen__c__Gen_new_tmp_var(g);
-		string styp = v__gen__c__Gen_typ(g, node.typ);
-		string tmp_i = v__gen__c__Gen_new_tmp_var(g);
-		string elem_type_str = _SLIT("");
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = tmp_i}}, {_SLIT(" = 0;"), 0, { .d_c = 0 }}})));
-		if (node.is_array) {
-			v__ast__TypeSymbol* array_sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-			v__ast__Array array_info = /* as */ *(v__ast__Array*)__as_cast((array_sym->info)._v__ast__Array,(array_sym->info)._typ, 376) /*expected idx: 376, name: v.ast.Array */ ;
-			elem_type_str = v__gen__c__Gen_typ(g, array_info.elem_type);
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array = __new_array(0, 10, sizeof("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("for ("), 0xfe10, {.d_s = tmp_i}}, {_SLIT(" = 0; "), 0xfe10, {.d_s = tmp_i}}, {_SLIT(" < "), 0xfe10, {.d_s = rows}}, {_SLIT(".len; "), 0xfe10, {.d_s = tmp_i}}, {_SLIT("++) {"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, array_info.elem_type);
-			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-			for (int i = 0; i < info.fields.len; ++i) {
-				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
-				v__gen__c__Gen_zero_struct_field(g, field);
-				if (i != info.fields.len - 1) {
-					v__gen__c__Gen_write(g, _SLIT(", "));
-				}
-			}
-			v__gen__c__Gen_writeln(g, _SLIT("};"));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = styp}}, {_SLIT("){"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-			for (int i = 0; i < info.fields.len; ++i) {
-				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
-				v__gen__c__Gen_zero_struct_field(g, field);
-				if (i != info.fields.len - 1) {
-					v__gen__c__Gen_write(g, _SLIT(", "));
-				}
-			}
-			v__gen__c__Gen_writeln(g, _SLIT("};"));
-		}
-		string fields = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = rows}}, {_SLIT(".len > 0) {"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("Array_string "), 0xfe10, {.d_s = fields}}, {_SLIT(" = (*(pg__Row*) array_get("), 0xfe10, {.d_s = rows}}, {_SLIT(", "), 0xfe10, {.d_s = tmp_i}}, {_SLIT(")).vals;"), 0, { .d_c = 0 }}})));
-		string fld = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string "), 0xfe10, {.d_s = fld}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-		string primary = _SLIT("");
-		for (int i = 0; i < node.fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[i];
-			for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-				if (string__eq(attr.name, _SLIT("primary"))) {
-					primary =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-					break;
-				}
-			}
-			if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__gen__c__Gen_sql_select_arr(g, field, node, primary, tmp);
-				continue;
-			}
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fld}}, {_SLIT(" = (*(string*)array_get("), 0xfe10, {.d_s = fields}}, {_SLIT(", "), 0xfe07, {.d_i32 = i}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-			string name = v__ast__Table_get_type_symbol(g->table, field.typ)->cname;
-			if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				v__gen__c__Gen_writeln(g, _SLIT("//parse struct start"));
-				v__ast__SqlExpr expr = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-				v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((expr.where_expr)._v__ast__InfixExpr,(expr.where_expr)._typ, 235) /*expected idx: 235, name: v.ast.InfixExpr */ ;
-				v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
-				ident.name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fld}}, {_SLIT0, 0, { .d_c = 0 }}}));
-				where_expr.right = v__ast__Ident_to_sumtype_v__ast__Expr(&ident);
-				expr.where_expr = v__ast__InfixExpr_to_sumtype_v__ast__Expr(&where_expr);
-				int tmp_sql_i = g->sql_i;
-				string tmp_sql_stmt_name = g->sql_stmt_name;
-				strings__Builder tmp_sql_buf = g->sql_buf;
-				string tmp_sql_table_name = g->sql_table_name;
-				v__gen__c__Gen_sql_select_expr(g, expr, true,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" ="), 0, { .d_c = 0 }}})));
-				v__gen__c__Gen_writeln(g, _SLIT("//parse struct end"));
-				g->sql_stmt_name = tmp_sql_stmt_name;
-				g->sql_buf = tmp_sql_buf;
-				g->sql_i = tmp_sql_i;
-				g->sql_table_name = tmp_sql_table_name;
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__string_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = "), 0xfe10, {.d_s = fld}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__byte_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = (byte) string_"), 0xfe10, {.d_s = name}}, {_SLIT("("), 0xfe10, {.d_s = fld}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__i8_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = (i8) string_"), 0xfe10, {.d_s = name}}, {_SLIT("("), 0xfe10, {.d_s = fld}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			} else if (v__ast__Type_alias_eq(field.typ, _const_v__ast__bool_type)) {
-				v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = string__eq("), 0xfe10, {.d_s = fld}}, {_SLIT(", _SLIT(\"0\")) ? false : true;"), 0, { .d_c = 0 }}})));
-			} else {
-				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = string_"), 0xfe10, {.d_s = name}}, {_SLIT("("), 0xfe10, {.d_s = fld}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-			}
-		}
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t array_push((array*)&"), 0xfe10, {.d_s = tmp}}, {_SLIT("_array, _MOV(("), 0xfe10, {.d_s = elem_type_str}}, {_SLIT("[]) { "), 0xfe10, {.d_s = tmp}}, {_SLIT(" }));\n"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_writeln(g, _SLIT("}"));
-		}
-		v__gen__c__Gen_writeln(g, _SLIT("}"));
-		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string_free(&"), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
-		if (node.is_array) {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array; "), 0, { .d_c = 0 }}})));
-		} else {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cur_line}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("; "), 0, { .d_c = 0 }}})));
-		}
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	v__gen__c__Gen_writeln(g, _SLIT("// psql table creator"));
-	string create_string = v__gen__c__Gen_table_gen(g, node, typ, db_expr);
-	string tmp = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_Array_pg__Row "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = pg__DB_exec("), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = create_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	v__gen__c__Gen_writeln(g, _SLIT("// psql table drop"));
-	string lit = _SLIT("\\\"");
-	string drop_string =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("DROP TABLE "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(";"), 0, { .d_c = 0 }}}));
-	string tmp = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_Array_pg__Row "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = pg__DB_exec("), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = drop_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_psql_get_table_type(v__gen__c__Gen* g, v__ast__Type typ) {
-	string table_typ = _SLIT("");
-
-	if (typ == (_const_v__ast__i8_type) || typ == (_const_v__ast__byte_type) || typ == (_const_v__ast__bool_type)) {
-		table_typ = _SLIT("CHAR(1)");
-	}
-	else if (typ == (_const_v__ast__i16_type) || typ == (_const_v__ast__u16_type)) {
-		table_typ = _SLIT("SMALLINT");
-	}
-	else if (typ == (_const_v__ast__int_type) || typ == (_const_v__ast__u32_type)) {
-		table_typ = _SLIT("INT");
-	}
-	else if (typ == (_const_v__ast__i64_type) || typ == (_const_v__ast__u64_type)) {
-		table_typ = _SLIT("BIGINT");
-	}
-	else if (typ == (_const_v__ast__f32_type)) {
-		table_typ = _SLIT("FLOAT4");
-	}
-	else if (typ == (_const_v__ast__f64_type)) {
-		table_typ = _SLIT("FLOAT8");
-	}
-	else if (typ == (_const_v__ast__string_type)) {
-		table_typ = _SLIT("TEXT");
-	}
-	else if (typ == (-1)) {
-		table_typ = _SLIT("SERIAL");
-	}
-	else {
-	};
-	return table_typ;
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_psql_bind(v__gen__c__Gen* g, string val, v__ast__Type typ) {
-	string sym = v__ast__Table_get_type_symbol(g->table, typ)->cname;
-	strings__Builder_write_string(&g->sql_buf,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(" = string_replace("), 0xfe10, {.d_s = g->sql_stmt_name}}, {_SLIT(", _SLIT(\"$"), 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT("\"), "), 0, { .d_c = 0 }}})));
-	if (!string__eq(sym, _SLIT("string"))) {
-		bool num = false;
-		if (!string__eq(sym, _SLIT("bool"))) {
-			num = true;
-			strings__Builder_write_string(&g->sql_buf,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = sym}}, {_SLIT("_str("), 0, { .d_c = 0 }}})));
-		}
-		strings__Builder_write_string(&g->sql_buf,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("(("), 0xfe10, {.d_s = sym}}, {_SLIT(") "), 0xfe10, {.d_s = val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
-		if (string__eq(sym, _SLIT("bool"))) {
-			strings__Builder_write_string(&g->sql_buf, _SLIT("? _SLIT(\"1\") : _SLIT(\"0\")"));
-		}
-		if (num) {
-			strings__Builder_write_string(&g->sql_buf, _SLIT(")"));
-		}
-	} else {
-		strings__Builder_write_string(&g->sql_buf,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("string__plus(_SLIT(\"\'\"), string__plus(((string) "), 0xfe10, {.d_s = val}}, {_SLIT("), _SLIT(\"\'\")))"), 0, { .d_c = 0 }}})));
-	}
-	strings__Builder_writeln(&g->sql_buf, _SLIT(");"));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mssql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	v__gen__c__Gen_writeln(g, _SLIT("// mssql table creator"));
-	string create_string = v__gen__c__Gen_table_gen(g, node, typ, db_expr);
-	string tmp = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_mssql__Result "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = mssql__Connection_query(&"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = create_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_mssql_drop_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr db_expr) {
-	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	v__gen__c__Gen_writeln(g, _SLIT("// mssql table drop"));
-	string lit = _SLIT("\\\"");
-	string drop_string =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("DROP TABLE "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(";"), 0, { .d_c = 0 }}}));
-	string tmp = v__gen__c__Gen_new_tmp_var(g);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Option_mssql__Result "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = mssql__Connection_query(&"), 0, { .d_c = 0 }}})));
-	v__gen__c__Gen_expr(g, db_expr);
-	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", _SLIT(\""), 0xfe10, {.d_s = drop_string}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-	string tmp_str =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("str_intp(1, _MOV((StrIntpData[]){{_SLIT(\"Something went wrong: \"), "), 0xfe10, {.d_s = _const_v__gen__c__si_s_code}}, {_SLIT(" ,{.d_s=IError_str(err)}}}))"), 0, { .d_c = 0 }}}));
-	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) { IError err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err; eprintln("), 0xfe10, {.d_s = tmp_str}}, {_SLIT("); }"), 0, { .d_c = 0 }}})));
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_mssql_get_table_type(v__gen__c__Gen* g, v__ast__Type typ) {
-	string table_typ = _SLIT("");
-
-	if (typ == (_const_v__ast__i8_type) || typ == (_const_v__ast__byte_type) || typ == (_const_v__ast__bool_type)) {
-		table_typ = _SLIT("TINYINT");
-	}
-	else if (typ == (_const_v__ast__i16_type) || typ == (_const_v__ast__u16_type)) {
-		table_typ = _SLIT("SMALLINT");
-	}
-	else if (typ == (_const_v__ast__int_type) || typ == (_const_v__ast__u32_type)) {
-		table_typ = _SLIT("INT");
-	}
-	else if (typ == (_const_v__ast__i64_type) || typ == (_const_v__ast__u64_type)) {
-		table_typ = _SLIT("BIGINT");
-	}
-	else if (typ == (_const_v__ast__f32_type)) {
-		table_typ = _SLIT("FLOAT(24)");
-	}
-	else if (typ == (_const_v__ast__f64_type)) {
-		table_typ = _SLIT("FLOAT(53)");
-	}
-	else if (typ == (_const_v__ast__string_type)) {
-		table_typ = _SLIT("TEXT");
-	}
-	else if (typ == (-1)) {
-		table_typ = _SLIT("INT IDENTITY");
-	}
-	else {
-	};
-	return table_typ;
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_arr(v__gen__c__Gen* g, v__ast__StructField field, v__ast__SqlExpr node, string primary, string tmp) {
-	v__ast__Type t = v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(g->table, field.typ)).elem_type;
-	if (v__ast__Table_get_type_symbol(g->table, t)->kind == v__ast__Kind__struct_) {
-		string fkey = _SLIT("");
-		for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-			v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-			if (string__eq(attr.name, _SLIT("fkey")) && (attr.arg).len != 0 && attr.kind == v__ast__AttrKind__string) {
-				fkey = attr.arg;
-				break;
-			}
-		}
-		if ((fkey).len == 0) {
-			v__gen__c__verror(_SLIT("fkey attribute has to be set for arrays in orm"));
-			VUNREACHABLE();
-			return;
-		}
-		v__gen__c__Gen_writeln(g, _SLIT("//parse array start"));
-		v__ast__SqlExpr e = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(t))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
-		v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((e.where_expr)._v__ast__InfixExpr,(e.where_expr)._typ, 235) /*expected idx: 235, name: v.ast.InfixExpr */ ;
-		v__ast__Ident lidt = /* as */ *(v__ast__Ident*)__as_cast((where_expr.left)._v__ast__Ident,(where_expr.left)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
-		v__ast__Ident ridt = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
-		ridt.name = primary;
-		lidt.name = fkey;
-		where_expr.right = v__ast__Ident_to_sumtype_v__ast__Expr(&ridt);
-		where_expr.left = v__ast__Ident_to_sumtype_v__ast__Expr(&lidt);
-		v__ast__SqlExpr expr = (v__ast__SqlExpr){
-			.typ = field.typ,
-			.is_count = 0,
-			.db_expr = e.db_expr,
-			.has_where = e.has_where,
-			.has_offset = 0,
-			.offset_expr = {0},
-			.has_order = 0,
-			.order_expr = {0},
-			.has_desc = 0,
-			.is_array = true,
-			.pos = e.pos,
-			.has_limit = 0,
-			.limit_expr = {0},
-			.where_expr = v__ast__InfixExpr_to_sumtype_v__ast__Expr(&where_expr),
-			.table_expr = e.table_expr,
-			.fields = e.fields,
-			.sub_structs = e.sub_structs,
-		};
-		int tmp_sql_i = g->sql_i;
-		string tmp_sql_stmt_name = g->sql_stmt_name;
-		strings__Builder tmp_sql_buf = g->sql_buf;
-		string tmp_sql_table_name = g->sql_table_name;
-		v__gen__c__Gen_sql_select_expr(g, expr, true,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" ="), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g, _SLIT("//parse array end"));
-		g->sql_stmt_name = tmp_sql_stmt_name;
-		g->sql_buf = tmp_sql_buf;
-		g->sql_i = tmp_sql_i;
-		g->sql_table_name = tmp_sql_table_name;
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_arr_stmt(v__gen__c__Gen* g, Array_v__ast__SqlStmtLine arr_stmt, Array_string arr_fkeys, Array_string arr_field_name, string id_name, v__ast__Expr db_expr) {
-	for (int i = 0; i < arr_stmt.len; ++i) {
-		v__ast__SqlStmtLine s = ((v__ast__SqlStmtLine*)arr_stmt.data)[i];
-		string cnt = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("for (int "), 0xfe10, {.d_s = cnt}}, {_SLIT(" = 0; "), 0xfe10, {.d_s = cnt}}, {_SLIT(" < "), 0xfe10, {.d_s = s.object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(arr_field_name, i))}}, {_SLIT(".len; "), 0xfe10, {.d_s = cnt}}, {_SLIT("++) {"), 0, { .d_c = 0 }}})));
-		string name = v__ast__Table_get_type_symbol(g->table, s.table_expr.typ)->cname;
-		string tmp_var = v__gen__c__Gen_new_tmp_var(g);
-		v__gen__c__Gen_writeln(g,  str_intp(7, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = name}}, {_SLIT(" "), 0xfe10, {.d_s = tmp_var}}, {_SLIT(" = (*("), 0xfe10, {.d_s = name}}, {_SLIT("*)array_get("), 0xfe10, {.d_s = s.object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(arr_field_name, i))}}, {_SLIT(", "), 0xfe10, {.d_s = cnt}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
-		Map_int_v__ast__SqlStmtLine sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop);
-		Map_int_v__ast__SqlStmtLine _t1 = s.sub_structs;
-		int _t3 = _t1.key_values.len;
-		for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
-			int _t4 = _t1.key_values.len - _t3;
-			_t3 = _t1.key_values.len;
-			if (_t4 < 0) {
-				_t2 = -1;
-				continue;
-			}
-			if (!DenseArray_has_index(&_t1.key_values, _t2)) {continue;}
-			int key = /*key*/ *(int*)DenseArray_key(&_t1.key_values, _t2);
-			v__ast__SqlStmtLine sub = (*(v__ast__SqlStmtLine*)DenseArray_value(&_t1.key_values, _t2));
-			(*(v__ast__SqlStmtLine*)map_get_and_set((map*)&sub_structs, &(int[]){key}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) = (v__ast__SqlStmtLine){
-				.kind = sub.kind,
-				.object_var_name = tmp_var,
-				.pos = sub.pos,
-				.where_expr = {0},
-				.updated_columns = __new_array(0, 0, sizeof(string)),
-				.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),
-				.table_expr = sub.table_expr,
-				.fields = sub.fields,
-				.sub_structs = sub.sub_structs,
-			};
-		}
-		v__ast__SqlStmtLine stmt = (v__ast__SqlStmtLine){
-			.kind = s.kind,
-			.object_var_name = tmp_var,
-			.pos = s.pos,
-			.where_expr = {0},
-			.updated_columns = __new_array(0, 0, sizeof(string)),
-			.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),
-			.table_expr = s.table_expr,
-			.fields = s.fields,
-			.sub_structs = sub_structs,
-		};
-		string tmp_fkey = g->sql_fkey;
-		string tmp_parent_id = g->sql_parent_id;
-		g->sql_fkey = (*(string*)/*ee elem_typ */array_get(arr_fkeys, i));
-		g->sql_parent_id = id_name;
-		v__gen__c__Gen_sql_stmt_line(g, stmt, db_expr);
-		g->sql_fkey = tmp_fkey;
-		g->sql_parent_id = tmp_parent_id;
-		v__gen__c__Gen_writeln(g, _SLIT("}"));
-	}
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_expr_defaults(v__gen__c__Gen* g, v__ast__SqlExpr node, v__gen__c__SqlType sql_typ) {
-	if (node.has_where && (node.where_expr)._typ == 235 /* v.ast.InfixExpr */) {
-		v__gen__c__Gen_expr_to_sql(g, node.where_expr, sql_typ);
-	}
-	if (node.has_order) {
-		v__gen__c__Gen_write(g, _SLIT(" ORDER BY "));
-		g->sql_side = v__gen__c__SqlExprSide__left;
-		v__gen__c__Gen_expr_to_sql(g, node.order_expr, sql_typ);
-		if (node.has_desc) {
-			v__gen__c__Gen_write(g, _SLIT(" DESC "));
-		}
-	} else {
-		v__gen__c__Gen_write(g, _SLIT(" ORDER BY id "));
-	}
-	if (node.has_limit) {
-		v__gen__c__Gen_write(g, _SLIT(" LIMIT "));
-		g->sql_side = v__gen__c__SqlExprSide__right;
-		v__gen__c__Gen_expr_to_sql(g, node.limit_expr, sql_typ);
-	}
-	if (node.has_offset) {
-		v__gen__c__Gen_write(g, _SLIT(" OFFSET "));
-		g->sql_side = v__gen__c__SqlExprSide__right;
-		v__gen__c__Gen_expr_to_sql(g, node.offset_expr, sql_typ);
-	}
-}
-
-VV_LOCAL_SYMBOL string v__gen__c__Gen_get_base_sql_select_query(v__gen__c__Gen* g, v__ast__SqlExpr node, v__gen__c__SqlType typ) {
-	string lit = _SLIT("`");
-	if (typ == v__gen__c__SqlType__psql) {
-		lit = _SLIT("\\\"");
-	}
-	string sql_query = _SLIT("SELECT ");
-	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	if (node.is_count) {
-		sql_query = /*f*/string__plus(sql_query,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("COUNT(*) FROM "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
-	} else {
-		Array_v__ast__StructField _t1_orig = node.fields;
-		int _t1_len = _t1_orig.len;
-		Array_v__ast__StructField _t1 = __new_array(0, _t1_len, sizeof(v__ast__StructField));
-
-		for (int _t2 = 0; _t2 < _t1_len; ++_t2) {
-			v__ast__StructField it = ((v__ast__StructField*) _t1_orig.data)[_t2];
-			if (v__ast__Table_get_type_symbol(g->table, it.typ)->kind != v__ast__Kind__array) {
-				array_push((array*)&_t1, &it); 
-		}
-		}
-		
-		Array_v__ast__StructField fields = _t1;
-		for (int i = 0; i < fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)fields.data)[i];
-			sql_query = /*f*/string__plus(sql_query,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = v__gen__c__Gen_get_field_name(g, field)}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			if (i < fields.len - 1) {
-				sql_query = /*f*/string__plus(sql_query, _SLIT(", "));
-			}
-		}
-		sql_query = /*f*/string__plus(sql_query,  str_intp(4, _MOV((StrIntpData[]){{_SLIT(" FROM "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0, { .d_c = 0 }}})));
-	}
-	if (node.has_where) {
-		sql_query = /*f*/string__plus(sql_query, _SLIT(" WHERE "));
-	}
-	return sql_query;
-}
-
-VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_defaults(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ) {
-	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	string lit = _SLIT("`");
-	if (typ == v__gen__c__SqlType__psql) {
-		lit = _SLIT("\\\"");
-	}
-	if (node.kind == v__ast__SqlStmtKind__insert) {
-		v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("INSERT INTO "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" ("), 0, { .d_c = 0 }}})));
+	if (node.kind == v__ast__SqlStmtKind__create) {
+		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_void "), 0xfe10, {.d_s = res}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_sql_create_table(g, node, expr, table_name);
+		subs = true;
+	} else if (node.kind == v__ast__SqlStmtKind__drop) {
+		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_void "), 0xfe10, {.d_s = res}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("drop("), 0xfe10, {.d_s = expr}}, {_SLIT("._object, _SLIT(\""), 0xfe10, {.d_s = table_name}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
+		subs = true;
+	} else if (node.kind == v__ast__SqlStmtKind__insert) {
+		string arr = v__gen__c__Gen_new_tmp_var(g);
+		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("Array_orm__Primitive "), 0xfe10, {.d_s = arr}}, {_SLIT(" = new_array_from_c_array(0, 0, sizeof(orm__Primitive), NULL);"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_sql_insert(g, node, expr, table_name, arr, res, _SLIT(""), false, _SLIT(""));
+		dcheck = true;
 	} else if (node.kind == v__ast__SqlStmtKind__update) {
-		v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("UPDATE "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" SET "), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_void "), 0xfe10, {.d_s = res}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_sql_update(g, node, expr, table_name);
 	} else if (node.kind == v__ast__SqlStmtKind__delete) {
-		v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("DELETE FROM "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_void "), 0xfe10, {.d_s = res}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_sql_delete(g, node, expr, table_name);
 	}
-	if (node.kind == v__ast__SqlStmtKind__insert) {
-		Array_v__ast__StructField _t1_orig = node.fields;
-		int _t1_len = _t1_orig.len;
-		Array_v__ast__StructField _t1 = __new_array(0, _t1_len, sizeof(v__ast__StructField));
-
-		for (int _t2 = 0; _t2 < _t1_len; ++_t2) {
-			v__ast__StructField it = ((v__ast__StructField*) _t1_orig.data)[_t2];
-			if (v__ast__Table_get_type_symbol(g->table, it.typ)->kind != v__ast__Kind__array) {
-				array_push((array*)&_t1, &it); 
-		}
-		}
-		
-		Array_v__ast__StructField fields = _t1;
-		for (int i = 0; i < fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)fields.data)[i];
-			if (v__ast__Type_alias_eq(v__gen__c__Gen_get_sql_field_type(g, field), ((v__ast__Type)(-1)))) {
+	if (!dcheck) {
+		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0 && "), 0xfe10, {.d_s = res}}, {_SLIT(".err._typ != _IError_None___index) { _v_panic(IError_str("), 0xfe10, {.d_s = res}}, {_SLIT(".err)); }"), 0, { .d_c = 0 }}})));
+	}
+	if (subs) {
+		Map_int_v__ast__SqlStmtLine _t4 = node.sub_structs;
+		int _t6 = _t4.key_values.len;
+		for (int _t5 = 0; _t5 < _t6; ++_t5 ) {
+			int _t7 = _t4.key_values.len - _t6;
+			_t6 = _t4.key_values.len;
+			if (_t7 < 0) {
+				_t5 = -1;
 				continue;
 			}
-			v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = v__gen__c__Gen_get_field_name(g, field)}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			if (i < fields.len - 1) {
-				v__gen__c__Gen_write(g, _SLIT(", "));
-			}
+			if (!DenseArray_has_index(&_t4.key_values, _t5)) {continue;}
+			v__ast__SqlStmtLine sub = (*(v__ast__SqlStmtLine*)DenseArray_value(&_t4.key_values, _t5));
+			v__gen__c__Gen_sql_stmt_line(g, sub, expr);
 		}
-		v__gen__c__Gen_write(g, _SLIT(") VALUES ("));
-		for (int i = 0; i < fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)fields.data)[i];
-			if (v__ast__Type_alias_eq(v__gen__c__Gen_get_sql_field_type(g, field), ((v__ast__Type)(-1)))) {
-				continue;
-			}
-			v__gen__c__Gen_inc_sql_i(g, typ);
-			if (i < fields.len - 1) {
-				v__gen__c__Gen_write(g, _SLIT(", "));
-			}
-		}
-		v__gen__c__Gen_write(g, _SLIT(")"));
-	} else if (node.kind == v__ast__SqlStmtKind__update) {
-		for (int i = 0; i < node.updated_columns.len; ++i) {
-			string col = ((string*)node.updated_columns.data)[i];
-			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__gen__c__Gen_get_field_name(g, v__gen__c__Gen_get_struct_field(g, col))}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_expr_to_sql(g, (*(v__ast__Expr*)/*ee elem_typ */array_get(node.update_exprs, i)), typ);
-			if (i < node.updated_columns.len - 1) {
-				v__gen__c__Gen_write(g, _SLIT(", "));
-			}
-		}
-		v__gen__c__Gen_write(g, _SLIT(" WHERE "));
-	} else if (node.kind == v__ast__SqlStmtKind__delete) {
-		v__gen__c__Gen_write(g, _SLIT(" WHERE "));
 	}
-	if (node.kind == v__ast__SqlStmtKind__update || node.kind == v__ast__SqlStmtKind__delete) {
-		v__gen__c__Gen_expr_to_sql(g, node.where_expr, typ);
-	}
-	v__gen__c__Gen_write(g, _SLIT(";\")"));
 }
 
-VV_LOCAL_SYMBOL string v__gen__c__Gen_table_gen(v__gen__c__Gen* g, v__ast__SqlStmtLine node, v__gen__c__SqlType typ, v__ast__Expr expr) {
-	v__ast__TypeSymbol* typ_sym = v__ast__Table_get_type_symbol(g->table, node.table_expr.typ);
-	v__ast__Struct struct_data = v__ast__TypeSymbol_struct_info(typ_sym);
-	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
-	string lit = _SLIT("`");
-	if (typ == v__gen__c__SqlType__psql || typ == v__gen__c__SqlType__mssql) {
-		lit = _SLIT("\\\"");
-	}
-	string create_string =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("CREATE TABLE IF NOT EXISTS "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" ("), 0, { .d_c = 0 }}}));
-	if (typ == v__gen__c__SqlType__mssql) {
-		create_string =  str_intp(5, _MOV((StrIntpData[]){{_SLIT("IF NOT EXISTS (SELECT * FROM sysobjects WHERE name=\'"), 0xfe10, {.d_s = table_name}}, {_SLIT("\' and xtype=\'U\') CREATE TABLE "), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = table_name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" ("), 0, { .d_c = 0 }}}));
-	}
-	Array_string fields = __new_array_with_default(0, 0, sizeof(string), 0);
-	Array_string unique_fields = __new_array_with_default(0, 0, sizeof(string), 0);
-	string primary = _SLIT("");
-	Map_string_Array_string unique = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
-	for (int _t1 = 0; _t1 < struct_data.fields.len; ++_t1) {
-		v__ast__StructField field = ((v__ast__StructField*)struct_data.fields.data)[_t1];
-		string name = v__gen__c__Gen_get_field_name(g, field);
-		bool is_primary = false;
-		bool no_null = false;
-		bool is_unique = false;
-		bool is_skip = false;
-		int unique_len = 0;
-		string fkey = _SLIT("");
-		for (int _t2 = 0; _t2 < field.attrs.len; ++_t2) {
-			v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t2];
-
-			if (string__eq(attr.name, _SLIT("primary"))) {
-				is_primary = true;
-				primary = name;
-			}
-			else if (string__eq(attr.name, _SLIT("unique"))) {
-				if ((attr.arg).len != 0) {
-					if (attr.kind == v__ast__AttrKind__string) {
-						array_push((array*)&(*(Array_string*)map_get_and_set((map*)&unique, &(string[]){attr.arg}, &(Array_string[]){ __new_array(0, 0, sizeof(string)) })), _MOV((string[]){ string_clone(name) }));
-						continue;
-					} else if (attr.kind == v__ast__AttrKind__number) {
-						unique_len = string_int(attr.arg);
-						is_unique = true;
-						continue;
-					}
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_create_table(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name) {
+	v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("create("), 0xfe10, {.d_s = expr}}, {_SLIT("._object, _SLIT(\""), 0xfe10, {.d_s = table_name}}, {_SLIT("\"), new_array_from_c_array("), 0xfe07, {.d_i32 = node.fields.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = node.fields.len}}, {_SLIT(", sizeof(orm__TableField),"), 0, { .d_c = 0 }}})));
+	if (node.fields.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__TableField["), 0xfe07, {.d_i32 = node.fields.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t1 = 0; _t1 < node.fields.len; ++_t1) {
+			v__ast__StructField field = ((v__ast__StructField*)node.fields.data)[_t1];
+			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
+			v__gen__c__Gen_write(g, _SLIT("(orm__TableField){"));
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".name = _SLIT(\""), 0xfe10, {.d_s = field.name}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".typ = "), 0xfe07, {.d_i32 = ((int)(field.typ))}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".is_arr = "), 0xfe10, {.d_s = sym->kind == v__ast__Kind__array ? _SLIT("true") : _SLIT("false")}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".is_time = "), 0xfe07, {.d_i32 = ((int)(string__eq(v__ast__Table_get_type_name(g->table, field.typ), _SLIT("time__Time"))))}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".default_val = (string){.str = (byteptr) \""), 0xfe10, {.d_s = field.default_val}}, {_SLIT("\", .is_lit = 1},"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".attrs = new_array_from_c_array("), 0xfe07, {.d_i32 = field.attrs.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = field.attrs.len}}, {_SLIT(", sizeof(StructAttribute),"), 0, { .d_c = 0 }}})));
+			if (field.attrs.len > 0) {
+				v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((StructAttribute["), 0xfe07, {.d_i32 = field.attrs.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+				for (int _t2 = 0; _t2 < field.attrs.len; ++_t2) {
+					v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t2];
+					v__gen__c__Gen_write(g, _SLIT("(StructAttribute){"));
+					v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".name = _SLIT(\""), 0xfe10, {.d_s = attr.name}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+					v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".has_arg = "), 0xfe07, {.d_i32 = ((int)(attr.has_arg))}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+					v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".arg = _SLIT(\""), 0xfe10, {.d_s = attr.arg}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+					v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".kind = "), 0xfe07, {.d_i32 = ((int)(attr.kind))}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+					v__gen__c__Gen_write(g, _SLIT("},"));
 				}
-				is_unique = true;
-			}
-			else if (string__eq(attr.name, _SLIT("nonull"))) {
-				no_null = true;
-			}
-			else if (string__eq(attr.name, _SLIT("skip"))) {
-				is_skip = true;
-			}
-			else if (string__eq(attr.name, _SLIT("fkey"))) {
-				if ((attr.arg).len != 0) {
-					if (attr.kind == v__ast__AttrKind__string) {
-						fkey = attr.arg;
-						continue;
-					}
-				}
-			}
-			else {
-			};
-		}
-		if (is_skip) {
-			continue;
-		}
-		string stmt = _SLIT("");
-		string converted_typ = v__gen__c__Gen_sql_type_from_v(g, typ, v__gen__c__Gen_get_sql_field_type(g, field));
-		if ((converted_typ).len == 0) {
-			if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__struct_) {
-				converted_typ = v__gen__c__Gen_sql_type_from_v(g, typ, _const_v__ast__int_type);
-				v__gen__c__Gen_sql_create_table(g, (v__ast__SqlStmtLine){.kind = node.kind,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = node.pos,.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = field.typ,.pos = node.table_expr.pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),}, expr);
-			} else if (v__ast__Table_get_type_symbol(g->table, field.typ)->kind == v__ast__Kind__array) {
-				v__ast__Array arr_info = v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(g->table, field.typ));
-				if (arr_info.nr_dims > 1) {
-					v__gen__c__verror(_SLIT("array with one dim are supported in orm"));
-					VUNREACHABLE();
-					continue;
-				}
-				v__ast__Type atyp = arr_info.elem_type;
-				if (v__ast__Table_get_type_symbol(g->table, atyp)->kind == v__ast__Kind__struct_) {
-					if ((fkey).len == 0) {
-						v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("array field ("), 0xfe10, {.d_s = field.name}}, {_SLIT(") needs a fkey"), 0, { .d_c = 0 }}})));
-						VUNREACHABLE();
-						continue;
-					}
-					v__gen__c__Gen_sql_create_table(g, (v__ast__SqlStmtLine){.kind = node.kind,.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = node.pos,.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = atyp,.pos = node.table_expr.pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),}, expr);
-				} else {
-					v__gen__c__verror( str_intp(4, _MOV((StrIntpData[]){{_SLIT("unknown type ("), 0xfe07, {.d_i32 = field.typ}}, {_SLIT(") for field "), 0xfe10, {.d_s = field.name}}, {_SLIT(" in struct "), 0xfe10, {.d_s = table_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
-					VUNREACHABLE();
-				}
-				continue;
+				v__gen__c__Gen_write(g, _SLIT("})"));
 			} else {
-				v__gen__c__verror( str_intp(4, _MOV((StrIntpData[]){{_SLIT("unknown type ("), 0xfe07, {.d_i32 = field.typ}}, {_SLIT(") for field "), 0xfe10, {.d_s = field.name}}, {_SLIT(" in struct "), 0xfe10, {.d_s = table_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				v__gen__c__Gen_write(g, _SLIT("NULL"));
+			}
+			v__gen__c__Gen_write(g, _SLIT(")"));
+			v__gen__c__Gen_write(g, _SLIT("},"));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_writeln(g, _SLIT("));"));
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_insert(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name, string last_ids_arr, string res, string pid, bool is_array, string fkey) {
+	Array_v__ast__SqlStmtLine subs = __new_array_with_default(0, 0, sizeof(v__ast__SqlStmtLine), 0);
+	Array_v__ast__SqlStmtLine arrs = __new_array_with_default(0, 0, sizeof(v__ast__SqlStmtLine), 0);
+	Array_string fkeys = __new_array_with_default(0, 0, sizeof(string), 0);
+	Array_string field_names = __new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < node.fields.len; ++_t1) {
+		v__ast__StructField f = ((v__ast__StructField*)node.fields.data)[_t1];
+		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, f.typ);
+		if (sym->kind == v__ast__Kind__struct_) {
+			array_push((array*)&subs, _MOV((v__ast__SqlStmtLine[]){ (*(v__ast__SqlStmtLine*)map_get((map*)&node.sub_structs, &(int[]){((int)(f.typ))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) }));
+		} else if (sym->kind == v__ast__Kind__array) {
+			string f_key = _SLIT("");
+			for (int _t3 = 0; _t3 < f.attrs.len; ++_t3) {
+				v__ast__Attr attr = ((v__ast__Attr*)f.attrs.data)[_t3];
+				if (string__eq(attr.name, _SLIT("fkey")) && attr.has_arg && attr.kind == v__ast__AttrKind__string) {
+					f_key = attr.arg;
+				}
+			}
+			if ((f_key).len == 0) {
+				v__gen__c__verror(_SLIT("An field which holds an array, needs a fkey defined"));
 				VUNREACHABLE();
-				continue;
+			}
+			array_push((array*)&fkeys, _MOV((string[]){ string_clone(f_key) }));
+			v__ast__Array info = v__ast__TypeSymbol_array_info(sym);
+			if (info.nr_dims == 1) {
+				array_push((array*)&arrs, _MOV((v__ast__SqlStmtLine[]){ (*(v__ast__SqlStmtLine*)map_get((map*)&node.sub_structs, &(int[]){((int)(info.elem_type))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) }));
+				array_push((array*)&field_names, _MOV((string[]){ string_clone(f.name) }));
+			} else {
+				v__gen__c__verror(_SLIT("V ORM only supports 1 dimensional arrays"));
+				VUNREACHABLE();
 			}
 		}
-		stmt =  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(" "), 0xfe10, {.d_s = converted_typ}}, {_SLIT0, 0, { .d_c = 0 }}}));
-		if (field.has_default_expr && typ != v__gen__c__SqlType__mysql) {
-			stmt = /*f*/string__plus(stmt, _SLIT(" DEFAULT "));
-			stmt = /*f*/string__plus(stmt, v__ast__Expr_str(field.default_expr));
+	}
+	Array_v__ast__StructField _t7_orig = node.fields;
+	int _t7_len = _t7_orig.len;
+	Array_v__ast__StructField _t7 = __new_array(0, _t7_len, sizeof(v__ast__StructField));
+
+	for (int _t8 = 0; _t8 < _t7_len; ++_t8) {
+		v__ast__StructField it = ((v__ast__StructField*) _t7_orig.data)[_t8];
+		if (v__ast__Table_get_type_symbol(g->table, it.typ)->kind != v__ast__Kind__array) {
+			array_push((array*)&_t7, &it); 
 		}
-		if (no_null) {
-			stmt = /*f*/string__plus(stmt, _SLIT(" NOT NULL"));
+	}
+	
+	Array_v__ast__StructField fields = _t7;
+	for (int _t9 = 0; _t9 < subs.len; ++_t9) {
+		v__ast__SqlStmtLine sub = ((v__ast__SqlStmtLine*)subs.data)[_t9];
+		v__gen__c__Gen_sql_stmt_line(g, sub, expr);
+		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("array_push(&"), 0xfe10, {.d_s = last_ids_arr}}, {_SLIT(", _MOV((orm__Primitive[]){orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_last_id("), 0xfe10, {.d_s = expr}}, {_SLIT("._object)}));"), 0, { .d_c = 0 }}})));
+	}
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_void "), 0xfe10, {.d_s = res}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("insert("), 0xfe10, {.d_s = expr}}, {_SLIT("._object, _SLIT(\""), 0xfe10, {.d_s = table_name}}, {_SLIT("\"), (orm__QueryData){"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".fields = new_array_from_c_array("), 0xfe07, {.d_i32 = fields.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = fields.len}}, {_SLIT(", sizeof(string),"), 0, { .d_c = 0 }}})));
+	if (fields.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_MOV((string["), 0xfe07, {.d_i32 = fields.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t10 = 0; _t10 < fields.len; ++_t10) {
+			v__ast__StructField f = ((v__ast__StructField*)fields.data)[_t10];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_SLIT(\""), 0xfe10, {.d_s = v__gen__c__Gen_get_field_name(g, f)}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
 		}
-		if (is_unique) {
-			if (typ == v__gen__c__SqlType__mysql) {
-				string f =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("UNIQUE KEY("), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0, { .d_c = 0 }}}));
-				if (string__eq(converted_typ, _SLIT("TEXT"))) {
-					if (unique_len > 0) {
-						f = /*f*/string__plus(f,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("("), 0xfe07, {.d_i32 = unique_len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
-					} else {
-						f = /*f*/string__plus(f,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("("), 0xfe07, {.d_i32 = _const_v__gen__c__default_unique_str_len}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".data = new_array_from_c_array("), 0xfe07, {.d_i32 = fields.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = fields.len}}, {_SLIT(", sizeof(orm__Primitive),"), 0, { .d_c = 0 }}})));
+	if (fields.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__Primitive["), 0xfe07, {.d_i32 = fields.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		int structs = 0;
+		for (int _t11 = 0; _t11 < fields.len; ++_t11) {
+			v__ast__StructField f = ((v__ast__StructField*)fields.data)[_t11];
+			if (string__eq(f.name, fkey)) {
+				v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = pid}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+				continue;
+			}
+			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, f.typ);
+			if (sym->kind == v__ast__Kind__struct_) {
+				v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("(*(orm__Primitive*) array_get("), 0xfe10, {.d_s = last_ids_arr}}, {_SLIT(", "), 0xfe07, {.d_i32 = structs}}, {_SLIT(")),"), 0, { .d_c = 0 }}})));
+				structs++;
+				continue;
+			}
+			string typ = sym->cname;
+			if (string__eq(typ, _SLIT("time__Time"))) {
+				typ = _SLIT("time");
+			}
+			v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("orm__"), 0xfe10, {.d_s = typ}}, {_SLIT("_to_primitive("), 0xfe10, {.d_s = node.object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = f.name}}, {_SLIT("),"), 0, { .d_c = 0 }}})));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g, _SLIT(".types = new_array_from_c_array(0, 0, sizeof(int), NULL),"));
+	v__gen__c__Gen_write(g, _SLIT(".kinds = new_array_from_c_array(0, 0, sizeof(orm__OperationKind), NULL),"));
+	v__gen__c__Gen_write(g, _SLIT(".is_and = new_array_from_c_array(0, 0, sizeof(bool), NULL),"));
+	v__gen__c__Gen_writeln(g, _SLIT("});"));
+	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0 && "), 0xfe10, {.d_s = res}}, {_SLIT(".err._typ != _IError_None___index) { _v_panic(IError_str("), 0xfe10, {.d_s = res}}, {_SLIT(".err)); }"), 0, { .d_c = 0 }}})));
+	if (arrs.len > 0) {
+		string id_name = v__gen__c__Gen_new_tmp_var(g);
+		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("orm__Primitive "), 0xfe10, {.d_s = id_name}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_last_id("), 0xfe10, {.d_s = expr}}, {_SLIT("._object);"), 0, { .d_c = 0 }}})));
+		for (int i = 0; i < arrs.len; ++i) {
+			v__ast__SqlStmtLine* arr = ((v__ast__SqlStmtLine*)arrs.data) + i;
+			string idx = v__gen__c__Gen_new_tmp_var(g);
+			v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("for (int "), 0xfe10, {.d_s = idx}}, {_SLIT(" = 0; "), 0xfe10, {.d_s = idx}}, {_SLIT(" < "), 0xfe10, {.d_s = arr->object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(field_names, i))}}, {_SLIT(".len; "), 0xfe10, {.d_s = idx}}, {_SLIT("++) {"), 0, { .d_c = 0 }}})));
+			string last_ids = v__gen__c__Gen_new_tmp_var(g);
+			string res_ = v__gen__c__Gen_new_tmp_var(g);
+			string tmp_var = v__gen__c__Gen_new_tmp_var(g);
+			string ctyp = v__gen__c__Gen_typ(g, arr->table_expr.typ);
+			v__gen__c__Gen_writeln(g,  str_intp(7, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ctyp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp_var}}, {_SLIT(" = (*("), 0xfe10, {.d_s = ctyp}}, {_SLIT("*)array_get("), 0xfe10, {.d_s = arr->object_var_name}}, {_SLIT("."), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(field_names, i))}}, {_SLIT(", "), 0xfe10, {.d_s = idx}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
+			arr->object_var_name = tmp_var;
+			Array_v__ast__StructField fff = __new_array_with_default(0, 0, sizeof(v__ast__StructField), 0);
+			for (int _t12 = 0; _t12 < arr->fields.len; ++_t12) {
+				v__ast__StructField f = ((v__ast__StructField*)arr->fields.data)[_t12];
+				bool skip = false;
+				bool primary = false;
+				for (int _t13 = 0; _t13 < f.attrs.len; ++_t13) {
+					v__ast__Attr attr = ((v__ast__Attr*)f.attrs.data)[_t13];
+					if (string__eq(attr.name, _SLIT("primary"))) {
+						primary = true;
+					}
+					if (string__eq(attr.name, _SLIT("skip"))) {
+						skip = true;
 					}
 				}
-				f = /*f*/string__plus(f, _SLIT(")"));
-				array_push((array*)&unique_fields, _MOV((string[]){ string_clone(f) }));
-			} else {
-				stmt = /*f*/string__plus(stmt, _SLIT(" UNIQUE"));
+				if (!skip && !primary) {
+					array_push((array*)&fff, _MOV((v__ast__StructField[]){ f }));
+				}
 			}
-		}
-		if (is_primary && typ == v__gen__c__SqlType__sqlite3) {
-			stmt = /*f*/string__plus(stmt, _SLIT(" PRIMARY KEY"));
-		}
-		array_push((array*)&fields, _MOV((string[]){ string_clone(stmt) }));
-	}
-	if (unique.len > 0) {
-		int _t7 = unique.key_values.len;
-		for (int _t6 = 0; _t6 < _t7; ++_t6 ) {
-			int _t8 = unique.key_values.len - _t7;
-			_t7 = unique.key_values.len;
-			if (_t8 < 0) {
-				_t6 = -1;
-				continue;
-			}
-			if (!DenseArray_has_index(&unique.key_values, _t6)) {continue;}
-			string k = /*key*/ *(string*)DenseArray_key(&unique.key_values, _t6);
-			k = string_clone(k);
-			Array_string v = (*(Array_string*)DenseArray_value(&unique.key_values, _t6));
-			Array_string tmp = __new_array_with_default(0, 0, sizeof(string), 0);
-			for (int _t9 = 0; _t9 < v.len; ++_t9) {
-				string f = ((string*)v.data)[_t9];
-				array_push((array*)&tmp, _MOV((string[]){ string_clone( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = f}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
-			}
-			array_push((array*)&fields, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT("/* "), 0xfe10, {.d_s = k}}, {_SLIT(" */UNIQUE("), 0xfe10, {.d_s = Array_string_join(tmp, _SLIT(", "))}}, {_SLIT(")"), 0, { .d_c = 0 }}}))) }));
+			arr->fields = array_clone_to_depth(&fff, 0);
+			array_free(&fff);
+			v__gen__c__Gen_sql_insert(g, *arr, expr, v__gen__c__Gen_get_table_name(g, arr->table_expr), last_ids, res_, id_name, true, (*(string*)/*ee elem_typ */array_get(fkeys, i)));
+			v__gen__c__Gen_writeln(g, _SLIT("}"));
 		}
 	}
-	if (typ == v__gen__c__SqlType__mysql || typ == v__gen__c__SqlType__psql) {
-		array_push((array*)&fields, _MOV((string[]){ string_clone( str_intp(4, _MOV((StrIntpData[]){{_SLIT("PRIMARY KEY("), 0xfe10, {.d_s = lit}}, {_SLIT0, 0xfe10, {.d_s = primary}}, {_SLIT0, 0xfe10, {.d_s = lit}}, {_SLIT(")"), 0, { .d_c = 0 }}}))) }));
-	}
-	_PUSH_MANY(&fields, (unique_fields), _t13, Array_string);
-	create_string = /*f*/string__plus(create_string, Array_string_join(fields, _SLIT(", ")));
-	create_string = /*f*/string__plus(create_string, _SLIT(");"));
-	return create_string;
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_to_sql(v__gen__c__Gen* g, v__ast__Expr expr, v__gen__c__SqlType typ) {
-	if (expr._typ == 235 /* v.ast.InfixExpr */) {
-		g->sql_side = v__gen__c__SqlExprSide__left;
-		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).left, typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_update(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name) {
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("update("), 0xfe10, {.d_s = expr}}, {_SLIT("._object, _SLIT(\""), 0xfe10, {.d_s = table_name}}, {_SLIT("\"), (orm__QueryData){"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g, _SLIT(".kinds = new_array_from_c_array(0, 0, sizeof(orm__OperationKind), NULL),"));
+	v__gen__c__Gen_write(g, _SLIT(".is_and = new_array_from_c_array(0, 0, sizeof(bool), NULL),"));
+	v__gen__c__Gen_write(g, _SLIT(".types = new_array_from_c_array(0, 0, sizeof(int), NULL),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".fields = new_array_from_c_array("), 0xfe07, {.d_i32 = node.updated_columns.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = node.updated_columns.len}}, {_SLIT(", sizeof(string),"), 0, { .d_c = 0 }}})));
+	if (node.updated_columns.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((string["), 0xfe07, {.d_i32 = node.updated_columns.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t1 = 0; _t1 < node.updated_columns.len; ++_t1) {
+			string field = ((string*)node.updated_columns.data)[_t1];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_SLIT(\""), 0xfe10, {.d_s = field}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".data = new_array_from_c_array("), 0xfe07, {.d_i32 = node.update_exprs.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = node.update_exprs.len}}, {_SLIT(", sizeof(orm__Primitive),"), 0, { .d_c = 0 }}})));
+	if (node.update_exprs.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__Primitive["), 0xfe07, {.d_i32 = node.update_exprs.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t2 = 0; _t2 < node.update_exprs.len; ++_t2) {
+			v__ast__Expr e = ((v__ast__Expr*)node.update_exprs.data)[_t2];
+			v__gen__c__Gen_sql_expr_to_orm_primitive(g, e);
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),},"));
+	v__gen__c__Gen_sql_gen_where_data(g, node.where_expr);
+	v__gen__c__Gen_writeln(g, _SLIT(");"));
+}
 
-		if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__ne)) {
-			v__gen__c__Gen_write(g, _SLIT(" != "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__eq)) {
-			v__gen__c__Gen_write(g, _SLIT(" = "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__gt)) {
-			v__gen__c__Gen_write(g, _SLIT(" > "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__lt)) {
-			v__gen__c__Gen_write(g, _SLIT(" < "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__ge)) {
-			v__gen__c__Gen_write(g, _SLIT(" >= "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__le)) {
-			v__gen__c__Gen_write(g, _SLIT(" <= "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__and)) {
-			v__gen__c__Gen_write(g, _SLIT(" and "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__logical_or)) {
-			v__gen__c__Gen_write(g, _SLIT(" or "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-			v__gen__c__Gen_write(g, _SLIT(" + "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-			v__gen__c__Gen_write(g, _SLIT(" - "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-			v__gen__c__Gen_write(g, _SLIT(" * "));
-		}
-		else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-			v__gen__c__Gen_write(g, _SLIT(" / "));
-		}
-		else {
-		};
-		g->sql_side = v__gen__c__SqlExprSide__right;
-		v__gen__c__Gen_expr_to_sql(g, (*expr._v__ast__InfixExpr).right, typ);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_delete(v__gen__c__Gen* g, v__ast__SqlStmtLine node, string expr, string table_name) {
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_v_delete("), 0xfe10, {.d_s = expr}}, {_SLIT("._object, _SLIT(\""), 0xfe10, {.d_s = table_name}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_sql_gen_where_data(g, node.where_expr);
+	v__gen__c__Gen_writeln(g, _SLIT(");"));
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_expr_to_orm_primitive(v__gen__c__Gen* g, v__ast__Expr expr) {
+	if (expr._typ == 235 /* v.ast.InfixExpr */) {
+		v__gen__c__Gen_sql_write_orm_primitive(g, v__ast__Table_find_type_idx(g->table, _SLIT("orm.InfixType")), expr);
 	}
 	else if (expr._typ == 255 /* v.ast.StringLiteral */) {
-		v__gen__c__Gen_inc_sql_i(g, typ);
-		v__gen__c__Gen_sql_bind(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = (*expr._v__ast__StringLiteral).val}}, {_SLIT("\""), 0, { .d_c = 0 }}})), int_str((*expr._v__ast__StringLiteral).val.len), v__gen__c__Gen_sql_get_real_type(g, _const_v__ast__string_type), typ);
+		v__gen__c__Gen_sql_write_orm_primitive(g, _const_v__ast__string_type, expr);
 	}
 	else if (expr._typ == 236 /* v.ast.IntegerLiteral */) {
-		v__gen__c__Gen_inc_sql_i(g, typ);
-		v__gen__c__Gen_sql_bind(g, (*expr._v__ast__IntegerLiteral).val, _SLIT(""), v__gen__c__Gen_sql_get_real_type(g, _const_v__ast__int_type), typ);
+		v__gen__c__Gen_sql_write_orm_primitive(g, _const_v__ast__int_type, expr);
 	}
 	else if (expr._typ == 216 /* v.ast.BoolLiteral */) {
-		v__gen__c__Gen_inc_sql_i(g, typ);
-		string eval = ((*expr._v__ast__BoolLiteral).val ? (_SLIT("1")) : (_SLIT("0")));
-		v__gen__c__Gen_sql_bind(g, eval, _SLIT(""), v__gen__c__Gen_sql_get_real_type(g, _const_v__ast__byte_type), typ);
+		v__gen__c__Gen_sql_write_orm_primitive(g, _const_v__ast__bool_type, expr);
 	}
 	else if (expr._typ == 231 /* v.ast.Ident */) {
-		if (g->sql_side == v__gen__c__SqlExprSide__left) {
-			g->sql_left_type = v__gen__c__Gen_get_struct_field_typ(g, (*expr._v__ast__Ident).name);
-			v__gen__c__Gen_write(g, v__gen__c__Gen_get_field_name(g, v__gen__c__Gen_get_struct_field(g, (*expr._v__ast__Ident).name)));
-		} else {
-			v__gen__c__Gen_inc_sql_i(g, typ);
-			v__ast__IdentVar info = /* as */ *(v__ast__IdentVar*)__as_cast(((*expr._v__ast__Ident).info)._v__ast__IdentVar,((*expr._v__ast__Ident).info)._typ, 342) /*expected idx: 342, name: v.ast.IdentVar */ ;
-			v__ast__Type ityp = info.typ;
-			if (typ == v__gen__c__SqlType__sqlite3) {
-				if (v__ast__Type_alias_eq(ityp, _const_v__ast__string_type)) {
-					v__gen__c__Gen_sql_bind(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*expr._v__ast__Ident).name}}, {_SLIT(".str"), 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*expr._v__ast__Ident).name}}, {_SLIT(".len"), 0, { .d_c = 0 }}})), v__gen__c__Gen_sql_get_real_type(g, ityp), typ);
-				} else {
-					v__gen__c__Gen_sql_bind(g, (*expr._v__ast__Ident).name, _SLIT(""), v__gen__c__Gen_sql_get_real_type(g, ityp), typ);
-				}
-			} else {
-				v__gen__c__Gen_sql_bind(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = int_str(g->sql_i)}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT(""), v__gen__c__Gen_sql_get_real_type(g, ityp), typ);
-				array_push((array*)&g->sql_idents, _MOV((string[]){ string_clone((*expr._v__ast__Ident).name) }));
-				array_push((array*)&g->sql_idents_types, _MOV((v__ast__Type[]){ v__gen__c__Gen_sql_get_real_type(g, ityp) }));
-			}
-		}
+		v__ast__IdentVar info = /* as */ *(v__ast__IdentVar*)__as_cast(((*expr._v__ast__Ident).info)._v__ast__IdentVar,((*expr._v__ast__Ident).info)._typ, 342) /*expected idx: 342, name: v.ast.IdentVar */ ;
+		v__gen__c__Gen_sql_write_orm_primitive(g, info.typ, expr);
 	}
 	else if (expr._typ == 251 /* v.ast.SelectorExpr */) {
-		v__gen__c__Gen_inc_sql_i(g, typ);
-		if (((*expr._v__ast__SelectorExpr).expr)._typ != 231 /* v.ast.Ident */) {
-			v__gen__c__verror(_SLIT("orm selector not ident"));
-			VUNREACHABLE();
-		}
-		v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast(((*expr._v__ast__SelectorExpr).expr)._v__ast__Ident,((*expr._v__ast__SelectorExpr).expr)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
-		v__gen__c__Gen_sql_bind(g, string__plus(string__plus(ident.name, _SLIT(".")), (*expr._v__ast__SelectorExpr).field_name), _SLIT(""), v__gen__c__Gen_sql_get_real_type(g, (*expr._v__ast__SelectorExpr).typ), typ);
+		v__gen__c__Gen_sql_write_orm_primitive(g, (*expr._v__ast__SelectorExpr).typ, expr);
 	}
 	
 	else {
-		v__gen__c__Gen_expr(g, expr);
+		eprintln(v__ast__Expr_str(expr));
+		v__gen__c__verror(_SLIT("Unknown expr"));
+		VUNREACHABLE();
 	}
 	;
 }
 
-VV_LOCAL_SYMBOL v__ast__Type v__gen__c__Gen_get_struct_field_typ(v__gen__c__Gen* g, string f) {
-	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, (*(int*)map_get(ADDR(map, g->table->type_idxs), &(string[]){g->sql_table_name}, &(int[]){ 0 })));
-	v__ast__Type typ = ((v__ast__Type)(-1));
-	if (sym->kind != v__ast__Kind__struct_) {
-		v__ast__Struct str = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
-		for (int _t1 = 0; _t1 < str.fields.len; ++_t1) {
-			v__ast__StructField field = ((v__ast__StructField*)str.fields.data)[_t1];
-			if (!string__eq(field.name, f)) {
-				continue;
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_write_orm_primitive(v__gen__c__Gen* g, v__ast__Type t, v__ast__Expr expr) {
+	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, t);
+	string typ = sym->cname;
+	if (string__eq(typ, _SLIT("orm__Primitive"))) {
+		v__gen__c__Gen_expr(g, expr);
+		v__gen__c__Gen_write(g, _SLIT(","));
+		return;
+	}
+	if (string__eq(typ, _SLIT("time__Time"))) {
+		typ = _SLIT("time");
+	}
+	if (string__eq(typ, _SLIT("orm__InfixType"))) {
+		typ = _SLIT("infix");
+	}
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("orm__"), 0xfe10, {.d_s = typ}}, {_SLIT("_to_primitive("), 0, { .d_c = 0 }}})));
+	if ((expr)._typ == 235 /* v.ast.InfixExpr */) {
+		v__gen__c__Gen_write(g, _SLIT("(orm__InfixType){"));
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".name = _SLIT(\""), 0xfe10, {.d_s = v__ast__Expr_str((*expr._v__ast__InfixExpr).left)}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+		string kind = (((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) ? (_SLIT("orm__MathOperationKind__add")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) ? (_SLIT("orm__MathOperationKind__sub")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) ? (_SLIT("orm__MathOperationKind__div")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) ? (_SLIT("orm__MathOperationKind__mul")) : (_SLIT("")));
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".operator = "), 0xfe10, {.d_s = kind}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_write(g, _SLIT(".right = "));
+		v__gen__c__Gen_sql_expr_to_orm_primitive(g, (*expr._v__ast__InfixExpr).right);
+		v__gen__c__Gen_write(g, _SLIT("}"));
+	} else {
+		v__gen__c__Gen_expr(g, expr);
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_where_data(v__gen__c__Gen* g, v__ast__Expr expr, Array_string* fields, Array_string* kinds, Array_v__ast__Expr* data, Array_bool* is_and) {
+	if (expr._typ == 235 /* v.ast.InfixExpr */) {
+		g->sql_side = v__gen__c__SqlExprSide__left;
+		v__gen__c__Gen_sql_where_data(g, (*expr._v__ast__InfixExpr).left, fields, kinds, data, is_and);
+		string kind = (((*expr._v__ast__InfixExpr).op == (v__token__Kind__ne)) ? (_SLIT("orm__OperationKind__neq")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__eq)) ? (_SLIT("orm__OperationKind__eq")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__lt)) ? (_SLIT("orm__OperationKind__lt")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__gt)) ? (_SLIT("orm__OperationKind__gt")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__ge)) ? (_SLIT("orm__OperationKind__ge")) : ((*expr._v__ast__InfixExpr).op == (v__token__Kind__le)) ? (_SLIT("orm__OperationKind__le")) : (_SLIT("")));
+		if ((kind).len == 0) {
+			if ((*expr._v__ast__InfixExpr).op == v__token__Kind__logical_or) {
+				array_push((array*)is_and, _MOV((bool[]){ false }));
+			} else if ((*expr._v__ast__InfixExpr).op == v__token__Kind__and) {
+				array_push((array*)is_and, _MOV((bool[]){ true }));
+			} else {
+				kind = _SLIT("orm__OperationKind__eq");
 			}
-			typ = v__gen__c__Gen_get_sql_field_type(g, field);
-			break;
+		}
+		if (((*expr._v__ast__InfixExpr).left)._typ != 235 /* v.ast.InfixExpr */ && ((*expr._v__ast__InfixExpr).right)._typ != 235 /* v.ast.InfixExpr */) {
+			array_push((array*)kinds, _MOV((string[]){ string_clone(kind) }));
+		}
+		g->sql_side = v__gen__c__SqlExprSide__right;
+		v__gen__c__Gen_sql_where_data(g, (*expr._v__ast__InfixExpr).right, fields, kinds, data, is_and);
+	}
+	else if (expr._typ == 231 /* v.ast.Ident */) {
+		if (g->sql_side == v__gen__c__SqlExprSide__left) {
+			array_push((array*)fields, _MOV((string[]){ string_clone(v__gen__c__Gen_get_field_name(g, v__gen__c__Gen_get_struct_field(g, (*expr._v__ast__Ident).name))) }));
+		} else {
+			array_push((array*)data, _MOV((v__ast__Expr[]){ expr }));
 		}
 	}
-	return typ;
-}
-
-VV_LOCAL_SYMBOL v__ast__Type v__gen__c__Gen_sql_get_real_type(v__gen__c__Gen* g, v__ast__Type typ) {
-	if (!v__ast__Type_alias_eq(typ, g->sql_left_type) && g->sql_left_type >= 0) {
-		v__ast__Type _t1 = g->sql_left_type;
-		return _t1;
+	else if (expr._typ == 255 /* v.ast.StringLiteral */) {
+		array_push((array*)data, _MOV((v__ast__Expr[]){ expr }));
 	}
-	return typ;
+	else if (expr._typ == 236 /* v.ast.IntegerLiteral */) {
+		array_push((array*)data, _MOV((v__ast__Expr[]){ expr }));
+	}
+	else if (expr._typ == 251 /* v.ast.SelectorExpr */) {
+		array_push((array*)data, _MOV((v__ast__Expr[]){ expr }));
+	}
+	else if (expr._typ == 216 /* v.ast.BoolLiteral */) {
+		array_push((array*)data, _MOV((v__ast__Expr[]){ expr }));
+	}
+	
+	else {
+	}
+	;
 }
 
-VV_LOCAL_SYMBOL void v__gen__c__Gen_inc_sql_i(v__gen__c__Gen* g, v__gen__c__SqlType typ) {
-	g->sql_i++;
-	if (typ == v__gen__c__SqlType__psql) {
-		v__gen__c__Gen_write(g, _SLIT("$"));
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_gen_where_data(v__gen__c__Gen* g, v__ast__Expr where_expr) {
+	v__gen__c__Gen_write(g, _SLIT("(orm__QueryData){"));
+	Array_string fields = __new_array_with_default(0, 0, sizeof(string), 0);
+	Array_string kinds = __new_array_with_default(0, 0, sizeof(string), 0);
+	Array_v__ast__Expr data = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
+	Array_bool is_and = __new_array_with_default(0, 0, sizeof(bool), 0);
+	v__gen__c__Gen_sql_where_data(g, where_expr, &/*arr*/fields, &/*arr*/kinds, &/*arr*/data, &/*arr*/is_and);
+	v__gen__c__Gen_write(g, _SLIT(".types = new_array_from_c_array(0, 0, sizeof(int), NULL),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".fields = new_array_from_c_array("), 0xfe07, {.d_i32 = fields.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = fields.len}}, {_SLIT(", sizeof(string),"), 0, { .d_c = 0 }}})));
+	if (fields.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((string["), 0xfe07, {.d_i32 = fields.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t1 = 0; _t1 < fields.len; ++_t1) {
+			string field = ((string*)fields.data)[_t1];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_SLIT(\""), 0xfe10, {.d_s = field}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
 	} else {
-		v__gen__c__Gen_write(g, _SLIT("?"));
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
 	}
-	if (typ != v__gen__c__SqlType__mysql) {
-		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = g->sql_i}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".data = new_array_from_c_array("), 0xfe07, {.d_i32 = data.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = data.len}}, {_SLIT(", sizeof(orm__Primitive),"), 0, { .d_c = 0 }}})));
+	if (data.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__Primitive["), 0xfe07, {.d_i32 = data.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t2 = 0; _t2 < data.len; ++_t2) {
+			v__ast__Expr e = ((v__ast__Expr*)data.data)[_t2];
+			v__gen__c__Gen_sql_expr_to_orm_primitive(g, e);
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".kinds = new_array_from_c_array("), 0xfe07, {.d_i32 = kinds.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = kinds.len}}, {_SLIT(", sizeof(orm__OperationKind),"), 0, { .d_c = 0 }}})));
+	if (kinds.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__OperationKind["), 0xfe07, {.d_i32 = kinds.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t3 = 0; _t3 < kinds.len; ++_t3) {
+			string k = ((string*)kinds.data)[_t3];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = k}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".is_and = new_array_from_c_array("), 0xfe07, {.d_i32 = is_and.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = is_and.len}}, {_SLIT(", sizeof(bool),"), 0, { .d_c = 0 }}})));
+	if (is_and.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((bool["), 0xfe07, {.d_i32 = is_and.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t4 = 0; _t4 < is_and.len; ++_t4) {
+			bool b = ((bool*)is_and.data)[_t4];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = b ? _SLIT("true") : _SLIT("false")}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),}"));
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select_expr(v__gen__c__Gen* g, v__ast__SqlExpr node) {
+	string left = v__gen__c__Gen_go_before_stmt(g, 0);
+	string conn = v__gen__c__Gen_new_tmp_var(g);
+	v__gen__c__Gen_writeln(g, _SLIT(""));
+	v__gen__c__Gen_writeln(g, _SLIT("// orm"));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("orm__Connection "), 0xfe10, {.d_s = conn}}, {_SLIT(" = (orm__Connection){._"), 0, { .d_c = 0 }}})));
+	string fn_prefix = _SLIT("");
+	v__gen__c__SqlType typ = v__gen__c__Gen_parse_db_type(g, node.db_expr);
+
+	if (typ == (v__gen__c__SqlType__sqlite3)) {
+		fn_prefix = _SLIT("sqlite__DB");
+	}
+	else if (typ == (v__gen__c__SqlType__mysql)) {
+		fn_prefix = _SLIT("mysql__Connection");
+	}
+	else {
+		v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("This database type `"), 0xfe10, {.d_s = v__gen__c__SqlType_str(typ)}}, {_SLIT("` is not implemented yet in orm"), 0, { .d_c = 0 }}})));
+		VUNREACHABLE();
+	};
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fn_prefix}}, {_SLIT(" = &"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_expr(g, node.db_expr);
+	v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", ._typ = _orm__Connection_"), 0xfe10, {.d_s = fn_prefix}}, {_SLIT("_index};"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_sql_select(g, node, conn, left);
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExpr node, string expr, string left) {
+	Array_v__ast__StructField fields = __new_array_with_default(0, 0, sizeof(v__ast__StructField), 0);
+	string prim = _SLIT("");
+	for (int _t1 = 0; _t1 < node.fields.len; ++_t1) {
+		v__ast__StructField f = ((v__ast__StructField*)node.fields.data)[_t1];
+		bool skip = false;
+		for (int _t2 = 0; _t2 < f.attrs.len; ++_t2) {
+			v__ast__Attr attr = ((v__ast__Attr*)f.attrs.data)[_t2];
+			if (string__eq(attr.name, _SLIT("primary"))) {
+				prim = f.name;
+			}
+			if (string__eq(attr.name, _SLIT("skip"))) {
+				skip = true;
+			}
+		}
+		if (!skip) {
+			array_push((array*)&fields, _MOV((v__ast__StructField[]){ f }));
+		}
+	}
+	string res = v__gen__c__Gen_new_tmp_var(g);
+	string table_name = v__gen__c__Gen_get_table_name(g, node.table_expr);
+	g->sql_table_name = v__ast__Table_get_type_symbol(g->table, node.table_expr.typ)->name;
+	v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("Option_Array_Array_orm__Primitive _o"), 0xfe10, {.d_s = res}}, {_SLIT(" = orm__Connection_name_table["), 0xfe10, {.d_s = expr}}, {_SLIT("._typ]._method_select("), 0xfe10, {.d_s = expr}}, {_SLIT("._object, "), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g, _SLIT("(orm__SelectConfig){"));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".table = _SLIT(\""), 0xfe10, {.d_s = table_name}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".is_count = "), 0xfe10, {.d_s = node.is_count ? _SLIT("true") : _SLIT("false")}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".has_where = "), 0xfe10, {.d_s = node.has_where ? _SLIT("true") : _SLIT("false")}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".has_order = "), 0xfe10, {.d_s = node.has_order ? _SLIT("true") : _SLIT("false")}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+	if (node.has_order) {
+		v__gen__c__Gen_write(g, _SLIT(".order = _SLIT(\""));
+		v__gen__c__Gen_expr(g, node.order_expr);
+		v__gen__c__Gen_write(g, _SLIT("\"),"));
+		if (node.has_desc) {
+			v__gen__c__Gen_write(g, _SLIT(".order_type = orm__OrderType__desc,"));
+		} else {
+			v__gen__c__Gen_write(g, _SLIT(".order_type = orm__OrderType__asc,"));
+		}
+	}
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".has_limit = "), 0xfe10, {.d_s = node.has_limit ? _SLIT("true") : _SLIT("false")}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".has_offset = "), 0xfe10, {.d_s = node.has_offset ? _SLIT("true") : _SLIT("false")}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+	if ((prim).len != 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".primary = _SLIT(\""), 0xfe10, {.d_s = prim}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+	}
+	Array_v__ast__StructField _t4_orig = fields;
+	int _t4_len = _t4_orig.len;
+	Array_v__ast__StructField _t4 = __new_array(0, _t4_len, sizeof(v__ast__StructField));
+
+	for (int _t5 = 0; _t5 < _t4_len; ++_t5) {
+		v__ast__StructField it = ((v__ast__StructField*) _t4_orig.data)[_t5];
+		if (v__ast__Table_get_type_symbol(g->table, it.typ)->kind != v__ast__Kind__array) {
+			array_push((array*)&_t4, &it); 
+		}
+	}
+	
+	Array_v__ast__StructField select_fields = _t4;
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".fields = new_array_from_c_array("), 0xfe07, {.d_i32 = select_fields.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = select_fields.len}}, {_SLIT(", sizeof(string),"), 0, { .d_c = 0 }}})));
+	Array_int types = __new_array_with_default(0, 0, sizeof(int), 0);
+	if (select_fields.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((string["), 0xfe07, {.d_i32 = select_fields.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t6 = 0; _t6 < select_fields.len; ++_t6) {
+			v__ast__StructField field = ((v__ast__StructField*)select_fields.data)[_t6];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_SLIT(\""), 0xfe10, {.d_s = v__gen__c__Gen_get_field_name(g, field)}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
+			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
+			if (sym->kind == v__ast__Kind__struct_) {
+				array_push((array*)&types, _MOV((int[]){ ((int)(_const_v__ast__int_type)) }));
+				continue;
+			}
+			array_push((array*)&types, _MOV((int[]){ ((int)(field.typ)) }));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".types = new_array_from_c_array("), 0xfe07, {.d_i32 = types.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = types.len}}, {_SLIT(", sizeof(int),"), 0, { .d_c = 0 }}})));
+	if (types.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((int["), 0xfe07, {.d_i32 = types.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t9 = 0; _t9 < types.len; ++_t9) {
+			int typ = ((int*)types.data)[_t9];
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = typ}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT("),},"));
+	Array_v__ast__Expr exprs = __new_array_with_default(0, 0, sizeof(v__ast__Expr), 0);
+	if (node.has_limit) {
+		array_push((array*)&exprs, _MOV((v__ast__Expr[]){ node.limit_expr }));
+	}
+	if (node.has_offset) {
+		array_push((array*)&exprs, _MOV((v__ast__Expr[]){ node.offset_expr }));
+	}
+	v__gen__c__Gen_write(g, _SLIT("(orm__QueryData) {"));
+	v__gen__c__Gen_write(g, _SLIT(".types = new_array_from_c_array(0, 0, sizeof(int), NULL),"));
+	v__gen__c__Gen_write(g, _SLIT(".kinds = new_array_from_c_array(0, 0, sizeof(orm__OperationKind), NULL),"));
+	v__gen__c__Gen_write(g, _SLIT(".is_and = new_array_from_c_array(0, 0, sizeof(bool), NULL),"));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".data = new_array_from_c_array("), 0xfe07, {.d_i32 = exprs.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = exprs.len}}, {_SLIT(", sizeof(orm__Primitive),"), 0, { .d_c = 0 }}})));
+	if (exprs.len > 0) {
+		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__Primitive["), 0xfe07, {.d_i32 = exprs.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
+		for (int _t12 = 0; _t12 < exprs.len; ++_t12) {
+			v__ast__Expr e = ((v__ast__Expr*)exprs.data)[_t12];
+			v__gen__c__Gen_sql_expr_to_orm_primitive(g, e);
+		}
+		v__gen__c__Gen_write(g, _SLIT("})"));
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("NULL"));
+	}
+	v__gen__c__Gen_write(g, _SLIT(")},"));
+	if (node.has_where) {
+		v__gen__c__Gen_sql_gen_where_data(g, node.where_expr);
+	} else {
+		v__gen__c__Gen_write(g, _SLIT("(orm__QueryData) {}"));
+	}
+	v__gen__c__Gen_writeln(g, _SLIT(");"));
+	v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if (_o"), 0xfe10, {.d_s = res}}, {_SLIT(".state != 0 && _o"), 0xfe10, {.d_s = res}}, {_SLIT(".err._typ != _IError_None___index) { _v_panic(IError_str(_o"), 0xfe10, {.d_s = res}}, {_SLIT(".err)); }"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Array_Array_orm__Primitive "), 0xfe10, {.d_s = res}}, {_SLIT(" = (*(Array_Array_orm__Primitive*)_o"), 0xfe10, {.d_s = res}}, {_SLIT(".data);"), 0, { .d_c = 0 }}})));
+	if (node.is_count) {
+		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = left}}, {_SLIT(" *((*(orm__Primitive*) array_get((*(Array_orm__Primitive*)array_get("), 0xfe10, {.d_s = res}}, {_SLIT(", 0)), 0))._int);"), 0, { .d_c = 0 }}})));
+	} else {
+		string tmp = v__gen__c__Gen_new_tmp_var(g);
+		string styp = v__gen__c__Gen_typ(g, node.typ);
+		string idx = v__gen__c__Gen_new_tmp_var(g);
+		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = idx}}, {_SLIT(" = 0;"), 0, { .d_c = 0 }}})));
+		string typ_str = _SLIT("");
+		if (node.is_array) {
+			v__ast__Array info = v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(g->table, node.typ));
+			typ_str = v__gen__c__Gen_typ(g, info.elem_type);
+			v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT("_array = __new_array(0, "), 0xfe10, {.d_s = res}}, {_SLIT(".len, sizeof("), 0xfe10, {.d_s = typ_str}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("for (; "), 0xfe10, {.d_s = idx}}, {_SLIT(" < "), 0xfe10, {.d_s = res}}, {_SLIT(".len; "), 0xfe10, {.d_s = idx}}, {_SLIT("++) {"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = typ_str}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = typ_str}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
+			v__ast__Struct inf = v__ast__TypeSymbol_struct_info(v__ast__Table_get_type_symbol(g->table, info.elem_type));
+			for (int i = 0; i < inf.fields.len; ++i) {
+				v__ast__StructField field = ((v__ast__StructField*)inf.fields.data)[i];
+				v__gen__c__Gen_zero_struct_field(g, field);
+				if (i != inf.fields.len - 1) {
+					v__gen__c__Gen_write(g, _SLIT(", "));
+				}
+			}
+			v__gen__c__Gen_writeln(g, _SLIT("};"));
+		} else {
+			v__gen__c__Gen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = ("), 0xfe10, {.d_s = styp}}, {_SLIT("){"), 0, { .d_c = 0 }}})));
+			v__ast__Struct info = v__ast__TypeSymbol_struct_info(v__ast__Table_get_type_symbol(g->table, node.typ));
+			for (int i = 0; i < info.fields.len; ++i) {
+				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[i];
+				v__gen__c__Gen_zero_struct_field(g, field);
+				if (i != info.fields.len - 1) {
+					v__gen__c__Gen_write(g, _SLIT(", "));
+				}
+			}
+			v__gen__c__Gen_writeln(g, _SLIT("};"));
+		}
+		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = res}}, {_SLIT(".len > 0) {"), 0, { .d_c = 0 }}})));
+		for (int i = 0; i < fields.len; ++i) {
+			v__ast__StructField field = ((v__ast__StructField*)fields.data)[i];
+			string sel =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("(*(orm__Primitive*) array_get((*(Array_orm__Primitive*) array_get("), 0xfe10, {.d_s = res}}, {_SLIT(", "), 0xfe10, {.d_s = idx}}, {_SLIT(")), "), 0xfe07, {.d_i32 = i}}, {_SLIT("))"), 0, { .d_c = 0 }}}));
+			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
+			if (sym->kind == v__ast__Kind__struct_) {
+				v__ast__SqlExpr sub = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
+				v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((sub.where_expr)._v__ast__InfixExpr,(sub.where_expr)._typ, 235) /*expected idx: 235, name: v.ast.InfixExpr */ ;
+				v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
+				string name = sel;
+				int s = v__ast__Table_find_type_idx(g->table, _SLIT("orm.Primitive"));
+				if (s != 0) {
+					if ((ident.info)._typ == 342 /* v.ast.IdentVar */) {
+						v__ast__IdentVar info = /* as */ *(v__ast__IdentVar*)__as_cast((ident.info)._v__ast__IdentVar,(ident.info)._typ, 342) /*expected idx: 342, name: v.ast.IdentVar */ ;
+						info.typ = s;
+						ident.info = v__ast__IdentVar_to_sumtype_v__ast__IdentInfo(&info);
+					}
+				}
+				ident.name = name;
+				where_expr.right = v__ast__Ident_to_sumtype_v__ast__Expr(&ident);
+				sub.where_expr = v__ast__InfixExpr_to_sumtype_v__ast__Expr(&where_expr);
+				v__gen__c__Gen_sql_select(g, sub, expr,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+			} else if (sym->kind == v__ast__Kind__array) {
+				string fkey = _SLIT("");
+				for (int _t13 = 0; _t13 < field.attrs.len; ++_t13) {
+					v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t13];
+					if (string__eq(attr.name, _SLIT("fkey")) && attr.has_arg && attr.kind == v__ast__AttrKind__string) {
+						fkey = attr.arg;
+					}
+				}
+				if ((fkey).len == 0) {
+					v__gen__c__verror(_SLIT("An field which holds an array, needs a fkey defined"));
+					VUNREACHABLE();
+				}
+				v__ast__Array info = v__ast__TypeSymbol_array_info(sym);
+				v__ast__Type arr_typ = info.elem_type;
+				v__ast__SqlExpr sub = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(arr_typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
+				v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((sub.where_expr)._v__ast__InfixExpr,(sub.where_expr)._typ, 235) /*expected idx: 235, name: v.ast.InfixExpr */ ;
+				v__ast__Ident l = /* as */ *(v__ast__Ident*)__as_cast((where_expr.left)._v__ast__Ident,(where_expr.left)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
+				v__ast__Ident r = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 231) /*expected idx: 231, name: v.ast.Ident */ ;
+				l.name = fkey;
+				r.name = tmp;
+				where_expr.left = v__ast__Ident_to_sumtype_v__ast__Expr(&l);
+				where_expr.right = v__ast__SelectorExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__SelectorExpr, ((v__ast__SelectorExpr){
+					.pos = r.pos,
+					.field_name = prim,
+					.is_mut = false,
+					.mut_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},
+					.next_token = 0,
+					.expr = v__ast__Ident_to_sumtype_v__ast__Expr(&r),
+					.expr_type = (/* as */ *(v__ast__IdentVar*)__as_cast((r.info)._v__ast__IdentVar,(r.info)._typ, 342) /*expected idx: 342, name: v.ast.IdentVar */ ).typ,
+					.typ = _const_v__ast__int_type,
+					.name_type = 0,
+					.scope = 0,
+					.from_embed_type = 0,
+				})));
+				v__ast__SqlExpr arr = (v__ast__SqlExpr){
+					.typ = field.typ,
+					.is_count = sub.is_count,
+					.db_expr = sub.db_expr,
+					.has_where = sub.has_where,
+					.has_offset = sub.has_offset,
+					.offset_expr = sub.offset_expr,
+					.has_order = sub.has_order,
+					.order_expr = sub.order_expr,
+					.has_desc = sub.has_desc,
+					.is_array = true,
+					.pos = sub.pos,
+					.has_limit = sub.has_limit,
+					.limit_expr = sub.limit_expr,
+					.where_expr = v__ast__InfixExpr_to_sumtype_v__ast__Expr(&where_expr),
+					.table_expr = sub.table_expr,
+					.fields = sub.fields,
+					.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),
+				};
+				v__gen__c__Gen_sql_select(g, arr, expr,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+			} else {
+				string typ = sym->cname;
+				v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = *("), 0xfe10, {.d_s = sel}}, {_SLIT("._"), 0xfe10, {.d_s = typ}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+			}
+		}
+		v__gen__c__Gen_writeln(g, _SLIT("}"));
+		if (node.is_array) {
+			v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("array_push(&"), 0xfe10, {.d_s = tmp}}, {_SLIT("_array, _MOV(("), 0xfe10, {.d_s = typ_str}}, {_SLIT("[]){ "), 0xfe10, {.d_s = tmp}}, {_SLIT(" }));"), 0, { .d_c = 0 }}})));
+			v__gen__c__Gen_writeln(g, _SLIT("}"));
+		}
+		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = left}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		if (node.is_array) {
+			v__gen__c__Gen_write(g, _SLIT("_array"));
+		}
+		v__gen__c__Gen_writeln(g, _SLIT(";"));
 	}
 }
 
@@ -63545,21 +62609,6 @@ VV_LOCAL_SYMBOL v__gen__c__SqlType v__gen__c__Gen_parse_db_from_type_string(v__g
 	return 0;
 }
 
-VV_LOCAL_SYMBOL v__ast__Type v__gen__c__Gen_get_sql_field_type(v__gen__c__Gen* g, v__ast__StructField field) {
-	v__ast__Type typ = field.typ;
-	for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
-		v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
-		if (attr.kind == v__ast__AttrKind__plain && string__eq(attr.name, _SLIT("sql")) && (attr.arg).len != 0) {
-			if (string__eq(string_to_lower(attr.arg), _SLIT("serial"))) {
-				typ = ((v__ast__Type)(-1));
-				break;
-			}
-			typ = (*(int*)map_get(ADDR(map, g->table->type_idxs), &(string[]){attr.arg}, &(int[]){ 0 }));
-		}
-	}
-	return typ;
-}
-
 VV_LOCAL_SYMBOL string v__gen__c__Gen_get_table_name(v__gen__c__Gen* g, v__ast__TypeNode table_expr) {
 	v__ast__Struct info = v__ast__TypeSymbol_struct_info(v__ast__Table_get_type_symbol(g->table, table_expr.typ));
 	string tablename = v__util__strip_mod_name(v__ast__Table_get_type_symbol(g->table, table_expr.typ)->name);
@@ -63593,6 +62642,10 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_get_field_name(v__gen__c__Gen* g, v__ast__
 			name = attr.arg;
 			break;
 		}
+	}
+	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
+	if (sym->kind == v__ast__Kind__struct_) {
+		name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("_id"), 0, { .d_c = 0 }}}));
 	}
 	return name;
 }
@@ -77473,17 +76526,33 @@ bool v__checker__Checker_sql_stmt_line_defer_0 = false;
 		if (!v__ast__Type_alias_eq(typ, f.typ)) {
 			object_var_name = node->object_var_name;
 		}
-		v__ast__SqlStmtLine n = (v__ast__SqlStmtLine){.kind = node->kind,.object_var_name = object_var_name,.pos = node->pos,.where_expr = {0},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = typ,.pos = node->table_expr.pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
+		v__ast__SqlStmtLine n = (v__ast__SqlStmtLine){.kind = node->kind,.pos = node->pos,.where_expr = {0},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = object_var_name,.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = typ,.pos = node->table_expr.pos,},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),};
 		bool tmp_inside_sql = c->inside_sql;
 		v__checker__Checker_sql_stmt_line(c, (voidptr)&/*qq*/n);
 		c->inside_sql = tmp_inside_sql;
-		(*(v__ast__SqlStmtLine*)map_get_and_set((map*)&sub_structs, &(int[]){typ}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.updated_columns = __new_array(0, 0, sizeof(string)),.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) = n;
+		(*(v__ast__SqlStmtLine*)map_get_and_set((map*)&sub_structs, &(int[]){typ}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) = n;
 	}
 	node->fields = fields;
 	node->sub_structs = map_move(&sub_structs);
+	for (int i = 0; i < node->updated_columns.len; ++i) {
+		string column = ((string*)node->updated_columns.data)[i];
+		Array_v__ast__StructField _t8_orig = node->fields;
+		int _t8_len = _t8_orig.len;
+		Array_v__ast__StructField _t8 = __new_array(0, _t8_len, sizeof(v__ast__StructField));
+
+		for (int _t9 = 0; _t9 < _t8_len; ++_t9) {
+			v__ast__StructField it = ((v__ast__StructField*) _t8_orig.data)[_t9];
+			if (string__eq(it.name, column)) {
+				array_push((array*)&_t8, &it); 
+		}
+		}
+		
+		v__ast__StructField field = (*(v__ast__StructField*)/*ee elem_typ */array_get(_t8, 0));
+		(*(string*)/*ee elem_typ */array_get(node->updated_columns, i)) = v__checker__Checker_fetch_field_name(c, field);
+	}
 	if (node->kind == v__ast__SqlStmtKind__update) {
-		for (int _t8 = 0; _t8 < node->update_exprs.len; ++_t8) {
-			v__ast__Expr expr = ((v__ast__Expr*)node->update_exprs.data)[_t8];
+		for (int _t10 = 0; _t10 < node->update_exprs.len; ++_t10) {
+			v__ast__Expr expr = ((v__ast__Expr*)node->update_exprs.data)[_t10];
 			v__checker__Checker_expr(c, expr);
 		}
 	}
@@ -77520,6 +76589,22 @@ VV_LOCAL_SYMBOL Array_v__ast__StructField v__checker__Checker_fetch_and_verify_o
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("V orm: `id int` must be the first field in `"), 0xfe10, {.d_s = table_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), pos);
 	}
 	return fields;
+}
+
+VV_LOCAL_SYMBOL string v__checker__Checker_fetch_field_name(v__checker__Checker* c, v__ast__StructField field) {
+	string name = field.name;
+	for (int _t1 = 0; _t1 < field.attrs.len; ++_t1) {
+		v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t1];
+		if (attr.kind == v__ast__AttrKind__string && string__eq(attr.name, _SLIT("sql")) && (attr.arg).len != 0) {
+			name = attr.arg;
+			break;
+		}
+	}
+	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, field.typ);
+	if (sym->kind == v__ast__Kind__struct_) {
+		name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("_id"), 0, { .d_c = 0 }}}));
+	}
+	return name;
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_post_process_generic_fns(v__checker__Checker* c) {
@@ -77871,10 +76956,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_261968 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_261968.arg0;
-				int nroute_attributes = mr_261968.arg1;
-				int nargs = mr_261968.arg2;
+				multi_return_bool_int_int mr_262451 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_262451.arg0;
+				int nroute_attributes = mr_262451.arg1;
+				int nargs = mr_262451.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
