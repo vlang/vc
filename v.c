@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "a09324f"
+#define V_COMMIT_HASH "55c5b9c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f691a80"
+	#define V_COMMIT_HASH "a09324f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "a09324f"
+	#define V_CURRENT_COMMIT_HASH "55c5b9c"
 #endif
 
 // V comptime_defines:
@@ -3449,6 +3449,7 @@ struct v__markused__Walker {
 	Map_string_bool used_fns;
 	Map_string_bool used_consts;
 	int n_asserts;
+	v__pref__Preferences* pref;
 	Array_v__ast__File_ptr files;
 	Map_string_v__ast__FnDecl all_fns;
 	Map_string_v__ast__ConstField all_consts;
@@ -6608,6 +6609,8 @@ VV_LOCAL_SYMBOL string vcommithash();
 VV_LOCAL_SYMBOL void panic_debug(int line_no, string file, string mod, string fn_name, string s);
 void panic_optional_not_set(string s);
 void _v_panic(string s);
+string c_error_number_str(int errnum);
+void panic_error_number(string basestr, int errnum);
 void eprintln(string s);
 void eprint(string s);
 void print(string s);
@@ -6636,6 +6639,8 @@ VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames(int xskipframes);
 VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames_bsd(int skipframes);
 VV_LOCAL_SYMBOL bool print_backtrace_skipping_top_frames_linux(int skipframes);
 VV_LOCAL_SYMBOL void break_if_debugger_attached();
+string winapi_lasterr_str();
+void panic_lasterr();
 void gc_check_leaks();
 int proc_pidpath(int , voidptr , int );
 void chan_close(chan ch);
@@ -16010,6 +16015,27 @@ VNORETURN void _v_panic(string s) {
 	while(1);
 }
 
+string c_error_number_str(int errnum) {
+	string err_msg = _SLIT("");
+	#if defined(_VFREESTANDING)
+	{
+	}
+	#else
+	{
+		char* c_msg = strerror(errnum);
+		err_msg = (string){.str = ((byte*)(c_msg)), .len = strlen(c_msg), .is_lit = 1};
+	}
+	#endif
+	return err_msg;
+}
+
+// Attr: [noreturn]
+VNORETURN void panic_error_number(string basestr, int errnum) {
+	_v_panic(string__plus(basestr, c_error_number_str(errnum)));
+	VUNREACHABLE();
+	while(1);
+}
+
 void eprintln(string s) {
 	if (s.str == 0) {
 		eprintln(_SLIT("eprintln(NIL)"));
@@ -16673,6 +16699,15 @@ VV_LOCAL_SYMBOL void break_if_debugger_attached(void) {
 		{voidptr* _ = ptr;}
 		;
 	}
+}
+
+string winapi_lasterr_str(void) {
+	return _SLIT("");
+}
+
+// Attr: [noreturn]
+VNORETURN void panic_lasterr(void) {
+	while(1);
 }
 
 void gc_check_leaks(void) {
@@ -31643,7 +31678,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f691a80"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("a09324f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -49235,7 +49270,7 @@ bool v__markused__mark_used_defer_0 = false;
 			}
 		}
 	}
-	v__markused__Walker walker = (v__markused__Walker){.table = table,.used_fns = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.used_consts = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.n_asserts = 0,.files = ast_files,.all_fns = all_fns,.all_consts = all_consts,};
+	v__markused__Walker walker = (v__markused__Walker){.table = table,.used_fns = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.used_consts = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.n_asserts = 0,.pref = pref,.files = ast_files,.all_fns = all_fns,.all_consts = all_consts,};
 	v__markused__Walker_mark_exported_fns(&walker);
 	v__markused__Walker_mark_root_fns(&walker, all_fn_root_names);
 	if (walker.n_asserts > 0) {
@@ -49602,6 +49637,13 @@ VV_LOCAL_SYMBOL void v__markused__Walker_expr(v__markused__Walker* w, v__ast__Ex
 	}
 	else if (node._typ == 230 /* v.ast.GoExpr */) {
 		v__markused__Walker_expr(w, v__ast__CallExpr_to_sumtype_v__ast__Expr(&(*node._v__ast__GoExpr).call_expr));
+		if (w->pref->os == v__pref__OS__windows) {
+			v__markused__Walker_fn_by_name(w, _SLIT("panic_lasterr"));
+			v__markused__Walker_fn_by_name(w, _SLIT("winapi_lasterr_str"));
+		} else {
+			v__markused__Walker_fn_by_name(w, _SLIT("c_error_number_str"));
+			v__markused__Walker_fn_by_name(w, _SLIT("panic_error_number"));
+		}
 	}
 	else if (node._typ == 234 /* v.ast.IndexExpr */) {
 		v__markused__Walker_expr(w, (*node._v__ast__IndexExpr).left);
@@ -57785,6 +57827,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_go_expr(v__gen__c__Gen* g, v__ast__GoExpr no
 	if (g->pref->os == v__pref__OS__windows) {
 		string simple_handle = (node.is_expr && !v__ast__Type_alias_eq(node.call_expr.return_type, _const_v__ast__void_type) ? ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("thread_handle_"), 0xfe10, {.d_s = tmp}}, {_SLIT0, 0, { .d_c = 0 }}}))) : ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("thread_"), 0xfe10, {.d_s = tmp}}, {_SLIT0, 0, { .d_c = 0 }}}))));
 		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("HANDLE "), 0xfe10, {.d_s = simple_handle}}, {_SLIT(" = CreateThread(0,0, (LPTHREAD_START_ROUTINE)"), 0xfe10, {.d_s = wrapper_fn_name}}, {_SLIT(", "), 0xfe10, {.d_s = arg_tmp_var}}, {_SLIT(", 0,0);"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("if (!"), 0xfe10, {.d_s = simple_handle}}, {_SLIT(") panic_lasterr(tos3(\"`go "), 0xfe10, {.d_s = name}}, {_SLIT("()`: \"));"), 0, { .d_c = 0 }}})));
 		if (node.is_expr && !v__ast__Type_alias_eq(node.call_expr.return_type, _const_v__ast__void_type)) {
 			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = gohandle_name}}, {_SLIT(" thread_"), 0xfe10, {.d_s = tmp}}, {_SLIT(" = {"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t.ret_ptr = "), 0xfe10, {.d_s = arg_tmp_var}}, {_SLIT("->ret_ptr,"), 0, { .d_c = 0 }}})));
@@ -57796,7 +57839,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_go_expr(v__gen__c__Gen* g, v__ast__GoExpr no
 		}
 	} else {
 		v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("pthread_t thread_"), 0xfe10, {.d_s = tmp}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("pthread_create(&thread_"), 0xfe10, {.d_s = tmp}}, {_SLIT(", NULL, (void*)"), 0xfe10, {.d_s = wrapper_fn_name}}, {_SLIT(", "), 0xfe10, {.d_s = arg_tmp_var}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = tmp}}, {_SLIT("_thr_res = pthread_create(&thread_"), 0xfe10, {.d_s = tmp}}, {_SLIT(", NULL, (void*)"), 0xfe10, {.d_s = wrapper_fn_name}}, {_SLIT(", "), 0xfe10, {.d_s = arg_tmp_var}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		v__gen__c__Gen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = tmp}}, {_SLIT("_thr_res) panic_error_number(tos3(\"`go "), 0xfe10, {.d_s = name}}, {_SLIT("()`: \"), "), 0xfe10, {.d_s = tmp}}, {_SLIT("_thr_res);"), 0, { .d_c = 0 }}})));
 		if (!node.is_expr) {
 			v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("pthread_detach(thread_"), 0xfe10, {.d_s = tmp}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 		}
@@ -58206,8 +58250,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_193939 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_193939.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_194134 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_194134.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -75662,7 +75706,7 @@ v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr*
 			}
 			c->skip_flags = cur_skip_flags;
 			if (c->fn_level == 0 && c->pref->output_cross_c && c->ct_cond_stack.len > 0) {
-				(*(v__ast__Expr*)array_pop(&c->ct_cond_stack));
+				array_delete_last(&c->ct_cond_stack);
 			}
 		} else {
 			v__checker__Checker_smartcast_if_conds(c, branch.cond, branch.scope);
@@ -76093,8 +76137,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_228865 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_228865.arg0;
+		multi_return_string_v__token__Position mr_228873 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_228873.arg0;
 	}
 	return typ;
 }
@@ -77321,10 +77365,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_263891 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_263891.arg0;
-				int nroute_attributes = mr_263891.arg1;
-				int nargs = mr_263891.arg2;
+				multi_return_bool_int_int mr_263899 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_263899.arg0;
+				int nroute_attributes = mr_263899.arg1;
+				int nargs = mr_263899.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
