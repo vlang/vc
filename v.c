@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "45a1575"
+#define V_COMMIT_HASH "f51fa7e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0acb84d"
+	#define V_COMMIT_HASH "45a1575"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "45a1575"
+	#define V_CURRENT_COMMIT_HASH "f51fa7e"
 #endif
 
 // V comptime_defines:
@@ -31643,7 +31643,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0acb84d"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("45a1575"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -64216,6 +64216,8 @@ void v__gen__js__JsGen_init(v__gen__js__JsGen* g) {
 	strings__Builder_writeln(&g->definitions, _SLIT("\"use strict\";"));
 	strings__Builder_writeln(&g->definitions, _SLIT(""));
 	strings__Builder_writeln(&g->definitions, _SLIT("var $global = (new Function(\"return this\"))();"));
+	strings__Builder_writeln(&g->definitions, _SLIT("function $ref(value) { this.val = value; } "));
+	strings__Builder_writeln(&g->definitions, _SLIT("$ref.prototype.valueOf = function() { return this.val; } "));
 	if (g->pref->backend != v__pref__Backend__js_node) {
 		strings__Builder_writeln(&g->definitions, _SLIT("const $process = {"));
 		strings__Builder_writeln(&g->definitions, _SLIT("  arch: \"js\","));
@@ -64588,9 +64590,10 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 			if ((*node._v__ast__PrefixExpr).op == v__token__Kind__amp) {
 				v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(g->table, (*node._v__ast__PrefixExpr).right_type);
 				if (!v__ast__TypeSymbol_is_primitive(type_sym) && !v__ast__Type_is_pointer((*node._v__ast__PrefixExpr).right_type)) {
-					v__gen__js__JsGen_write(g, _SLIT("{ val: "));
+					v__gen__js__JsGen_write(g, _SLIT("(function(x) {"));
+					v__gen__js__JsGen_write(g, _SLIT(" return { val: x, __proto__: Object.getPrototypeOf(x), valueOf: function() { return this.val; } }})(  "));
 					v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
-					v__gen__js__JsGen_write(g, _SLIT(" } "));
+					v__gen__js__JsGen_write(g, _SLIT(")"));
 				} else {
 					v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
 				}
@@ -64993,6 +64996,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__
 			if (it.kind == v__ast__Kind__string) {
 				v__gen__js__JsGen_write(g, _SLIT("Array.from("));
 				v__gen__js__JsGen_expr(g, it.cond);
+				if (v__ast__Type_is_ptr(it.cond_type)) {
+					v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+				}
 				v__gen__js__JsGen_write(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT(".str.split(\'\').entries(), (["), 0xfe10, {.d_s = it.key_var}}, {_SLIT(", "), 0xfe10, {.d_s = val}}, {_SLIT("]) => ["), 0xfe10, {.d_s = it.key_var}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
 				if (string__eq(g->ns->name, _SLIT("builtin"))) {
 					v__gen__js__JsGen_write(g, _SLIT("new "));
@@ -65000,11 +65006,17 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__
 				v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("byte("), 0xfe10, {.d_s = val}}, {_SLIT(")])"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__js__JsGen_expr(g, it.cond);
+				if (v__ast__Type_is_ptr(it.cond_type)) {
+					v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+				}
 				v__gen__js__JsGen_write(g, _SLIT(".entries()"));
 			}
 		} else {
 			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("for (const "), 0xfe10, {.d_s = val}}, {_SLIT(" of "), 0, { .d_c = 0 }}})));
 			v__gen__js__JsGen_expr(g, it.cond);
+			if (v__ast__Type_is_ptr(it.cond_type)) {
+				v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+			}
 			if (it.kind == v__ast__Kind__string) {
 				v__gen__js__JsGen_write(g, _SLIT(".str.split('')"));
 			}
@@ -65024,6 +65036,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__
 		string val = ((string__eq(it.val_var, _SLIT("")) || string__eq(it.val_var, _SLIT("_"))) ? (_SLIT("")) : (it.val_var));
 		v__gen__js__JsGen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("for (let ["), 0xfe10, {.d_s = key}}, {_SLIT(", "), 0xfe10, {.d_s = val}}, {_SLIT("] of "), 0, { .d_c = 0 }}})));
 		v__gen__js__JsGen_expr(g, it.cond);
+		if (v__ast__Type_is_ptr(it.cond_type)) {
+			v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+		}
 		v__gen__js__JsGen_writeln(g, _SLIT(") {"));
 		v__gen__js__JsGen_stmts(g, it.stmts);
 		v__gen__js__JsGen_writeln(g, _SLIT("}"));
@@ -65398,6 +65413,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 	v__ast__TypeSymbol* left_typ = v__ast__Table_get_type_symbol(g->table, expr.left_type);
 	if ((expr.index)._typ == 249 /* v.ast.RangeExpr */) {
 		v__gen__js__JsGen_expr(g, expr.left);
+		if (v__ast__Type_is_ptr(expr.left_type)) {
+			v__gen__js__JsGen_write(g, _SLIT(".val"));
+		}
 		v__gen__js__JsGen_write(g, _SLIT(".slice("));
 		if ((*expr.index._v__ast__RangeExpr).has_low) {
 			v__gen__js__JsGen_expr(g, (*expr.index._v__ast__RangeExpr).low);
@@ -65409,6 +65427,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 			v__gen__js__JsGen_expr(g, (*expr.index._v__ast__RangeExpr).high);
 		} else {
 			v__gen__js__JsGen_expr(g, expr.left);
+			if (v__ast__Type_is_ptr(expr.left_type)) {
+				v__gen__js__JsGen_write(g, _SLIT(".val"));
+			}
 			v__gen__js__JsGen_write(g, _SLIT(".length"));
 		}
 		v__gen__js__JsGen_write(g, _SLIT(")"));
@@ -65430,12 +65451,18 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 		} else {
 			v__gen__js__JsGen_write(g, _SLIT("new byte("));
 			v__gen__js__JsGen_expr(g, expr.left);
+			if (v__ast__Type_is_ptr(expr.left_type)) {
+				v__gen__js__JsGen_write(g, _SLIT(".val"));
+			}
 			v__gen__js__JsGen_write(g, _SLIT(".str.charCodeAt("));
 			v__gen__js__JsGen_expr(g, expr.index);
 			v__gen__js__JsGen_write(g, _SLIT("))"));
 		}
 	} else {
 		v__gen__js__JsGen_expr(g, expr.left);
+		if (v__ast__Type_is_ptr(expr.left_type)) {
+			v__gen__js__JsGen_write(g, _SLIT(".val"));
+		}
 		v__gen__js__JsGen_write(g, _SLIT(".arr"));
 		v__gen__js__JsGen_write(g, _SLIT("["));
 		array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ _const_v__ast__int_type_idx }));
@@ -65612,6 +65639,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it) {
 	v__gen__js__JsGen_expr(g, it.expr);
+	if (v__ast__Type_is_ptr(it.expr_type)) {
+		v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+	}
 	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("."), 0xfe10, {.d_s = it.field_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
