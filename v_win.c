@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e4e6c90"
+#define V_COMMIT_HASH "db5e0f2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ee2e817"
+	#define V_COMMIT_HASH "e4e6c90"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e4e6c90"
+	#define V_CURRENT_COMMIT_HASH "db5e0f2"
 #endif
 
 // V comptime_defines:
@@ -16087,8 +16087,12 @@ string c_error_number_str(int errnum) {
 	}
 	#else
 	{
-		char* c_msg = strerror(errnum);
-		err_msg = (string){.str = ((byte*)(c_msg)), .len = strlen(c_msg), .is_lit = 1};
+		#if !defined(__vinix__)
+		{
+			char* c_msg = strerror(errnum);
+			err_msg = (string){.str = ((byte*)(c_msg)), .len = strlen(c_msg), .is_lit = 1};
+		}
+		#endif
 	}
 	#endif
 	return err_msg;
@@ -30866,7 +30870,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("ee2e817"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e4e6c90"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -59675,8 +59679,16 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_ref_or_deref_arg(v__gen__c__Gen* g, v
 				if (v__ast__Expr_is_lvalue(arg.expr)) {
 					v__gen__c__Gen_write(g, _SLIT("(voidptr)&/*qq*/"));
 				} else {
-					needs_closing = true;
-					v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("ADDR("), 0xfe10, {.d_s = v__gen__c__Gen_typ(g, expected_deref_type)}}, {_SLIT("/*qq*/, "), 0, { .d_c = 0 }}})));
+					v__ast__Type atype = expected_deref_type;
+					if (v__ast__Type_has_flag(atype, v__ast__TypeFlag__generic)) {
+						atype = v__gen__c__Gen_unwrap_generic(g, atype);
+					}
+					if (v__ast__Type_has_flag(atype, v__ast__TypeFlag__generic)) {
+						v__gen__c__Gen_write(g, _SLIT("(voidptr)&/*qq*/"));
+					} else {
+						needs_closing = true;
+						v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("ADDR("), 0xfe10, {.d_s = v__gen__c__Gen_typ(g, atype)}}, {_SLIT("/*qq*/, "), 0, { .d_c = 0 }}})));
+					}
 				}
 			}
 		}
