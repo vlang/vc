@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8a09729"
+#define V_COMMIT_HASH "684c10a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e246ed9"
+	#define V_COMMIT_HASH "8a09729"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8a09729"
+	#define V_CURRENT_COMMIT_HASH "684c10a"
 #endif
 
 // V comptime_defines:
@@ -8688,6 +8688,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_op_arg(v__gen__c__Gen* g, v__ast__Expr expr,
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_safe_integer_infix_expr(v__gen__c__Gen* g, v__gen__c__GenSafeIntegerCfg cfg);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_json_for_type(v__gen__c__Gen* g, v__ast__Type typ);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_struct_enc_dec(v__gen__c__Gen* g, v__ast__TypeInfo type_info, string styp, strings__Builder* enc, strings__Builder* dec);
+VV_LOCAL_SYMBOL void v__gen__c__gen_js_get(string styp, string tmp, string name, strings__Builder* dec, bool is_required);
+VV_LOCAL_SYMBOL void v__gen__c__gen_js_get_opt(string dec_name, string field_type, string styp, string tmp, string name, strings__Builder* dec, bool is_required);
 VV_LOCAL_SYMBOL string v__gen__c__js_enc_name(string typ);
 VV_LOCAL_SYMBOL string v__gen__c__js_dec_name(string typ);
 VV_LOCAL_SYMBOL bool v__gen__c__is_js_prim(string typ);
@@ -31681,7 +31683,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e246ed9"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("8a09729"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -61868,51 +61870,67 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_struct_enc_dec(v__gen__c__Gen* g,
 	v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((type_info)._v__ast__Struct,(type_info)._typ, 381) /*expected idx: 381, name: v.ast.Struct */ ;
 	for (int _t1 = 0; _t1 < info.fields.len; ++_t1) {
 		v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[_t1];
-		if (Array_v__ast__Attr_contains(field.attrs, _SLIT("skip"))) {
-			continue;
-		}
 		string name = field.name;
+		bool is_raw = false;
+		bool is_skip = false;
+		bool is_required = false;
 		for (int _t2 = 0; _t2 < field.attrs.len; ++_t2) {
 			v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t2];
+
 			if (string__eq(attr.name, _SLIT("json"))) {
 				name = attr.arg;
-				break;
 			}
+			else if (string__eq(attr.name, _SLIT("skip"))) {
+				is_skip = true;
+			}
+			else if (string__eq(attr.name, _SLIT("raw"))) {
+				is_raw = true;
+			}
+			else if (string__eq(attr.name, _SLIT("required"))) {
+				is_required = true;
+			}
+			else {
+			};
+		}
+		if (is_skip) {
+			continue;
 		}
 		string field_type = v__gen__c__Gen_typ(g, field.typ);
 		v__ast__TypeSymbol* field_sym = v__ast__Table_get_type_symbol(g->table, field.typ);
-		if (Array_v__ast__Attr_contains(field.attrs, _SLIT("raw"))) {
+		if (is_raw) {
 			strings__Builder_writeln(dec, string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = tos5(cJSON_PrintUnformatted("), 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("js_get(root, \""), 0xfe10, {.d_s = name}}, {_SLIT("\")));"), 0, { .d_c = 0 }}}))));
 		} else {
 			v__gen__c__Gen_gen_json_for_type(g, field.typ);
 			string dec_name = v__gen__c__js_dec_name(field_type);
 			if (v__gen__c__is_js_prim(field_type)) {
-				strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = "), 0xfe10, {.d_s = dec_name}}, {_SLIT(" (js_get(root, \""), 0xfe10, {.d_s = name}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
+				string tmp = v__gen__c__Gen_new_tmp_var(g);
+				v__gen__c__gen_js_get(styp, tmp, name, dec, is_required);
+				strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = "), 0xfe10, {.d_s = dec_name}}, {_SLIT(" (jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 			} else if (field_sym->kind == v__ast__Kind__enum_) {
-				strings__Builder_writeln(dec,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = json__decode_u64(js_get(root, \""), 0xfe10, {.d_s = name}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
+				string tmp = v__gen__c__Gen_new_tmp_var(g);
+				v__gen__c__gen_js_get(styp, tmp, name, dec, is_required);
+				strings__Builder_writeln(dec,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = json__decode_u64(jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 			} else if (string__eq(field_sym->name, _SLIT("time.Time"))) {
-				strings__Builder_writeln(dec,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = time__unix(json__decode_u64(js_get(root, \""), 0xfe10, {.d_s = name}}, {_SLIT("\")));"), 0, { .d_c = 0 }}})));
+				string tmp = v__gen__c__Gen_new_tmp_var(g);
+				v__gen__c__gen_js_get(styp, tmp, name, dec, is_required);
+				strings__Builder_writeln(dec,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = time__unix(json__decode_u64(jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT("));"), 0, { .d_c = 0 }}})));
 			} else if (field_sym->kind == v__ast__Kind__alias) {
 				v__ast__Alias alias = /* as */ *(v__ast__Alias*)__as_cast((field_sym->info)._v__ast__Alias,(field_sym->info)._typ, 399) /*expected idx: 399, name: v.ast.Alias */ ;
 				string parent_type = v__gen__c__Gen_typ(g, alias.parent_type);
 				string parent_dec_name = v__gen__c__js_dec_name(parent_type);
 				if (v__gen__c__is_js_prim(parent_type)) {
-					strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = "), 0xfe10, {.d_s = parent_dec_name}}, {_SLIT(" (js_get(root, \""), 0xfe10, {.d_s = name}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
+					string tmp = v__gen__c__Gen_new_tmp_var(g);
+					v__gen__c__gen_js_get(styp, tmp, name, dec, is_required);
+					strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = "), 0xfe10, {.d_s = parent_dec_name}}, {_SLIT(" (jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 				} else {
 					v__gen__c__Gen_gen_json_for_type(g, field.typ);
 					string tmp = v__gen__c__Gen_new_tmp_var(g);
-					strings__Builder_writeln(dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\tOption_"), 0xfe10, {.d_s = field_type}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = "), 0xfe10, {.d_s = dec_name}}, {_SLIT(" (js_get(root,\""), 0xfe10, {.d_s = name}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-					strings__Builder_writeln(dec,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) {"), 0, { .d_c = 0 }}})));
-					strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t\treturn (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){ .state = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".state, .err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err, .data = {0} };"), 0, { .d_c = 0 }}})));
-					strings__Builder_writeln(dec, _SLIT("\t}"));
+					v__gen__c__gen_js_get_opt(dec_name, field_type, styp, tmp, name, dec, is_required);
 					strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = *("), 0xfe10, {.d_s = field_type}}, {_SLIT("*) "), 0xfe10, {.d_s = tmp}}, {_SLIT(".data;"), 0, { .d_c = 0 }}})));
 				}
 			} else {
 				string tmp = v__gen__c__Gen_new_tmp_var(g);
-				strings__Builder_writeln(dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\tOption_"), 0xfe10, {.d_s = field_type}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = "), 0xfe10, {.d_s = dec_name}}, {_SLIT(" (js_get(root,\""), 0xfe10, {.d_s = name}}, {_SLIT("\"));"), 0, { .d_c = 0 }}})));
-				strings__Builder_writeln(dec,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) {"), 0, { .d_c = 0 }}})));
-				strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t\treturn (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){ .state = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".state, .err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err, .data = {0} };"), 0, { .d_c = 0 }}})));
-				strings__Builder_writeln(dec, _SLIT("\t}"));
+				v__gen__c__gen_js_get_opt(dec_name, field_type, styp, tmp, name, dec, is_required);
 				strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\tres."), 0xfe10, {.d_s = v__gen__c__c_name(field.name)}}, {_SLIT(" = *("), 0xfe10, {.d_s = field_type}}, {_SLIT("*) "), 0xfe10, {.d_s = tmp}}, {_SLIT(".data;"), 0, { .d_c = 0 }}})));
 			}
 		}
@@ -61933,6 +61951,23 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_struct_enc_dec(v__gen__c__Gen* g,
 			}
 		}
 	}
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__gen_js_get(string styp, string tmp, string name, strings__Builder* dec, bool is_required) {
+	strings__Builder_writeln(dec,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tcJSON *jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT(" = js_get(root,\""), 0xfe10, {.d_s = name}}, {_SLIT("\");"), 0, { .d_c = 0 }}})));
+	if (is_required) {
+		strings__Builder_writeln(dec,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif(jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT(" == 0) {"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(dec,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t\treturn (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){ .state = 2, .err = _v_error(_SLIT(\"expected field \'"), 0xfe10, {.d_s = name}}, {_SLIT("\' is missing\")), .data = {0} };"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(dec, _SLIT("\t}"));
+	}
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__gen_js_get_opt(string dec_name, string field_type, string styp, string tmp, string name, strings__Builder* dec, bool is_required) {
+	v__gen__c__gen_js_get(styp, tmp, name, dec, is_required);
+	strings__Builder_writeln(dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\tOption_"), 0xfe10, {.d_s = field_type}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = "), 0xfe10, {.d_s = dec_name}}, {_SLIT(" (jsonroot_"), 0xfe10, {.d_s = tmp}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(dec,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif("), 0xfe10, {.d_s = tmp}}, {_SLIT(".state != 0) {"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(dec,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t\treturn (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){ .state = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".state, .err = "), 0xfe10, {.d_s = tmp}}, {_SLIT(".err, .data = {0} };"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(dec, _SLIT("\t}"));
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__js_enc_name(string typ) {
@@ -61978,11 +62013,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_decode_map(v__gen__c__Gen* g, v__ast__Type
 	string styp = v__gen__c__Gen_typ(g, key_type);
 	string styp_v = v__gen__c__Gen_typ(g, value_type);
 	v__ast__TypeSymbol* key_type_symbol = v__ast__Table_get_type_symbol(g->table, key_type);
-	multi_return_string_string_string_string mr_8424 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
-	string hash_fn = mr_8424.arg0;
-	string key_eq_fn = mr_8424.arg1;
-	string clone_fn = mr_8424.arg2;
-	string free_fn = mr_8424.arg3;
+	multi_return_string_string_string_string mr_9265 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
+	string hash_fn = mr_9265.arg0;
+	string key_eq_fn = mr_9265.arg1;
+	string clone_fn = mr_9265.arg2;
+	string free_fn = mr_9265.arg3;
 	string fn_name_v = v__gen__c__js_dec_name(styp_v);
 	string s = _SLIT("");
 	if (v__gen__c__is_js_prim(styp_v)) {
