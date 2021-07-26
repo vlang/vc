@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4cf91a2"
+#define V_COMMIT_HASH "517260a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b666482"
+	#define V_COMMIT_HASH "4cf91a2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4cf91a2"
+	#define V_CURRENT_COMMIT_HASH "517260a"
 #endif
 
 // V comptime_defines:
@@ -7988,6 +7988,7 @@ bool v__pref__Preferences_should_compile_asm(v__pref__Preferences* prefs, string
 bool v__pref__Preferences_should_compile_js(v__pref__Preferences* prefs, string file);
 string _const_help__unknown_topic; // a string literal, inited later
 void help__print_and_exit(string topic);
+VV_LOCAL_SYMBOL string help__known_topics(string topicdir);
 Option_string v__util__find_working_diff_command();
 string v__util__color_compare_files(string diff_cmd, string file1, string file2);
 string v__util__color_compare_strings(string diff_cmd, string unique_prefix, string expected, string found);
@@ -30917,7 +30918,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("b666482"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("4cf91a2"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32121,6 +32122,7 @@ bool v__pref__Preferences_should_compile_js(v__pref__Preferences* prefs, string 
 void help__print_and_exit(string topic) {
 	string vexe = v__pref__vexe_path();
 	string vroot = os__dir(vexe);
+	string topicdir = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("v"), _SLIT("help")})));
 	for (int _t1 = 0; _t1 < topic.len; ++_t1) {
 		byte b = topic.str[_t1];
 		if ((b >= 'a' && b <= 'z') || b == '-' || (b >= '0' && b <= '9')) {
@@ -32131,11 +32133,17 @@ void help__print_and_exit(string topic) {
 		VUNREACHABLE();
 	}
 	string name = (string__eq(topic, _SLIT("init")) ? (_SLIT("new")) : (topic));
-	string target_topic = os__join_path(vroot, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("cmd"), _SLIT("v"), _SLIT("help"),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT(".txt"), 0, { .d_c = 0 }}}))})));
+	if (string__eq(topic, _SLIT("topics"))) {
+		println(help__known_topics(topicdir));
+		_v_exit(0);
+		VUNREACHABLE();
+	}
+	string target_topic = os__join_path(topicdir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){ str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT(".txt"), 0, { .d_c = 0 }}}))})));
 	Option_string _t2 = os__read_file(target_topic);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
 		eprintln(_const_help__unknown_topic);
+		eprintln(help__known_topics(topicdir));
 		_v_exit(1);
 		VUNREACHABLE();
 	;
@@ -32145,6 +32153,33 @@ void help__print_and_exit(string topic) {
 	println(content);
 	_v_exit(0);
 	VUNREACHABLE();
+}
+
+VV_LOCAL_SYMBOL string help__known_topics(string topicdir) {
+	Array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
+	array_push((array*)&res, _MOV((string[]){ string_clone(_SLIT("Known help topics:")) }));
+	Option_Array_string _t2 = os__glob(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){os__join_path(topicdir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("*.txt")})))})));
+	if (_t2.state != 0) { /*or block*/ 
+		IError err = _t2.err;
+		*(Array_string*) _t2.data = __new_array_with_default(0, 0, sizeof(string), 0);
+	}
+	
+ 	Array_string topic_files =  (*(Array_string*)_t2.data);
+	Array_string _t3_orig = topic_files;
+	int _t3_len = _t3_orig.len;
+	Array_string _t3 = __new_array(0, _t3_len, sizeof(string));
+
+	for (int _t4 = 0; _t4 < _t3_len; ++_t4) {
+		string it = ((string*) _t3_orig.data)[_t4];
+		string ti = string_replace(os__file_name(it), _SLIT(".txt"), _SLIT(""));
+		array_push((array*)&_t3, &ti);
+	}
+	
+	Array_string topics = _t3;
+	qsort(topics.data, topics.len, topics.element_size, (int (*)(const void *, const void *))&compare_strings);
+	array_push((array*)&res, _MOV((string[]){ string_clone(Array_string_join(topics, _SLIT(", "))) }));
+	string _t6 = Array_string_join(res, _SLIT(""));
+	return _t6;
 }
 
 Option_string v__util__find_working_diff_command(void) {
