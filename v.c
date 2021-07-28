@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "66bc8bc"
+#define V_COMMIT_HASH "e3cf95b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9f44315"
+	#define V_COMMIT_HASH "66bc8bc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "66bc8bc"
+	#define V_CURRENT_COMMIT_HASH "e3cf95b"
 #endif
 
 // V comptime_defines:
@@ -9988,7 +9988,7 @@ void vinit_string_literals(){
 	_const_v__gen__c__c_wyhash_headers = _SLIT("\n// ============== wyhash ==============\n#ifndef wyhash_final_version_3\n#define wyhash_final_version_3\n\n#ifndef WYHASH_CONDOM\n// protections that produce different results:\n// 1: normal valid behavior\n// 2: extra protection against entropy loss (probability=2^-63), aka. \"blind multiplication\"\n#define WYHASH_CONDOM 1\n#endif\n\n#ifndef WYHASH_32BIT_MUM\n// 0: normal version, slow on 32 bit systems\n// 1: faster on 32 bit systems but produces different results, incompatible with wy2u0k function\n#define WYHASH_32BIT_MUM 0\n#endif\n\n// includes\n#include <stdint.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n	#include <intrin.h>\n	#pragma intrinsic(_umul128)\n#endif\n\n// 128bit multiply function\nstatic inline uint64_t _wyrot(uint64_t x) { return (x>>32)|(x<<32); }\nstatic inline void _wymum(uint64_t *A, uint64_t *B){\n#if(WYHASH_32BIT_MUM)\n	uint64_t hh=(*A>>32)*(*B>>32), hl=(*A>>32)*(uint32_t)*B, lh=(uint32_t)*A*(*B>>32), ll=(uint64_t)(uint32_t)*A*(uint32_t)*B;\n	#if(WYHASH_CONDOM>1)\n	*A^=_wyrot(hl)^hh; *B^=_wyrot(lh)^ll;\n	#else\n	*A=_wyrot(hl)^hh; *B=_wyrot(lh)^ll;\n	#endif\n#elif defined(__SIZEOF_INT128__)\n	__uint128_t r=*A; r*=*B;\n	#if(WYHASH_CONDOM>1)\n	*A^=(uint64_t)r; *B^=(uint64_t)(r>>64);\n	#else\n	*A=(uint64_t)r; *B=(uint64_t)(r>>64);\n	#endif\n#elif defined(_MSC_VER) && defined(_M_X64)\n	#if(WYHASH_CONDOM>1)\n	uint64_t  a,  b;\n	a=_umul128(*A,*B,&b);\n	*A^=a;  *B^=b;\n	#else\n	*A=_umul128(*A,*B,B);\n	#endif\n#else\n	uint64_t ha=*A>>32, hb=*B>>32, la=(uint32_t)*A, lb=(uint32_t)*B, hi, lo;\n	uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n	lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n	#if(WYHASH_CONDOM>1)\n	*A^=lo;  *B^=hi;\n	#else\n	*A=lo;  *B=hi;\n	#endif\n#endif\n}\n\n// multiply and xor mix function, aka MUM\nstatic inline uint64_t _wymix(uint64_t A, uint64_t B){ _wymum(&A,&B); return A^B; }\n\n// endian macros\n#ifndef WYHASH_LITTLE_ENDIAN\n	#ifdef TARGET_ORDER_IS_LITTLE\n		#define WYHASH_LITTLE_ENDIAN 1\n	#else\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n#endif\n\n// read functions\n#if (WYHASH_LITTLE_ENDIAN)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return v;}\n#elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#else\n	static inline uint64_t _wyr8(const uint8_t *p) {\n		uint64_t v; memcpy(&v, p, 8);\n		return (((v >> 56) & 0xff)| ((v >> 40) & 0xff00)| ((v >> 24) & 0xff0000)| ((v >>  8) & 0xff000000)| ((v <<  8) & 0xff00000000)| ((v << 24) & 0xff0000000000)| ((v << 40) & 0xff000000000000)| ((v << 56) & 0xff00000000000000));\n	}\n	static inline uint64_t _wyr4(const uint8_t *p) {\n		uint32_t v; memcpy(&v, p, 4);\n		return (((v >> 24) & 0xff)| ((v >>  8) & 0xff00)| ((v <<  8) & 0xff0000)| ((v << 24) & 0xff000000));\n	}\n#endif\nstatic inline uint64_t _wyr3(const uint8_t *p, size_t k) { return (((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];}\n// wyhash main function\nstatic inline uint64_t wyhash(const void *key, size_t len, uint64_t seed, const uint64_t *secret){\n	const uint8_t *p=(const uint8_t *)key; seed^=*secret;	uint64_t a, b;\n	if (_likely_(len<=16)) {\n		if (_likely_(len>=4)) { a=(_wyr4(p)<<32)|_wyr4(p+((len>>3)<<2)); b=(_wyr4(p+len-4)<<32)|_wyr4(p+len-4-((len>>3)<<2)); }\n		else if (_likely_(len>0)) { a=_wyr3(p,len); b=0; }\n		else a=b=0;\n	} else {\n		size_t i=len;\n		if (_unlikely_(i>48)) {\n			uint64_t see1=seed, see2=seed;\n			do {\n				seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);\n				see1=_wymix(_wyr8(p+16)^secret[2],_wyr8(p+24)^see1);\n				see2=_wymix(_wyr8(p+32)^secret[3],_wyr8(p+40)^see2);\n				p+=48; i-=48;\n			} while(_likely_(i>48));\n			seed^=see1^see2;\n		}\n		while(_unlikely_(i>16)) { seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);  i-=16; p+=16; }\n		a=_wyr8(p+i-16);  b=_wyr8(p+i-8);\n	}\n	return _wymix(secret[1]^len,_wymix(a^secret[1],b^seed));\n}\n// the default secret parameters\nstatic const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};\n\n// a useful 64bit-64bit mix function to produce deterministic pseudo random numbers that can pass BigCrush and PractRand\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){ A^=0xa0761d6478bd642full; B^=0xe7037ed1a0b428dbull; _wymum(&A,&B); return _wymix(A^0xa0761d6478bd642full,B^0xe7037ed1a0b428dbull);}\n\n// the wyrand PRNG that pass BigCrush and PractRand\nstatic inline uint64_t wyrand(uint64_t *seed){ *seed+=0xa0761d6478bd642full; return _wymix(*seed,*seed^0xe7037ed1a0b428dbull);}\n\n#ifndef __vinix__\n// convert any 64 bit pseudo random numbers to uniform distribution [0,1). It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2u01(uint64_t r){ const double _wynorm=1.0/(1ull<<52); return (r>>12)*_wynorm;}\n\n// convert any 64 bit pseudo random numbers to APPROXIMATE Gaussian distribution. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2gau(uint64_t r){ const double _wynorm=1.0/(1ull<<20); return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;}\n#endif\n\n#if(!WYHASH_32BIT_MUM)\n// fast range integer random number generation on [0,k) credit to Daniel Lemire. May not work when WYHASH_32BIT_MUM=1. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; }\n#endif\n#endif\n\n#define _IN_MAP(val, m) map_exists(m, val)\n\n");
 	_const_v__gen__c__posix_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
 	_const_v__gen__c__windows_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
-	_const_v__gen__js__fast_deep_eq_fn = _SLIT("// https://www.npmjs.com/package/fast-deep-equal - 3/3/2021\nconst envHasBigInt64Array = typeof BigInt64Array !== 'undefined';\nfunction vEq(a, b) {\n	if (a === b) return true;\n\n	if (a && b && typeof a == 'object' && typeof b == 'object') {\n		if (a.constructor !== b.constructor) return false;\n\n		var length, i, keys;\n		if (Array.isArray(a)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (!vEq(a[i], b[i])) return false;\n			return true;\n		}\n\n\n		if ((a instanceof Map) && (b instanceof Map)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			for (i of a.entries())\n				if (!vEq(i[1], b.get(i[0]))) return false;\n			return true;\n		}\n\n		if ((a instanceof Set) && (b instanceof Set)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			return true;\n		}\n\n		if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (a[i] !== b[i]) return false;\n			return true;\n		}\n\n\n		if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;\n		if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();\n		if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();\n\n		keys = Object.keys(a);\n		length = keys.length;\n		if (length !== Object.keys(b).length) return false;\n\n		for (i = length; i-- !== 0;)\n			if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;\n\n		for (i = length; i-- !== 0;) {\n			var key = keys[i];\n\n			if (!vEq(a[key], b[key])) return false;\n		}\n\n		return true;\n	}\n\n	// true if both NaN, false otherwise\n	return a!==a && b!==b;\n};\n");
+	_const_v__gen__js__fast_deep_eq_fn = _SLIT("// https://www.npmjs.com/package/fast-deep-equal - 3/3/2021\nconst envHasBigInt64Array = typeof BigInt64Array !== 'undefined';\nfunction vEq(a, b) {\n	if (a === b) return true;\n\n	if (a && b && typeof a == 'object' && typeof b == 'object') {\n		if (a.constructor !== b.constructor) return false;\n		a = a.valueOf();\n		b = b.valueOf();\n		var length, i, keys;\n		if (Array.isArray(a)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (!vEq(a[i], b[i])) return false;\n			return true;\n		}\n\n\n		if ((a instanceof Map) && (b instanceof Map)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			for (i of a.entries())\n				if (!vEq(i[1], b.get(i[0]))) return false;\n			return true;\n		}\n\n		if ((a instanceof Set) && (b instanceof Set)) {\n			if (a.size !== b.size) return false;\n			for (i of a.entries())\n				if (!b.has(i[0])) return false;\n			return true;\n		}\n\n		if (ArrayBuffer.isView(a) && ArrayBuffer.isView(b)) {\n			length = a.length;\n			if (length != b.length) return false;\n			for (i = length; i-- !== 0;)\n				if (a[i] !== b[i]) return false;\n			return true;\n		}\n\n\n		if (a.constructor === RegExp) return a.source === b.source && a.flags === b.flags;\n		if (a.valueOf !== Object.prototype.valueOf) return a.valueOf() === b.valueOf();\n		if (a.toString !== Object.prototype.toString) return a.toString() === b.toString();\n\n		keys = Object.keys(a);\n		length = keys.length;\n		if (length !== Object.keys(b).length) return false;\n\n		for (i = length; i-- !== 0;)\n			if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false;\n\n		for (i = length; i-- !== 0;) {\n			var key = keys[i];\n\n			if (!vEq(a[key], b[key])) return false;\n		}\n\n		return true;\n	}\n\n	// true if both NaN, false otherwise\n	return a!==a && b!==b;\n};\n");
 	_const_v__checker__hex_lit_overflow_message = _SLIT("hex character literal overflows string");
 	_const_v__checker__vroot_is_deprecated_message = _SLIT("@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead");
 	_const_v__builder__c_verror_message_marker = _SLIT("VERROR_MESSAGE ");
@@ -31773,7 +31773,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9f44315"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("66bc8bc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -63547,6 +63547,9 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_to_js_typ_val(v__gen__js__JsGen* g, v__
 	else if (sym->kind == (v__ast__Kind__struct_)) {
 		styp =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("new "), 0xfe10, {.d_s = v__gen__js__JsGen_js_name(g, sym->name)}}, {_SLIT("("), 0xfe10, {.d_s = v__gen__js__JsGen_to_js_typ_def_val(g, sym->name)}}, {_SLIT(")"), 0, { .d_c = 0 }}}));
 	}
+	else if (sym->kind == (v__ast__Kind__voidptr)) {
+		styp = _SLIT("null");
+	}
 	else {
 		styp = _SLIT("undefined");
 	};
@@ -63606,6 +63609,9 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_sym_to_js_typ(v__gen__js__JsGen* g, v__
 	}
 	else if (sym.kind == (v__ast__Kind__array)) {
 		styp = _SLIT("array");
+	}
+	else if (sym.kind == (v__ast__Kind__voidptr)) {
+		styp = _SLIT("any");
 	}
 	else {
 		styp = _SLIT("undefined");
@@ -63857,6 +63863,19 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 				.value_of = _SLIT("this.arr"),
 				.to_string = _SLIT("JSON.stringify(this.arr.map(it => it.valueOf()))"),
 				.eq = _SLIT("vEq(this, other)"),
+				.extras = (string){.str=(byteptr)"", .is_lit=1},
+				.has_strfn = 0,
+			});
+		}
+		else if (string__eq(typ_name, _SLIT("any"))) {
+			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){
+				.typ_name = typ_name,
+				.val_name = _SLIT("any"),
+				.default_value = _SLIT("null"),
+				.constructor = _SLIT("this.val = any"),
+				.value_of = _SLIT("this.val"),
+				.to_string = _SLIT("\"&\" + this.val"),
+				.eq = _SLIT("this == other"),
 				.extras = (string){.str=(byteptr)"", .is_lit=1},
 				.has_strfn = 0,
 			});
@@ -64871,8 +64890,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 	else if (node._typ == 249 /* v.ast.PrefixExpr */) {
 		if (((*node._v__ast__PrefixExpr).op == v__token__Kind__amp || (*node._v__ast__PrefixExpr).op == v__token__Kind__mul)) {
 			if ((*node._v__ast__PrefixExpr).op == v__token__Kind__amp) {
-				v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(g->table, (*node._v__ast__PrefixExpr).right_type);
-				if (!v__ast__TypeSymbol_is_primitive(type_sym) && !v__ast__Type_is_pointer((*node._v__ast__PrefixExpr).right_type)) {
+				if (!v__ast__Type_is_pointer((*node._v__ast__PrefixExpr).right_type)) {
 					v__gen__js__JsGen_write(g, _SLIT("(function(x) {"));
 					v__gen__js__JsGen_write(g, _SLIT(" return { val: x, __proto__: Object.getPrototypeOf(x), valueOf: function() { return this.val; } }})(  "));
 					v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
@@ -64883,12 +64901,14 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 			} else {
 				v__gen__js__JsGen_write(g, _SLIT("("));
 				v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
-				v__gen__js__JsGen_write(g, _SLIT(").val"));
+				v__gen__js__JsGen_write(g, _SLIT(").valueOf()"));
 			}
 		} else {
 			v__gen__js__JsGen_write(g, v__token__Kind_str((*node._v__ast__PrefixExpr).op));
+			v__gen__js__JsGen_write(g, _SLIT("("));
 			v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
 			v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+			v__gen__js__JsGen_write(g, _SLIT(")"));
 		}
 	}
 	else if (node._typ == 250 /* v.ast.RangeExpr */) {
@@ -65268,7 +65288,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_for_in_stmt(v__gen__js__JsGen* g, v__
 		v__gen__js__JsGen_expr(g, it.cond);
 		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("; "), 0xfe10, {.d_s = i}}, {_SLIT(" < "), 0, { .d_c = 0 }}})));
 		v__gen__js__JsGen_expr(g, it.high);
-		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("; ++"), 0xfe10, {.d_s = i}}, {_SLIT(") {"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("; "), 0xfe10, {.d_s = i}}, {_SLIT(" = new builtin.int("), 0xfe10, {.d_s = i}}, {_SLIT(" + 1)) {"), 0, { .d_c = 0 }}})));
 		g->inside_loop = false;
 		v__gen__js__JsGen_stmts(g, it.stmts);
 		v__gen__js__JsGen_writeln(g, _SLIT("}"));
@@ -65580,6 +65600,34 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__as
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 			return;
 		}
+		v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, it.left_type);
+		if (left_sym->kind == v__ast__Kind__array) {
+			v__ast__CallExpr node = it;
+
+			if (string__eq(node.name, _SLIT("insert"))) {
+				v__ast__TypeSymbol* arg2_sym = v__ast__Table_get_type_symbol(g->table, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 1)).typ);
+				bool is_arg2_array = arg2_sym->kind == v__ast__Kind__array && v__ast__Type_alias_eq((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 1)).typ, node.left_type);
+				if (is_arg2_array) {
+					v__gen__js__JsGen_write(g, _SLIT("insert_many("));
+				} else {
+					v__gen__js__JsGen_write(g, _SLIT("insert("));
+				}
+				v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
+				v__gen__js__JsGen_write(g, _SLIT(","));
+				if (is_arg2_array) {
+					v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 1)).expr);
+					v__gen__js__JsGen_write(g, _SLIT(".arr,"));
+					v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 1)).expr);
+					v__gen__js__JsGen_write(g, _SLIT(".len"));
+				} else {
+					v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 1)).expr);
+				}
+				v__gen__js__JsGen_write(g, _SLIT(")"));
+				return;
+			}
+			else {
+			};
+		}
 	} else {
 		if ((Array_string_contains(g->builtin_fns, name))) {
 			v__gen__js__JsGen_write(g, _SLIT("builtin."));
@@ -65781,7 +65829,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_write(g, _SLIT("Array.prototype.push.call("));
 		v__gen__js__JsGen_expr(g, it.left);
 		v__gen__js__JsGen_write(g, _SLIT(".arr,"));
-		if (r_sym->kind == v__ast__Kind__array) {
+		v__ast__Array array_info = /* as */ *(v__ast__Array*)__as_cast((l_sym->info)._v__ast__Array,(l_sym->info)._typ, 377) /*expected idx: 377, name: v.ast.Array */ ;
+		if (r_sym->kind == v__ast__Kind__array && !v__ast__Type_alias_eq(array_info.elem_type, it.right_type)) {
 			v__gen__js__JsGen_write(g, _SLIT("..."));
 		}
 		v__gen__js__JsGen_expr(g, it.right);
@@ -81487,9 +81536,10 @@ void _vinit(int ___argc, voidptr ___argv) {
 		_SLIT("new"), _SLIT("package"), _SLIT("private"), _SLIT("protected"), _SLIT("public"), _SLIT("return"), _SLIT("static"), _SLIT("super"),
 		_SLIT("switch"), _SLIT("this"), _SLIT("throw"), _SLIT("try"), _SLIT("typeof"), _SLIT("var"), _SLIT("void"), _SLIT("while"),
 		_SLIT("with"), _SLIT("yield"), _SLIT("Number"), _SLIT("String"), _SLIT("Boolean"), _SLIT("Array"), _SLIT("Map")}));
-	_const_v__gen__js__v_types = new_array_from_c_array(17, 17, sizeof(string), _MOV((string[17]){
+	_const_v__gen__js__v_types = new_array_from_c_array(18, 18, sizeof(string), _MOV((string[18]){
 		_SLIT("i8"), _SLIT("i16"), _SLIT("int"), _SLIT("i64"), _SLIT("byte"), _SLIT("u16"), _SLIT("u32"), _SLIT("u64"), _SLIT("f32"),
-		_SLIT("f64"), _SLIT("int_literal"), _SLIT("float_literal"), _SLIT("size_t"), _SLIT("bool"), _SLIT("string"), _SLIT("map"), _SLIT("array")}));
+		_SLIT("f64"), _SLIT("int_literal"), _SLIT("float_literal"), _SLIT("size_t"), _SLIT("bool"), _SLIT("string"), _SLIT("map"), _SLIT("array"),
+		_SLIT("any")}));
 	_const_v__gen__js__shallow_equatables = new_array_from_c_array(15, 15, sizeof(v__ast__Kind), _MOV((v__ast__Kind[15]){
 		v__ast__Kind__i8, v__ast__Kind__i16, v__ast__Kind__int, v__ast__Kind__i64, v__ast__Kind__byte, v__ast__Kind__u16, v__ast__Kind__u32, v__ast__Kind__u64, v__ast__Kind__f32,
 		v__ast__Kind__f64, v__ast__Kind__int_literal, v__ast__Kind__float_literal, v__ast__Kind__size_t, v__ast__Kind__bool, v__ast__Kind__string}));
