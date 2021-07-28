@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7704685"
+#define V_COMMIT_HASH "65126ef"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d25bd95"
+	#define V_COMMIT_HASH "7704685"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7704685"
+	#define V_CURRENT_COMMIT_HASH "65126ef"
 #endif
 
 // V comptime_defines:
@@ -7037,8 +7037,8 @@ string StrIntpType_str(StrIntpType x);
 VV_LOCAL_SYMBOL f32 fabs32(f32 x);
 VV_LOCAL_SYMBOL f64 fabs64(f64 x);
 VV_LOCAL_SYMBOL u64 abs64(i64 x);
-u64 get_str_intp_u64_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, u8 in_pad_ch, int in_base, bool in_upper_case);
-u32 get_str_intp_u32_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, u8 in_pad_ch, int in_base, bool in_upper_case);
+u64 get_str_intp_u64_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, byte in_pad_ch, int in_base, bool in_upper_case);
+u32 get_str_intp_u32_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, byte in_pad_ch, int in_base, bool in_upper_case);
 VV_LOCAL_SYMBOL void StrIntpData_get_fmt_format(StrIntpData data, strings__Builder* sb);
 string str_intp(int data_len, voidptr in_data);
 string _const_si_s_code; // a string literal, inited later
@@ -19928,7 +19928,7 @@ inline VV_LOCAL_SYMBOL u64 abs64(i64 x) {
 	return (x < 0 ? (((u64)(-x))) : (((u64)(x))));
 }
 
-u64 get_str_intp_u64_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, u8 in_pad_ch, int in_base, bool in_upper_case) {
+u64 get_str_intp_u64_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, byte in_pad_ch, int in_base, bool in_upper_case) {
 	u64 width = (in_width != 0 ? (abs64(in_width)) : (((u64)(0U))));
 	u64 allign = (in_width > 0 ? (((u64)(1 << 5))) : (((u64)(0U))));
 	u64 upper_case = (in_upper_case ? (((u64)(1 << 7))) : (((u64)(0U))));
@@ -19940,7 +19940,7 @@ u64 get_str_intp_u64_format(StrIntpType fmt_type, int in_width, int in_precision
 	return res;
 }
 
-u32 get_str_intp_u32_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, u8 in_pad_ch, int in_base, bool in_upper_case) {
+u32 get_str_intp_u32_format(StrIntpType fmt_type, int in_width, int in_precision, bool in_tail_zeros, bool in_sign, byte in_pad_ch, int in_base, bool in_upper_case) {
 	u64 width = (in_width != 0 ? (abs64(in_width)) : (((u32)(0U))));
 	u32 allign = (in_width > 0 ? (((u32)(1 << 5))) : (((u32)(0U))));
 	u32 upper_case = (in_upper_case ? (((u32)(1 << 7))) : (((u32)(0U))));
@@ -31028,7 +31028,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("d25bd95"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7704685"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -62317,7 +62317,7 @@ VV_LOCAL_SYMBOL multi_return_u64_string v__gen__c__Gen_str_format(v__gen__c__Gen
 	if ((*(bool*)/*ee elem_typ */array_get(node.fills, i))) {
 		pad_ch = 1;
 	}
-	u32 res = get_str_intp_u32_format(fmt_type, (*(int*)/*ee elem_typ */array_get(node.fwidths, i)), (*(int*)/*ee elem_typ */array_get(node.precisions, i)), remove_tail_zeros, (*(bool*)/*ee elem_typ */array_get(node.pluss, i)), pad_ch, base, upper_case);
+	u32 res = get_str_intp_u32_format(fmt_type, (*(int*)/*ee elem_typ */array_get(node.fwidths, i)), (*(int*)/*ee elem_typ */array_get(node.precisions, i)), remove_tail_zeros, (*(bool*)/*ee elem_typ */array_get(node.pluss, i)), ((byte)(pad_ch)), base, upper_case);
 	return (multi_return_u64_string){.arg0=res, .arg1=StrIntpType_str(fmt_type)};
 }
 
@@ -62385,9 +62385,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal(v__gen__c__Gen* g, v__a
 			v__gen__c__Gen_write(g, _SLIT("0, { .d_c = 0 }}"));
 			break;
 		}
-		multi_return_u64_string mr_4420 = v__gen__c__Gen_str_format(g, node, i);
-		u64 ft_u64 = mr_4420.arg0;
-		string ft_str = mr_4420.arg1;
+		multi_return_u64_string mr_4426 = v__gen__c__Gen_str_format(g, node, i);
+		u64 ft_u64 = mr_4426.arg0;
+		string ft_str = mr_4426.arg1;
 		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("0x"), 0xfe10, {.d_s = u64_hex(ft_u64)}}, {_SLIT(", {.d_"), 0xfe10, {.d_s = ft_str}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
 		if (ft_str.str[0] == 'p') {
 			v__gen__c__Gen_write(g, _SLIT("(void*)("));
