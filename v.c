@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e3cf95b"
+#define V_COMMIT_HASH "d25bd95"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "66bc8bc"
+	#define V_COMMIT_HASH "e3cf95b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e3cf95b"
+	#define V_CURRENT_COMMIT_HASH "d25bd95"
 #endif
 
 // V comptime_defines:
@@ -51,8 +51,8 @@ typedef struct multi_return_bool_int_int multi_return_bool_int_int;
 typedef struct multi_return_Array_v__ast__Param_bool_bool multi_return_Array_v__ast__Param_bool_bool;
 typedef struct multi_return_Array_v__ast__Expr_Array_v__ast__Comment multi_return_Array_v__ast__Expr_Array_v__ast__Comment;
 typedef struct multi_return_v__ast__File_Array_v__vet__Error multi_return_v__ast__File_Array_v__vet__Error;
-typedef struct multi_return_bool_Array_string multi_return_bool_Array_string;
 typedef struct multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField_Map_string_v__ast__GlobalField multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField_Map_string_v__ast__GlobalField;
+typedef struct multi_return_bool_Array_string multi_return_bool_Array_string;
 typedef struct multi_return_string_string_string_string multi_return_string_string_string_string;
 typedef struct multi_return_int_string_string_string multi_return_int_string_string_string;
 typedef struct multi_return_Array_string_Array_string_Array_bool multi_return_Array_string_Array_string_Array_bool;
@@ -105,10 +105,9 @@ typedef struct v__token__Token v__token__Token;
 typedef struct time__StopWatchOptions time__StopWatchOptions;
 typedef struct time__StopWatch time__StopWatch;
 typedef struct time__Time time__Time;
-typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
-typedef struct v__depgraph__DepGraph v__depgraph__DepGraph;
-typedef struct v__depgraph__OrderedDepMap v__depgraph__OrderedDepMap;
-typedef struct v__depgraph__NodeNames v__depgraph__NodeNames;
+typedef struct v__dotgraph__DotGraph v__dotgraph__DotGraph;
+typedef struct v__dotgraph__NewNodeConfig v__dotgraph__NewNodeConfig;
+typedef struct v__dotgraph__NewEdgeConfig v__dotgraph__NewEdgeConfig;
 typedef struct flag__Flag flag__Flag;
 typedef struct flag__UnkownFlagError flag__UnkownFlagError;
 typedef struct flag__MinimumArgsCountError flag__MinimumArgsCountError;
@@ -143,6 +142,10 @@ typedef struct v__vmod__Parser v__vmod__Parser;
 typedef struct v__vmod__Token v__vmod__Token;
 typedef struct v__vmod__ModFileAndFolder v__vmod__ModFileAndFolder;
 typedef struct v__vmod__ModFileCacher v__vmod__ModFileCacher;
+typedef struct v__depgraph__DepGraphNode v__depgraph__DepGraphNode;
+typedef struct v__depgraph__DepGraph v__depgraph__DepGraph;
+typedef struct v__depgraph__OrderedDepMap v__depgraph__OrderedDepMap;
+typedef struct v__depgraph__NodeNames v__depgraph__NodeNames;
 typedef struct v__cflag__CFlag v__cflag__CFlag;
 typedef struct v__errors__Error v__errors__Error;
 typedef struct v__errors__Warning v__errors__Warning;
@@ -2074,10 +2077,10 @@ typedef map Map_string_v__ast__Type;
 typedef map Map_int_v__ast__InterfaceEmbedding;
 typedef array Array_i64;
 typedef array Array_v__vet__Error;
-typedef array Array_v__depgraph__DepGraphNode;
 typedef map Map_string_v__ast__FnDecl;
 typedef map Map_string_v__ast__ConstField;
 typedef map Map_string_v__ast__GlobalField;
+typedef array Array_v__depgraph__DepGraphNode;
 typedef map Map_string_strings__Builder;
 typedef map Map_string_v__ast__Stmt_ptr;
 typedef map Map_int_bool;
@@ -2141,6 +2144,7 @@ typedef void (*os__FN_SA_Handler)(int);
 typedef void (*os__SignalHandler)(os__Signal);
 typedef string (*anon_fn_string__string)(string);
 typedef void (*v__ast__FnPanicHandler)(v__ast__Table*,string);
+typedef string (*v__dotgraph__FnLabel2NodeName)(string,voidptr);
 typedef bool (*v__ast__walker__InspectorFn)(v__ast__Node*,voidptr);
 typedef struct rand__PRNG rand__PRNG;
 typedef struct v__gen__native__CodeGen v__gen__native__CodeGen;
@@ -2688,8 +2692,8 @@ struct v__gen__js__sourcemap__Empty {
 
 
 // Union sum type v__gen__js__sourcemap__SourcePositionType = 
-//          |  500 = v__gen__js__sourcemap__Empty
-//          |  471 = v__gen__js__sourcemap__SourcePosition
+//          |  505 = v__gen__js__sourcemap__Empty
+//          |  476 = v__gen__js__sourcemap__SourcePosition
 struct v__gen__js__sourcemap__SourcePositionType {
 	union {
 		v__gen__js__sourcemap__Empty* _v__gen__js__sourcemap__Empty;
@@ -2700,8 +2704,8 @@ struct v__gen__js__sourcemap__SourcePositionType {
 
 
 // Union sum type v__gen__js__sourcemap__NameIndexType = 
-//          |  500 = v__gen__js__sourcemap__Empty
-//          |  501 = v__gen__js__sourcemap__IndexNumber
+//          |  505 = v__gen__js__sourcemap__Empty
+//          |  506 = v__gen__js__sourcemap__IndexNumber
 struct v__gen__js__sourcemap__NameIndexType {
 	union {
 		v__gen__js__sourcemap__Empty* _v__gen__js__sourcemap__Empty;
@@ -2712,14 +2716,14 @@ struct v__gen__js__sourcemap__NameIndexType {
 
 
 // Union sum type x__json2__Any = 
-//          |  553 = x__json2__Null      
-//          |  517 = Array_x__json2__Any 
+//          |  558 = x__json2__Null      
+//          |  522 = Array_x__json2__Any 
 //          |   16 = bool                
 //          |   13 = f32                 
 //          |   14 = f64                 
 //          |    8 = i64                 
 //          |    7 = int                 
-//          |  513 = Map_string_x__json2__Any
+//          |  518 = Map_string_x__json2__Any
 //          |   18 = string              
 //          |   12 = u64                 
 struct x__json2__Any {
@@ -3442,6 +3446,21 @@ struct v__parser__EatCommentsConfig {
 
 
 
+struct v__markused__Walker {
+	v__ast__Table* table;
+	Map_string_bool used_fns;
+	Map_string_bool used_consts;
+	Map_string_bool used_globals;
+	int n_asserts;
+	v__pref__Preferences* pref;
+	Array_v__ast__File_ptr files;
+	Map_string_v__ast__FnDecl all_fns;
+	Map_string_v__ast__ConstField all_consts;
+	Map_string_v__ast__GlobalField all_globals;
+};
+
+
+
 struct v__depgraph__DepGraphNode {
 	string name;
 	Array_string deps;
@@ -3463,32 +3482,26 @@ struct v__depgraph__NodeNames {
 
 
 
-struct v__markused__Walker {
-	v__ast__Table* table;
-	Map_string_bool used_fns;
-	Map_string_bool used_consts;
-	Map_string_bool used_globals;
-	int n_asserts;
-	v__pref__Preferences* pref;
-	Array_v__ast__File_ptr files;
-	Map_string_v__ast__FnDecl all_fns;
-	Map_string_v__ast__ConstField all_consts;
-	Map_string_v__ast__GlobalField all_globals;
+struct v__dotgraph__DotGraph {
+	strings__Builder sb;
 };
 
 
 
-struct v__callgraph__Mapper {
-	int pos;
-	v__pref__Preferences* pref;
-	v__ast__Table* table;
-	v__ast__File* file;
-	v__ast__Node* node;
-	v__ast__FnDecl* fn_decl;
-	string caller_name;
-	string dot_caller_name;
-	bool is_caller_used;
-	strings__Builder sb;
+struct v__dotgraph__NewNodeConfig {
+	string node_name;
+	bool should_highlight;
+	string tooltip;
+	voidptr ctx;
+	v__dotgraph__FnLabel2NodeName name2node_fn;
+};
+
+
+
+struct v__dotgraph__NewEdgeConfig {
+	bool should_highlight;
+	voidptr ctx;
+	v__dotgraph__FnLabel2NodeName name2node_fn;
 };
 
 
@@ -3968,15 +3981,16 @@ struct v__pref__Preferences {
 	bool obfuscate;
 	bool is_repl;
 	bool is_run;
-	bool sanitize;
 	bool is_debug;
+	bool is_vlines;
+	bool sanitize;
 	bool sourcemap;
 	bool sourcemap_inline;
 	bool sourcemap_src_included;
-	bool is_vlines;
 	bool show_cc;
 	bool show_c_output;
 	bool show_callgraph;
+	bool show_depgraph;
 	string dump_c_flags;
 	bool use_cache;
 	bool retry_compilation;
@@ -5185,6 +5199,21 @@ struct v__vet__Error {
 
 
 
+struct v__callgraph__Mapper {
+	int pos;
+	v__pref__Preferences* pref;
+	v__ast__Table* table;
+	v__ast__File* file;
+	v__ast__Node* node;
+	v__ast__FnDecl* fn_decl;
+	string caller_name;
+	string dot_caller_name;
+	bool is_caller_used;
+	v__dotgraph__DotGraph dg;
+};
+
+
+
 struct v__pkgconfig__PkgConfig {
 	v__pkgconfig__Options options;
 	string name;
@@ -5881,15 +5910,15 @@ struct multi_return_v__ast__File_Array_v__vet__Error {
 	Array_v__vet__Error arg1;
 };
 
-struct multi_return_bool_Array_string {
-	bool arg0;
-	Array_string arg1;
-};
-
 struct multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField_Map_string_v__ast__GlobalField {
 	Map_string_v__ast__FnDecl arg0;
 	Map_string_v__ast__ConstField arg1;
 	Map_string_v__ast__GlobalField arg2;
+};
+
+struct multi_return_bool_Array_string {
+	bool arg0;
+	Array_string arg1;
 };
 
 struct multi_return_string_string_string_string {
@@ -7364,19 +7393,14 @@ time__Time time__unix(int abs);
 time__Time time__unix2(i64 abs, int microsecond);
 VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_date_from_offset(i64 day_offset_);
 VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(i64 second_offset_);
-void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
-void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
-Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, string name);
-void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name);
-void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
-int v__depgraph__OrderedDepMap_size(v__depgraph__OrderedDepMap* o);
-v__depgraph__DepGraph* v__depgraph__new_dep_graph();
-void v__depgraph__DepGraph_add(v__depgraph__DepGraph* graph, string mod, Array_string deps);
-v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* graph);
-v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph);
-string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph);
-string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph);
-VV_LOCAL_SYMBOL multi_return_bool_Array_string v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string already_seen);
+void v__dotgraph__start_digraph();
+VV_LOCAL_SYMBOL void anon_fn_40181cb3d9c4559e__82();
+v__dotgraph__DotGraph* v__dotgraph__new(string name, string label, string color);
+void v__dotgraph__DotGraph_writeln(v__dotgraph__DotGraph* d, string line);
+void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d);
+void v__dotgraph__DotGraph_new_node(v__dotgraph__DotGraph* d, string nlabel, v__dotgraph__NewNodeConfig cfg);
+void v__dotgraph__DotGraph_new_edge(v__dotgraph__DotGraph* d, string source, string target, v__dotgraph__NewEdgeConfig cfg);
+string v__dotgraph__node_name(string name, voidptr context);
 u64 hash__wyhash_c(byte* key, u64 len, u64 seed);
 u64 hash__wyhash64_c(u64 a, u64 b);
 u64 _const_hash__wyp0 = 11562461410679940143U; // precomputed
@@ -7702,6 +7726,20 @@ v__vmod__ModFileCacher* _const_v__vmod__private_file_cacher; // inited later
 v__vmod__ModFileCacher* v__vmod__get_cache();
 string v__util__recompilation__disabling_file(string vroot);
 void v__util__recompilation__must_be_enabled(string vroot, string error_message);
+void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
+void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
+Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, string name);
+void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name);
+void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string name, Array_string deps);
+int v__depgraph__OrderedDepMap_size(v__depgraph__OrderedDepMap* o);
+v__depgraph__DepGraph* v__depgraph__new_dep_graph();
+void v__depgraph__DepGraph_add(v__depgraph__DepGraph* graph, string mod, Array_string deps);
+v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* graph);
+v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph);
+string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph);
+string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph);
+VV_LOCAL_SYMBOL multi_return_bool_Array_string v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string already_seen);
+void v__depgraph__show(v__depgraph__DepGraph* graph, string path);
 string v__cflag__CFlag_str(v__cflag__CFlag* c);
 string _const_v__cflag__fexisting_literal; // a string literal, inited later
 string v__cflag__CFlag_eval(v__cflag__CFlag* cf);
@@ -10428,17 +10466,17 @@ static inline x__json2__Any bool_to_sumtype_x__json2__Any(bool* x) {
 
 static inline x__json2__Any x__json2__Null_to_sumtype_x__json2__Any(x__json2__Null* x) {
 	x__json2__Null* ptr = memdup(x, sizeof(x__json2__Null));
-	return (x__json2__Any){ ._x__json2__Null = ptr, ._typ = 553};
+	return (x__json2__Any){ ._x__json2__Null = ptr, ._typ = 558};
 }
 
 static inline x__json2__Any Array_x__json2__Any_to_sumtype_x__json2__Any(Array_x__json2__Any* x) {
 	Array_x__json2__Any* ptr = memdup(x, sizeof(Array_x__json2__Any));
-	return (x__json2__Any){ ._Array_x__json2__Any = ptr, ._typ = 517};
+	return (x__json2__Any){ ._Array_x__json2__Any = ptr, ._typ = 522};
 }
 
 static inline x__json2__Any Map_string_x__json2__Any_to_sumtype_x__json2__Any(Map_string_x__json2__Any* x) {
 	Map_string_x__json2__Any* ptr = memdup(x, sizeof(Map_string_x__json2__Any));
-	return (x__json2__Any){ ._Map_string_x__json2__Any = ptr, ._typ = 513};
+	return (x__json2__Any){ ._Map_string_x__json2__Any = ptr, ._typ = 518};
 }
 
 static bool Array_rune_contains(Array_rune a, rune v) {
@@ -10465,12 +10503,12 @@ static bool v__gen__js__sourcemap__IndexNumber_alias_eq(v__gen__js__sourcemap__I
 
 static inline v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__IndexNumber_to_sumtype_v__gen__js__sourcemap__NameIndexType(v__gen__js__sourcemap__IndexNumber* x) {
 	v__gen__js__sourcemap__IndexNumber* ptr = memdup(x, sizeof(v__gen__js__sourcemap__IndexNumber));
-	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__IndexNumber = ptr, ._typ = 501};
+	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__IndexNumber = ptr, ._typ = 506};
 }
 
 static inline v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__Empty_to_sumtype_v__gen__js__sourcemap__NameIndexType(v__gen__js__sourcemap__Empty* x) {
 	v__gen__js__sourcemap__Empty* ptr = memdup(x, sizeof(v__gen__js__sourcemap__Empty));
-	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__Empty = ptr, ._typ = 500};
+	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__Empty = ptr, ._typ = 505};
 }
 
 static inline x__json2__Any int_to_sumtype_x__json2__Any(int* x) {
@@ -11564,7 +11602,7 @@ static string indent_v__ast__TypeNode_str(v__ast__TypeNode it, int indent_count)
 
 static inline v__gen__js__sourcemap__SourcePositionType v__gen__js__sourcemap__SourcePosition_to_sumtype_v__gen__js__sourcemap__SourcePositionType(v__gen__js__sourcemap__SourcePosition* x) {
 	v__gen__js__sourcemap__SourcePosition* ptr = memdup(x, sizeof(v__gen__js__sourcemap__SourcePosition));
-	return (v__gen__js__sourcemap__SourcePositionType){ ._v__gen__js__sourcemap__SourcePosition = ptr, ._typ = 471};
+	return (v__gen__js__sourcemap__SourcePositionType){ ._v__gen__js__sourcemap__SourcePosition = ptr, ._typ = 476};
 }
 
 static bool Array_v__ast__Kind_contains(Array_v__ast__Kind a, v__ast__Kind v) {
@@ -11748,6 +11786,11 @@ static string indent_v__ast__Return_str(v__ast__Return it, int indent_count) {
 	string_free(&indents);
 	return res;
 }
+
+VV_LOCAL_SYMBOL void anon_fn_40181cb3d9c4559e__82(void) {
+		println(_SLIT("}"));
+	}
+	
 
 
 // V out
@@ -11982,17 +12025,17 @@ static char * v_typeof_interface_v__ast__walker__Visitor(int sidx) { /* v.ast.wa
 }
 static char * v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType(int sidx) { /* v.gen.js.sourcemap.SourcePositionType */ 
 	switch(sidx) {
-		case 502: return "v.gen.js.sourcemap.SourcePositionType";
-		case 500: return "v.gen.js.sourcemap.Empty";
-		case 471: return "v.gen.js.sourcemap.SourcePosition";
+		case 507: return "v.gen.js.sourcemap.SourcePositionType";
+		case 505: return "v.gen.js.sourcemap.Empty";
+		case 476: return "v.gen.js.sourcemap.SourcePosition";
 		default: return "unknown v.gen.js.sourcemap.SourcePositionType";
 	}
 }
 static char * v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType(int sidx) { /* v.gen.js.sourcemap.NameIndexType */ 
 	switch(sidx) {
-		case 503: return "v.gen.js.sourcemap.NameIndexType";
-		case 500: return "v.gen.js.sourcemap.Empty";
-		case 501: return "v.gen.js.sourcemap.IndexNumber";
+		case 508: return "v.gen.js.sourcemap.NameIndexType";
+		case 505: return "v.gen.js.sourcemap.Empty";
+		case 506: return "v.gen.js.sourcemap.IndexNumber";
 		default: return "unknown v.gen.js.sourcemap.NameIndexType";
 	}
 }
@@ -12006,15 +12049,15 @@ static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */
 }
 static char * v_typeof_sumtype_x__json2__Any(int sidx) { /* x.json2.Any */ 
 	switch(sidx) {
-		case 512: return "x.json2.Any";
-		case 553: return "x.json2.Null";
-		case 517: return "[]x.json2.Any";
+		case 517: return "x.json2.Any";
+		case 558: return "x.json2.Null";
+		case 522: return "[]x.json2.Any";
 		case 16: return "bool";
 		case 13: return "f32";
 		case 14: return "f64";
 		case 8: return "i64";
 		case 7: return "int";
-		case 513: return "map[string]x.json2.Any";
+		case 518: return "map[string]x.json2.Any";
 		case 18: return "string";
 		case 12: return "u64";
 		default: return "unknown x.json2.Any";
@@ -25850,213 +25893,57 @@ VV_LOCAL_SYMBOL multi_return_int_int_int time__calculate_time_from_offset(i64 se
 	return (multi_return_int_int_int){.arg0=((int)(hour_)), .arg1=((int)(min)), .arg2=((int)(second_offset))};
 }
 
-void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
-	if (!_IN_MAP(ADDR(string, name), ADDR(map, o->data))) {
-		array_push((array*)&o->keys, _MOV((string[]){ string_clone(name) }));
-	}
-	map_set(&o->data, &(string[]){name}, &(Array_string[]) { deps });
+void v__dotgraph__start_digraph(void) {
+	println(_SLIT("digraph G {"));
+	atexit((voidptr)	anon_fn_40181cb3d9c4559e__82);
 }
 
-void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
-	Array_string d = v__depgraph__OrderedDepMap_get(o, name);
-	for (int _t1 = 0; _t1 < deps.len; ++_t1) {
-		string dep = ((string*)deps.data)[_t1];
-		if (!(Array_string_contains(d, dep))) {
-			array_push((array*)&d, _MOV((string[]){ string_clone(dep) }));
-		} else {
-		}
-	}
-	v__depgraph__OrderedDepMap_set(o, name, d);
-}
-
-Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, string name) {
-	Array_string* _t2 = (Array_string*)/*ee elem_ptr_typ */(map_get_check(ADDR(map, o->data), &(string[]){name}));
-	Option_Array_string _t1 = {0};
-	if (_t2) {
-		*((Array_string*)&_t1.data) = *((Array_string*)_t2);
-	} else {
-		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
-	}
-	;
-	if (_t1.state != 0) { /*or block*/ 
-		IError err = _t1.err;
-		*(Array_string*) _t1.data = __new_array_with_default(0, 0, sizeof(string), 0);
-	}
-	
-	Array_string res = *(Array_string*)_t1.data;
+v__dotgraph__DotGraph* v__dotgraph__new(string name, string label, string color) {
+	v__dotgraph__DotGraph* res = (v__dotgraph__DotGraph*)memdup(&(v__dotgraph__DotGraph){.sb = strings__new_builder(1024),}, sizeof(v__dotgraph__DotGraph));
+	v__dotgraph__DotGraph_writeln(res,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("  subgraph cluster_"), 0xfe10, {.d_s = name}}, {_SLIT(" {"), 0, { .d_c = 0 }}})));
+	v__dotgraph__DotGraph_writeln(res, _SLIT("\tedge [fontname=\"Helvetica\",fontsize=\"10\",labelfontname=\"Helvetica\",labelfontsize=\"10\",style=\"solid\",color=\"black\"];"));
+	v__dotgraph__DotGraph_writeln(res, _SLIT("\tnode [fontname=\"Helvetica\",fontsize=\"10\",style=\"filled\",fontcolor=\"black\",fillcolor=\"white\",color=\"black\",shape=\"box\"];"));
+	v__dotgraph__DotGraph_writeln(res, _SLIT("\trankdir=\"LR\";"));
+	v__dotgraph__DotGraph_writeln(res,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tcolor=\""), 0xfe10, {.d_s = color}}, {_SLIT("\";"), 0, { .d_c = 0 }}})));
+	v__dotgraph__DotGraph_writeln(res,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tlabel=\""), 0xfe10, {.d_s = label}}, {_SLIT("\";"), 0, { .d_c = 0 }}})));
 	return res;
 }
 
-void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name) {
-	if (!_IN_MAP(ADDR(string, name), ADDR(map, o->data))) {
-		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("delete: no such key: "), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
-	}
-	for (int i = 0; i < o->keys.len; ++i) {
-		if (string__eq((*(string*)/*ee elem_typ */array_get(o->keys, i)), name)) {
-			array_delete(&o->keys, i);
-			break;
-		}
-	}
-	map_delete(&o->data, &(string[]){name});
+void v__dotgraph__DotGraph_writeln(v__dotgraph__DotGraph* d, string line) {
+	strings__Builder_writeln(&d->sb, line);
 }
 
-void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
-	Array_string diff = __new_array_with_default(0, 0, sizeof(string), 0);
-	Array_string deps_of_name = v__depgraph__OrderedDepMap_get(o, name);
-	for (int _t1 = 0; _t1 < deps_of_name.len; ++_t1) {
-		string dep = ((string*)deps_of_name.data)[_t1];
-		if (!(Array_string_contains(deps, dep))) {
-			array_push((array*)&diff, _MOV((string[]){ string_clone(dep) }));
-		}
-	}
-	v__depgraph__OrderedDepMap_set(o, name, diff);
+void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d) {
+	strings__Builder_writeln(&d->sb, _SLIT("  }"));
+	println(strings__Builder_str(&d->sb));
 }
 
-int v__depgraph__OrderedDepMap_size(v__depgraph__OrderedDepMap* o) {
-	int _t1 = o->data.len;
+void v__dotgraph__DotGraph_new_node(v__dotgraph__DotGraph* d, string nlabel, v__dotgraph__NewNodeConfig cfg) {
+	string nname = cfg.name2node_fn(nlabel, cfg.ctx);
+	if ((cfg.node_name).len != 0) {
+		nname = cfg.node_name;
+	}
+	if (cfg.should_highlight) {
+		v__dotgraph__DotGraph_writeln(d,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = nname}}, {_SLIT(" [label=\""), 0xfe10, {.d_s = nlabel}}, {_SLIT("\",color=\"blue\",height=0.2,width=0.4,fillcolor=\"#00FF00\",tooltip=\""), 0xfe10, {.d_s = cfg.tooltip}}, {_SLIT("\",shape=oval];"), 0, { .d_c = 0 }}})));
+	} else {
+		v__dotgraph__DotGraph_writeln(d,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = nname}}, {_SLIT(" [shape=\"box\",label=\""), 0xfe10, {.d_s = nlabel}}, {_SLIT("\"];"), 0, { .d_c = 0 }}})));
+	}
+}
+
+void v__dotgraph__DotGraph_new_edge(v__dotgraph__DotGraph* d, string source, string target, v__dotgraph__NewEdgeConfig cfg) {
+	string nsource = cfg.name2node_fn(source, cfg.ctx);
+	string ntarget = cfg.name2node_fn(target, cfg.ctx);
+	if (cfg.should_highlight) {
+		v__dotgraph__DotGraph_writeln(d,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = nsource}}, {_SLIT(" -> "), 0xfe10, {.d_s = ntarget}}, {_SLIT(" [color=\"blue\"];"), 0, { .d_c = 0 }}})));
+	} else {
+		v__dotgraph__DotGraph_writeln(d,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = nsource}}, {_SLIT(" -> "), 0xfe10, {.d_s = ntarget}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+	}
+}
+
+// TypeDecl
+string v__dotgraph__node_name(string name, voidptr context) {
+	string _t1 = string_replace(name, _SLIT("."), _SLIT("_"));
 	return _t1;
-}
-
-v__depgraph__DepGraph* v__depgraph__new_dep_graph(void) {
-	v__depgraph__DepGraph* _t1 = (v__depgraph__DepGraph*)memdup(&(v__depgraph__DepGraph){.acyclic = true,.nodes = __new_array_with_default(0, 1024, sizeof(v__depgraph__DepGraphNode), 0),}, sizeof(v__depgraph__DepGraph));
-	return _t1;
-}
-
-void v__depgraph__DepGraph_add(v__depgraph__DepGraph* graph, string mod, Array_string deps) {
-	v__depgraph__DepGraphNode new_node = (v__depgraph__DepGraphNode){.name = mod,.deps = array_clone_to_depth(&deps, 0),};
-	array_push((array*)&graph->nodes, _MOV((v__depgraph__DepGraphNode[]){ new_node }));
-}
-
-v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* graph) {
-	v__depgraph__OrderedDepMap node_names = (v__depgraph__OrderedDepMap){.keys = __new_array(0, 0, sizeof(string)),.data = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
-	v__depgraph__OrderedDepMap node_deps = (v__depgraph__OrderedDepMap){.keys = __new_array(0, 0, sizeof(string)),.data = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
-	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
-		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
-		v__depgraph__OrderedDepMap_add(&node_names, node.name, node.deps);
-		v__depgraph__OrderedDepMap_add(&node_deps, node.name, node.deps);
-	}
-	int iterations = 0;
-	v__depgraph__DepGraph* resolved = v__depgraph__new_dep_graph();
-	for (;;) {
-		if (!(v__depgraph__OrderedDepMap_size(&node_deps) != 0)) break;
-		iterations++;
-		Array_string ready_set = __new_array_with_default(0, 0, sizeof(string), 0);
-		for (int _t2 = 0; _t2 < node_deps.keys.len; ++_t2) {
-			string name = ((string*)node_deps.keys.data)[_t2];
-			Array_string deps = v__depgraph__OrderedDepMap_get(&node_deps, name);
-			if (deps.len == 0) {
-				array_push((array*)&ready_set, _MOV((string[]){ string_clone(name) }));
-			}
-		}
-		if (ready_set.len == 0) {
-			v__depgraph__DepGraph* g = v__depgraph__new_dep_graph();
-			g->acyclic = false;
-			for (int _t4 = 0; _t4 < node_deps.keys.len; ++_t4) {
-				string name = ((string*)node_deps.keys.data)[_t4];
-				v__depgraph__DepGraph_add(g, name, v__depgraph__OrderedDepMap_get(&node_names, name));
-			}
-			return g;
-		}
-		for (int _t6 = 0; _t6 < ready_set.len; ++_t6) {
-			string name = ((string*)ready_set.data)[_t6];
-			v__depgraph__OrderedDepMap_delete(&node_deps, name);
-			Array_string resolved_deps = v__depgraph__OrderedDepMap_get(&node_names, name);
-			v__depgraph__DepGraph_add(resolved, name, resolved_deps);
-		}
-		for (int _t7 = 0; _t7 < node_deps.keys.len; ++_t7) {
-			string name = ((string*)node_deps.keys.data)[_t7];
-			v__depgraph__OrderedDepMap_apply_diff(&node_deps, name, ready_set);
-		}
-	}
-	return resolved;
-}
-
-v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph) {
-	v__depgraph__DepGraphNode _t1 = (*(v__depgraph__DepGraphNode*)/*ee elem_typ */array_get(graph->nodes, graph->nodes.len - 1));
-	return _t1;
-}
-
-string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph) {
-	Array_string out = __new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
-		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
-		for (int _t2 = 0; _t2 < node.deps.len; ++_t2) {
-			string dep = ((string*)node.deps.data)[_t2];
-			array_push((array*)&out, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT(" * "), 0xfe10, {.d_s = node.name}}, {_SLIT(" -> "), 0xfe10, {.d_s = dep}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
-		}
-	}
-	string _t4 = Array_string_join(out, _SLIT("\n"));
-	return _t4;
-}
-
-string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
-	bool seen = false;
-	Array_string out = __new_array_with_default(0, 0, sizeof(string), 0);
-	v__depgraph__NodeNames nn = (v__depgraph__NodeNames){.is_cycle = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.names = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
-	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
-		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
-		map_set(&nn.names, &(string[]){node.name}, &(Array_string[]) { node.deps });
-	}
-	Map_string_Array_string _t2 = nn.names;
-	int _t4 = _t2.key_values.len;
-	for (int _t3 = 0; _t3 < _t4; ++_t3 ) {
-		int _t5 = _t2.key_values.len - _t4;
-		_t4 = _t2.key_values.len;
-		if (_t5 < 0) {
-			_t3 = -1;
-			continue;
-		}
-		if (!DenseArray_has_index(&_t2.key_values, _t3)) {continue;}
-		string k = /*key*/ *(string*)DenseArray_key(&_t2.key_values, _t3);
-		k = string_clone(k);
-		Array_string cycle_names = __new_array_with_default(0, 0, sizeof(string), 0);
-		if (_IN_MAP(ADDR(string, k), ADDR(map, nn.is_cycle))) {
-			continue;
-		}
-		multi_return_bool_Array_string mr_3178 = v__depgraph__NodeNames_is_part_of_cycle(&nn, k, cycle_names);
-		seen = mr_3178.arg0;
-		cycle_names = mr_3178.arg1;
-		if (seen) {
-			array_push((array*)&out, _MOV((string[]){ string_clone(string__plus(_SLIT(" * "), Array_string_join(cycle_names, _SLIT(" -> ")))) }));
-			nn.is_cycle = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
-		}
-	}
-	string _t7 = Array_string_join(out, _SLIT("\n"));
-	return _t7;
-}
-
-VV_LOCAL_SYMBOL multi_return_bool_Array_string v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string already_seen) {
-	bool seen = false;
-	Array_string new_already_seen = array_clone_to_depth(&already_seen, 0);
-	if (_IN_MAP(ADDR(string, name), ADDR(map, nn->is_cycle))) {
-		return (multi_return_bool_Array_string){.arg0=(*(bool*)map_get(ADDR(map, nn->is_cycle), &(string[]){name}, &(bool[]){ 0 })), .arg1=new_already_seen};
-	}
-	if ((Array_string_contains(already_seen, name))) {
-		array_push((array*)&new_already_seen, _MOV((string[]){ string_clone(name) }));
-		map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { true });
-		return (multi_return_bool_Array_string){.arg0=true, .arg1=new_already_seen};
-	}
-	array_push((array*)&new_already_seen, _MOV((string[]){ string_clone(name) }));
-	Array_string deps = (*(Array_string*)map_get(ADDR(map, nn->names), &(string[]){name}, &(Array_string[]){ __new_array(0, 0, sizeof(string)) }));
-	if (deps.len == 0) {
-		map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { false });
-		return (multi_return_bool_Array_string){.arg0=false, .arg1=new_already_seen};
-	}
-	for (int _t6 = 0; _t6 < deps.len; ++_t6) {
-		string d = ((string*)deps.data)[_t6];
-		Array_string d_already_seen = array_clone_to_depth(&new_already_seen, 0);
-		multi_return_bool_Array_string mr_3911 = v__depgraph__NodeNames_is_part_of_cycle(nn, d, d_already_seen);
-		seen = mr_3911.arg0;
-		d_already_seen = mr_3911.arg1;
-		if (seen) {
-			new_already_seen = array_clone_to_depth(&d_already_seen, 0);
-			map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { true });
-			return (multi_return_bool_Array_string){.arg0=true, .arg1=new_already_seen};
-		}
-	}
-	map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { false });
-	return (multi_return_bool_Array_string){.arg0=false, .arg1=new_already_seen};
 }
 
 // Attr: [inline]
@@ -28135,15 +28022,15 @@ string x__json2__Any_json_str(x__json2__Any f) {
 		string _t9 = bool_str((*f._bool));
 		return _t9;
 	}
-	else if (f._typ == 513 /* map[string]x.json2.Any */) {
+	else if (f._typ == 518 /* map[string]x.json2.Any */) {
 		string _t10 = Map_string_x__json2__Any_str((*f._Map_string_x__json2__Any));
 		return _t10;
 	}
-	else if (f._typ == 517 /* []x.json2.Any */) {
+	else if (f._typ == 522 /* []x.json2.Any */) {
 		string _t11 = Array_x__json2__Any_str((*f._Array_x__json2__Any));
 		return _t11;
 	}
-	else if (f._typ == 553 /* x.json2.Null */) {
+	else if (f._typ == 558 /* x.json2.Null */) {
 		string _t12 = _SLIT("null");
 		return _t12;
 	}
@@ -28234,9 +28121,9 @@ Option_x__json2__Any x__json2__fast_raw_decode(string src) {
 
 
 Map_string_x__json2__Any x__json2__Any_as_map(x__json2__Any f) {
-	if ((f)._typ == 513 /* map[string]x.json2.Any */) {
+	if ((f)._typ == 518 /* map[string]x.json2.Any */) {
 		return (*f._Map_string_x__json2__Any);
-	} else if ((f)._typ == 517 /* []x.json2.Any */) {
+	} else if ((f)._typ == 522 /* []x.json2.Any */) {
 		Map_string_x__json2__Any mp = new_map(sizeof(string), sizeof(x__json2__Any), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
 		for (int i = 0; i < (*f._Array_x__json2__Any).len; ++i) {
 			x__json2__Any fi = ((x__json2__Any*)(*f._Array_x__json2__Any).data)[i];
@@ -28390,9 +28277,9 @@ f64 x__json2__Any_f64(x__json2__Any f) {
 }
 
 Array_x__json2__Any x__json2__Any_arr(x__json2__Any f) {
-	if ((f)._typ == 517 /* []x.json2.Any */) {
+	if ((f)._typ == 522 /* []x.json2.Any */) {
 		return (*f._Array_x__json2__Any);
-	} else if ((f)._typ == 513 /* map[string]x.json2.Any */) {
+	} else if ((f)._typ == 518 /* map[string]x.json2.Any */) {
 		Array_x__json2__Any arr = __new_array_with_default(0, 0, sizeof(x__json2__Any), 0);
 		int _t3 = (*f._Map_string_x__json2__Any).key_values.len;
 		for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
@@ -30029,6 +29916,234 @@ void v__util__recompilation__must_be_enabled(string vroot, string error_message)
 	}
 }
 
+void v__depgraph__OrderedDepMap_set(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
+	if (!_IN_MAP(ADDR(string, name), ADDR(map, o->data))) {
+		array_push((array*)&o->keys, _MOV((string[]){ string_clone(name) }));
+	}
+	map_set(&o->data, &(string[]){name}, &(Array_string[]) { deps });
+}
+
+void v__depgraph__OrderedDepMap_add(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
+	Array_string d = v__depgraph__OrderedDepMap_get(o, name);
+	for (int _t1 = 0; _t1 < deps.len; ++_t1) {
+		string dep = ((string*)deps.data)[_t1];
+		if (!(Array_string_contains(d, dep))) {
+			array_push((array*)&d, _MOV((string[]){ string_clone(dep) }));
+		} else {
+		}
+	}
+	v__depgraph__OrderedDepMap_set(o, name, d);
+}
+
+Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, string name) {
+	Array_string* _t2 = (Array_string*)/*ee elem_ptr_typ */(map_get_check(ADDR(map, o->data), &(string[]){name}));
+	Option_Array_string _t1 = {0};
+	if (_t2) {
+		*((Array_string*)&_t1.data) = *((Array_string*)_t2);
+	} else {
+		_t1.state = 2; _t1.err = _v_error(_SLIT("array index out of range"));
+	}
+	;
+	if (_t1.state != 0) { /*or block*/ 
+		IError err = _t1.err;
+		*(Array_string*) _t1.data = __new_array_with_default(0, 0, sizeof(string), 0);
+	}
+	
+	Array_string res = *(Array_string*)_t1.data;
+	return res;
+}
+
+void v__depgraph__OrderedDepMap_delete(v__depgraph__OrderedDepMap* o, string name) {
+	if (!_IN_MAP(ADDR(string, name), ADDR(map, o->data))) {
+		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("delete: no such key: "), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		VUNREACHABLE();
+	}
+	for (int i = 0; i < o->keys.len; ++i) {
+		if (string__eq((*(string*)/*ee elem_typ */array_get(o->keys, i)), name)) {
+			array_delete(&o->keys, i);
+			break;
+		}
+	}
+	map_delete(&o->data, &(string[]){name});
+}
+
+void v__depgraph__OrderedDepMap_apply_diff(v__depgraph__OrderedDepMap* o, string name, Array_string deps) {
+	Array_string diff = __new_array_with_default(0, 0, sizeof(string), 0);
+	Array_string deps_of_name = v__depgraph__OrderedDepMap_get(o, name);
+	for (int _t1 = 0; _t1 < deps_of_name.len; ++_t1) {
+		string dep = ((string*)deps_of_name.data)[_t1];
+		if (!(Array_string_contains(deps, dep))) {
+			array_push((array*)&diff, _MOV((string[]){ string_clone(dep) }));
+		}
+	}
+	v__depgraph__OrderedDepMap_set(o, name, diff);
+}
+
+int v__depgraph__OrderedDepMap_size(v__depgraph__OrderedDepMap* o) {
+	int _t1 = o->data.len;
+	return _t1;
+}
+
+v__depgraph__DepGraph* v__depgraph__new_dep_graph(void) {
+	v__depgraph__DepGraph* _t1 = (v__depgraph__DepGraph*)memdup(&(v__depgraph__DepGraph){.acyclic = true,.nodes = __new_array_with_default(0, 1024, sizeof(v__depgraph__DepGraphNode), 0),}, sizeof(v__depgraph__DepGraph));
+	return _t1;
+}
+
+void v__depgraph__DepGraph_add(v__depgraph__DepGraph* graph, string mod, Array_string deps) {
+	v__depgraph__DepGraphNode new_node = (v__depgraph__DepGraphNode){.name = mod,.deps = array_clone_to_depth(&deps, 0),};
+	array_push((array*)&graph->nodes, _MOV((v__depgraph__DepGraphNode[]){ new_node }));
+}
+
+v__depgraph__DepGraph* v__depgraph__DepGraph_resolve(v__depgraph__DepGraph* graph) {
+	v__depgraph__OrderedDepMap node_names = (v__depgraph__OrderedDepMap){.keys = __new_array(0, 0, sizeof(string)),.data = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
+	v__depgraph__OrderedDepMap node_deps = (v__depgraph__OrderedDepMap){.keys = __new_array(0, 0, sizeof(string)),.data = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
+	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
+		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
+		v__depgraph__OrderedDepMap_add(&node_names, node.name, node.deps);
+		v__depgraph__OrderedDepMap_add(&node_deps, node.name, node.deps);
+	}
+	int iterations = 0;
+	v__depgraph__DepGraph* resolved = v__depgraph__new_dep_graph();
+	for (;;) {
+		if (!(v__depgraph__OrderedDepMap_size(&node_deps) != 0)) break;
+		iterations++;
+		Array_string ready_set = __new_array_with_default(0, 0, sizeof(string), 0);
+		for (int _t2 = 0; _t2 < node_deps.keys.len; ++_t2) {
+			string name = ((string*)node_deps.keys.data)[_t2];
+			Array_string deps = v__depgraph__OrderedDepMap_get(&node_deps, name);
+			if (deps.len == 0) {
+				array_push((array*)&ready_set, _MOV((string[]){ string_clone(name) }));
+			}
+		}
+		if (ready_set.len == 0) {
+			v__depgraph__DepGraph* g = v__depgraph__new_dep_graph();
+			g->acyclic = false;
+			for (int _t4 = 0; _t4 < node_deps.keys.len; ++_t4) {
+				string name = ((string*)node_deps.keys.data)[_t4];
+				v__depgraph__DepGraph_add(g, name, v__depgraph__OrderedDepMap_get(&node_names, name));
+			}
+			return g;
+		}
+		for (int _t6 = 0; _t6 < ready_set.len; ++_t6) {
+			string name = ((string*)ready_set.data)[_t6];
+			v__depgraph__OrderedDepMap_delete(&node_deps, name);
+			Array_string resolved_deps = v__depgraph__OrderedDepMap_get(&node_names, name);
+			v__depgraph__DepGraph_add(resolved, name, resolved_deps);
+		}
+		for (int _t7 = 0; _t7 < node_deps.keys.len; ++_t7) {
+			string name = ((string*)node_deps.keys.data)[_t7];
+			v__depgraph__OrderedDepMap_apply_diff(&node_deps, name, ready_set);
+		}
+	}
+	return resolved;
+}
+
+v__depgraph__DepGraphNode v__depgraph__DepGraph_last_node(v__depgraph__DepGraph* graph) {
+	v__depgraph__DepGraphNode _t1 = (*(v__depgraph__DepGraphNode*)/*ee elem_typ */array_get(graph->nodes, graph->nodes.len - 1));
+	return _t1;
+}
+
+string v__depgraph__DepGraph_display(v__depgraph__DepGraph* graph) {
+	Array_string out = __new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
+		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
+		for (int _t2 = 0; _t2 < node.deps.len; ++_t2) {
+			string dep = ((string*)node.deps.data)[_t2];
+			array_push((array*)&out, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT(" * "), 0xfe10, {.d_s = node.name}}, {_SLIT(" -> "), 0xfe10, {.d_s = dep}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+		}
+	}
+	string _t4 = Array_string_join(out, _SLIT("\n"));
+	return _t4;
+}
+
+string v__depgraph__DepGraph_display_cycles(v__depgraph__DepGraph* graph) {
+	bool seen = false;
+	Array_string out = __new_array_with_default(0, 0, sizeof(string), 0);
+	v__depgraph__NodeNames nn = (v__depgraph__NodeNames){.is_cycle = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.names = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
+	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
+		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
+		map_set(&nn.names, &(string[]){node.name}, &(Array_string[]) { node.deps });
+	}
+	Map_string_Array_string _t2 = nn.names;
+	int _t4 = _t2.key_values.len;
+	for (int _t3 = 0; _t3 < _t4; ++_t3 ) {
+		int _t5 = _t2.key_values.len - _t4;
+		_t4 = _t2.key_values.len;
+		if (_t5 < 0) {
+			_t3 = -1;
+			continue;
+		}
+		if (!DenseArray_has_index(&_t2.key_values, _t3)) {continue;}
+		string k = /*key*/ *(string*)DenseArray_key(&_t2.key_values, _t3);
+		k = string_clone(k);
+		Array_string cycle_names = __new_array_with_default(0, 0, sizeof(string), 0);
+		if (_IN_MAP(ADDR(string, k), ADDR(map, nn.is_cycle))) {
+			continue;
+		}
+		multi_return_bool_Array_string mr_3197 = v__depgraph__NodeNames_is_part_of_cycle(&nn, k, cycle_names);
+		seen = mr_3197.arg0;
+		cycle_names = mr_3197.arg1;
+		if (seen) {
+			array_push((array*)&out, _MOV((string[]){ string_clone(string__plus(_SLIT(" * "), Array_string_join(cycle_names, _SLIT(" -> ")))) }));
+			nn.is_cycle = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
+		}
+	}
+	string _t7 = Array_string_join(out, _SLIT("\n"));
+	return _t7;
+}
+
+VV_LOCAL_SYMBOL multi_return_bool_Array_string v__depgraph__NodeNames_is_part_of_cycle(v__depgraph__NodeNames* nn, string name, Array_string already_seen) {
+	bool seen = false;
+	Array_string new_already_seen = array_clone_to_depth(&already_seen, 0);
+	if (_IN_MAP(ADDR(string, name), ADDR(map, nn->is_cycle))) {
+		return (multi_return_bool_Array_string){.arg0=(*(bool*)map_get(ADDR(map, nn->is_cycle), &(string[]){name}, &(bool[]){ 0 })), .arg1=new_already_seen};
+	}
+	if ((Array_string_contains(already_seen, name))) {
+		array_push((array*)&new_already_seen, _MOV((string[]){ string_clone(name) }));
+		map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { true });
+		return (multi_return_bool_Array_string){.arg0=true, .arg1=new_already_seen};
+	}
+	array_push((array*)&new_already_seen, _MOV((string[]){ string_clone(name) }));
+	Array_string deps = (*(Array_string*)map_get(ADDR(map, nn->names), &(string[]){name}, &(Array_string[]){ __new_array(0, 0, sizeof(string)) }));
+	if (deps.len == 0) {
+		map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { false });
+		return (multi_return_bool_Array_string){.arg0=false, .arg1=new_already_seen};
+	}
+	for (int _t6 = 0; _t6 < deps.len; ++_t6) {
+		string d = ((string*)deps.data)[_t6];
+		Array_string d_already_seen = array_clone_to_depth(&new_already_seen, 0);
+		multi_return_bool_Array_string mr_3930 = v__depgraph__NodeNames_is_part_of_cycle(nn, d, d_already_seen);
+		seen = mr_3930.arg0;
+		d_already_seen = mr_3930.arg1;
+		if (seen) {
+			new_already_seen = array_clone_to_depth(&d_already_seen, 0);
+			map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { true });
+			return (multi_return_bool_Array_string){.arg0=true, .arg1=new_already_seen};
+		}
+	}
+	map_set(&nn->is_cycle, &(string[]){name}, &(bool[]) { false });
+	return (multi_return_bool_Array_string){.arg0=false, .arg1=new_already_seen};
+}
+
+void v__depgraph__show(v__depgraph__DepGraph* graph, string path) {
+	v__dotgraph__DotGraph* dg = v__dotgraph__new(_SLIT("ModGraph"),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("ModGraph for "), 0xfe10, {.d_s = path}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("blue"));
+	string mbuiltin = _SLIT("builtin");
+	for (int _t1 = 0; _t1 < graph->nodes.len; ++_t1) {
+		v__depgraph__DepGraphNode node = ((v__depgraph__DepGraphNode*)graph->nodes.data)[_t1];
+		bool is_main = string__eq(node.name, _SLIT("main"));
+		v__dotgraph__DotGraph_new_node(dg, node.name, (v__dotgraph__NewNodeConfig){.node_name = (string){.str=(byteptr)"", .is_lit=1},.should_highlight = is_main,.tooltip = (string){.str=(byteptr)"", .is_lit=1},.ctx = ((voidptr)(0)),.name2node_fn = v__dotgraph__node_name,});
+		Array_string deps = array_clone_to_depth(&node.deps, 0);
+		if (!string__eq(node.name, mbuiltin) && !(Array_string_contains(deps, mbuiltin))) {
+			array_push((array*)&deps, _MOV((string[]){ string_clone(mbuiltin) }));
+		}
+		for (int _t3 = 0; _t3 < deps.len; ++_t3) {
+			string dep = ((string*)deps.data)[_t3];
+			v__dotgraph__DotGraph_new_edge(dg, node.name, dep, (v__dotgraph__NewEdgeConfig){.should_highlight = is_main,.ctx = ((voidptr)(0)),.name2node_fn = v__dotgraph__node_name,});
+		}
+	}
+	v__dotgraph__DotGraph_finish(dg);
+}
+
 string v__cflag__CFlag_str(v__cflag__CFlag* c) {
 	string _t1 =  str_intp(6, _MOV((StrIntpData[]){{_SLIT("CFlag{ name: \""), 0xfe10, {.d_s = c->name}}, {_SLIT("\" value: \""), 0xfe10, {.d_s = c->value}}, {_SLIT("\" mod: \""), 0xfe10, {.d_s = c->mod}}, {_SLIT("\" os: \""), 0xfe10, {.d_s = c->os}}, {_SLIT("\" cached: \""), 0xfe10, {.d_s = c->cached}}, {_SLIT("\" }"), 0, { .d_c = 0 }}}));
 	return _t1;
@@ -31190,9 +31305,9 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 		}
 		;
 		previous_generated_column = mapping.GenPosition.gen_column;
-		if (mapping.source_position._typ == 500 /* v.gen.js.sourcemap.Empty */) {
+		if (mapping.source_position._typ == 505 /* v.gen.js.sourcemap.Empty */) {
 		}
-		else if (mapping.source_position._typ == 471 /* v.gen.js.sourcemap.SourcePosition */) {
+		else if (mapping.source_position._typ == 476 /* v.gen.js.sourcemap.SourcePosition */) {
 			Option_void _t5 = v__gen__js__sourcemap__vlq__encode(((i64)(mapping.sources_ind - previous_source_index)), output);
 			if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
 				Option_void _t6;
@@ -31217,9 +31332,9 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 			}
 			;
 			previous_source_column = (*mapping.source_position._v__gen__js__sourcemap__SourcePosition).source_column;
-			if (mapping.names_ind._typ == 500 /* v.gen.js.sourcemap.Empty */) {
+			if (mapping.names_ind._typ == 505 /* v.gen.js.sourcemap.Empty */) {
 			}
-			else if (mapping.names_ind._typ == 501 /* v.gen.js.sourcemap.IndexNumber */) {
+			else if (mapping.names_ind._typ == 506 /* v.gen.js.sourcemap.IndexNumber */) {
 				Option_void _t11 = v__gen__js__sourcemap__vlq__encode(((i64)((*mapping.names_ind._v__gen__js__sourcemap__IndexNumber) - previous_name_index)), output);
 				if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
 					Option_void _t12;
@@ -31249,7 +31364,7 @@ VV_LOCAL_SYMBOL bool v__gen__js__sourcemap__compare_by_generated_positions_infla
 		bool _t3 = true;
 		return _t3;
 	}
-	if (string__eq(tos3( /* v.gen.js.sourcemap.SourcePositionType */ v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType( (mapping_a.source_position)._typ )), tos3( /* v.gen.js.sourcemap.SourcePositionType */ v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType( (mapping_b.source_position)._typ ))) && (mapping_a.source_position)._typ == 471 /* v.gen.js.sourcemap.SourcePosition */ && (mapping_b.source_position)._typ == 471 /* v.gen.js.sourcemap.SourcePosition */) {
+	if (string__eq(tos3( /* v.gen.js.sourcemap.SourcePositionType */ v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType( (mapping_a.source_position)._typ )), tos3( /* v.gen.js.sourcemap.SourcePositionType */ v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType( (mapping_b.source_position)._typ ))) && (mapping_a.source_position)._typ == 476 /* v.gen.js.sourcemap.SourcePosition */ && (mapping_b.source_position)._typ == 476 /* v.gen.js.sourcemap.SourcePosition */) {
 		if ((*mapping_a.source_position._v__gen__js__sourcemap__SourcePosition).source_line != (*mapping_b.source_position._v__gen__js__sourcemap__SourcePosition).source_line || (*mapping_a.source_position._v__gen__js__sourcemap__SourcePosition).source_column != (*mapping_b.source_position._v__gen__js__sourcemap__SourcePosition).source_column) {
 			bool _t4 = true;
 			return _t4;
@@ -31260,7 +31375,7 @@ VV_LOCAL_SYMBOL bool v__gen__js__sourcemap__compare_by_generated_positions_infla
 			return _t5;
 		}
 	}
-	if (string__eq(tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_a.names_ind)._typ )), tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_b.names_ind)._typ ))) && (mapping_a.names_ind)._typ == 501 /* v.gen.js.sourcemap.IndexNumber */ && (mapping_b.names_ind)._typ == 501 /* v.gen.js.sourcemap.IndexNumber */) {
+	if (string__eq(tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_a.names_ind)._typ )), tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_b.names_ind)._typ ))) && (mapping_a.names_ind)._typ == 506 /* v.gen.js.sourcemap.IndexNumber */ && (mapping_b.names_ind)._typ == 506 /* v.gen.js.sourcemap.IndexNumber */) {
 		bool _t6 = !v__gen__js__sourcemap__IndexNumber_alias_eq((*mapping_a.names_ind._v__gen__js__sourcemap__IndexNumber), (*mapping_b.names_ind._v__gen__js__sourcemap__IndexNumber));
 		return _t6;
 	} else {
@@ -31699,7 +31814,7 @@ string rand__ulid_at_millisecond(u64 unix_time_milli) {
 }
 
 v__pref__Preferences* v__pref__new_preferences(void) {
-	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences));
 	v__pref__Preferences_fill_with_defaults(p);
 	return p;
 }
@@ -31773,7 +31888,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("66bc8bc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("e3cf95b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32132,7 +32247,7 @@ bool v__pref__Backend_is_js(v__pref__Backend b) {
 }
 
 multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args) {
-	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences));
+	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences));
 	#if defined(TARGET_IS_64BIT)
 	{
 		res->m64 = true;
@@ -32384,6 +32499,9 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 		}
 		else if (string__eq(arg, _SLIT("-show-callgraph"))) {
 			res->show_callgraph = true;
+		}
+		else if (string__eq(arg, _SLIT("-show-depgraph"))) {
+			res->show_depgraph = true;
 		}
 		else if (string__eq(arg, _SLIT("-dump-c-flags"))) {
 			res->dump_c_flags = os__cmdline__option(current_args, arg, _SLIT("-"));
@@ -44867,7 +44985,7 @@ v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser*
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__ast__Table* table, v__ast__Scope* scope) {
 bool v__parser__parse_stmt_defer_0 = false;
-	v__parser__Parser p = (v__parser__Parser){.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences)),.file_base = (string){.str=(byteptr)"", .is_lit=1},.file_name = (string){.str=(byteptr)"", .is_lit=1},.file_name_dir = (string){.str=(byteptr)"", .is_lit=1},.unique_prefix = (string){.str=(byteptr)"", .is_lit=1},.file_backend_mode = 0,.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode__skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.sanitize = 0,.is_debug = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.is_vlines = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences))),.comments_mode = v__scanner__CommentsMode__skip_comments,.tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.prev_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.peek_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.table = table,.language = 0,.inside_test_file = true,.inside_if = 0,.inside_if_expr = 0,.inside_ct_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_unsafe_fn = 0,.inside_str_interp = 0,.inside_array_lit = 0,.or_is_handled = 0,.builtin_mod = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.is_manualfree = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.expr_mod = (string){.str=(byteptr)"", .is_lit=1},.scope = scope,.imports = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.ast_imports = __new_array(0, 0, sizeof(v__ast__Import)),.used_imports = __new_array(0, 0, sizeof(string)),.auto_imports = __new_array(0, 0, sizeof(string)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.is_amp = 0,.returns = 0,.inside_match = 0,.inside_select = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 0, sizeof(v__errors__Error)),.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),.notices = __new_array(0, 0, sizeof(v__errors__Notice)),.vet_errors = __new_array(0, 0, sizeof(v__vet__Error)),.cur_fn_name = (string){.str=(byteptr)"", .is_lit=1},.label_names = __new_array(0, 0, sizeof(string)),.in_generic_params = 0,.name_error = 0,.n_asm = 0,.inside_asm_template = 0,.inside_asm = 0,.global_labels = __new_array(0, 0, sizeof(string)),.inside_defer = 0,.comp_if_cond = 0,.defer_vars = __new_array(0, 0, sizeof(v__ast__Ident)),};
+	v__parser__Parser p = (v__parser__Parser){.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences)),.file_base = (string){.str=(byteptr)"", .is_lit=1},.file_name = (string){.str=(byteptr)"", .is_lit=1},.file_name_dir = (string){.str=(byteptr)"", .is_lit=1},.unique_prefix = (string){.str=(byteptr)"", .is_lit=1},.file_backend_mode = 0,.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode__skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.use_color = 0,.is_parallel = 0,.error_limit = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences))),.comments_mode = v__scanner__CommentsMode__skip_comments,.tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.prev_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.peek_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.table = table,.language = 0,.inside_test_file = true,.inside_if = 0,.inside_if_expr = 0,.inside_ct_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_unsafe_fn = 0,.inside_str_interp = 0,.inside_array_lit = 0,.or_is_handled = 0,.builtin_mod = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.is_manualfree = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.expr_mod = (string){.str=(byteptr)"", .is_lit=1},.scope = scope,.imports = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.ast_imports = __new_array(0, 0, sizeof(v__ast__Import)),.used_imports = __new_array(0, 0, sizeof(string)),.auto_imports = __new_array(0, 0, sizeof(string)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.is_amp = 0,.returns = 0,.inside_match = 0,.inside_select = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 0, sizeof(v__errors__Error)),.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),.notices = __new_array(0, 0, sizeof(v__errors__Notice)),.vet_errors = __new_array(0, 0, sizeof(v__vet__Error)),.cur_fn_name = (string){.str=(byteptr)"", .is_lit=1},.label_names = __new_array(0, 0, sizeof(string)),.in_generic_params = 0,.name_error = 0,.n_asm = 0,.inside_asm_template = 0,.inside_asm = 0,.global_labels = __new_array(0, 0, sizeof(string)),.inside_defer = 0,.comp_if_cond = 0,.defer_vars = __new_array(0, 0, sizeof(v__ast__Ident)),};
 	v__parser__Parser_init_parse_fns(&p);
 	v__util__timing_start(_SLIT("PARSE stmt"));
 	v__parser__parse_stmt_defer_0 = true;
@@ -74994,7 +75112,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	}
 	if (node->is_vweb) {
 		v__pref__Preferences *pref_ = HEAP(v__pref__Preferences, (*c->pref));
-		v__pref__Preferences* pref2 = (v__pref__Preferences*)memdup(&(v__pref__Preferences){(*(pref_)).os,(*(pref_)).backend,(*(pref_)).build_mode,(*(pref_)).arch,(*(pref_)).output_mode,(*(pref_)).is_verbose,(*(pref_)).is_test,(*(pref_)).is_script,(*(pref_)).is_vsh,(*(pref_)).is_livemain,(*(pref_)).is_liveshared,(*(pref_)).is_shared,(*(pref_)).is_prof,(*(pref_)).profile_file,(*(pref_)).profile_no_inline,(*(pref_)).translated,(*(pref_)).is_prod,(*(pref_)).obfuscate,(*(pref_)).is_repl,(*(pref_)).is_run,(*(pref_)).sanitize,(*(pref_)).is_debug,(*(pref_)).sourcemap,(*(pref_)).sourcemap_inline,(*(pref_)).sourcemap_src_included,(*(pref_)).is_vlines,(*(pref_)).show_cc,(*(pref_)).show_c_output,(*(pref_)).show_callgraph,(*(pref_)).dump_c_flags,(*(pref_)).use_cache,(*(pref_)).retry_compilation,(*(pref_)).is_stats,(*(pref_)).cflags,(*(pref_)).m64,(*(pref_)).ccompiler,(*(pref_)).ccompiler_type,(*(pref_)).third_party_option,(*(pref_)).building_v,(*(pref_)).autofree,(*(pref_)).compress,(*(pref_)).enable_globals,(*(pref_)).is_fmt,(*(pref_)).is_vet,(*(pref_)).is_bare,(*(pref_)).no_preludes,(*(pref_)).custom_prelude,(*(pref_)).lookup_path,(*(pref_)).bare_builtin_dir,(*(pref_)).output_cross_c,(*(pref_)).prealloc,(*(pref_)).vroot,(*(pref_)).out_name_c,(*(pref_)).out_name,(*(pref_)).path,(*(pref_)).compile_defines,(*(pref_)).compile_defines_all,(*(pref_)).run_args,(*(pref_)).printfn_list,(*(pref_)).print_v_files,(*(pref_)).skip_running,(*(pref_)).skip_warnings,(*(pref_)).warn_impure_v,(*(pref_)).warns_are_errors,(*(pref_)).fatal_errors,(*(pref_)).reuse_tmpc,(*(pref_)).use_color,(*(pref_)).is_parallel,(*(pref_)).error_limit,.is_vweb = true,(*(pref_)).only_check_syntax,(*(pref_)).experimental,(*(pref_)).skip_unused,(*(pref_)).show_timings,(*(pref_)).is_ios_simulator,(*(pref_)).is_apk,(*(pref_)).cleanup_files,(*(pref_)).build_options,(*(pref_)).cache_manager,(*(pref_)).is_help,(*(pref_)).gc_mode,(*(pref_)).is_cstrict,(*(pref_)).assert_failure_mode,(*(pref_)).checker_match_exhaustive_cutoff_limit,}, sizeof(v__pref__Preferences));
+		v__pref__Preferences* pref2 = (v__pref__Preferences*)memdup(&(v__pref__Preferences){(*(pref_)).os,(*(pref_)).backend,(*(pref_)).build_mode,(*(pref_)).arch,(*(pref_)).output_mode,(*(pref_)).is_verbose,(*(pref_)).is_test,(*(pref_)).is_script,(*(pref_)).is_vsh,(*(pref_)).is_livemain,(*(pref_)).is_liveshared,(*(pref_)).is_shared,(*(pref_)).is_prof,(*(pref_)).profile_file,(*(pref_)).profile_no_inline,(*(pref_)).translated,(*(pref_)).is_prod,(*(pref_)).obfuscate,(*(pref_)).is_repl,(*(pref_)).is_run,(*(pref_)).is_debug,(*(pref_)).is_vlines,(*(pref_)).sanitize,(*(pref_)).sourcemap,(*(pref_)).sourcemap_inline,(*(pref_)).sourcemap_src_included,(*(pref_)).show_cc,(*(pref_)).show_c_output,(*(pref_)).show_callgraph,(*(pref_)).show_depgraph,(*(pref_)).dump_c_flags,(*(pref_)).use_cache,(*(pref_)).retry_compilation,(*(pref_)).is_stats,(*(pref_)).cflags,(*(pref_)).m64,(*(pref_)).ccompiler,(*(pref_)).ccompiler_type,(*(pref_)).third_party_option,(*(pref_)).building_v,(*(pref_)).autofree,(*(pref_)).compress,(*(pref_)).enable_globals,(*(pref_)).is_fmt,(*(pref_)).is_vet,(*(pref_)).is_bare,(*(pref_)).no_preludes,(*(pref_)).custom_prelude,(*(pref_)).lookup_path,(*(pref_)).bare_builtin_dir,(*(pref_)).output_cross_c,(*(pref_)).prealloc,(*(pref_)).vroot,(*(pref_)).out_name_c,(*(pref_)).out_name,(*(pref_)).path,(*(pref_)).compile_defines,(*(pref_)).compile_defines_all,(*(pref_)).run_args,(*(pref_)).printfn_list,(*(pref_)).print_v_files,(*(pref_)).skip_running,(*(pref_)).skip_warnings,(*(pref_)).warn_impure_v,(*(pref_)).warns_are_errors,(*(pref_)).fatal_errors,(*(pref_)).reuse_tmpc,(*(pref_)).use_color,(*(pref_)).is_parallel,(*(pref_)).error_limit,.is_vweb = true,(*(pref_)).only_check_syntax,(*(pref_)).experimental,(*(pref_)).skip_unused,(*(pref_)).show_timings,(*(pref_)).is_ios_simulator,(*(pref_)).is_apk,(*(pref_)).cleanup_files,(*(pref_)).build_options,(*(pref_)).cache_manager,(*(pref_)).is_help,(*(pref_)).gc_mode,(*(pref_)).is_cstrict,(*(pref_)).assert_failure_mode,(*(pref_)).checker_match_exhaustive_cutoff_limit,}, sizeof(v__pref__Preferences));
 		v__checker__Checker* c2 = v__checker__new_checker(c->table, pref2);
 		v__checker__Checker_check(c2, (voidptr)&/*qq*/node->vweb_tmpl);
 		int i = 0;
@@ -78299,17 +78417,12 @@ VV_LOCAL_SYMBOL bool v__checker__uses_return_stmt(Array_v__ast__Stmt stmts) {
 }
 
 void v__callgraph__show(v__ast__Table* table, v__pref__Preferences* pref, Array_v__ast__File_ptr ast_files) {
-	v__callgraph__Mapper* mapper = (v__callgraph__Mapper*)memdup(&(v__callgraph__Mapper){.pos = 0,.pref = pref,.table = table,.file = 0,.node = 0,.fn_decl = 0,.caller_name = (string){.str=(byteptr)"", .is_lit=1},.dot_caller_name = (string){.str=(byteptr)"", .is_lit=1},.is_caller_used = 0,.sb = strings__new_builder(1024),}, sizeof(v__callgraph__Mapper));
-	strings__Builder_writeln(&mapper->sb, _SLIT("digraph G {"));
-	strings__Builder_writeln(&mapper->sb, _SLIT("\tedge [fontname=\"Helvetica\",fontsize=\"10\",labelfontname=\"Helvetica\",labelfontsize=\"10\",style=\"solid\",color=\"black\"];"));
-	strings__Builder_writeln(&mapper->sb, _SLIT("\tnode [fontname=\"Helvetica\",fontsize=\"10\",style=\"filled\",fontcolor=\"black\",fillcolor=\"white\",color=\"black\",shape=\"box\"];"));
-	strings__Builder_writeln(&mapper->sb, _SLIT("\trankdir=\"LR\";"));
+	v__callgraph__Mapper* mapper = (v__callgraph__Mapper*)memdup(&(v__callgraph__Mapper){.pos = 0,.pref = pref,.table = table,.file = 0,.node = 0,.fn_decl = 0,.caller_name = (string){.str=(byteptr)"", .is_lit=1},.dot_caller_name = (string){.str=(byteptr)"", .is_lit=1},.is_caller_used = 0,.dg = *v__dotgraph__new(_SLIT("CallGraph"),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("CallGraph for "), 0xfe10, {.d_s = pref->path}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("green")),}, sizeof(v__callgraph__Mapper));
 	for (int _t1 = 0; _t1 < ast_files.len; ++_t1) {
 		v__ast__File* afile = ((v__ast__File**)ast_files.data)[_t1];
 		v__ast__walker__walk(/*&v.ast.walker.Visitor*/I_v__callgraph__Mapper_to_Interface_v__ast__walker__Visitor(mapper), HEAP(v__ast__Node, v__ast__File_to_sumtype_v__ast__Node(afile)));
 	}
-	strings__Builder_writeln(&mapper->sb, _SLIT("}"));
-	println(strings__Builder_str(&mapper->sb));
+	v__dotgraph__DotGraph_finish(&mapper->dg);
 }
 
 VV_LOCAL_SYMBOL string v__callgraph__Mapper_dot_normalise_node_name(v__callgraph__Mapper* m, string name) {
@@ -78354,11 +78467,7 @@ VV_LOCAL_SYMBOL Option_void v__callgraph__Mapper_visit(v__callgraph__Mapper* m, 
 			m->caller_name = v__callgraph__Mapper_fn_name(m, (*(*node->_v__ast__Stmt)._v__ast__FnDecl).name, (*(*node->_v__ast__Stmt)._v__ast__FnDecl).receiver.typ, (*(*node->_v__ast__Stmt)._v__ast__FnDecl).is_method);
 			m->dot_caller_name = v__callgraph__Mapper_dot_fn_name(m, (*(*node->_v__ast__Stmt)._v__ast__FnDecl).name, (*(*node->_v__ast__Stmt)._v__ast__FnDecl).receiver.typ, (*(*node->_v__ast__Stmt)._v__ast__FnDecl).is_method);
 			if (m->is_caller_used) {
-				if (string__eq(m->caller_name, _SLIT("main.main"))) {
-					strings__Builder_writeln(&m->sb,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = m->dot_caller_name}}, {_SLIT(" [label=\"fn main()\",color=\"blue\",height=0.2,width=0.4,fillcolor=\"#00FF00\",tooltip=\"The main program entry point.\",shape=oval];"), 0, { .d_c = 0 }}})));
-				} else {
-					strings__Builder_writeln(&m->sb,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = m->dot_caller_name}}, {_SLIT(" [shape=\"box\",label=\""), 0xfe10, {.d_s = m->caller_name}}, {_SLIT("\"];"), 0, { .d_c = 0 }}})));
-				}
+				v__dotgraph__DotGraph_new_node(&m->dg, m->caller_name, (v__dotgraph__NewNodeConfig){.node_name = m->dot_caller_name,.should_highlight = string__eq(m->caller_name, _SLIT("main.main")),.tooltip = (string){.str=(byteptr)"", .is_lit=1},.ctx = ((voidptr)(0)),.name2node_fn = v__dotgraph__node_name,});
 			}
 		}
 		
@@ -78370,11 +78479,7 @@ VV_LOCAL_SYMBOL Option_void v__callgraph__Mapper_visit(v__callgraph__Mapper* m, 
 		if ((*node->_v__ast__Expr)._typ == 219 /* v.ast.CallExpr */) {
 			if (m->is_caller_used) {
 				string dot_called_name = v__callgraph__Mapper_dot_fn_name(m, (*(*node->_v__ast__Expr)._v__ast__CallExpr).name, (*(*node->_v__ast__Expr)._v__ast__CallExpr).receiver_type, (*(*node->_v__ast__Expr)._v__ast__CallExpr).is_method);
-				if (string__eq(m->caller_name, _SLIT("main.main"))) {
-					strings__Builder_writeln(&m->sb,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = m->dot_caller_name}}, {_SLIT(" -> "), 0xfe10, {.d_s = dot_called_name}}, {_SLIT(" [color=\"blue\"];"), 0, { .d_c = 0 }}})));
-				} else {
-					strings__Builder_writeln(&m->sb,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = m->dot_caller_name}}, {_SLIT(" -> "), 0xfe10, {.d_s = dot_called_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
-				}
+				v__dotgraph__DotGraph_new_edge(&m->dg, m->dot_caller_name, dot_called_name, (v__dotgraph__NewEdgeConfig){.should_highlight = string__eq(m->caller_name, _SLIT("main.main")),.ctx = ((voidptr)(0)),.name2node_fn = v__dotgraph__node_name,});
 			}
 		}
 		
@@ -78410,6 +78515,9 @@ v__builder__Builder v__builder__new_builder(v__pref__Preferences* pref) {
 	
  	v__builder__MsvcResult msvc =  (*(v__builder__MsvcResult*)_t1.data);
 	v__util__timing_set_should_print(pref->show_timings || pref->is_verbose);
+	if (pref->show_callgraph || pref->show_depgraph) {
+		v__dotgraph__start_digraph();
+	}
 	v__builder__Builder _t2 = (v__builder__Builder){
 		.compiled_dir = compiled_dir,
 		.module_path = (string){.str=(byteptr)"", .is_lit=1},
@@ -78545,6 +78653,9 @@ void v__builder__Builder_resolve_deps(v__builder__Builder* b) {
 		eprintln(_SLIT("------ resolved dependencies graph: ------"));
 		eprintln(v__depgraph__DepGraph_display(deps_resolved));
 		eprintln(_SLIT("------------------------------------------"));
+	}
+	if (b->pref->show_depgraph) {
+		v__depgraph__show(deps_resolved, b->pref->path);
 	}
 	string cycles = v__depgraph__DepGraph_display_cycles(deps_resolved);
 	if (cycles.len > 1) {
@@ -81367,7 +81478,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_time__minute = ((60 * _const_time__second));
 	_const_time__hour = ((60 * _const_time__minute));
 	_const_time__infinite = ((time__Duration)(INT64_MAX));
-	// Initializations for module v.depgraph :
+	// Initializations for module v.dotgraph :
 	// Initializations for module hash :
 	// Initializations for module hash.fnv1a :
 	_const_hash__fnv1a__fnv32_offset_basis = ((u32)(2166136261U));
@@ -81399,6 +81510,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__vmod__mod_file_stop_paths = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT(".git"), _SLIT(".hg"), _SLIT(".svn"), _SLIT(".v.mod.stop")}));
 	_const_v__vmod__private_file_cacher = v__vmod__new_mod_file_cacher();
 	// Initializations for module v.util.recompilation :
+	// Initializations for module v.depgraph :
 	// Initializations for module v.cflag :
 	// Initializations for module rand.seed :
 	// Initializations for module v.errors :
