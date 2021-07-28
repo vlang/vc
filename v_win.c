@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9f44315"
+#define V_COMMIT_HASH "66bc8bc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "45ad48d"
+	#define V_COMMIT_HASH "9f44315"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9f44315"
+	#define V_CURRENT_COMMIT_HASH "66bc8bc"
 #endif
 
 // V comptime_defines:
@@ -6590,7 +6590,6 @@ VV_LOCAL_SYMBOL int strconv__bool_to_int(bool b);
 VV_LOCAL_SYMBOL u32 strconv__bool_to_u32(bool b);
 VV_LOCAL_SYMBOL u64 strconv__bool_to_u64(bool b);
 VV_LOCAL_SYMBOL string strconv__get_string_special(bool neg, bool expZero, bool mantZero);
-int strconv__decimal_len_32(u32 u);
 VV_LOCAL_SYMBOL u32 strconv__mul_shift_32(u32 m, u64 mul, int ishift);
 VV_LOCAL_SYMBOL u32 strconv__mul_pow5_invdiv_pow2(u32 m, u32 q, int j);
 VV_LOCAL_SYMBOL u32 strconv__mul_pow5_div_pow2(u32 m, u32 i, int j);
@@ -6600,7 +6599,6 @@ VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_two_32(u32 v, u32 p);
 VV_LOCAL_SYMBOL u32 strconv__log10_pow2(int e);
 VV_LOCAL_SYMBOL u32 strconv__log10_pow5(int e);
 VV_LOCAL_SYMBOL int strconv__pow5_bits(int e);
-int strconv__decimal_len_64(u64 u);
 VV_LOCAL_SYMBOL u64 strconv__shift_right_128(strconv__Uint128 v, int shift);
 VV_LOCAL_SYMBOL u64 strconv__mul_shift_64(u64 m, strconv__Uint128 mul, int shift);
 VV_LOCAL_SYMBOL u32 strconv__pow5_factor_64(u64 v_i);
@@ -6699,7 +6697,6 @@ voidptr memdup(voidptr src, int sz);
 voidptr memdup_noscan(voidptr src, int sz);
 VV_LOCAL_SYMBOL int v_fixed_index(int i, int len);
 bool isnil(voidptr v);
-int is_atty(int fd);
 void print_backtrace();
 Array_VCastTypeIndexName as_cast_type_indexes; // global
 VV_LOCAL_SYMBOL voidptr __as_cast(voidptr obj, int obj_type, int expected_type);
@@ -6900,7 +6897,6 @@ string tos2(byte* s);
 string tos3(char* s);
 string tos4(byte* s);
 string tos5(char* s);
-string tos_lit(char* s);
 string byte_vstring(byte* bp);
 string byte_vstring_with_len(byte* bp, int len);
 string char_vstring(char* cp);
@@ -7466,8 +7462,6 @@ int time__Time_day_of_week(time__Time t);
 string time__Time_weekday_str(time__Time t);
 string time__Time_long_weekday_str(time__Time t);
 i64 time__ticks();
-void time__sleep_ms(int milliseconds);
-void time__usleep(int microseconds);
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
 string time__Time_str(time__Time t);
@@ -7505,7 +7499,6 @@ time__Time time__solaris_now();
 time__Time time__darwin_utc();
 time__Time time__linux_utc();
 time__Time time__solaris_utc();
-void time__wait(time__Duration duration);
 void time__sleep(time__Duration duration);
 u32 time__Duration_sys_milliseconds(time__Duration d);
 time__Time time__unix(int abs);
@@ -7534,7 +7527,6 @@ u64 _const_hash__wyp3 = 6384245875588680899U; // precomputed
 u64 _const_hash__wyp4 = 2129725606500045391U; // precomputed
 u64 hash__sum64_string(string key, u64 seed);
 u64 hash__sum64(Array_byte key, u64 seed);
-VV_LOCAL_SYMBOL u64 hash__wyhash64(byte* key, u64 len, u64 seed_);
 VV_LOCAL_SYMBOL u64 hash__wyrotr(u64 v, u32 k);
 u64 hash__wymum(u64 a, u64 b);
 VV_LOCAL_SYMBOL u64 hash__wyr3(byte* p, u64 k);
@@ -14405,33 +14397,10 @@ VV_LOCAL_SYMBOL string strconv__get_string_special(bool neg, bool expZero, bool 
 	return _SLIT("0e+00");
 }
 
-// Attr: [deprecated]
-int strconv__decimal_len_32(u32 u) {
-	;
-	if (u >= 100000000U) {
-		return 9;
-	} else if (u >= 10000000U) {
-		return 8;
-	} else if (u >= 1000000U) {
-		return 7;
-	} else if (u >= 100000U) {
-		return 6;
-	} else if (u >= 10000U) {
-		return 5;
-	} else if (u >= 1000U) {
-		return 4;
-	} else if (u >= 100U) {
-		return 3;
-	} else if (u >= 10U) {
-		return 2;
-	}
-	return 1;
-}
-
 VV_LOCAL_SYMBOL u32 strconv__mul_shift_32(u32 m, u64 mul, int ishift) {
-	multi_return_u64_u64 mr_1943 = math__bits__mul_64(((u64)(m)), mul);
-	u64 hi = mr_1943.arg0;
-	u64 lo = mr_1943.arg1;
+	multi_return_u64_u64 mr_1329 = math__bits__mul_64(((u64)(m)), mul);
+	u64 hi = mr_1329.arg0;
+	u64 lo = mr_1329.arg1;
 	u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
 	;
 	return ((u32)(shifted_sum));
@@ -14484,24 +14453,17 @@ VV_LOCAL_SYMBOL int strconv__pow5_bits(int e) {
 	return ((int)(((((u32)(e)) * 1217359U) >> 19U) + 1U));
 }
 
-// Attr: [deprecated]
-int strconv__decimal_len_64(u64 u) {
-	int log2 = 64 - math__bits__leading_zeros_64(u) - 1;
-	int t = (log2 + 1) * 1233 >> 12;
-	return t - strconv__bool_to_int(u < (*(u64*)/*ee elem_typ */array_get(_const_strconv__powers_of_10, t))) + 1;
-}
-
 VV_LOCAL_SYMBOL u64 strconv__shift_right_128(strconv__Uint128 v, int shift) {
 	;
 	return ((v.hi << ((u64)(64 - shift))) | (v.lo >> ((u32)(shift))));
 }
 
 VV_LOCAL_SYMBOL u64 strconv__mul_shift_64(u64 m, strconv__Uint128 mul, int shift) {
-	multi_return_u64_u64 mr_4571 = math__bits__mul_64(m, mul.hi);
-	u64 hihi = mr_4571.arg0;
-	u64 hilo = mr_4571.arg1;
-	multi_return_u64_u64 mr_4606 = math__bits__mul_64(m, mul.lo);
-	u64 lohi = mr_4606.arg0;
+	multi_return_u64_u64 mr_3648 = math__bits__mul_64(m, mul.hi);
+	u64 hihi = mr_3648.arg0;
+	u64 hilo = mr_3648.arg1;
+	multi_return_u64_u64 mr_3683 = math__bits__mul_64(m, mul.lo);
+	u64 lohi = mr_3683.arg0;
 	strconv__Uint128 sum = (strconv__Uint128){.lo = lohi + hilo,.hi = hihi,};
 	if (sum.lo < lohi) {
 		sum.hi++;
@@ -16439,13 +16401,6 @@ inline VV_LOCAL_SYMBOL int v_fixed_index(int i, int len) {
 // Attr: [inline]
 inline bool isnil(voidptr v) {
 	return v == 0;
-}
-
-// Attr: [deprecated]
-int is_atty(int fd) {
-	_v_panic(_SLIT("use os.is_atty(x) instead"));
-	VUNREACHABLE();
-	return 0;
 }
 
 void print_backtrace(void) {
@@ -18477,11 +18432,6 @@ string tos5(char* s) {
 		return _SLIT("");
 	}
 	return tos3(s);
-}
-
-// Attr: [deprecated]
-string tos_lit(char* s) {
-	return (string){.str = ((byte*)(s)), .len = strlen(s), .is_lit = 1};
 }
 
 // Attr: [unsafe]
@@ -24810,16 +24760,6 @@ i64 time__ticks(void) {
 	return 0;
 }
 
-// Attr: [deprecated]
-void time__sleep_ms(int milliseconds) {
-	time__wait(milliseconds * _const_time__millisecond);
-}
-
-// Attr: [deprecated]
-void time__usleep(int microseconds) {
-	time__wait(microseconds * _const_time__microsecond);
-}
-
 bool time__is_leap_year(int year) {
 	bool _t1 = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
 	return _t1;
@@ -25042,11 +24982,6 @@ time__Time time__linux_utc(void) {
 time__Time time__solaris_utc(void) {
 	time__Time _t1 = (time__Time){.year = 0,.month = 0,.day = 0,.hour = 0,.minute = 0,.second = 0,.microsecond = 0,._v_unix = 0,};
 	return _t1;
-}
-
-// Attr: [deprecated]
-void time__wait(time__Duration duration) {
-	Sleep(((int)(duration / _const_time__millisecond)));
 }
 
 void time__sleep(time__Duration duration) {
@@ -25420,57 +25355,6 @@ inline u64 hash__sum64_string(string key, u64 seed) {
 inline u64 hash__sum64(Array_byte key, u64 seed) {
 	u64 _t1 = hash__wyhash_c(((byte*)(key.data)), ((u64)(key.len)), seed);
 	return _t1;
-}
-
-// Attr: [deprecated]
-// Attr: [inline]
-inline VV_LOCAL_SYMBOL u64 hash__wyhash64(byte* key, u64 len, u64 seed_) {
-	if (len == 0U) {
-		u64 _t1 = 0U;
-		return _t1;
-	}
-	byte* p = key;
-	u64 seed = seed_;
-	u64 i = (len & 63U);
-	u64 _t2 = 0;
-	
-	if ((i <= 3)) {
-		_t2 = hash__wymum(((hash__wyr3(p, i) ^ seed) ^ _const_hash__wyp0), (seed ^ _const_hash__wyp1));
-	}
-	else if ((i >= 4 && i <= 8)) {
-		_t2 = hash__wymum(((hash__wyr4(p) ^ seed) ^ _const_hash__wyp0), ((hash__wyr4(p + i - 4) ^ seed) ^ _const_hash__wyp1));
-	}
-	else if ((i >= 9 && i <= 16)) {
-		_t2 = hash__wymum(((hash__wyr8(p) ^ seed) ^ _const_hash__wyp0), ((hash__wyr8(p + i - 8) ^ seed) ^ _const_hash__wyp1));
-	}
-	else if ((i >= 17 && i <= 24)) {
-		_t2 = (hash__wymum(((hash__wyr8(p) ^ seed) ^ _const_hash__wyp0), ((hash__wyr8(p + 8) ^ seed) ^ _const_hash__wyp1)) ^ hash__wymum(((hash__wyr8(p + i - 8) ^ seed) ^ _const_hash__wyp2), (seed ^ _const_hash__wyp3)));
-	}
-	else if ((i >= 25 && i <= 32)) {
-		_t2 = (hash__wymum(((hash__wyr8(p) ^ seed) ^ _const_hash__wyp0), ((hash__wyr8(p + 8) ^ seed) ^ _const_hash__wyp1)) ^ hash__wymum(((hash__wyr8(p + 16) ^ seed) ^ _const_hash__wyp2), ((hash__wyr8(p + i - 8) ^ seed) ^ _const_hash__wyp3)));
-	}
-	else {
-		_t2 = (((hash__wymum(((hash__wyr8(p) ^ seed) ^ _const_hash__wyp0), ((hash__wyr8(p + 8) ^ seed) ^ _const_hash__wyp1)) ^ hash__wymum(((hash__wyr8(p + 16) ^ seed) ^ _const_hash__wyp2), ((hash__wyr8(p + 24) ^ seed) ^ _const_hash__wyp3))) ^ hash__wymum(((hash__wyr8(p + i - 32) ^ seed) ^ _const_hash__wyp1), ((hash__wyr8(p + i - 24) ^ seed) ^ _const_hash__wyp2))) ^ hash__wymum(((hash__wyr8(p + i - 16) ^ seed) ^ _const_hash__wyp3), ((hash__wyr8(p + i - 8) ^ seed) ^ _const_hash__wyp0)));
-	}seed = _t2;
-	if (i == len) {
-		u64 _t3 = hash__wymum(seed, (len ^ _const_hash__wyp4));
-		return _t3;
-	}
-	u64 see1 = seed;
-	u64 see2 = seed;
-	u64 see3 = seed;
-	{ // Unsafe block
-		p = p + i;
-		for (i = len - i; i >= 64U; i -= 64U) {
-			seed = hash__wymum(((hash__wyr8(p) ^ seed) ^ _const_hash__wyp0), ((hash__wyr8(p + 8) ^ seed) ^ _const_hash__wyp1));
-			see1 = hash__wymum(((hash__wyr8(p + 16) ^ see1) ^ _const_hash__wyp2), ((hash__wyr8(p + 24) ^ see1) ^ _const_hash__wyp3));
-			see2 = hash__wymum(((hash__wyr8(p + 32) ^ see2) ^ _const_hash__wyp1), ((hash__wyr8(p + 40) ^ see2) ^ _const_hash__wyp2));
-			see3 = hash__wymum(((hash__wyr8(p + 48) ^ see3) ^ _const_hash__wyp3), ((hash__wyr8(p + 56) ^ see3) ^ _const_hash__wyp0));
-			p = p + 64;
-		}
-	}
-	u64 _t4 = hash__wymum(((seed ^ see1) ^ see2), ((see3 ^ len) ^ _const_hash__wyp4));
-	return _t4;
 }
 
 // Attr: [inline]
@@ -31029,7 +30913,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("45ad48d"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("9f44315"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
