@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7a9b326"
+#define V_COMMIT_HASH "7547882"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "066dd02"
+	#define V_COMMIT_HASH "7a9b326"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7a9b326"
+	#define V_CURRENT_COMMIT_HASH "7547882"
 #endif
 
 // V comptime_defines:
@@ -31890,7 +31890,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("066dd02"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7a9b326"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -39051,7 +39051,7 @@ void v__ast__Table_register_builtin_type_symbols(v__ast__Table* t) {
 	v__ast__Table_register_type_symbol(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = {0},.kind = v__ast__Kind__int_literal,.name = _SLIT("int literal"),.cname = _SLIT("int_literal"),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = _SLIT("builtin"),.is_public = 0,.language = 0,.idx = 0,});
 	v__ast__Table_register_type_symbol(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = v__ast__Thread_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__Thread, ((v__ast__Thread){.return_type = _const_v__ast__void_type,}))),.kind = v__ast__Kind__thread,.name = _SLIT("thread"),.cname = _SLIT("__v_thread"),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = _SLIT("builtin"),.is_public = 0,.language = 0,.idx = 0,});
 	v__ast__Table_register_type_symbol(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = {0},.kind = v__ast__Kind__interface_,.name = _SLIT("IError"),.cname = _SLIT("IError"),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = _SLIT("builtin"),.is_public = 0,.language = 0,.idx = 0,});
-	v__ast__Table_register_type_symbol(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = {0},.kind = v__ast__Kind__u8,.name = _SLIT("uu8"),.cname = _SLIT("uu8"),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = _SLIT("builtin"),.is_public = 0,.language = 0,.idx = 0,});
+	v__ast__Table_register_type_symbol(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = {0},.kind = v__ast__Kind__u8,.name = _SLIT("zu8"),.cname = _SLIT("zu8"),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = _SLIT("builtin"),.is_public = 0,.language = 0,.idx = 0,});
 }
 
 // Attr: [inline]
