@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "44d8dcc"
+#define V_COMMIT_HASH "6337325"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c7ecb18"
+	#define V_COMMIT_HASH "44d8dcc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "44d8dcc"
+	#define V_CURRENT_COMMIT_HASH "6337325"
 #endif
 
 // V comptime_defines:
@@ -31891,7 +31891,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c7ecb18"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("44d8dcc"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -67007,7 +67007,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov(v__gen__native__Gen* g, v__gen__nat
 			v__gen__native__Gen_write8(g, 0xbc);
 		}
 		else {
-			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		};
 		v__gen__native__Gen_write32(g, val);
@@ -67025,18 +67025,17 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mul_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0xf7);
 		v__gen__native__Gen_write8(g, 0xe8);
-		v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mul "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else if (b == (v__gen__native__Register__rbx)) {
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0xf7);
 		v__gen__native__Gen_write8(g, 0xeb);
-		v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mul "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else {
 		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
+	v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mul "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_div_reg(v__gen__native__Gen* g, v__gen__native__Register a, v__gen__native__Register b) {
@@ -67049,19 +67048,18 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_div_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0xf7);
 		v__gen__native__Gen_write8(g, 0xf8);
-		v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else if (b == (v__gen__native__Register__rbx)) {
 		v__gen__native__Gen_mov(g, v__gen__native__Register__edx, 0);
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0xf7);
 		v__gen__native__Gen_write8(g, 0xfb);
-		v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else {
 		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	};
+	v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("div "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_sub_reg(v__gen__native__Gen* g, v__gen__native__Register a, v__gen__native__Register b) {
@@ -67069,11 +67067,11 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_sub_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0x29);
 		v__gen__native__Gen_write8(g, 0xd8);
-		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("sub "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	} else {
 		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
+	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("sub "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_add_reg(v__gen__native__Gen* g, v__gen__native__Register a, v__gen__native__Register b) {
@@ -67081,11 +67079,15 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_add_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0x01);
 		v__gen__native__Gen_write8(g, 0xd8);
-		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	} else if (a == v__gen__native__Register__rax && b == v__gen__native__Register__rdi) {
+		v__gen__native__Gen_write8(g, 0x48);
+		v__gen__native__Gen_write8(g, 0x01);
+		v__gen__native__Gen_write8(g, 0xf8);
 	} else {
 		_v_panic( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
+	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("add "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_reg(v__gen__native__Gen* g, v__gen__native__Register a, v__gen__native__Register b) {
@@ -67100,6 +67102,10 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0x89);
 		v__gen__native__Gen_write8(g, 0xc8);
+	} else if (a == v__gen__native__Register__rax && b == v__gen__native__Register__rdi) {
+		v__gen__native__Gen_write8(g, 0x48);
+		v__gen__native__Gen_write8(g, 0x89);
+		v__gen__native__Gen_write8(g, 0xf8);
 	} else if (a == v__gen__native__Register__rdi && b == v__gen__native__Register__rsi) {
 		v__gen__native__Gen_write8(g, 0x48);
 		v__gen__native__Gen_write8(g, 0x89);
@@ -67112,6 +67118,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__verror( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled mov_reg combination for "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(" "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
+	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mov "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_rbp_rsp(v__gen__native__Gen* g) {
@@ -67225,14 +67232,14 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				}
 				else {
 					string tn = tos3( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( ((*(v__ast__Expr*)/*ee elem_typ */array_get(node.left, i)))._typ ));
-					 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 817, _SLIT("node.left_types"), node.left_types );
+					 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 824, _SLIT("node.left_types"), node.left_types );
 					v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled assign type: "), 0xfe10, {.d_s = tn}}, {_SLIT0, 0, { .d_c = 0 }}})));
 					VUNREACHABLE();
 				};
 			}
 			else {
 				eprintln(_SLIT("ERROR 2"));
-				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 824, _SLIT("node"), node );
+				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 831, _SLIT("node"), node );
 			};
 		}
 		else if (right._typ == 237 /* v.ast.InfixExpr */) {
@@ -67276,7 +67283,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 			}
 			else {
 				eprintln(_SLIT("TODO: unhandled assign ident case"));
-				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 873, _SLIT("node"), node );
+				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 880, _SLIT("node"), node );
 			};
 		}
 		else if (right._typ == 258 /* v.ast.StructInit */) {
@@ -67305,7 +67312,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				}
 				
 				else {
-					 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 906, _SLIT("e"), e );
+					 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 913, _SLIT("e"), e );
 					v__gen__native__verror(_SLIT("unhandled array init type"));
 					VUNREACHABLE();
 				}
@@ -67320,9 +67327,20 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 			v__ast__IndexExpr ie = /* as */ *(v__ast__IndexExpr*)__as_cast(((*(v__ast__Expr*)/*ee elem_typ */array_get(node.right, i)))._v__ast__IndexExpr,((*(v__ast__Expr*)/*ee elem_typ */array_get(node.right, i)))._typ, 236) /*expected idx: 236, name: v.ast.IndexExpr */ ;
 			string var_name = v__ast__Expr_str(ie.left);
 			int dest = v__gen__native__Gen_get_var_offset(g, var_name);
-			v__ast__IntegerLiteral index = /* as */ *(v__ast__IntegerLiteral*)__as_cast((ie.index)._v__ast__IntegerLiteral,(ie.index)._typ, 238) /*expected idx: 238, name: v.ast.IntegerLiteral */ ;
-			dest += string_int(index.val) * 8;
-			v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__rax, dest);
+			if ((ie.index)._typ == 238 /* v.ast.IntegerLiteral */) {
+				v__ast__IntegerLiteral index = (*ie.index._v__ast__IntegerLiteral);
+				dest += string_int(index.val) * 8;
+				v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__rax, dest);
+			} else if ((ie.index)._typ == 233 /* v.ast.Ident */) {
+				v__ast__Ident ident = (*ie.index._v__ast__Ident);
+				int var_offset = v__gen__native__Gen_get_var_offset(g, ident.name);
+				v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__edi, var_offset);
+				v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__rax, dest);
+				v__gen__native__Gen_add_reg(g, v__gen__native__Register__rax, v__gen__native__Register__rdi);
+			} else {
+				v__gen__native__verror(_SLIT("only integers and idents can be used as indexes"));
+				VUNREACHABLE();
+			}
 			v__gen__native__Gen_mov_reg_to_var(g, offset, v__gen__native__Register__eax);
 		}
 		else if (right._typ == 257 /* v.ast.StringLiteral */) {
