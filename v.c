@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "08aa6c0"
+#define V_COMMIT_HASH "75c4125"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7547882"
+	#define V_COMMIT_HASH "08aa6c0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "08aa6c0"
+	#define V_CURRENT_COMMIT_HASH "75c4125"
 #endif
 
 // V comptime_defines:
@@ -31891,7 +31891,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("7547882"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("08aa6c0"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65754,6 +65754,25 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__as
 				v__gen__js__JsGen_write(g, _SLIT(")"));
 				return;
 			}
+			else if (string__eq(node.name, _SLIT("prepend"))) {
+				v__ast__TypeSymbol* arg_sym = v__ast__Table_get_type_symbol(g->table, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).typ);
+				bool is_arg_array = arg_sym->kind == v__ast__Kind__array && v__ast__Type_alias_eq((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).typ, node.left_type);
+				if (is_arg_array) {
+					v__gen__js__JsGen_write(g, _SLIT("prepend_many("));
+				} else {
+					v__gen__js__JsGen_write(g, _SLIT("prepend("));
+				}
+				if (is_arg_array) {
+					v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
+					v__gen__js__JsGen_write(g, _SLIT(".arr, "));
+					v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
+					v__gen__js__JsGen_write(g, _SLIT(".len"));
+				} else {
+					v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
+				}
+				v__gen__js__JsGen_write(g, _SLIT(")"));
+				return;
+			}
 			else {
 			};
 		}
@@ -66252,7 +66271,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_integer_literal_expr(v__gen__js__JsGe
 	}
 	if (g->cast_stack.len > 0) {
 		if ((Array_int_contains(_const_v__ast__integer_type_idxs, (*(v__ast__Type*)/*ee elem_typ */array_get(g->cast_stack, g->cast_stack.len - 1))))) {
-			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = it.val}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("new int("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			return;
 		}
 	}
@@ -66282,7 +66301,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_float_literal_expr(v__gen__js__JsGen*
 	}
 	if (g->cast_stack.len > 0) {
 		if ((Array_int_contains(_const_v__ast__float_type_idxs, (*(v__ast__Type*)/*ee elem_typ */array_get(g->cast_stack, g->cast_stack.len - 1))))) {
-			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = it.val}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("new f32("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			return;
 		} else if ((Array_int_contains(_const_v__ast__integer_type_idxs, (*(v__ast__Type*)/*ee elem_typ */array_get(g->cast_stack, g->cast_stack.len - 1))))) {
 			v__gen__js__JsGen_write(g, int_str(((int)(string_f64(it.val)))));
