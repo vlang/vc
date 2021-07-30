@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "afb7168"
+#define V_COMMIT_HASH "06d1422"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0f09228"
+	#define V_COMMIT_HASH "afb7168"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "afb7168"
+	#define V_CURRENT_COMMIT_HASH "06d1422"
 #endif
 
 // V comptime_defines:
@@ -382,6 +382,10 @@ typedef struct Option_v__pref__Arch Option_v__pref__Arch;
 typedef struct Option_v__pref__Backend Option_v__pref__Backend;
 typedef struct Option_time__StopWatch Option_time__StopWatch;
 typedef struct Option_v__ast__Ident Option_v__ast__Ident;
+typedef struct Option_i8 Option_i8;
+typedef struct Option_i16 Option_i16;
+typedef struct Option_u16 Option_u16;
+typedef struct Option_f32 Option_f32;
 typedef struct Option_v__ast__ComptTimeConstValue Option_v__ast__ComptTimeConstValue;
 typedef struct Option_multi_return_v__ast__ScopeObject_v__ast__Scope Option_multi_return_v__ast__ScopeObject_v__ast__Scope;
 typedef struct Option_v__ast__ScopeObject Option_v__ast__ScopeObject;
@@ -2467,19 +2471,31 @@ struct v__ast__Node {
 // Union sum type v__ast__ComptTimeConstValue = 
 //          |  263 = v__ast__EmptyExpr   
 //          |    9 = byte                
+//          |   13 = f32                 
 //          |   14 = f64                 
+//          |    6 = i16                 
 //          |    8 = i64                 
+//          |    5 = i8                  
+//          |    7 = int                 
 //          |   19 = rune                
 //          |   18 = string              
+//          |   10 = u16                 
+//          |   11 = u32                 
 //          |   12 = u64                 
 struct v__ast__ComptTimeConstValue {
 	union {
 		v__ast__EmptyExpr* _v__ast__EmptyExpr;
 		byte* _byte;
+		f32* _f32;
 		f64* _f64;
+		i16* _i16;
 		i64* _i64;
+		i8* _i8;
+		int* _int;
 		rune* _rune;
 		string* _string;
+		u16* _u16;
+		u32* _u32;
 		u64* _u64;
 	};
 	int _typ;
@@ -6304,6 +6320,30 @@ struct Option_v__ast__Ident {
 	byte data[sizeof(v__ast__Ident)];
 };
 
+struct Option_i8 {
+	byte state;
+	IError err;
+	byte data[sizeof(i8)];
+};
+
+struct Option_i16 {
+	byte state;
+	IError err;
+	byte data[sizeof(i16)];
+};
+
+struct Option_u16 {
+	byte state;
+	IError err;
+	byte data[sizeof(u16)];
+};
+
+struct Option_f32 {
+	byte state;
+	IError err;
+	byte data[sizeof(f32)];
+};
+
 struct Option_v__ast__ComptTimeConstValue {
 	byte state;
 	IError err;
@@ -6473,7 +6513,7 @@ f32 strings__levenshtein_distance_percentage(string a, string b);
 f32 strings__dice_coefficient(string s1, string s2);
 string strings__repeat(byte c, int n);
 string strings__repeat_string(string s, int n);
-u32 _const_math__bits__de_bruijn32; // inited later
+u32 _const_math__bits__de_bruijn32 = 125613361; // precomputed
 Array_byte _const_math__bits__de_bruijn32tab; // inited later
 u64 _const_math__bits__de_bruijn64 = 285870213051353865U; // precomputed
 Array_byte _const_math__bits__de_bruijn64tab; // inited later
@@ -6482,7 +6522,7 @@ u64 _const_math__bits__m1 = 3689348814741910323U; // precomputed
 u64 _const_math__bits__m2 = 1085102592571150095U; // precomputed
 u64 _const_math__bits__m3 = 71777214294589695U; // precomputed
 u64 _const_math__bits__m4 = 281470681808895U; // precomputed
-u32 _const_math__bits__max_u32; // inited later
+u32 _const_math__bits__max_u32 = 4294967295; // precomputed
 u64 _const_math__bits__max_u64 = 18446744073709551615U; // precomputed
 int math__bits__leading_zeros_8(byte x);
 int math__bits__leading_zeros_16(u16 x);
@@ -6533,10 +6573,10 @@ VV_LOCAL_SYMBOL multi_return_u32_u32_u32 strconv__lsr96(u32 s2, u32 s1, u32 s0);
 VV_LOCAL_SYMBOL multi_return_u32_u32_u32 strconv__lsl96(u32 s2, u32 s1, u32 s0);
 VV_LOCAL_SYMBOL multi_return_u32_u32_u32 strconv__add96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
 VV_LOCAL_SYMBOL multi_return_u32_u32_u32 strconv__sub96(u32 s2, u32 s1, u32 s0, u32 d2, u32 d1, u32 d0);
-u32 _const_strconv__single_plus_zero; // inited later
-u32 _const_strconv__single_minus_zero; // inited later
-u32 _const_strconv__single_plus_infinity; // inited later
-u32 _const_strconv__single_minus_infinity; // inited later
+u32 _const_strconv__single_plus_zero = 0; // precomputed
+u32 _const_strconv__single_minus_zero = 2147483648; // precomputed
+u32 _const_strconv__single_plus_infinity = 2139095040; // precomputed
+u32 _const_strconv__single_minus_infinity = 4286578688; // precomputed
 #define _const_strconv__digits 18
 u64 _const_strconv__double_plus_zero = 0U; // precomputed
 u64 _const_strconv__double_minus_zero = 9223372036854775808U; // precomputed
@@ -6552,7 +6592,7 @@ rune _const_strconv__c_plus = '+'; // precomputed
 rune _const_strconv__c_minus = '-'; // precomputed
 rune _const_strconv__c_zero = '0'; // precomputed
 rune _const_strconv__c_nine = '9'; // precomputed
-u32 _const_strconv__c_ten; // inited later
+u32 _const_strconv__c_ten = 10; // precomputed
 VV_LOCAL_SYMBOL bool strconv__is_digit(byte x);
 VV_LOCAL_SYMBOL bool strconv__is_space(byte x);
 VV_LOCAL_SYMBOL bool strconv__is_exp(byte x);
@@ -6573,8 +6613,8 @@ Option_i64 strconv__parse_int(string _s, int base, int _bit_size);
 Option_int strconv__atoi(string s);
 VV_LOCAL_SYMBOL bool strconv__underscore_ok(string s);
 Array_u32 _const_strconv__ten_pow_table_32; // inited later
-u32 _const_strconv__mantbits32; // inited later
-u32 _const_strconv__expbits32; // inited later
+u32 _const_strconv__mantbits32 = 23; // precomputed
+u32 _const_strconv__expbits32 = 8; // precomputed
 #define _const_strconv__bias32 127
 #define _const_strconv__maxexp32 255
 string strconv__Dec32_get_string_32(strconv__Dec32 d, bool neg, int i_n_digit, int i_pad_digit);
@@ -6583,8 +6623,8 @@ VV_LOCAL_SYMBOL strconv__Dec32 strconv__f32_to_decimal(u32 mant, u32 exp);
 string strconv__f32_to_str(f32 f, int n_digit);
 string strconv__f32_to_str_pad(f32 f, int n_digit);
 Array_u64 _const_strconv__ten_pow_table_64; // inited later
-u32 _const_strconv__mantbits64; // inited later
-u32 _const_strconv__expbits64; // inited later
+u32 _const_strconv__mantbits64 = 52; // precomputed
+u32 _const_strconv__expbits64 = 11; // precomputed
 #define _const_strconv__bias64 1023
 #define _const_strconv__maxexp64 2047
 VV_LOCAL_SYMBOL string strconv__Dec64_get_string_64(strconv__Dec64 d, bool neg, int i_n_digit, int i_pad_digit);
@@ -6825,8 +6865,8 @@ string byte_str_escaped(byte b);
 #define _const_max_load_factor 0.8
 #define _const_init_even_index 30
 #define _const_extra_metas_inc 4
-u32 _const_hash_mask; // inited later
-u32 _const_probe_inc; // inited later
+u32 _const_hash_mask = 16777215; // precomputed
+u32 _const_probe_inc = 16777216; // precomputed
 VV_LOCAL_SYMBOL bool fast_string_eq(string a, string b);
 VV_LOCAL_SYMBOL DenseArray new_dense_array(int key_bytes, int value_bytes);
 VV_LOCAL_SYMBOL voidptr DenseArray_key(DenseArray* d, int i);
@@ -7467,7 +7507,7 @@ time__Duration time__StopWatch_elapsed(time__StopWatch t);
 string _const_time__days_string; // a string literal, inited later
 Array_int _const_time__month_days; // inited later
 string _const_time__months_string; // a string literal, inited later
-i64 _const_time__absolute_zero_year; // inited later
+i64 _const_time__absolute_zero_year = -292277022399; // precomputed
 #define _const_time__seconds_per_minute 60
 #define _const_time__seconds_per_hour 3600
 #define _const_time__seconds_per_day 86400
@@ -7562,8 +7602,8 @@ VV_LOCAL_SYMBOL u64 hash__wyr4(byte* p);
 VV_LOCAL_SYMBOL u64 hash__wyr8(byte* p);
 u64 _const_hash__fnv1a__fnv64_prime = 1099511628211U; // precomputed
 u64 _const_hash__fnv1a__fnv64_offset_basis = 14695981039346656037U; // precomputed
-u32 _const_hash__fnv1a__fnv32_offset_basis; // inited later
-u32 _const_hash__fnv1a__fnv32_prime; // inited later
+u32 _const_hash__fnv1a__fnv32_offset_basis = 2166136261; // precomputed
+u32 _const_hash__fnv1a__fnv32_prime = 16777619; // precomputed
 u32 hash__fnv1a__sum32_string(string data);
 u32 hash__fnv1a__sum32(Array_byte data);
 u64 hash__fnv1a__sum64_string(string data);
@@ -7588,7 +7628,7 @@ u64 _const_rand__constants__lower_mask = 4294967295U; // precomputed
 u64 _const_rand__constants__max_u64 = 18446744073709551615U; // precomputed
 f32 _const_rand__constants__max_u32_as_f32; // inited later
 f64 _const_rand__constants__max_u64_as_f64; // inited later
-u32 _const_rand__constants__u31_mask; // inited later
+u32 _const_rand__constants__u31_mask = 2147483647; // precomputed
 u64 _const_rand__constants__u63_mask = 9223372036854775807U; // precomputed
 VV_LOCAL_SYMBOL void flag__Flag_free(flag__Flag* f);
 string flag__Flag_str(flag__Flag f);
@@ -8176,12 +8216,17 @@ Option_int Array_v__ast__Attr_find_comptime_define(Array_v__ast__Attr attrs);
 VV_LOCAL_SYMBOL bool v__ast__Table_has_cflag(v__ast__Table* t, v__cflag__CFlag flag);
 Option_bool v__ast__Table_parse_cflag(v__ast__Table* t, string cflg, string mod, Array_string ctimedefines);
 v__ast__ComptTimeConstValue v__ast__empty_comptime_const_expr();
-Option_i64 v__ast__ComptTimeConstValue_i64(v__ast__ComptTimeConstValue val);
+Option_i8 v__ast__ComptTimeConstValue_i8(v__ast__ComptTimeConstValue val);
+Option_i16 v__ast__ComptTimeConstValue_i16(v__ast__ComptTimeConstValue val);
 Option_int v__ast__ComptTimeConstValue_int(v__ast__ComptTimeConstValue val);
-Option_string v__ast__ComptTimeConstValue_string(v__ast__ComptTimeConstValue val);
-Option_f64 v__ast__ComptTimeConstValue_f64(v__ast__ComptTimeConstValue val);
-Option_u64 v__ast__ComptTimeConstValue_u64(v__ast__ComptTimeConstValue val);
+Option_i64 v__ast__ComptTimeConstValue_i64(v__ast__ComptTimeConstValue val);
 Option_byte v__ast__ComptTimeConstValue_byte(v__ast__ComptTimeConstValue val);
+Option_u16 v__ast__ComptTimeConstValue_u16(v__ast__ComptTimeConstValue val);
+Option_u32 v__ast__ComptTimeConstValue_u32(v__ast__ComptTimeConstValue val);
+Option_u64 v__ast__ComptTimeConstValue_u64(v__ast__ComptTimeConstValue val);
+Option_f32 v__ast__ComptTimeConstValue_f32(v__ast__ComptTimeConstValue val);
+Option_f64 v__ast__ComptTimeConstValue_f64(v__ast__ComptTimeConstValue val);
+Option_string v__ast__ComptTimeConstValue_string(v__ast__ComptTimeConstValue val);
 Option_v__ast__ComptTimeConstValue v__ast__ConstField_comptime_expr_value(v__ast__ConstField obj);
 bool v__ast__ConstField_is_simple_define_const(v__ast__ConstField obj);
 bool v__ast__ScopeObject_is_simple_define_const(v__ast__ScopeObject obj);
@@ -9206,7 +9251,7 @@ v__ast__Type v__checker__Checker_string_lit(v__checker__Checker* c, v__ast__Stri
 v__ast__Type v__checker__Checker_int_lit(v__checker__Checker* c, v__ast__IntegerLiteral* node);
 void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__Fn f, v__ast__CallExpr* call_expr);
 int _const_v__checker__int_min; // inited later
-#define _const_v__checker__int_max 2147483647
+int _const_v__checker__int_max = 2147483647; // precomputed
 Array_string _const_v__checker__valid_comp_if_os; // inited later
 Array_string _const_v__checker__valid_comp_if_compilers; // inited later
 Array_string _const_v__checker__valid_comp_if_platforms; // inited later
@@ -11822,9 +11867,44 @@ static inline v__ast__ComptTimeConstValue rune_to_sumtype_v__ast__ComptTimeConst
 	return (v__ast__ComptTimeConstValue){ ._rune = ptr, ._typ = 19};
 }
 
+static inline v__ast__ComptTimeConstValue i8_to_sumtype_v__ast__ComptTimeConstValue(i8* x) {
+	i8* ptr = memdup(x, sizeof(i8));
+	return (v__ast__ComptTimeConstValue){ ._i8 = ptr, ._typ = 5};
+}
+
+static inline v__ast__ComptTimeConstValue i16_to_sumtype_v__ast__ComptTimeConstValue(i16* x) {
+	i16* ptr = memdup(x, sizeof(i16));
+	return (v__ast__ComptTimeConstValue){ ._i16 = ptr, ._typ = 6};
+}
+
+static inline v__ast__ComptTimeConstValue int_to_sumtype_v__ast__ComptTimeConstValue(int* x) {
+	int* ptr = memdup(x, sizeof(int));
+	return (v__ast__ComptTimeConstValue){ ._int = ptr, ._typ = 7};
+}
+
 static inline v__ast__ComptTimeConstValue byte_to_sumtype_v__ast__ComptTimeConstValue(byte* x) {
 	byte* ptr = memdup(x, sizeof(byte));
 	return (v__ast__ComptTimeConstValue){ ._byte = ptr, ._typ = 9};
+}
+
+static inline v__ast__ComptTimeConstValue u16_to_sumtype_v__ast__ComptTimeConstValue(u16* x) {
+	u16* ptr = memdup(x, sizeof(u16));
+	return (v__ast__ComptTimeConstValue){ ._u16 = ptr, ._typ = 10};
+}
+
+static inline v__ast__ComptTimeConstValue u32_to_sumtype_v__ast__ComptTimeConstValue(u32* x) {
+	u32* ptr = memdup(x, sizeof(u32));
+	return (v__ast__ComptTimeConstValue){ ._u32 = ptr, ._typ = 11};
+}
+
+static inline v__ast__ComptTimeConstValue f32_to_sumtype_v__ast__ComptTimeConstValue(f32* x) {
+	f32* ptr = memdup(x, sizeof(f32));
+	return (v__ast__ComptTimeConstValue){ ._f32 = ptr, ._typ = 13};
+}
+
+static inline v__ast__ComptTimeConstValue f64_to_sumtype_v__ast__ComptTimeConstValue(f64* x) {
+	f64* ptr = memdup(x, sizeof(f64));
+	return (v__ast__ComptTimeConstValue){ ._f64 = ptr, ._typ = 14};
 }
 
 static inline v__ast__Node v__ast__File_to_sumtype_v__ast__Node(v__ast__File* x) {
@@ -12033,10 +12113,16 @@ static char * v_typeof_sumtype_v__ast__ComptTimeConstValue(int sidx) { /* v.ast.
 		case 348: return "v.ast.ComptTimeConstValue";
 		case 263: return "v.ast.EmptyExpr";
 		case 9: return "byte";
+		case 13: return "f32";
 		case 14: return "f64";
+		case 6: return "i16";
 		case 8: return "i64";
+		case 5: return "i8";
+		case 7: return "int";
 		case 19: return "rune";
 		case 18: return "string";
+		case 10: return "u16";
+		case 11: return "u32";
 		case 12: return "u64";
 		default: return "unknown v.ast.ComptTimeConstValue";
 	}
@@ -31042,7 +31128,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0f09228"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("afb7168"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34894,40 +34980,123 @@ v__ast__ComptTimeConstValue v__ast__empty_comptime_const_expr(void) {
 	return _t1;
 }
 
-Option_i64 v__ast__ComptTimeConstValue_i64(v__ast__ComptTimeConstValue val) {
-	if (val._typ == 9 /* byte */) {
-		Option_i64 _t1;
-		opt_ok(&(i64[]) { ((i64)((*val._byte))) }, (Option*)(&_t1), sizeof(i64));
-		return _t1;
-	}
-	else if (val._typ == 8 /* i64 */) {
-		Option_i64 _t2;
-		opt_ok(&(i64[]) { ((i64)((*val._i64))) }, (Option*)(&_t2), sizeof(i64));
+Option_i8 v__ast__ComptTimeConstValue_i8(v__ast__ComptTimeConstValue val) {
+	Option_i64 _t1 = v__ast__ComptTimeConstValue_i64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_i8 _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
 		return _t2;
 	}
-	else if (val._typ == 14 /* f64 */) {
-		if (-9223372036854775808.0 <= (*val._f64) && (*val._f64) <= 9223372036854775807.0) {
-			Option_i64 _t3;
-			opt_ok(&(i64[]) { ((i64)((*val._f64))) }, (Option*)(&_t3), sizeof(i64));
-			return _t3;
-		}
+	
+ 	i64 x =  (*(i64*)_t1.data);
+	if (x > -129 && x < 128) {
+		Option_i8 _t3;
+		opt_ok(&(i8[]) { ((i8)(x)) }, (Option*)(&_t3), sizeof(i8));
+		return _t3;
+	}
+	return (Option_i8){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
+Option_i16 v__ast__ComptTimeConstValue_i16(v__ast__ComptTimeConstValue val) {
+	Option_i64 _t1 = v__ast__ComptTimeConstValue_i64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_i16 _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
+		return _t2;
+	}
+	
+ 	i64 x =  (*(i64*)_t1.data);
+	if (x > -32769 && x < 32768) {
+		Option_i16 _t3;
+		opt_ok(&(i16[]) { ((i16)(x)) }, (Option*)(&_t3), sizeof(i16));
+		return _t3;
+	}
+	return (Option_i16){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
+Option_int v__ast__ComptTimeConstValue_int(v__ast__ComptTimeConstValue val) {
+	Option_i64 _t1 = v__ast__ComptTimeConstValue_i64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_int _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
+		return _t2;
+	}
+	
+ 	i64 x =  (*(i64*)_t1.data);
+	if (x > -2147483649 && x < 2147483648) {
+		Option_int _t3;
+		opt_ok(&(int[]) { ((int)(x)) }, (Option*)(&_t3), sizeof(int));
+		return _t3;
+	}
+	return (Option_int){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
+Option_i64 v__ast__ComptTimeConstValue_i64(v__ast__ComptTimeConstValue val) {
+	if (val._typ == 5 /* i8 */) {
+		Option_i64 _t1;
+		opt_ok(&(i64[]) { ((i64)((*val._i8))) }, (Option*)(&_t1), sizeof(i64));
+		return _t1;
+	}
+	else if (val._typ == 6 /* i16 */) {
+		Option_i64 _t2;
+		opt_ok(&(i64[]) { ((i64)((*val._i16))) }, (Option*)(&_t2), sizeof(i64));
+		return _t2;
+	}
+	else if (val._typ == 7 /* int */) {
+		Option_i64 _t3;
+		opt_ok(&(i64[]) { ((i64)((*val._int))) }, (Option*)(&_t3), sizeof(i64));
+		return _t3;
+	}
+	else if (val._typ == 8 /* i64 */) {
+		Option_i64 _t4;
+		opt_ok(&(i64[]) { ((i64)((*val._i64))) }, (Option*)(&_t4), sizeof(i64));
+		return _t4;
+	}
+	else if (val._typ == 9 /* byte */) {
+		Option_i64 _t5;
+		opt_ok(&(i64[]) { ((i64)((*val._byte))) }, (Option*)(&_t5), sizeof(i64));
+		return _t5;
+	}
+	else if (val._typ == 10 /* u16 */) {
+		Option_i64 _t6;
+		opt_ok(&(i64[]) { ((i64)((*val._u16))) }, (Option*)(&_t6), sizeof(i64));
+		return _t6;
+	}
+	else if (val._typ == 11 /* u32 */) {
+		Option_i64 _t7;
+		opt_ok(&(i64[]) { ((i64)((*val._u32))) }, (Option*)(&_t7), sizeof(i64));
+		return _t7;
 	}
 	else if (val._typ == 12 /* u64 */) {
 		if ((*val._u64) <= 9223372036854775807U) {
-			Option_i64 _t4;
-			opt_ok(&(i64[]) { ((i64)((*val._u64))) }, (Option*)(&_t4), sizeof(i64));
-			return _t4;
+			Option_i64 _t8;
+			opt_ok(&(i64[]) { ((i64)((*val._u64))) }, (Option*)(&_t8), sizeof(i64));
+			return _t8;
+		}
+	}
+	else if (val._typ == 13 /* f32 */) {
+		if (-9223372036854775808.0 <= (*val._f32) && (*val._f32) <= 9223372036854775807.0) {
+			Option_i64 _t9;
+			opt_ok(&(i64[]) { ((i64)((*val._f32))) }, (Option*)(&_t9), sizeof(i64));
+			return _t9;
+		}
+	}
+	else if (val._typ == 14 /* f64 */) {
+		if (-9223372036854775808.0 <= (*val._f64) && (*val._f64) <= 9223372036854775807.0) {
+			Option_i64 _t10;
+			opt_ok(&(i64[]) { ((i64)((*val._f64))) }, (Option*)(&_t10), sizeof(i64));
+			return _t10;
 		}
 	}
 	else if (val._typ == 18 /* string */) {
-		Option_i64 _t5;
-		opt_ok(&(i64[]) { string_i64((*val._string)) }, (Option*)(&_t5), sizeof(i64));
-		return _t5;
+		Option_i64 _t11;
+		opt_ok(&(i64[]) { string_i64((*val._string)) }, (Option*)(&_t11), sizeof(i64));
+		return _t11;
 	}
 	else if (val._typ == 19 /* rune */) {
-		Option_i64 _t6;
-		opt_ok(&(i64[]) { ((int)((*val._rune))) }, (Option*)(&_t6), sizeof(i64));
-		return _t6;
+		Option_i64 _t12;
+		opt_ok(&(i64[]) { ((int)((*val._rune))) }, (Option*)(&_t12), sizeof(i64));
+		return _t12;
 	}
 	else if (val._typ == 263 /* v.ast.EmptyExpr */) {
 	}
@@ -34935,146 +35104,124 @@ Option_i64 v__ast__ComptTimeConstValue_i64(v__ast__ComptTimeConstValue val) {
 	return (Option_i64){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
-Option_int v__ast__ComptTimeConstValue_int(v__ast__ComptTimeConstValue val) {
-	if (val._typ == 12 /* u64 */) {
-		if ((*val._u64) <= 2147483647U) {
-			Option_int _t1;
-			opt_ok(&(int[]) { ((int)((*val._u64))) }, (Option*)(&_t1), sizeof(int));
-			return _t1;
-		}
-	}
-	else if (val._typ == 14 /* f64 */) {
-		if (-2147483648.0 <= (*val._f64) && (*val._f64) <= 2147483647.0) {
-			Option_int _t2;
-			opt_ok(&(int[]) { ((int)((*val._f64))) }, (Option*)(&_t2), sizeof(int));
-			return _t2;
-		}
-	}
-	else if (val._typ == 8 /* i64 */) {
-		if (-2147483648 <= (*val._i64) && (*val._i64) <= 2147483647) {
-			Option_int _t3;
-			opt_ok(&(int[]) { ((int)((*val._i64))) }, (Option*)(&_t3), sizeof(int));
-			return _t3;
-		}
-	}
-	else if (val._typ == 9 /* byte */) {
-		Option_int _t4;
-		opt_ok(&(int[]) { ((int)((*val._byte))) }, (Option*)(&_t4), sizeof(int));
-		return _t4;
-	}
-	else if (val._typ == 18 /* string */) {
-		Option_int _t5;
-		opt_ok(&(int[]) { string_int((*val._string)) }, (Option*)(&_t5), sizeof(int));
-		return _t5;
-	}
-	else if (val._typ == 19 /* rune */) {
-	}
-	else if (val._typ == 263 /* v.ast.EmptyExpr */) {
-	}
-	;
-	return (Option_int){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
-}
-
-Option_string v__ast__ComptTimeConstValue_string(v__ast__ComptTimeConstValue val) {
-	if (val._typ == 12 /* u64 */) {
-		Option_string _t1;
-		opt_ok(&(string[]) { u64_str((*val._u64)) }, (Option*)(&_t1), sizeof(string));
-		return _t1;
-	}
-	else if (val._typ == 8 /* i64 */) {
-		Option_string _t2;
-		opt_ok(&(string[]) { i64_str((*val._i64)) }, (Option*)(&_t2), sizeof(string));
+Option_byte v__ast__ComptTimeConstValue_byte(v__ast__ComptTimeConstValue val) {
+	Option_u64 _t1 = v__ast__ComptTimeConstValue_u64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_byte _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
 		return _t2;
 	}
-	else if (val._typ == 14 /* f64 */) {
-		Option_string _t3;
-		opt_ok(&(string[]) { f64_str((*val._f64)) }, (Option*)(&_t3), sizeof(string));
+	
+ 	u64 x =  (*(u64*)_t1.data);
+	if (x < 256U) {
+		Option_byte _t3;
+		opt_ok(&(byte[]) { ((byte)(x)) }, (Option*)(&_t3), sizeof(byte));
 		return _t3;
 	}
-	else if (val._typ == 9 /* byte */) {
-		Option_string _t4;
-		opt_ok(&(string[]) { byte_str((*val._byte)) }, (Option*)(&_t4), sizeof(string));
-		return _t4;
-	}
-	else if (val._typ == 19 /* rune */) {
-		Option_string _t5;
-		opt_ok(&(string[]) { rune_str((*val._rune)) }, (Option*)(&_t5), sizeof(string));
-		return _t5;
-	}
-	else if (val._typ == 18 /* string */) {
-		Option_string _t6;
-		opt_ok(&(string[]) { (*val._string) }, (Option*)(&_t6), sizeof(string));
-		return _t6;
-	}
-	else if (val._typ == 263 /* v.ast.EmptyExpr */) {
-	}
-	;
-	return (Option_string){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_byte){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
-Option_f64 v__ast__ComptTimeConstValue_f64(v__ast__ComptTimeConstValue val) {
-	if (val._typ == 8 /* i64 */) {
-		Option_f64 _t1;
-		opt_ok(&(f64[]) { ((f64)((*val._i64))) }, (Option*)(&_t1), sizeof(f64));
-		return _t1;
-	}
-	else if (val._typ == 12 /* u64 */) {
-		Option_f64 _t2;
-		opt_ok(&(f64[]) { ((f64)((*val._u64))) }, (Option*)(&_t2), sizeof(f64));
+Option_u16 v__ast__ComptTimeConstValue_u16(v__ast__ComptTimeConstValue val) {
+	Option_u64 _t1 = v__ast__ComptTimeConstValue_u64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_u16 _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
 		return _t2;
 	}
-	else if (val._typ == 9 /* byte */) {
-		Option_f64 _t3;
-		opt_ok(&(f64[]) { ((f64)((*val._byte))) }, (Option*)(&_t3), sizeof(f64));
+	
+ 	u64 x =  (*(u64*)_t1.data);
+	if (x < 65536U) {
+		Option_u16 _t3;
+		opt_ok(&(u16[]) { ((u16)(x)) }, (Option*)(&_t3), sizeof(u16));
 		return _t3;
 	}
-	else if (val._typ == 14 /* f64 */) {
-		Option_f64 _t4;
-		opt_ok(&(f64[]) { (*val._f64) }, (Option*)(&_t4), sizeof(f64));
-		return _t4;
+	return (Option_u16){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
+Option_u32 v__ast__ComptTimeConstValue_u32(v__ast__ComptTimeConstValue val) {
+	Option_u64 _t1 = v__ast__ComptTimeConstValue_u64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_u32 _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
+		return _t2;
 	}
-	else if (val._typ == 18 /* string */) {
-		Option_f64 _t5;
-		opt_ok(&(f64[]) { string_f64((*val._string)) }, (Option*)(&_t5), sizeof(f64));
-		return _t5;
+	
+ 	u64 x =  (*(u64*)_t1.data);
+	if (x < 4294967296U) {
+		Option_u32 _t3;
+		opt_ok(&(u32[]) { ((u32)(x)) }, (Option*)(&_t3), sizeof(u32));
+		return _t3;
 	}
-	else if (val._typ == 19 /* rune */) {
-	}
-	else if (val._typ == 263 /* v.ast.EmptyExpr */) {
-	}
-	;
-	return (Option_f64){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_u32){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 Option_u64 v__ast__ComptTimeConstValue_u64(v__ast__ComptTimeConstValue val) {
-	if (val._typ == 8 /* i64 */) {
-		if ((*val._i64) >= 0) {
+	if (val._typ == 5 /* i8 */) {
+		if ((*val._i8) >= 0) {
 			Option_u64 _t1;
-			opt_ok(&(u64[]) { ((u64)((*val._i64))) }, (Option*)(&_t1), sizeof(u64));
+			opt_ok(&(u64[]) { ((u64)((*val._i8))) }, (Option*)(&_t1), sizeof(u64));
 			return _t1;
 		}
 	}
-	else if (val._typ == 12 /* u64 */) {
-		Option_u64 _t2;
-		opt_ok(&(u64[]) { (*val._u64) }, (Option*)(&_t2), sizeof(u64));
-		return _t2;
+	else if (val._typ == 6 /* i16 */) {
+		if ((*val._i16) >= 0) {
+			Option_u64 _t2;
+			opt_ok(&(u64[]) { ((u64)((*val._i16))) }, (Option*)(&_t2), sizeof(u64));
+			return _t2;
+		}
 	}
-	else if (val._typ == 9 /* byte */) {
-		Option_u64 _t3;
-		opt_ok(&(u64[]) { ((u64)((*val._byte))) }, (Option*)(&_t3), sizeof(u64));
-		return _t3;
+	else if (val._typ == 7 /* int */) {
+		if ((*val._int) >= 0) {
+			Option_u64 _t3;
+			opt_ok(&(u64[]) { ((u64)((*val._int))) }, (Option*)(&_t3), sizeof(u64));
+			return _t3;
+		}
 	}
-	else if (val._typ == 14 /* f64 */) {
-		if ((*val._f64) <= 18446744073709551615.0) {
+	else if (val._typ == 8 /* i64 */) {
+		if ((*val._i64) >= 0) {
 			Option_u64 _t4;
-			opt_ok(&(u64[]) { ((u64)((*val._f64))) }, (Option*)(&_t4), sizeof(u64));
+			opt_ok(&(u64[]) { ((u64)((*val._i64))) }, (Option*)(&_t4), sizeof(u64));
 			return _t4;
 		}
 	}
-	else if (val._typ == 18 /* string */) {
+	else if (val._typ == 9 /* byte */) {
 		Option_u64 _t5;
-		opt_ok(&(u64[]) { string_u64((*val._string)) }, (Option*)(&_t5), sizeof(u64));
+		opt_ok(&(u64[]) { ((u64)((*val._byte))) }, (Option*)(&_t5), sizeof(u64));
 		return _t5;
+	}
+	else if (val._typ == 10 /* u16 */) {
+		Option_u64 _t6;
+		opt_ok(&(u64[]) { ((u64)((*val._u16))) }, (Option*)(&_t6), sizeof(u64));
+		return _t6;
+	}
+	else if (val._typ == 11 /* u32 */) {
+		Option_u64 _t7;
+		opt_ok(&(u64[]) { ((u64)((*val._u32))) }, (Option*)(&_t7), sizeof(u64));
+		return _t7;
+	}
+	else if (val._typ == 12 /* u64 */) {
+		Option_u64 _t8;
+		opt_ok(&(u64[]) { (*val._u64) }, (Option*)(&_t8), sizeof(u64));
+		return _t8;
+	}
+	else if (val._typ == 13 /* f32 */) {
+		if ((*val._f32) <= 18446744073709551615.0) {
+			Option_u64 _t9;
+			opt_ok(&(u64[]) { ((u64)((*val._f32))) }, (Option*)(&_t9), sizeof(u64));
+			return _t9;
+		}
+	}
+	else if (val._typ == 14 /* f64 */) {
+		if ((*val._f64) <= 18446744073709551615.0) {
+			Option_u64 _t10;
+			opt_ok(&(u64[]) { ((u64)((*val._f64))) }, (Option*)(&_t10), sizeof(u64));
+			return _t10;
+		}
+	}
+	else if (val._typ == 18 /* string */) {
+		Option_u64 _t11;
+		opt_ok(&(u64[]) { string_u64((*val._string)) }, (Option*)(&_t11), sizeof(u64));
+		return _t11;
 	}
 	else if (val._typ == 19 /* rune */) {
 	}
@@ -35084,53 +35231,149 @@ Option_u64 v__ast__ComptTimeConstValue_u64(v__ast__ComptTimeConstValue val) {
 	return (Option_u64){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
-Option_byte v__ast__ComptTimeConstValue_byte(v__ast__ComptTimeConstValue val) {
-	if (val._typ == 9 /* byte */) {
-		Option_byte _t1;
-		opt_ok(&(byte[]) { (*val._byte) }, (Option*)(&_t1), sizeof(byte));
+Option_f32 v__ast__ComptTimeConstValue_f32(v__ast__ComptTimeConstValue val) {
+	Option_f64 _t1 = v__ast__ComptTimeConstValue_f64(val);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_f32 _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
+		return _t2;
+	}
+	
+ 	f64 x =  (*(f64*)_t1.data);
+	Option_f32 _t3;
+	opt_ok(&(f32[]) { ((f32)(x)) }, (Option*)(&_t3), sizeof(f32));
+	return _t3;
+}
+
+Option_f64 v__ast__ComptTimeConstValue_f64(v__ast__ComptTimeConstValue val) {
+	if (val._typ == 5 /* i8 */) {
+		Option_f64 _t1;
+		opt_ok(&(f64[]) { ((f64)((*val._i8))) }, (Option*)(&_t1), sizeof(f64));
 		return _t1;
 	}
-	else if (val._typ == 12 /* u64 */) {
-		if ((*val._u64) <= 255U) {
-			Option_byte _t2;
-			opt_ok(&(byte[]) { ((byte)((*val._u64))) }, (Option*)(&_t2), sizeof(byte));
-			return _t2;
-		}
+	else if (val._typ == 6 /* i16 */) {
+		Option_f64 _t2;
+		opt_ok(&(f64[]) { ((f64)((*val._i16))) }, (Option*)(&_t2), sizeof(f64));
+		return _t2;
 	}
-	else if (val._typ == 14 /* f64 */) {
-		if (0 <= (*val._f64) && (*val._f64) <= 255) {
-			Option_byte _t3;
-			opt_ok(&(byte[]) { ((byte)((*val._f64))) }, (Option*)(&_t3), sizeof(byte));
-			return _t3;
-		}
+	else if (val._typ == 7 /* int */) {
+		Option_f64 _t3;
+		opt_ok(&(f64[]) { ((f64)((*val._int))) }, (Option*)(&_t3), sizeof(f64));
+		return _t3;
 	}
 	else if (val._typ == 8 /* i64 */) {
-		if (0 <= (*val._i64) && (*val._i64) <= 255) {
-			Option_byte _t4;
-			opt_ok(&(byte[]) { ((byte)((*val._i64))) }, (Option*)(&_t4), sizeof(byte));
-			return _t4;
-		}
+		Option_f64 _t4;
+		opt_ok(&(f64[]) { ((f64)((*val._i64))) }, (Option*)(&_t4), sizeof(f64));
+		return _t4;
+	}
+	else if (val._typ == 9 /* byte */) {
+		Option_f64 _t5;
+		opt_ok(&(f64[]) { ((f64)((*val._byte))) }, (Option*)(&_t5), sizeof(f64));
+		return _t5;
+	}
+	else if (val._typ == 10 /* u16 */) {
+		Option_f64 _t6;
+		opt_ok(&(f64[]) { ((f64)((*val._u16))) }, (Option*)(&_t6), sizeof(f64));
+		return _t6;
+	}
+	else if (val._typ == 11 /* u32 */) {
+		Option_f64 _t7;
+		opt_ok(&(f64[]) { ((f64)((*val._u32))) }, (Option*)(&_t7), sizeof(f64));
+		return _t7;
+	}
+	else if (val._typ == 12 /* u64 */) {
+		Option_f64 _t8;
+		opt_ok(&(f64[]) { ((f64)((*val._u64))) }, (Option*)(&_t8), sizeof(f64));
+		return _t8;
+	}
+	else if (val._typ == 13 /* f32 */) {
+		Option_f64 _t9;
+		opt_ok(&(f64[]) { ((f64)((*val._f32))) }, (Option*)(&_t9), sizeof(f64));
+		return _t9;
+	}
+	else if (val._typ == 14 /* f64 */) {
+		Option_f64 _t10;
+		opt_ok(&(f64[]) { (*val._f64) }, (Option*)(&_t10), sizeof(f64));
+		return _t10;
 	}
 	else if (val._typ == 18 /* string */) {
-		int x = string_int((*val._string));
-		if (0 <= x && x <= 255) {
-			Option_byte _t5;
-			opt_ok(&(byte[]) { ((byte)(x)) }, (Option*)(&_t5), sizeof(byte));
-			return _t5;
-		}
+		Option_f64 _t11;
+		opt_ok(&(f64[]) { string_f64((*val._string)) }, (Option*)(&_t11), sizeof(f64));
+		return _t11;
 	}
 	else if (val._typ == 19 /* rune */) {
-		u32 x = ((u32)((*val._rune)));
-		if (0 <= x && x <= 255U) {
-			Option_byte _t6;
-			opt_ok(&(byte[]) { ((byte)(x)) }, (Option*)(&_t6), sizeof(byte));
-			return _t6;
-		}
 	}
 	else if (val._typ == 263 /* v.ast.EmptyExpr */) {
 	}
 	;
-	return (Option_byte){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+	return (Option_f64){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
+Option_string v__ast__ComptTimeConstValue_string(v__ast__ComptTimeConstValue val) {
+	if (val._typ == 5 /* i8 */) {
+		Option_string _t1;
+		opt_ok(&(string[]) { i8_str((*val._i8)) }, (Option*)(&_t1), sizeof(string));
+		return _t1;
+	}
+	else if (val._typ == 6 /* i16 */) {
+		Option_string _t2;
+		opt_ok(&(string[]) { i16_str((*val._i16)) }, (Option*)(&_t2), sizeof(string));
+		return _t2;
+	}
+	else if (val._typ == 7 /* int */) {
+		Option_string _t3;
+		opt_ok(&(string[]) { int_str((*val._int)) }, (Option*)(&_t3), sizeof(string));
+		return _t3;
+	}
+	else if (val._typ == 8 /* i64 */) {
+		Option_string _t4;
+		opt_ok(&(string[]) { i64_str((*val._i64)) }, (Option*)(&_t4), sizeof(string));
+		return _t4;
+	}
+	else if (val._typ == 9 /* byte */) {
+		Option_string _t5;
+		opt_ok(&(string[]) { byte_str((*val._byte)) }, (Option*)(&_t5), sizeof(string));
+		return _t5;
+	}
+	else if (val._typ == 10 /* u16 */) {
+		Option_string _t6;
+		opt_ok(&(string[]) { u16_str((*val._u16)) }, (Option*)(&_t6), sizeof(string));
+		return _t6;
+	}
+	else if (val._typ == 11 /* u32 */) {
+		Option_string _t7;
+		opt_ok(&(string[]) { u32_str((*val._u32)) }, (Option*)(&_t7), sizeof(string));
+		return _t7;
+	}
+	else if (val._typ == 12 /* u64 */) {
+		Option_string _t8;
+		opt_ok(&(string[]) { u64_str((*val._u64)) }, (Option*)(&_t8), sizeof(string));
+		return _t8;
+	}
+	else if (val._typ == 13 /* f32 */) {
+		Option_string _t9;
+		opt_ok(&(string[]) { f32_str((*val._f32)) }, (Option*)(&_t9), sizeof(string));
+		return _t9;
+	}
+	else if (val._typ == 14 /* f64 */) {
+		Option_string _t10;
+		opt_ok(&(string[]) { f64_str((*val._f64)) }, (Option*)(&_t10), sizeof(string));
+		return _t10;
+	}
+	else if (val._typ == 19 /* rune */) {
+		Option_string _t11;
+		opt_ok(&(string[]) { rune_str((*val._rune)) }, (Option*)(&_t11), sizeof(string));
+		return _t11;
+	}
+	else if (val._typ == 18 /* string */) {
+		Option_string _t12;
+		opt_ok(&(string[]) { (*val._string) }, (Option*)(&_t12), sizeof(string));
+		return _t12;
+	}
+	else if (val._typ == 263 /* v.ast.EmptyExpr */) {
+	}
+	;
+	return (Option_string){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
 Option_v__ast__ComptTimeConstValue v__ast__ConstField_comptime_expr_value(v__ast__ConstField obj) {
@@ -55884,27 +56127,20 @@ if (v__gen__c__Gen_const_decl_defer_0) {
 VV_LOCAL_SYMBOL bool v__gen__c__Gen_const_decl_precomputed(v__gen__c__Gen* g, string mod, string name, v__ast__ComptTimeConstValue ct_value, v__ast__Type typ) {
 	string styp = v__gen__c__Gen_typ(g, typ);
 	string cname =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_const_"), 0xfe10, {.d_s = name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-	if (ct_value._typ == 9 /* byte */) {
-		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, byte_str((*ct_value._byte)));
+	if (ct_value._typ == 5 /* i8 */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, i8_str((*ct_value._i8)));
 	}
-	else if (ct_value._typ == 19 /* rune */) {
-		u32 rune_code = ((u32)((*ct_value._rune)));
-		if (rune_code <= 255U) {
-			if ((rune_code == '"' || rune_code == '\\' || rune_code == '\'')) {
-				bool _t1 = false;
-				return _t1;
-			}
-			string escval = v__util__smart_quote(byte_ascii_str(((byte)(rune_code))), false);
-			v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("'"), 0xfe10, {.d_s = escval}}, {_SLIT("'"), 0, { .d_c = 0 }}})));
-		} else {
-			v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, u32_str(((u32)((*ct_value._rune)))));
-		}
+	else if (ct_value._typ == 6 /* i16 */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, i16_str((*ct_value._i16)));
+	}
+	else if (ct_value._typ == 7 /* int */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, int_str((*ct_value._int)));
 	}
 	else if (ct_value._typ == 8 /* i64 */) {
 		if (v__ast__Type_alias_eq(typ, _const_v__ast__int_type)) {
 			v__gen__c__Gen_const_decl_simple_define(g, name, i64_str((*ct_value._i64)));
-			bool _t2 = true;
-			return _t2;
+			bool _t1 = true;
+			return _t1;
 		}
 		if (v__ast__Type_alias_eq(typ, _const_v__ast__u64_type)) {
 			v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, string__plus(i64_str((*ct_value._i64)), _SLIT("U")));
@@ -55912,11 +56148,36 @@ VV_LOCAL_SYMBOL bool v__gen__c__Gen_const_decl_precomputed(v__gen__c__Gen* g, st
 			v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, i64_str((*ct_value._i64)));
 		}
 	}
+	else if (ct_value._typ == 9 /* byte */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, byte_str((*ct_value._byte)));
+	}
+	else if (ct_value._typ == 10 /* u16 */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, u16_str((*ct_value._u16)));
+	}
+	else if (ct_value._typ == 11 /* u32 */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, u32_str((*ct_value._u32)));
+	}
 	else if (ct_value._typ == 12 /* u64 */) {
 		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, string__plus(u64_str((*ct_value._u64)), _SLIT("U")));
 	}
+	else if (ct_value._typ == 13 /* f32 */) {
+		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, f32_str((*ct_value._f32)));
+	}
 	else if (ct_value._typ == 14 /* f64 */) {
 		v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, f64_str((*ct_value._f64)));
+	}
+	else if (ct_value._typ == 19 /* rune */) {
+		u32 rune_code = ((u32)((*ct_value._rune)));
+		if (rune_code <= 255U) {
+			if ((rune_code == '"' || rune_code == '\\' || rune_code == '\'')) {
+				bool _t2 = false;
+				return _t2;
+			}
+			string escval = v__util__smart_quote(byte_ascii_str(((byte)(rune_code))), false);
+			v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("'"), 0xfe10, {.d_s = escval}}, {_SLIT("'"), 0, { .d_c = 0 }}})));
+		} else {
+			v__gen__c__Gen_const_decl_write_precomputed(g, styp, cname, u32_str(((u32)((*ct_value._rune)))));
+		}
 	}
 	else if (ct_value._typ == 18 /* string */) {
 		string escaped_val = v__util__smart_quote((*ct_value._string), false);
@@ -56465,9 +56726,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*typ.info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_165373 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_165373.arg0;
-						string base = mr_165373.arg1;
+						multi_return_string_string mr_165822 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_165822.arg0;
+						string base = mr_165822.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -56700,11 +56961,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_173662 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_173662.arg0;
-				string pafile = mr_173662.arg1;
-				string pamod = mr_173662.arg2;
-				string pafn = mr_173662.arg3;
+				multi_return_int_string_string_string mr_174111 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_174111.arg0;
+				string pafile = mr_174111.arg1;
+				string pamod = mr_174111.arg2;
+				string pafn = mr_174111.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -56797,11 +57058,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind__map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_176292 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_176292.arg0;
-		string key_eq_fn = mr_176292.arg1;
-		string clone_fn = mr_176292.arg2;
-		string free_fn = mr_176292.arg3;
+		multi_return_string_string_string_string mr_176741 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_176741.arg0;
+		string key_eq_fn = mr_176741.arg1;
+		string clone_fn = mr_176741.arg2;
+		string free_fn = mr_176741.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -57406,8 +57667,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_195544 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_195544.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_195993 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_195993.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -76818,63 +77079,140 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		}
 		
  		v__ast__ComptTimeConstValue cast_expr_value =  (*(v__ast__ComptTimeConstValue*)_t8.data);
-		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__byte_type)) {
-			Option_byte _t11 = v__ast__ComptTimeConstValue_byte(cast_expr_value);
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__i8_type)) {
+			Option_i8 _t11 = v__ast__ComptTimeConstValue_i8(cast_expr_value);
 			if (_t11.state != 0) { /*or block*/ 
 				IError err = _t11.err;
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
  			Option_v__ast__ComptTimeConstValue _t10;
-			opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ( (*(byte*)_t11.data)))) }, (Option*)(&_t10), sizeof(v__ast__ComptTimeConstValue));
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { i8_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i8, ( (*(i8*)_t11.data)))) }, (Option*)(&_t10), sizeof(v__ast__ComptTimeConstValue));
 			return _t10;
 		}
-		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__int_type)) {
-			Option_int _t14 = v__ast__ComptTimeConstValue_int(cast_expr_value);
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__i16_type)) {
+			Option_i16 _t14 = v__ast__ComptTimeConstValue_i16(cast_expr_value);
 			if (_t14.state != 0) { /*or block*/ 
 				IError err = _t14.err;
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
  			Option_v__ast__ComptTimeConstValue _t13;
-			opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)( (*(int*)_t14.data)))))) }, (Option*)(&_t13), sizeof(v__ast__ComptTimeConstValue));
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { i16_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i16, ( (*(i16*)_t14.data)))) }, (Option*)(&_t13), sizeof(v__ast__ComptTimeConstValue));
 			return _t13;
 		}
-		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__u64_type)) {
-			Option_u64 _t17 = v__ast__ComptTimeConstValue_u64(cast_expr_value);
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__int_type)) {
+			Option_int _t17 = v__ast__ComptTimeConstValue_int(cast_expr_value);
 			if (_t17.state != 0) { /*or block*/ 
 				IError err = _t17.err;
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
  			Option_v__ast__ComptTimeConstValue _t16;
-			opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ( (*(u64*)_t17.data)))) }, (Option*)(&_t16), sizeof(v__ast__ComptTimeConstValue));
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { int_to_sumtype_v__ast__ComptTimeConstValue(ADDR(int, ( (*(int*)_t17.data)))) }, (Option*)(&_t16), sizeof(v__ast__ComptTimeConstValue));
 			return _t16;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__i64_type)) {
+			Option_i64 _t20 = v__ast__ComptTimeConstValue_i64(cast_expr_value);
+			if (_t20.state != 0) { /*or block*/ 
+				IError err = _t20.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t19;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ( (*(i64*)_t20.data)))) }, (Option*)(&_t19), sizeof(v__ast__ComptTimeConstValue));
+			return _t19;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__byte_type)) {
+			Option_byte _t23 = v__ast__ComptTimeConstValue_byte(cast_expr_value);
+			if (_t23.state != 0) { /*or block*/ 
+				IError err = _t23.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t22;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ( (*(byte*)_t23.data)))) }, (Option*)(&_t22), sizeof(v__ast__ComptTimeConstValue));
+			return _t22;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__u16_type)) {
+			Option_u16 _t26 = v__ast__ComptTimeConstValue_u16(cast_expr_value);
+			if (_t26.state != 0) { /*or block*/ 
+				IError err = _t26.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t25;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { u16_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u16, ( (*(u16*)_t26.data)))) }, (Option*)(&_t25), sizeof(v__ast__ComptTimeConstValue));
+			return _t25;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__u32_type)) {
+			Option_u32 _t29 = v__ast__ComptTimeConstValue_u32(cast_expr_value);
+			if (_t29.state != 0) { /*or block*/ 
+				IError err = _t29.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t28;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { u32_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u32, ( (*(u32*)_t29.data)))) }, (Option*)(&_t28), sizeof(v__ast__ComptTimeConstValue));
+			return _t28;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__u64_type)) {
+			Option_u64 _t32 = v__ast__ComptTimeConstValue_u64(cast_expr_value);
+			if (_t32.state != 0) { /*or block*/ 
+				IError err = _t32.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t31;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ( (*(u64*)_t32.data)))) }, (Option*)(&_t31), sizeof(v__ast__ComptTimeConstValue));
+			return _t31;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__f32_type)) {
+			Option_f32 _t35 = v__ast__ComptTimeConstValue_f32(cast_expr_value);
+			if (_t35.state != 0) { /*or block*/ 
+				IError err = _t35.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t34;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { f32_to_sumtype_v__ast__ComptTimeConstValue(ADDR(f32, ( (*(f32*)_t35.data)))) }, (Option*)(&_t34), sizeof(v__ast__ComptTimeConstValue));
+			return _t34;
+		}
+		if (v__ast__Type_alias_eq((*expr._v__ast__CastExpr).typ, _const_v__ast__f64_type)) {
+			Option_f64 _t38 = v__ast__ComptTimeConstValue_f64(cast_expr_value);
+			if (_t38.state != 0) { /*or block*/ 
+				IError err = _t38.err;
+				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			}
+			
+ 			Option_v__ast__ComptTimeConstValue _t37;
+			opt_ok(&(v__ast__ComptTimeConstValue[]) { f64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(f64, ( (*(f64*)_t38.data)))) }, (Option*)(&_t37), sizeof(v__ast__ComptTimeConstValue));
+			return _t37;
 		}
 	}
 	else if (expr._typ == 271 /* v.ast.InfixExpr */) {
-		Option_v__ast__ComptTimeConstValue _t19 = v__checker__eval_comptime_const_expr((*expr._v__ast__InfixExpr).left, nlevel + 1);
-		if (_t19.state != 0) { /*or block*/ 
-			Option_v__ast__ComptTimeConstValue _t20;
-			memcpy(&_t20, &_t19, sizeof(Option));
-			return _t20;
+		Option_v__ast__ComptTimeConstValue _t40 = v__checker__eval_comptime_const_expr((*expr._v__ast__InfixExpr).left, nlevel + 1);
+		if (_t40.state != 0) { /*or block*/ 
+			Option_v__ast__ComptTimeConstValue _t41;
+			memcpy(&_t41, &_t40, sizeof(Option));
+			return _t41;
 		}
 		
- 		v__ast__ComptTimeConstValue left =  (*(v__ast__ComptTimeConstValue*)_t19.data);
-		Option_v__ast__ComptTimeConstValue _t21 = v__checker__eval_comptime_const_expr((*expr._v__ast__InfixExpr).right, nlevel + 1);
-		if (_t21.state != 0) { /*or block*/ 
-			Option_v__ast__ComptTimeConstValue _t22;
-			memcpy(&_t22, &_t21, sizeof(Option));
-			return _t22;
+ 		v__ast__ComptTimeConstValue left =  (*(v__ast__ComptTimeConstValue*)_t40.data);
+		Option_v__ast__ComptTimeConstValue _t42 = v__checker__eval_comptime_const_expr((*expr._v__ast__InfixExpr).right, nlevel + 1);
+		if (_t42.state != 0) { /*or block*/ 
+			Option_v__ast__ComptTimeConstValue _t43;
+			memcpy(&_t43, &_t42, sizeof(Option));
+			return _t43;
 		}
 		
- 		v__ast__ComptTimeConstValue right =  (*(v__ast__ComptTimeConstValue*)_t21.data);
+ 		v__ast__ComptTimeConstValue right =  (*(v__ast__ComptTimeConstValue*)_t42.data);
 		if ((left)._typ == 18 /* string */ && (right)._typ == 18 /* string */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t23;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { string_to_sumtype_v__ast__ComptTimeConstValue(ADDR(string, (string__plus((*left._string), (*right._string))))) }, (Option*)(&_t23), sizeof(v__ast__ComptTimeConstValue));
-				return _t23;
+				Option_v__ast__ComptTimeConstValue _t44;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { string_to_sumtype_v__ast__ComptTimeConstValue(ADDR(string, (string__plus((*left._string), (*right._string))))) }, (Option*)(&_t44), sizeof(v__ast__ComptTimeConstValue));
+				return _t44;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -76882,54 +77220,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 12 /* u64 */ && (right)._typ == 8 /* i64 */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t25;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) + ((i64)((*right._i64)))))) }, (Option*)(&_t25), sizeof(v__ast__ComptTimeConstValue));
-				return _t25;
+				Option_v__ast__ComptTimeConstValue _t46;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) + ((i64)((*right._i64)))))) }, (Option*)(&_t46), sizeof(v__ast__ComptTimeConstValue));
+				return _t46;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t26;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) - ((i64)((*right._i64)))))) }, (Option*)(&_t26), sizeof(v__ast__ComptTimeConstValue));
-				return _t26;
+				Option_v__ast__ComptTimeConstValue _t47;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) - ((i64)((*right._i64)))))) }, (Option*)(&_t47), sizeof(v__ast__ComptTimeConstValue));
+				return _t47;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t27;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) * ((i64)((*right._i64)))))) }, (Option*)(&_t27), sizeof(v__ast__ComptTimeConstValue));
-				return _t27;
+				Option_v__ast__ComptTimeConstValue _t48;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) * ((i64)((*right._i64)))))) }, (Option*)(&_t48), sizeof(v__ast__ComptTimeConstValue));
+				return _t48;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t28;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) / ((i64)((*right._i64)))))) }, (Option*)(&_t28), sizeof(v__ast__ComptTimeConstValue));
-				return _t28;
+				Option_v__ast__ComptTimeConstValue _t49;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) / ((i64)((*right._i64)))))) }, (Option*)(&_t49), sizeof(v__ast__ComptTimeConstValue));
+				return _t49;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t29;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) % ((i64)((*right._i64)))))) }, (Option*)(&_t29), sizeof(v__ast__ComptTimeConstValue));
-				return _t29;
+				Option_v__ast__ComptTimeConstValue _t50;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) % ((i64)((*right._i64)))))) }, (Option*)(&_t50), sizeof(v__ast__ComptTimeConstValue));
+				return _t50;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t30;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) ^ ((i64)((*right._i64))))))) }, (Option*)(&_t30), sizeof(v__ast__ComptTimeConstValue));
-				return _t30;
+				Option_v__ast__ComptTimeConstValue _t51;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) ^ ((i64)((*right._i64))))))) }, (Option*)(&_t51), sizeof(v__ast__ComptTimeConstValue));
+				return _t51;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t31;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) | ((i64)((*right._i64))))))) }, (Option*)(&_t31), sizeof(v__ast__ComptTimeConstValue));
-				return _t31;
+				Option_v__ast__ComptTimeConstValue _t52;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) | ((i64)((*right._i64))))))) }, (Option*)(&_t52), sizeof(v__ast__ComptTimeConstValue));
+				return _t52;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t32;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) & ((i64)((*right._i64))))))) }, (Option*)(&_t32), sizeof(v__ast__ComptTimeConstValue));
-				return _t32;
+				Option_v__ast__ComptTimeConstValue _t53;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._u64))) & ((i64)((*right._i64))))))) }, (Option*)(&_t53), sizeof(v__ast__ComptTimeConstValue));
+				return _t53;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t33;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) << ((i64)((*right._i64)))))) }, (Option*)(&_t33), sizeof(v__ast__ComptTimeConstValue));
-				return _t33;
+				Option_v__ast__ComptTimeConstValue _t54;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) << ((i64)((*right._i64)))))) }, (Option*)(&_t54), sizeof(v__ast__ComptTimeConstValue));
+				return _t54;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t34;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) >> ((i64)((*right._i64)))))) }, (Option*)(&_t34), sizeof(v__ast__ComptTimeConstValue));
-				return _t34;
+				Option_v__ast__ComptTimeConstValue _t55;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._u64))) >> ((i64)((*right._i64)))))) }, (Option*)(&_t55), sizeof(v__ast__ComptTimeConstValue));
+				return _t55;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -76937,54 +77275,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 8 /* i64 */ && (right)._typ == 12 /* u64 */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t36;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) + ((i64)((*right._u64)))))) }, (Option*)(&_t36), sizeof(v__ast__ComptTimeConstValue));
-				return _t36;
+				Option_v__ast__ComptTimeConstValue _t57;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) + ((i64)((*right._u64)))))) }, (Option*)(&_t57), sizeof(v__ast__ComptTimeConstValue));
+				return _t57;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t37;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) - ((i64)((*right._u64)))))) }, (Option*)(&_t37), sizeof(v__ast__ComptTimeConstValue));
-				return _t37;
+				Option_v__ast__ComptTimeConstValue _t58;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) - ((i64)((*right._u64)))))) }, (Option*)(&_t58), sizeof(v__ast__ComptTimeConstValue));
+				return _t58;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t38;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) * ((i64)((*right._u64)))))) }, (Option*)(&_t38), sizeof(v__ast__ComptTimeConstValue));
-				return _t38;
+				Option_v__ast__ComptTimeConstValue _t59;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) * ((i64)((*right._u64)))))) }, (Option*)(&_t59), sizeof(v__ast__ComptTimeConstValue));
+				return _t59;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t39;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) / ((i64)((*right._u64)))))) }, (Option*)(&_t39), sizeof(v__ast__ComptTimeConstValue));
-				return _t39;
+				Option_v__ast__ComptTimeConstValue _t60;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) / ((i64)((*right._u64)))))) }, (Option*)(&_t60), sizeof(v__ast__ComptTimeConstValue));
+				return _t60;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t40;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) % ((i64)((*right._u64)))))) }, (Option*)(&_t40), sizeof(v__ast__ComptTimeConstValue));
-				return _t40;
+				Option_v__ast__ComptTimeConstValue _t61;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) % ((i64)((*right._u64)))))) }, (Option*)(&_t61), sizeof(v__ast__ComptTimeConstValue));
+				return _t61;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t41;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) ^ ((i64)((*right._u64))))))) }, (Option*)(&_t41), sizeof(v__ast__ComptTimeConstValue));
-				return _t41;
+				Option_v__ast__ComptTimeConstValue _t62;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) ^ ((i64)((*right._u64))))))) }, (Option*)(&_t62), sizeof(v__ast__ComptTimeConstValue));
+				return _t62;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t42;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) | ((i64)((*right._u64))))))) }, (Option*)(&_t42), sizeof(v__ast__ComptTimeConstValue));
-				return _t42;
+				Option_v__ast__ComptTimeConstValue _t63;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) | ((i64)((*right._u64))))))) }, (Option*)(&_t63), sizeof(v__ast__ComptTimeConstValue));
+				return _t63;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t43;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) & ((i64)((*right._u64))))))) }, (Option*)(&_t43), sizeof(v__ast__ComptTimeConstValue));
-				return _t43;
+				Option_v__ast__ComptTimeConstValue _t64;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((((i64)((*left._i64))) & ((i64)((*right._u64))))))) }, (Option*)(&_t64), sizeof(v__ast__ComptTimeConstValue));
+				return _t64;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t44;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) << ((i64)((*right._u64)))))) }, (Option*)(&_t44), sizeof(v__ast__ComptTimeConstValue));
-				return _t44;
+				Option_v__ast__ComptTimeConstValue _t65;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) << ((i64)((*right._u64)))))) }, (Option*)(&_t65), sizeof(v__ast__ComptTimeConstValue));
+				return _t65;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t45;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) >> ((i64)((*right._u64)))))) }, (Option*)(&_t45), sizeof(v__ast__ComptTimeConstValue));
-				return _t45;
+				Option_v__ast__ComptTimeConstValue _t66;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((i64)((*left._i64))) >> ((i64)((*right._u64)))))) }, (Option*)(&_t66), sizeof(v__ast__ComptTimeConstValue));
+				return _t66;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -76992,54 +77330,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 12 /* u64 */ && (right)._typ == 12 /* u64 */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t47;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) + (*right._u64)))) }, (Option*)(&_t47), sizeof(v__ast__ComptTimeConstValue));
-				return _t47;
+				Option_v__ast__ComptTimeConstValue _t68;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) + (*right._u64)))) }, (Option*)(&_t68), sizeof(v__ast__ComptTimeConstValue));
+				return _t68;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t48;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) - (*right._u64)))) }, (Option*)(&_t48), sizeof(v__ast__ComptTimeConstValue));
-				return _t48;
+				Option_v__ast__ComptTimeConstValue _t69;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) - (*right._u64)))) }, (Option*)(&_t69), sizeof(v__ast__ComptTimeConstValue));
+				return _t69;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t49;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) * (*right._u64)))) }, (Option*)(&_t49), sizeof(v__ast__ComptTimeConstValue));
-				return _t49;
+				Option_v__ast__ComptTimeConstValue _t70;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) * (*right._u64)))) }, (Option*)(&_t70), sizeof(v__ast__ComptTimeConstValue));
+				return _t70;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t50;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) / (*right._u64)))) }, (Option*)(&_t50), sizeof(v__ast__ComptTimeConstValue));
-				return _t50;
+				Option_v__ast__ComptTimeConstValue _t71;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) / (*right._u64)))) }, (Option*)(&_t71), sizeof(v__ast__ComptTimeConstValue));
+				return _t71;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t51;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) % (*right._u64)))) }, (Option*)(&_t51), sizeof(v__ast__ComptTimeConstValue));
-				return _t51;
+				Option_v__ast__ComptTimeConstValue _t72;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) % (*right._u64)))) }, (Option*)(&_t72), sizeof(v__ast__ComptTimeConstValue));
+				return _t72;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t52;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) ^ (*right._u64))))) }, (Option*)(&_t52), sizeof(v__ast__ComptTimeConstValue));
-				return _t52;
+				Option_v__ast__ComptTimeConstValue _t73;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) ^ (*right._u64))))) }, (Option*)(&_t73), sizeof(v__ast__ComptTimeConstValue));
+				return _t73;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t53;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) | (*right._u64))))) }, (Option*)(&_t53), sizeof(v__ast__ComptTimeConstValue));
-				return _t53;
+				Option_v__ast__ComptTimeConstValue _t74;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) | (*right._u64))))) }, (Option*)(&_t74), sizeof(v__ast__ComptTimeConstValue));
+				return _t74;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t54;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) & (*right._u64))))) }, (Option*)(&_t54), sizeof(v__ast__ComptTimeConstValue));
-				return _t54;
+				Option_v__ast__ComptTimeConstValue _t75;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, (((*left._u64) & (*right._u64))))) }, (Option*)(&_t75), sizeof(v__ast__ComptTimeConstValue));
+				return _t75;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t55;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) << (*right._u64)))) }, (Option*)(&_t55), sizeof(v__ast__ComptTimeConstValue));
-				return _t55;
+				Option_v__ast__ComptTimeConstValue _t76;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) << (*right._u64)))) }, (Option*)(&_t76), sizeof(v__ast__ComptTimeConstValue));
+				return _t76;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t56;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) >> (*right._u64)))) }, (Option*)(&_t56), sizeof(v__ast__ComptTimeConstValue));
-				return _t56;
+				Option_v__ast__ComptTimeConstValue _t77;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { u64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(u64, ((*left._u64) >> (*right._u64)))) }, (Option*)(&_t77), sizeof(v__ast__ComptTimeConstValue));
+				return _t77;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -77047,54 +77385,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 8 /* i64 */ && (right)._typ == 8 /* i64 */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t58;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) + (*right._i64)))) }, (Option*)(&_t58), sizeof(v__ast__ComptTimeConstValue));
-				return _t58;
+				Option_v__ast__ComptTimeConstValue _t79;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) + (*right._i64)))) }, (Option*)(&_t79), sizeof(v__ast__ComptTimeConstValue));
+				return _t79;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t59;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) - (*right._i64)))) }, (Option*)(&_t59), sizeof(v__ast__ComptTimeConstValue));
-				return _t59;
+				Option_v__ast__ComptTimeConstValue _t80;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) - (*right._i64)))) }, (Option*)(&_t80), sizeof(v__ast__ComptTimeConstValue));
+				return _t80;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t60;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) * (*right._i64)))) }, (Option*)(&_t60), sizeof(v__ast__ComptTimeConstValue));
-				return _t60;
+				Option_v__ast__ComptTimeConstValue _t81;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) * (*right._i64)))) }, (Option*)(&_t81), sizeof(v__ast__ComptTimeConstValue));
+				return _t81;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t61;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) / (*right._i64)))) }, (Option*)(&_t61), sizeof(v__ast__ComptTimeConstValue));
-				return _t61;
+				Option_v__ast__ComptTimeConstValue _t82;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) / (*right._i64)))) }, (Option*)(&_t82), sizeof(v__ast__ComptTimeConstValue));
+				return _t82;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t62;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) % (*right._i64)))) }, (Option*)(&_t62), sizeof(v__ast__ComptTimeConstValue));
-				return _t62;
+				Option_v__ast__ComptTimeConstValue _t83;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) % (*right._i64)))) }, (Option*)(&_t83), sizeof(v__ast__ComptTimeConstValue));
+				return _t83;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t63;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) ^ (*right._i64))))) }, (Option*)(&_t63), sizeof(v__ast__ComptTimeConstValue));
-				return _t63;
+				Option_v__ast__ComptTimeConstValue _t84;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) ^ (*right._i64))))) }, (Option*)(&_t84), sizeof(v__ast__ComptTimeConstValue));
+				return _t84;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t64;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) | (*right._i64))))) }, (Option*)(&_t64), sizeof(v__ast__ComptTimeConstValue));
-				return _t64;
+				Option_v__ast__ComptTimeConstValue _t85;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) | (*right._i64))))) }, (Option*)(&_t85), sizeof(v__ast__ComptTimeConstValue));
+				return _t85;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t65;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) & (*right._i64))))) }, (Option*)(&_t65), sizeof(v__ast__ComptTimeConstValue));
-				return _t65;
+				Option_v__ast__ComptTimeConstValue _t86;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, (((*left._i64) & (*right._i64))))) }, (Option*)(&_t86), sizeof(v__ast__ComptTimeConstValue));
+				return _t86;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t66;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) << (*right._i64)))) }, (Option*)(&_t66), sizeof(v__ast__ComptTimeConstValue));
-				return _t66;
+				Option_v__ast__ComptTimeConstValue _t87;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) << (*right._i64)))) }, (Option*)(&_t87), sizeof(v__ast__ComptTimeConstValue));
+				return _t87;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t67;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) >> (*right._i64)))) }, (Option*)(&_t67), sizeof(v__ast__ComptTimeConstValue));
-				return _t67;
+				Option_v__ast__ComptTimeConstValue _t88;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { i64_to_sumtype_v__ast__ComptTimeConstValue(ADDR(i64, ((*left._i64) >> (*right._i64)))) }, (Option*)(&_t88), sizeof(v__ast__ComptTimeConstValue));
+				return _t88;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -77102,54 +77440,54 @@ VV_LOCAL_SYMBOL Option_v__ast__ComptTimeConstValue v__checker__eval_comptime_con
 		} else if ((left)._typ == 9 /* byte */ && (right)._typ == 9 /* byte */) {
 
 			if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__plus)) {
-				Option_v__ast__ComptTimeConstValue _t69;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) + (*right._byte)))) }, (Option*)(&_t69), sizeof(v__ast__ComptTimeConstValue));
-				return _t69;
+				Option_v__ast__ComptTimeConstValue _t90;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) + (*right._byte)))) }, (Option*)(&_t90), sizeof(v__ast__ComptTimeConstValue));
+				return _t90;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__minus)) {
-				Option_v__ast__ComptTimeConstValue _t70;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) - (*right._byte)))) }, (Option*)(&_t70), sizeof(v__ast__ComptTimeConstValue));
-				return _t70;
+				Option_v__ast__ComptTimeConstValue _t91;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) - (*right._byte)))) }, (Option*)(&_t91), sizeof(v__ast__ComptTimeConstValue));
+				return _t91;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mul)) {
-				Option_v__ast__ComptTimeConstValue _t71;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) * (*right._byte)))) }, (Option*)(&_t71), sizeof(v__ast__ComptTimeConstValue));
-				return _t71;
+				Option_v__ast__ComptTimeConstValue _t92;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) * (*right._byte)))) }, (Option*)(&_t92), sizeof(v__ast__ComptTimeConstValue));
+				return _t92;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__div)) {
-				Option_v__ast__ComptTimeConstValue _t72;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) / (*right._byte)))) }, (Option*)(&_t72), sizeof(v__ast__ComptTimeConstValue));
-				return _t72;
+				Option_v__ast__ComptTimeConstValue _t93;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) / (*right._byte)))) }, (Option*)(&_t93), sizeof(v__ast__ComptTimeConstValue));
+				return _t93;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__mod)) {
-				Option_v__ast__ComptTimeConstValue _t73;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) % (*right._byte)))) }, (Option*)(&_t73), sizeof(v__ast__ComptTimeConstValue));
-				return _t73;
+				Option_v__ast__ComptTimeConstValue _t94;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) % (*right._byte)))) }, (Option*)(&_t94), sizeof(v__ast__ComptTimeConstValue));
+				return _t94;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__xor)) {
-				Option_v__ast__ComptTimeConstValue _t74;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) ^ (*right._byte))))) }, (Option*)(&_t74), sizeof(v__ast__ComptTimeConstValue));
-				return _t74;
+				Option_v__ast__ComptTimeConstValue _t95;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) ^ (*right._byte))))) }, (Option*)(&_t95), sizeof(v__ast__ComptTimeConstValue));
+				return _t95;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__pipe)) {
-				Option_v__ast__ComptTimeConstValue _t75;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) | (*right._byte))))) }, (Option*)(&_t75), sizeof(v__ast__ComptTimeConstValue));
-				return _t75;
+				Option_v__ast__ComptTimeConstValue _t96;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) | (*right._byte))))) }, (Option*)(&_t96), sizeof(v__ast__ComptTimeConstValue));
+				return _t96;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__amp)) {
-				Option_v__ast__ComptTimeConstValue _t76;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) & (*right._byte))))) }, (Option*)(&_t76), sizeof(v__ast__ComptTimeConstValue));
-				return _t76;
+				Option_v__ast__ComptTimeConstValue _t97;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, (((*left._byte) & (*right._byte))))) }, (Option*)(&_t97), sizeof(v__ast__ComptTimeConstValue));
+				return _t97;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__left_shift)) {
-				Option_v__ast__ComptTimeConstValue _t77;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) << (*right._byte)))) }, (Option*)(&_t77), sizeof(v__ast__ComptTimeConstValue));
-				return _t77;
+				Option_v__ast__ComptTimeConstValue _t98;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) << (*right._byte)))) }, (Option*)(&_t98), sizeof(v__ast__ComptTimeConstValue));
+				return _t98;
 			}
 			else if ((*expr._v__ast__InfixExpr).op == (v__token__Kind__right_shift)) {
-				Option_v__ast__ComptTimeConstValue _t78;
-				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) >> (*right._byte)))) }, (Option*)(&_t78), sizeof(v__ast__ComptTimeConstValue));
-				return _t78;
+				Option_v__ast__ComptTimeConstValue _t99;
+				opt_ok(&(v__ast__ComptTimeConstValue[]) { byte_to_sumtype_v__ast__ComptTimeConstValue(ADDR(byte, ((*left._byte) >> (*right._byte)))) }, (Option*)(&_t99), sizeof(v__ast__ComptTimeConstValue));
+				return _t99;
 			}
 			else {
 				return (Option_v__ast__ComptTimeConstValue){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -79851,7 +80189,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	vinit_string_literals();
 	// Initializations for module strings :
 	// Initializations for module math.bits :
-	_const_math__bits__de_bruijn32 = ((u32)(0x077CB531U));
 	_const_math__bits__de_bruijn32tab = new_array_from_c_array(32, 32, sizeof(byte), _MOV((byte[32]){
 		((byte)(0)), 1, 28, 2, 29, 14, 24, 3, 30,
 		22, 20, 15, 25, 17, 4, 8, 31,
@@ -79866,7 +80203,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 		35, 44, 21, 52, 32, 23, 11, 54,
 		26, 40, 15, 34, 20, 31, 10, 25,
 		14, 19, 9, 13, 8, 7, 6}));
-	_const_math__bits__max_u32 = ((u32)(4294967295U));
 	_const_math__bits__ntz_8_tab = new_array_from_c_array(256, 256, sizeof(byte), _MOV((byte[256]){
 		((byte)(0x08)), 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03,
 		0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x04,
@@ -80000,11 +80336,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 		0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
 		0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08}));
 	// Initializations for module strconv :
-	_const_strconv__single_plus_zero = ((u32)(0x00000000U));
-	_const_strconv__single_minus_zero = ((u32)(0x80000000U));
-	_const_strconv__single_plus_infinity = ((u32)(0x7F800000U));
-	_const_strconv__single_minus_infinity = ((u32)(0xFF800000U));
-	_const_strconv__c_ten = ((u32)(10U));
 	_const_strconv__pos_exp = new_array_from_c_array(309, 309, sizeof(u64), _MOV((u64[309]){
 		((u64)(0x3ff0000000000000U)), ((u64)(0x4024000000000000U)), ((u64)(0x4059000000000000U)), ((u64)(0x408f400000000000U)), ((u64)(0x40c3880000000000U)), ((u64)(0x40f86a0000000000U)), ((u64)(0x412e848000000000U)), ((u64)(0x416312d000000000U)), ((u64)(0x4197d78400000000U)),
 		((u64)(0x41cdcd6500000000U)), ((u64)(0x4202a05f20000000U)), ((u64)(0x42374876e8000000U)), ((u64)(0x426d1a94a2000000U)), ((u64)(0x42a2309ce5400000U)), ((u64)(0x42d6bcc41e900000U)), ((u64)(0x430c6bf526340000U)), ((u64)(0x4341c37937e08000U)),
@@ -80090,14 +80421,10 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_strconv__ten_pow_table_32 = new_array_from_c_array(12, 12, sizeof(u32), _MOV((u32[12]){
 		((u32)(1U)), ((u32)(10U)), ((u32)(100U)), ((u32)(1000U)), ((u32)(10000U)), ((u32)(100000U)), ((u32)(1000000U)), ((u32)(10000000U)), ((u32)(100000000U)),
 		((u32)(1000000000U)), ((u32)(10000000000U)), ((u32)(100000000000U))}));
-	_const_strconv__mantbits32 = ((u32)(23U));
-	_const_strconv__expbits32 = ((u32)(8U));
 	_const_strconv__ten_pow_table_64 = new_array_from_c_array(20, 20, sizeof(u64), _MOV((u64[20]){
 		((u64)(1U)), ((u64)(10U)), ((u64)(100U)), ((u64)(1000U)), ((u64)(10000U)), ((u64)(100000U)), ((u64)(1000000U)), ((u64)(10000000U)), ((u64)(100000000U)),
 		((u64)(1000000000U)), ((u64)(10000000000U)), ((u64)(100000000000U)), ((u64)(1000000000000U)), ((u64)(10000000000000U)), ((u64)(100000000000000U)), ((u64)(1000000000000000U)), ((u64)(10000000000000000U)),
 		((u64)(100000000000000000U)), ((u64)(1000000000000000000U)), ((u64)(10000000000000000000U))}));
-	_const_strconv__mantbits64 = ((u32)(52U));
-	_const_strconv__expbits64 = ((u32)(11U));
 	_const_strconv__dec_round = new_array_from_c_array(20, 20, sizeof(f64), _MOV((f64[20]){
 		((f64)(0.5)), 0.05, 0.005, 0.0005, 0.00005, 0.000005, 0.0000005, 0.00000005, 0.000000005,
 		0.0000000005, 0.00000000005, 0.000000000005, 0.0000000000005, 0.00000000000005, 0.000000000000005, 0.0000000000000005, 0.00000000000000005,
@@ -80199,8 +80526,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 		(strconv__Uint128){.lo = ((u64)(0x1f6bd73364fec332U)),.hi = ((u64)(0x02e7822a0e978d3cU)),}, (strconv__Uint128){.lo = ((u64)(0xe5efdf5c50cbcf5bU)),.hi = ((u64)(0x0252ce880bac70fcU)),}, (strconv__Uint128){.lo = ((u64)(0x3cb2fefa1adfb22bU)),.hi = ((u64)(0x03b7b0d9ac471b2eU)),}, (strconv__Uint128){.lo = ((u64)(0x308f3261af195b56U)),.hi = ((u64)(0x02f95a47bd05af58U)),}, (strconv__Uint128){.lo = ((u64)(0x5a0c284e25ade2abU)),.hi = ((u64)(0x0261150630d15913U)),}, (strconv__Uint128){.lo = ((u64)(0x29ad0d49d5e30445U)),.hi = ((u64)(0x03ce8809e7b55b52U)),}, (strconv__Uint128){.lo = ((u64)(0x548a7107de4f369dU)),.hi = ((u64)(0x030ba007ec9115dbU)),}, (strconv__Uint128){.lo = ((u64)(0xdd3b8d9fe50c2bb1U)),.hi = ((u64)(0x026fb3398a0dab15U)),},
 		(strconv__Uint128){.lo = ((u64)(0x952c15cca1ad12b5U)),.hi = ((u64)(0x03e5eb8f434911bcU)),}, (strconv__Uint128){.lo = ((u64)(0x775677d6e7bda891U)),.hi = ((u64)(0x031e560c35d40e30U)),}, (strconv__Uint128){.lo = ((u64)(0xc5dec645863153a7U)),.hi = ((u64)(0x027eab3cf7dcd826U)),}}));
 	// Initializations for module builtin :
-	_const_hash_mask = ((u32)(0x00FFFFFFU));
-	_const_probe_inc = ((u32)(0x01000000U));
 	_const_none__ = /*&IError*/I_None___to_Interface_IError((None__*)memdup(&(None__){.msg = (string){.str=(byteptr)"", .is_lit=1},.code = 0,}, sizeof(None__)));
 	_const_children_bytes = /*SizeOf*/ sizeof(voidptr) * (_const_max_len + 1);
 	total_m = 0; // global
@@ -80231,7 +80556,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
 		31, 28, 31, 30, 31, 30, 31, 31, 30,
 		31, 30, 31}));
-	_const_time__absolute_zero_year = ((i64)(-292277022399));
 	_const_time__days_before = new_array_from_c_array(13, 13, sizeof(int), _MOV((int[13]){
 		0, 31, 31 + 28, 31 + 28 + 31, 31 + 28 + 31 + 30, 31 + 28 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31,
 		31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30, 31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31}));
@@ -80250,13 +80574,10 @@ void _vinit(int ___argc, voidptr ___argv) {
 	// Initializations for module hash :
 	hash__init();
 	// Initializations for module hash.fnv1a :
-	_const_hash__fnv1a__fnv32_offset_basis = ((u32)(2166136261U));
-	_const_hash__fnv1a__fnv32_prime = ((u32)(16777619U));
 	// Initializations for module encoding.base64 :
 	// Initializations for module rand.constants :
 	_const_rand__constants__max_u32_as_f32 = ((f32)(_const_rand__constants__max_u32)) + 1;
 	_const_rand__constants__max_u64_as_f64 = ((f64)(_const_rand__constants__max_u64)) + 1;
-	_const_rand__constants__u31_mask = ((u32)(0x7FFFFFFFU));
 	// Initializations for module flag :
 	// Initializations for module semver :
 	_const_semver__versions = new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_semver__ver_major, _const_semver__ver_minor, _const_semver__ver_patch}));
