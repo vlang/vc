@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0f09228"
+#define V_COMMIT_HASH "afb7168"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6674d65"
+	#define V_COMMIT_HASH "0f09228"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0f09228"
+	#define V_CURRENT_COMMIT_HASH "afb7168"
 #endif
 
 // V comptime_defines:
@@ -1993,6 +1993,7 @@ typedef byte Array_fixed_byte_4096 [4096];
 typedef u16 Array_fixed_u16_255 [255];
 typedef array Array_os__ProcessState;
 typedef array Array_v__token__Kind;
+typedef map Map_int_int;
 typedef int Array_fixed_int_123 [123];
 typedef map Map_int_rune;
 typedef byte Array_fixed_byte_50 [50];
@@ -7544,6 +7545,7 @@ void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d);
 void v__dotgraph__DotGraph_new_node(v__dotgraph__DotGraph* d, string nlabel, v__dotgraph__NewNodeConfig cfg);
 void v__dotgraph__DotGraph_new_edge(v__dotgraph__DotGraph* d, string source, string target, v__dotgraph__NewEdgeConfig cfg);
 string v__dotgraph__node_name(string name, voidptr context);
+VV_LOCAL_SYMBOL void hash__init();
 u64 hash__wyhash_c(byte* key, u64 len, u64 seed);
 u64 hash__wyhash64_c(u64 a, u64 b);
 u64 _const_hash__wyp0 = 11562461410679940143U; // precomputed
@@ -25227,6 +25229,11 @@ string v__dotgraph__node_name(string name, voidptr context) {
 	return _t1;
 }
 
+VV_LOCAL_SYMBOL void hash__init(void) {
+	{Map_int_int _ = new_map_init(&map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop, 1, sizeof(int), sizeof(int), _MOV((int[1]){1, }), _MOV((int[1]){1, }));}
+	;
+}
+
 // Attr: [inline]
 inline u64 hash__wyhash_c(byte* key, u64 len, u64 seed) {
 	u64 _t1 = wyhash(key, len, seed, ((u64*)(_wyp)));
@@ -31035,7 +31042,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6674d65"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0f09228"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -80241,6 +80248,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_time__start_local_time = time__local_as_unix_time();
 	// Initializations for module v.dotgraph :
 	// Initializations for module hash :
+	hash__init();
 	// Initializations for module hash.fnv1a :
 	_const_hash__fnv1a__fnv32_offset_basis = ((u32)(2166136261U));
 	_const_hash__fnv1a__fnv32_prime = ((u32)(16777619U));
