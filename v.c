@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6fa8e42"
+#define V_COMMIT_HASH "7c50492"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1eac351"
+	#define V_COMMIT_HASH "6fa8e42"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6fa8e42"
+	#define V_CURRENT_COMMIT_HASH "7c50492"
 #endif
 
 // V comptime_defines:
@@ -31891,7 +31891,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("1eac351"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6fa8e42"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -73298,6 +73298,13 @@ bool v__checker__Checker_assign_stmt_defer_0 = false;
 								(*(*left._v__ast__Ident).obj._v__ast__Var).is_auto_heap = true;
 							}
 						}
+						if ((Array_int_contains(_const_v__ast__unsigned_integer_type_idxs, left_type))) {
+							if ((right)._typ == 238 /* v.ast.IntegerLiteral */) {
+								if (string_at((*right._v__ast__IntegerLiteral).val, 0) == '-') {
+									v__checker__Checker_error(c, _SLIT("Cannot assign negative value to unsigned integer type"), (*right._v__ast__IntegerLiteral).pos);
+								}
+							}
+						}
 					}
 					else if ((*left._v__ast__Ident).obj._typ == 290 /* v.ast.GlobalField */) {
 						(*(*left._v__ast__Ident).obj._v__ast__GlobalField).typ = left_type;
@@ -76615,8 +76622,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_230026 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_230026.arg0;
+		multi_return_string_v__token__Position mr_230292 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_230292.arg0;
 	}
 	return typ;
 }
@@ -77876,10 +77883,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_265750 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_265750.arg0;
-				int nroute_attributes = mr_265750.arg1;
-				int nargs = mr_265750.arg2;
+				multi_return_bool_int_int mr_266016 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_266016.arg0;
+				int nroute_attributes = mr_266016.arg1;
+				int nargs = mr_266016.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
