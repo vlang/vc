@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6068777"
+#define V_COMMIT_HASH "33e4dc3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c1f3eb6"
+	#define V_COMMIT_HASH "6068777"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6068777"
+	#define V_CURRENT_COMMIT_HASH "33e4dc3"
 #endif
 
 // V comptime_defines:
@@ -7941,6 +7941,7 @@ bool v__pref__Backend_is_js(v__pref__Backend b);
 Array_string _const_v__pref__list_of_flags_with_param; // inited later
 multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args);
 void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
+bool v__pref__Preferences_should_output_to_stdout(v__pref__Preferences* pref);
 Option_v__pref__Arch v__pref__arch_from_string(string arch_str);
 VV_LOCAL_SYMBOL void v__pref__must_exist(string path);
 VV_LOCAL_SYMBOL bool v__pref__is_source_file(string path);
@@ -32116,7 +32117,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c1f3eb6"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6068777"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33012,6 +33013,11 @@ void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s) {
 	if (pref->is_verbose) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("> v run -, "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
+}
+
+bool v__pref__Preferences_should_output_to_stdout(v__pref__Preferences* pref) {
+	bool _t1 = string_ends_with(pref->out_name, _SLIT("/-")) || string_ends_with(pref->out_name, _SLIT("\\-"));
+	return _t1;
 }
 
 Option_v__pref__Arch v__pref__arch_from_string(string arch_str) {
@@ -80562,7 +80568,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc(v__builder__Builder* v) {
 		}
 		return;
 	}
-	if (string_ends_with(v->pref->out_name, _SLIT("/-"))) {
+	if (v__pref__Preferences_should_output_to_stdout(v->pref)) {
 		Option_string _t1 = os__read_file(v->out_name_c);
 		if (_t1.state != 0) { /*or block*/ 
 			IError err = _t1.err;
@@ -80849,10 +80855,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_23875 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_23875.arg0;
-	Array_string others = mr_23875.arg1;
-	Array_string libs = mr_23875.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_23876 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_23876.arg0;
+	Array_string others = mr_23876.arg1;
+	Array_string libs = mr_23876.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
@@ -81235,7 +81241,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_run_compiled_executable_and_exit(v__bui
 	if (b->pref->only_check_syntax) {
 		return;
 	}
-	if (string_ends_with(b->pref->out_name, _SLIT("/-"))) {
+	if (v__pref__Preferences_should_output_to_stdout(b->pref)) {
 		return;
 	}
 	if (b->pref->os == v__pref__OS__ios) {
