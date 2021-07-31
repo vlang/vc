@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "08016ab"
+#define V_COMMIT_HASH "d82d41d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "033b027"
+	#define V_COMMIT_HASH "08016ab"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "08016ab"
+	#define V_CURRENT_COMMIT_HASH "d82d41d"
 #endif
 
 // V comptime_defines:
@@ -7265,9 +7265,9 @@ string os__sigint_to_signal_name(int si);
 Option_void os__rmdir_all(string path);
 bool os__is_dir_empty(string path);
 string os__file_ext(string path);
-string os__dir(string path);
-string os__base(string path);
-string os__file_name(string path);
+string os__dir(string opath);
+string os__base(string opath);
+string os__file_name(string opath);
 Option_string os__input_opt(string prompt);
 string os__input(string prompt);
 string os__get_line();
@@ -21681,10 +21681,11 @@ string os__file_ext(string path) {
 	return string_substr(path, pos, path.len);
 }
 
-string os__dir(string path) {
-	if ((path).len == 0) {
+string os__dir(string opath) {
+	if ((opath).len == 0) {
 		return _SLIT(".");
 	}
+	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
 	Option_int _t2 = string_last_index(path, _const_os__path_separator);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
@@ -21698,10 +21699,11 @@ string os__dir(string path) {
 	return string_substr(path, 0, pos);
 }
 
-string os__base(string path) {
-	if ((path).len == 0) {
+string os__base(string opath) {
+	if ((opath).len == 0) {
 		return _SLIT(".");
 	}
+	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
 	if (string__eq(path, _const_os__path_separator)) {
 		return _const_os__path_separator;
 	}
@@ -21726,7 +21728,8 @@ string os__base(string path) {
 	return string_substr(path, pos + 1, path.len);
 }
 
-string os__file_name(string path) {
+string os__file_name(string opath) {
+	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
 	return string_all_after_last(path, _const_os__path_separator);
 }
 
@@ -21869,7 +21872,8 @@ VV_LOCAL_SYMBOL string os__executable_fallback(void) {
 		exepath = /*f*/string__plus(exepath, _SLIT(".exe"));
 	}
 	if (!os__is_abs_path(exepath)) {
-		if (string_contains(exepath, _const_os__path_separator)) {
+		string rexepath = string_replace_each(exepath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
+		if (string_contains(rexepath, _const_os__path_separator)) {
 			exepath = os__join_path(_const_os__wd_at_startup, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){exepath})));
 		} else {
 			Option_string _t2 = os__find_abs_path_of_executable(exepath);
@@ -31230,7 +31234,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("033b027"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("08016ab"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
