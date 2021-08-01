@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "836ac54"
+#define V_COMMIT_HASH "cc94634"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "77e9ed4"
+	#define V_COMMIT_HASH "836ac54"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "836ac54"
+	#define V_CURRENT_COMMIT_HASH "cc94634"
 #endif
 
 // V comptime_defines:
@@ -32117,7 +32117,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("77e9ed4"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("836ac54"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -50078,15 +50078,22 @@ bool v__markused__mark_used_defer_0 = false;
 		for (int _t30 = 0; _t30 < interface_info.types.len; ++_t30) {
 			v__ast__Type itype = ((v__ast__Type*)interface_info.types.data)[_t30];
 			v__ast__Type pitype = v__ast__Type_set_nr_muls(itype, 1);
-			for (int _t31 = 0; _t31 < interface_info.methods.len; ++_t31) {
-				v__ast__Fn method = ((v__ast__Fn*)interface_info.methods.data)[_t31];
-				string interface_implementation_method_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = pitype}}, {_SLIT("."), 0xfe10, {.d_s = method.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
-				#if defined(CUSTOM_DEFINE_trace_skip_unused_interface_methods)
-				{
-					eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT(">> isym.name: "), 0xfe10, {.d_s = isym.name}}, {_SLIT(" | interface_implementation_method_name: "), 0xfe10, {.d_s = interface_implementation_method_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			Array_v__ast__Type itypes = new_array_from_c_array(1, 1, sizeof(v__ast__Type), _MOV((v__ast__Type[1]){itype}));
+			if (!v__ast__Type_alias_eq(pitype, itype)) {
+				array_push((array*)&itypes, _MOV((v__ast__Type[]){ pitype }));
+			}
+			for (int _t32 = 0; _t32 < interface_info.methods.len; ++_t32) {
+				v__ast__Fn method = ((v__ast__Fn*)interface_info.methods.data)[_t32];
+				for (int _t33 = 0; _t33 < itypes.len; ++_t33) {
+					v__ast__Type typ = ((v__ast__Type*)itypes.data)[_t33];
+					string interface_implementation_method_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(typ))}}, {_SLIT("."), 0xfe10, {.d_s = method.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
+					#if defined(CUSTOM_DEFINE_trace_skip_unused_interface_methods)
+					{
+						eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT(">> isym.name: "), 0xfe10, {.d_s = isym.name}}, {_SLIT(" | interface_implementation_method_name: "), 0xfe10, {.d_s = interface_implementation_method_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+					}
+					#endif
+					array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone(interface_implementation_method_name) }));
 				}
-				#endif
-				array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone(interface_implementation_method_name) }));
 			}
 		}
 	}
@@ -50095,11 +50102,11 @@ bool v__markused__mark_used_defer_0 = false;
 		array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone(_SLIT("vweb.filter")) }));
 		v__ast__Type typ_vweb_context = v__ast__Type_set_nr_muls(((v__ast__Table_find_type_idx(table, _SLIT("vweb.Context")))), 1);
 		array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(typ_vweb_context))}}, {_SLIT(".html"), 0, { .d_c = 0 }}}))) }));
-		for (int _t35 = 0; _t35 < table->used_vweb_types.len; ++_t35) {
-			v__ast__Type vgt = ((v__ast__Type*)table->used_vweb_types.data)[_t35];
+		for (int _t37 = 0; _t37 < table->used_vweb_types.len; ++_t37) {
+			v__ast__Type vgt = ((v__ast__Type*)table->used_vweb_types.data)[_t37];
 			v__ast__TypeSymbol* sym_app = v__ast__Table_get_type_symbol(table, vgt);
-			for (int _t36 = 0; _t36 < sym_app->methods.len; ++_t36) {
-				v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t36];
+			for (int _t38 = 0; _t38 < sym_app->methods.len; ++_t38) {
+				v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t38];
 				if (m.return_type == typ_vweb_result) {
 					v__ast__Type pvgt = v__ast__Type_set_nr_muls(vgt, 1);
 					array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(pvgt))}}, {_SLIT("."), 0xfe10, {.d_s = m.name}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
@@ -50107,38 +50114,38 @@ bool v__markused__mark_used_defer_0 = false;
 			}
 		}
 	}
-	Array_v__ast__Type* _t39 = (Array_v__ast__Type*)/*ee elem_ptr_typ */(map_get_check(ADDR(map, table->iface_types), &(string[]){_SLIT("orm.Connection")}));
-	Option_Array_v__ast__Type _t38 = {0};
-	if (_t39) {
-		*((Array_v__ast__Type*)&_t38.data) = *((Array_v__ast__Type*)_t39);
+	Array_v__ast__Type* _t41 = (Array_v__ast__Type*)/*ee elem_ptr_typ */(map_get_check(ADDR(map, table->iface_types), &(string[]){_SLIT("orm.Connection")}));
+	Option_Array_v__ast__Type _t40 = {0};
+	if (_t41) {
+		*((Array_v__ast__Type*)&_t40.data) = *((Array_v__ast__Type*)_t41);
 	} else {
-		_t38.state = 2; _t38.err = _v_error(_SLIT("array index out of range"));
+		_t40.state = 2; _t40.err = _v_error(_SLIT("array index out of range"));
 	}
 	;
-	if (_t38.state != 0) { /*or block*/ 
-		IError err = _t38.err;
-		*(Array_v__ast__Type*) _t38.data = __new_array_with_default(0, 0, sizeof(v__ast__Type), 0);
+	if (_t40.state != 0) { /*or block*/ 
+		IError err = _t40.err;
+		*(Array_v__ast__Type*) _t40.data = __new_array_with_default(0, 0, sizeof(v__ast__Type), 0);
 	}
 	
-	Array_v__ast__Type orm_connection_implementations = *(Array_v__ast__Type*)_t38.data;
+	Array_v__ast__Type orm_connection_implementations = *(Array_v__ast__Type*)_t40.data;
 	if (orm_connection_implementations.len > 0) {
-		int _t41 = all_fns.key_values.len;
-		for (int _t40 = 0; _t40 < _t41; ++_t40 ) {
-			int _t42 = all_fns.key_values.len - _t41;
-			_t41 = all_fns.key_values.len;
-			if (_t42 < 0) {
-				_t40 = -1;
+		int _t43 = all_fns.key_values.len;
+		for (int _t42 = 0; _t42 < _t43; ++_t42 ) {
+			int _t44 = all_fns.key_values.len - _t43;
+			_t43 = all_fns.key_values.len;
+			if (_t44 < 0) {
+				_t42 = -1;
 				continue;
 			}
-			if (!DenseArray_has_index(&all_fns.key_values, _t40)) {continue;}
-			string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t40);
+			if (!DenseArray_has_index(&all_fns.key_values, _t42)) {continue;}
+			string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t42);
 			k = string_clone(k);
 			if (string_starts_with(k, _SLIT("orm."))) {
 				array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone(k) }));
 			}
 		}
-		for (int _t44 = 0; _t44 < orm_connection_implementations.len; ++_t44) {
-			v__ast__Type orm_type = ((v__ast__Type*)orm_connection_implementations.data)[_t44];
+		for (int _t46 = 0; _t46 < orm_connection_implementations.len; ++_t46) {
+			v__ast__Type orm_type = ((v__ast__Type*)orm_connection_implementations.data)[_t46];
 			array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(orm_type))}}, {_SLIT(".select"), 0, { .d_c = 0 }}}))) }));
 			array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(orm_type))}}, {_SLIT(".insert"), 0, { .d_c = 0 }}}))) }));
 			array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(orm_type))}}, {_SLIT(".update"), 0, { .d_c = 0 }}}))) }));
@@ -50170,18 +50177,18 @@ bool v__markused__mark_used_defer_0 = false;
 		v__markused__Walker_fn_decl(&walker, (voidptr)&/*qq*/(*(v__ast__FnDecl*)map_get(ADDR(map, all_fns), &(string[]){_SLIT("__print_assert_failure")}, &(v__ast__FnDecl[]){ (v__ast__FnDecl){.name = (string){.str=(byteptr)"", .is_lit=1},.mod = (string){.str=(byteptr)"", .is_lit=1},.is_deprecated = 0,.is_pub = 0,.is_variadic = 0,.is_anon = 0,.is_noreturn = 0,.is_manualfree = 0,.is_main = 0,.is_test = 0,.is_conditional = 0,.is_exported = 0,.is_keep_alive = 0,.is_unsafe = 0,.receiver = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.receiver_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_method = 0,.method_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.method_idx = 0,.rec_mut = 0,.no_body = 0,.is_builtin = 0,.body_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.file = (string){.str=(byteptr)"", .is_lit=1},.generic_names = __new_array(0, 0, sizeof(string)),.is_direct_arr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.ctdefine_idx = -1,.params = __new_array(0, 0, sizeof(v__ast__Param)),.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.defer_stmts = __new_array(0, 0, sizeof(v__ast__DeferStmt)),.return_type = 0,.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_return = 0,.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.next_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.source_file = 0,.scope = 0,.label_names = __new_array(0, 0, sizeof(string)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},} })));
 	}
 	if (table->used_maps > 0) {
-		int _t55 = all_fns.key_values.len;
-		for (int _t54 = 0; _t54 < _t55; ++_t54 ) {
-			int _t56 = all_fns.key_values.len - _t55;
-			_t55 = all_fns.key_values.len;
-			if (_t56 < 0) {
-				_t54 = -1;
+		int _t57 = all_fns.key_values.len;
+		for (int _t56 = 0; _t56 < _t57; ++_t56 ) {
+			int _t58 = all_fns.key_values.len - _t57;
+			_t57 = all_fns.key_values.len;
+			if (_t58 < 0) {
+				_t56 = -1;
 				continue;
 			}
-			if (!DenseArray_has_index(&all_fns.key_values, _t54)) {continue;}
-			string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t54);
+			if (!DenseArray_has_index(&all_fns.key_values, _t56)) {continue;}
+			string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t56);
 			k = string_clone(k);
-			v__ast__FnDecl* mfn = &(*(v__ast__FnDecl*)DenseArray_value(&all_fns.key_values, _t54));
+			v__ast__FnDecl* mfn = &(*(v__ast__FnDecl*)DenseArray_value(&all_fns.key_values, _t56));
 			string method_receiver_typename = _SLIT("");
 			if (mfn->is_method) {
 				method_receiver_typename = v__ast__Table_type_to_str(table, mfn->receiver.typ);
@@ -50196,23 +50203,23 @@ bool v__markused__mark_used_defer_0 = false;
 			}
 		}
 	} else {
-		Array_string _t57 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("new_map"), _SLIT("new_map_init"), _SLIT("map_hash_string"), _SLIT("new_dense_array")}));
-		for (int _t58 = 0; _t58 < _t57.len; ++_t58) {
-			string map_fn_name = ((string*)_t57.data)[_t58];
+		Array_string _t59 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("new_map"), _SLIT("new_map_init"), _SLIT("map_hash_string"), _SLIT("new_dense_array")}));
+		for (int _t60 = 0; _t60 < _t59.len; ++_t60) {
+			string map_fn_name = ((string*)_t59.data)[_t60];
 			map_delete(&walker.used_fns, &(string[]){map_fn_name});
 		}
-		int _t60 = all_fns.key_values.len;
-		for (int _t59 = 0; _t59 < _t60; ++_t59 ) {
-			int _t61 = all_fns.key_values.len - _t60;
-			_t60 = all_fns.key_values.len;
-			if (_t61 < 0) {
-				_t59 = -1;
+		int _t62 = all_fns.key_values.len;
+		for (int _t61 = 0; _t61 < _t62; ++_t61 ) {
+			int _t63 = all_fns.key_values.len - _t62;
+			_t62 = all_fns.key_values.len;
+			if (_t63 < 0) {
+				_t61 = -1;
 				continue;
 			}
-			if (!DenseArray_has_index(&all_fns.key_values, _t59)) {continue;}
-			string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t59);
+			if (!DenseArray_has_index(&all_fns.key_values, _t61)) {continue;}
+			string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t61);
 			k = string_clone(k);
-			v__ast__FnDecl* mfn = &(*(v__ast__FnDecl*)DenseArray_value(&all_fns.key_values, _t59));
+			v__ast__FnDecl* mfn = &(*(v__ast__FnDecl*)DenseArray_value(&all_fns.key_values, _t61));
 			if (!mfn->is_method) {
 				continue;
 			}
@@ -50224,17 +50231,17 @@ bool v__markused__mark_used_defer_0 = false;
 	}
 	#if defined(CUSTOM_DEFINE_trace_skip_unused_fn_names)
 	{
-		Map_string_bool _t62 = walker.used_fns;
-		int _t64 = _t62.key_values.len;
-		for (int _t63 = 0; _t63 < _t64; ++_t63 ) {
-			int _t65 = _t62.key_values.len - _t64;
-			_t64 = _t62.key_values.len;
-			if (_t65 < 0) {
-				_t63 = -1;
+		Map_string_bool _t64 = walker.used_fns;
+		int _t66 = _t64.key_values.len;
+		for (int _t65 = 0; _t65 < _t66; ++_t65 ) {
+			int _t67 = _t64.key_values.len - _t66;
+			_t66 = _t64.key_values.len;
+			if (_t67 < 0) {
+				_t65 = -1;
 				continue;
 			}
-			if (!DenseArray_has_index(&_t62.key_values, _t63)) {continue;}
-			string key = /*key*/ *(string*)DenseArray_key(&_t62.key_values, _t63);
+			if (!DenseArray_has_index(&_t64.key_values, _t65)) {continue;}
+			string key = /*key*/ *(string*)DenseArray_key(&_t64.key_values, _t65);
 			key = string_clone(key);
 			println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("> used fn key: "), 0xfe10, {.d_s = key}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
