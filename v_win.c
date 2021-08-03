@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "80976e6"
+#define V_COMMIT_HASH "00d4c70"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f879b3e"
+	#define V_COMMIT_HASH "80976e6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "80976e6"
+	#define V_CURRENT_COMMIT_HASH "00d4c70"
 #endif
 
 // V comptime_defines:
@@ -9198,8 +9198,8 @@ int v__gen__native__Gen_allocate_string(v__gen__native__Gen* g, string s, int op
 void v__gen__native__Gen_cld_repne_scasb(v__gen__native__Gen* g);
 void v__gen__native__Gen_xor(v__gen__native__Gen* g, v__gen__native__Register r, int v);
 void v__gen__native__Gen_inline_strlen(v__gen__native__Gen* g, v__gen__native__Register r);
-void v__gen__native__Gen_gen_print_reg(v__gen__native__Gen* g, v__gen__native__Register r, int n);
-void v__gen__native__Gen_gen_print(v__gen__native__Gen* g, string s);
+void v__gen__native__Gen_gen_print_reg(v__gen__native__Gen* g, v__gen__native__Register r, int n, int fd);
+void v__gen__native__Gen_gen_print(v__gen__native__Gen* g, string s, int fd);
 VV_LOCAL_SYMBOL int v__gen__native__Gen_nsyscall_write(v__gen__native__Gen* g);
 VV_LOCAL_SYMBOL int v__gen__native__Gen_nsyscall_exit(v__gen__native__Gen* g);
 void v__gen__native__Amd64_gen_exit(v__gen__native__Amd64* a, v__gen__native__Gen* g, v__ast__Expr node);
@@ -9271,7 +9271,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_write32_at(v__gen__native__Gen* g, i64 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_write_string(v__gen__native__Gen* g, string s);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_write_string_with_padding(v__gen__native__Gen* g, string s, int max);
 VV_LOCAL_SYMBOL int v__gen__native__Gen_get_var_offset(v__gen__native__Gen* g, string var_name);
-void v__gen__native__Gen_gen_print_from_expr(v__gen__native__Gen* g, v__ast__Expr expr, bool newline);
+void v__gen__native__Gen_gen_print_from_expr(v__gen__native__Gen* g, v__ast__Expr expr, string name);
 void v__gen__native__Gen_register_function_address(v__gen__native__Gen* g, string name);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_println(v__gen__native__Gen* g, string comment);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_for_in_stmt(v__gen__native__Gen* g, v__ast__ForInStmt node);
@@ -31391,7 +31391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("f879b3e"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("80976e6"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -66670,7 +66670,7 @@ void v__gen__native__Gen_inline_strlen(v__gen__native__Gen* g, v__gen__native__R
 	v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("strlen rax, "), 0xfe10, {.d_s = v__gen__native__Register_str(r)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
-void v__gen__native__Gen_gen_print_reg(v__gen__native__Gen* g, v__gen__native__Register r, int n) {
+void v__gen__native__Gen_gen_print_reg(v__gen__native__Gen* g, v__gen__native__Register r, int n, int fd) {
 	bool mystrlen = true;
 	v__gen__native__Gen_mov_reg(g, v__gen__native__Register__rsi, r);
 	if (mystrlen) {
@@ -66680,13 +66680,13 @@ void v__gen__native__Gen_gen_print_reg(v__gen__native__Gen* g, v__gen__native__R
 		v__gen__native__Gen_mov(g, v__gen__native__Register__edx, n);
 	}
 	v__gen__native__Gen_mov(g, v__gen__native__Register__eax, v__gen__native__Gen_nsyscall_write(g));
-	v__gen__native__Gen_mov(g, v__gen__native__Register__edi, 1);
+	v__gen__native__Gen_mov(g, v__gen__native__Register__edi, fd);
 	v__gen__native__Gen_syscall(g);
 }
 
-void v__gen__native__Gen_gen_print(v__gen__native__Gen* g, string s) {
+void v__gen__native__Gen_gen_print(v__gen__native__Gen* g, string s, int fd) {
 	v__gen__native__Gen_mov(g, v__gen__native__Register__eax, v__gen__native__Gen_nsyscall_write(g));
-	v__gen__native__Gen_mov(g, v__gen__native__Register__edi, 1);
+	v__gen__native__Gen_mov(g, v__gen__native__Register__edi, fd);
 	v__gen__native__Gen_mov64(g, v__gen__native__Register__rsi, v__gen__native__Gen_allocate_string(g, s, 2));
 	v__gen__native__Gen_mov(g, v__gen__native__Register__edx, s.len);
 	v__gen__native__Gen_syscall(g);
@@ -67796,26 +67796,28 @@ VV_LOCAL_SYMBOL int v__gen__native__Gen_get_var_offset(v__gen__native__Gen* g, s
 	return _t1;
 }
 
-void v__gen__native__Gen_gen_print_from_expr(v__gen__native__Gen* g, v__ast__Expr expr, bool newline) {
+void v__gen__native__Gen_gen_print_from_expr(v__gen__native__Gen* g, v__ast__Expr expr, string name) {
+	bool newline = (string__eq(name, _SLIT("println")) || string__eq(name, _SLIT("eprintln")));
+	int fd = ((string__eq(name, _SLIT("eprint")) || string__eq(name, _SLIT("eprintln"))) ? (2) : (1));
 	if (expr._typ == 300 /* v.ast.StringLiteral */) {
 		if (newline) {
-			v__gen__native__Gen_gen_print(g, string__plus((*expr._v__ast__StringLiteral).val, _SLIT("\n")));
+			v__gen__native__Gen_gen_print(g, string__plus((*expr._v__ast__StringLiteral).val, _SLIT("\n")), fd);
 		} else {
-			v__gen__native__Gen_gen_print(g, (*expr._v__ast__StringLiteral).val);
+			v__gen__native__Gen_gen_print(g, (*expr._v__ast__StringLiteral).val, fd);
 		}
 	}
 	else if (expr._typ == 263 /* v.ast.CallExpr */) {
 		v__gen__native__Gen_call_fn(g, (*expr._v__ast__CallExpr));
-		v__gen__native__Gen_gen_print_reg(g, v__gen__native__Register__rax, 3);
+		v__gen__native__Gen_gen_print_reg(g, v__gen__native__Register__rax, 3, fd);
 	}
 	else if (expr._typ == 276 /* v.ast.Ident */) {
 		v__gen__native__Gen_expr(g, expr);
-		v__gen__native__Gen_gen_print_reg(g, v__gen__native__Register__rax, 3);
+		v__gen__native__Gen_gen_print_reg(g, v__gen__native__Register__rax, 3, fd);
 	}
 	
 	else {
-		 _v_dump_expr_string(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 248, _SLIT("typeof(expr).name"), _SLIT("ast.Expr") );
-		 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 249, _SLIT("expr"), expr );
+		 _v_dump_expr_string(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 250, _SLIT("typeof(expr).name"), _SLIT("ast.Expr") );
+		 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 251, _SLIT("expr"), expr );
 		v__gen__native__verror(_SLIT("expected string as argument for print"));
 		VUNREACHABLE();
 	}
@@ -67892,8 +67894,8 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 	else if (node._typ == 326 /* v.ast.Module */) {
 	}
 	else if (node._typ == 327 /* v.ast.Return */) {
-		 _v_dump_expr_v__ast__Return(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 347, _SLIT("node"), (*node._v__ast__Return) );
-		 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 348, _SLIT("node.types"), (*node._v__ast__Return).types );
+		 _v_dump_expr_v__ast__Return(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 349, _SLIT("node"), (*node._v__ast__Return) );
+		 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 350, _SLIT("node.types"), (*node._v__ast__Return).types );
 		string s = _SLIT("?");
 		v__ast__Expr e0 = (*(v__ast__Expr*)/*ee elem_typ */array_get((*node._v__ast__Return).exprs, 0));
 		if (e0._typ == 281 /* v.ast.IntegerLiteral */) {
@@ -67937,7 +67939,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Ex
 		}
 		if ((string__eq((*node._v__ast__CallExpr).name, _SLIT("println")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("print")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprintln")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprint")))) {
 			v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get((*node._v__ast__CallExpr).args, 0)).expr;
-			v__gen__native__Gen_gen_print_from_expr(g, expr, (string__eq((*node._v__ast__CallExpr).name, _SLIT("println")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprintln"))));
+			v__gen__native__Gen_gen_print_from_expr(g, expr, (*node._v__ast__CallExpr).name);
 			return;
 		}
 		v__gen__native__Gen_call_fn(g, (*node._v__ast__CallExpr));
@@ -81738,7 +81740,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 		v__ast__Kind__f64, v__ast__Kind__int_literal, v__ast__Kind__float_literal, v__ast__Kind__size_t, v__ast__Kind__bool, v__ast__Kind__string}));
 	// Initializations for module v.gen.native :
 	_const_v__gen__native__fn_arg_registers = new_array_from_c_array(6, 6, sizeof(v__gen__native__Register), _MOV((v__gen__native__Register[6]){v__gen__native__Register__rdi, v__gen__native__Register__rsi, v__gen__native__Register__rdx, v__gen__native__Register__rcx, v__gen__native__Register__r8, v__gen__native__Register__r9}));
-	_const_v__gen__native__builtins = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_SLIT("println"), _SLIT("exit")}));
+	_const_v__gen__native__builtins = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("print"), _SLIT("eprint"), _SLIT("println"), _SLIT("eprintln"), _SLIT("exit")}));
 	// Initializations for module v.ast.walker :
 	// Initializations for module v.checker :
 	_const_v__checker__int_min = ((int)(0x80000000));
