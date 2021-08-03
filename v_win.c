@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0ebad47"
+#define V_COMMIT_HASH "0455632"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fd58e9f"
+	#define V_COMMIT_HASH "0ebad47"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0ebad47"
+	#define V_CURRENT_COMMIT_HASH "0455632"
 #endif
 
 // V comptime_defines:
@@ -31391,7 +31391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("fd58e9f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("0ebad47"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -64741,7 +64741,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 	}
 	else if (node._typ == 292 /* v.ast.PostfixExpr */) {
 		v__gen__js__JsGen_expr(g, (*node._v__ast__PostfixExpr).expr);
-		v__gen__js__JsGen_write(g, v__token__Kind_str((*node._v__ast__PostfixExpr).op));
+		if (((*node._v__ast__PostfixExpr).op == v__token__Kind__inc || (*node._v__ast__PostfixExpr).op == v__token__Kind__dec)) {
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".val "), 0xfe10, {.d_s = v__token__Kind_str((*node._v__ast__PostfixExpr).op)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		} else {
+			v__gen__js__JsGen_write(g, v__token__Kind_str((*node._v__ast__PostfixExpr).op));
+		}
 	}
 	else if (node._typ == 293 /* v.ast.PrefixExpr */) {
 		if (((*node._v__ast__PrefixExpr).op == v__token__Kind__amp || (*node._v__ast__PrefixExpr).op == v__token__Kind__mul)) {
@@ -64761,10 +64765,15 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 			}
 		} else {
 			v__gen__js__JsGen_write(g, v__token__Kind_str((*node._v__ast__PrefixExpr).op));
-			v__gen__js__JsGen_write(g, _SLIT("("));
-			v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
-			v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
-			v__gen__js__JsGen_write(g, _SLIT(")"));
+			if (((*node._v__ast__PrefixExpr).op == v__token__Kind__inc || (*node._v__ast__PrefixExpr).op == v__token__Kind__dec)) {
+				v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
+				v__gen__js__JsGen_write(g, _SLIT(".val "));
+			} else {
+				v__gen__js__JsGen_write(g, _SLIT("("));
+				v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
+				v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+				v__gen__js__JsGen_write(g, _SLIT(")"));
+			}
 		}
 	}
 	else if (node._typ == 294 /* v.ast.RangeExpr */) {
@@ -64866,6 +64875,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__
 			if (stmt.op == v__token__Kind__decl_assign) {
 				op = v__token__Kind__assign;
 			}
+			bool is_assign = (stmt.op == v__token__Kind__plus_assign || stmt.op == v__token__Kind__minus_assign || stmt.op == v__token__Kind__mult_assign || stmt.op == v__token__Kind__div_assign || stmt.op == v__token__Kind__xor_assign || stmt.op == v__token__Kind__mod_assign || stmt.op == v__token__Kind__or_assign || stmt.op == v__token__Kind__and_assign || stmt.op == v__token__Kind__right_shift_assign || stmt.op == v__token__Kind__left_shift_assign);
 			v__ast__Expr val = (*(v__ast__Expr*)/*ee elem_typ */array_get(stmt.right, i));
 			bool is_mut = false;
 			if ((left)._typ == 276 /* v.ast.Ident */) {
@@ -64904,7 +64914,48 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__
 				}
 				v__gen__js__JsGen_write(g, _SLIT(")"));
 			} else {
-				v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+				if (is_assign) {
+					v__gen__js__JsGen_write(g, _SLIT(".val"));
+					v__gen__js__JsGen_write(g, _SLIT(" = "));
+					v__gen__js__JsGen_expr(g, left);
+
+					if (op == (v__token__Kind__plus_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" + "));
+					}
+					else if (op == (v__token__Kind__minus_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" - "));
+					}
+					else if (op == (v__token__Kind__mult_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" * "));
+					}
+					else if (op == (v__token__Kind__div_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" / "));
+					}
+					else if (op == (v__token__Kind__mod_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" % "));
+					}
+					else if (op == (v__token__Kind__xor_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" ^ "));
+					}
+					else if (op == (v__token__Kind__and_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" & "));
+					}
+					else if (op == (v__token__Kind__right_shift_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" << "));
+					}
+					else if (op == (v__token__Kind__left_shift_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" >> "));
+					}
+					else if (op == (v__token__Kind__or_assign)) {
+						v__gen__js__JsGen_write(g, _SLIT(" | "));
+					}
+					else {
+						_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected op "), 0xfe10, {.d_s = v__token__Kind_str(op)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+						VUNREACHABLE();
+					};
+				} else {
+					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+				}
 				bool should_cast = ((Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, v__ast__Table_type_kind(g->table, (*(v__ast__Type*)array_first(stmt.left_types)))))) && (g->cast_stack.len <= 0 || !v__ast__Type_alias_eq((*(v__ast__Type*)array_first(stmt.left_types)), (*(v__ast__Type*)array_last(g->cast_stack))));
 				if (should_cast) {
 					array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ (*(v__ast__Type*)array_first(stmt.left_types)) }));
