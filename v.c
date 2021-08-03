@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6dcf72f"
+#define V_COMMIT_HASH "a55ba08"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "820669b"
+	#define V_COMMIT_HASH "6dcf72f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6dcf72f"
+	#define V_CURRENT_COMMIT_HASH "a55ba08"
 #endif
 
 // V comptime_defines:
@@ -32199,7 +32199,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("820669b"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("6dcf72f"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -63420,7 +63420,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_create_table(v__gen__c__Gen* g, v__ast__
 			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
 			v__gen__c__Gen_write(g, _SLIT("(orm__TableField){"));
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".name = _SLIT(\""), 0xfe10, {.d_s = field.name}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".typ = "), 0xfe07, {.d_i32 = ((int)(field.typ))}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+			int typ = ((int)(field.typ));
+			if (string__eq(sym->name, _SLIT("time.Time"))) {
+				typ = -2;
+			}
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".typ = "), 0xfe07, {.d_i32 = typ}}, {_SLIT(","), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".is_arr = "), 0xfe10, {.d_s = sym->kind == v__ast__Kind__array ? _SLIT("true") : _SLIT("false")}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".is_time = "), 0xfe07, {.d_i32 = ((int)(string__eq(v__ast__Table_get_type_name(g->table, field.typ), _SLIT("time__Time"))))}}, {_SLIT(","), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".default_val = (string){.str = (byteptr) \""), 0xfe10, {.d_s = field.default_val}}, {_SLIT("\", .is_lit = 1},"), 0, { .d_c = 0 }}})));
@@ -63458,7 +63462,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_insert(v__gen__c__Gen* g, v__ast__SqlStm
 	for (int _t1 = 0; _t1 < node.fields.len; ++_t1) {
 		v__ast__StructField f = ((v__ast__StructField*)node.fields.data)[_t1];
 		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, f.typ);
-		if (sym->kind == v__ast__Kind__struct_) {
+		if (sym->kind == v__ast__Kind__struct_ && !string__eq(sym->name, _SLIT("time.Time"))) {
 			array_push((array*)&subs, _MOV((v__ast__SqlStmtLine[]){ (*(v__ast__SqlStmtLine*)map_get((map*)&node.sub_structs, &(int[]){((int)(f.typ))}, &(v__ast__SqlStmtLine[]){ (v__ast__SqlStmtLine){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.update_exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.object_var_name = (string){.str=(byteptr)"", .is_lit=1},.updated_columns = __new_array(0, 0, sizeof(string)),.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlStmtLine), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} })) }));
 		} else if (sym->kind == v__ast__Kind__array) {
 			string f_key = _SLIT("");
@@ -63525,12 +63529,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_insert(v__gen__c__Gen* g, v__ast__SqlStm
 				continue;
 			}
 			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, f.typ);
-			if (sym->kind == v__ast__Kind__struct_) {
+			string typ = sym->cname;
+			if (sym->kind == v__ast__Kind__struct_ && !string__eq(typ, _SLIT("time__Time"))) {
 				v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("(*(orm__Primitive*) array_get("), 0xfe10, {.d_s = last_ids_arr}}, {_SLIT(", "), 0xfe07, {.d_i32 = structs}}, {_SLIT(")),"), 0, { .d_c = 0 }}})));
 				structs++;
 				continue;
 			}
-			string typ = sym->cname;
 			if (string__eq(typ, _SLIT("time__Time"))) {
 				typ = _SLIT("time");
 			}
@@ -63870,6 +63874,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExp
 			v__ast__StructField field = ((v__ast__StructField*)select_fields.data)[_t6];
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_SLIT(\""), 0xfe10, {.d_s = v__gen__c__Gen_get_field_name(g, field)}}, {_SLIT("\"),"), 0, { .d_c = 0 }}})));
 			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
+			if (string__eq(sym->name, _SLIT("time.Time"))) {
+				array_push((array*)&types, _MOV((int[]){ -2 }));
+				continue;
+			}
 			if (sym->kind == v__ast__Kind__struct_) {
 				array_push((array*)&types, _MOV((int[]){ ((int)(_const_v__ast__int_type)) }));
 				continue;
@@ -63884,8 +63892,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExp
 	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".types = new_array_from_c_array("), 0xfe07, {.d_i32 = types.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = types.len}}, {_SLIT(", sizeof(int),"), 0, { .d_c = 0 }}})));
 	if (types.len > 0) {
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((int["), 0xfe07, {.d_i32 = types.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
-		for (int _t9 = 0; _t9 < types.len; ++_t9) {
-			int typ = ((int*)types.data)[_t9];
+		for (int _t10 = 0; _t10 < types.len; ++_t10) {
+			int typ = ((int*)types.data)[_t10];
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = typ}}, {_SLIT(","), 0, { .d_c = 0 }}})));
 		}
 		v__gen__c__Gen_write(g, _SLIT("})"));
@@ -63907,8 +63915,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExp
 	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT(".data = new_array_from_c_array("), 0xfe07, {.d_i32 = exprs.len}}, {_SLIT(", "), 0xfe07, {.d_i32 = exprs.len}}, {_SLIT(", sizeof(orm__Primitive),"), 0, { .d_c = 0 }}})));
 	if (exprs.len > 0) {
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" _MOV((orm__Primitive["), 0xfe07, {.d_i32 = exprs.len}}, {_SLIT("]){"), 0, { .d_c = 0 }}})));
-		for (int _t12 = 0; _t12 < exprs.len; ++_t12) {
-			v__ast__Expr e = ((v__ast__Expr*)exprs.data)[_t12];
+		for (int _t13 = 0; _t13 < exprs.len; ++_t13) {
+			v__ast__Expr e = ((v__ast__Expr*)exprs.data)[_t13];
 			v__gen__c__Gen_sql_expr_to_orm_primitive(g, e);
 		}
 		v__gen__c__Gen_write(g, _SLIT("})"));
@@ -63964,7 +63972,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExp
 			v__ast__StructField field = ((v__ast__StructField*)fields.data)[i];
 			string sel =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("(*(orm__Primitive*) array_get((*(Array_orm__Primitive*) array_get("), 0xfe10, {.d_s = res}}, {_SLIT(", "), 0xfe10, {.d_s = idx}}, {_SLIT(")), "), 0xfe07, {.d_i32 = i}}, {_SLIT("))"), 0, { .d_c = 0 }}}));
 			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
-			if (sym->kind == v__ast__Kind__struct_) {
+			if (sym->kind == v__ast__Kind__struct_ && !string__eq(sym->name, _SLIT("time.Time"))) {
 				v__ast__SqlExpr sub = (*(v__ast__SqlExpr*)map_get(ADDR(map, node.sub_structs), &(int[]){((int)(field.typ))}, &(v__ast__SqlExpr[]){ (v__ast__SqlExpr){.typ = 0,.is_count = 0,.has_where = 0,.has_offset = 0,.has_order = 0,.has_desc = 0,.is_array = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_limit = 0,.table_expr = (v__ast__TypeNode){.typ = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.sub_structs = new_map(sizeof(int), sizeof(v__ast__SqlExpr), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),} }));
 				v__ast__InfixExpr where_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((sub.where_expr)._v__ast__InfixExpr,(sub.where_expr)._typ, 237) /*expected idx: 237, name: v.ast.InfixExpr */ ;
 				v__ast__Ident ident = /* as */ *(v__ast__Ident*)__as_cast((where_expr.right)._v__ast__Ident,(where_expr.right)._typ, 233) /*expected idx: 233, name: v.ast.Ident */ ;
@@ -63983,8 +63991,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_sql_select(v__gen__c__Gen* g, v__ast__SqlExp
 				v__gen__c__Gen_sql_select(g, sub, expr,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
 			} else if (sym->kind == v__ast__Kind__array) {
 				string fkey = _SLIT("");
-				for (int _t13 = 0; _t13 < field.attrs.len; ++_t13) {
-					v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t13];
+				for (int _t14 = 0; _t14 < field.attrs.len; ++_t14) {
+					v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t14];
 					if (string__eq(attr.name, _SLIT("fkey")) && attr.has_arg && attr.kind == v__ast__AttrKind__string) {
 						fkey = attr.arg;
 					}
@@ -64136,7 +64144,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_get_field_name(v__gen__c__Gen* g, v__ast__
 		}
 	}
 	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, field.typ);
-	if (sym->kind == v__ast__Kind__struct_) {
+	if (sym->kind == v__ast__Kind__struct_ && !string__eq(sym->name, _SLIT("time.Time"))) {
 		name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("_id"), 0, { .d_c = 0 }}}));
 	}
 	string _t2 = name;
@@ -78417,7 +78425,7 @@ bool v__checker__Checker_sql_expr_defer_0 = false;
 
 	for (int _t5 = 0; _t5 < _t4_len; ++_t5) {
 		v__ast__StructField it = ((v__ast__StructField*) _t4_orig.data)[_t5];
-		if ((*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(c->table->type_symbols, ((int)(it.typ)))).kind == v__ast__Kind__struct_ || (v__ast__Table_get_type_symbol(c->table, it.typ)->kind == v__ast__Kind__array && v__ast__Table_get_type_symbol(c->table, v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(c->table, it.typ)).elem_type)->kind == v__ast__Kind__struct_)) {
+		if (((*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(c->table->type_symbols, ((int)(it.typ)))).kind == v__ast__Kind__struct_ || (v__ast__Table_get_type_symbol(c->table, it.typ)->kind == v__ast__Kind__array && v__ast__Table_get_type_symbol(c->table, v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(c->table, it.typ)).elem_type)->kind == v__ast__Kind__struct_)) && !string__eq(v__ast__Table_get_type_name(c->table, it.typ), _SLIT("time.Time"))) {
 			array_push((array*)&_t4, &it); 
 		}
 	}
@@ -78544,7 +78552,7 @@ bool v__checker__Checker_sql_stmt_line_defer_0 = false;
 
 	for (int _t6 = 0; _t6 < _t5_len; ++_t6) {
 		v__ast__StructField it = ((v__ast__StructField*) _t5_orig.data)[_t6];
-		if (((*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(c->table->type_symbols, ((int)(it.typ)))).kind == v__ast__Kind__struct_) || (v__ast__Table_get_type_symbol(c->table, it.typ)->kind == v__ast__Kind__array && v__ast__Table_get_type_symbol(c->table, v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(c->table, it.typ)).elem_type)->kind == v__ast__Kind__struct_)) {
+		if ((((*(v__ast__TypeSymbol*)/*ee elem_typ */array_get(c->table->type_symbols, ((int)(it.typ)))).kind == v__ast__Kind__struct_) || (v__ast__Table_get_type_symbol(c->table, it.typ)->kind == v__ast__Kind__array && v__ast__Table_get_type_symbol(c->table, v__ast__TypeSymbol_array_info(v__ast__Table_get_type_symbol(c->table, it.typ)).elem_type)->kind == v__ast__Kind__struct_)) && !string__eq(v__ast__Table_get_type_name(c->table, it.typ), _SLIT("time.Time"))) {
 			array_push((array*)&_t5, &it); 
 		}
 	}
@@ -79060,10 +79068,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_267468 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_267468.arg0;
-				int nroute_attributes = mr_267468.arg1;
-				int nargs = mr_267468.arg2;
+				multi_return_bool_int_int mr_267572 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_267572.arg0;
+				int nroute_attributes = mr_267572.arg1;
+				int nargs = mr_267572.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
