@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b870f7a"
+#define V_COMMIT_HASH "800c0e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2eb1111"
+	#define V_COMMIT_HASH "b870f7a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b870f7a"
+	#define V_CURRENT_COMMIT_HASH "800c0e5"
 #endif
 
 // V comptime_defines:
@@ -7812,7 +7812,6 @@ Option_string io__BufferedReader_read_line(io__BufferedReader* r);
 Option_void io__cp(io__Reader src, io__Writer* dst);
 io__Writer io__new_multi_writer(Array_io__Writer writers);
 Option_int io__MultiWriter_write(io__MultiWriter* m, Array_byte buf);
-io__Reader io__make_reader(io__Reader r);
 #define _const_io__read_all_len 10240
 #define _const_io__read_all_grow_len 1024
 Option_Array_byte io__read_all(io__ReadAllConfig config);
@@ -11544,11 +11543,6 @@ static inline v__ast__Expr v__ast__OffsetOf_to_sumtype_v__ast__Expr(v__ast__Offs
 static inline v__ast__Expr v__ast__Likely_to_sumtype_v__ast__Expr(v__ast__Likely* x) {
 	v__ast__Likely* ptr = memdup(x, sizeof(v__ast__Likely));
 	return (v__ast__Expr){ ._v__ast__Likely = ptr, ._typ = 283};
-}
-
-static inline v__ast__Expr v__ast__Assoc_to_sumtype_v__ast__Expr(v__ast__Assoc* x) {
-	v__ast__Assoc* ptr = memdup(x, sizeof(v__ast__Assoc));
-	return (v__ast__Expr){ ._v__ast__Assoc = ptr, ._typ = 259};
 }
 
 static inline v__ast__Expr v__ast__AnonFn_to_sumtype_v__ast__Expr(v__ast__AnonFn* x) {
@@ -27137,13 +27131,6 @@ Option_int io__MultiWriter_write(io__MultiWriter* m, Array_byte buf) {
 	return _t5;
 }
 
-// Attr: [deprecated]
-// Attr: [deprecated_after]
-io__Reader io__make_reader(io__Reader r) {
-	io__Reader _t1 = r;
-	return _t1;
-}
-
 Option_Array_byte io__read_all(io__ReadAllConfig config) {
 	io__Reader r = config.reader;
 	bool read_till_eof = config.read_to_end_of_stream;
@@ -31391,7 +31378,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("2eb1111")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("b870f7a")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33753,9 +33740,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_13749 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_13749.arg0;
-	string tool_exe = mr_13749.arg1;
+	multi_return_string_string mr_13746 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_13746.arg0;
+	string tool_exe = mr_13746.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
@@ -41904,6 +41891,7 @@ bool inside_array_lit;
 			node = v__parser__Parser_sql_expr(p);
 			p->inside_match = false;
 		} else if (string__eq(p->tok.lit, _SLIT("map")) && p->peek_tok.kind == v__token__Kind__lcbr && !(p->builtin_mod && (string__eq(p->file_base, _SLIT("map.v")) || string__eq(p->file_base, _SLIT("map_d_gcboehm_opt.v"))))) {
+			v__parser__Parser_warn_with_pos(p, _SLIT("deprecated map syntax, use syntax like `{'age': 20}`"), v__token__Token_position(&p->tok));
 			v__parser__Parser_next(p);
 			v__parser__Parser_next(p);
 			node = v__ast__MapInit_to_sumtype_v__ast__Expr(ADDR(v__ast__MapInit, (v__parser__Parser_map_init(p))));
@@ -42135,50 +42123,20 @@ bool inside_array_lit;
 	}
 	else if (p->tok.kind == (v__token__Kind__lcbr)) {
 		v__parser__Parser_next(p);
-		if ((p->tok.kind == v__token__Kind__chartoken || p->tok.kind == v__token__Kind__number || p->tok.kind == v__token__Kind__string)) {
-			v__parser__Parser_warn_with_pos(p, _SLIT("deprecated map syntax, use syntax like `map{'age': 20}`"), v__token__Token_position(&p->prev_tok));
-			node = v__ast__MapInit_to_sumtype_v__ast__Expr(ADDR(v__ast__MapInit, (v__parser__Parser_map_init(p))));
-		} else {
-			if (p->tok.kind == v__token__Kind__name && p->peek_tok.kind == v__token__Kind__pipe) {
-				v__parser__Parser_warn_with_pos(p, _SLIT("use e.g. `...struct_var` instead"), v__token__Token_position(&p->peek_tok));
-				node = v__ast__Assoc_to_sumtype_v__ast__Expr(ADDR(v__ast__Assoc, (v__parser__Parser_assoc(p))));
-			} else if ((p->tok.kind == v__token__Kind__name && p->peek_tok.kind == v__token__Kind__colon) || (p->tok.kind == v__token__Kind__rcbr || p->tok.kind == v__token__Kind__comment || p->tok.kind == v__token__Kind__ellipsis)) {
-				node = v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, (v__parser__Parser_struct_init(p, true))));
-				v__parser__Parser_warn_with_pos(p, _SLIT("short struct initalization is deprecated, use explicit struct name"), v__ast__Expr_position(node));
-			} else if (p->tok.kind == v__token__Kind__name) {
-				v__parser__Parser_next(p);
-				Option_v__ast__Expr _t10;
-				opt_ok(&(v__ast__Expr[]) { v__ast__NodeError_to_sumtype_v__ast__Expr(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected "), 0xfe10, {.d_s = v__token__Token_str(p->tok)}}, {_SLIT(", expecting `:` after struct field name"), 0, { .d_c = 0 }}})), v__token__Token_position(&p->tok))))) }, (Option*)(&_t10), sizeof(v__ast__Expr));
-				// Defer begin
-				if (v__parser__Parser_check_expr_defer_0) {
-					p->inside_array_lit = inside_array_lit;
-				}
-				// Defer end
-				return _t10;
-			} else {
-				Option_v__ast__Expr _t11;
-				opt_ok(&(v__ast__Expr[]) { v__ast__NodeError_to_sumtype_v__ast__Expr(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected "), 0xfe10, {.d_s = v__token__Token_str(p->tok)}}, {_SLIT(", expecting struct field name"), 0, { .d_c = 0 }}})), v__token__Token_position(&p->tok))))) }, (Option*)(&_t11), sizeof(v__ast__Expr));
-				// Defer begin
-				if (v__parser__Parser_check_expr_defer_0) {
-					p->inside_array_lit = inside_array_lit;
-				}
-				// Defer end
-				return _t11;
-			}
-		}
+		node = v__ast__MapInit_to_sumtype_v__ast__Expr(ADDR(v__ast__MapInit, (v__parser__Parser_map_init(p))));
 		v__parser__Parser_check(p, v__token__Kind__rcbr);
 	}
 	else if (p->tok.kind == (v__token__Kind__key_fn)) {
 		if (p->expecting_type) {
 			v__token__Position start_pos = v__token__Token_position(&p->tok);
-			Option_v__ast__Expr _t12;
-			opt_ok(&(v__ast__Expr[]) { v__ast__TypeNode_to_sumtype_v__ast__Expr(ADDR(v__ast__TypeNode, ((v__ast__TypeNode){.typ = v__parser__Parser_parse_type(p),.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),}))) }, (Option*)(&_t12), sizeof(v__ast__Expr));
+			Option_v__ast__Expr _t10;
+			opt_ok(&(v__ast__Expr[]) { v__ast__TypeNode_to_sumtype_v__ast__Expr(ADDR(v__ast__TypeNode, ((v__ast__TypeNode){.typ = v__parser__Parser_parse_type(p),.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),}))) }, (Option*)(&_t10), sizeof(v__ast__Expr));
 			// Defer begin
 			if (v__parser__Parser_check_expr_defer_0) {
 				p->inside_array_lit = inside_array_lit;
 			}
 			// Defer end
-			return _t12;
+			return _t10;
 		} else {
 			node = v__ast__AnonFn_to_sumtype_v__ast__Expr(ADDR(v__ast__AnonFn, (v__parser__Parser_anon_fn(p))));
 			if (p->tok.kind == v__token__Kind__lpar) {
@@ -42188,6 +42146,29 @@ bool inside_array_lit;
 				v__parser__Parser_check(p, v__token__Kind__rpar);
 				node = v__ast__CallExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CallExpr, ((v__ast__CallExpr){.pos = pos,.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.mod = (string){.str=(byteptr)"", .is_lit=1},.name = _SLIT("anon"),.is_method = 0,.is_field = 0,.is_keep_alive = 0,.is_noreturn = 0,.args = args,.expected_arg_types = __new_array(0, 0, sizeof(v__ast__Type)),.language = 0,.or_block = (v__ast__OrExpr){.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},.left = node,.left_type = 0,.receiver_type = 0,.return_type = 0,.should_be_skipped = 0,.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_list_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.free_receiver = 0,.scope = p->scope,.from_embed_type = 0,.comments = __new_array(0, 0, sizeof(v__ast__Comment)),})));
 			}
+			Option_v__ast__Expr _t11;
+			opt_ok(&(v__ast__Expr[]) { node }, (Option*)(&_t11), sizeof(v__ast__Expr));
+			// Defer begin
+			if (v__parser__Parser_check_expr_defer_0) {
+				p->inside_array_lit = inside_array_lit;
+			}
+			// Defer end
+			return _t11;
+		}
+	}
+	else {
+		if (p->tok.kind != v__token__Kind__eof && !(p->tok.kind == v__token__Kind__rsbr && p->inside_asm)) {
+			Option_v__ast__Expr _t12 = (Option_v__ast__Expr){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+			// Defer begin
+			if (v__parser__Parser_check_expr_defer_0) {
+				p->inside_array_lit = inside_array_lit;
+			}
+			// Defer end
+			return _t12;
+		}
+	};
+	if (inside_array_lit) {
+		if ((p->tok.kind == v__token__Kind__minus || p->tok.kind == v__token__Kind__mul || p->tok.kind == v__token__Kind__amp || p->tok.kind == v__token__Kind__arrow) && p->tok.pos + 1 == p->peek_tok.pos && p->prev_tok.pos + p->prev_tok.len + 1 != p->peek_tok.pos) {
 			Option_v__ast__Expr _t13;
 			opt_ok(&(v__ast__Expr[]) { node }, (Option*)(&_t13), sizeof(v__ast__Expr));
 			// Defer begin
@@ -42198,37 +42179,14 @@ bool inside_array_lit;
 			return _t13;
 		}
 	}
-	else {
-		if (p->tok.kind != v__token__Kind__eof && !(p->tok.kind == v__token__Kind__rsbr && p->inside_asm)) {
-			Option_v__ast__Expr _t14 = (Option_v__ast__Expr){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
-			// Defer begin
-			if (v__parser__Parser_check_expr_defer_0) {
-				p->inside_array_lit = inside_array_lit;
-			}
-			// Defer end
-			return _t14;
-		}
-	};
-	if (inside_array_lit) {
-		if ((p->tok.kind == v__token__Kind__minus || p->tok.kind == v__token__Kind__mul || p->tok.kind == v__token__Kind__amp || p->tok.kind == v__token__Kind__arrow) && p->tok.pos + 1 == p->peek_tok.pos && p->prev_tok.pos + p->prev_tok.len + 1 != p->peek_tok.pos) {
-			Option_v__ast__Expr _t15;
-			opt_ok(&(v__ast__Expr[]) { node }, (Option*)(&_t15), sizeof(v__ast__Expr));
-			// Defer begin
-			if (v__parser__Parser_check_expr_defer_0) {
-				p->inside_array_lit = inside_array_lit;
-			}
-			// Defer end
-			return _t15;
-		}
-	}
-	Option_v__ast__Expr _t16;
-	opt_ok(&(v__ast__Expr[]) { v__parser__Parser_expr_with_left(p, node, precedence, is_stmt_ident) }, (Option*)(&_t16), sizeof(v__ast__Expr));
+	Option_v__ast__Expr _t14;
+	opt_ok(&(v__ast__Expr[]) { v__parser__Parser_expr_with_left(p, node, precedence, is_stmt_ident) }, (Option*)(&_t14), sizeof(v__ast__Expr));
 	// Defer begin
 	if (v__parser__Parser_check_expr_defer_0) {
 		p->inside_array_lit = inside_array_lit;
 	}
 	// Defer end
-	return _t16;
+	return _t14;
 }
 
 v__ast__Expr v__parser__Parser_expr_with_left(v__parser__Parser* p, v__ast__Expr left, int precedence, bool is_stmt_ident) {
@@ -70661,26 +70619,16 @@ v__ast__Type former_expected_type;
 			;
 			node->left_type = map_info.key_type;
 		}
-		else if (right_final->kind == (v__ast__Kind__string)) {
-			v__checker__Checker_warn(c, _SLIT("use `str.contains(substr)` instead of `substr in str`"), left_right_pos);
-			Option_void _t3 = v__checker__Checker_check_expected(c, left_type, right_type);
-			if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
-				IError err = _t3.err;
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("left operand to `"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` does not match: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), left_right_pos);
-			;
-			}
-			;
-		}
 		else {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT("` can only be used with an array/map/string"), 0, { .d_c = 0 }}})), node->pos);
 		};
-		v__ast__Type _t4 = _const_v__ast__bool_type;
+		v__ast__Type _t3 = _const_v__ast__bool_type;
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
 			c->expected_type = former_expected_type;
 		}
 		// Defer end
-		return _t4;
+		return _t3;
 	}
 	else if (node->op == (v__token__Kind__plus) || node->op == (v__token__Kind__minus) || node->op == (v__token__Kind__mul) || node->op == (v__token__Kind__div) || node->op == (v__token__Kind__mod) || node->op == (v__token__Kind__xor) || node->op == (v__token__Kind__amp) || node->op == (v__token__Kind__pipe)) {
 		if ((right_sym->info)._typ == 446 /* v.ast.Alias */ && (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Alias */ ).language != v__ast__Language__c && string__eq(c->mod, (*(string*)/*ee elem_typ */array_get(string_split(v__ast__Table_type_to_str(c->table, right_type), _SLIT(".")), 0))) && v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Alias */ ).parent_type))) {
@@ -70691,12 +70639,12 @@ v__ast__Type former_expected_type;
 		}
 		if (left_sym->kind == v__ast__Kind__alias && (left_sym->info)._typ == 446 /* v.ast.Alias */ && !(v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((left_sym->info)._v__ast__Alias,(left_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Alias */ ).parent_type)))) {
 			if (v__ast__TypeSymbol_has_method(left_sym, v__token__Kind_str(node->op))) {
-				Option_v__ast__Fn _t5;
-				if (_t5 = v__ast__TypeSymbol_find_method(left_sym, v__token__Kind_str(node->op)), _t5.state == 0) {
-					v__ast__Fn method = *(v__ast__Fn*)_t5.data;
+				Option_v__ast__Fn _t4;
+				if (_t4 = v__ast__TypeSymbol_find_method(left_sym, v__token__Kind_str(node->op)), _t4.state == 0) {
+					v__ast__Fn method = *(v__ast__Fn*)_t4.data;
 					return_type = method.return_type;
 				} else {
-					IError err = _t5.err;
+					IError err = _t4.err;
 					return_type = left_type;
 				}
 			} else {
@@ -70710,12 +70658,12 @@ v__ast__Type former_expected_type;
 			}
 		} else if (right_sym->kind == v__ast__Kind__alias && (right_sym->info)._typ == 446 /* v.ast.Alias */ && !(v__ast__TypeSymbol_is_primitive(v__ast__Table_get_type_symbol(c->table, (/* as */ *(v__ast__Alias*)__as_cast((right_sym->info)._v__ast__Alias,(right_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Alias */ ).parent_type)))) {
 			if (v__ast__TypeSymbol_has_method(right_sym, v__token__Kind_str(node->op))) {
-				Option_v__ast__Fn _t6;
-				if (_t6 = v__ast__TypeSymbol_find_method(right_sym, v__token__Kind_str(node->op)), _t6.state == 0) {
-					v__ast__Fn method = *(v__ast__Fn*)_t6.data;
+				Option_v__ast__Fn _t5;
+				if (_t5 = v__ast__TypeSymbol_find_method(right_sym, v__token__Kind_str(node->op)), _t5.state == 0) {
+					v__ast__Fn method = *(v__ast__Fn*)_t5.data;
 					return_type = method.return_type;
 				} else {
-					IError err = _t6.err;
+					IError err = _t5.err;
 					return_type = right_type;
 				}
 			} else {
@@ -70730,12 +70678,12 @@ v__ast__Type former_expected_type;
 		}
 		if ((left_sym->kind == v__ast__Kind__array || left_sym->kind == v__ast__Kind__array_fixed || left_sym->kind == v__ast__Kind__map || left_sym->kind == v__ast__Kind__struct_)) {
 			if (v__ast__TypeSymbol_has_method(left_sym, v__token__Kind_str(node->op))) {
-				Option_v__ast__Fn _t7;
-				if (_t7 = v__ast__TypeSymbol_find_method(left_sym, v__token__Kind_str(node->op)), _t7.state == 0) {
-					v__ast__Fn method = *(v__ast__Fn*)_t7.data;
+				Option_v__ast__Fn _t6;
+				if (_t6 = v__ast__TypeSymbol_find_method(left_sym, v__token__Kind_str(node->op)), _t6.state == 0) {
+					v__ast__Fn method = *(v__ast__Fn*)_t6.data;
 					return_type = method.return_type;
 				} else {
-					IError err = _t7.err;
+					IError err = _t6.err;
 					return_type = left_type;
 				}
 			} else {
@@ -70749,12 +70697,12 @@ v__ast__Type former_expected_type;
 			}
 		} else if ((right_sym->kind == v__ast__Kind__array || right_sym->kind == v__ast__Kind__array_fixed || right_sym->kind == v__ast__Kind__map || right_sym->kind == v__ast__Kind__struct_)) {
 			if (v__ast__TypeSymbol_has_method(right_sym, v__token__Kind_str(node->op))) {
-				Option_v__ast__Fn _t8;
-				if (_t8 = v__ast__TypeSymbol_find_method(right_sym, v__token__Kind_str(node->op)), _t8.state == 0) {
-					v__ast__Fn method = *(v__ast__Fn*)_t8.data;
+				Option_v__ast__Fn _t7;
+				if (_t7 = v__ast__TypeSymbol_find_method(right_sym, v__token__Kind_str(node->op)), _t7.state == 0) {
+					v__ast__Fn method = *(v__ast__Fn*)_t7.data;
 					return_type = method.return_type;
 				} else {
-					IError err = _t8.err;
+					IError err = _t7.err;
 					return_type = right_type;
 				}
 			} else {
@@ -70835,8 +70783,8 @@ v__ast__Type former_expected_type;
 				v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), node->pos);
 			}
 			v__checker__Checker_check_expr_opt_call(c, node->right, right_type);
-			multi_return_string_v__token__Position mr_52550 = v__checker__Checker_fail_if_immutable(c, node->left);
-			node->auto_locked = mr_52550.arg0;
+			multi_return_string_v__token__Position mr_52296 = v__checker__Checker_fail_if_immutable(c, node->left);
+			node->auto_locked = mr_52296.arg0;
 			v__ast__Type left_value_type = v__ast__Table_value_type(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 			v__ast__TypeSymbol* left_value_sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, left_value_type));
 			if (left_value_sym->kind == v__ast__Kind__interface_) {
@@ -70849,6 +70797,16 @@ v__ast__Type former_expected_type;
 				} else {
 					v__checker__Checker_type_implements(c, v__ast__Table_value_type(c->table, right_type), left_value_type, right_pos);
 				}
+				v__ast__Type _t8 = _const_v__ast__void_type;
+				// Defer begin
+				if (v__checker__Checker_infix_expr_defer_0) {
+					c->expected_type = former_expected_type;
+				}
+				// Defer end
+				return _t8;
+			}
+			v__ast__Type unwrapped_right_type = v__checker__Checker_unwrap_generic(c, right_type);
+			if (v__checker__Checker_check_types(c, unwrapped_right_type, left_value_type) || v__checker__Checker_check_types(c, unwrapped_right_type, left_type)) {
 				v__ast__Type _t9 = _const_v__ast__void_type;
 				// Defer begin
 				if (v__checker__Checker_infix_expr_defer_0) {
@@ -70857,58 +70815,48 @@ v__ast__Type former_expected_type;
 				// Defer end
 				return _t9;
 			}
-			v__ast__Type unwrapped_right_type = v__checker__Checker_unwrap_generic(c, right_type);
-			if (v__checker__Checker_check_types(c, unwrapped_right_type, left_value_type) || v__checker__Checker_check_types(c, unwrapped_right_type, left_type)) {
-				v__ast__Type _t10 = _const_v__ast__void_type;
-				// Defer begin
-				if (v__checker__Checker_infix_expr_defer_0) {
-					c->expected_type = former_expected_type;
-				}
-				// Defer end
-				return _t10;
-			}
 			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot append `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), right_pos);
-			v__ast__Type _t11 = _const_v__ast__void_type;
+			v__ast__Type _t10 = _const_v__ast__void_type;
+			// Defer begin
+			if (v__checker__Checker_infix_expr_defer_0) {
+				c->expected_type = former_expected_type;
+			}
+			// Defer end
+			return _t10;
+		} else {
+			v__ast__Type _t11 = v__checker__Checker_check_shift(c, left_type, right_type, left_pos, right_pos);
 			// Defer begin
 			if (v__checker__Checker_infix_expr_defer_0) {
 				c->expected_type = former_expected_type;
 			}
 			// Defer end
 			return _t11;
-		} else {
-			v__ast__Type _t12 = v__checker__Checker_check_shift(c, left_type, right_type, left_pos, right_pos);
-			// Defer begin
-			if (v__checker__Checker_infix_expr_defer_0) {
-				c->expected_type = former_expected_type;
-			}
-			// Defer end
-			return _t12;
 		}
 	}
 	else if (node->op == (v__token__Kind__right_shift)) {
-		v__ast__Type _t13 = v__checker__Checker_check_shift(c, left_type, right_type, left_pos, right_pos);
+		v__ast__Type _t12 = v__checker__Checker_check_shift(c, left_type, right_type, left_pos, right_pos);
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
 			c->expected_type = former_expected_type;
 		}
 		// Defer end
-		return _t13;
+		return _t12;
 	}
 	else if (node->op == (v__token__Kind__key_is) || node->op == (v__token__Kind__not_is)) {
 		v__ast__Expr right_expr = node->right;
-		v__ast__Type _t14 = 0;
+		v__ast__Type _t13 = 0;
 		if (right_expr._typ == 302 /* v.ast.TypeNode */) {
-			_t14 = (*right_expr._v__ast__TypeNode).typ;
+			_t13 = (*right_expr._v__ast__TypeNode).typ;
 		}
 		else if (right_expr._typ == 288 /* v.ast.None */) {
-			_t14 = _const_v__ast__none_type_idx;
+			_t13 = _const_v__ast__none_type_idx;
 		}
 		
 		else {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid type `"), 0xfe10, {.d_s = v__ast__Expr_str(right_expr)}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(right_expr));
-			_t14 = ((v__ast__Type)(0));
+			_t13 = ((v__ast__Type)(0));
 		}
-		v__ast__Type typ = _t14;
+		v__ast__Type typ = _t13;
 		if (!v__ast__Type_alias_eq(typ, ((v__ast__Type)(0)))) {
 			v__ast__TypeSymbol* typ_sym = v__ast__Table_get_type_symbol(c->table, typ);
 			string op = v__token__Kind_str(node->op);
@@ -70923,13 +70871,13 @@ v__ast__Type former_expected_type;
 				}
 			}
 		}
-		v__ast__Type _t15 = _const_v__ast__bool_type;
+		v__ast__Type _t14 = _const_v__ast__bool_type;
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
 			c->expected_type = former_expected_type;
 		}
 		// Defer end
-		return _t15;
+		return _t14;
 	}
 	else if (node->op == (v__token__Kind__arrow)) {
 		if (left_sym->kind == v__ast__Kind__chan) {
@@ -70948,13 +70896,13 @@ v__ast__Type former_expected_type;
 		} else {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot push on non-channel `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), left_pos);
 		}
-		v__ast__Type _t16 = _const_v__ast__void_type;
+		v__ast__Type _t15 = _const_v__ast__void_type;
 		// Defer begin
 		if (v__checker__Checker_infix_expr_defer_0) {
 			c->expected_type = former_expected_type;
 		}
 		// Defer end
-		return _t16;
+		return _t15;
 	}
 	else if (node->op == (v__token__Kind__and) || node->op == (v__token__Kind__logical_or)) {
 		if (!c->pref->translated) {
@@ -71000,7 +70948,16 @@ v__ast__Type former_expected_type;
 	}
 	if (!(v__checker__Checker_symmetric_check(c, left_type, right_type) && v__checker__Checker_symmetric_check(c, right_type, left_type)) && !c->pref->translated && !v__ast__Expr_is_auto_deref_var(node->left) && !v__ast__Expr_is_auto_deref_var(node->right)) {
 		if (v__ast__Type_alias_eq(left_type, _const_v__ast__void_type) || v__ast__Type_alias_eq(right_type, _const_v__ast__void_type)) {
-			v__ast__Type _t17 = _const_v__ast__void_type;
+			v__ast__Type _t16 = _const_v__ast__void_type;
+			// Defer begin
+			if (v__checker__Checker_infix_expr_defer_0) {
+				c->expected_type = former_expected_type;
+			}
+			// Defer end
+			return _t16;
+		}
+		if (v__ast__Type_nr_muls(left_type) > 0 && v__ast__Type_is_int(right_type)) {
+			v__ast__Type _t17 = return_type;
 			// Defer begin
 			if (v__checker__Checker_infix_expr_defer_0) {
 				c->expected_type = former_expected_type;
@@ -71008,24 +70965,15 @@ v__ast__Type former_expected_type;
 			// Defer end
 			return _t17;
 		}
-		if (v__ast__Type_nr_muls(left_type) > 0 && v__ast__Type_is_int(right_type)) {
-			v__ast__Type _t18 = return_type;
-			// Defer begin
-			if (v__checker__Checker_infix_expr_defer_0) {
-				c->expected_type = former_expected_type;
-			}
-			// Defer end
-			return _t18;
-		}
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("infix expr: cannot use `"), 0xfe10, {.d_s = right_sym->name}}, {_SLIT("` (right expression) as `"), 0xfe10, {.d_s = left_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), left_right_pos);
 	}
-	v__ast__Type _t19 = (v__token__Kind_is_relational(node->op) ? (_const_v__ast__bool_type) : (return_type));
+	v__ast__Type _t18 = (v__token__Kind_is_relational(node->op) ? (_const_v__ast__bool_type) : (return_type));
 	// Defer begin
 	if (v__checker__Checker_infix_expr_defer_0) {
 		c->expected_type = former_expected_type;
 	}
 	// Defer end
-	return _t19;
+	return _t18;
 }
 
 VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast__Expr expr) {
@@ -71085,19 +71033,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__shared_f)) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("you have to create a handle and `lock` it to modify `shared` "), 0xfe10, {.d_s = kind}}, {_SLIT(" element"), 0, { .d_c = 0 }}})), v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_60754 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_60754.arg0;
-		pos = mr_60754.arg1;
+		multi_return_string_v__token__Position mr_60500 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_60500.arg0;
+		pos = mr_60500.arg1;
 	}
 	else if (expr._typ == 291 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_60823 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_60823.arg0;
-		pos = mr_60823.arg1;
+		multi_return_string_v__token__Position mr_60569 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_60569.arg0;
+		pos = mr_60569.arg1;
 	}
 	else if (expr._typ == 293 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_60895 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_60895.arg0;
-		pos = mr_60895.arg1;
+		multi_return_string_v__token__Position mr_60641 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_60641.arg0;
+		pos = mr_60641.arg1;
 	}
 	else if (expr._typ == 296 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -71159,9 +71107,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 					string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*expr._v__ast__SelectorExpr).field_name}}, {_SLIT("` of struct `"), 0xfe10, {.d_s = type_str}}, {_SLIT("` is immutable"), 0, { .d_c = 0 }}})), (*expr._v__ast__SelectorExpr).pos);
 				}
-				multi_return_string_v__token__Position mr_62696 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-				to_lock = mr_62696.arg0;
-				pos = mr_62696.arg1;
+				multi_return_string_v__token__Position mr_62442 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+				to_lock = mr_62442.arg0;
+				pos = mr_62442.arg1;
 			}
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
@@ -71198,9 +71146,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 263 /* v.ast.CallExpr */) {
 		if (string__eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_63829 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_63829.arg0;
-			pos = mr_63829.arg1;
+			multi_return_string_v__token__Position mr_63575 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_63575.arg0;
+			pos = mr_63575.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -71484,9 +71432,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				*(multi_return_v__ast__Fn_v__ast__Type*) _t16.data = (multi_return_v__ast__Fn_v__ast__Type){.arg0=(v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,},.arg1=((v__ast__Type)(0))};
 			}
 			
- 			Option_multi_return_v__ast__Fn_v__ast__Type mr_75402 =  _t16 /*U*/;
-			method = (*(multi_return_v__ast__Fn_v__ast__Type*)mr_75402.data).arg0;
-			embed_type = (*(multi_return_v__ast__Fn_v__ast__Type*)mr_75402.data).arg1;
+ 			Option_multi_return_v__ast__Fn_v__ast__Type mr_75148 =  _t16 /*U*/;
+			method = (*(multi_return_v__ast__Fn_v__ast__Type*)mr_75148.data).arg0;
+			embed_type = (*(multi_return_v__ast__Fn_v__ast__Type*)mr_75148.data).arg1;
 			if (embed_type != 0) {
 				is_method_from_embed = true;
 				call_expr->from_embed_type = embed_type;
@@ -71506,9 +71454,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), call_expr->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_76524 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
-			string to_lock = mr_76524.arg0;
-			v__token__Position pos = mr_76524.arg1;
+			multi_return_string_v__token__Position mr_76270 = v__checker__Checker_fail_if_immutable(c, call_expr->left);
+			string to_lock = mr_76270.arg0;
+			v__token__Position pos = mr_76270.arg1;
 			if (!v__ast__Expr_is_lvalue(call_expr->left)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_expr->left));
 			}
@@ -71597,9 +71545,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg->pos);
 			}
 			if (arg->is_mut) {
-				multi_return_string_v__token__Position mr_80616 = v__checker__Checker_fail_if_immutable(c, arg->expr);
-				string to_lock = mr_80616.arg0;
-				v__token__Position pos = mr_80616.arg1;
+				multi_return_string_v__token__Position mr_80362 = v__checker__Checker_fail_if_immutable(c, arg->expr);
+				string to_lock = mr_80362.arg0;
+				v__token__Position pos = mr_80362.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg->share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = call_expr->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(arg->expr));
@@ -72138,9 +72086,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg->pos);
 		}
 		if (call_arg->is_mut && func.language == v__ast__Language__v) {
-			multi_return_string_v__token__Position mr_101143 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
-			string to_lock = mr_101143.arg0;
-			v__token__Position pos = mr_101143.arg1;
+			multi_return_string_v__token__Position mr_100889 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
+			string to_lock = mr_100889.arg0;
+			v__token__Position pos = mr_100889.arg1;
 			if (!v__ast__Expr_is_lvalue(call_arg->expr)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_arg->expr));
 			}
@@ -72722,9 +72670,9 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 				*(multi_return_v__ast__StructField_v__ast__Type*) _t9.data = (multi_return_v__ast__StructField_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=((v__ast__Type)(0))};
 			}
 			
- 			Option_multi_return_v__ast__StructField_v__ast__Type mr_120981 =  _t9 /*U*/;
-			field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_120981.data).arg0;
-			embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_120981.data).arg1;
+ 			Option_multi_return_v__ast__StructField_v__ast__Type mr_120727 =  _t9 /*U*/;
+			field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_120727.data).arg0;
+			embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_120727.data).arg1;
 			node->from_embed_type = embed_type;
 			if ((sym->kind == v__ast__Kind__aggregate || sym->kind == v__ast__Kind__sum_type)) {
 				unknown_field_msg = (*(err.msg));
@@ -72758,9 +72706,9 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 					*(multi_return_v__ast__StructField_v__ast__Type*) _t11.data = (multi_return_v__ast__StructField_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=((v__ast__Type)(0))};
 				}
 				
- 				Option_multi_return_v__ast__StructField_v__ast__Type mr_121794 =  _t11 /*U*/;
-				field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121794.data).arg0;
-				embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121794.data).arg1;
+ 				Option_multi_return_v__ast__StructField_v__ast__Type mr_121540 =  _t11 /*U*/;
+				field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121540.data).arg0;
+				embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121540.data).arg1;
 				node->from_embed_type = embed_type;
 			}
 		}
@@ -76668,8 +76616,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_231706 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_231706.arg0;
+		multi_return_string_v__token__Position mr_231452 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_231452.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
@@ -77941,10 +77889,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_267559 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_267559.arg0;
-				int nroute_attributes = mr_267559.arg1;
-				int nargs = mr_267559.arg2;
+				multi_return_bool_int_int mr_267305 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_267305.arg0;
+				int nroute_attributes = mr_267305.arg1;
+				int nargs = mr_267305.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
