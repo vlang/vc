@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "815c4b7"
+#define V_COMMIT_HASH "2eb1111"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c13ba6d"
+	#define V_COMMIT_HASH "815c4b7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "815c4b7"
+	#define V_CURRENT_COMMIT_HASH "2eb1111"
 #endif
 
 // V comptime_defines:
@@ -22180,7 +22180,7 @@ string os__dir(string opath) {
 	if ((opath).len == 0) {
 		return _SLIT(".");
 	}
-	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
+	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), string_clone(_const_os__path_separator), _SLIT("\\"), string_clone(_const_os__path_separator)})));
 	Option_int _t2 = string_last_index(path, _const_os__path_separator);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
@@ -22198,7 +22198,7 @@ string os__base(string opath) {
 	if ((opath).len == 0) {
 		return _SLIT(".");
 	}
-	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
+	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), string_clone(_const_os__path_separator), _SLIT("\\"), string_clone(_const_os__path_separator)})));
 	if (string__eq(path, _const_os__path_separator)) {
 		return _const_os__path_separator;
 	}
@@ -22224,7 +22224,7 @@ string os__base(string opath) {
 }
 
 string os__file_name(string opath) {
-	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
+	string path = string_replace_each(opath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), string_clone(_const_os__path_separator), _SLIT("\\"), string_clone(_const_os__path_separator)})));
 	return string_all_after_last(path, _const_os__path_separator);
 }
 
@@ -22435,7 +22435,7 @@ VV_LOCAL_SYMBOL string os__executable_fallback(void) {
 	}
 	#endif
 	if (!os__is_abs_path(exepath)) {
-		string rexepath = string_replace_each(exepath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), _const_os__path_separator, _SLIT("\\"), _const_os__path_separator})));
+		string rexepath = string_replace_each(exepath, new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("/"), string_clone(_const_os__path_separator), _SLIT("\\"), string_clone(_const_os__path_separator)})));
 		if (string_contains(rexepath, _const_os__path_separator)) {
 			exepath = os__join_path(_const_os__wd_at_startup, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){exepath})));
 		} else {
@@ -23877,7 +23877,7 @@ VV_LOCAL_SYMBOL Array_string os__glob_match(string dir, string pattern, string n
 VV_LOCAL_SYMBOL Option_void os__native_glob_pattern(string pattern, Array_string* matches) {
 	Array_string steps = string_split(pattern, _const_os__path_separator);
 	string cwd = (string_starts_with(pattern, _const_os__path_separator) ? (_const_os__path_separator) : (_SLIT(".")));
-	Array_string subdirs = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){cwd}));
+	Array_string subdirs = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(cwd)}));
 	for (int i = 0; i < steps.len; i++) {
 		string step = (*(string*)/*ee elem_typ */array_get(steps, i));
 		string step2 = (i + 1 == steps.len ? (step) : ((*(string*)/*ee elem_typ */array_get(steps, i + 1))));
@@ -25484,7 +25484,7 @@ Option_time__Time time__parse_iso8601(string s) {
 	}
 	
  	int t_i =  (*(int*)_t1.data);
-	Array_string parts = (t_i != -1 ? (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){string_substr(s, 0, t_i), string_substr(s, t_i + 1, s.len)}))) : (string_split(s, _SLIT(" "))));
+	Array_string parts = (t_i != -1 ? (new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){string_clone(string_substr(s, 0, t_i)), string_clone(string_substr(s, t_i + 1, s.len))}))) : (string_split(s, _SLIT(" "))));
 	if (!(parts.len == 1 || parts.len == 2)) {
 		return (Option_time__Time){ .state=2, .err=_v_error(_const_time__err_invalid_8601), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
@@ -30075,7 +30075,7 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 					i = idx;
 					continue;
 				}
-				map_set(&mn.unknown, &(string[]){field_name}, &(Array_string[]) { new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){field_value})) });
+				map_set(&mn.unknown, &(string[]){field_name}, &(Array_string[]) { new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(field_value)})) });
 			};
 			i += 2;
 			continue;
@@ -30169,7 +30169,7 @@ VV_LOCAL_SYMBOL void v__vmod__ModFileCacher_add(v__vmod__ModFileCacher* cacher, 
 
 VV_LOCAL_SYMBOL multi_return_Array_string_v__vmod__ModFileAndFolder v__vmod__ModFileCacher_traverse(v__vmod__ModFileCacher* mcache, string mfolder) {
 	string cfolder = mfolder;
-	Array_string folders_so_far = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){cfolder}));
+	Array_string folders_so_far = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(cfolder)}));
 	int levels = 0;
 	for (;;) {
 		if (levels > 255) {
@@ -30200,7 +30200,7 @@ VV_LOCAL_SYMBOL multi_return_Array_string_v__vmod__ModFileAndFolder v__vmod__Mod
 		levels++;
 	}
 	v__vmod__ModFileCacher_mark_folders_as_vmod_free(mcache, folders_so_far);
-	return (multi_return_Array_string_v__vmod__ModFileAndFolder){.arg0=new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){mfolder})), .arg1=(v__vmod__ModFileAndFolder){.vmod_file = _SLIT(""),.vmod_folder = mfolder,}};
+	return (multi_return_Array_string_v__vmod__ModFileAndFolder){.arg0=new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(mfolder)})), .arg1=(v__vmod__ModFileAndFolder){.vmod_file = _SLIT(""),.vmod_folder = mfolder,}};
 }
 
 VV_LOCAL_SYMBOL void v__vmod__ModFileCacher_mark_folders_with_vmod(v__vmod__ModFileCacher* mcache, Array_string folders_so_far, v__vmod__ModFileAndFolder vmod) {
@@ -32265,7 +32265,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("c13ba6d"),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_trim_space(p->cflags), string_trim_space(p->third_party_option),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("815c4b7")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -44300,7 +44300,7 @@ VV_LOCAL_SYMBOL multi_return_Array_v__ast__Param_bool_bool v__parser__Parser_fn_
 				v__parser__Parser_next(p);
 			}
 			Array_v__token__Position arg_pos = new_array_from_c_array(1, 1, sizeof(v__token__Position), _MOV((v__token__Position[1]){v__token__Token_position(&p->tok)}));
-			Array_string arg_names = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){v__parser__Parser_check_name(p)}));
+			Array_string arg_names = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(v__parser__Parser_check_name(p))}));
 			Array_v__token__Position type_pos = new_array_from_c_array(1, 1, sizeof(v__token__Position), _MOV((v__token__Position[1]){v__token__Token_position(&p->tok)}));
 			for (;;) {
 				if (!(p->tok.kind == v__token__Kind__comma)) break;
@@ -51114,7 +51114,13 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayI
 	}
 	for (int i = 0; i < node.exprs.len; ++i) {
 		v__ast__Expr expr = ((v__ast__Expr*)node.exprs.data)[i];
-		v__gen__c__Gen_expr_with_cast(g, expr, (*(v__ast__Type*)/*ee elem_typ */array_get(node.expr_types, i)), node.elem_type);
+		if (v__ast__Type_alias_eq((*(v__ast__Type*)/*ee elem_typ */array_get(node.expr_types, i)), _const_v__ast__string_type) && (expr)._typ != 266 /* v.ast.StringLiteral */ && (expr)._typ != 265 /* v.ast.StringInterLiteral */) {
+			v__gen__c__Gen_write(g, _SLIT("string_clone("));
+			v__gen__c__Gen_expr(g, expr);
+			v__gen__c__Gen_write(g, _SLIT(")"));
+		} else {
+			v__gen__c__Gen_expr_with_cast(g, expr, (*(v__ast__Type*)/*ee elem_typ */array_get(node.expr_types, i)), node.elem_type);
+		}
 		if (i != len - 1) {
 			if (i > 0 && (i & 7) == 0) {
 				v__gen__c__Gen_writeln(g, _SLIT(","));
@@ -77795,7 +77801,7 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comp_if_branch(v__checker__Checker* c, 
 	}
 	else if (cond._typ == 234 /* v.ast.ComptimeCall */) {
 		if ((*cond._v__ast__ComptimeCall).is_pkgconfig) {
-			Option_v__pkgconfig__Main_ptr _t38 = v__pkgconfig__main(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){(*cond._v__ast__ComptimeCall).args_var})));
+			Option_v__pkgconfig__Main_ptr _t38 = v__pkgconfig__main(new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone((*cond._v__ast__ComptimeCall).args_var)})));
 			if (_t38.state != 0) { /*or block*/ 
 				IError err = _t38.err;
 				v__checker__Checker_error(c, (*(err.msg)), (*cond._v__ast__ComptimeCall).pos);
@@ -80554,7 +80560,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_post_process_c_compiler_output(v__build
 		}
 		return;
 	}
-	Array_string _t3 = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_const_v__builder__c_verror_message_marker, _SLIT("error: include file ")}));
+	Array_string _t3 = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){string_clone(_const_v__builder__c_verror_message_marker), _SLIT("error: include file ")}));
 	for (int _t4 = 0; _t4 < _t3.len; ++_t4) {
 		string emsg_marker = ((string*)_t3.data)[_t4];
 		if (string_contains(res.output, emsg_marker)) {
@@ -80636,7 +80642,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	v__builder__CcompilerOptions ccoptions = (v__builder__CcompilerOptions){.guessed_compiler = (string){.str=(byteptr)"", .is_lit=1},.shared_postfix = (string){.str=(byteptr)"", .is_lit=1},.debug_mode = 0,.is_cc_tcc = 0,.is_cc_gcc = 0,.is_cc_msvc = 0,.is_cc_clang = 0,.env_cflags = (string){.str=(byteptr)"", .is_lit=1},.env_ldflags = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 0, sizeof(string)),.wargs = __new_array(0, 0, sizeof(string)),.pre_args = __new_array(0, 0, sizeof(string)),.o_args = __new_array(0, 0, sizeof(string)),.source_args = __new_array(0, 0, sizeof(string)),.post_args = __new_array(0, 0, sizeof(string)),.linker_flags = __new_array(0, 0, sizeof(string)),};
 	Array_string debug_options = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("-g")}));
 	Array_string optimization_options = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("-O2")}));
-	ccoptions.args = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){v->pref->cflags, _SLIT("-std=gnu99")}));
+	ccoptions.args = new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){string_clone(v->pref->cflags), _SLIT("-std=gnu99")}));
 	ccoptions.wargs = new_array_from_c_array(26, 26, sizeof(string), _MOV((string[26]){
 			_SLIT("-Wall"), _SLIT("-Wextra"), _SLIT("-Werror"), _SLIT("-Wno-unused-parameter"), _SLIT("-Wno-unused"), _SLIT("-Wno-type-limits"), _SLIT("-Wno-tautological-compare"), _SLIT("-Wno-shadow"), _SLIT("-Wno-int-to-pointer-cast"),
 			_SLIT("-Wno-trigraphs"), _SLIT("-Wno-missing-braces"), _SLIT("-Wno-unknown-warning"), _SLIT("-Wno-unknown-warning-option"), _SLIT("-Wdate-time"), _SLIT("-Wduplicated-branches"), _SLIT("-Wduplicated-cond"), _SLIT("-Winit-self"),
@@ -80789,7 +80795,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	#endif
 	v->ccoptions = ccoptions;
-	v__vcache__CacheManager_set_temporary_options(&v->pref->cache_manager, v__builder__Builder_thirdparty_object_args(v, v->ccoptions, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){ccoptions.guessed_compiler}))));
+	v__vcache__CacheManager_set_temporary_options(&v->pref->cache_manager, v__builder__Builder_thirdparty_object_args(v, v->ccoptions, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(ccoptions.guessed_compiler)}))));
 }
 
 VV_LOCAL_SYMBOL Array_string v__builder__Builder_all_args(v__builder__Builder* v, v__builder__CcompilerOptions ccoptions) {
@@ -82299,7 +82305,7 @@ void v__builder__Builder_build_native(v__builder__Builder* b, Array_string v_fil
 }
 
 void v__builder__Builder_compile_native(v__builder__Builder* b) {
-	Array_string files = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){b->pref->path}));
+	Array_string files = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(b->pref->path)}));
 	v__builder__Builder_set_module_lookup_paths(b);
 	v__builder__Builder_build_native(b, files, b->pref->out_name);
 }
