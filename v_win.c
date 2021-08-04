@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2eb1111"
+#define V_COMMIT_HASH "b870f7a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "815c4b7"
+	#define V_COMMIT_HASH "2eb1111"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2eb1111"
+	#define V_CURRENT_COMMIT_HASH "b870f7a"
 #endif
 
 // V comptime_defines:
@@ -31391,7 +31391,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("815c4b7")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("2eb1111")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -50144,10 +50144,16 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort(v__gen__c__Gen* g, v__ast__Ca
 				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = styp}}, {_SLIT("__lt(*b, *a)) { return -1; } else { return 1; }}"), 0, { .d_c = 0 }}})));
 			} else {
 				string field_type = v__gen__c__Gen_typ(g, infix_expr.left_type);
+				string left_name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(infix_expr.left)}}, {_SLIT0, 0, { .d_c = 0 }}}));
 				string left_expr_str = v__gen__c__Gen_expr_string(g, infix_expr.left);
 				string right_expr_str = v__gen__c__Gen_expr_string(g, infix_expr.right);
-				strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" a_ = "), 0xfe10, {.d_s = left_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" b_ = "), 0xfe10, {.d_s = right_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+				if (string_starts_with(left_name, _SLIT("a"))) {
+					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" a_ = "), 0xfe10, {.d_s = left_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" b_ = "), 0xfe10, {.d_s = right_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+				} else {
+					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" a_ = "), 0xfe10, {.d_s = right_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" b_ = "), 0xfe10, {.d_s = left_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+				}
 				string op1 = _SLIT("");
 				string op2 = _SLIT("");
 				if (v__ast__Type_alias_eq(infix_expr.left_type, _const_v__ast__string_type)) {
