@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8743b61"
+#define V_COMMIT_HASH "5162c25"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "800c0e5"
+	#define V_COMMIT_HASH "8743b61"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8743b61"
+	#define V_CURRENT_COMMIT_HASH "5162c25"
 #endif
 
 // V comptime_defines:
@@ -8529,9 +8529,9 @@ v__ast__Type v__parser__Parser_parse_type_with_mut(v__parser__Parser* p, bool is
 v__ast__Language v__parser__Parser_parse_language(v__parser__Parser* p);
 v__ast__Type v__parser__Parser_parse_type(v__parser__Parser* p);
 v__ast__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__ast__Language language, bool is_ptr, bool check_dot);
-v__ast__Type v__parser__Parser_parse_enum_or_struct_type(v__parser__Parser* p, string name, v__ast__Language language);
-v__ast__Type v__parser__Parser_parse_generic_template_type(v__parser__Parser* p, string name);
-v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser* p, string name);
+v__ast__Type v__parser__Parser_find_type_or_add_placeholder(v__parser__Parser* p, string name, v__ast__Language language);
+v__ast__Type v__parser__Parser_parse_generic_type(v__parser__Parser* p, string name);
+v__ast__Type v__parser__Parser_parse_generic_inst_type(v__parser__Parser* p, string name);
 Array_string _const_v__parser__builtin_functions; // inited later
 v__ast__Stmt v__parser__parse_stmt(string text, v__ast__Table* table, v__ast__Scope* scope);
 v__ast__File* v__parser__parse_comptime(string text, v__ast__Table* table, v__pref__Preferences* pref, v__ast__Scope* scope);
@@ -32252,7 +32252,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("800c0e5")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8743b61")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -45604,14 +45604,14 @@ v__ast__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__ast__Lang
 			else {
 				v__parser__Parser_next(p);
 				if (name.len == 1 && byte_is_capital(string_at(name, 0))) {
-					v__ast__Type _t10 = v__parser__Parser_parse_generic_template_type(p, name);
+					v__ast__Type _t10 = v__parser__Parser_parse_generic_type(p, name);
 					return _t10;
 				}
 				if (p->tok.kind == v__token__Kind__lt) {
-					v__ast__Type _t11 = v__parser__Parser_parse_generic_struct_inst_type(p, name);
+					v__ast__Type _t11 = v__parser__Parser_parse_generic_inst_type(p, name);
 					return _t11;
 				}
-				v__ast__Type _t12 = v__parser__Parser_parse_enum_or_struct_type(p, name, language);
+				v__ast__Type _t12 = v__parser__Parser_find_type_or_add_placeholder(p, name, language);
 				return _t12;
 			};
 		}
@@ -45622,7 +45622,7 @@ v__ast__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__ast__Lang
 	return 0;
 }
 
-v__ast__Type v__parser__Parser_parse_enum_or_struct_type(v__parser__Parser* p, string name, v__ast__Language language) {
+v__ast__Type v__parser__Parser_find_type_or_add_placeholder(v__parser__Parser* p, string name, v__ast__Language language) {
 	int idx = v__ast__Table_find_type_idx(p->table, name);
 	if (idx > 0) {
 		v__ast__Type _t1 = v__ast__new_type(idx);
@@ -45633,7 +45633,7 @@ v__ast__Type v__parser__Parser_parse_enum_or_struct_type(v__parser__Parser* p, s
 	return _t2;
 }
 
-v__ast__Type v__parser__Parser_parse_generic_template_type(v__parser__Parser* p, string name) {
+v__ast__Type v__parser__Parser_parse_generic_type(v__parser__Parser* p, string name) {
 	int idx = v__ast__Table_find_type_idx(p->table, name);
 	if (idx > 0) {
 		v__ast__Type _t1 = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
@@ -45644,7 +45644,7 @@ v__ast__Type v__parser__Parser_parse_generic_template_type(v__parser__Parser* p,
 	return _t2;
 }
 
-v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser* p, string name) {
+v__ast__Type v__parser__Parser_parse_generic_inst_type(v__parser__Parser* p, string name) {
 	string bs_name = name;
 	string bs_cname = name;
 	v__parser__Parser_next(p);
@@ -45688,7 +45688,7 @@ v__ast__Type v__parser__Parser_parse_generic_struct_inst_type(v__parser__Parser*
 		v__ast__Type _t3 = v__ast__new_type(idx);
 		return _t3;
 	}
-	v__ast__Type _t4 = v__ast__Type_set_flag(v__parser__Parser_parse_enum_or_struct_type(p, name, v__ast__Language__v), v__ast__TypeFlag__generic);
+	v__ast__Type _t4 = v__ast__Type_set_flag(v__parser__Parser_find_type_or_add_placeholder(p, name, v__ast__Language__v), v__ast__TypeFlag__generic);
 	return _t4;
 }
 
