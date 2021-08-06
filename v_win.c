@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8d25677"
+#define V_COMMIT_HASH "7346aec"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c30cda3"
+	#define V_COMMIT_HASH "8d25677"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8d25677"
+	#define V_CURRENT_COMMIT_HASH "7346aec"
 #endif
 
 // V comptime_defines:
@@ -5713,6 +5713,7 @@ struct v__gen__c__Gen {
 	v__ast__Type expected_cast_type;
 	Array_string defer_vars;
 	bool anon_fn;
+	Map_string_bool array_sort_fn;
 };
 
 
@@ -7379,6 +7380,11 @@ os__Result os__execute_or_panic(string cmd);
 os__Result os__execute_or_exit(string cmd);
 int os__is_atty(int fd);
 Option_Array_string os__glob(Array_string patterns);
+int compare_string(string* a, string* b) {
+	if (string__lt(*a, *b)) return -1;
+	else return 1;
+}
+
 Option_Array_byte os__read_bytes(string path);
 Option_string os__read_file(string path);
 Option_void os__truncate(string path, u64 len);
@@ -8209,12 +8215,9 @@ v__util__Suggestion v__util__new_suggestion(string wanted, Array_string possibil
 void v__util__Suggestion_add(v__util__Suggestion* s, string val);
 void v__util__Suggestion_add_many(v__util__Suggestion* s, Array_string many);
 void v__util__Suggestion_sort(v__util__Suggestion* s);
-int compare__t1_v__util__Possibility (v__util__Possibility* a, v__util__Possibility* b) {
-	f32 a_ = a->similarity;
-	f32 b_ = b->similarity;
-	if (a_ < b_) return -1;
-	if (a_ > b_) return 1; 
-	else return 0; 
+int compare_v__util__Possibility_by_similarity(v__util__Possibility* a, v__util__Possibility* b) {
+	if (a->similarity < b->similarity) return -1;
+	else return 1;
 }
 
 string v__util__Suggestion_say(v__util__Suggestion s, string msg);
@@ -8787,6 +8790,7 @@ void v__markused__Walker_or_block(v__markused__Walker* w, v__ast__OrExpr node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayInit node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_map(v__gen__c__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort(v__gen__c__Gen* g, v__ast__CallExpr node);
+VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort_call(v__gen__c__Gen* g, v__ast__CallExpr node, string compare_fn);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_filter(v__gen__c__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_insert(v__gen__c__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_prepend(v__gen__c__Gen* g, v__ast__CallExpr node);
@@ -22317,7 +22321,7 @@ Option_Array_string os__glob(Array_string patterns) {
 		}
 		;
 	}
-	qsort(matches.data, matches.len, matches.element_size, (int (*)(const void *, const void *))&compare_strings);
+	qsort(matches.data, matches.len, matches.element_size, (int (*)(const void *, const void *))&compare_string);
 	Option_Array_string _t4;
 	opt_ok(&(Array_string[]) { matches }, (Option*)(&_t4), sizeof(Array_string));
 	return _t4;
@@ -29905,7 +29909,7 @@ Option_v__pkgconfig__Main_ptr v__pkgconfig__main(Array_string args) {
 		m->res = _const_v__pkgconfig__version;
 	} else if (opt->listall) {
 		Array_string modules = v__pkgconfig__list();
-		qsort(modules.data, modules.len, modules.element_size, (int (*)(const void *, const void *))&compare_strings);
+		qsort(modules.data, modules.len, modules.element_size, (int (*)(const void *, const void *))&compare_string);
 		if (opt->description) {
 			for (int _t1 = 0; _t1 < modules.len; ++_t1) {
 				string mod = ((string*)modules.data)[_t1];
@@ -31412,7 +31416,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c30cda3")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8d25677")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -32400,7 +32404,7 @@ VV_LOCAL_SYMBOL void v__pref__parse_define(v__pref__Preferences* prefs, string d
 Array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Preferences* prefs, string dir, Array_string files_) {
 	Array_string res = __new_array_with_default(0, 0, sizeof(string), 0);
 	Array_string files = array_clone_to_depth(&files_, 0);
-	qsort(files.data, files.len, files.element_size, (int (*)(const void *, const void *))&compare_strings);
+	qsort(files.data, files.len, files.element_size, (int (*)(const void *, const void *))&compare_string);
 	Array_string all_v_files = __new_array_with_default(0, 0, sizeof(string), 0);
 	for (int _t1 = 0; _t1 < files.len; ++_t1) {
 		string file = ((string*)files.data)[_t1];
@@ -32683,7 +32687,7 @@ VV_LOCAL_SYMBOL string help__known_topics(string topicdir) {
 	}
 	
 	Array_string topics = _t3;
-	qsort(topics.data, topics.len, topics.element_size, (int (*)(const void *, const void *))&compare_strings);
+	qsort(topics.data, topics.len, topics.element_size, (int (*)(const void *, const void *))&compare_string);
 	array_push((array*)&res, _MOV((string[]){ string_clone(Array_string_join(topics, _SLIT(", "))) }));
 	string _t6 = Array_string_join(res, _SLIT(""));
 	return _t6;
@@ -33145,7 +33149,7 @@ void v__util__Suggestion_add_many(v__util__Suggestion* s, Array_string many) {
 }
 
 void v__util__Suggestion_sort(v__util__Suggestion* s) {
-	qsort(s->known.data, s->known.len, s->known.element_size, (int (*)(const void *, const void *))&compare__t1_v__util__Possibility);
+	qsort(s->known.data, s->known.len, s->known.element_size, (int (*)(const void *, const void *))&compare_v__util__Possibility_by_similarity);
 }
 
 string v__util__Suggestion_say(v__util__Suggestion s, string msg) {
@@ -33174,7 +33178,7 @@ string v__util__Suggestion_say(v__util__Suggestion s, string msg) {
 			}
 			
 			Array_string values = _t1;
-			qsort(values.data, values.len, values.element_size, (int (*)(const void *, const void *))&compare_strings);
+			qsort(values.data, values.len, values.element_size, (int (*)(const void *, const void *))&compare_string);
 			if (values.len == 1) {
 				res = /*f*/string__plus(res,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(".\n1 possibility: "), 0xfe10, {.d_s = (*(string*)/*ee elem_typ */array_get(values, 0))}}, {_SLIT("."), 0, { .d_c = 0 }}})));
 			} else if (values.len < 25) {
@@ -50098,102 +50102,75 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort(v__gen__c__Gen* g, v__ast__Ca
 		VUNREACHABLE();
 	}
 	v__ast__Array info = /* as */ *(v__ast__Array*)__as_cast((rec_sym->info)._v__ast__Array,(rec_sym->info)._typ, 421) /*expected idx: 421, name: v.ast.Array */ ;
-	v__ast__Type typ = info.elem_type;
-	bool is_default = false;
-	bool is_reverse = false;
-	string compare_fn = _SLIT("");
+	string elem_stype = v__gen__c__Gen_typ(g, info.elem_type);
+	string compare_fn =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("compare_"), 0xfe10, {.d_s = string_replace(elem_stype, _SLIT("*"), _SLIT("_ptr"))}}, {_SLIT0, 0, { .d_c = 0 }}}));
+	v__gen__c__Type comparison_type = v__gen__c__Gen_unwrap(g, _const_v__ast__void_type);
+	string left_expr = _SLIT("");
+	string right_expr = _SLIT("");
 	if (node.args.len == 0) {
-		is_default = true;
+		comparison_type = v__gen__c__Gen_unwrap(g, v__ast__Type_set_nr_muls(info.elem_type, 0));
+		if (_IN_MAP(ADDR(string, compare_fn), ADDR(map, g->array_sort_fn))) {
+			v__gen__c__Gen_gen_array_sort_call(g, node, compare_fn);
+			return;
+		}
+		left_expr = _SLIT("*a");
+		right_expr = _SLIT("*b");
 	} else {
 		v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast(((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr)._v__ast__InfixExpr,((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr)._typ, 280) /*expected idx: 280, name: v.ast.InfixExpr */ ;
-		string left_name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(infix_expr.left)}}, {_SLIT0, 0, { .d_c = 0 }}}));
-		is_default = (string__eq(left_name, _SLIT("a")) || string__eq(left_name, _SLIT("b"))) && (string__eq( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(infix_expr.right)}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("a")) || string__eq( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(infix_expr.right)}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("b")));
-		is_reverse = (string_starts_with(left_name, _SLIT("a")) && infix_expr.op == v__token__Kind__gt) || (string_starts_with(left_name, _SLIT("b")) && infix_expr.op == v__token__Kind__lt);
-	}
-	if (is_default) {
-		compare_fn = ((typ == (_const_v__ast__int_type) || typ == (v__ast__Type_to_ptr(_const_v__ast__int_type))) ? (_SLIT("compare_ints")) : (typ == (_const_v__ast__string_type) || typ == (v__ast__Type_to_ptr(_const_v__ast__string_type))) ? (_SLIT("compare_strings")) : (_SLIT("")));
-		if ((compare_fn).len != 0 && is_reverse) {
-			compare_fn = /*f*/string__plus(compare_fn, _SLIT("_reverse"));
+		comparison_type = v__gen__c__Gen_unwrap(g, v__ast__Type_set_nr_muls(infix_expr.left_type, 0));
+		string left_name = v__ast__Expr_str(infix_expr.left);
+		if (left_name.len > 1) {
+			compare_fn = /*f*/string__plus(compare_fn, string__plus(_SLIT("_by"), string_replace_each(string_substr(left_name, 1, left_name.len), new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("."), _SLIT("_"), _SLIT("["), _SLIT("_"), _SLIT("]"), _SLIT("_")})))));
 		}
-	}
-	if ((compare_fn).len == 0) {
-		string tmp_name = v__gen__c__Gen_new_global_tmp_var(g);
-		string styp = string_trim(v__gen__c__Gen_typ(g, typ), _SLIT("*"));
-		compare_fn =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("compare_"), 0xfe10, {.d_s = tmp_name}}, {_SLIT("_"), 0xfe10, {.d_s = styp}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		bool is_reverse = (string_starts_with(left_name, _SLIT("a")) && infix_expr.op == v__token__Kind__gt) || (string_starts_with(left_name, _SLIT("b")) && infix_expr.op == v__token__Kind__lt);
 		if (is_reverse) {
 			compare_fn = /*f*/string__plus(compare_fn, _SLIT("_reverse"));
 		}
-		v__ast__Table_register_fn(g->table, (v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = _const_v__ast__int_type,.name = compare_fn,.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,});
-		if (node.args.len == 0) {
-			string styp_arg = v__gen__c__Gen_typ(g, typ);
-			strings__Builder_writeln(&g->definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = compare_fn}}, {_SLIT(" ("), 0xfe10, {.d_s = styp_arg}}, {_SLIT("* a, "), 0xfe10, {.d_s = styp_arg}}, {_SLIT("* b) {"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, typ);
-			if (!is_reverse && v__ast__TypeSymbol_has_method(sym, _SLIT("<"))) {
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = styp}}, {_SLIT("__lt(*a, *b)) { return -1; } else { return 1; }}"), 0, { .d_c = 0 }}})));
-			} else if (is_reverse && v__ast__TypeSymbol_has_method(sym, _SLIT("<"))) {
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = styp}}, {_SLIT("__lt(*b, *a)) { return -1; } else { return 1; }}"), 0, { .d_c = 0 }}})));
-			} else {
-				strings__Builder_writeln(&g->definitions, _SLIT("if (*a < *b) return -1;"));
-				strings__Builder_writeln(&g->definitions, _SLIT("if (*a > *b) return 1; else return 0; }\n"));
+		if (_IN_MAP(ADDR(string, compare_fn), ADDR(map, g->array_sort_fn))) {
+			v__gen__c__Gen_gen_array_sort_call(g, node, compare_fn);
+			return;
+		}
+		if (string_starts_with(left_name, _SLIT("a")) != is_reverse) {
+			left_expr = v__gen__c__Gen_expr_string(g, infix_expr.left);
+			right_expr = v__gen__c__Gen_expr_string(g, infix_expr.right);
+			if ((infix_expr.left)._typ == 276 /* v.ast.Ident */) {
+				left_expr = string__plus(_SLIT("*"), left_expr);
+			}
+			if ((infix_expr.right)._typ == 276 /* v.ast.Ident */) {
+				right_expr = string__plus(_SLIT("*"), right_expr);
 			}
 		} else {
-			v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast(((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr)._v__ast__InfixExpr,((*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr)._typ, 280) /*expected idx: 280, name: v.ast.InfixExpr */ ;
-			string styp_arg = v__gen__c__Gen_typ(g, typ);
-			strings__Builder_writeln(&g->definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = compare_fn}}, {_SLIT(" ("), 0xfe10, {.d_s = styp_arg}}, {_SLIT("* a, "), 0xfe10, {.d_s = styp_arg}}, {_SLIT("* b) {"), 0, { .d_c = 0 }}})));
-			v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, typ);
-			if (!is_reverse && v__ast__TypeSymbol_has_method(sym, _SLIT("<")) && v__ast__Expr_str(infix_expr.left).len == 1) {
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = styp}}, {_SLIT("__lt(*a, *b)) { return -1; } else { return 1; }}"), 0, { .d_c = 0 }}})));
-			} else if (is_reverse && v__ast__TypeSymbol_has_method(sym, _SLIT("<")) && v__ast__Expr_str(infix_expr.left).len == 1) {
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = styp}}, {_SLIT("__lt(*b, *a)) { return -1; } else { return 1; }}"), 0, { .d_c = 0 }}})));
-			} else {
-				string field_type = v__gen__c__Gen_typ(g, infix_expr.left_type);
-				string left_name =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(infix_expr.left)}}, {_SLIT0, 0, { .d_c = 0 }}}));
-				string left_expr_str = v__gen__c__Gen_expr_string(g, infix_expr.left);
-				string right_expr_str = v__gen__c__Gen_expr_string(g, infix_expr.right);
-				if (string_starts_with(left_name, _SLIT("a"))) {
-					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" a_ = "), 0xfe10, {.d_s = left_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" b_ = "), 0xfe10, {.d_s = right_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				} else {
-					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" a_ = "), 0xfe10, {.d_s = right_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-					strings__Builder_writeln(&g->definitions,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = field_type}}, {_SLIT(" b_ = "), 0xfe10, {.d_s = left_expr_str}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
-				}
-				string op1 = _SLIT("");
-				string op2 = _SLIT("");
-				if (v__ast__Type_alias_eq(infix_expr.left_type, _const_v__ast__string_type)) {
-					if (is_reverse) {
-						op1 = _SLIT("string__lt(b_, a_)");
-						op2 = _SLIT("string__lt(a_, b_)");
-					} else {
-						op1 = _SLIT("string__lt(a_, b_)");
-						op2 = _SLIT("string__lt(b_, a_)");
-					}
-				} else {
-					string deref_str = (v__ast__Type_is_ptr(infix_expr.left_type) ? (_SLIT("*")) : (_SLIT("")));
-					if (is_reverse) {
-						op1 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_str}}, {_SLIT("a_ > "), 0xfe10, {.d_s = deref_str}}, {_SLIT("b_"), 0, { .d_c = 0 }}}));
-						op2 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_str}}, {_SLIT("a_ < "), 0xfe10, {.d_s = deref_str}}, {_SLIT("b_"), 0, { .d_c = 0 }}}));
-					} else {
-						op1 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_str}}, {_SLIT("a_ < "), 0xfe10, {.d_s = deref_str}}, {_SLIT("b_"), 0, { .d_c = 0 }}}));
-						op2 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_str}}, {_SLIT("a_ > "), 0xfe10, {.d_s = deref_str}}, {_SLIT("b_"), 0, { .d_c = 0 }}}));
-					}
-				}
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = op1}}, {_SLIT(") return -1;"), 0, { .d_c = 0 }}})));
-				strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = op2}}, {_SLIT(") return 1; \n\telse return 0; \n}\n"), 0, { .d_c = 0 }}})));
+			left_expr = v__gen__c__Gen_expr_string(g, infix_expr.right);
+			right_expr = v__gen__c__Gen_expr_string(g, infix_expr.left);
+			if ((infix_expr.left)._typ == 276 /* v.ast.Ident */) {
+				right_expr = string__plus(_SLIT("*"), right_expr);
+			}
+			if ((infix_expr.right)._typ == 276 /* v.ast.Ident */) {
+				left_expr = string__plus(_SLIT("*"), left_expr);
 			}
 		}
 	}
-	if (is_reverse && !string_ends_with(compare_fn, _SLIT("_reverse"))) {
-		compare_fn = /*f*/string__plus(compare_fn, _SLIT("_reverse"));
-	}
-	string deref = (v__ast__Type_is_ptr(node.left_type) || v__ast__Type_is_pointer(node.left_type) ? (_SLIT("->")) : (_SLIT(".")));
+	v__ast__Table_register_fn(g->table, (v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = _const_v__ast__int_type,.name = compare_fn,.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,});
+	map_set(&g->array_sort_fn, &(string[]){compare_fn}, &(bool[]) { true });
+	string stype_arg = v__gen__c__Gen_typ(g, info.elem_type);
+	strings__Builder_writeln(&g->definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("int "), 0xfe10, {.d_s = compare_fn}}, {_SLIT("("), 0xfe10, {.d_s = stype_arg}}, {_SLIT("* a, "), 0xfe10, {.d_s = stype_arg}}, {_SLIT("* b) {"), 0, { .d_c = 0 }}})));
+	string c_condition = (v__ast__TypeSymbol_has_method(comparison_type.sym, _SLIT("<")) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__c__Gen_typ(g, comparison_type.typ)}}, {_SLIT("__lt("), 0xfe10, {.d_s = left_expr}}, {_SLIT(", "), 0xfe10, {.d_s = right_expr}}, {_SLIT(")"), 0, { .d_c = 0 }}}))) : v__ast__TypeSymbol_has_method(comparison_type.unaliased_sym, _SLIT("<")) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__c__Gen_typ(g, comparison_type.unaliased)}}, {_SLIT("__lt("), 0xfe10, {.d_s = left_expr}}, {_SLIT(", "), 0xfe10, {.d_s = right_expr}}, {_SLIT(")"), 0, { .d_c = 0 }}}))) : ( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = left_expr}}, {_SLIT(" < "), 0xfe10, {.d_s = right_expr}}, {_SLIT0, 0, { .d_c = 0 }}}))));
+	strings__Builder_writeln(&g->definitions,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tif ("), 0xfe10, {.d_s = c_condition}}, {_SLIT(") return -1;"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(&g->definitions, _SLIT("\telse return 1;"));
+	strings__Builder_writeln(&g->definitions, _SLIT("}\n"));
+	v__gen__c__Gen_gen_array_sort_call(g, node, compare_fn);
+}
+
+VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort_call(v__gen__c__Gen* g, v__ast__CallExpr node, string compare_fn) {
+	string deref_field = (v__ast__Type_is_ptr(node.left_type) || v__ast__Type_is_pointer(node.left_type) ? (_SLIT("->")) : (_SLIT(".")));
 	g->empty_line = true;
 	v__gen__c__Gen_write(g, _SLIT("qsort("));
 	v__gen__c__Gen_expr(g, node.left);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref}}, {_SLIT("data, "), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_field}}, {_SLIT("data, "), 0, { .d_c = 0 }}})));
 	v__gen__c__Gen_expr(g, node.left);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref}}, {_SLIT("len, "), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_field}}, {_SLIT("len, "), 0, { .d_c = 0 }}})));
 	v__gen__c__Gen_expr(g, node.left);
-	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref}}, {_SLIT("element_size, (int (*)(const void *, const void *))&"), 0xfe10, {.d_s = compare_fn}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = deref_field}}, {_SLIT("element_size, (int (*)(const void *, const void *))&"), 0xfe10, {.d_s = compare_fn}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_filter(v__gen__c__Gen* g, v__ast__CallExpr node) {
@@ -52178,6 +52155,7 @@ string v__gen__c__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pre
 		.expected_cast_type = 0,
 		.defer_vars = __new_array(0, 0, sizeof(string)),
 		.anon_fn = 0,
+		.array_sort_fn = new_map(sizeof(string), sizeof(bool), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 	};
 	v__util__Timers_start(g.timers, _SLIT("cgen init"));
 	for (int _t2 = 0; _t2 < g.table->modules.len; ++_t2) {
@@ -52592,9 +52570,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_optional_type_text(v__gen__c__Gen* g, stri
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_register_optional(v__gen__c__Gen* g, v__ast__Type t) {
-	multi_return_string_string mr_24528 = v__gen__c__Gen_optional_type_name(g, t);
-	string styp = mr_24528.arg0;
-	string base = mr_24528.arg1;
+	multi_return_string_string mr_24564 = v__gen__c__Gen_optional_type_name(g, t);
+	string styp = mr_24564.arg0;
+	string base = mr_24564.arg1;
 	if (!(Array_string_contains(g->optionals, styp))) {
 		strings__Builder_writeln(&g->typedefs2,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("typedef struct "), 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = styp}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
 		strings__Builder_write_string(&g->options, v__gen__c__Gen_optional_type_text(g, styp, base));
@@ -55828,11 +55806,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, node.value_type);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, node.value_type);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, node.key_type);
-	multi_return_string_string_string_string mr_121723 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_121723.arg0;
-	string key_eq_fn = mr_121723.arg1;
-	string clone_fn = mr_121723.arg2;
-	string free_fn = mr_121723.arg3;
+	multi_return_string_string_string_string mr_121759 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_121759.arg0;
+	string key_eq_fn = mr_121759.arg1;
+	string clone_fn = mr_121759.arg2;
+	string free_fn = mr_121759.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -57336,9 +57314,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*typ.info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*typ.info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_166140 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_166140.arg0;
-						string base = mr_166140.arg1;
+						multi_return_string_string mr_166176 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_166176.arg0;
+						string base = mr_166176.arg1;
 						if (!(Array_string_contains(g->optionals, styp))) {
 							string last_text = string_clone(strings__Builder_after(&g->type_definitions, start_pos));
 							strings__Builder_go_back_to(&g->type_definitions, start_pos);
@@ -57573,11 +57551,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_174429 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_174429.arg0;
-				string pafile = mr_174429.arg1;
-				string pamod = mr_174429.arg2;
-				string pafn = mr_174429.arg3;
+				multi_return_int_string_string_string mr_174465 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_174465.arg0;
+				string pafile = mr_174465.arg1;
+				string pamod = mr_174465.arg2;
+				string pafn = mr_174465.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -57672,11 +57650,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 	else if (sym->kind == (v__ast__Kind__map)) {
 		v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 		v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-		multi_return_string_string_string_string mr_177059 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-		string hash_fn = mr_177059.arg0;
-		string key_eq_fn = mr_177059.arg1;
-		string clone_fn = mr_177059.arg2;
-		string free_fn = mr_177059.arg3;
+		multi_return_string_string_string_string mr_177095 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+		string hash_fn = mr_177095.arg0;
+		string key_eq_fn = mr_177095.arg1;
+		string clone_fn = mr_177095.arg2;
+		string free_fn = mr_177095.arg3;
 		string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 		string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 		string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -58284,8 +58262,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_196311 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
-					Array_string fargs = mr_196311.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_196347 = v__gen__c__Gen_fn_args(g, params, false, ((voidptr)(0)));
+					Array_string fargs = mr_196347.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
