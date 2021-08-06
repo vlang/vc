@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cf0767a"
+#define V_COMMIT_HASH "9995f6c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ec39e38"
+	#define V_COMMIT_HASH "cf0767a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cf0767a"
+	#define V_CURRENT_COMMIT_HASH "9995f6c"
 #endif
 
 // V comptime_defines:
@@ -130,6 +130,8 @@ typedef struct time__SystemTime time__SystemTime;
 typedef struct v__dotgraph__DotGraph v__dotgraph__DotGraph;
 typedef struct v__dotgraph__NewNodeConfig v__dotgraph__NewNodeConfig;
 typedef struct v__dotgraph__NewEdgeConfig v__dotgraph__NewEdgeConfig;
+typedef union encoding__base64__B64_64_datablock encoding__base64__B64_64_datablock;
+typedef union encoding__base64__B64_32_datablock encoding__base64__B64_32_datablock;
 typedef struct flag__Flag flag__Flag;
 typedef struct flag__UnkownFlagError flag__UnkownFlagError;
 typedef struct flag__MinimumArgsCountError flag__MinimumArgsCountError;
@@ -1995,6 +1997,8 @@ typedef map Map_string_i64;
 typedef array Array_v__gen__native__Symbol;
 typedef array Array_v__gen__native__Reloc;
 typedef array Array_v__token__Token;
+typedef byte Array_fixed_byte_8 [8];
+typedef byte Array_fixed_byte_4 [4];
 typedef array Array_v__gen__js__sourcemap__Mapping;
 typedef map Map_string_u32;
 typedef map Map_string_x__json2__Any;
@@ -2669,7 +2673,7 @@ struct v__gen__js__sourcemap__Empty {
 
 
 // Union sum type v__gen__js__sourcemap__SourcePositionType = 
-//          |  554 = v__gen__js__sourcemap__Empty
+//          |  558 = v__gen__js__sourcemap__Empty
 //          |  524 = v__gen__js__sourcemap__SourcePosition
 struct v__gen__js__sourcemap__SourcePositionType {
 	union {
@@ -2681,8 +2685,8 @@ struct v__gen__js__sourcemap__SourcePositionType {
 
 
 // Union sum type v__gen__js__sourcemap__NameIndexType = 
-//          |  554 = v__gen__js__sourcemap__Empty
-//          |  555 = v__gen__js__sourcemap__IndexNumber
+//          |  558 = v__gen__js__sourcemap__Empty
+//          |  559 = v__gen__js__sourcemap__IndexNumber
 struct v__gen__js__sourcemap__NameIndexType {
 	union {
 		v__gen__js__sourcemap__Empty* _v__gen__js__sourcemap__Empty;
@@ -2693,14 +2697,14 @@ struct v__gen__js__sourcemap__NameIndexType {
 
 
 // Union sum type x__json2__Any = 
-//          |  607 = x__json2__Null      
-//          |  571 = Array_x__json2__Any 
+//          |  611 = x__json2__Null      
+//          |  575 = Array_x__json2__Any 
 //          |   16 = bool                
 //          |   13 = f32                 
 //          |   14 = f64                 
 //          |    8 = i64                 
 //          |    7 = int                 
-//          |  567 = Map_string_x__json2__Any
+//          |  571 = Map_string_x__json2__Any
 //          |   18 = string              
 //          |   12 = u64                 
 struct x__json2__Any {
@@ -5363,6 +5367,20 @@ struct v__pkgconfig__PkgConfig {
 
 
 
+union encoding__base64__B64_64_datablock {
+	u64 data;
+	Array_fixed_byte_8 data_byte;
+};
+
+
+
+union encoding__base64__B64_32_datablock {
+	u32 data;
+	Array_fixed_byte_4 data_byte;
+};
+
+
+
 struct v__gen__js__sourcemap__MappingInput {
 	v__gen__js__sourcemap__GenPosition GenPosition;
 	string name;
@@ -7738,7 +7756,11 @@ Array_byte encoding__base64__url_decode(string data);
 string encoding__base64__url_decode_str(string data);
 string encoding__base64__url_encode(Array_byte data);
 string encoding__base64__url_encode_str(string data);
+VV_LOCAL_SYMBOL u64 encoding__base64__assemble64(byte n1, byte n2, byte n3, byte n4, byte n5, byte n6, byte n7, byte n8);
+VV_LOCAL_SYMBOL u32 encoding__base64__assemble32(byte n1, byte n2, byte n3, byte n4);
 int encoding__base64__decode_in_buffer(string* data, byte* buffer);
+int encoding__base64__decode_in_buffer_bytes(Array_byte data, byte* buffer);
+VV_LOCAL_SYMBOL int encoding__base64__decode_from_buffer(byte* dest, byte* src, int src_len);
 int encoding__base64__encode_in_buffer(Array_byte data, byte* buffer);
 VV_LOCAL_SYMBOL int encoding__base64__encode_from_buffer(byte* dest, byte* src, int src_len);
 u64 _const_rand__constants__lower_mask = 4294967295U; // precomputed
@@ -10820,17 +10842,17 @@ static inline x__json2__Any bool_to_sumtype_x__json2__Any(bool* x) {
 
 static inline x__json2__Any x__json2__Null_to_sumtype_x__json2__Any(x__json2__Null* x) {
 	x__json2__Null* ptr = memdup(x, sizeof(x__json2__Null));
-	return (x__json2__Any){ ._x__json2__Null = ptr, ._typ = 607};
+	return (x__json2__Any){ ._x__json2__Null = ptr, ._typ = 611};
 }
 
 static inline x__json2__Any Array_x__json2__Any_to_sumtype_x__json2__Any(Array_x__json2__Any* x) {
 	Array_x__json2__Any* ptr = memdup(x, sizeof(Array_x__json2__Any));
-	return (x__json2__Any){ ._Array_x__json2__Any = ptr, ._typ = 571};
+	return (x__json2__Any){ ._Array_x__json2__Any = ptr, ._typ = 575};
 }
 
 static inline x__json2__Any Map_string_x__json2__Any_to_sumtype_x__json2__Any(Map_string_x__json2__Any* x) {
 	Map_string_x__json2__Any* ptr = memdup(x, sizeof(Map_string_x__json2__Any));
-	return (x__json2__Any){ ._Map_string_x__json2__Any = ptr, ._typ = 567};
+	return (x__json2__Any){ ._Map_string_x__json2__Any = ptr, ._typ = 571};
 }
 
 static bool Array_rune_contains(Array_rune a, rune v) {
@@ -10857,12 +10879,12 @@ static bool v__gen__js__sourcemap__IndexNumber_alias_eq(v__gen__js__sourcemap__I
 
 static inline v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__IndexNumber_to_sumtype_v__gen__js__sourcemap__NameIndexType(v__gen__js__sourcemap__IndexNumber* x) {
 	v__gen__js__sourcemap__IndexNumber* ptr = memdup(x, sizeof(v__gen__js__sourcemap__IndexNumber));
-	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__IndexNumber = ptr, ._typ = 555};
+	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__IndexNumber = ptr, ._typ = 559};
 }
 
 static inline v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__Empty_to_sumtype_v__gen__js__sourcemap__NameIndexType(v__gen__js__sourcemap__Empty* x) {
 	v__gen__js__sourcemap__Empty* ptr = memdup(x, sizeof(v__gen__js__sourcemap__Empty));
-	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__Empty = ptr, ._typ = 554};
+	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__Empty = ptr, ._typ = 558};
 }
 
 static inline x__json2__Any int_to_sumtype_x__json2__Any(int* x) {
@@ -12387,17 +12409,17 @@ static char * v_typeof_interface_v__ast__walker__Visitor(int sidx) { /* v.ast.wa
 }
 static char * v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType(int sidx) { /* v.gen.js.sourcemap.SourcePositionType */ 
 	switch(sidx) {
-		case 556: return "v.gen.js.sourcemap.SourcePositionType";
-		case 554: return "v.gen.js.sourcemap.Empty";
+		case 560: return "v.gen.js.sourcemap.SourcePositionType";
+		case 558: return "v.gen.js.sourcemap.Empty";
 		case 524: return "v.gen.js.sourcemap.SourcePosition";
 		default: return "unknown v.gen.js.sourcemap.SourcePositionType";
 	}
 }
 static char * v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType(int sidx) { /* v.gen.js.sourcemap.NameIndexType */ 
 	switch(sidx) {
-		case 557: return "v.gen.js.sourcemap.NameIndexType";
-		case 554: return "v.gen.js.sourcemap.Empty";
-		case 555: return "v.gen.js.sourcemap.IndexNumber";
+		case 561: return "v.gen.js.sourcemap.NameIndexType";
+		case 558: return "v.gen.js.sourcemap.Empty";
+		case 559: return "v.gen.js.sourcemap.IndexNumber";
 		default: return "unknown v.gen.js.sourcemap.NameIndexType";
 	}
 }
@@ -12411,15 +12433,15 @@ static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */
 }
 static char * v_typeof_sumtype_x__json2__Any(int sidx) { /* x.json2.Any */ 
 	switch(sidx) {
-		case 566: return "x.json2.Any";
-		case 607: return "x.json2.Null";
-		case 571: return "[]x.json2.Any";
+		case 570: return "x.json2.Any";
+		case 611: return "x.json2.Null";
+		case 575: return "[]x.json2.Any";
 		case 16: return "bool";
 		case 13: return "f32";
 		case 14: return "f64";
 		case 8: return "i64";
 		case 7: return "int";
-		case 567: return "map[string]x.json2.Any";
+		case 571: return "map[string]x.json2.Any";
 		case 18: return "string";
 		case 12: return "u64";
 		default: return "unknown x.json2.Any";
@@ -25784,57 +25806,86 @@ string encoding__base64__url_encode_str(string data) {
 	return _t1;
 }
 
+VV_LOCAL_SYMBOL u64 encoding__base64__assemble64(byte n1, byte n2, byte n3, byte n4, byte n5, byte n6, byte n7, byte n8) {
+	u64 _t1 = (((((((((u64)(n1)) << 58U | ((u64)(n2)) << 52U) | ((u64)(n3)) << 46U) | ((u64)(n4)) << 40U) | ((u64)(n5)) << 34U) | ((u64)(n6)) << 28U) | ((u64)(n7)) << 22U) | ((u64)(n8)) << 16U);
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL u32 encoding__base64__assemble32(byte n1, byte n2, byte n3, byte n4) {
+	u32 _t1 = (((((u32)(n1)) << 26U | ((u32)(n2)) << 20U) | ((u32)(n3)) << 14U) | ((u32)(n4)) << 8U);
+	return _t1;
+}
+
 int encoding__base64__decode_in_buffer(string* data, byte* buffer) {
+	int _t1 = encoding__base64__decode_from_buffer(buffer, data->str, data->len);
+	return _t1;
+}
+
+int encoding__base64__decode_in_buffer_bytes(Array_byte data, byte* buffer) {
+	int _t1 = encoding__base64__decode_from_buffer(buffer, data.data, data.len);
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL int encoding__base64__decode_from_buffer(byte* dest, byte* src, int src_len) {
+	if (src_len < 4) {
+		int _t1 = 0;
+		return _t1;
+	}
 	int padding = 0;
-	if (string_ends_with(/*rec*/*data, _SLIT("="))) {
-		if (string_ends_with(/*rec*/*data, _SLIT("=="))) {
+	if (src[src_len - 1] == '=') {
+		if (src[src_len - 2] == '=') {
 			padding = 2;
 		} else {
 			padding = 1;
 		}
 	}
-	int input_length = data->len - padding;
-	int output_length = input_length * 3 / 4;
-	int i = 0;
-	int j = 0;
-	byte* b = ((byte*)(0));
-	byte* d = ((byte*)(0));
+	byte* d = src;
+	byte* b = dest;
 	{ // Unsafe block
-		d = ((byte*)(data->str));
-		b = ((byte*)(buffer));
+		int n_decoded_bytes = 0;
+		int si = 0;
+		encoding__base64__B64_64_datablock datablock_64 = (encoding__base64__B64_64_datablock){.data = 0U,};
+		encoding__base64__B64_32_datablock datablock_32 = (encoding__base64__B64_32_datablock){.data = 0U,};
+		for (;;) {
+			if (!(src_len - si >= 8)) break;
+			datablock_64.data = encoding__base64__assemble64(((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 0], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 1], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 2], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 3], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 4], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 5], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 6], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 7], 123)])));
+			#if defined(TARGET_ORDER_IS_LITTLE)
+			{
+				b[n_decoded_bytes + 0] = datablock_64.data_byte[7];
+				b[n_decoded_bytes + 1] = datablock_64.data_byte[6];
+				b[n_decoded_bytes + 2] = datablock_64.data_byte[5];
+				b[n_decoded_bytes + 3] = datablock_64.data_byte[4];
+				b[n_decoded_bytes + 4] = datablock_64.data_byte[3];
+				b[n_decoded_bytes + 5] = datablock_64.data_byte[2];
+			}
+			#else
+			{
+			}
+			#endif
+			n_decoded_bytes += 6;
+			si += 8;
+		}
+		for (;;) {
+			if (!(src_len - si >= 4)) break;
+			datablock_32.data = encoding__base64__assemble32(((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 0], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 1], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 2], 123)])), ((byte)(_const_encoding__base64__index[v_fixed_index(d[si + 3], 123)])));
+			#if defined(TARGET_ORDER_IS_LITTLE)
+			{
+				b[n_decoded_bytes + 0] = datablock_32.data_byte[3];
+				b[n_decoded_bytes + 1] = datablock_32.data_byte[2];
+				b[n_decoded_bytes + 2] = datablock_32.data_byte[1];
+				b[n_decoded_bytes + 3] = datablock_32.data_byte[0];
+			}
+			#else
+			{
+			}
+			#endif
+			n_decoded_bytes += 3;
+			si += 4;
+		}
+		int _t2 = n_decoded_bytes - padding;
+		return _t2;
 	}
-	for (;;) {
-		if (!(i < input_length)) break;
-		int char_a = 0;
-		int char_b = 0;
-		int char_c = 0;
-		int char_d = 0;
-		if (i < input_length) {
-			char_a = _const_encoding__base64__index[v_fixed_index(d[i], 123)];
-			i++;
-		}
-		if (i < input_length) {
-			char_b = _const_encoding__base64__index[v_fixed_index(d[i], 123)];
-			i++;
-		}
-		if (i < input_length) {
-			char_c = _const_encoding__base64__index[v_fixed_index(d[i], 123)];
-			i++;
-		}
-		if (i < input_length) {
-			char_d = _const_encoding__base64__index[v_fixed_index(d[i], 123)];
-			i++;
-		}
-		int decoded_bytes = ((((char_a << 18) | (char_b << 12)) | (char_c << 6)) | (char_d << 0));
-		{ // Unsafe block
-			b[j] = ((byte)(decoded_bytes >> 16));
-			b[j + 1] = ((byte)(((decoded_bytes >> 8) & 0xff)));
-			b[j + 2] = ((byte)(((decoded_bytes >> 0) & 0xff)));
-		}
-		j += 3;
-	}
-	int _t1 = output_length;
-	return _t1;
+	return 0;
 }
 
 int encoding__base64__encode_in_buffer(Array_byte data, byte* buffer) {
@@ -25843,47 +25894,57 @@ int encoding__base64__encode_in_buffer(Array_byte data, byte* buffer) {
 }
 
 VV_LOCAL_SYMBOL int encoding__base64__encode_from_buffer(byte* dest, byte* src, int src_len) {
-	int input_length = src_len;
-	int output_length = 4 * ((input_length + 2) / 3);
-	int i = 0;
-	int j = 0;
+	if (src_len == 0) {
+		int _t1 = 0;
+		return _t1;
+	}
+	int output_length = 4 * ((src_len + 2) / 3);
 	byte* d = src;
 	byte* b = dest;
 	byte* etable = _const_encoding__base64__enc_table.str;
+	int di = 0;
+	int si = 0;
+	int n = (src_len / 3) * 3;
 	for (;;) {
-		if (!(i < input_length)) break;
-		int octet_a = 0;
-		int octet_b = 0;
-		int octet_c = 0;
-		if (i < input_length) {
-			octet_a = ((int)(d[i]));
-			i++;
-		}
-		if (i < input_length) {
-			octet_b = ((int)(d[i]));
-			i++;
-		}
-		if (i < input_length) {
-			octet_c = ((int)(d[i]));
-			i++;
-		}
-		int triple = ((octet_a << 0x10) + (octet_b << 0x08) + octet_c);
+		if (!(si < n)) break;
 		{ // Unsafe block
-			b[j] = etable[((triple >> 3 * 6) & 63)];
-			b[j + 1] = etable[((triple >> 2 * 6) & 63)];
-			b[j + 2] = etable[((triple >> 1 * 6) & 63)];
-			b[j + 3] = etable[((triple >> 0 * 6) & 63)];
+			u32 val = ((((u32)(d[si + 0])) << 16U | ((u32)(d[si + 1])) << 8U) | ((u32)(d[si + 2])));
+			b[di + 0] = etable[(val >> 18U & 0x3FU)];
+			b[di + 1] = etable[(val >> 12U & 0x3FU)];
+			b[di + 2] = etable[(val >> 6U & 0x3FU)];
+			b[di + 3] = etable[(val & 0x3FU)];
 		}
-		j += 4;
+		si += 3;
+		di += 4;
 	}
-	int padding_length = _const_encoding__base64__ending_table[v_fixed_index(input_length % 3, 3)];
-	for (i = 0; i < padding_length; i++) {
-		{ // Unsafe block
-			b[output_length - 1 - i] = '=';
+	int remain = src_len - si;
+	if (remain == 0) {
+		int _t2 = output_length;
+		return _t2;
+	}
+	{ // Unsafe block
+		u32 val = ((u32)(d[si + 0])) << 16U;
+		if (remain == 2) {
+			val |= ((u32)(d[si + 1])) << 8U;
 		}
+		b[di + 0] = etable[(val >> 18U & 0x3FU)];
+		b[di + 1] = etable[(val >> 12U & 0x3FU)];
+
+		if (remain == (2)) {
+			b[di + 2] = etable[(val >> 6U & 0x3FU)];
+			b[di + 3] = ((byte)('='));
+		}
+		else if (remain == (1)) {
+			b[di + 2] = ((byte)('='));
+			b[di + 3] = ((byte)('='));
+		}
+		else {
+			_v_panic(_SLIT("base64: This case should never occur."));
+			VUNREACHABLE();
+		};
 	}
-	int _t1 = output_length;
-	return _t1;
+	int _t3 = output_length;
+	return _t3;
 }
 
 // Attr: [unsafe]
@@ -27667,15 +27728,15 @@ string x__json2__Any_json_str(x__json2__Any f) {
 		string _t9 = bool_str((*f._bool));
 		return _t9;
 	}
-	else if (f._typ == 567 /* map[string]x.json2.Any */) {
+	else if (f._typ == 571 /* map[string]x.json2.Any */) {
 		string _t10 = Map_string_x__json2__Any_str((*f._Map_string_x__json2__Any));
 		return _t10;
 	}
-	else if (f._typ == 571 /* []x.json2.Any */) {
+	else if (f._typ == 575 /* []x.json2.Any */) {
 		string _t11 = Array_x__json2__Any_str((*f._Array_x__json2__Any));
 		return _t11;
 	}
-	else if (f._typ == 607 /* x.json2.Null */) {
+	else if (f._typ == 611 /* x.json2.Null */) {
 		string _t12 = _SLIT("null");
 		return _t12;
 	}
@@ -27768,10 +27829,10 @@ Option_x__json2__Any x__json2__fast_raw_decode(string src) {
 
 
 Map_string_x__json2__Any x__json2__Any_as_map(x__json2__Any f) {
-	if ((f)._typ == 567 /* map[string]x.json2.Any */) {
+	if ((f)._typ == 571 /* map[string]x.json2.Any */) {
 		Map_string_x__json2__Any _t1 = (*f._Map_string_x__json2__Any);
 		return _t1;
-	} else if ((f)._typ == 571 /* []x.json2.Any */) {
+	} else if ((f)._typ == 575 /* []x.json2.Any */) {
 		Map_string_x__json2__Any mp = new_map(sizeof(string), sizeof(x__json2__Any), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
 		for (int i = 0; i < (*f._Array_x__json2__Any).len; ++i) {
 			x__json2__Any fi = ((x__json2__Any*)(*f._Array_x__json2__Any).data)[i];
@@ -27931,10 +27992,10 @@ f64 x__json2__Any_f64(x__json2__Any f) {
 }
 
 Array_x__json2__Any x__json2__Any_arr(x__json2__Any f) {
-	if ((f)._typ == 571 /* []x.json2.Any */) {
+	if ((f)._typ == 575 /* []x.json2.Any */) {
 		Array_x__json2__Any _t1 = (*f._Array_x__json2__Any);
 		return _t1;
-	} else if ((f)._typ == 567 /* map[string]x.json2.Any */) {
+	} else if ((f)._typ == 571 /* map[string]x.json2.Any */) {
 		Array_x__json2__Any arr = __new_array_with_default(0, 0, sizeof(x__json2__Any), 0);
 		int _t3 = (*f._Map_string_x__json2__Any).key_values.len;
 		for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
@@ -30872,7 +30933,7 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 		}
 		;
 		previous_generated_column = mapping.GenPosition.gen_column;
-		if (mapping.source_position._typ == 554 /* v.gen.js.sourcemap.Empty */) {
+		if (mapping.source_position._typ == 558 /* v.gen.js.sourcemap.Empty */) {
 		}
 		else if (mapping.source_position._typ == 524 /* v.gen.js.sourcemap.SourcePosition */) {
 			Option_void _t5 = v__gen__js__sourcemap__vlq__encode(((i64)(mapping.sources_ind - previous_source_index)), output);
@@ -30899,9 +30960,9 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 			}
 			;
 			previous_source_column = (*mapping.source_position._v__gen__js__sourcemap__SourcePosition).source_column;
-			if (mapping.names_ind._typ == 554 /* v.gen.js.sourcemap.Empty */) {
+			if (mapping.names_ind._typ == 558 /* v.gen.js.sourcemap.Empty */) {
 			}
-			else if (mapping.names_ind._typ == 555 /* v.gen.js.sourcemap.IndexNumber */) {
+			else if (mapping.names_ind._typ == 559 /* v.gen.js.sourcemap.IndexNumber */) {
 				Option_void _t11 = v__gen__js__sourcemap__vlq__encode(((i64)((*mapping.names_ind._v__gen__js__sourcemap__IndexNumber) - previous_name_index)), output);
 				if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
 					Option_void _t12;
@@ -30942,7 +31003,7 @@ VV_LOCAL_SYMBOL bool v__gen__js__sourcemap__compare_by_generated_positions_infla
 			return _t5;
 		}
 	}
-	if (string__eq(tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_a.names_ind)._typ )), tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_b.names_ind)._typ ))) && (mapping_a.names_ind)._typ == 555 /* v.gen.js.sourcemap.IndexNumber */ && (mapping_b.names_ind)._typ == 555 /* v.gen.js.sourcemap.IndexNumber */) {
+	if (string__eq(tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_a.names_ind)._typ )), tos3( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_b.names_ind)._typ ))) && (mapping_a.names_ind)._typ == 559 /* v.gen.js.sourcemap.IndexNumber */ && (mapping_b.names_ind)._typ == 559 /* v.gen.js.sourcemap.IndexNumber */) {
 		bool _t6 = !v__gen__js__sourcemap__IndexNumber_alias_eq((*mapping_a.names_ind._v__gen__js__sourcemap__IndexNumber), (*mapping_b.names_ind._v__gen__js__sourcemap__IndexNumber));
 		return _t6;
 	} else {
@@ -31454,7 +31515,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("ec39e38")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("cf0767a")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
