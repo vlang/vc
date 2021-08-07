@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c560d58"
+#define V_COMMIT_HASH "94c321c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7d3476c"
+	#define V_COMMIT_HASH "c560d58"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c560d58"
+	#define V_CURRENT_COMMIT_HASH "94c321c"
 #endif
 
 // V comptime_defines:
@@ -31516,7 +31516,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("7d3476c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c560d58")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -63845,7 +63845,7 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_to_js_typ_val(v__gen__js__JsGen* g, v__
 		styp =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = prefix}}, {_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_sym_to_js_typ(g, *sym)}}, {_SLIT("(\"\")"), 0, { .d_c = 0 }}}));
 	}
 	else if (sym->kind == (v__ast__Kind__map)) {
-		styp = _SLIT("new Map()");
+		styp = _SLIT("new map(new Map())");
 	}
 	else if (sym->kind == (v__ast__Kind__array)) {
 		styp =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = prefix}}, {_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_sym_to_js_typ(g, *sym)}}, {_SLIT("()"), 0, { .d_c = 0 }}}));
@@ -64139,7 +64139,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Number(0)"),.constructor = _SLIT("this.val = val"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.val"),.to_jsval = _SLIT("+this"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
 		}
 		else if (string__eq(typ_name, _SLIT("bool"))) {
-			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Boolean(false)"),.constructor = _SLIT("this.val = +val !== 0"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.val"),.to_jsval = _SLIT("+this != 0"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
+			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Boolean(false)"),.constructor = _SLIT("this.val = +val !== 0"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.valueOf()"),.to_jsval = _SLIT("+this != 0"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
 		}
 		else if (string__eq(typ_name, _SLIT("string"))) {
 			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){
@@ -64159,7 +64159,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){
 				.typ_name = typ_name,
 				.val_name = _SLIT("map"),
-				.default_value = _SLIT("new Map()"),
+				.default_value = _SLIT("new map(new Map())"),
 				.constructor = _SLIT("this.map = map"),
 				.value_of = _SLIT("this"),
 				.to_string = _SLIT("this.map.toString()"),
@@ -66291,15 +66291,13 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_write(g, v__gen__js__JsGen_typ(g, it.right_type));
 	} else {
 		bool is_arithmetic = (it.op == v__token__Kind__plus || it.op == v__token__Kind__minus || it.op == v__token__Kind__mul || it.op == v__token__Kind__div || it.op == v__token__Kind__mod);
-		bool needs_cast = is_arithmetic && !v__ast__Type_alias_eq(it.left_type, it.right_type);
 		int greater_typ = 0;
-		if (true || needs_cast) {
+		if (is_arithmetic) {
 			greater_typ = v__gen__js__JsGen_greater_typ(g, it.left_type, it.right_type);
 			if (g->cast_stack.len > 0) {
-				needs_cast = (*(v__ast__Type*)array_last(g->cast_stack)) != greater_typ;
 			}
 		}
-		if (true || needs_cast) {
+		if (is_arithmetic) {
 			if (string__eq(g->ns->name, _SLIT("builtin"))) {
 				v__gen__js__JsGen_write(g, _SLIT("new "));
 			}
@@ -66309,7 +66307,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_expr(g, it.left);
 		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(it.op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
 		v__gen__js__JsGen_expr(g, it.right);
-		if (true || needs_cast) {
+		if (is_arithmetic) {
 			array_delete_last(&g->cast_stack);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		}
