@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1a555ab"
+#define V_COMMIT_HASH "506c30a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a64b191"
+	#define V_COMMIT_HASH "1a555ab"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1a555ab"
+	#define V_CURRENT_COMMIT_HASH "506c30a"
 #endif
 
 // V comptime_defines:
@@ -6120,6 +6120,7 @@ static bool Array_string_contains(Array_string a, string v); // auto
 static bool Array_v__token__Kind_contains(Array_v__token__Kind a, v__token__Kind v); // auto
 static string time__FormatTime_str(time__FormatTime it); // auto
 static string time__FormatDate_str(time__FormatDate it); // auto
+static int Array_string_index(Array_string a, string v); // auto
 static string x__json2__TokenKind_str(x__json2__TokenKind it); // auto
 static string Array_byte_str(Array_byte a); // auto
 static string indent_Array_byte_str(Array_byte a, int indent_count); // auto
@@ -6860,14 +6861,9 @@ void Array_string_free(Array_string* a);
 string Array_string_str(Array_string a);
 string Array_byte_hex(Array_byte b);
 int copy(Array_byte dst, Array_byte src);
-VV_LOCAL_SYMBOL int compare_ints(int* a, int* b);
-VV_LOCAL_SYMBOL int compare_ints_reverse(int* a, int* b);
-void Array_int_sort(Array_int* a);
-int Array_string_index(Array_string a, string v);
 int Array_int_reduce(Array_int a, int (*iter)(int , int ), int accum_start);
 void array_grow_cap(array* a, int amount);
 void array_grow_len(array* a, int amount);
-bool Array_string_eq(Array_string a1, Array_string a2);
 Array_voidptr array_pointers(array a);
 Array_byte voidptr_vbytes(voidptr data, int len);
 Array_byte byte_vbytes(byte* data, int len);
@@ -7110,9 +7106,12 @@ string string_clone(string a);
 string cstring_to_vstring(char* cstr);
 string string_replace_once(string s, string rep, string with);
 string string_replace(string s, string rep, string with);
-VV_LOCAL_SYMBOL int compare_rep_index(RepIndex* a, RepIndex* b);
-VV_LOCAL_SYMBOL void Array_RepIndex_sort2(Array_RepIndex* a);
 string string_replace_each(string s, Array_string vals);
+int compare_RepIndex_by_idx(RepIndex* a, RepIndex* b) {
+	if (a->idx < b->idx) return -1;
+	else return 1;
+}
+
 bool string_bool(string s);
 int string_int(string s);
 i64 string_i64(string s);
@@ -7162,10 +7161,8 @@ string string_trim_right(string s, string cutset);
 string string_trim_prefix(string s, string str);
 string string_trim_suffix(string s, string str);
 int compare_strings(string* a, string* b);
-VV_LOCAL_SYMBOL int compare_strings_reverse(string* a, string* b);
 VV_LOCAL_SYMBOL int compare_strings_by_len(string* a, string* b);
 VV_LOCAL_SYMBOL int compare_lower_strings(string* a, string* b);
-void Array_string_sort(Array_string* s);
 void Array_string_sort_ignore_case(Array_string* s);
 void Array_string_sort_by_len(Array_string* s);
 string string_str(string s);
@@ -10820,6 +10817,16 @@ static bool Array_v__token__Kind_contains(Array_v__token__Kind a, v__token__Kind
 		}
 	}
 	return false;
+}
+
+static int Array_string_index(Array_string a, string v) {
+	string* pelem = a.data;
+	for (int i = 0; i < a.len; ++i, ++pelem) {
+		if (fast_string_eq(*pelem, v)) {
+			return i;
+		}
+	}
+	return -1;
 }
 
 static inline x__json2__Any f64_to_sumtype_x__json2__Any(f64* x) {
@@ -16256,40 +16263,6 @@ int copy(Array_byte dst, Array_byte src) {
 	return min;
 }
 
-VV_LOCAL_SYMBOL int compare_ints(int* a, int* b) {
-	if (*a < *b) {
-		return -1;
-	}
-	if (*a > *b) {
-		return 1;
-	}
-	return 0;
-}
-
-VV_LOCAL_SYMBOL int compare_ints_reverse(int* a, int* b) {
-	if (*a > *b) {
-		return -1;
-	}
-	if (*a < *b) {
-		return 1;
-	}
-	return 0;
-}
-
-void Array_int_sort(Array_int* a) {
-	array_sort_with_compare(a, compare_ints);
-}
-
-// Attr: [direct_array_access]
-int Array_string_index(Array_string a, string v) {
-	for (int i = 0; i < a.len; ++i) {
-		if (string__eq(((string*)a.data)[i], v)) {
-			return i;
-		}
-	}
-	return -1;
-}
-
 int Array_int_reduce(Array_int a, int (*iter)(int , int ), int accum_start) {
 	int accum_ = accum_start;
 	for (int _t1 = 0; _t1 < a.len; ++_t1) {
@@ -16307,22 +16280,6 @@ void array_grow_cap(array* a, int amount) {
 void array_grow_len(array* a, int amount) {
 	array_ensure_cap(a, a->len + amount);
 	a->len += amount;
-}
-
-bool Array_string_eq(Array_string a1, Array_string a2) {
-	if (a1.len != a2.len) {
-		return false;
-	}
-	int size_of_string = ((int)(/*SizeOf*/ sizeof(string)));
-	for (int i = 0; i < a1.len; ++i) {
-		int offset = i * size_of_string;
-		string* s1 = ((string*)(((byte*)(a1.data)) + offset));
-		string* s2 = ((string*)(((byte*)(a2.data)) + offset));
-		if (!string__eq(*s1, *s2)) {
-			return false;
-		}
-	}
-	return true;
 }
 
 // Attr: [unsafe]
@@ -18931,20 +18888,6 @@ Array_int idxs;
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
 
-VV_LOCAL_SYMBOL int compare_rep_index(RepIndex* a, RepIndex* b) {
-	if (a->idx < b->idx) {
-		return -1;
-	}
-	if (a->idx > b->idx) {
-		return 1;
-	}
-	return 0;
-}
-
-VV_LOCAL_SYMBOL void Array_RepIndex_sort2(Array_RepIndex* a) {
-	array_sort_with_compare(a, compare_rep_index);
-}
-
 // Attr: [direct_array_access]
 string string_replace_each(string s, Array_string vals) {
 	if (s.len == 0 || vals.len == 0) {
@@ -18979,7 +18922,7 @@ string string_replace_each(string s, Array_string vals) {
 	if (idxs.len == 0) {
 		return string_clone(s);
 	}
-	Array_RepIndex_sort2(&idxs);
+	qsort(idxs.data, idxs.len, idxs.element_size, (int (*)(const void *, const void *))&compare_RepIndex_by_idx);
 	byte* b = malloc_noscan(new_len + 1);
 	int idx_pos = 0;
 	RepIndex cur_idx = ((RepIndex*)idxs.data)[idx_pos];
@@ -19757,16 +19700,6 @@ int compare_strings(string* a, string* b) {
 	return 0;
 }
 
-VV_LOCAL_SYMBOL int compare_strings_reverse(string* a, string* b) {
-	if (string__lt(*a, *b)) {
-		return 1;
-	}
-	if (string__lt(*b, *a)) {
-		return -1;
-	}
-	return 0;
-}
-
 VV_LOCAL_SYMBOL int compare_strings_by_len(string* a, string* b) {
 	if (a->len < b->len) {
 		return -1;
@@ -19781,10 +19714,6 @@ VV_LOCAL_SYMBOL int compare_lower_strings(string* a, string* b) {
 	string aa = string_to_lower(/*rec*/*a);
 	string bb = string_to_lower(/*rec*/*b);
 	return compare_strings(&aa, &bb);
-}
-
-void Array_string_sort(Array_string* s) {
-	array_sort_with_compare(s, compare_strings);
 }
 
 void Array_string_sort_ignore_case(Array_string* s) {
@@ -31518,7 +31447,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("a64b191")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("1a555ab")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -50517,6 +50446,10 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_sort(v__gen__c__Gen* g, v__ast__Ca
 		println(v__gen__c__Gen_typ(g, node.receiver_type));
 		v__gen__c__verror(_SLIT(".sort() is an array method"));
 		VUNREACHABLE();
+	}
+	if (g->pref->is_bare) {
+		v__gen__c__Gen_writeln(g, _SLIT("bare_panic(_SLIT(\"sort does not work with -freestanding\"))"));
+		return;
 	}
 	v__ast__Array info = /* as */ *(v__ast__Array*)__as_cast((rec_sym->info)._v__ast__Array,(rec_sym->info)._typ, 422) /*expected idx: 422, name: v.ast.Array */ ;
 	string elem_stype = v__gen__c__Gen_typ(g, info.elem_type);
