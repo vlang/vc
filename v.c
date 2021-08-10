@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0ed7b00"
+#define V_COMMIT_HASH "2ae77c1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8d6903a"
+	#define V_COMMIT_HASH "0ed7b00"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0ed7b00"
+	#define V_CURRENT_COMMIT_HASH "2ae77c1"
 #endif
 
 // V comptime_defines:
@@ -8484,6 +8484,7 @@ bool v__ast__Interface_defines_method(v__ast__Interface i, string name);
 rune _const_v__scanner__num_sep = '_'; // precomputed
 #define _const_v__scanner__b_lf 10
 #define _const_v__scanner__b_cr 13
+#define _const_v__scanner__backslash '\\'
 v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
 v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
 VV_LOCAL_SYMBOL void v__scanner__Scanner_init_scanner(v__scanner__Scanner* s);
@@ -32301,7 +32302,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8d6903a")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0ed7b00")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -41847,7 +41848,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 	}
 	s->is_inside_string = false;
 	Array_int u_escapes_pos = __new_array_with_default(0, 0, sizeof(int), 0);
-	rune slash = '\\';
+	int backslash_count = (start_char == _const_v__scanner__backslash ? (1) : (0));
 	for (;;) {
 		s->pos++;
 		if (s->pos >= s->text.len) {
@@ -41856,7 +41857,10 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		}
 		byte c = s->text.str[ s->pos];
 		byte prevc = s->text.str[ s->pos - 1];
-		if (c == s->quote && (is_raw || prevc != slash || (prevc == slash && s->text.str[ s->pos - 2] == slash))) {
+		if (c == _const_v__scanner__backslash) {
+			backslash_count++;
+		}
+		if (c == s->quote && (is_raw || backslash_count % 2 == 0)) {
 			break;
 		}
 		if (c == s->inter_quote && (s->is_inter_start || s->is_enclosed_inter)) {
@@ -41868,19 +41872,19 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		if (c == _const_v__scanner__b_lf) {
 			v__scanner__Scanner_inc_line_number(s);
 		}
-		if (c == '0' && s->pos > 2 && prevc == slash) {
-			if ((s->pos < s->text.len - 1 && byte_is_digit(s->text.str[ s->pos + 1])) || v__scanner__Scanner_count_symbol_before(s, s->pos - 1, slash) % 2 == 0) {
+		if (c == '0' && s->pos > 2 && prevc == _const_v__scanner__backslash) {
+			if ((s->pos < s->text.len - 1 && byte_is_digit(s->text.str[ s->pos + 1])) || v__scanner__Scanner_count_symbol_before(s, s->pos - 1, _const_v__scanner__backslash) % 2 == 0) {
 			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, _SLIT("cannot use `\\0` (NULL character) in the string literal"));
 			}
 		}
 		if (c == '0' && s->pos > 5 && v__scanner__Scanner_expect(s, _SLIT("\\x0"), s->pos - 3)) {
-			if (v__scanner__Scanner_count_symbol_before(s, s->pos - 3, slash) % 2 == 0) {
+			if (v__scanner__Scanner_count_symbol_before(s, s->pos - 3, _const_v__scanner__backslash) % 2 == 0) {
 			} else if (!is_cstr && !is_raw) {
 				v__scanner__Scanner_error(s, _SLIT("cannot use `\\x00` (NULL character) in the string literal"));
 			}
 		}
-		if (prevc == slash && !is_raw && !is_cstr && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (backslash_count % 2 == 1 && !is_raw && !is_cstr) {
 			if (c == 'x' && (s->text.str[ s->pos + 1] == s->quote || !byte_is_hex_digit(s->text.str[ s->pos + 1]))) {
 				v__scanner__Scanner_error(s, _SLIT("`\\x` used with no following hex digits"));
 			}
@@ -41891,17 +41895,20 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 				array_push((array*)&u_escapes_pos, _MOV((int[]){ s->pos - 1 }));
 			}
 		}
-		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (prevc == '$' && c == '{' && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, _const_v__scanner__backslash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->is_enclosed_inter = true;
 			s->pos -= 2;
 			break;
 		}
-		if (prevc == '$' && v__util__is_name_char(c) && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, slash) % 2 == 0) {
+		if (prevc == '$' && v__util__is_name_char(c) && !is_raw && v__scanner__Scanner_count_symbol_before(s, s->pos - 2, _const_v__scanner__backslash) % 2 == 0) {
 			s->is_inside_string = true;
 			s->is_inter_start = true;
 			s->pos -= 2;
 			break;
+		}
+		if (c != _const_v__scanner__backslash) {
+			backslash_count = 0;
 		}
 	}
 	string lit = _SLIT("");
