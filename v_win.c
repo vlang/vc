@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1588fe7"
+#define V_COMMIT_HASH "e7b8cf1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "506c30a"
+	#define V_COMMIT_HASH "1588fe7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1588fe7"
+	#define V_CURRENT_COMMIT_HASH "e7b8cf1"
 #endif
 
 // V comptime_defines:
@@ -1759,7 +1759,9 @@ typedef enum {
 typedef enum {
 	v__gen__native__JumpOp__je = 0x840f, // 0x840f
 	v__gen__native__JumpOp__jne = 0x850f, // 0x850f
+	v__gen__native__JumpOp__jg = 0x8f0f, // 0x8f0f
 	v__gen__native__JumpOp__jge = 0x8d0f, // 0x8d0f
+	v__gen__native__JumpOp__lt = 0x8c0f, // 0x8c0f
 	v__gen__native__JumpOp__jle = 0x8e0f, // 0x8e0f
 } v__gen__native__JumpOp;
 
@@ -6222,12 +6224,8 @@ static string Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a); // auto
 static string indent_Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a, int indent_count); // auto
 static string v__ast__AssignStmt_str(v__ast__AssignStmt it); // auto
 static string indent_v__ast__AssignStmt_str(v__ast__AssignStmt it, int indent_count); // auto
-static string v__ast__IfExpr_str(v__ast__IfExpr it); // auto
-static string indent_v__ast__IfExpr_str(v__ast__IfExpr it, int indent_count); // auto
-static string v__ast__IfBranch_str(v__ast__IfBranch it); // auto
-static string indent_v__ast__IfBranch_str(v__ast__IfBranch it, int indent_count); // auto
-static string Array_v__ast__IfBranch_str(Array_v__ast__IfBranch a); // auto
-static string indent_Array_v__ast__IfBranch_str(Array_v__ast__IfBranch a, int indent_count); // auto
+static string v__ast__InfixExpr_str(v__ast__InfixExpr it); // auto
+static string indent_v__ast__InfixExpr_str(v__ast__InfixExpr it, int indent_count); // auto
 static string v__ast__Return_str(v__ast__Return it); // auto
 static string indent_v__ast__Return_str(v__ast__Return it, int indent_count); // auto
 
@@ -9279,6 +9277,11 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_rbp_rsp(v__gen__native__Gen* g);
 void v__gen__native__Gen_call_fn(v__gen__native__Gen* g, v__ast__CallExpr node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__ast__AssignStmt node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_infix_expr(v__gen__native__Gen* g, v__ast__InfixExpr node);
+VV_LOCAL_SYMBOL void v__gen__native__Gen_trap(v__gen__native__Gen* g);
+VV_LOCAL_SYMBOL void v__gen__native__Gen_gen_assert(v__gen__native__Gen* g, v__ast__AssertStmt assert_node);
+VV_LOCAL_SYMBOL int v__gen__native__Gen_cjmp_notop(v__gen__native__Gen* g, v__token__Kind op);
+VV_LOCAL_SYMBOL int v__gen__native__Gen_cjmp_op(v__gen__native__Gen* g, v__token__Kind op);
+VV_LOCAL_SYMBOL int v__gen__native__Gen_condition(v__gen__native__Gen* g, v__ast__InfixExpr infix_expr, bool neg);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast__IfExpr node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_for_stmt(v__gen__native__Gen* g, v__ast__ForStmt node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_fn_decl(v__gen__native__Gen* g, v__ast__FnDecl node);
@@ -9642,7 +9645,7 @@ v__ast__Expr _v_dump_expr_v__ast__Expr(string fpath, int line, string sexpr, v__
 	eprintln(v__ast__Expr_str(x));
 	return x;
 }
-v__ast__IfExpr _v_dump_expr_v__ast__IfExpr(string fpath, int line, string sexpr, v__ast__IfExpr x) {
+v__ast__InfixExpr _v_dump_expr_v__ast__InfixExpr(string fpath, int line, string sexpr, v__ast__InfixExpr x) {
 	eprint(_SLIT("["));
 	eprint(fpath);
 	eprint(_SLIT(":"));
@@ -9650,7 +9653,7 @@ v__ast__IfExpr _v_dump_expr_v__ast__IfExpr(string fpath, int line, string sexpr,
 	eprint(_SLIT("] "));
 	eprint(sexpr);
 	eprint(_SLIT(": "));
-	eprintln(v__ast__IfExpr_str(x));
+	eprintln(v__ast__InfixExpr_str(x));
 	return x;
 }
 string _v_dump_expr_string(string fpath, int line, string sexpr, string x) {
@@ -10712,7 +10715,9 @@ static string v__gen__native__JumpOp_str(v__gen__native__JumpOp it) { /* gen_str
 	switch(it) {
 		case v__gen__native__JumpOp__je: return _SLIT("je");
 		case v__gen__native__JumpOp__jne: return _SLIT("jne");
+		case v__gen__native__JumpOp__jg: return _SLIT("jg");
 		case v__gen__native__JumpOp__jge: return _SLIT("jge");
+		case v__gen__native__JumpOp__lt: return _SLIT("lt");
 		case v__gen__native__JumpOp__jle: return _SLIT("jle");
 		default: return _SLIT("unknown enum value");
 	}
@@ -10781,25 +10786,7 @@ static string indent_Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a, int inde
 	return res;
 }
 static string v__ast__AssignStmt_str(v__ast__AssignStmt it) { return indent_v__ast__AssignStmt_str(it, 0);}
-static string v__ast__IfExpr_str(v__ast__IfExpr it) { return indent_v__ast__IfExpr_str(it, 0);}
-static string v__ast__IfBranch_str(v__ast__IfBranch it) { return indent_v__ast__IfBranch_str(it, 0);}
-static string Array_v__ast__IfBranch_str(Array_v__ast__IfBranch a) { return indent_Array_v__ast__IfBranch_str(a, 0);}
-static string indent_Array_v__ast__IfBranch_str(Array_v__ast__IfBranch a, int indent_count) {
-	strings__Builder sb = strings__new_builder(a.len * 10);
-	strings__Builder_write_string(&sb, _SLIT("["));
-	for (int i = 0; i < a.len; ++i) {
-		v__ast__IfBranch it = *(v__ast__IfBranch*)array_get(a, i);
-		string x = indent_v__ast__IfBranch_str(it, indent_count);
-		strings__Builder_write_string(&sb, x);
-		if (i < a.len-1) {
-			strings__Builder_write_string(&sb, _SLIT(", "));
-		}
-	}
-	strings__Builder_write_string(&sb, _SLIT("]"));
-	string res = strings__Builder_str(&sb);
-	strings__Builder_free(&sb);
-	return res;
-}
+static string v__ast__InfixExpr_str(v__ast__InfixExpr it) { return indent_v__ast__InfixExpr_str(it, 0);}
 static string v__ast__Return_str(v__ast__Return it) { return indent_v__ast__Return_str(it, 0);}
 static bool Array_string_contains(Array_string a, string v) {
 	for (int i = 0; i < a.len; ++i) {
@@ -12124,36 +12111,19 @@ static string indent_v__ast__AssignStmt_str(v__ast__AssignStmt it, int indent_co
 	return res;
 }
 
-static string indent_v__ast__IfBranch_str(v__ast__IfBranch it, int indent_count) {
-	string indents = string_repeat(_SLIT("    "), indent_count);
-	string res = str_intp( 31, _MOV((StrIntpData[]){
-		{_SLIT("v.ast.IfBranch{\n"), 0, {.d_c=0}},
-		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    cond: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Expr_str(it.cond)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    pos: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Position_str(it.pos)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    body_pos: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Position_str(it.body_pos)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    comments: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__Comment_str(it.comments, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    pkg_exist: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.pkg_exist ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    stmts: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__Stmt_str(it.stmts, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    scope: &"), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=isnil(it.scope) ? _SLIT("nil") : (indent_count > 25) ? _SLIT("<probably circular>") : v__ast__Scope_str(*it.scope)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("}"), 0, {.d_c=0}},
-	}));
-	string_free(&indents);
-	return res;
-}
-
-static string indent_v__ast__IfExpr_str(v__ast__IfExpr it, int indent_count) {
+static string indent_v__ast__InfixExpr_str(v__ast__InfixExpr it, int indent_count) {
 	string indents = string_repeat(_SLIT("    "), indent_count);
 	string res = str_intp( 39, _MOV((StrIntpData[]){
-		{_SLIT("v.ast.IfExpr{\n"), 0, {.d_c=0}},
-		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    is_comptime: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_comptime ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    tok_kind: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Kind_str(it.tok_kind)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    left: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Expr_str(it.left)}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("v.ast.InfixExpr{\n"), 0, {.d_c=0}},
+		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    op: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Kind_str(it.op)}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    pos: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Position_str(it.pos)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    post_comments: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__Comment_str(it.post_comments, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    branches: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__IfBranch_str(it.branches, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_expr: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_expr ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    typ: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Type_str(it.typ)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    has_else: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.has_else ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_stmt: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_stmt ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    left: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Expr_str(it.left)}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    right: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Expr_str(it.right)}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    left_type: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Type_str(it.left_type)}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    right_type: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Type_str(it.right_type)}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    auto_locked: "), 0, {.d_c=0}}, {_SLIT("'"), 16, {.d_s=it.auto_locked}}, {_SLIT("'"), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    or_block: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_v__ast__OrExpr_str(it.or_block, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("}"), 0, {.d_c=0}},
 	}));
 	string_free(&indents);
@@ -31447,7 +31417,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("506c30a")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("1588fe7")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -67521,14 +67491,14 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				}
 				else {
 					string tn = tos3( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( ((*(v__ast__Expr*)/*ee elem_typ */array_get(node.left, i)))._typ ));
-					 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 847, _SLIT("node.left_types"), node.left_types );
+					 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 850, _SLIT("node.left_types"), node.left_types );
 					v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled assign type: "), 0xfe10, {.d_s = tn}}, {_SLIT0, 0, { .d_c = 0 }}})));
 					VUNREACHABLE();
 				};
 			}
 			else {
 				eprintln(_SLIT("ERROR 2"));
-				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 854, _SLIT("node"), node );
+				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 857, _SLIT("node"), node );
 			};
 		}
 		else if (right._typ == 281 /* v.ast.InfixExpr */) {
@@ -67572,7 +67542,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 			}
 			else {
 				eprintln(_SLIT("TODO: unhandled assign ident case"));
-				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 903, _SLIT("node"), node );
+				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 906, _SLIT("node"), node );
 			};
 		}
 		else if (right._typ == 302 /* v.ast.StructInit */) {
@@ -67601,7 +67571,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				}
 				
 				else {
-					 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 936, _SLIT("e"), e );
+					 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 937, _SLIT("e"), e );
 					v__gen__native__verror(_SLIT("unhandled array init type"));
 					VUNREACHABLE();
 				}
@@ -67687,10 +67657,72 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_infix_expr(v__gen__native__Gen* g, v__a
 	}
 }
 
-VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast__IfExpr node) {
-	v__ast__IfBranch branch = (*(v__ast__IfBranch*)/*ee elem_typ */array_get(node.branches, 0));
-	v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((branch.cond)._v__ast__InfixExpr,(branch.cond)._typ, 281) /*expected idx: 281, name: v.ast.InfixExpr */ ;
+VV_LOCAL_SYMBOL void v__gen__native__Gen_trap(v__gen__native__Gen* g) {
+	v__gen__native__Gen_write32(g, 0xcccccccc);
+	v__gen__native__Gen_println(g, _SLIT("trap"));
+}
+
+VV_LOCAL_SYMBOL void v__gen__native__Gen_gen_assert(v__gen__native__Gen* g, v__ast__AssertStmt assert_node) {
 	int cjmp_addr = 0;
+	v__ast__InfixExpr ine = (v__ast__InfixExpr){.op = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_stmt = 0,.left = {0},.right = {0},.left_type = 0,.right_type = 0,.auto_locked = (string){.str=(byteptr)"", .is_lit=1},.or_block = (v__ast__OrExpr){.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},},};
+	v__ast__Expr ane = assert_node.expr;
+	if ((ane)._typ == 292 /* v.ast.ParExpr */) {
+		ine = /* as */ *(v__ast__InfixExpr*)__as_cast(((*ane._v__ast__ParExpr).expr)._v__ast__InfixExpr,((*ane._v__ast__ParExpr).expr)._typ, 281) /*expected idx: 281, name: v.ast.InfixExpr */ ;
+	} else if ((ane)._typ == 281 /* v.ast.InfixExpr */) {
+		ine = (*ane._v__ast__InfixExpr);
+	} else {
+		v__gen__native__verror(_SLIT("Unsupported expression in assert"));
+		VUNREACHABLE();
+	}
+	cjmp_addr = v__gen__native__Gen_condition(g, ine, true);
+	v__gen__native__Gen_expr(g, assert_node.expr);
+	v__gen__native__Gen_trap(g);
+	v__gen__native__Gen_write32_at(g, cjmp_addr, ((int)(v__gen__native__Gen_pos(g) - cjmp_addr - 4)));
+}
+
+VV_LOCAL_SYMBOL int v__gen__native__Gen_cjmp_notop(v__gen__native__Gen* g, v__token__Kind op) {
+	int _t2 = 0;
+	
+	if (op == (v__token__Kind__gt)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jle);
+	}
+	else if (op == (v__token__Kind__lt)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jge);
+	}
+	else if (op == (v__token__Kind__ne)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__je);
+	}
+	else if (op == (v__token__Kind__eq)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jne);
+	}
+	else {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__je);
+	}int _t1 = _t2;
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL int v__gen__native__Gen_cjmp_op(v__gen__native__Gen* g, v__token__Kind op) {
+	int _t2 = 0;
+	
+	if (op == (v__token__Kind__gt)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jg);
+	}
+	else if (op == (v__token__Kind__lt)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__lt);
+	}
+	else if (op == (v__token__Kind__ne)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jne);
+	}
+	else if (op == (v__token__Kind__eq)) {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__je);
+	}
+	else {
+		_t2 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jne);
+	}int _t1 = _t2;
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL int v__gen__native__Gen_condition(v__gen__native__Gen* g, v__ast__InfixExpr infix_expr, bool neg) {
 	if (infix_expr.left._typ == 282 /* v.ast.IntegerLiteral */) {
 		if (infix_expr.right._typ == 282 /* v.ast.IntegerLiteral */) {
 			int a0 = string_int((*infix_expr.left._v__ast__IntegerLiteral).val);
@@ -67727,28 +67759,19 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast_
 	}
 	
 	else {
-		 _v_dump_expr_v__ast__IfExpr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 1060, _SLIT("node"), node );
+		 _v_dump_expr_v__ast__InfixExpr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 1121, _SLIT("infix_expr"), infix_expr );
 		v__gen__native__verror(_SLIT("unhandled infix.left"));
 		VUNREACHABLE();
 	}
 	;
-	int _t1 = 0;
-	
-	if (infix_expr.op == (v__token__Kind__gt)) {
-		_t1 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jle);
-	}
-	else if (infix_expr.op == (v__token__Kind__lt)) {
-		_t1 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jge);
-	}
-	else if (infix_expr.op == (v__token__Kind__ne)) {
-		_t1 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__je);
-	}
-	else if (infix_expr.op == (v__token__Kind__eq)) {
-		_t1 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__jne);
-	}
-	else {
-		_t1 = v__gen__native__Gen_cjmp(g, v__gen__native__JumpOp__je);
-	}cjmp_addr = _t1;
+	int _t1 = (neg ? (v__gen__native__Gen_cjmp_op(g, infix_expr.op)) : (v__gen__native__Gen_cjmp_notop(g, infix_expr.op)));
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast__IfExpr node) {
+	v__ast__IfBranch branch = (*(v__ast__IfBranch*)/*ee elem_typ */array_get(node.branches, 0));
+	v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((branch.cond)._v__ast__InfixExpr,(branch.cond)._typ, 281) /*expected idx: 281, name: v.ast.InfixExpr */ ;
+	int cjmp_addr = v__gen__native__Gen_condition(g, infix_expr, false);
 	v__gen__native__Gen_stmts(g, branch.stmts);
 	v__gen__native__Gen_write32_at(g, cjmp_addr, ((int)(v__gen__native__Gen_pos(g) - cjmp_addr - 4)));
 	if (node.has_else) {
@@ -68373,6 +68396,9 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 		v__gen__native__Gen_pop(g, v__gen__native__Register__rbp);
 		v__gen__native__Gen_ret(g);
 	}
+	else if (node._typ == 308 /* v.ast.AssertStmt */) {
+		v__gen__native__Gen_gen_assert(g, (*node._v__ast__AssertStmt));
+	}
 	else if (node._typ == 330 /* v.ast.StructDecl */) {
 	}
 	
@@ -68383,7 +68409,10 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Expr node) {
-	if (node._typ == 258 /* v.ast.ArrayInit */) {
+	if (node._typ == 292 /* v.ast.ParExpr */) {
+		v__gen__native__Gen_expr(g, (*node._v__ast__ParExpr).expr);
+	}
+	else if (node._typ == 258 /* v.ast.ArrayInit */) {
 		v__gen__native__verror(_SLIT("array init expr not supported yet"));
 		VUNREACHABLE();
 	}
@@ -68392,14 +68421,12 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Ex
 	else if (node._typ == 264 /* v.ast.CallExpr */) {
 		if (string__eq((*node._v__ast__CallExpr).name, _SLIT("exit"))) {
 			v__gen__native__Gen_gen_exit(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get((*node._v__ast__CallExpr).args, 0)).expr);
-			return;
-		}
-		if ((string__eq((*node._v__ast__CallExpr).name, _SLIT("println")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("print")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprintln")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprint")))) {
+		} else if ((string__eq((*node._v__ast__CallExpr).name, _SLIT("println")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("print")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprintln")) || string__eq((*node._v__ast__CallExpr).name, _SLIT("eprint")))) {
 			v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get((*node._v__ast__CallExpr).args, 0)).expr;
 			v__gen__native__Gen_gen_print_from_expr(g, expr, (*node._v__ast__CallExpr).name);
-			return;
+		} else {
+			v__gen__native__Gen_call_fn(g, (*node._v__ast__CallExpr));
 		}
-		v__gen__native__Gen_call_fn(g, (*node._v__ast__CallExpr));
 	}
 	else if (node._typ == 275 /* v.ast.FloatLiteral */) {
 	}
@@ -82211,7 +82238,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 		v__ast__Kind__f64, v__ast__Kind__int_literal, v__ast__Kind__float_literal, v__ast__Kind__size_t, v__ast__Kind__bool, v__ast__Kind__string}));
 	// Initializations for module v.gen.native :
 	_const_v__gen__native__fn_arg_registers = new_array_from_c_array(6, 6, sizeof(v__gen__native__Register), _MOV((v__gen__native__Register[6]){v__gen__native__Register__rdi, v__gen__native__Register__rsi, v__gen__native__Register__rdx, v__gen__native__Register__rcx, v__gen__native__Register__r8, v__gen__native__Register__r9}));
-	_const_v__gen__native__builtins = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("print"), _SLIT("eprint"), _SLIT("println"), _SLIT("eprintln"), _SLIT("exit")}));
+	_const_v__gen__native__builtins = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("assert"), _SLIT("print"), _SLIT("eprint"), _SLIT("println"), _SLIT("eprintln"), _SLIT("exit")}));
 	// Initializations for module v.ast.walker :
 	// Initializations for module v.checker :
 	_const_v__checker__int_min = ((int)(0x80000000));
