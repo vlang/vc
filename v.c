@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aceaaa6"
+#define V_COMMIT_HASH "2cfb8fd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2ae77c1"
+	#define V_COMMIT_HASH "aceaaa6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aceaaa6"
+	#define V_CURRENT_COMMIT_HASH "2cfb8fd"
 #endif
 
 // V comptime_defines:
@@ -1911,6 +1911,20 @@ typedef enum {
 	v__gen__native__Arm64Register__x14, // +14
 	v__gen__native__Arm64Register__x15, // +15
 	v__gen__native__Arm64Register__x16, // +16
+	v__gen__native__Arm64Register__x17, // +17
+	v__gen__native__Arm64Register__x18, // +18
+	v__gen__native__Arm64Register__x19, // +19
+	v__gen__native__Arm64Register__x20, // +20
+	v__gen__native__Arm64Register__x21, // +21
+	v__gen__native__Arm64Register__x22, // +22
+	v__gen__native__Arm64Register__x23, // +23
+	v__gen__native__Arm64Register__x24, // +24
+	v__gen__native__Arm64Register__x25, // +25
+	v__gen__native__Arm64Register__x26, // +26
+	v__gen__native__Arm64Register__x27, // +27
+	v__gen__native__Arm64Register__x28, // +28
+	v__gen__native__Arm64Register__x29, // +29
+	v__gen__native__Arm64Register__x30, // +30
 } v__gen__native__Arm64Register;
 
 typedef enum {
@@ -10604,6 +10618,20 @@ static string v__gen__native__Arm64Register_str(v__gen__native__Arm64Register it
 		case v__gen__native__Arm64Register__x14: return _SLIT("x14");
 		case v__gen__native__Arm64Register__x15: return _SLIT("x15");
 		case v__gen__native__Arm64Register__x16: return _SLIT("x16");
+		case v__gen__native__Arm64Register__x17: return _SLIT("x17");
+		case v__gen__native__Arm64Register__x18: return _SLIT("x18");
+		case v__gen__native__Arm64Register__x19: return _SLIT("x19");
+		case v__gen__native__Arm64Register__x20: return _SLIT("x20");
+		case v__gen__native__Arm64Register__x21: return _SLIT("x21");
+		case v__gen__native__Arm64Register__x22: return _SLIT("x22");
+		case v__gen__native__Arm64Register__x23: return _SLIT("x23");
+		case v__gen__native__Arm64Register__x24: return _SLIT("x24");
+		case v__gen__native__Arm64Register__x25: return _SLIT("x25");
+		case v__gen__native__Arm64Register__x26: return _SLIT("x26");
+		case v__gen__native__Arm64Register__x27: return _SLIT("x27");
+		case v__gen__native__Arm64Register__x28: return _SLIT("x28");
+		case v__gen__native__Arm64Register__x29: return _SLIT("x29");
+		case v__gen__native__Arm64Register__x30: return _SLIT("x30");
 		default: return _SLIT("unknown enum value");
 	}
 }
@@ -32302,7 +32330,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("2ae77c1")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("aceaaa6")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
