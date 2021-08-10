@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1179403"
+#define V_COMMIT_HASH "8d6903a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e7b8cf1"
+	#define V_COMMIT_HASH "1179403"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1179403"
+	#define V_CURRENT_COMMIT_HASH "8d6903a"
 #endif
 
 // V comptime_defines:
@@ -7601,8 +7601,8 @@ bool v__token__Kind_is_start_of_type(v__token__Kind k);
 bool v__token__Kind_is_prefix(v__token__Kind kind);
 bool v__token__Kind_is_infix(v__token__Kind kind);
 bool v__token__Token_can_start_type(v__token__Token* tok, Array_string builtin_types);
-int time__days_from_civil(int oy, int m, int d);
 i64 time__portable_timegm(struct tm* t);
+int time__days_from_civil(int oy, int m, int d);
 string time__Time_format(time__Time t);
 string time__Time_format_ss(time__Time t);
 string time__Time_format_ss_milli(time__Time t);
@@ -7634,6 +7634,12 @@ void time__StopWatch_restart(time__StopWatch* t);
 void time__StopWatch_stop(time__StopWatch* t);
 void time__StopWatch_pause(time__StopWatch* t);
 time__Duration time__StopWatch_elapsed(time__StopWatch t);
+time__Time time__now();
+time__Time time__utc();
+time__Time time__new_time(time__Time t);
+i64 time__ticks();
+string time__Time_str(time__Time t);
+VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond);
 string _const_time__days_string; // a string literal, inited later
 Array_int _const_time__month_days; // inited later
 string _const_time__months_string; // a string literal, inited later
@@ -7647,10 +7653,7 @@ i64 _const_time__absolute_zero_year; // inited later
 #define _const_time__days_per_4_years 1461
 Array_int _const_time__days_before; // inited later
 Array_string _const_time__long_days; // inited later
-time__Time time__now();
-time__Time time__utc();
 string time__Time_smonth(time__Time t);
-time__Time time__new_time(time__Time t);
 i64 time__Time_unix_time(time__Time t);
 i64 time__Time_unix_time_milli(time__Time t);
 time__Time time__Time_add(time__Time t, time__Duration d);
@@ -7663,12 +7666,9 @@ int time__day_of_week(int y, int m, int d);
 int time__Time_day_of_week(time__Time t);
 string time__Time_weekday_str(time__Time t);
 string time__Time_long_weekday_str(time__Time t);
-i64 time__ticks();
 bool time__is_leap_year(int year);
 Option_int time__days_in_month(int month, int year);
-string time__Time_str(time__Time t);
 string time__Time_debug(time__Time t);
-VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond);
 time__Duration _const_time__nanosecond; // inited later
 time__Duration _const_time__microsecond; // inited later
 time__Duration _const_time__millisecond; // inited later
@@ -24454,16 +24454,6 @@ bool v__token__Token_can_start_type(v__token__Token* tok, Array_string builtin_t
 	return _t3;
 }
 
-int time__days_from_civil(int oy, int m, int d) {
-	int y = (m <= 2 ? (oy - 1) : (oy));
-	int era = y / 400;
-	int yoe = y - era * 400;
-	int doy = (153 * (m + ((m > 2 ? (-3) : (9)))) + 2) / 5 + d - 1;
-	int doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
-	int _t1 = era * 146097 + doe - 719468;
-	return _t1;
-}
-
 i64 time__portable_timegm(struct tm* t) {
 	int year = t->tm_year + 1900;
 	int month = t->tm_mon;
@@ -24477,6 +24467,16 @@ i64 time__portable_timegm(struct tm* t) {
 	}
 	i64 days_since_1970 = ((i64)(time__days_from_civil(year, month + 1, t->tm_mday)));
 	i64 _t1 = 60 * (60 * (24 * days_since_1970 + t->tm_hour) + t->tm_min) + t->tm_sec;
+	return _t1;
+}
+
+int time__days_from_civil(int oy, int m, int d) {
+	int y = (m <= 2 ? (oy - 1) : (oy));
+	int era = y / 400;
+	int yoe = y - era * 400;
+	int doy = (153 * (m + ((m > 2 ? (-3) : (9)))) + 2) / 5 + d - 1;
+	int doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+	int _t1 = era * 146097 + doe - 719468;
 	return _t1;
 }
 
@@ -24879,16 +24879,6 @@ time__Time time__utc(void) {
 	return _t2;
 }
 
-string time__Time_smonth(time__Time t) {
-	if (t.month <= 0 || t.month > 12) {
-		string _t1 = _SLIT("---");
-		return _t1;
-	}
-	int i = t.month - 1;
-	string _t2 = string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
-	return _t2;
-}
-
 time__Time time__new_time(time__Time t) {
 	if (t._v_unix != 0) {
 		time__Time _t1 = t;
@@ -24904,6 +24894,48 @@ time__Time time__new_time(time__Time t) {
 	};
 	i64 utime = time__make_unix_time(tt);
 	time__Time _t2 = (time__Time){t.year,t.month,t.day,t.hour,t.minute,t.second,t.microsecond,._v_unix = utime,};
+	return _t2;
+}
+
+i64 time__ticks(void) {
+	#if defined(_WIN32)
+	{
+		i64 _t1 = GetTickCount();
+		return _t1;
+	}
+	#else
+	{
+	}
+	#endif
+	return 0;
+}
+
+string time__Time_str(time__Time t) {
+	string _t1 = time__Time_format_ss(t);
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
+	time__Time _t1 = (time__Time){
+		.year = t.tm_year + 1900,
+		.month = t.tm_mon + 1,
+		.day = t.tm_mday,
+		.hour = t.tm_hour,
+		.minute = t.tm_min,
+		.second = t.tm_sec,
+		.microsecond = microsecond,
+		._v_unix = time__make_unix_time(t),
+	};
+	return _t1;
+}
+
+string time__Time_smonth(time__Time t) {
+	if (t.month <= 0 || t.month > 12) {
+		string _t1 = _SLIT("---");
+		return _t1;
+	}
+	int i = t.month - 1;
+	string _t2 = string_substr(_const_time__months_string, i * 3, (i + 1) * 3);
 	return _t2;
 }
 
@@ -25048,19 +25080,6 @@ string time__Time_long_weekday_str(time__Time t) {
 	return _t1;
 }
 
-i64 time__ticks(void) {
-	#if defined(_WIN32)
-	{
-		i64 _t1 = GetTickCount();
-		return _t1;
-	}
-	#else
-	{
-	}
-	#endif
-	return 0;
-}
-
 bool time__is_leap_year(int year) {
 	bool _t1 = (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
 	return _t1;
@@ -25077,27 +25096,8 @@ Option_int time__days_in_month(int month, int year) {
 	return _t2;
 }
 
-string time__Time_str(time__Time t) {
-	string _t1 = time__Time_format_ss(t);
-	return _t1;
-}
-
 string time__Time_debug(time__Time t) {
 	string _t1 =  str_intp(9, _MOV((StrIntpData[]){{_SLIT("Time{ year: "), 0x8008fe27, {.d_i32 = t.year}}, {_SLIT(" month: "), 0x8004fe27, {.d_i32 = t.month}}, {_SLIT(" day: "), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT(" hour: "), 0x8004fe27, {.d_i32 = t.hour}}, {_SLIT(" minute: "), 0x8004fe27, {.d_i32 = t.minute}}, {_SLIT(" second: "), 0x8004fe27, {.d_i32 = t.second}}, {_SLIT(" microsecond: "), 0x800cfe27, {.d_i32 = t.microsecond}}, {_SLIT(" unix: "), 0x800efe29, {.d_i64 = t._v_unix}}, {_SLIT(" }"), 0, { .d_c = 0 }}}));
-	return _t1;
-}
-
-VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond) {
-	time__Time _t1 = (time__Time){
-		.year = t.tm_year + 1900,
-		.month = t.tm_mon + 1,
-		.day = t.tm_mday,
-		.hour = t.tm_hour,
-		.minute = t.tm_min,
-		.second = t.tm_sec,
-		.microsecond = microsecond,
-		._v_unix = time__make_unix_time(t),
-	};
 	return _t1;
 }
 
@@ -31417,7 +31417,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e7b8cf1")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("1179403")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
