@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "70124d2"
+#define V_COMMIT_HASH "18be9e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "da53f81"
+	#define V_COMMIT_HASH "70124d2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "70124d2"
+	#define V_CURRENT_COMMIT_HASH "18be9e5"
 #endif
 
 // V comptime_defines:
@@ -24612,7 +24612,7 @@ string time__Time_get_fmt_date_str(time__Time t, time__FormatDelimiter fmt_dlmtr
 		string _t1 = _SLIT("");
 		return _t1;
 	}
-	string month =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = time__Time_smonth(t)}}, {_SLIT0, 0, { .d_c = 0 }}}));
+	string month = time__Time_smonth(t);
 	string year =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0x8004fe27, {.d_i32 = (t.year % 100)}}, {_SLIT0, 0, { .d_c = 0 }}}));
 	string res = ((fmt_date == (time__FormatDate__ddmmyy)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0x8004fe27, {.d_i32 = t.day}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.month}}, {_SLIT("|"), 0xfe10, {.d_s = year}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__ddmmyyyy)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0x8004fe27, {.d_i32 = t.day}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.month}}, {_SLIT("|"), 0x8008fe27, {.d_i32 = t.year}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__mmddyy)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0x8004fe27, {.d_i32 = t.month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT("|"), 0xfe10, {.d_s = year}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__mmddyyyy)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0x8004fe27, {.d_i32 = t.month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT("|"), 0x8008fe27, {.d_i32 = t.year}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__mmmd)) ? ( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = month}}, {_SLIT("|"), 0xfe07, {.d_i32 = t.day}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__mmmdd)) ? ( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__mmmddyy)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT("|"), 0xfe10, {.d_s = year}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__mmmddyyyy)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT("|"), 0x8008fe27, {.d_i32 = t.year}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__yyyymmdd)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0x8008fe27, {.d_i32 = t.year}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT0, 0, { .d_c = 0 }}}))) : (fmt_date == (time__FormatDate__yymmdd)) ? ( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = year}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.month}}, {_SLIT("|"), 0x8004fe27, {.d_i32 = t.day}}, {_SLIT0, 0, { .d_c = 0 }}}))) : ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown enumeration "), 0xfe10, {.d_s = time__FormatDate_str(fmt_date)}}, {_SLIT0, 0, { .d_c = 0 }}}))));
 	string del = ((fmt_dlmtr == (time__FormatDelimiter__dot)) ? (_SLIT(".")) : (fmt_dlmtr == (time__FormatDelimiter__hyphen)) ? (_SLIT("-")) : (fmt_dlmtr == (time__FormatDelimiter__slash)) ? (_SLIT("/")) : (fmt_dlmtr == (time__FormatDelimiter__space)) ? (_SLIT(" ")) : (_SLIT("")));
@@ -24632,7 +24632,9 @@ string time__Time_get_fmt_str(time__Time t, time__FormatDelimiter fmt_dlmtr, tim
 		}
 	} else {
 		if (fmt_time != time__FormatTime__no_time) {
-			string _t3 = string__plus(string__plus(time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date), _SLIT(" ")), time__Time_get_fmt_time_str(t, fmt_time));
+			string dstr = time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date);
+			string tstr = time__Time_get_fmt_time_str(t, fmt_time);
+			string _t3 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dstr}}, {_SLIT(" "), 0xfe10, {.d_s = tstr}}, {_SLIT0, 0, { .d_c = 0 }}}));
 			return _t3;
 		} else {
 			string _t4 = time__Time_get_fmt_date_str(t, fmt_dlmtr, fmt_date);
@@ -28242,12 +28244,12 @@ VV_LOCAL_SYMBOL x__json2__Token x__json2__Scanner_scan(x__json2__Scanner* s) {
 }
 
 string term__format(string msg, string open, string close) {
-	string _t1 = string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(_SLIT("\x1b["), open), _SLIT("m")), msg), _SLIT("\x1b[")), close), _SLIT("m"));
+	string _t1 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\x1b["), 0xfe10, {.d_s = open}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("\x1b["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
 	return _t1;
 }
 
 string term__format_rgb(int r, int g, int b, string msg, string open, string close) {
-	string _t1 = string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(string__plus(_SLIT("\x1b["), open), _SLIT(";2;")), int_str(r)), _SLIT(";")), int_str(g)), _SLIT(";")), int_str(b)), _SLIT("m")), msg), _SLIT("\x1b[")), close), _SLIT("m"));
+	string _t1 =  str_intp(7, _MOV((StrIntpData[]){{_SLIT("\x1b["), 0xfe10, {.d_s = open}}, {_SLIT(";2;"), 0xfe07, {.d_i32 = r}}, {_SLIT(";"), 0xfe07, {.d_i32 = g}}, {_SLIT(";"), 0xfe07, {.d_i32 = b}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("\x1b["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
 	return _t1;
 }
 
@@ -31455,7 +31457,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("da53f81")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("70124d2")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
