@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "da53f81"
+#define V_COMMIT_HASH "70124d2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2cfb8fd"
+	#define V_COMMIT_HASH "da53f81"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "da53f81"
+	#define V_CURRENT_COMMIT_HASH "70124d2"
 #endif
 
 // V comptime_defines:
@@ -7508,6 +7508,7 @@ time__Time time__new_time(time__Time t);
 i64 time__ticks();
 string time__Time_str(time__Time t);
 VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond);
+time__Duration _const_time__infinite; // inited later
 string _const_time__days_string; // a string literal, inited later
 Array_int _const_time__month_days; // inited later
 string _const_time__months_string; // a string literal, inited later
@@ -7543,7 +7544,6 @@ time__Duration _const_time__millisecond; // inited later
 time__Duration _const_time__second; // inited later
 time__Duration _const_time__minute; // inited later
 time__Duration _const_time__hour; // inited later
-time__Duration _const_time__infinite; // inited later
 i64 time__Duration_nanoseconds(time__Duration d);
 i64 time__Duration_microseconds(time__Duration d);
 i64 time__Duration_milliseconds(time__Duration d);
@@ -32339,7 +32339,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("2cfb8fd")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("da53f81")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -66262,6 +66262,7 @@ void v__gen__js__JsGen_init(v__gen__js__JsGen* g) {
 		strings__Builder_writeln(&g->definitions, _SLIT("const $os = require(\"os\");"));
 		strings__Builder_writeln(&g->definitions, _SLIT("const $process = process;"));
 	}
+	strings__Builder_writeln(&g->definitions, _SLIT("function alias(value) { return value; } "));
 }
 
 string v__gen__js__JsGen_hashes(v__gen__js__JsGen* g) {
@@ -66356,6 +66357,7 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_get_alias(v__gen__js__JsGen* g, string 
 
 VV_LOCAL_SYMBOL string v__gen__js__JsGen_js_name(v__gen__js__JsGen* g, string name_) {
 	bool is_js = false;
+	Array_string is_overload = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("+"), _SLIT("-"), _SLIT("*"), _SLIT("/"), _SLIT("=="), _SLIT("<"), _SLIT(">")}));
 	string name = name_;
 	if (string_starts_with(name, _SLIT("JS."))) {
 		name = string_substr(name, 3, name.len);
@@ -66363,7 +66365,9 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_js_name(v__gen__js__JsGen* g, string na
 	}
 	string ns = v__gen__js__get_ns(name);
 	string _t1; /* if prepend */
-	if (g->ns == 0) {
+	if ((Array_string_contains(is_overload, name))) {
+		_t1 = ((string__eq(name, _SLIT("+"))) ? (_SLIT("$add")) : (string__eq(name, _SLIT("-"))) ? (_SLIT("$sub")) : (string__eq(name, _SLIT("/"))) ? (_SLIT("$div")) : (string__eq(name, _SLIT("*"))) ? (_SLIT("$mul")) : (string__eq(name, _SLIT("=="))) ? (_SLIT("eq")) : (string__eq(name, _SLIT(">"))) ? (_SLIT("$gt")) : (string__eq(name, _SLIT("<"))) ? (_SLIT("$lt")) : (_SLIT("")));
+	} else if (g->ns == 0) {
 		_t1 = name;
 	} else if (string__eq(ns, g->ns->name)) {
 		_t1 = (*(string*)array_last(string_split(name, _SLIT("."))));
@@ -83637,6 +83641,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__token__keywords = v__token__build_keys();
 	_const_v__token__precedences = v__token__build_precedences();
 	// Initializations for module time :
+	_const_time__infinite = ((time__Duration)(INT64_MAX));
 	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
 		31, 28, 31, 30, 31, 30, 31, 31, 30,
 		31, 30, 31}));
@@ -83651,7 +83656,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_time__second = ((1000 * _const_time__millisecond));
 	_const_time__minute = ((60 * _const_time__second));
 	_const_time__hour = ((60 * _const_time__minute));
-	_const_time__infinite = ((time__Duration)(INT64_MAX));
 	// Initializations for module v.dotgraph :
 	// Initializations for module hash :
 	hash__init();
