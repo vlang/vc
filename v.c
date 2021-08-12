@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "47884df"
+#define V_COMMIT_HASH "8fbd8f7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c9e9556"
+	#define V_COMMIT_HASH "47884df"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "47884df"
+	#define V_CURRENT_COMMIT_HASH "8fbd8f7"
 #endif
 
 // V comptime_defines:
@@ -7282,7 +7282,6 @@ Array_string os__vmodules_paths();
 string os__resource_abs_path(string path);
 os__Result os__execute_or_panic(string cmd);
 os__Result os__execute_or_exit(string cmd);
-int os__is_atty(int fd);
 Option_Array_string os__glob(Array_string patterns);
 int compare_string(string* a, string* b) {
 	if (string__lt(*a, *b)) return -1;
@@ -7329,6 +7328,7 @@ Option_void os__chown(string path, int owner, int group);
 Option_os__File os__open_append(string path);
 Option_void os__execvp(string cmdpath, Array_string args);
 Option_void os__execve(string cmdpath, Array_string args, Array_string envs);
+int os__is_atty(int fd);
 #define _const_os__prot_read 1
 #define _const_os__prot_write 2
 #define _const_os__map_private 2
@@ -22803,22 +22803,6 @@ os__Result os__execute_or_exit(string cmd) {
 	return res;
 }
 
-int os__is_atty(int fd) {
-	#if defined(_WIN32)
-	{
-		u32 mode = ((u32)(0U));
-		voidptr osfh = ((voidptr)(_get_osfhandle(fd)));
-		GetConsoleMode(osfh, ((voidptr)(&mode)));
-		return ((int)(mode));
-	}
-	#else
-	{
-		return isatty(fd);
-	}
-	#endif
-	return 0;
-}
-
 Option_Array_string os__glob(Array_string patterns) {
 	Array_string matches = __new_array_with_default(0, 0, sizeof(string), 0);
 	for (int _t1 = 0; _t1 < patterns.len; ++_t1) {
@@ -23862,6 +23846,22 @@ Option_void os__execve(string cmdpath, Array_string args, Array_string envs) {
 		return (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	return (Option_void){0};
+}
+
+int os__is_atty(int fd) {
+	#if defined(_WIN32)
+	{
+		u32 mode = ((u32)(0U));
+		voidptr osfh = ((voidptr)(_get_osfhandle(fd)));
+		GetConsoleMode(osfh, ((voidptr)(&mode)));
+		return ((int)(mode));
+	}
+	#else
+	{
+		return isatty(fd);
+	}
+	#endif
+	return 0;
 }
 
 #if !defined(__sun) && !defined(__HAIKU__)
@@ -32412,7 +32412,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c9e9556")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("47884df")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
