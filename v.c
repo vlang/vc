@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "34d39cc"
+#define V_COMMIT_HASH "b72d1e5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0bd68bf"
+	#define V_COMMIT_HASH "34d39cc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "34d39cc"
+	#define V_CURRENT_COMMIT_HASH "b72d1e5"
 #endif
 
 // V comptime_defines:
@@ -32433,7 +32433,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0bd68bf")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("34d39cc")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65638,7 +65638,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 	for (int _t1 = 0; _t1 < _const_v__gen__js__v_types.len; ++_t1) {
 		string typ_name = ((string*)_const_v__gen__js__v_types.data)[_t1];
 
-		if (string__eq(typ_name, _SLIT("i8")) || string__eq(typ_name, _SLIT("i16")) || string__eq(typ_name, _SLIT("int")) || string__eq(typ_name, _SLIT("i64")) || string__eq(typ_name, _SLIT("u16")) || string__eq(typ_name, _SLIT("u32")) || string__eq(typ_name, _SLIT("u64")) || string__eq(typ_name, _SLIT("int_literal")) || string__eq(typ_name, _SLIT("size_t"))) {
+		if (string__eq(typ_name, _SLIT("i8")) || string__eq(typ_name, _SLIT("i16")) || string__eq(typ_name, _SLIT("int")) || string__eq(typ_name, _SLIT("u16")) || string__eq(typ_name, _SLIT("u32")) || string__eq(typ_name, _SLIT("int_literal")) || string__eq(typ_name, _SLIT("size_t"))) {
 			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){
 				.typ_name = typ_name,
 				.val_name = _SLIT("val"),
@@ -65648,6 +65648,34 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 				.to_string = _SLIT("this.valueOf().toString()"),
 				.eq = _SLIT("this.valueOf() === other.valueOf()"),
 				.to_jsval = _SLIT("+this"),
+				.extras = (string){.str=(byteptr)"", .is_lit=1},
+				.has_strfn = 0,
+			});
+		}
+		else if (string__eq(typ_name, _SLIT("u64"))) {
+			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){
+				.typ_name = typ_name,
+				.val_name = _SLIT("val"),
+				.default_value = _SLIT("BigInt(0)"),
+				.constructor = _SLIT("this.val = BigInt.asUintN(64,BigInt(val))"),
+				.value_of = _SLIT("this.val"),
+				.to_string = _SLIT("this.val.toString()"),
+				.eq = _SLIT("this.valueOf() === other.valueOf()"),
+				.to_jsval = _SLIT("this.val"),
+				.extras = (string){.str=(byteptr)"", .is_lit=1},
+				.has_strfn = 0,
+			});
+		}
+		else if (string__eq(typ_name, _SLIT("i64"))) {
+			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){
+				.typ_name = typ_name,
+				.val_name = _SLIT("val"),
+				.default_value = _SLIT("BigInt(0)"),
+				.constructor = _SLIT("this.val = BigInt.asIntN(64,BigInt(val))"),
+				.value_of = _SLIT("this.val"),
+				.to_string = _SLIT("this.val.toString()"),
+				.eq = _SLIT("this.valueOf() === other.valueOf()"),
+				.to_jsval = _SLIT("this.val"),
 				.extras = (string){.str=(byteptr)"", .is_lit=1},
 				.has_strfn = 0,
 			});
@@ -67740,6 +67768,28 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 	if (is_not) {
 		v__gen__js__JsGen_write(g, _SLIT("!("));
 	}
+	bool is_arithmetic = (it.op == v__token__Kind__plus || it.op == v__token__Kind__minus || it.op == v__token__Kind__mul || it.op == v__token__Kind__div || it.op == v__token__Kind__mod);
+	if (is_arithmetic && ((l_sym->kind == v__ast__Kind__i64 || l_sym->kind == v__ast__Kind__u64) || (r_sym->kind == v__ast__Kind__i64 || r_sym->kind == v__ast__Kind__u64))) {
+		v__ast__Type greater_typ = v__gen__js__JsGen_greater_typ(g, it.left_type, it.right_type);
+		if (string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("new "));
+		}
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, greater_typ)}}, {_SLIT("("), 0, { .d_c = 0 }}})));
+		array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ greater_typ }));
+		v__gen__js__JsGen_write(g, _SLIT("BigInt(("));
+		v__gen__js__JsGen_expr(g, it.left);
+		v__gen__js__JsGen_write(g, _SLIT(").$toJS())"));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(it.op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_write(g, _SLIT("BigInt(("));
+		v__gen__js__JsGen_expr(g, it.right);
+		v__gen__js__JsGen_write(g, _SLIT(").$toJS())"));
+		array_delete_last(&g->cast_stack);
+		v__gen__js__JsGen_write(g, _SLIT(")"));
+		if (is_not) {
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+		}
+		return;
+	}
 	if (it.op == v__token__Kind__eq || it.op == v__token__Kind__ne) {
 		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, _SLIT("=="));
 		if (has_operator_overloading) {
@@ -67807,33 +67857,32 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		}
 	} else {
-		bool is_arithmetic = (it.op == v__token__Kind__plus || it.op == v__token__Kind__minus || it.op == v__token__Kind__mul || it.op == v__token__Kind__div || it.op == v__token__Kind__mod);
 		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, v__token__Kind_str(it.op));
 		if (has_operator_overloading) {
 			v__gen__js__JsGen_expr(g, it.left);
-			string _t2 = v__token__Kind_str(it.op);
-			string _t3 = (string){.str=(byteptr)"", .is_lit=1};
+			string _t3 = v__token__Kind_str(it.op);
+			string _t4 = (string){.str=(byteptr)"", .is_lit=1};
 			
-			if (string__eq(_t2, _SLIT("+"))) {
-				_t3 = _SLIT("$add");
+			if (string__eq(_t3, _SLIT("+"))) {
+				_t4 = _SLIT("$add");
 			}
-			else if (string__eq(_t2, _SLIT("-"))) {
-				_t3 = _SLIT("$sub");
+			else if (string__eq(_t3, _SLIT("-"))) {
+				_t4 = _SLIT("$sub");
 			}
-			else if (string__eq(_t2, _SLIT("/"))) {
-				_t3 = _SLIT("$div");
+			else if (string__eq(_t3, _SLIT("/"))) {
+				_t4 = _SLIT("$div");
 			}
-			else if (string__eq(_t2, _SLIT("*"))) {
-				_t3 = _SLIT("$mul");
+			else if (string__eq(_t3, _SLIT("*"))) {
+				_t4 = _SLIT("$mul");
 			}
-			else if (string__eq(_t2, _SLIT("%"))) {
-				_t3 = _SLIT("$mod");
+			else if (string__eq(_t3, _SLIT("%"))) {
+				_t4 = _SLIT("$mod");
 			}
 			else {
 				_v_panic(_SLIT("unreachable"));
 				VUNREACHABLE();
-				_t3 = _SLIT("");
-			}string name = _t3;
+				_t4 = _SLIT("");
+			}string name = _t4;
 			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT(" ("), 0, { .d_c = 0 }}})));
 			v__gen__js__JsGen_expr(g, it.right);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
@@ -67888,39 +67937,43 @@ VV_LOCAL_SYMBOL v__ast__Type v__gen__js__JsGen_greater_typ(v__gen__js__JsGen* g,
 	}
 	bool should_int = ((Array_int_contains(_const_v__ast__integer_type_idxs, l)) && (Array_int_contains(_const_v__ast__integer_type_idxs, r)));
 	if (should_int) {
-		if ((Array_int_contains(lr, _const_v__ast__i64_type_idx))) {
-			v__ast__Type _t5 = ((v__ast__Type)(_const_v__ast__i64_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__u64_type_idx))) {
+			v__ast__Type _t5 = ((v__ast__Type)(_const_v__ast__u64_type_idx));
 			return _t5;
 		}
-		if ((Array_int_contains(lr, _const_v__ast__u32_type_idx))) {
-			v__ast__Type _t6 = ((v__ast__Type)(_const_v__ast__u32_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__i64_type_idx))) {
+			v__ast__Type _t6 = ((v__ast__Type)(_const_v__ast__i64_type_idx));
 			return _t6;
 		}
-		if ((Array_int_contains(lr, _const_v__ast__int_type_idx))) {
-			v__ast__Type _t7 = ((v__ast__Type)(_const_v__ast__int_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__u32_type_idx))) {
+			v__ast__Type _t7 = ((v__ast__Type)(_const_v__ast__u32_type_idx));
 			return _t7;
 		}
-		if ((Array_int_contains(lr, _const_v__ast__u16_type_idx))) {
-			v__ast__Type _t8 = ((v__ast__Type)(_const_v__ast__u16_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__int_type_idx))) {
+			v__ast__Type _t8 = ((v__ast__Type)(_const_v__ast__int_type_idx));
 			return _t8;
 		}
-		if ((Array_int_contains(lr, _const_v__ast__i16_type_idx))) {
-			v__ast__Type _t9 = ((v__ast__Type)(_const_v__ast__i16_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__u16_type_idx))) {
+			v__ast__Type _t9 = ((v__ast__Type)(_const_v__ast__u16_type_idx));
 			return _t9;
 		}
-		if ((Array_int_contains(lr, _const_v__ast__byte_type_idx))) {
-			v__ast__Type _t10 = ((v__ast__Type)(_const_v__ast__byte_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__i16_type_idx))) {
+			v__ast__Type _t10 = ((v__ast__Type)(_const_v__ast__i16_type_idx));
 			return _t10;
 		}
-		if ((Array_int_contains(lr, _const_v__ast__i8_type_idx))) {
-			v__ast__Type _t11 = ((v__ast__Type)(_const_v__ast__i8_type_idx));
+		if ((Array_int_contains(lr, _const_v__ast__byte_type_idx))) {
+			v__ast__Type _t11 = ((v__ast__Type)(_const_v__ast__byte_type_idx));
 			return _t11;
 		}
-		v__ast__Type _t12 = ((v__ast__Type)(_const_v__ast__int_literal_type_idx));
-		return _t12;
+		if ((Array_int_contains(lr, _const_v__ast__i8_type_idx))) {
+			v__ast__Type _t12 = ((v__ast__Type)(_const_v__ast__i8_type_idx));
+			return _t12;
+		}
+		v__ast__Type _t13 = ((v__ast__Type)(_const_v__ast__int_literal_type_idx));
+		return _t13;
 	}
-	v__ast__Type _t13 = ((l));
-	return _t13;
+	v__ast__Type _t14 = ((l));
+	return _t14;
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__MapInit it) {
@@ -68064,8 +68117,20 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_typeof_expr(v__gen__js__JsGen* g, v__
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_type_cast_expr(v__gen__js__JsGen* g, v__ast__CastExpr it) {
 	bool is_literal = (((it.expr)._typ == 249 /* v.ast.IntegerLiteral */ && (Array_int_contains(_const_v__ast__integer_type_idxs, it.typ))) || ((it.expr)._typ == 242 /* v.ast.FloatLiteral */ && (Array_int_contains(_const_v__ast__float_type_idxs, it.typ))));
+	v__ast__TypeSymbol* tsym = v__ast__Table_get_type_symbol(g->table, it.typ);
+	if ((it.expr)._typ == 249 /* v.ast.IntegerLiteral */ && (tsym->kind == v__ast__Kind__i64 || tsym->kind == v__ast__Kind__u64)) {
+		if (string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("new "));
+		}
+		v__gen__js__JsGen_write(g, v__ast__Kind_str(tsym->kind));
+		v__gen__js__JsGen_write(g, _SLIT("(BigInt("));
+		v__gen__js__JsGen_write(g, (*it.expr._v__ast__IntegerLiteral).val);
+		v__gen__js__JsGen_write(g, _SLIT("n))"));
+		return;
+	}
 	if (g->cast_stack.len > 0 && is_literal) {
 		if (v__ast__Type_alias_eq(it.typ, (*(v__ast__Type*)/*ee elem_typ */array_get(g->cast_stack, g->cast_stack.len - 1)))) {
+			v__gen__js__JsGen_expr(g, it.expr);
 			return;
 		}
 	}
