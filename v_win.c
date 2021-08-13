@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "083a901"
+#define V_COMMIT_HASH "aa14fd1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "579aa7b"
+	#define V_COMMIT_HASH "083a901"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "083a901"
+	#define V_CURRENT_COMMIT_HASH "aa14fd1"
 #endif
 
 // V comptime_defines:
@@ -31528,7 +31528,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("579aa7b")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("083a901")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65230,7 +65230,7 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_js_name(v__gen__js__JsGen* g, string na
 	string ns = v__gen__js__get_ns(name);
 	string _t1; /* if prepend */
 	if ((Array_string_contains(is_overload, name))) {
-		_t1 = ((string__eq(name, _SLIT("+"))) ? (_SLIT("$add")) : (string__eq(name, _SLIT("-"))) ? (_SLIT("$sub")) : (string__eq(name, _SLIT("/"))) ? (_SLIT("$div")) : (string__eq(name, _SLIT("*"))) ? (_SLIT("$mul")) : (string__eq(name, _SLIT("=="))) ? (_SLIT("eq")) : (string__eq(name, _SLIT(">"))) ? (_SLIT("$gt")) : (string__eq(name, _SLIT("<"))) ? (_SLIT("$lt")) : (_SLIT("")));
+		_t1 = ((string__eq(name, _SLIT("+"))) ? (_SLIT("$add")) : (string__eq(name, _SLIT("-"))) ? (_SLIT("$sub")) : (string__eq(name, _SLIT("/"))) ? (_SLIT("$div")) : (string__eq(name, _SLIT("*"))) ? (_SLIT("$mul")) : (string__eq(name, _SLIT("%"))) ? (_SLIT("$mod")) : (string__eq(name, _SLIT("=="))) ? (_SLIT("eq")) : (string__eq(name, _SLIT(">"))) ? (_SLIT("$gt")) : (string__eq(name, _SLIT("<"))) ? (_SLIT("$lt")) : (_SLIT("")));
 	} else if (g->ns == 0) {
 		_t1 = name;
 	} else if (string__eq(ns, g->ns->name)) {
@@ -66479,7 +66479,13 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_write(g, _SLIT("!("));
 	}
 	if (it.op == v__token__Kind__eq || it.op == v__token__Kind__ne) {
-		if ((Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, l_sym->kind)) && (Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, r_sym->kind))) {
+		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, _SLIT("=="));
+		if (has_operator_overloading) {
+			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_write(g, _SLIT(".eq("));
+			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+		} else if ((Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, l_sym->kind)) && (Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, r_sym->kind))) {
 			v__gen__js__JsGen_write(g, _SLIT("("));
 			v__gen__js__JsGen_expr(g, it.left);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
@@ -66523,27 +66529,73 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_expr(g, it.left);
 		v__gen__js__JsGen_write(g, _SLIT(" instanceof "));
 		v__gen__js__JsGen_write(g, v__gen__js__JsGen_typ(g, it.right_type));
+	} else if ((it.op == v__token__Kind__lt || it.op == v__token__Kind__gt || it.op == v__token__Kind__ge || it.op == v__token__Kind__le) && v__ast__Table_type_has_method(g->table, l_sym, _SLIT("<")) && l_sym->kind == r_sym->kind) {
+		if ((it.op == v__token__Kind__le || it.op == v__token__Kind__ge)) {
+			v__gen__js__JsGen_write(g, _SLIT("!"));
+		}
+		if ((it.op == v__token__Kind__lt || it.op == v__token__Kind__ge)) {
+			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_write(g, _SLIT(".$lt ("));
+			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+		} else {
+			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_write(g, _SLIT(".$lt ("));
+			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+		}
 	} else {
 		bool is_arithmetic = (it.op == v__token__Kind__plus || it.op == v__token__Kind__minus || it.op == v__token__Kind__mul || it.op == v__token__Kind__div || it.op == v__token__Kind__mod);
-		int greater_typ = 0;
-		if (is_arithmetic) {
-			greater_typ = v__gen__js__JsGen_greater_typ(g, it.left_type, it.right_type);
-			if (g->cast_stack.len > 0) {
+		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, v__token__Kind_str(it.op));
+		if (has_operator_overloading) {
+			v__gen__js__JsGen_expr(g, it.left);
+			string _t2 = v__token__Kind_str(it.op);
+			string _t3 = (string){.str=(byteptr)"", .is_lit=1};
+			
+			if (string__eq(_t2, _SLIT("+"))) {
+				_t3 = _SLIT("$add");
 			}
-		}
-		if (is_arithmetic) {
-			if (string__eq(g->ns->name, _SLIT("builtin"))) {
-				v__gen__js__JsGen_write(g, _SLIT("new "));
+			else if (string__eq(_t2, _SLIT("-"))) {
+				_t3 = _SLIT("$sub");
 			}
-			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, greater_typ)}}, {_SLIT("("), 0, { .d_c = 0 }}})));
-			array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ greater_typ }));
-		}
-		v__gen__js__JsGen_expr(g, it.left);
-		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(it.op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
-		v__gen__js__JsGen_expr(g, it.right);
-		if (is_arithmetic) {
-			array_delete_last(&g->cast_stack);
+			else if (string__eq(_t2, _SLIT("/"))) {
+				_t3 = _SLIT("$div");
+			}
+			else if (string__eq(_t2, _SLIT("*"))) {
+				_t3 = _SLIT("$mul");
+			}
+			else if (string__eq(_t2, _SLIT("%"))) {
+				_t3 = _SLIT("$mod");
+			}
+			else {
+				_v_panic(_SLIT("unreachable"));
+				VUNREACHABLE();
+				_t3 = _SLIT("");
+			}string name = _t3;
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT(" ("), 0, { .d_c = 0 }}})));
+			v__gen__js__JsGen_expr(g, it.right);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
+		} else {
+			int greater_typ = 0;
+			if (is_arithmetic) {
+				greater_typ = v__gen__js__JsGen_greater_typ(g, it.left_type, it.right_type);
+				if (g->cast_stack.len > 0) {
+				}
+			}
+			if (is_arithmetic) {
+				if (string__eq(g->ns->name, _SLIT("builtin"))) {
+					v__gen__js__JsGen_write(g, _SLIT("new "));
+				}
+				v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, greater_typ)}}, {_SLIT("("), 0, { .d_c = 0 }}})));
+				array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ greater_typ }));
+			}
+			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(it.op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
+			v__gen__js__JsGen_expr(g, it.right);
+			if (is_arithmetic) {
+				array_delete_last(&g->cast_stack);
+				v__gen__js__JsGen_write(g, _SLIT(")"));
+			}
 		}
 	}
 	if (is_not) {
