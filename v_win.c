@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1743ad0"
+#define V_COMMIT_HASH "f6d7170"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8a8a093"
+	#define V_COMMIT_HASH "1743ad0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1743ad0"
+	#define V_CURRENT_COMMIT_HASH "f6d7170"
 #endif
 
 // V comptime_defines:
@@ -31890,7 +31890,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8a8a093")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("1743ad0")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -78612,6 +78612,9 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_check_struct_signature(v__checker__Chec
 }
 
 void v__checker__Checker_note(v__checker__Checker* c, string message, v__token__Position pos) {
+	if (c->nr_notices >= c->pref->warn_error_limit && c->pref->warn_error_limit >= 0) {
+		return;
+	}
 	string details = _SLIT("");
 	if (c->error_details.len > 0) {
 		details = Array_string_join(c->error_details, _SLIT("\n"));
@@ -78645,7 +78648,7 @@ VV_LOCAL_SYMBOL void v__checker__Checker_warn_or_error(v__checker__Checker* c, s
 			VUNREACHABLE();
 		}
 		c->nr_errors++;
-		if (c->nr_errors < c->pref->warn_error_limit || c->pref->warn_error_limit < 0) {
+		if (c->errors.len < c->pref->warn_error_limit || c->pref->warn_error_limit < 0) {
 			if (!(Array_int_contains(c->error_lines, pos.line_nr))) {
 				v__errors__Error err = (v__errors__Error){.message = message,.details = details,.file_path = c->file->path,.pos = pos,.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__checker,};
 				array_push((array*)&c->file->errors, _MOV((v__errors__Error[]){ err }));
@@ -79370,10 +79373,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_269101 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_269101.arg0;
-				int nroute_attributes = mr_269101.arg1;
-				int nargs = mr_269101.arg2;
+				multi_return_bool_int_int mr_269192 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_269192.arg0;
+				int nroute_attributes = mr_269192.arg1;
+				int nargs = mr_269192.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
@@ -80452,8 +80455,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_show_total_warns_and_errors_stats(v__bu
 		return;
 	}
 	if (b->pref->is_stats) {
-		string estring = v__util__bold(int_str(b->checker->nr_errors));
-		string wstring = v__util__bold(int_str(b->checker->nr_warnings));
+		string estring = v__util__bold(int_str(b->checker->errors.len));
+		string wstring = v__util__bold(int_str(b->checker->warnings.len));
 		string nstring = v__util__bold(int_str(b->checker->nr_notices));
 		println( str_intp(4, _MOV((StrIntpData[]){{_SLIT("checker summary: "), 0xfe10, {.d_s = estring}}, {_SLIT(" V errors, "), 0xfe10, {.d_s = wstring}}, {_SLIT(" V warnings, "), 0xfe10, {.d_s = nstring}}, {_SLIT(" V notices"), 0, { .d_c = 0 }}})));
 	}
