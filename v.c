@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "40efe4f"
+#define V_COMMIT_HASH "3ffa6c1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d3cf53e"
+	#define V_COMMIT_HASH "40efe4f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "40efe4f"
+	#define V_CURRENT_COMMIT_HASH "3ffa6c1"
 #endif
 
 // V comptime_defines:
@@ -32783,7 +32783,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("d3cf53e")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines_all)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->compile_defines)}}, {_SLIT0, 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = Array_string_str(p->lookup_path)}}, {_SLIT0, 0, { .d_c = 0 }}}))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("40efe4f")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33829,7 +33829,9 @@ v__pref__Arch v__pref__get_host_arch(void) {
 
 VV_LOCAL_SYMBOL void v__pref__parse_define(v__pref__Preferences* prefs, string define) {
 	Array_string define_parts = string_split(define, _SLIT("="));
-	array_push((array*)&prefs->build_options, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-d "), 0xfe10, {.d_s = define}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+	if (!(prefs->is_debug && string__eq(define, _SLIT("debug")))) {
+		array_push((array*)&prefs->build_options, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-d "), 0xfe10, {.d_s = define}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+	}
 	if (define_parts.len == 1) {
 		array_push((array*)&prefs->compile_defines, _MOV((string[]){ string_clone(define) }));
 		array_push((array*)&prefs->compile_defines_all, _MOV((string[]){ string_clone(define) }));
