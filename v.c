@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6ee7772"
+#define V_COMMIT_HASH "659f823"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0be20f1"
+	#define V_COMMIT_HASH "6ee7772"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6ee7772"
+	#define V_CURRENT_COMMIT_HASH "659f823"
 #endif
 
 // V comptime_defines:
@@ -3242,7 +3242,7 @@ struct strings__textscanner__TextScanner {
 
 
 struct rand__PRNGConfigStruct {
-	Array_u32 seed;
+	Array_u32 seed_;
 };
 
 
@@ -7617,13 +7617,13 @@ string v__dotgraph__node_name(string name, voidptr context);
 VV_LOCAL_SYMBOL void hash__init();
 u64 hash__wyhash_c(byte* key, u64 len, u64 seed);
 u64 hash__wyhash64_c(u64 a, u64 b);
+u64 hash__sum64_string(string key, u64 seed);
+u64 hash__sum64(Array_byte key, u64 seed);
 u64 _const_hash__wyp0 = 11562461410679940143U; // precomputed
 u64 _const_hash__wyp1 = 16646288086500911323U; // precomputed
 u64 _const_hash__wyp2 = 10285213230658275043U; // precomputed
 u64 _const_hash__wyp3 = 6384245875588680899U; // precomputed
 u64 _const_hash__wyp4 = 2129725606500045391U; // precomputed
-u64 hash__sum64_string(string key, u64 seed);
-u64 hash__sum64(Array_byte key, u64 seed);
 VV_LOCAL_SYMBOL u64 hash__wyrotr(u64 v, u32 k);
 u64 hash__wymum(u64 a, u64 b);
 VV_LOCAL_SYMBOL u64 hash__wyr3(byte* p, u64 k);
@@ -8053,6 +8053,14 @@ v__gen__js__sourcemap__SourceMapJson v__gen__js__sourcemap__SourceMap_to_json(v_
 VV_LOCAL_SYMBOL Option_int v__gen__js__sourcemap__StringWriter_write(v__gen__js__sourcemap__StringWriter* w, Array_byte buf);
 v__gen__js__sourcemap__Generator* v__gen__js__sourcemap__generate_empty_map();
 v__gen__js__sourcemap__SourceMap* v__gen__js__sourcemap__Generator_add_map(v__gen__js__sourcemap__Generator* g, string file, string source_root, bool sources_content_inline, int line_offset, int column_offset);
+string rand__uuid_v4();
+string _const_rand__ulid_encoding; // a string literal, inited later
+string rand__ulid();
+string rand__ulid_at_millisecond(u64 unix_time_milli);
+string rand__string_from_set(string charset, int len);
+string rand__string(int len);
+string rand__hex(int len);
+string rand__ascii(int len);
 rand__PRNG* default_rng; // global
 VV_LOCAL_SYMBOL void rand__init();
 rand__PRNG* rand__new_default(rand__PRNGConfigStruct config);
@@ -8083,14 +8091,6 @@ f64 rand__f64_in_range(f64 min, f64 max);
 string _const_rand__english_letters; // a string literal, inited later
 string _const_rand__hex_chars; // a string literal, inited later
 string _const_rand__ascii_chars; // a string literal, inited later
-string rand__string_from_set(string charset, int len);
-string rand__string(int len);
-string rand__hex(int len);
-string rand__ascii(int len);
-string rand__uuid_v4();
-string _const_rand__ulid_encoding; // a string literal, inited later
-string rand__ulid();
-string rand__ulid_at_millisecond(u64 unix_time_milli);
 string _const_v__pref__default_module_path; // inited later
 v__pref__Preferences* v__pref__new_preferences();
 VV_LOCAL_SYMBOL void v__pref__Preferences_expand_lookup_paths(v__pref__Preferences* p);
@@ -10268,10 +10268,10 @@ void vinit_string_literals(){
 	_const_v__cflag__fexisting_literal = _SLIT("$first_existing");
 	_const_v__pkgconfig__version = _SLIT("0.3.1");
 	_const_v__gen__js__sourcemap__vlq__enc_table = _SLIT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
+	_const_rand__ulid_encoding = _SLIT("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
 	_const_rand__english_letters = _SLIT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	_const_rand__hex_chars = _SLIT("abcdef0123456789");
 	_const_rand__ascii_chars = _SLIT("!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz{|}~");
-	_const_rand__ulid_encoding = _SLIT("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
 	_const_help__unknown_topic = _SLIT("`v help`: unknown help topic provided. Use `v help` for usage information.");
 	_const_v__util__double_escape = _SLIT("\\\\");
 	_const_v__util__map_prefix = _SLIT("map[string]");
@@ -32464,13 +32464,130 @@ v__gen__js__sourcemap__SourceMap* v__gen__js__sourcemap__Generator_add_map(v__ge
 	return _t2;
 }
 
+string rand__uuid_v4(void) {
+	int buflen = 36;
+	byte* buf = malloc_noscan(37);
+	int i_buf = 0;
+	u64 x = ((u64)(0U));
+	byte d = ((byte)(0));
+	for (;;) {
+		if (!(i_buf < buflen)) break;
+		int c = 0;
+		x = rand__PRNG_name_table[default_rng->_typ]._method_u64(default_rng->_object);
+		x &= 0x0F0F0F0F0F0F0F0FU;
+		x += 0x3030303030303030U;
+		for (;;) {
+			if (!(c < 8 && i_buf < buflen)) break;
+			d = ((byte)(x));
+			{ // Unsafe block
+				buf[i_buf] = (d > 0x39 ? (d + 0x27) : (d));
+			}
+			i_buf++;
+			c++;
+			x = x >> 8U;
+		}
+	}
+	x = x >> 8U;
+	d = ((byte)(x));
+	{ // Unsafe block
+		buf[19] = (d > 0x39 ? (d + 0x27) : (d));
+		buf[8] = '-';
+		buf[13] = '-';
+		buf[18] = '-';
+		buf[23] = '-';
+		buf[14] = '4';
+		buf[buflen] = 0;
+		string _t1 = byte_vstring_with_len(buf, buflen);
+		return _t1;
+	}
+	return (string){.str=(byteptr)"", .is_lit=1};
+}
+
+string rand__ulid(void) {
+	string _t1 = rand__ulid_at_millisecond(((u64)(time__Time_unix_time_milli(time__utc()))));
+	return _t1;
+}
+
+string rand__ulid_at_millisecond(u64 unix_time_milli) {
+	int buflen = 26;
+	byte* buf = malloc_noscan(27);
+	u64 t = unix_time_milli;
+	int i = 9;
+	for (;;) {
+		if (!(i >= 0)) break;
+		{ // Unsafe block
+			buf[i] = string_at(_const_rand__ulid_encoding, (t & 0x1FU));
+		}
+		t = t >> 5U;
+		i--;
+	}
+	u64 x = rand__PRNG_name_table[default_rng->_typ]._method_u64(default_rng->_object);
+	i = 10;
+	for (;;) {
+		if (!(i < 19)) break;
+		{ // Unsafe block
+			buf[i] = string_at(_const_rand__ulid_encoding, (x & 0x1FU));
+		}
+		x = x >> 5U;
+		i++;
+	}
+	x = rand__PRNG_name_table[default_rng->_typ]._method_u64(default_rng->_object);
+	for (;;) {
+		if (!(i < 26)) break;
+		{ // Unsafe block
+			buf[i] = string_at(_const_rand__ulid_encoding, (x & 0x1FU));
+		}
+		x = x >> 5U;
+		i++;
+	}
+	{ // Unsafe block
+		buf[26] = 0;
+		string _t1 = byte_vstring_with_len(buf, buflen);
+		return _t1;
+	}
+	return (string){.str=(byteptr)"", .is_lit=1};
+}
+
+string rand__string_from_set(string charset, int len) {
+	if (len == 0) {
+		string _t1 = _SLIT("");
+		return _t1;
+	}
+	byte* buf = malloc_noscan(len + 1);
+	for (int i = 0; i < len; ++i) {
+		{ // Unsafe block
+			buf[i] = string_at(charset, rand__intn(charset.len));
+		}
+	}
+	{ // Unsafe block
+		buf[len] = 0;
+	}
+	string _t2 = byte_vstring_with_len(buf, len);
+	return _t2;
+}
+
+string rand__string(int len) {
+	string _t1 = rand__string_from_set(_const_rand__english_letters, len);
+	return _t1;
+}
+
+string rand__hex(int len) {
+	string _t1 = rand__string_from_set(_const_rand__hex_chars, len);
+	return _t1;
+}
+
+string rand__ascii(int len) {
+	string _t1 = rand__string_from_set(_const_rand__ascii_chars, len);
+	return _t1;
+}
+
 VV_LOCAL_SYMBOL void rand__init(void) {
-	default_rng = rand__new_default((rand__PRNGConfigStruct){.seed = rand__seed__time_seed_array(2),});
+	default_rng = rand__new_default((rand__PRNGConfigStruct){.seed_ = rand__seed__time_seed_array(2),});
 }
 
 rand__PRNG* rand__new_default(rand__PRNGConfigStruct config) {
 	rand__wyrand__WyRandRNG* rng = (rand__wyrand__WyRandRNG*)memdup(&(rand__wyrand__WyRandRNG){.state = rand__seed__time_seed_64(),.has_extra = 0,.extra = 0,}, sizeof(rand__wyrand__WyRandRNG));
-	rand__wyrand__WyRandRNG_seed(rng, config.seed);
+	rand__wyrand__WyRandRNG_seed(rng, config.seed_);
 	rand__PRNG* _t1 = HEAP(rand__PRNG, /*&rand.PRNG*/I_rand__wyrand__WyRandRNG_to_Interface_rand__PRNG(rng));
 	return _t1;
 }
@@ -32593,123 +32710,6 @@ f64 rand__f64_in_range(f64 min, f64 max) {
 	return _t1;
 }
 
-string rand__string_from_set(string charset, int len) {
-	if (len == 0) {
-		string _t1 = _SLIT("");
-		return _t1;
-	}
-	byte* buf = malloc_noscan(len + 1);
-	for (int i = 0; i < len; ++i) {
-		{ // Unsafe block
-			buf[i] = string_at(charset, rand__intn(charset.len));
-		}
-	}
-	{ // Unsafe block
-		buf[len] = 0;
-	}
-	string _t2 = byte_vstring_with_len(buf, len);
-	return _t2;
-}
-
-string rand__string(int len) {
-	string _t1 = rand__string_from_set(_const_rand__english_letters, len);
-	return _t1;
-}
-
-string rand__hex(int len) {
-	string _t1 = rand__string_from_set(_const_rand__hex_chars, len);
-	return _t1;
-}
-
-string rand__ascii(int len) {
-	string _t1 = rand__string_from_set(_const_rand__ascii_chars, len);
-	return _t1;
-}
-
-string rand__uuid_v4(void) {
-	int buflen = 36;
-	byte* buf = malloc_noscan(37);
-	int i_buf = 0;
-	u64 x = ((u64)(0U));
-	byte d = ((byte)(0));
-	for (;;) {
-		if (!(i_buf < buflen)) break;
-		int c = 0;
-		x = rand__PRNG_name_table[default_rng->_typ]._method_u64(default_rng->_object);
-		x &= 0x0F0F0F0F0F0F0F0FU;
-		x += 0x3030303030303030U;
-		for (;;) {
-			if (!(c < 8 && i_buf < buflen)) break;
-			d = ((byte)(x));
-			{ // Unsafe block
-				buf[i_buf] = (d > 0x39 ? (d + 0x27) : (d));
-			}
-			i_buf++;
-			c++;
-			x = x >> 8U;
-		}
-	}
-	x = x >> 8U;
-	d = ((byte)(x));
-	{ // Unsafe block
-		buf[19] = (d > 0x39 ? (d + 0x27) : (d));
-		buf[8] = '-';
-		buf[13] = '-';
-		buf[18] = '-';
-		buf[23] = '-';
-		buf[14] = '4';
-		buf[buflen] = 0;
-		string _t1 = byte_vstring_with_len(buf, buflen);
-		return _t1;
-	}
-	return (string){.str=(byteptr)"", .is_lit=1};
-}
-
-string rand__ulid(void) {
-	string _t1 = rand__ulid_at_millisecond(((u64)(time__Time_unix_time_milli(time__utc()))));
-	return _t1;
-}
-
-string rand__ulid_at_millisecond(u64 unix_time_milli) {
-	int buflen = 26;
-	byte* buf = malloc_noscan(27);
-	u64 t = unix_time_milli;
-	int i = 9;
-	for (;;) {
-		if (!(i >= 0)) break;
-		{ // Unsafe block
-			buf[i] = string_at(_const_rand__ulid_encoding, (t & 0x1FU));
-		}
-		t = t >> 5U;
-		i--;
-	}
-	u64 x = rand__PRNG_name_table[default_rng->_typ]._method_u64(default_rng->_object);
-	i = 10;
-	for (;;) {
-		if (!(i < 19)) break;
-		{ // Unsafe block
-			buf[i] = string_at(_const_rand__ulid_encoding, (x & 0x1FU));
-		}
-		x = x >> 5U;
-		i++;
-	}
-	x = rand__PRNG_name_table[default_rng->_typ]._method_u64(default_rng->_object);
-	for (;;) {
-		if (!(i < 26)) break;
-		{ // Unsafe block
-			buf[i] = string_at(_const_rand__ulid_encoding, (x & 0x1FU));
-		}
-		x = x >> 5U;
-		i++;
-	}
-	{ // Unsafe block
-		buf[26] = 0;
-		string _t1 = byte_vstring_with_len(buf, buflen);
-		return _t1;
-	}
-	return (string){.str=(byteptr)"", .is_lit=1};
-}
-
 v__pref__Preferences* v__pref__new_preferences(void) {
 	v__pref__Preferences* p = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_prof = 0,.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.output_cross_c = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.use_color = 0,.is_parallel = 0,.is_vweb = 0,.only_check_syntax = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.message_limit = 100,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences));
 	v__pref__Preferences_fill_with_defaults(p);
@@ -32786,7 +32786,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0be20f1")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("6ee7772")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65912,7 +65912,7 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_to_js_typ_def_val(v__gen__js__JsGen* g,
 VV_LOCAL_SYMBOL string v__gen__js__JsGen_to_js_typ_val(v__gen__js__JsGen* g, v__ast__Type t) {
 	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, t);
 	string styp = _SLIT("");
-	string prefix = (string__eq(g->file->mod.name, _SLIT("builtin")) ? (_SLIT("new ")) : (_SLIT("")));
+	string prefix = (string__eq(g->file->mod.name, _SLIT("builtin")) ? (_SLIT("new  ")) : (_SLIT("new builtin.")));
 
 	if (sym->kind == (v__ast__Kind__i8) || sym->kind == (v__ast__Kind__i16) || sym->kind == (v__ast__Kind__int) || sym->kind == (v__ast__Kind__i64) || sym->kind == (v__ast__Kind__byte) || sym->kind == (v__ast__Kind__u8) || sym->kind == (v__ast__Kind__u16) || sym->kind == (v__ast__Kind__u32) || sym->kind == (v__ast__Kind__u64) || sym->kind == (v__ast__Kind__f32) || sym->kind == (v__ast__Kind__f64) || sym->kind == (v__ast__Kind__int_literal) || sym->kind == (v__ast__Kind__float_literal) || sym->kind == (v__ast__Kind__size_t)) {
 		styp =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = prefix}}, {_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_sym_to_js_typ(g, *sym)}}, {_SLIT("(0)"), 0, { .d_c = 0 }}}));
@@ -66762,6 +66762,7 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 			g->generated_builtin = true;
 		}
 		v__gen__js__JsGen_stmts(g, file->stmts);
+		v__gen__js__JsGen_writeln(g, _SLIT("try { init() } catch (_) {}"));
 		v__gen__js__JsGen_escape_namespace(g);
 	}
 	v__depgraph__DepGraph* deps_resolved = v__depgraph__DepGraph_resolve(graph);
@@ -67120,6 +67121,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_global_decl(v__gen__js__JsGen* g, v__
 			v__gen__js__JsGen_writeln(g, _SLIT(";"));
 			v__gen__js__JsGen_writeln(g,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("Object.defineProperty($global,\""), 0xfe10, {.d_s = field.name}}, {_SLIT("\", {\n				configurable: false,\n				"), 0xfe10, {.d_s = mod}}, {_SLIT(" ,\n				writable: true,\n				value: "), 0xfe10, {.d_s = tmp_var}}, {_SLIT("\n				}\n			); // global"), 0, { .d_c = 0 }}})));
 		} else {
+			if (v__ast__Type_is_ptr(field.typ)) {
+				v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Object.defineProperty($global,\""), 0xfe10, {.d_s = field.name}}, {_SLIT("\", {\n					configurable: false,\n					"), 0xfe10, {.d_s = mod}}, {_SLIT(" ,\n					writable: true,\n					value: new $ref({})\n					}\n				); // global"), 0, { .d_c = 0 }}})));
+			} else {
+				v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Object.defineProperty($global,\""), 0xfe10, {.d_s = field.name}}, {_SLIT("\", {\n					configurable: false,\n					"), 0xfe10, {.d_s = mod}}, {_SLIT(" ,\n					writable: true,\n					value: {}\n					}\n				); // global"), 0, { .d_c = 0 }}})));
+			}
 		}
 	}
 }
@@ -67543,8 +67549,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__
 				bool should_cast = ((Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, v__ast__Table_type_kind(g->table, (*(v__ast__Type*)array_first(stmt.left_types)))))) && (g->cast_stack.len <= 0 || !v__ast__Type_alias_eq((*(v__ast__Type*)array_first(stmt.left_types)), (*(v__ast__Type*)array_last(g->cast_stack))));
 				if (should_cast) {
 					array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ (*(v__ast__Type*)array_first(stmt.left_types)) }));
-					if (string__eq(g->file->mod.name, _SLIT("builtin"))) {
-						v__gen__js__JsGen_write(g, _SLIT("new "));
+					v__gen__js__JsGen_write(g, _SLIT("new "));
+					if (!string__eq(g->file->mod.name, _SLIT("builtin"))) {
+						v__gen__js__JsGen_write(g, _SLIT("builtin."));
 					}
 					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, (*(v__ast__Type*)array_first(stmt.left_types)))}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 				}
@@ -68316,11 +68323,12 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 	if (is_not) {
 		v__gen__js__JsGen_write(g, _SLIT("!("));
 	}
-	bool is_arithmetic = (it.op == v__token__Kind__plus || it.op == v__token__Kind__minus || it.op == v__token__Kind__mul || it.op == v__token__Kind__div || it.op == v__token__Kind__mod);
+	bool is_arithmetic = (it.op == v__token__Kind__plus || it.op == v__token__Kind__minus || it.op == v__token__Kind__mul || it.op == v__token__Kind__div || it.op == v__token__Kind__mod || it.op == v__token__Kind__right_shift || it.op == v__token__Kind__left_shift || it.op == v__token__Kind__amp || it.op == v__token__Kind__pipe || it.op == v__token__Kind__xor);
 	if (is_arithmetic && ((l_sym->kind == v__ast__Kind__i64 || l_sym->kind == v__ast__Kind__u64) || (r_sym->kind == v__ast__Kind__i64 || r_sym->kind == v__ast__Kind__u64))) {
 		v__ast__Type greater_typ = v__gen__js__JsGen_greater_typ(g, it.left_type, it.right_type);
-		if (string__eq(g->ns->name, _SLIT("builtin"))) {
-			v__gen__js__JsGen_write(g, _SLIT("new "));
+		v__gen__js__JsGen_write(g, _SLIT("new "));
+		if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("builtin."));
 		}
 		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, greater_typ)}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 		array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ greater_typ }));
@@ -68667,8 +68675,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_type_cast_expr(v__gen__js__JsGen* g, 
 	bool is_literal = (((it.expr)._typ == 251 /* v.ast.IntegerLiteral */ && (Array_int_contains(_const_v__ast__integer_type_idxs, it.typ))) || ((it.expr)._typ == 244 /* v.ast.FloatLiteral */ && (Array_int_contains(_const_v__ast__float_type_idxs, it.typ))));
 	v__ast__TypeSymbol* tsym = v__ast__Table_get_type_symbol(g->table, it.typ);
 	if ((it.expr)._typ == 251 /* v.ast.IntegerLiteral */ && (tsym->kind == v__ast__Kind__i64 || tsym->kind == v__ast__Kind__u64)) {
-		if (string__eq(g->ns->name, _SLIT("builtin"))) {
-			v__gen__js__JsGen_write(g, _SLIT("new "));
+		v__gen__js__JsGen_write(g, _SLIT("new "));
+		if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("builtin."));
 		}
 		v__gen__js__JsGen_write(g, v__ast__Kind_str(tsym->kind));
 		v__gen__js__JsGen_write(g, _SLIT("(BigInt("));
@@ -68718,12 +68727,17 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_integer_literal_expr(v__gen__js__JsGe
 	}
 	if (g->cast_stack.len > 0) {
 		if ((Array_int_contains(_const_v__ast__integer_type_idxs, (*(v__ast__Type*)/*ee elem_typ */array_get(g->cast_stack, g->cast_stack.len - 1))))) {
-			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("new int("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			v__gen__js__JsGen_write(g, _SLIT("new "));
+			if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+				v__gen__js__JsGen_write(g, _SLIT("builtin."));
+			}
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("int("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 			return;
 		}
 	}
-	if (string__eq(g->ns->name, _SLIT("builtin"))) {
-		v__gen__js__JsGen_write(g, _SLIT("new "));
+	v__gen__js__JsGen_write(g, _SLIT("new "));
+	if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+		v__gen__js__JsGen_write(g, _SLIT("builtin."));
 	}
 	v__gen__js__JsGen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, typ)}}, {_SLIT("("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 }
@@ -68755,8 +68769,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_float_literal_expr(v__gen__js__JsGen*
 			return;
 		}
 	}
-	if (string__eq(g->ns->name, _SLIT("builtin"))) {
-		v__gen__js__JsGen_write(g, _SLIT("new "));
+	v__gen__js__JsGen_write(g, _SLIT("new "));
+	if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+		v__gen__js__JsGen_write(g, _SLIT("builtin."));
 	}
 	v__gen__js__JsGen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__gen__js__JsGen_typ(g, typ)}}, {_SLIT("("), 0xfe10, {.d_s = it.val}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 }
