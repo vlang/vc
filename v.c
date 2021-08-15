@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "eef7eea"
+#define V_COMMIT_HASH "6843b85"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b1186cc"
+	#define V_COMMIT_HASH "eef7eea"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "eef7eea"
+	#define V_CURRENT_COMMIT_HASH "6843b85"
 #endif
 
 // V comptime_defines:
@@ -32785,7 +32785,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("b1186cc")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("eef7eea")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -35401,13 +35401,15 @@ Option_Array_string v__util__find_all_v_files(Array_string roots) {
 }
 
 void v__util__free_caches(void) {
+	{ // Unsafe block
+		v__util__cached_file2sourcelines(_SLIT(""));
 		Option_string _t1 = v__util__cached_read_source_file(_SLIT(""));
-	if (_t1.state != 0) { /*or block*/ 
-		IError err = _t1.err;
+		if (_t1.state != 0) { /*or block*/ 
+			IError err = _t1.err;
+			*(string*) _t1.data = _SLIT("");
+		}
+		;
 	}
-	
-  (*(string*)_t1.data);
-	v__util__cached_file2sourcelines(_SLIT(""));
 }
 
 // TypeDecl
@@ -82169,7 +82171,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	Array_string optimization_options = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("-O2")}));
 	ccoptions.args = new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){string_clone(v->pref->cflags)}));
 	if (!v->pref->no_std) {
-		array_push((array*)&ccoptions.args, _MOV((string[]){ string_clone(_SLIT("-std=c99")) }));
+		array_push((array*)&ccoptions.args, _MOV((string[]){ string_clone(_SLIT("-std=c99 -D_DEFAULT_SOURCE")) }));
 	}
 	ccoptions.wargs = new_array_from_c_array(26, 26, sizeof(string), _MOV((string[26]){
 			_SLIT("-Wall"), _SLIT("-Wextra"), _SLIT("-Werror"), _SLIT("-Wno-unused-parameter"), _SLIT("-Wno-unused"), _SLIT("-Wno-type-limits"), _SLIT("-Wno-tautological-compare"), _SLIT("-Wno-shadow"), _SLIT("-Wno-int-to-pointer-cast"),
@@ -82289,10 +82291,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	_PUSH_MANY(&ccoptions.o_args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t27, Array_string);
-	multi_return_Array_string_Array_string_Array_string mr_10905 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_10905.arg0;
-	Array_string others = mr_10905.arg1;
-	Array_string libs = mr_10905.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_10923 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_10923.arg0;
+	Array_string others = mr_10923.arg1;
+	Array_string libs = mr_10923.arg2;
 	_PUSH_MANY(&ccoptions.pre_args, (defines), _t28, Array_string);
 	_PUSH_MANY(&ccoptions.pre_args, (others), _t29, Array_string);
 	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t30, Array_string);
@@ -82720,10 +82722,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_23985 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_23985.arg0;
-	Array_string others = mr_23985.arg1;
-	Array_string libs = mr_23985.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24003 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24003.arg0;
+	Array_string others = mr_24003.arg1;
+	Array_string libs = mr_24003.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
