@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0d30667"
+#define V_COMMIT_HASH "405ed58"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "482eecb"
+	#define V_COMMIT_HASH "0d30667"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0d30667"
+	#define V_CURRENT_COMMIT_HASH "405ed58"
 #endif
 
 // V comptime_defines:
@@ -30363,9 +30363,7 @@ Option_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
 	Option_string _t2 = os__read_file(vmod_path);
 	if (_t2.state != 0) { /*or block*/ 
 		IError err = _t2.err;
-		_v_panic(_SLIT("v.mod: cannot parse v.mod"));
-		VUNREACHABLE();
-	;
+		*(string*) _t2.data = _SLIT("");
 	}
 	
  	string contents =  (*(string*)_t2.data);
@@ -30524,8 +30522,7 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 	Array_v__vmod__Token tokens = p->scanner.tokens;
 	v__vmod__Manifest mn = (v__vmod__Manifest){.name = (string){.str=(byteptr)"", .is_lit=1},.version = (string){.str=(byteptr)"", .is_lit=1},.description = (string){.str=(byteptr)"", .is_lit=1},.dependencies = __new_array(0, 0, sizeof(string)),.license = (string){.str=(byteptr)"", .is_lit=1},.repo_url = (string){.str=(byteptr)"", .is_lit=1},.author = (string){.str=(byteptr)"", .is_lit=1},.unknown = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),};
 	if ((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, 0)).typ != v__vmod__TokenKind__module_keyword) {
-		_v_panic(_SLIT("not a valid v.mod"));
-		VUNREACHABLE();
+		return (Option_v__vmod__Manifest){ .state=2, .err=_v_error(_SLIT("vmod: v.mod files should start with Module")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	int i = 1;
 	for (;;) {
@@ -30568,14 +30565,14 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 				mn.author = field_value;
 			}
 			else if (string__eq(field_name, _SLIT("dependencies"))) {
-				Option_multi_return_Array_string_int _t4 = v__vmod__get_array_content(tokens, i + 1);
-				if (_t4.state != 0) { /*or block*/ 
-					Option_v__vmod__Manifest _t5;
-					memcpy(&_t5, &_t4, sizeof(Option));
-					return _t5;
+				Option_multi_return_Array_string_int _t5 = v__vmod__get_array_content(tokens, i + 1);
+				if (_t5.state != 0) { /*or block*/ 
+					Option_v__vmod__Manifest _t6;
+					memcpy(&_t6, &_t5, sizeof(Option));
+					return _t6;
 				}
 				
- 				Option_multi_return_Array_string_int mr_4490 =  _t4 /*U*/;
+ 				Option_multi_return_Array_string_int mr_4490 =  _t5 /*U*/;
 				Array_string deps = (*(multi_return_Array_string_int*)mr_4490.data).arg0;
 				int idx = (*(multi_return_Array_string_int*)mr_4490.data).arg1;
 				mn.dependencies = deps;
@@ -30584,14 +30581,14 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 			}
 			else {
 				if ((*(v__vmod__Token*)/*ee elem_typ */array_get(tokens, i + 1)).typ == v__vmod__TokenKind__labr) {
-					Option_multi_return_Array_string_int _t6 = v__vmod__get_array_content(tokens, i + 1);
-					if (_t6.state != 0) { /*or block*/ 
-						Option_v__vmod__Manifest _t7;
-						memcpy(&_t7, &_t6, sizeof(Option));
-						return _t7;
+					Option_multi_return_Array_string_int _t7 = v__vmod__get_array_content(tokens, i + 1);
+					if (_t7.state != 0) { /*or block*/ 
+						Option_v__vmod__Manifest _t8;
+						memcpy(&_t8, &_t7, sizeof(Option));
+						return _t8;
 					}
 					
- 					Option_multi_return_Array_string_int mr_4660 =  _t6 /*U*/;
+ 					Option_multi_return_Array_string_int mr_4660 =  _t7 /*U*/;
 					Array_string vals = (*(multi_return_Array_string_int*)mr_4660.data).arg0;
 					int idx = (*(multi_return_Array_string_int*)mr_4660.data).arg1;
 					map_set(&mn.unknown, &(string[]){field_name}, &(Array_string[]) { vals });
@@ -30614,9 +30611,9 @@ VV_LOCAL_SYMBOL Option_v__vmod__Manifest v__vmod__Parser_parse(v__vmod__Parser* 
 			return (Option_v__vmod__Manifest){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = err_label}}, {_SLIT(" invalid token \""), 0xfe10, {.d_s = tok.val}}, {_SLIT("\""), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		};
 	}
-	Option_v__vmod__Manifest _t10;
-	opt_ok(&(v__vmod__Manifest[]) { mn }, (Option*)(&_t10), sizeof(v__vmod__Manifest));
-	return _t10;
+	Option_v__vmod__Manifest _t11;
+	opt_ok(&(v__vmod__Manifest[]) { mn }, (Option*)(&_t11), sizeof(v__vmod__Manifest));
+	return _t11;
 }
 
 v__vmod__ModFileCacher* v__vmod__new_mod_file_cacher(void) {
@@ -32788,7 +32785,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("482eecb")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0d30667")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
