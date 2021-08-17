@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8521e22"
+#define V_COMMIT_HASH "90b25e7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "405ed58"
+	#define V_COMMIT_HASH "8521e22"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8521e22"
+	#define V_CURRENT_COMMIT_HASH "90b25e7"
 #endif
 
 // V comptime_defines:
@@ -23327,7 +23327,7 @@ FILE* fp;
 Option_void os__truncate(string path, u64 len) {
 bool os__truncate_defer_0 = false;
 int fp;
-	fp = open(((char*)(path.str)), (_const_os__o_wronly | _const_os__o_trunc));
+	fp = open(((char*)(path.str)), (_const_os__o_wronly | _const_os__o_trunc), 0);
 	os__truncate_defer_0 = true;
 	if (fp < 0) {
 		Option_void _t1 = (Option_void){ .state=2, .err=error_with_code(os__posix_get_error_msg(errno), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -23467,7 +23467,7 @@ Option_void os__cp(string src, string dst) {
 	}
 	#else
 	{
-		int fp_from = open(((char*)(src.str)), O_RDONLY);
+		int fp_from = open(((char*)(src.str)), O_RDONLY, 0);
 		if (fp_from < 0) {
 			return (Option_void){ .state=2, .err=error_with_code( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cp: failed to open "), 0xfe10, {.d_s = src}}, {_SLIT0, 0, { .d_c = 0 }}})), ((int)(fp_from))), .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
@@ -23595,8 +23595,8 @@ VV_LOCAL_SYMBOL int os__vpclose(voidptr f) {
 	}
 	#else
 	{
-		multi_return_int_bool mr_8830 = os__posix_wait4_to_exit_status(pclose(f));
-		int ret = mr_8830.arg0;
+		multi_return_int_bool mr_8836 = os__posix_wait4_to_exit_status(pclose(f));
+		int ret = mr_8836.arg0;
 		return ret;
 	}
 	#endif
@@ -23641,9 +23641,9 @@ int os__system(string cmd) {
 	}
 	#if !defined(_WIN32)
 	{
-		multi_return_int_bool mr_9839 = os__posix_wait4_to_exit_status(ret);
-		int pret = mr_9839.arg0;
-		bool is_signaled = mr_9839.arg1;
+		multi_return_int_bool mr_9845 = os__posix_wait4_to_exit_status(ret);
+		int pret = mr_9845.arg0;
+		bool is_signaled = mr_9845.arg1;
 		if (is_signaled) {
 			println(string__plus(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Terminated by signal "), 0x4fe27, {.d_i32 = ret}}, {_SLIT(" ("), 0, { .d_c = 0 }}})), os__sigint_to_signal_name(pret)), _SLIT(")")));
 		}
@@ -32792,7 +32792,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("405ed58")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8521e22")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
