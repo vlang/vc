@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "eee71ce"
+#define V_COMMIT_HASH "d2ce1f7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e07678d"
+	#define V_COMMIT_HASH "eee71ce"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "eee71ce"
+	#define V_CURRENT_COMMIT_HASH "d2ce1f7"
 #endif
 
 // V comptime_defines:
@@ -31942,7 +31942,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e07678d")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("eee71ce")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37810,9 +37810,10 @@ VV_LOCAL_SYMBOL Option_v__ast__StructField v__ast__Table_register_aggregate_fiel
 			if (!found_once) {
 				found_once = true;
 				new_field = type_field;
-			} else if (!v__ast__StructField_equals(&new_field, (voidptr)&/*qq*/type_field)) {
+			} else if (!v__ast__Type_alias_eq(new_field.typ, type_field.typ)) {
 				return (Option_v__ast__StructField){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT("` type is different"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
+			new_field = (v__ast__StructField){new_field.pos,new_field.type_pos,new_field.comments,new_field.has_default_expr,new_field.attrs,.is_pub = new_field.is_pub && type_field.is_pub,new_field.default_val,.is_mut = new_field.is_mut && type_field.is_mut,new_field.is_global,new_field.default_expr,new_field.default_expr_typ,new_field.name,new_field.typ,};
 		} else {
 			IError err = _t2.err;
 			return (Option_v__ast__StructField){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("type `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(t, typ)}}, {_SLIT("` has no field or method `"), 0xfe10, {.d_s = name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
@@ -37931,9 +37932,9 @@ Option_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_fi
 					*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t5.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14305 =  _t5 /*U*/;
-				v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14305.data).arg0;
-				Array_v__ast__Type types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14305.data).arg1;
+ 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14457 =  _t5 /*U*/;
+				v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14457.data).arg0;
+				Array_v__ast__Type types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14457.data).arg1;
 				array_push((array*)&found_fields, _MOV((v__ast__StructField[]){ field }));
 				array_push((array*)&embeds_of_found_fields, _MOV((Array_v__ast__Type[]){ types }));
 			}
@@ -37955,9 +37956,9 @@ Option_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_fi
 				return (Option_multi_return_v__ast__StructField_Array_v__ast__Type){ .state=2, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
- 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14771 =  _t11 /*U*/;
-			v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14771.data).arg0;
-			Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14771.data).arg1;
+ 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14923 =  _t11 /*U*/;
+			v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14923.data).arg0;
+			Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14923.data).arg1;
 			if (embed_types.len > 0) {
 				Option_multi_return_v__ast__StructField_Array_v__ast__Type _t13;
 				opt_ok(&(multi_return_v__ast__StructField_Array_v__ast__Type/*X*/[]) { (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=field, .arg1=embed_types} }, (Option*)(&_t13), sizeof(multi_return_v__ast__StructField_Array_v__ast__Type));
@@ -37999,9 +38000,9 @@ Option_multi_return_v__ast__StructField_v__ast__Type v__ast__Table_find_field_fr
 				return (Option_multi_return_v__ast__StructField_v__ast__Type){ .state=2, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
- 			Option_multi_return_v__ast__StructField_v__ast__Type mr_15738 =  _t8 /*U*/;
-			v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15738.data).arg0;
-			v__ast__Type embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15738.data).arg1;
+ 			Option_multi_return_v__ast__StructField_v__ast__Type mr_15890 =  _t8 /*U*/;
+			v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15890.data).arg0;
+			v__ast__Type embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15890.data).arg1;
 			if (embed_type != 0) {
 				Option_multi_return_v__ast__StructField_v__ast__Type _t10;
 				opt_ok(&(multi_return_v__ast__StructField_v__ast__Type/*X*/[]) { (multi_return_v__ast__StructField_v__ast__Type){.arg0=field, .arg1=embed_type} }, (Option*)(&_t10), sizeof(multi_return_v__ast__StructField_v__ast__Type));
@@ -38028,8 +38029,8 @@ Option_v__ast__StructField v__ast__Table_find_field_with_embeds(v__ast__Table* t
 			return (Option_v__ast__StructField){ .state=2, .err=first_err, .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
- 		Option_multi_return_v__ast__StructField_v__ast__Type mr_16198 =  _t3 /*U*/;
-		v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_16198.data).arg0;
+ 		Option_multi_return_v__ast__StructField_v__ast__Type mr_16350 =  _t3 /*U*/;
+		v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_16350.data).arg0;
 		Option_v__ast__StructField _t5;
 		opt_ok(&(v__ast__StructField[]) { field }, (Option*)(&_t5), sizeof(v__ast__StructField));
 		return _t5;
