@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c51f83e"
+#define V_COMMIT_HASH "0121c8b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1dee4f2"
+	#define V_COMMIT_HASH "c51f83e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c51f83e"
+	#define V_CURRENT_COMMIT_HASH "0121c8b"
 #endif
 
 // V comptime_defines:
@@ -178,6 +178,7 @@ typedef struct v__pkgconfig__MainOptions v__pkgconfig__MainOptions;
 typedef struct v__pkgconfig__Options v__pkgconfig__Options;
 typedef struct v__pkgconfig__PkgConfig v__pkgconfig__PkgConfig;
 typedef struct v__vet__Error v__vet__Error;
+typedef struct rand__config__PRNGConfigStruct rand__config__PRNGConfigStruct;
 typedef struct rand__wyrand__WyRandRNG rand__wyrand__WyRandRNG;
 typedef struct v__gen__js__sourcemap__Empty v__gen__js__sourcemap__Empty;
 typedef struct v__gen__js__sourcemap__SourcePosition v__gen__js__sourcemap__SourcePosition;
@@ -192,7 +193,6 @@ typedef struct v__gen__js__sourcemap__V3 v__gen__js__sourcemap__V3;
 typedef struct v__gen__js__sourcemap__Offset v__gen__js__sourcemap__Offset;
 typedef struct v__gen__js__sourcemap__Section v__gen__js__sourcemap__Section;
 typedef struct v__gen__js__sourcemap__Generator v__gen__js__sourcemap__Generator;
-typedef struct rand__PRNGConfigStruct rand__PRNGConfigStruct;
 typedef struct v__pref__Preferences v__pref__Preferences;
 typedef struct v__util__EManager v__util__EManager;
 typedef struct v__util__LinesCache v__util__LinesCache;
@@ -3217,7 +3217,7 @@ struct strings__textscanner__TextScanner {
 
 
 
-struct rand__PRNGConfigStruct {
+struct rand__config__PRNGConfigStruct {
 	Array_u32 seed_;
 };
 
@@ -8127,10 +8127,6 @@ Array_string Array_v__cflag__CFlag_c_options_after_target(Array_v__cflag__CFlag 
 Array_string Array_v__cflag__CFlag_c_options_without_object_files(Array_v__cflag__CFlag cflags);
 Array_string Array_v__cflag__CFlag_c_options_only_object_files(Array_v__cflag__CFlag cflags);
 multi_return_Array_string_Array_string_Array_string Array_v__cflag__CFlag_defines_others_libs(Array_v__cflag__CFlag cflags);
-VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev);
-Array_u32 rand__seed__time_seed_array(int count);
-u32 rand__seed__time_seed_32();
-u64 rand__seed__time_seed_64();
 VV_LOCAL_SYMBOL Option_string v__pkgconfig__desc(string mod);
 Option_v__pkgconfig__Main_ptr v__pkgconfig__main(Array_string args);
 Option_string v__pkgconfig__Main_run(v__pkgconfig__Main* m);
@@ -8153,6 +8149,10 @@ VV_LOCAL_SYMBOL void v__pkgconfig__PkgConfig_add_path(v__pkgconfig__PkgConfig* p
 VV_LOCAL_SYMBOL void v__pkgconfig__PkgConfig_load_paths(v__pkgconfig__PkgConfig* pc);
 Option_v__pkgconfig__PkgConfig_ptr v__pkgconfig__load(string pkgname, v__pkgconfig__Options options);
 Array_string v__pkgconfig__list();
+VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev);
+Array_u32 rand__seed__time_seed_array(int count);
+u32 rand__seed__time_seed_32();
+u64 rand__seed__time_seed_64();
 byte _const_v__gen__js__sourcemap__vlq__shift = 5; // precomputed
 byte _const_v__gen__js__sourcemap__vlq__mask; // inited later
 byte _const_v__gen__js__sourcemap__vlq__continued; // inited later
@@ -8222,7 +8222,7 @@ string rand__hex(int len);
 string rand__ascii(int len);
 rand__PRNG* default_rng; // global
 VV_LOCAL_SYMBOL void rand__init();
-rand__PRNG* rand__new_default(rand__PRNGConfigStruct config);
+rand__PRNG* rand__new_default(rand__config__PRNGConfigStruct config);
 rand__PRNG* rand__get_current_rng();
 void rand__set_rng(rand__PRNG* rng);
 void rand__seed(Array_u32 seed);
@@ -9266,11 +9266,13 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_hash_stmt(v__gen__js__JsGen* g, v__as
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_array_init_expr(v__gen__js__JsGen* g, v__ast__ArrayInit it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_array_init_values(v__gen__js__JsGen* g, Array_v__ast__Expr exprs);
+VV_LOCAL_SYMBOL bool v__gen__js__JsGen_gen_method_call(v__gen__js__JsGen* g, v__ast__CallExpr it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__ast__CallExpr it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_lock_expr(v__gen__js__JsGen* g, v__ast__LockExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__ast__IndexExpr expr);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_deref_ptr(v__gen__js__JsGen* g, v__ast__Type ty);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__InfixExpr it);
 VV_LOCAL_SYMBOL v__ast__Type v__gen__js__JsGen_greater_typ(v__gen__js__JsGen* g, v__ast__Type left, v__ast__Type right);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__MapInit it);
@@ -12332,7 +12334,7 @@ static char * v_typeof_interface_rand__PRNG(int sidx) { /* rand.PRNG */
 
 static int v_typeof_interface_idx_rand__PRNG(int sidx) { /* rand.PRNG */ 
 	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 65758;
-	return 221;
+	return 219;
 }
 static char * v_typeof_sumtype_v__ast__TypeDecl(int sidx) { /* v.ast.TypeDecl */ 
 	switch(sidx) {
@@ -30373,40 +30375,6 @@ multi_return_Array_string_Array_string_Array_string Array_v__cflag__CFlag_define
 	return (multi_return_Array_string_Array_string_Array_string){.arg0=defines, .arg1=others, .arg2=libs};
 }
 
-// Attr: [inline]
-inline VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev) {
-	u32 _t1 = prev * 1664525U + 1013904223U;
-	return _t1;
-}
-
-// Attr: [inline]
-inline Array_u32 rand__seed__time_seed_array(int count) {
-	u64 ctime = time__sys_mono_now();
-	u32 seed = ((u32)((ctime >> 32U ^ ((ctime & 0x00000000FFFFFFFFU)))));
-	Array_u32 seed_data = __new_array_with_default(0, count, sizeof(u32), 0);
-	for (int _t1 = 0; _t1 < count; ++_t1) {
-		seed = rand__seed__nr_next(seed);
-		array_push((array*)&seed_data, _MOV((u32[]){ rand__seed__nr_next(seed) }));
-	}
-	Array_u32 _t3 = seed_data;
-	return _t3;
-}
-
-// Attr: [inline]
-inline u32 rand__seed__time_seed_32(void) {
-	u32 _t1 = (*(u32*)/*ee elem_typ */array_get(rand__seed__time_seed_array(1), 0));
-	return _t1;
-}
-
-// Attr: [inline]
-inline u64 rand__seed__time_seed_64(void) {
-	Array_u32 seed_data = rand__seed__time_seed_array(2);
-	u64 lower = ((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 0))));
-	u64 upper = ((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 1))));
-	u64 _t1 = (lower | (upper << 32U));
-	return _t1;
-}
-
 VV_LOCAL_SYMBOL Option_string v__pkgconfig__desc(string mod) {
 	v__pkgconfig__Options options = (v__pkgconfig__Options){.path = (string){.str=(byteptr)"", .is_lit=1},.debug = 0,.norecurse = 0,.only_description = true,.use_default_paths = true,};
 	Option_v__pkgconfig__PkgConfig_ptr _t1 = v__pkgconfig__load(mod, options);
@@ -30954,6 +30922,40 @@ Array_string v__pkgconfig__list(void) {
 	}
 	Array_string _t5 = modules;
 	return _t5;
+}
+
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL u32 rand__seed__nr_next(u32 prev) {
+	u32 _t1 = prev * 1664525U + 1013904223U;
+	return _t1;
+}
+
+// Attr: [inline]
+inline Array_u32 rand__seed__time_seed_array(int count) {
+	u64 ctime = time__sys_mono_now();
+	u32 seed = ((u32)((ctime >> 32U ^ ((ctime & 0x00000000FFFFFFFFU)))));
+	Array_u32 seed_data = __new_array_with_default(0, count, sizeof(u32), 0);
+	for (int _t1 = 0; _t1 < count; ++_t1) {
+		seed = rand__seed__nr_next(seed);
+		array_push((array*)&seed_data, _MOV((u32[]){ rand__seed__nr_next(seed) }));
+	}
+	Array_u32 _t3 = seed_data;
+	return _t3;
+}
+
+// Attr: [inline]
+inline u32 rand__seed__time_seed_32(void) {
+	u32 _t1 = (*(u32*)/*ee elem_typ */array_get(rand__seed__time_seed_array(1), 0));
+	return _t1;
+}
+
+// Attr: [inline]
+inline u64 rand__seed__time_seed_64(void) {
+	Array_u32 seed_data = rand__seed__time_seed_array(2);
+	u64 lower = ((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 0))));
+	u64 upper = ((u64)((*(u32*)/*ee elem_typ */array_get(seed_data, 1))));
+	u64 _t1 = (lower | (upper << 32U));
+	return _t1;
 }
 
 // Attr: [inline]
@@ -31743,10 +31745,10 @@ string rand__ascii(int len) {
 }
 
 VV_LOCAL_SYMBOL void rand__init(void) {
-	default_rng = rand__new_default((rand__PRNGConfigStruct){.seed_ = rand__seed__time_seed_array(2),});
+	default_rng = rand__new_default((rand__config__PRNGConfigStruct){.seed_ = rand__seed__time_seed_array(2),});
 }
 
-rand__PRNG* rand__new_default(rand__PRNGConfigStruct config) {
+rand__PRNG* rand__new_default(rand__config__PRNGConfigStruct config) {
 	rand__wyrand__WyRandRNG* rng = (rand__wyrand__WyRandRNG*)memdup(&(rand__wyrand__WyRandRNG){.state = rand__seed__time_seed_64(),.has_extra = 0,.extra = 0,}, sizeof(rand__wyrand__WyRandRNG));
 	rand__wyrand__WyRandRNG_seed(rng, config.seed_);
 	rand__PRNG* _t1 = HEAP(rand__PRNG, /*&rand.PRNG*/I_rand__wyrand__WyRandRNG_to_Interface_rand__PRNG(rng));
@@ -31940,7 +31942,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("1dee4f2")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c51f83e")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65276,8 +65278,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 				.typ_name = typ_name,
 				.val_name = _SLIT("val"),
 				.default_value = _SLIT("new Number(0)"),
-				.constructor = _SLIT("this.val = val | 0"),
-				.value_of = _SLIT("this.val | 0"),
+				.constructor = _SLIT("this.val = Number(val)"),
+				.value_of = _SLIT("Number(this.val)"),
 				.to_string = _SLIT("this.valueOf().toString()"),
 				.eq = _SLIT("this.valueOf() === other.valueOf()"),
 				.to_jsval = _SLIT("+this"),
@@ -66032,7 +66034,7 @@ void v__gen__js__JsGen_init(v__gen__js__JsGen* g) {
 	strings__Builder_writeln(&g->definitions, _SLIT("\"use strict\";"));
 	strings__Builder_writeln(&g->definitions, _SLIT(""));
 	strings__Builder_writeln(&g->definitions, _SLIT("var $global = (new Function(\"return this\"))();"));
-	strings__Builder_writeln(&g->definitions, _SLIT("function $ref(value) { this.val = value; } "));
+	strings__Builder_writeln(&g->definitions, _SLIT("function $ref(value) { if (value instanceof $ref) { return value; } this.val = value; } "));
 	strings__Builder_writeln(&g->definitions, _SLIT("$ref.prototype.valueOf = function() { return this.val; } "));
 	if (g->pref->backend != v__pref__Backend__js_node) {
 		strings__Builder_writeln(&g->definitions, _SLIT("const $process = {"));
@@ -66420,14 +66422,10 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 	else if (node._typ == 297 /* v.ast.PrefixExpr */) {
 		if (((*node._v__ast__PrefixExpr).op == v__token__Kind__amp || (*node._v__ast__PrefixExpr).op == v__token__Kind__mul)) {
 			if ((*node._v__ast__PrefixExpr).op == v__token__Kind__amp) {
-				if (!v__ast__Type_is_pointer((*node._v__ast__PrefixExpr).right_type)) {
-					v__gen__js__JsGen_write(g, _SLIT("(function(x) {"));
-					v__gen__js__JsGen_write(g, _SLIT(" return { val: x, __proto__: Object.getPrototypeOf(x), valueOf: function() { return this.val; } }})(  "));
-					v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
-					v__gen__js__JsGen_write(g, _SLIT(")"));
-				} else {
-					v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
-				}
+				v__gen__js__JsGen_write(g, _SLIT("(function(x) {"));
+				v__gen__js__JsGen_write(g, _SLIT(" return { val: x, __proto__: Object.getPrototypeOf(x), valueOf: function() { return this.val; } }})(  "));
+				v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
+				v__gen__js__JsGen_write(g, _SLIT(")"));
 			} else {
 				v__gen__js__JsGen_write(g, _SLIT("("));
 				v__gen__js__JsGen_expr(g, (*node._v__ast__PrefixExpr).right);
@@ -66804,15 +66802,23 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__
 		if (args.len > 0) {
 			v__gen__js__JsGen_write(g, _SLIT(", "));
 		}
-		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).name}}, {_SLIT(" = this"), 0, { .d_c = 0 }}})));
+		if ((*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).is_mut) {
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).name}}, {_SLIT(" = new $ref(this)"), 0, { .d_c = 0 }}})));
+		} else {
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).name}}, {_SLIT(" = this"), 0, { .d_c = 0 }}})));
+		}
 	}
 	v__gen__js__JsGen_writeln(g, _SLIT(") {"));
 	for (int i = 0; i < args.len; ++i) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[i];
 		bool is_varg = i == args.len - 1 && it.is_variadic;
+		string name = v__gen__js__JsGen_js_name(g, arg.name);
 		if (is_varg) {
-			string name = v__gen__js__JsGen_js_name(g, arg.name);
 			v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT(" = new array("), 0xfe10, {.d_s = name}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		} else {
+			if (v__ast__Type_is_ptr(arg.typ) || arg.is_mut) {
+				v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT(" = new $ref("), 0xfe10, {.d_s = name}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			}
 		}
 	}
 	v__gen__js__JsGen_stmts(g, it.stmts);
@@ -67164,7 +67170,139 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_array_init_values(v__gen__js__JsGen* 
 	v__gen__js__JsGen_write(g, _SLIT("]"));
 }
 
+VV_LOCAL_SYMBOL bool v__gen__js__JsGen_gen_method_call(v__gen__js__JsGen* g, v__ast__CallExpr it) {
+	array_push((array*)&g->call_stack, _MOV((v__ast__CallExpr[]){ it }));
+	string name = v__gen__js__JsGen_js_name(g, it.name);
+	bool call_return_is_optional = v__ast__Type_has_flag(it.return_type, v__ast__TypeFlag__optional);
+	if (call_return_is_optional) {
+		v__gen__js__JsGen_writeln(g, _SLIT("(function(){"));
+		v__gen__js__JsGen_inc_indent(g);
+		v__gen__js__JsGen_writeln(g, _SLIT("try {"));
+		v__gen__js__JsGen_inc_indent(g);
+		v__gen__js__JsGen_write(g, _SLIT("return builtin.unwrap("));
+	}
+	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, it.receiver_type);
+	if (sym->kind == v__ast__Kind__array) {
+		if (sym->kind == v__ast__Kind__array && (string__eq(it.name, _SLIT("map")) || string__eq(it.name, _SLIT("filter")))) {
+			v__gen__js__JsGen_expr(g, it.left);
+			v__ast__Type ltyp = it.left_type;
+			for (;;) {
+				if (!(v__ast__Type_is_ptr(ltyp))) break;
+				v__gen__js__JsGen_write(g, _SLIT(".val"));
+				ltyp = v__ast__Type_deref(ltyp);
+			}
+			v__gen__js__JsGen_write(g, _SLIT("."));
+			v__ast__CallExpr node = it;
+			v__gen__js__JsGen_write(g, it.name);
+			v__gen__js__JsGen_write(g, _SLIT("("));
+			v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr;
+			if (expr._typ == 259 /* v.ast.AnonFn */) {
+				v__gen__js__JsGen_gen_fn_decl(g, (*expr._v__ast__AnonFn).decl);
+				v__gen__js__JsGen_write(g, _SLIT(")"));
+				bool _t2 = true;
+				return _t2;
+			}
+			else if (expr._typ == 280 /* v.ast.Ident */) {
+				if ((*expr._v__ast__Ident).kind == v__ast__IdentKind__function) {
+					v__gen__js__JsGen_write(g, v__gen__js__JsGen_js_name(g, (*expr._v__ast__Ident).name));
+					v__gen__js__JsGen_write(g, _SLIT(")"));
+					bool _t3 = true;
+					return _t3;
+				} else if ((*expr._v__ast__Ident).kind == v__ast__IdentKind__variable) {
+					v__ast__TypeSymbol* v_sym = v__ast__Table_get_type_symbol(g->table, v__ast__Ident_var_info(&(*expr._v__ast__Ident)).typ);
+					if (v_sym->kind == v__ast__Kind__function) {
+						v__gen__js__JsGen_write(g, v__gen__js__JsGen_js_name(g, (*expr._v__ast__Ident).name));
+						v__gen__js__JsGen_write(g, _SLIT(")"));
+						bool _t4 = true;
+						return _t4;
+					}
+				}
+			}
+			
+			else {
+			}
+			;
+			v__gen__js__JsGen_write(g, _SLIT("it => "));
+			v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+			bool _t5 = true;
+			return _t5;
+		}
+		v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, it.left_type);
+		if (left_sym->kind == v__ast__Kind__array) {
+			if ((Array_string_contains(_const_v__gen__js__special_array_methods, it.name))) {
+				v__gen__js__JsGen_expr(g, it.left);
+				v__ast__Type ltyp = it.left_type;
+				for (;;) {
+					if (!(v__ast__Type_is_ptr(ltyp))) break;
+					v__gen__js__JsGen_write(g, _SLIT(".val"));
+					ltyp = v__ast__Type_deref(ltyp);
+				}
+				v__gen__js__JsGen_write(g, _SLIT("."));
+				v__gen__js__JsGen_gen_array_method_call(g, it);
+				bool _t6 = true;
+				return _t6;
+			}
+		}
+	}
+	v__gen__js__JsGen_write(g, _SLIT("Object.getPrototypeOf("));
+	v__gen__js__JsGen_expr(g, it.left);
+	v__ast__Type ltyp = it.left_type;
+	for (;;) {
+		if (!(v__ast__Type_is_ptr(ltyp))) break;
+		v__gen__js__JsGen_write(g, _SLIT(".val"));
+		ltyp = v__ast__Type_deref(ltyp);
+	}
+	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(")."), 0xfe10, {.d_s = name}}, {_SLIT(" .call("), 0, { .d_c = 0 }}})));
+	v__gen__js__JsGen_expr(g, it.left);
+	v__gen__js__JsGen_write(g, _SLIT(","));
+	for (int i = 0; i < it.args.len; ++i) {
+		v__ast__CallArg arg = ((v__ast__CallArg*)it.args.data)[i];
+		v__gen__js__JsGen_expr(g, arg.expr);
+		if (i != it.args.len - 1) {
+			v__gen__js__JsGen_write(g, _SLIT(", "));
+		}
+	}
+	v__gen__js__JsGen_write(g, _SLIT(")"));
+	if (call_return_is_optional) {
+		v__gen__js__JsGen_writeln(g, _SLIT(")"));
+		v__gen__js__JsGen_dec_indent(g);
+		v__gen__js__JsGen_writeln(g, _SLIT("} catch(err) {"));
+		v__gen__js__JsGen_inc_indent(g);
+
+		if (it.or_block.kind == (v__ast__OrKind__block)) {
+			if (it.or_block.stmts.len > 1) {
+				v__gen__js__JsGen_stmts(g, array_slice(it.or_block.stmts, 0, it.or_block.stmts.len - 1));
+			}
+			v__gen__js__JsGen_write(g, _SLIT("return "));
+			v__gen__js__JsGen_stmt(g, (*(v__ast__Stmt*)array_last(it.or_block.stmts)));
+		}
+		else if (it.or_block.kind == (v__ast__OrKind__propagate)) {
+			string panicstr = _SLIT("`optional not set (${err})`");
+			if (string__eq(g->file->mod.name, _SLIT("main")) && string__eq(g->fn_decl->name, _SLIT("main.main"))) {
+				v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("return builtin.panic("), 0xfe10, {.d_s = panicstr}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+			} else {
+				v__gen__js__JsGen_writeln(g, _SLIT("builtin.js_throw(err)"));
+			}
+		}
+		else {
+		};
+		v__gen__js__JsGen_dec_indent(g);
+		v__gen__js__JsGen_writeln(g, _SLIT("}"));
+		v__gen__js__JsGen_dec_indent(g);
+		v__gen__js__JsGen_write(g, _SLIT("})()"));
+	}
+	array_delete_last(&g->call_stack);
+	bool _t7 = true;
+	return _t7;
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__ast__CallExpr it) {
+	if (it.is_method) {
+		if (v__gen__js__JsGen_gen_method_call(g, it)) {
+			return;
+		}
+	}
 	array_push((array*)&g->call_stack, _MOV((v__ast__CallExpr[]){ it }));
 	string name = v__gen__js__JsGen_js_name(g, it.name);
 	bool call_return_is_optional = v__ast__Type_has_flag(it.return_type, v__ast__TypeFlag__optional);
@@ -67176,54 +67314,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__as
 		v__gen__js__JsGen_write(g, _SLIT("return builtin.unwrap("));
 	}
 	v__gen__js__JsGen_expr(g, it.left);
-	if (it.is_method) {
-		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, it.receiver_type);
-		v__gen__js__JsGen_write(g, _SLIT("."));
-		if (sym->kind == v__ast__Kind__array && (string__eq(it.name, _SLIT("map")) || string__eq(it.name, _SLIT("filter")))) {
-			v__ast__CallExpr node = it;
-			v__gen__js__JsGen_write(g, it.name);
-			v__gen__js__JsGen_write(g, _SLIT("("));
-			v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr;
-			if (expr._typ == 259 /* v.ast.AnonFn */) {
-				v__gen__js__JsGen_gen_fn_decl(g, (*expr._v__ast__AnonFn).decl);
-				v__gen__js__JsGen_write(g, _SLIT(")"));
-				return;
-			}
-			else if (expr._typ == 280 /* v.ast.Ident */) {
-				if ((*expr._v__ast__Ident).kind == v__ast__IdentKind__function) {
-					v__gen__js__JsGen_write(g, v__gen__js__JsGen_js_name(g, (*expr._v__ast__Ident).name));
-					v__gen__js__JsGen_write(g, _SLIT(")"));
-					return;
-				} else if ((*expr._v__ast__Ident).kind == v__ast__IdentKind__variable) {
-					v__ast__TypeSymbol* v_sym = v__ast__Table_get_type_symbol(g->table, v__ast__Ident_var_info(&(*expr._v__ast__Ident)).typ);
-					if (v_sym->kind == v__ast__Kind__function) {
-						v__gen__js__JsGen_write(g, v__gen__js__JsGen_js_name(g, (*expr._v__ast__Ident).name));
-						v__gen__js__JsGen_write(g, _SLIT(")"));
-						return;
-					}
-				}
-			}
-			
-			else {
-			}
-			;
-			v__gen__js__JsGen_write(g, _SLIT("it => "));
-			v__gen__js__JsGen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
-			v__gen__js__JsGen_write(g, _SLIT(")"));
-			return;
-		}
-		v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, it.left_type);
-		if (left_sym->kind == v__ast__Kind__array) {
-			v__ast__CallExpr node = it;
-			if ((Array_string_contains(_const_v__gen__js__special_array_methods, node.name))) {
-				v__gen__js__JsGen_gen_array_method_call(g, it);
-				return;
-			}
-		}
-	} else {
-		if ((Array_string_contains(g->builtin_fns, name))) {
-			v__gen__js__JsGen_write(g, _SLIT("builtin."));
-		}
+	if ((Array_string_contains(g->builtin_fns, name))) {
+		v__gen__js__JsGen_write(g, _SLIT("builtin."));
 	}
 	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = name}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 	for (int i = 0; i < it.args.len; ++i) {
@@ -67401,6 +67493,15 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__a
 	}
 }
 
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_deref_ptr(v__gen__js__JsGen* g, v__ast__Type ty) {
+	v__ast__Type t = ty;
+	for (;;) {
+		if (!(v__ast__Type_is_ptr(t))) break;
+		v__gen__js__JsGen_write(g, _SLIT(".val"));
+		t = v__ast__Type_deref(t);
+	}
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__InfixExpr it) {
 	v__ast__TypeSymbol* l_sym = v__ast__Table_get_type_symbol(g->table, it.left_type);
 	v__ast__TypeSymbol* r_sym = v__ast__Table_get_type_symbol(g->table, it.right_type);
@@ -67419,10 +67520,12 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ greater_typ }));
 		v__gen__js__JsGen_write(g, _SLIT("BigInt(("));
 		v__gen__js__JsGen_expr(g, it.left);
+		v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 		v__gen__js__JsGen_write(g, _SLIT(").$toJS())"));
 		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(it.op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
 		v__gen__js__JsGen_write(g, _SLIT("BigInt(("));
 		v__gen__js__JsGen_expr(g, it.right);
+		v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 		v__gen__js__JsGen_write(g, _SLIT(").$toJS())"));
 		array_delete_last(&g->cast_stack);
 		v__gen__js__JsGen_write(g, _SLIT(")"));
@@ -67435,28 +67538,40 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, _SLIT("=="));
 		if (has_operator_overloading) {
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			v__gen__js__JsGen_write(g, _SLIT(".eq("));
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		} else if ((Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, l_sym->kind)) && (Array_v__ast__Kind_contains(_const_v__gen__js__shallow_equatables, r_sym->kind))) {
 			v__gen__js__JsGen_write(g, _SLIT("("));
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 			v__gen__js__JsGen_write(g, _SLIT(".eq("));
 			array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ ((int)(l_sym->kind)) }));
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			array_delete_last(&g->cast_stack);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		} else {
 			v__gen__js__JsGen_write(g, _SLIT("vEq("));
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			v__gen__js__JsGen_write(g, _SLIT(", "));
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		}
 	} else if (l_sym->kind == v__ast__Kind__array && it.op == v__token__Kind__left_shift) {
 		v__gen__js__JsGen_write(g, _SLIT("Array.prototype.push.call("));
 		v__gen__js__JsGen_expr(g, it.left);
+		v__ast__Type ltyp = it.left_type;
+		for (;;) {
+			if (!(v__ast__Type_is_ptr(ltyp))) break;
+			v__gen__js__JsGen_write(g, _SLIT(".val"));
+			ltyp = v__ast__Type_deref(ltyp);
+		}
 		v__gen__js__JsGen_write(g, _SLIT(".arr,"));
 		v__ast__Array array_info = /* as */ *(v__ast__Array*)__as_cast((l_sym->info)._v__ast__Array,(l_sym->info)._typ, 426) /*expected idx: 426, name: v.ast.Array */ ;
 		if (r_sym->kind == v__ast__Kind__array && !v__ast__Type_alias_eq(array_info.elem_type, it.right_type)) {
@@ -67466,6 +67581,12 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_write(g, _SLIT(")"));
 	} else if ((r_sym->kind == v__ast__Kind__array || r_sym->kind == v__ast__Kind__map || r_sym->kind == v__ast__Kind__string) && (it.op == v__token__Kind__key_in || it.op == v__token__Kind__not_in)) {
 		v__gen__js__JsGen_expr(g, it.right);
+		v__ast__Type ltyp = it.right_type;
+		for (;;) {
+			if (!(v__ast__Type_is_ptr(ltyp))) break;
+			v__gen__js__JsGen_write(g, _SLIT(".val"));
+			ltyp = v__ast__Type_deref(ltyp);
+		}
 		if (r_sym->kind == v__ast__Kind__map) {
 			v__gen__js__JsGen_write(g, _SLIT(".map.has("));
 		} else if (r_sym->kind == v__ast__Kind__string) {
@@ -67480,6 +67601,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		v__gen__js__JsGen_write(g, _SLIT(")"));
 	} else if ((it.op == v__token__Kind__key_is || it.op == v__token__Kind__not_is)) {
 		v__gen__js__JsGen_expr(g, it.left);
+		v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 		v__gen__js__JsGen_write(g, _SLIT(" instanceof "));
 		v__gen__js__JsGen_write(g, v__gen__js__JsGen_typ(g, it.right_type));
 	} else if ((it.op == v__token__Kind__lt || it.op == v__token__Kind__gt || it.op == v__token__Kind__ge || it.op == v__token__Kind__le) && v__ast__Table_type_has_method(g->table, l_sym, _SLIT("<")) && l_sym->kind == r_sym->kind) {
@@ -67488,19 +67610,24 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		}
 		if ((it.op == v__token__Kind__lt || it.op == v__token__Kind__ge)) {
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			v__gen__js__JsGen_write(g, _SLIT(".$lt ("));
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		} else {
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			v__gen__js__JsGen_write(g, _SLIT(".$lt ("));
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		}
 	} else {
 		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, v__token__Kind_str(it.op));
 		if (has_operator_overloading) {
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			string _t3 = v__token__Kind_str(it.op);
 			string _t4 = (string){.str=(byteptr)"", .is_lit=1};
 			
@@ -67526,6 +67653,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 			}string name = _t4;
 			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("."), 0xfe10, {.d_s = name}}, {_SLIT(" ("), 0, { .d_c = 0 }}})));
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			v__gen__js__JsGen_write(g, _SLIT(")"));
 		} else {
 			int greater_typ = 0;
@@ -67542,8 +67670,10 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 				array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ greater_typ }));
 			}
 			v__gen__js__JsGen_expr(g, it.left);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.left_type);
 			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(" "), 0xfe10, {.d_s = v__token__Kind_str(it.op)}}, {_SLIT(" "), 0, { .d_c = 0 }}})));
 			v__gen__js__JsGen_expr(g, it.right);
+			v__gen__js__JsGen_gen_deref_ptr(g, it.right_type);
 			if (is_arithmetic) {
 				array_delete_last(&g->cast_stack);
 				v__gen__js__JsGen_write(g, _SLIT(")"));
@@ -67647,8 +67777,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it) {
 	v__gen__js__JsGen_expr(g, it.expr);
-	if (v__ast__Type_is_ptr(it.expr_type)) {
-		v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+	v__ast__Type ltyp = it.expr_type;
+	for (;;) {
+		if (!(v__ast__Type_is_ptr(ltyp))) break;
+		v__gen__js__JsGen_write(g, _SLIT(".val"));
+		ltyp = v__ast__Type_deref(ltyp);
 	}
 	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("."), 0xfe10, {.d_s = it.field_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
@@ -67692,7 +67825,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_inter_literal(v__gen__js__JsGe
 }
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_literal(v__gen__js__JsGen* g, v__ast__StringLiteral it) {
-	string text = string_replace(it.val, _SLIT("'"), _SLIT("\\'"));
+	string text = string_replace(it.val, _SLIT("'"), _SLIT("'"));
+	text = string_replace(text, _SLIT("\""), _SLIT("\\\""));
 	bool should_cast = !(g->cast_stack.len > 0 && (*(v__ast__Type*)array_last(g->cast_stack)) == _const_v__ast__string_type_idx);
 	if (true || should_cast) {
 		if (string__eq(g->file->mod.name, _SLIT("builtin"))) {
@@ -67700,7 +67834,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_literal(v__gen__js__JsGen* g, 
 		}
 		v__gen__js__JsGen_write(g, _SLIT("string("));
 	}
-	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("'"), 0xfe10, {.d_s = text}}, {_SLIT("'"), 0, { .d_c = 0 }}})));
+	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = text}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
 	if (true || should_cast) {
 		v__gen__js__JsGen_write(g, _SLIT(")"));
 	}
@@ -67779,6 +67913,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_type_cast_expr(v__gen__js__JsGen* g, 
 	array_push((array*)&g->cast_stack, _MOV((v__ast__Type[]){ it.typ }));
 	string typ = v__gen__js__JsGen_typ(g, it.typ);
 	if (!is_literal) {
+		if (v__ast__Type_is_ptr(it.typ)) {
+			v__gen__js__JsGen_write(g, _SLIT("new $ref("));
+		}
 		if (!(Array_string_contains(_const_v__gen__js__v_types, typ)) || string__eq(g->ns->name, _SLIT("builtin"))) {
 			v__gen__js__JsGen_write(g, _SLIT("new "));
 		}
@@ -67790,6 +67927,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_type_cast_expr(v__gen__js__JsGen* g, 
 	}
 	if (!is_literal) {
 		v__gen__js__JsGen_write(g, _SLIT(")"));
+		if (v__ast__Type_is_ptr(it.typ)) {
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+		}
 	}
 	array_delete_last(&g->cast_stack);
 }
@@ -83464,15 +83604,16 @@ void _vinit(int ___argc, voidptr ___argv) {
 	// Initializations for module v.util.recompilation :
 	// Initializations for module v.depgraph :
 	// Initializations for module v.cflag :
-	// Initializations for module rand.seed :
 	// Initializations for module v.errors :
 	// Initializations for module v.pkgconfig :
 	_const_v__pkgconfig__default_paths = new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
 		_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig"), _SLIT("/opt/homebrew/lib/pkgconfig")}));
 	// Initializations for module v.vet :
+	// Initializations for module rand.seed :
 	// Initializations for module v.gen.js.sourcemap.vlq :
 	_const_v__gen__js__sourcemap__vlq__mask = ((byte)((1 << _const_v__gen__js__sourcemap__vlq__shift) - 1));
 	_const_v__gen__js__sourcemap__vlq__continued = ((byte)(1 << _const_v__gen__js__sourcemap__vlq__shift));
+	// Initializations for module rand.config :
 	// Initializations for module rand.wyrand :
 	// Initializations for module v.gen.js.sourcemap :
 	// Initializations for module rand :
