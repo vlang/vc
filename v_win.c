@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "09e854c"
+#define V_COMMIT_HASH "e07678d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7a3fe3c"
+	#define V_COMMIT_HASH "09e854c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "09e854c"
+	#define V_CURRENT_COMMIT_HASH "e07678d"
 #endif
 
 // V comptime_defines:
@@ -31942,7 +31942,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("7a3fe3c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("09e854c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -74616,7 +74616,7 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 		return _t6;
 	}
 	node->expr_type = typ;
-	if (v__ast__Type_has_flag(node->expr_type, v__ast__TypeFlag__optional) && !(((node->expr)._typ == 280 /* v.ast.Ident */ && (/* as */ *(v__ast__Ident*)__as_cast((node->expr)._v__ast__Ident,(node->expr)._typ, 280) /*expected idx: 280, name: v.ast.Ident */ ).kind == v__ast__IdentKind__constant))) {
+	if (v__ast__Type_has_flag(node->expr_type, v__ast__TypeFlag__optional) && !((node->expr)._typ == 280 /* v.ast.Ident */ && (/* as */ *(v__ast__Ident*)__as_cast((node->expr)._v__ast__Ident,(node->expr)._typ, 280) /*expected idx: 280, name: v.ast.Ident */ ).kind == v__ast__IdentKind__constant)) {
 		v__checker__Checker_error(c, _SLIT("cannot access fields of an optional, handle the error with `or {...}` or propagate it with `?`"), node->pos);
 	}
 	string field_name = node->field_name;
@@ -74670,9 +74670,9 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 				*(multi_return_v__ast__StructField_v__ast__Type*) _t13.data = (multi_return_v__ast__StructField_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=((v__ast__Type)(0))};
 			}
 			
- 			Option_multi_return_v__ast__StructField_v__ast__Type mr_121768 =  _t13 /*U*/;
-			field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121768.data).arg0;
-			embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121768.data).arg1;
+ 			Option_multi_return_v__ast__StructField_v__ast__Type mr_121766 =  _t13 /*U*/;
+			field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121766.data).arg0;
+			embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_121766.data).arg1;
 			node->from_embed_type = embed_type;
 			if ((sym->kind == v__ast__Kind__aggregate || sym->kind == v__ast__Kind__sum_type)) {
 				unknown_field_msg = (*(err.msg));
@@ -74706,9 +74706,9 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 					*(multi_return_v__ast__StructField_v__ast__Type*) _t15.data = (multi_return_v__ast__StructField_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=((v__ast__Type)(0))};
 				}
 				
- 				Option_multi_return_v__ast__StructField_v__ast__Type mr_122599 =  _t15 /*U*/;
-				field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_122599.data).arg0;
-				embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_122599.data).arg1;
+ 				Option_multi_return_v__ast__StructField_v__ast__Type mr_122597 =  _t15 /*U*/;
+				field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_122597.data).arg0;
+				embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_122597.data).arg1;
 				node->from_embed_type = embed_type;
 			}
 		}
@@ -76827,6 +76827,9 @@ bool v__checker__Checker_expr_defer_0 = false;
 		return _t40;
 	}
 	else if (node._typ == 295 /* v.ast.ParExpr */) {
+		if (((*node._v__ast__ParExpr).expr)._typ == 295 /* v.ast.ParExpr */) {
+			v__checker__Checker_warn(c, _SLIT("redundant parentheses are used"), (*node._v__ast__ParExpr).pos);
+		}
 		v__ast__Type _t41 = v__checker__Checker_expr(c, (*node._v__ast__ParExpr).expr);
 		// Defer begin
 		if (v__checker__Checker_expr_defer_0) {
@@ -78627,8 +78630,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_232669 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_232669.arg0;
+		multi_return_string_v__token__Position mr_232760 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_232760.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
@@ -78890,7 +78893,7 @@ v__ast__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__ast__Inde
 		if ((node->left)._typ == 280 /* v.ast.Ident */) {
 			if (((*node->left._v__ast__Ident).obj)._typ == 338 /* v.ast.Var */) {
 				v__ast__Var v = /* as */ *(v__ast__Var*)__as_cast(((*node->left._v__ast__Ident).obj)._v__ast__Var,((*node->left._v__ast__Ident).obj)._typ, 338) /*expected idx: 338, name: v.ast.Var */ ;
-				is_ok = ((v.is_mut && v.is_arg)) && !v__ast__Type_is_ptr(v__ast__Type_deref(typ));
+				is_ok = v.is_mut && v.is_arg && !v__ast__Type_is_ptr(v__ast__Type_deref(typ));
 			}
 		}
 		if (!is_ok && !c->pref->translated) {
@@ -79958,10 +79961,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_269874 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_269874.arg0;
-				int nroute_attributes = mr_269874.arg1;
-				int nargs = mr_269874.arg2;
+				multi_return_bool_int_int mr_269961 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_269961.arg0;
+				int nroute_attributes = mr_269961.arg1;
+				int nargs = mr_269961.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
