@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7a3fe3c"
+#define V_COMMIT_HASH "09e854c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9ca99c6"
+	#define V_COMMIT_HASH "7a3fe3c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7a3fe3c"
+	#define V_CURRENT_COMMIT_HASH "09e854c"
 #endif
 
 // V comptime_defines:
@@ -32833,7 +32833,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("9ca99c6")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("7a3fe3c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -60505,6 +60505,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_as_cast(v__gen__c__Gen* g, v__ast__AsCast no
 		}
 	} else if (expr_type_sym->kind == v__ast__Kind__interface_ && sym->kind == v__ast__Kind__interface_) {
 		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("I_"), 0xfe10, {.d_s = expr_type_sym->cname}}, {_SLIT("_as_I_"), 0xfe10, {.d_s = sym->cname}}, {_SLIT("("), 0, { .d_c = 0 }}})));
+		if (v__ast__Type_is_ptr(node.expr_type)) {
+			v__gen__c__Gen_write(g, _SLIT("*"));
+		}
 		v__gen__c__Gen_expr(g, node.expr);
 		v__gen__c__Gen_write(g, _SLIT(")"));
 		v__ast__Interface info = /* as */ *(v__ast__Interface*)__as_cast((expr_type_sym->info)._v__ast__Interface,(expr_type_sym->info)._typ, 413) /*expected idx: 413, name: v.ast.Interface */ ;
@@ -60761,8 +60764,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls((*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).typ, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_200268 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
-					Array_string fargs = mr_200268.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_200319 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
+					Array_string fargs = mr_200319.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -64446,6 +64449,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_interface_is_op(v__gen__c__Gen* g, v__as
 		return;
 	}
 	v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("I_"), 0xfe10, {.d_s = left_sym->cname}}, {_SLIT("_is_I_"), 0xfe10, {.d_s = right_sym->cname}}, {_SLIT("("), 0, { .d_c = 0 }}})));
+	if (v__ast__Type_is_ptr(node.left_type)) {
+		v__gen__c__Gen_write(g, _SLIT("*"));
+	}
 	v__gen__c__Gen_expr(g, node.left);
 	v__gen__c__Gen_write(g, _SLIT(")"));
 }
