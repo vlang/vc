@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b3c641f"
+#define V_COMMIT_HASH "2bf1015"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d2ce1f7"
+	#define V_COMMIT_HASH "b3c641f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b3c641f"
+	#define V_CURRENT_COMMIT_HASH "2bf1015"
 #endif
 
 // V comptime_defines:
@@ -7425,6 +7425,7 @@ Array_byte os__File_read_bytes_at(os__File* f, int size, u64 pos);
 Option_int os__File_read_bytes_into_newline(os__File* f, Array_byte* buf);
 Option_int os__File_read_bytes_into(os__File* f, u64 pos, Array_byte* buf);
 Option_int os__File_read_from(os__File* f, u64 pos, Array_byte* buf);
+Option_int os__File_read_into_ptr(os__File* f, byte* ptr, int max_size);
 void os__File_flush(os__File* f);
 VV_LOCAL_SYMBOL IError os__error_file_not_opened();
 VV_LOCAL_SYMBOL IError os__error_size_of_type_0();
@@ -22023,6 +22024,10 @@ Option_int os__File_read_from(os__File* f, u64 pos, Array_byte* buf) {
 	return (Option_int){ .state=2, .err=_v_error(_SLIT("Could not read file")), .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
+Option_int os__File_read_into_ptr(os__File* f, byte* ptr, int max_size) {
+	return os__fread(ptr, 1, max_size, f->cfile);
+}
+
 void os__File_flush(os__File* f) {
 	if (!f->is_opened) {
 		return;
@@ -31942,7 +31947,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("d2ce1f7")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("b3c641f")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
