@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "26b7751"
+#define V_COMMIT_HASH "fe08e1c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0cbc77d"
+	#define V_COMMIT_HASH "26b7751"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "26b7751"
+	#define V_CURRENT_COMMIT_HASH "fe08e1c"
 #endif
 
 // V comptime_defines:
@@ -2033,6 +2033,7 @@ typedef array Array_f64;
 typedef array Array_semver__Comparator;
 typedef array Array_semver__ComparatorSet;
 typedef array Array_io__Writer;
+typedef byte Array_fixed_byte_5 [5];
 typedef array Array_u64;
 typedef array Array_strconv__Uint128;
 typedef byte Array_fixed_byte_32 [32];
@@ -6668,6 +6669,8 @@ static char * v_typeof_interface_x__json2__Serializable(int sidx);
 // end of definitions #endif
 strings__Builder strings__new_builder(int initial_size);
 void strings__Builder_write_ptr(strings__Builder* b, byte* ptr, int len);
+void strings__Builder_write_rune(strings__Builder* b, rune r);
+void strings__Builder_write_runes(strings__Builder* b, Array_rune runes);
 void strings__Builder_write_b(strings__Builder* b, byte data);
 Option_int strings__Builder_write(strings__Builder* b, Array_byte data);
 byte strings__Builder_byte_at(strings__Builder* b, int n);
@@ -12932,6 +12935,28 @@ void strings__Builder_write_ptr(strings__Builder* b, byte* ptr, int len) {
 	array_push_many(b, ptr, len);
 }
 
+// Attr: [manualfree]
+void strings__Builder_write_rune(strings__Builder* b, rune r) {
+	Array_fixed_byte_5 buffer = {0};
+	string res = utf32_to_str_no_malloc(((u32)(r)), &buffer[0]);
+	if (res.len == 0) {
+		return;
+	}
+	array_push_many(b, res.str, res.len);
+}
+
+void strings__Builder_write_runes(strings__Builder* b, Array_rune runes) {
+	Array_fixed_byte_5 buffer = {0};
+	for (int _t1 = 0; _t1 < runes.len; ++_t1) {
+		rune r = ((rune*)runes.data)[_t1];
+		string res = utf32_to_str_no_malloc(((u32)(r)), &buffer[0]);
+		if (res.len == 0) {
+			continue;
+		}
+		array_push_many(b, res.str, res.len);
+	}
+}
+
 void strings__Builder_write_b(strings__Builder* b, byte data) {
 	array_push((array*)b, _MOV((byte[]){ data }));
 }
@@ -18772,10 +18797,7 @@ string rune_str(rune c) {
 // Attr: [manualfree]
 string Array_rune_string(Array_rune ra) {
 	strings__Builder sb = strings__new_builder(ra.len);
-	for (int _t1 = 0; _t1 < ra.len; ++_t1) {
-		rune r = ((rune*)ra.data)[_t1];
-		strings__Builder_write_string(&sb, rune_str(r));
-	}
+	strings__Builder_write_runes(&sb, ra);
 	string res = strings__Builder_str(&sb);
 	strings__Builder_free(&sb);
 	return res;
@@ -31950,7 +31972,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0cbc77d")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("26b7751")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
