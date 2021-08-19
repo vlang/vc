@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "70a658a"
+#define V_COMMIT_HASH "1570e61"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a440b43"
+	#define V_COMMIT_HASH "70a658a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "70a658a"
+	#define V_CURRENT_COMMIT_HASH "1570e61"
 #endif
 
 // V comptime_defines:
@@ -31972,7 +31972,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("a440b43")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("70a658a")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65371,7 +65371,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 			});
 		}
 		else if (string__eq(typ_name, _SLIT("f32")) || string__eq(typ_name, _SLIT("f64")) || string__eq(typ_name, _SLIT("float_literal"))) {
-			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Number(0)"),.constructor = _SLIT("this.val = val"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.val"),.to_jsval = _SLIT("+this"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
+			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Number(0)"),.constructor = _SLIT("this.val = +val"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.val"),.to_jsval = _SLIT("+this"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
 		}
 		else if (string__eq(typ_name, _SLIT("bool"))) {
 			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Boolean(false)"),.constructor = _SLIT("this.val = +val !== 0"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.valueOf()"),.to_jsval = _SLIT("+this != 0"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
@@ -67575,7 +67575,18 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__a
 		}
 		return;
 	}
-	if (it.op == v__token__Kind__eq || it.op == v__token__Kind__ne) {
+	if (it.op == v__token__Kind__logical_or || it.op == v__token__Kind__and) {
+		if (string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("new "));
+		}
+		v__gen__js__JsGen_write(g, _SLIT("bool("));
+		v__gen__js__JsGen_expr(g, it.left);
+		v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+		v__gen__js__JsGen_write(g, v__token__Kind_str(it.op));
+		v__gen__js__JsGen_expr(g, it.right);
+		v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+		v__gen__js__JsGen_write(g, _SLIT(")"));
+	} else if (it.op == v__token__Kind__eq || it.op == v__token__Kind__ne) {
 		bool has_operator_overloading = v__ast__Table_type_has_method(g->table, l_sym, _SLIT("=="));
 		if (has_operator_overloading) {
 			v__gen__js__JsGen_expr(g, it.left);
