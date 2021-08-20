@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "82b1645"
+#define V_COMMIT_HASH "02d823f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c9d6242"
+	#define V_COMMIT_HASH "82b1645"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "82b1645"
+	#define V_CURRENT_COMMIT_HASH "02d823f"
 #endif
 
 // V comptime_defines:
@@ -9213,6 +9213,7 @@ VV_LOCAL_SYMBOL int v__gen__native__Gen_cjmp_notop(v__gen__native__Gen* g, v__to
 VV_LOCAL_SYMBOL int v__gen__native__Gen_cjmp_op(v__gen__native__Gen* g, v__token__Kind op);
 VV_LOCAL_SYMBOL int v__gen__native__Gen_condition(v__gen__native__Gen* g, v__ast__InfixExpr infix_expr, bool neg);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast__IfExpr node);
+VV_LOCAL_SYMBOL void v__gen__native__Gen_infloop(v__gen__native__Gen* g);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_for_stmt(v__gen__native__Gen* g, v__ast__ForStmt node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_fn_decl(v__gen__native__Gen* g, v__ast__FnDecl node);
 void v__gen__native__Amd64_allocate_var(v__gen__native__Amd64* x, string name, int size, int initial_val);
@@ -32802,7 +32803,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c9d6242")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("82b1645")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -70419,7 +70420,28 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast_
 	}
 }
 
+VV_LOCAL_SYMBOL void v__gen__native__Gen_infloop(v__gen__native__Gen* g) {
+	if (g->pref->arch == v__pref__Arch__arm64) {
+		v__gen__native__Gen_write32(g, ((byte)(0x14)));
+	} else {
+		v__gen__native__Gen_write8(g, ((byte)(0xeb)));
+		v__gen__native__Gen_write8(g, ((byte)(0xfe)));
+	}
+	v__gen__native__Gen_println(g, _SLIT("jmp $$"));
+}
+
 VV_LOCAL_SYMBOL void v__gen__native__Gen_for_stmt(v__gen__native__Gen* g, v__ast__ForStmt node) {
+	if (node.is_inf) {
+		if (node.stmts.len == 0) {
+			v__gen__native__Gen_infloop(g);
+			return;
+		}
+		i64 start = v__gen__native__Gen_pos(g);
+		v__gen__native__Gen_stmts(g, node.stmts);
+		v__gen__native__Gen_jmp(g, ((int)(0xffffffff - (v__gen__native__Gen_pos(g) + 5 - start) + 1)));
+		v__gen__native__Gen_println(g, _SLIT("jmp after infinite for"));
+		return;
+	}
 	v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((node.cond)._v__ast__InfixExpr,(node.cond)._typ, 249) /*expected idx: 249, name: v.ast.InfixExpr */ ;
 	int jump_addr = 0;
 	i64 start = v__gen__native__Gen_pos(g);
