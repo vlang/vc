@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c9d6242"
+#define V_COMMIT_HASH "82b1645"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e87cf8b"
+	#define V_COMMIT_HASH "c9d6242"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c9d6242"
+	#define V_CURRENT_COMMIT_HASH "82b1645"
 #endif
 
 // V comptime_defines:
@@ -6269,10 +6269,6 @@ static string Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a); // auto
 static string indent_Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a, int indent_count); // auto
 static string v__ast__AssignStmt_str(v__ast__AssignStmt it); // auto
 static string indent_v__ast__AssignStmt_str(v__ast__AssignStmt it, int indent_count); // auto
-static string v__ast__InfixExpr_str(v__ast__InfixExpr it); // auto
-static string indent_v__ast__InfixExpr_str(v__ast__InfixExpr it, int indent_count); // auto
-static string v__ast__Return_str(v__ast__Return it); // auto
-static string indent_v__ast__Return_str(v__ast__Return it, int indent_count); // auto
 
 // V shared types:
 
@@ -9422,8 +9418,8 @@ void v__gen__native__Gen_gen_exit(v__gen__native__Gen* g, v__ast__Expr node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__Stmt node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Expr node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_postfix_expr(v__gen__native__Gen* g, v__ast__PostfixExpr node);
-VV_LOCAL_SYMBOL void v__gen__native__verror(string s);
-void v__gen__native__Gen_error_with_pos(v__gen__native__Gen* g, string s, v__token__Position pos);
+void v__gen__native__Gen_n_error(v__gen__native__Gen* g, string s);
+void v__gen__native__Gen_v_error(v__gen__native__Gen* g, string s, v__token__Position pos);
 #define _const_v__gen__native__s_attr_some_instructions 1024
 #define _const_v__gen__native__s_attr_pure_instructions 2147483648
 #define _const_v__gen__native__s_attr_ext_reloc 512
@@ -9721,17 +9717,6 @@ v__ast__Expr _v_dump_expr_v__ast__Expr(string fpath, int line, string sexpr, v__
 	eprintln(v__ast__Expr_str(x));
 	return x;
 }
-v__ast__InfixExpr _v_dump_expr_v__ast__InfixExpr(string fpath, int line, string sexpr, v__ast__InfixExpr x) {
-	eprint(_SLIT("["));
-	eprint(fpath);
-	eprint(_SLIT(":"));
-	eprint(int_str(line));
-	eprint(_SLIT("] "));
-	eprint(sexpr);
-	eprint(_SLIT(": "));
-	eprintln(v__ast__InfixExpr_str(x));
-	return x;
-}
 string _v_dump_expr_string(string fpath, int line, string sexpr, string x) {
 	eprint(_SLIT("["));
 	eprint(fpath);
@@ -9741,17 +9726,6 @@ string _v_dump_expr_string(string fpath, int line, string sexpr, string x) {
 	eprint(sexpr);
 	eprint(_SLIT(": "));
 	eprintln(string_str(x));
-	return x;
-}
-v__ast__Return _v_dump_expr_v__ast__Return(string fpath, int line, string sexpr, v__ast__Return x) {
-	eprint(_SLIT("["));
-	eprint(fpath);
-	eprint(_SLIT(":"));
-	eprint(int_str(line));
-	eprint(_SLIT("] "));
-	eprint(sexpr);
-	eprint(_SLIT(": "));
-	eprintln(v__ast__Return_str(x));
 	return x;
 }
 
@@ -10911,8 +10885,6 @@ static string indent_Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a, int inde
 	return res;
 }
 static string v__ast__AssignStmt_str(v__ast__AssignStmt it) { return indent_v__ast__AssignStmt_str(it, 0);}
-static string v__ast__InfixExpr_str(v__ast__InfixExpr it) { return indent_v__ast__InfixExpr_str(it, 0);}
-static string v__ast__Return_str(v__ast__Return it) { return indent_v__ast__Return_str(it, 0);}
 static bool Array_string_contains(Array_string a, string v) {
 	for (int i = 0; i < a.len; ++i) {
 		if (fast_string_eq(((string*)a.data)[i], v)) {
@@ -12246,39 +12218,6 @@ static string indent_v__ast__AssignStmt_str(v__ast__AssignStmt it, int indent_co
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_static: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_static ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_simple: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_simple ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    has_cross_var: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.has_cross_var ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("}"), 0, {.d_c=0}},
-	}));
-	string_free(&indents);
-	return res;
-}
-
-static string indent_v__ast__InfixExpr_str(v__ast__InfixExpr it, int indent_count) {
-	string indents = string_repeat(_SLIT("    "), indent_count);
-	string res = str_intp( 39, _MOV((StrIntpData[]){
-		{_SLIT("v.ast.InfixExpr{\n"), 0, {.d_c=0}},
-		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    op: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__token__Kind_str(it.op)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    pos: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_v__token__Position_str(it.pos, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_stmt: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_stmt ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    left: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Expr_str(it.left)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    right: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Expr_str(it.right)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    left_type: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Type_str(it.left_type)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    right_type: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=v__ast__Type_str(it.right_type)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    auto_locked: "), 0, {.d_c=0}}, {_SLIT("'"), 16, {.d_s=it.auto_locked}}, {_SLIT("'"), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    or_block: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_v__ast__OrExpr_str(it.or_block, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("}"), 0, {.d_c=0}},
-	}));
-	string_free(&indents);
-	return res;
-}
-
-static string indent_v__ast__Return_str(v__ast__Return it, int indent_count) {
-	string indents = string_repeat(_SLIT("    "), indent_count);
-	string res = str_intp( 19, _MOV((StrIntpData[]){
-		{_SLIT("v.ast.Return{\n"), 0, {.d_c=0}},
-		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    pos: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_v__token__Position_str(it.pos, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    comments: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__Comment_str(it.comments, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    exprs: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__Expr_str(it.exprs, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    types: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=indent_Array_v__ast__Type_str(it.types, indent_count + 1)}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("}"), 0, {.d_c=0}},
 	}));
 	string_free(&indents);
@@ -31972,7 +31911,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e87cf8b")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c9d6242")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -68349,8 +68288,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_reg_to_var(v__gen__native__Gen* g, 
 		v__gen__native__Gen_write8(g, 0x4d);
 	}
 	else {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("mov_from_reg "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mov_from_reg "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	};
 	v__gen__native__Gen_write8(g, 0xff - var_offset + 1);
 	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mov DWORD PTR[rbp-"), 0xfe10, {.d_s = int_hex2(var_offset)}}, {_SLIT("],"), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
@@ -68384,8 +68322,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_var_to_reg(v__gen__native__Gen* g, 
 		v__gen__native__Gen_write8(g, 0x4d);
 	}
 	else {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("mov_var_to_reg "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("mov_var_to_reg "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	};
 	v__gen__native__Gen_write8(g, 0xff - var_offset + 1);
 	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(",DWORD PTR[rbp-"), 0xfe10, {.d_s = int_hex2(var_offset)}}, {_SLIT("]"), 0, { .d_c = 0 }}})));
@@ -68478,8 +68415,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_add8_var(v__gen__native__Gen* g, v__gen
 		v__gen__native__Gen_write8(g, 0x45);
 	}
 	else {
-		v__gen__native__verror(_SLIT("add8_var"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("add8_var"));
 	};
 	v__gen__native__Gen_write8(g, 0xff - var_offset + 1);
 	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("add8 "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(",DWORD PTR[rbp-"), 0xfe10, {.d_s = int_hex2(var_offset)}}, {_SLIT("]"), 0, { .d_c = 0 }}})));
@@ -68492,8 +68428,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_sub8_var(v__gen__native__Gen* g, v__gen
 		v__gen__native__Gen_write8(g, 0x45);
 	}
 	else {
-		v__gen__native__verror(_SLIT("sub8_var"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("sub8_var"));
 	};
 	v__gen__native__Gen_write8(g, 0xff - var_offset + 1);
 	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("sub8 "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(",DWORD PTR[rbp-"), 0xfe10, {.d_s = int_hex2(var_offset)}}, {_SLIT("]"), 0, { .d_c = 0 }}})));
@@ -68518,8 +68453,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mul8_var(v__gen__native__Gen* g, v__gen
 		v__gen__native__Gen_write8(g, 0x45);
 	}
 	else {
-		v__gen__native__verror(_SLIT("mul8_var"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("mul8_var"));
 	};
 	v__gen__native__Gen_write8(g, 0xff - var_offset + 1);
 	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mul8 "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(",DWORD PTR[rbp-"), 0xfe10, {.d_s = int_hex2(var_offset)}}, {_SLIT("]"), 0, { .d_c = 0 }}})));
@@ -68574,12 +68508,10 @@ void v__gen__native__Gen_xor(v__gen__native__Gen* g, v__gen__native__Register r,
 			v__gen__native__Gen_println(g, _SLIT("xor rcx, -1"));
 		}
 		else {
-			v__gen__native__verror(_SLIT("unhandled xor"));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, _SLIT("unhandled xor"));
 		};
 	} else {
-		v__gen__native__verror(_SLIT("unhandled xor"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("unhandled xor"));
 	}
 }
 
@@ -68627,8 +68559,7 @@ VV_LOCAL_SYMBOL int v__gen__native__Gen_nsyscall_write(v__gen__native__Gen* g) {
 		return _t2;
 	}
 	else {
-		v__gen__native__verror(_SLIT("unsupported exit syscall for this platform"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("unsupported exit syscall for this platform"));
 	};
 	int _t3 = 0;
 	return _t3;
@@ -68645,8 +68576,7 @@ VV_LOCAL_SYMBOL int v__gen__native__Gen_nsyscall_exit(v__gen__native__Gen* g) {
 		return _t2;
 	}
 	else {
-		v__gen__native__verror(_SLIT("unsupported exit syscall for this platform"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("unsupported exit syscall for this platform"));
 	};
 	int _t3 = 0;
 	return _t3;
@@ -68659,8 +68589,7 @@ void v__gen__native__Amd64_gen_exit(v__gen__native__Amd64* a, v__gen__native__Ge
 void v__gen__native__Gen_gen_amd64_exit(v__gen__native__Gen* g, v__ast__Expr expr) {
 	if (expr._typ == 267 /* v.ast.CallExpr */) {
 		v__ast__Type right = (*expr._v__ast__CallExpr).return_type;
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("native exit builtin: Unsupported call "), 0xfe07, {.d_i32 = right}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("native exit builtin: Unsupported call "), 0xfe07, {.d_i32 = right}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	else if (expr._typ == 280 /* v.ast.Ident */) {
 		int var_offset = v__gen__native__Gen_get_var_offset(g, (*expr._v__ast__Ident).name);
@@ -68671,8 +68600,7 @@ void v__gen__native__Gen_gen_amd64_exit(v__gen__native__Gen* g, v__ast__Expr exp
 	}
 	
 	else {
-		v__gen__native__verror(_SLIT("native builtin exit expects a numeric argument"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("native builtin exit expects a numeric argument"));
 	}
 	;
 	v__gen__native__Gen_mov(g, v__gen__native__Register__eax, v__gen__native__Gen_nsyscall_exit(g));
@@ -68697,8 +68625,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov(v__gen__native__Gen* g, v__gen__nat
 			return;
 		}
 		else {
-			v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(", -1"), 0, { .d_c = 0 }}})));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(", -1"), 0, { .d_c = 0 }}})));
 		};
 	}
 	if (val == 0) {
@@ -68736,8 +68663,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov(v__gen__native__Gen* g, v__gen__nat
 			v__gen__native__Gen_write8(g, 0xe4);
 		}
 		else {
-			v__gen__native__verror( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		};
 		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("xor "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	} else {
@@ -68763,8 +68689,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov(v__gen__native__Gen* g, v__gen__nat
 			v__gen__native__Gen_write8(g, 0xbc);
 		}
 		else {
-			v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		};
 		v__gen__native__Gen_write32(g, val);
 		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mov "), 0xfe10, {.d_s = v__gen__native__Register_str(reg)}}, {_SLIT(", "), 0xfe07, {.d_i32 = val}}, {_SLIT0, 0, { .d_c = 0 }}})));
@@ -68871,8 +68796,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_reg(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write8(g, 0x89);
 		v__gen__native__Gen_write8(g, 0xc6);
 	} else {
-		v__gen__native__verror( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled mov_reg combination for "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(" "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled mov_reg combination for "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(" "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mov "), 0xfe10, {.d_s = v__gen__native__Register_str(a)}}, {_SLIT(", "), 0xfe10, {.d_s = v__gen__native__Register_str(b)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
@@ -68897,8 +68821,7 @@ void v__gen__native__Gen_call_fn(v__gen__native__Gen* g, v__ast__CallExpr node) 
 	eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("call fn ("), 0xfe10, {.d_s = n}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
 	i64 addr = (*(i64*)map_get(ADDR(map, g->fn_addr), &(string[]){n}, &(i64[]){ 0 }));
 	if (addr == 0) {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("fn addr of `"), 0xfe10, {.d_s = name}}, {_SLIT("` = 0"), 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fn addr of `"), 0xfe10, {.d_s = name}}, {_SLIT("` = 0"), 0, { .d_c = 0 }}})));
 	}
 	for (int i = 0; i < node.args.len; ++i) {
 		v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, i)).expr;
@@ -68915,14 +68838,12 @@ void v__gen__native__Gen_call_fn(v__gen__native__Gen* g, v__ast__CallExpr node) 
 		}
 		
 		else {
-			v__gen__native__verror(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled call_fn (name="), 0xfe10, {.d_s = name}}, {_SLIT(") node: "), 0, { .d_c = 0 }}})), charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ))));
-			VUNREACHABLE();
+			v__gen__native__Gen_v_error(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("unhandled call_fn (name="), 0xfe10, {.d_s = name}}, {_SLIT(") node: "), 0xfe10, {.d_s = charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})), node.pos);
 		}
 		;
 	}
 	if (node.args.len > 6) {
-		v__gen__native__verror(_SLIT("more than 6 args not allowed for now"));
-		VUNREACHABLE();
+		v__gen__native__Gen_v_error(g, _SLIT("more than 6 args not allowed for now"), node.pos);
 	}
 	v__gen__native__Gen_call(g, ((int)(addr)));
 	v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fn call `"), 0xfe10, {.d_s = name}}, {_SLIT("()`"), 0, { .d_c = 0 }}})));
@@ -68973,7 +68894,8 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 					Option_int _t2 = string_index(name, _SLIT("["));
 					if (_t2.state != 0) { /*or block*/ 
 						IError err = _t2.err;
-						v__gen__native__verror(_SLIT("bracket expected"));
+						v__gen__native__Gen_v_error(g, _SLIT("bracket expected"), node.pos);
+						_v_exit(1);
 						VUNREACHABLE();
 					;
 					}
@@ -68988,14 +68910,13 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				}
 				else {
 					string tn = charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( ((*(v__ast__Expr*)/*ee elem_typ */array_get(node.left, i)))._typ ));
-					 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 850, _SLIT("node.left_types"), node.left_types );
-					v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled assign type: "), 0xfe10, {.d_s = tn}}, {_SLIT0, 0, { .d_c = 0 }}})));
-					VUNREACHABLE();
+					 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 853, _SLIT("node.left_types"), node.left_types );
+					v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled assign type: "), 0xfe10, {.d_s = tn}}, {_SLIT0, 0, { .d_c = 0 }}})));
 				};
 			}
 			else {
 				eprintln(_SLIT("ERROR 2"));
-				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 857, _SLIT("node"), node );
+				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 860, _SLIT("node"), node );
 			};
 		}
 		else if (right._typ == 284 /* v.ast.InfixExpr */) {
@@ -69039,7 +68960,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 			}
 			else {
 				eprintln(_SLIT("TODO: unhandled assign ident case"));
-				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 906, _SLIT("node"), node );
+				 _v_dump_expr_v__ast__AssignStmt(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 909, _SLIT("node"), node );
 			};
 		}
 		else if (right._typ == 305 /* v.ast.StructInit */) {
@@ -69068,9 +68989,8 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				}
 				
 				else {
-					 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 937, _SLIT("e"), e );
-					v__gen__native__verror(_SLIT("unhandled array init type"));
-					VUNREACHABLE();
+					 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 940, _SLIT("e"), e );
+					v__gen__native__Gen_n_error(g, _SLIT("unhandled array init type"));
 				}
 				;
 			}
@@ -69094,8 +69014,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 				v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__rax, dest);
 				v__gen__native__Gen_add_reg(g, v__gen__native__Register__rax, v__gen__native__Register__rdi);
 			} else {
-				v__gen__native__verror(_SLIT("only integers and idents can be used as indexes"));
-				VUNREACHABLE();
+				v__gen__native__Gen_n_error(g, _SLIT("only integers and idents can be used as indexes"));
 			}
 			v__gen__native__Gen_mov_reg_to_var(g, offset, v__gen__native__Register__eax);
 		}
@@ -69111,9 +69030,12 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 			v__gen__native__Gen_mov_reg_to_var(g, dest, v__gen__native__Register__rax);
 			v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__rsi, dest);
 		}
+		else if (right._typ == 279 /* v.ast.GoExpr */) {
+			v__gen__native__Gen_v_error(g, _SLIT("threads not implemented for the native backend"), node.pos);
+		}
 		
 		else {
-			v__gen__native__Gen_error_with_pos(g, string__plus(_SLIT("native assign_stmt unhandled expr: "), charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (right)._typ ))), v__ast__Expr_position(right));
+			v__gen__native__Gen_v_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled assign_stmt expression: "), 0xfe10, {.d_s = charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (right)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(right));
 		}
 		;
 	}
@@ -69124,8 +69046,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_infix_expr(v__gen__native__Gen* g, v__a
 		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("infix expr op="), 0xfe10, {.d_s = v__token__Kind_str(node.op)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	if ((node.left)._typ == 284 /* v.ast.InfixExpr */) {
-		v__gen__native__verror(_SLIT("only simple expressions are supported right now (not more than 2 operands)"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("only simple expressions are supported right now (not more than 2 operands)"));
 	}
 	if (node.left._typ == 280 /* v.ast.Ident */) {
 		v__gen__native__Gen_mov_var_to_reg(g, v__gen__native__Register__eax, v__gen__native__Gen_get_var_offset(g, (*node.left._v__ast__Ident).name));
@@ -69168,8 +69089,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_gen_assert(v__gen__native__Gen* g, v__a
 	} else if ((ane)._typ == 284 /* v.ast.InfixExpr */) {
 		ine = (*ane._v__ast__InfixExpr);
 	} else {
-		v__gen__native__verror(_SLIT("Unsupported expression in assert"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("Unsupported expression in assert"));
 	}
 	cjmp_addr = v__gen__native__Gen_condition(g, ine, true);
 	v__gen__native__Gen_expr(g, assert_node.expr);
@@ -69228,13 +69148,11 @@ VV_LOCAL_SYMBOL int v__gen__native__Gen_condition(v__gen__native__Gen* g, v__ast
 			v__gen__native__Gen_cmp(g, v__gen__native__Register__eax, v__gen__native__Size___32, a1);
 		}
 		else if (infix_expr.right._typ == 280 /* v.ast.Ident */) {
-			v__gen__native__verror(_SLIT("unsupported if construction"));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, _SLIT("unsupported if construction"));
 		}
 		
 		else {
-			v__gen__native__verror(_SLIT("unsupported if construction"));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, _SLIT("unsupported if construction"));
 		}
 		;
 	}
@@ -69244,21 +69162,17 @@ VV_LOCAL_SYMBOL int v__gen__native__Gen_condition(v__gen__native__Gen* g, v__ast
 			v__gen__native__Gen_cmp_var(g, (*infix_expr.left._v__ast__Ident).name, string_int(lit.val));
 		}
 		else if (infix_expr.right._typ == 280 /* v.ast.Ident */) {
-			v__gen__native__verror(_SLIT("unsupported if construction"));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, _SLIT("unsupported if construction"));
 		}
 		
 		else {
-			v__gen__native__verror(_SLIT("unsupported if construction"));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, _SLIT("unsupported if construction"));
 		}
 		;
 	}
 	
 	else {
-		 _v_dump_expr_v__ast__InfixExpr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/amd64.v"), 1121, _SLIT("infix_expr"), infix_expr );
-		v__gen__native__verror(_SLIT("unhandled infix.left"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled "), 0xfe10, {.d_s = v__ast__Expr_str(infix_expr.left)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	;
 	int _t1 = (neg ? (v__gen__native__Gen_cjmp_op(g, infix_expr.op)) : (v__gen__native__Gen_cjmp_notop(g, infix_expr.op)));
@@ -69269,11 +69183,13 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_if_expr(v__gen__native__Gen* g, v__ast_
 	v__ast__IfBranch branch = (*(v__ast__IfBranch*)/*ee elem_typ */array_get(node.branches, 0));
 	v__ast__InfixExpr infix_expr = /* as */ *(v__ast__InfixExpr*)__as_cast((branch.cond)._v__ast__InfixExpr,(branch.cond)._typ, 284) /*expected idx: 284, name: v.ast.InfixExpr */ ;
 	int cjmp_addr = v__gen__native__Gen_condition(g, infix_expr, false);
+	if (node.is_comptime) {
+		v__gen__native__Gen_n_error(g, _SLIT("ignored comptime"));
+	}
 	v__gen__native__Gen_stmts(g, branch.stmts);
 	v__gen__native__Gen_write32_at(g, cjmp_addr, ((int)(v__gen__native__Gen_pos(g) - cjmp_addr - 4)));
 	if (node.has_else) {
-		v__gen__native__verror(_SLIT("else statements not yet supported"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("else statements not yet supported"));
 	}
 }
 
@@ -69288,8 +69204,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_for_stmt(v__gen__native__Gen* g, v__ast
 	}
 	
 	else {
-		v__gen__native__verror(_SLIT("unhandled infix.left"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("unhandled infix.left"));
 	}
 	;
 	v__gen__native__Gen_stmts(g, node.stmts);
@@ -69371,8 +69286,7 @@ int v__gen__native__Gen_allocate_var(v__gen__native__Gen* g, string name, int si
 		v__gen__native__Gen_write8(g, 0x45);
 	}
 	else {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("allocate_var: bad size "), 0xfe07, {.d_i32 = size}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("allocate_var: bad size "), 0xfe07, {.d_i32 = size}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	};
 	int n = g->stack_var_pos + size;
 	v__gen__native__Gen_write8(g, 0xff - n + 1);
@@ -69397,8 +69311,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_mov_arm(v__gen__native__Gen* g, v__gen_
 		v__gen__native__Gen_write32(g, 0xd2800000 + ((int)(r)) + (((int)(val)) << 5));
 		v__gen__native__Gen_println(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("mov x"), 0xfe07, {.d_i32 = r}}, {_SLIT(", "), 0xfe08, {.d_u64 = val}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	} else {
-		v__gen__native__verror(_SLIT("mov_arm unsupported values"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("mov_arm unsupported values"));
 	}
 }
 
@@ -69410,8 +69323,7 @@ void v__gen__native__Gen_call_fn_arm64(v__gen__native__Gen* g, v__ast__CallExpr 
 	string name = node.name;
 	i64 addr = (*(i64*)map_get(ADDR(map, g->fn_addr), &(string[]){name}, &(i64[]){ 0 }));
 	if (addr == 0) {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("fn addr of `"), 0xfe10, {.d_s = name}}, {_SLIT("` = 0"), 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fn addr of `"), 0xfe10, {.d_s = name}}, {_SLIT("` = 0"), 0, { .d_c = 0 }}})));
 	}
 	for (int i = 0; i < node.args.len; ++i) {
 		v__ast__Expr expr = (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, i)).expr;
@@ -69419,14 +69331,12 @@ void v__gen__native__Gen_call_fn_arm64(v__gen__native__Gen* g, v__ast__CallExpr 
 		}
 		
 		else {
-			v__gen__native__verror(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled call_fn (name="), 0xfe10, {.d_s = name}}, {_SLIT(") node: "), 0, { .d_c = 0 }}})), charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ))));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled call_fn (name="), 0xfe10, {.d_s = name}}, {_SLIT(") node: "), 0, { .d_c = 0 }}})), charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ))));
 		}
 		;
 	}
 	if (node.args.len > 6) {
-		v__gen__native__verror(_SLIT("more than 6 args not allowed for now"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("more than 6 args not allowed for now"));
 	}
 	v__gen__native__Gen_call(g, ((int)(addr)));
 	v__gen__native__Gen_println(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fn call `"), 0xfe10, {.d_s = name}}, {_SLIT("()`"), 0, { .d_c = 0 }}})));
@@ -69474,8 +69384,7 @@ void v__gen__native__Arm64_gen_exit(v__gen__native__Arm64* c, v__gen__native__Ge
 	}
 	
 	else {
-		v__gen__native__verror(_SLIT("native builtin exit expects a numeric argument"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("native builtin exit expects a numeric argument"));
 	}
 	;
 
@@ -69489,8 +69398,7 @@ void v__gen__native__Arm64_gen_exit(v__gen__native__Arm64* c, v__gen__native__Ge
 		v__gen__native__Gen_mov_arm(&c->g, v__gen__native__Arm64Register__x0, 0U);
 	}
 	else {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported os "), 0xfe10, {.d_s = v__pref__OS_str(c->g.pref->os)}}, {_SLIT0, 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported os "), 0xfe10, {.d_s = v__pref__OS_str(c->g.pref->os)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	};
 	v__gen__native__Gen_svc(g);
 }
@@ -69501,8 +69409,7 @@ void v__gen__native__Gen_gen_arm64_exit(v__gen__native__Gen* g, v__ast__Expr exp
 	}
 	
 	else {
-		v__gen__native__verror(_SLIT("native builtin exit expects a numeric argument"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("native builtin exit expects a numeric argument"));
 	}
 	;
 	v__gen__native__Gen_mov_arm(g, v__gen__native__Arm64Register__x0, 0U);
@@ -69626,8 +69533,7 @@ multi_return_int_int v__gen__native__gen(Array_v__ast__File_ptr files, v__ast__T
 			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Warning: "), 0xfe10, {.d_s = v__errors__Warning_str((*(v__errors__Warning*)/*ee elem_typ */array_get(file->warnings, 0)))}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
 		if (file->errors.len > 0) {
-			v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Error "), 0xfe10, {.d_s = v__errors__Error_str((*(v__errors__Error*)/*ee elem_typ */array_get(file->errors, 0)))}}, {_SLIT0, 0, { .d_c = 0 }}})));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g, v__errors__Error_str((*(v__errors__Error*)/*ee elem_typ */array_get(file->errors, 0))));
 		}
 		v__gen__native__Gen_stmts(g, file->stmts);
 	}
@@ -69649,8 +69555,7 @@ void v__gen__native__Gen_generate_header(v__gen__native__Gen* g) {
 		}
 	}
 	else {
-		v__gen__native__verror(_SLIT("Error: only `raw`, `linux` and `macos` are supported for -os in -native"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("only `raw`, `linux` and `macos` are supported for -os in -native"));
 	};
 }
 
@@ -69766,8 +69671,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_write_string_with_padding(v__gen__nativ
 VV_LOCAL_SYMBOL int v__gen__native__Gen_get_var_offset(v__gen__native__Gen* g, string var_name) {
 	int offset = (*(int*)map_get(ADDR(map, g->var_offset), &(string[]){var_name}, &(int[]){ 0 }));
 	if (offset == 0) {
-		v__gen__native__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown variable `"), 0xfe10, {.d_s = var_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown variable `"), 0xfe10, {.d_s = var_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
 	}
 	int _t1 = offset;
 	return _t1;
@@ -69795,8 +69699,7 @@ void v__gen__native__Gen_gen_print_from_expr(v__gen__native__Gen* g, v__ast__Exp
 	else {
 		 _v_dump_expr_string(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 250, _SLIT("typeof(expr).name"), _SLIT("ast.Expr") );
 		 _v_dump_expr_v__ast__Expr(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 251, _SLIT("expr"), expr );
-		v__gen__native__verror(_SLIT("expected string as argument for print"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("expected string as argument for print"));
 	}
 	;
 }
@@ -69813,7 +69716,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_println(v__gen__native__Gen* g, string 
 	}
 	string addr = int_hex(g->debug_pos);
 	print(term__red(string__plus(string__plus(strings__repeat('0', 6 - addr.len), addr), _SLIT("  "))));
-	for (int i = g->debug_pos; i < g->buf.len; i++) {
+	for (int i = g->debug_pos; i < v__gen__native__Gen_pos(g); i++) {
 		string s = byte_hex((*(byte*)/*ee elem_typ */array_get(g->buf, i)));
 		if (s.len == 1) {
 			print(term__blue(_SLIT("0")));
@@ -69827,8 +69730,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_println(v__gen__native__Gen* g, string 
 }
 
 VV_LOCAL_SYMBOL void v__gen__native__Gen_for_in_stmt(v__gen__native__Gen* g, v__ast__ForInStmt node) {
-	v__gen__native__verror(_SLIT("for-in statement is not yet implemented"));
-	VUNREACHABLE();
+	v__gen__native__Gen_v_error(g, _SLIT("for-in statement is not yet implemented"), node.pos);
 }
 
 void v__gen__native__Gen_gen_exit(v__gen__native__Gen* g, v__ast__Expr node) {
@@ -69861,8 +69763,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 		for (int _t1 = 0; _t1 < words.len; ++_t1) {
 			string word = ((string*)words.data)[_t1];
 			if (word.len != 2) {
-				v__gen__native__verror(_SLIT("opcodes format: xx xx xx xx"));
-				VUNREACHABLE();
+				v__gen__native__Gen_n_error(g, _SLIT("opcodes format: xx xx xx xx"));
 			}
 			int b = strtol(((char*)(word.str)), 0, 16);
 			v__gen__native__Gen_write8(g, b);
@@ -69871,24 +69772,23 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 	else if (node._typ == 330 /* v.ast.Module */) {
 	}
 	else if (node._typ == 331 /* v.ast.Return */) {
-		 _v_dump_expr_v__ast__Return(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 349, _SLIT("node"), (*node._v__ast__Return) );
-		 _v_dump_expr_Array_v__ast__Type(_SLIT("/home/runner/work/v/v/vlib/v/gen/native/gen.v"), 350, _SLIT("node.types"), (*node._v__ast__Return).types );
 		string s = _SLIT("?");
 		v__ast__Expr e0 = (*(v__ast__Expr*)/*ee elem_typ */array_get((*node._v__ast__Return).exprs, 0));
 		if (e0._typ == 285 /* v.ast.IntegerLiteral */) {
+			v__gen__native__Gen_mov64(g, v__gen__native__Register__rax, string_int((*e0._v__ast__IntegerLiteral).val));
+		}
+		else if (e0._typ == 284 /* v.ast.InfixExpr */) {
 		}
 		else if (e0._typ == 304 /* v.ast.StringLiteral */) {
 			s = string_str((*e0._v__ast__StringLiteral).val);
-			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("jlalala "), 0xfe10, {.d_s = s}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			v__gen__native__Gen_expr(g, (*(v__ast__Expr*)/*ee elem_typ */array_get((*node._v__ast__Return).exprs, 0)));
+			v__gen__native__Gen_mov64(g, v__gen__native__Register__rax, v__gen__native__Gen_allocate_string(g, s, 2));
 		}
 		
 		else {
-			v__gen__native__verror(_SLIT("unknown return type"));
-			VUNREACHABLE();
+			v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown return type "), 0xfe10, {.d_s = v__ast__Expr_str(e0)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
 		;
-		v__gen__native__Gen_expr(g, (*(v__ast__Expr*)/*ee elem_typ */array_get((*node._v__ast__Return).exprs, 0)));
-		v__gen__native__Gen_mov64(g, v__gen__native__Register__rax, v__gen__native__Gen_allocate_string(g, s, 2));
 		v__gen__native__Gen_add8(g, v__gen__native__Register__rsp, 0x20);
 		v__gen__native__Gen_pop(g, v__gen__native__Register__rbp);
 		v__gen__native__Gen_ret(g);
@@ -69910,8 +69810,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Ex
 		v__gen__native__Gen_expr(g, (*node._v__ast__ParExpr).expr);
 	}
 	else if (node._typ == 261 /* v.ast.ArrayInit */) {
-		v__gen__native__verror(_SLIT("array init expr not supported yet"));
-		VUNREACHABLE();
+		v__gen__native__Gen_n_error(g, _SLIT("array init expr not supported yet"));
 	}
 	else if (node._typ == 265 /* v.ast.BoolLiteral */) {
 	}
@@ -69930,7 +69829,11 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Ex
 	else if (node._typ == 280 /* v.ast.Ident */) {
 	}
 	else if (node._typ == 281 /* v.ast.IfExpr */) {
-		v__gen__native__Gen_if_expr(g, (*node._v__ast__IfExpr));
+		if ((*node._v__ast__IfExpr).is_comptime) {
+			eprintln(_SLIT("Warning: ignored compile time conditional not yet supported for the native backend."));
+		} else {
+			v__gen__native__Gen_if_expr(g, (*node._v__ast__IfExpr));
+		}
 	}
 	else if (node._typ == 284 /* v.ast.InfixExpr */) {
 	}
@@ -69943,9 +69846,12 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Ex
 	}
 	else if (node._typ == 305 /* v.ast.StructInit */) {
 	}
+	else if (node._typ == 279 /* v.ast.GoExpr */) {
+		v__gen__native__Gen_v_error(g, _SLIT("native backend doesnt support threads yet"), (*node._v__ast__GoExpr).pos);
+	}
 	
 	else {
-		println(term__red(string__plus(_SLIT("native.expr(): unhandled node: "), charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (node)._typ )))));
+		v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expr: unhandled node type: "), 0xfe10, {.d_s = charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (node)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
 	;
 }
@@ -69962,13 +69868,13 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_postfix_expr(v__gen__native__Gen* g, v_
 }
 
 // Attr: [noreturn]
-VNORETURN VV_LOCAL_SYMBOL void v__gen__native__verror(string s) {
-	v__util__verror(_SLIT("native gen error"), s);
+VNORETURN void v__gen__native__Gen_n_error(v__gen__native__Gen* g, string s) {
+	v__util__verror(_SLIT("native error"), s);
 	VUNREACHABLE();
 	while(1);
 }
 
-void v__gen__native__Gen_error_with_pos(v__gen__native__Gen* g, string s, v__token__Position pos) {
+void v__gen__native__Gen_v_error(v__gen__native__Gen* g, string s, v__token__Position pos) {
 	string kind = _SLIT("error:");
 	if (g->pref->output_mode == v__pref__OutputMode__stdout) {
 		string ferror = v__util__formatted_error(kind, s, g->pref->path, pos);
