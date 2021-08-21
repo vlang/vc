@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0d81d0c"
+#define V_COMMIT_HASH "2f6b2dd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "02d823f"
+	#define V_COMMIT_HASH "0d81d0c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0d81d0c"
+	#define V_CURRENT_COMMIT_HASH "2f6b2dd"
 #endif
 
 // V comptime_defines:
@@ -9276,6 +9276,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_deref_ptr(v__gen__js__JsGen* g, v__as
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_infix_expr(v__gen__js__JsGen* g, v__ast__InfixExpr it);
 VV_LOCAL_SYMBOL v__ast__Type v__gen__js__JsGen_greater_typ(v__gen__js__JsGen* g, v__ast__Type left, v__ast__Type right);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v__ast__MapInit it);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_type_name(v__gen__js__JsGen* g, v__ast__Type raw_type);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_inter_literal(v__gen__js__JsGen* g, v__ast__StringInterLiteral it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_string_literal(v__gen__js__JsGen* g, v__ast__StringLiteral it);
@@ -31912,7 +31913,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("02d823f")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0d81d0c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -66797,7 +66798,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__
 		if (args.len > 0) {
 			v__gen__js__JsGen_write(g, _SLIT(", "));
 		}
-		if ((*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).is_mut) {
+		if ((*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).is_mut || v__ast__Type_is_ptr((*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).typ)) {
 			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).name}}, {_SLIT(" = new $ref(this)"), 0, { .d_c = 0 }}})));
 		} else {
 			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = (*(v__ast__Param*)/*ee elem_typ */array_get(it.params, 0)).name}}, {_SLIT(" = this"), 0, { .d_c = 0 }}})));
@@ -67781,7 +67782,51 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_map_init_expr(v__gen__js__JsGen* g, v
 	v__gen__js__JsGen_write(g, _SLIT(")"));
 }
 
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_type_name(v__gen__js__JsGen* g, v__ast__Type raw_type) {
+	v__ast__Type typ = raw_type;
+	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, typ);
+	string s = _SLIT("");
+	if (sym->kind == v__ast__Kind__function) {
+		if (v__ast__Type_is_ptr(typ)) {
+			s = _SLIT("&function");
+		} else {
+			s = _SLIT("function");
+		}
+	} else {
+		s = v__ast__Table_type_to_str(g->table, v__gen__js__JsGen_unwrap_generic(g, typ));
+	}
+	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("new builtin.string(\""), 0xfe10, {.d_s = s}}, {_SLIT("\")"), 0, { .d_c = 0 }}})));
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_selector_expr(v__gen__js__JsGen* g, v__ast__SelectorExpr it) {
+	if (it.name_type > 0) {
+		v__ast__SelectorExpr node = it;
+
+		if (node.gkind_field == (v__ast__GenericKindField__name)) {
+			v__gen__js__JsGen_type_name(g, it.name_type);
+			return;
+		}
+		else if (node.gkind_field == (v__ast__GenericKindField__typ)) {
+			v__gen__js__JsGen_write(g, _SLIT("new builtin.int("));
+			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(v__gen__js__JsGen_unwrap_generic(g, it.name_type)))}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+			v__gen__js__JsGen_write(g, _SLIT(")"));
+			return;
+		}
+		else if (node.gkind_field == (v__ast__GenericKindField__unknown)) {
+			if (string__eq(node.field_name, _SLIT("name"))) {
+				v__gen__js__JsGen_type_name(g, it.name_type);
+				return;
+			} else if (string__eq(node.field_name, _SLIT("idx"))) {
+				v__gen__js__JsGen_write(g, _SLIT("new builtin.int("));
+				v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = ((int)(v__gen__js__JsGen_unwrap_generic(g, it.name_type)))}}, {_SLIT0, 0, { .d_c = 0 }}})));
+				v__gen__js__JsGen_write(g, _SLIT(")"));
+				return;
+			}
+			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown generic field "), 0xfe10, {.d_s = v__token__Position_str(it.pos)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			VUNREACHABLE();
+		};
+	}
 	v__gen__js__JsGen_expr(g, it.expr);
 	v__ast__Type ltyp = it.expr_type;
 	for (;;) {
