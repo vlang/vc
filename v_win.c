@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ec196cf"
+#define V_COMMIT_HASH "b80777d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ed06c47"
+	#define V_COMMIT_HASH "ec196cf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ec196cf"
+	#define V_CURRENT_COMMIT_HASH "b80777d"
 #endif
 
 // V comptime_defines:
@@ -31917,7 +31917,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("ed06c47")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("ec196cf")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -37865,7 +37865,7 @@ Option_v__ast__StructField v__ast__Table_find_field(v__ast__Table* t, v__ast__Ty
 			}
 		}
 		else if (ts->info._typ == 448 /* v.ast.SumType */) {
-			v__ast__Table_resolve_common_sumtype_fields(t, s);
+			v__ast__Table_resolve_common_sumtype_fields(t, ts);
 			Option_v__ast__StructField _t10;
 			if (_t10 = v__ast__SumType_find_field(&(*ts->info._v__ast__SumType), name), _t10.state == 0) {
 				v__ast__StructField field = *(v__ast__StructField*)_t10.data;
@@ -37907,9 +37907,9 @@ Option_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_fi
 					*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t5.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14492 =  _t5 /*U*/;
-				v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14492.data).arg0;
-				Array_v__ast__Type types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14492.data).arg1;
+ 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14493 =  _t5 /*U*/;
+				v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14493.data).arg0;
+				Array_v__ast__Type types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14493.data).arg1;
 				array_push((array*)&found_fields, _MOV((v__ast__StructField[]){ field }));
 				array_push((array*)&embeds_of_found_fields, _MOV((Array_v__ast__Type[]){ types }));
 			}
@@ -37931,9 +37931,9 @@ Option_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_fi
 				return (Option_multi_return_v__ast__StructField_Array_v__ast__Type){ .state=2, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
- 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14958 =  _t11 /*U*/;
-			v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14958.data).arg0;
-			Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14958.data).arg1;
+ 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_14959 =  _t11 /*U*/;
+			v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14959.data).arg0;
+			Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_14959.data).arg1;
 			if (embed_types.len > 0) {
 				Option_multi_return_v__ast__StructField_Array_v__ast__Type _t13;
 				opt_ok(&(multi_return_v__ast__StructField_Array_v__ast__Type/*X*/[]) { (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=field, .arg1=embed_types} }, (Option*)(&_t13), sizeof(multi_return_v__ast__StructField_Array_v__ast__Type));
@@ -37975,9 +37975,9 @@ Option_multi_return_v__ast__StructField_v__ast__Type v__ast__Table_find_field_fr
 				return (Option_multi_return_v__ast__StructField_v__ast__Type){ .state=2, .err=err, .data={EMPTY_STRUCT_INITIALIZATION} };
 			}
 			
- 			Option_multi_return_v__ast__StructField_v__ast__Type mr_15925 =  _t8 /*U*/;
-			v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15925.data).arg0;
-			v__ast__Type embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15925.data).arg1;
+ 			Option_multi_return_v__ast__StructField_v__ast__Type mr_15926 =  _t8 /*U*/;
+			v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15926.data).arg0;
+			v__ast__Type embed_type = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_15926.data).arg1;
 			if (embed_type != 0) {
 				Option_multi_return_v__ast__StructField_v__ast__Type _t10;
 				opt_ok(&(multi_return_v__ast__StructField_v__ast__Type/*X*/[]) { (multi_return_v__ast__StructField_v__ast__Type){.arg0=field, .arg1=embed_type} }, (Option*)(&_t10), sizeof(multi_return_v__ast__StructField_v__ast__Type));
@@ -38004,8 +38004,8 @@ Option_v__ast__StructField v__ast__Table_find_field_with_embeds(v__ast__Table* t
 			return (Option_v__ast__StructField){ .state=2, .err=first_err, .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
- 		Option_multi_return_v__ast__StructField_v__ast__Type mr_16385 =  _t3 /*U*/;
-		v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_16385.data).arg0;
+ 		Option_multi_return_v__ast__StructField_v__ast__Type mr_16386 =  _t3 /*U*/;
+		v__ast__StructField field = (*(multi_return_v__ast__StructField_v__ast__Type*)mr_16386.data).arg0;
 		Option_v__ast__StructField _t5;
 		opt_ok(&(v__ast__StructField[]) { field }, (Option*)(&_t5), sizeof(v__ast__StructField));
 		return _t5;
