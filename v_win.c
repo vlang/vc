@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2f6b2dd"
+#define V_COMMIT_HASH "fde934c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0d81d0c"
+	#define V_COMMIT_HASH "2f6b2dd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2f6b2dd"
+	#define V_CURRENT_COMMIT_HASH "fde934c"
 #endif
 
 // V comptime_defines:
@@ -2050,7 +2050,7 @@ typedef array Array_u64;
 typedef array Array_strconv__Uint128;
 typedef byte Array_fixed_byte_32 [32];
 typedef byte Array_fixed_byte_26 [26];
-typedef byte Array_fixed_byte_256 [256];
+typedef byte Array_fixed_byte_17 [17];
 typedef array Array_StrIntpType;
 typedef u16 Array_fixed_u16_32768 [32768];
 typedef byte Array_fixed_byte_4096 [4096];
@@ -17780,13 +17780,12 @@ string bool_str(bool b) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL string u64_to_hex(u64 nn, byte len) {
 	u64 n = nn;
-	Array_fixed_byte_256 buf = {0};
+	Array_fixed_byte_17 buf = {0};
 	buf[len] = 0;
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xFU)));
-		rune x = (d < 10 ? (d + '0') : (d + 87));
-		buf[i] = x;
+		buf[i] = (d < 10 ? (d + '0') : (d + 87));
 		n = n >> 4U;
 	}
 	return tos(memdup(&buf[0], len + 1), len);
@@ -17796,13 +17795,12 @@ inline VV_LOCAL_SYMBOL string u64_to_hex(u64 nn, byte len) {
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL string u64_to_hex_no_leading_zeros(u64 nn, byte len) {
 	u64 n = nn;
-	Array_fixed_byte_256 buf = {0};
+	Array_fixed_byte_17 buf = {0};
 	buf[len] = 0;
 	int i = 0;
 	for (i = len - 1; i >= 0; i--) {
 		byte d = ((byte)((n & 0xFU)));
-		rune x = (d < 10 ? (d + '0') : (d + 87));
-		buf[i] = x;
+		buf[i] = (d < 10 ? (d + '0') : (d + 87));
 		n = n >> 4U;
 		if (n == 0U) {
 			break;
@@ -17820,7 +17818,10 @@ string byte_hex(byte nn) {
 }
 
 string i8_hex(i8 nn) {
-	return byte_hex(((byte)(nn)));
+	if (nn == 0) {
+		return _SLIT("00");
+	}
+	return u64_to_hex(((u64)(nn)), 2);
 }
 
 string u16_hex(u16 nn) {
@@ -31913,7 +31914,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("0d81d0c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("2f6b2dd")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
