@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "76205cf"
+#define V_COMMIT_HASH "d78e7e3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f87a638"
+	#define V_COMMIT_HASH "76205cf"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "76205cf"
+	#define V_CURRENT_COMMIT_HASH "d78e7e3"
 #endif
 
 // V comptime_defines:
@@ -33,6 +33,7 @@ typedef struct v__ast__ComptTimeConstValue v__ast__ComptTimeConstValue;
 typedef struct v__ast__IdentInfo v__ast__IdentInfo;
 typedef struct v__ast__AsmArg v__ast__AsmArg;
 typedef struct v__ast__TypeInfo v__ast__TypeInfo;
+typedef struct v__gen__js__MatchCond v__gen__js__MatchCond;
 typedef struct v__gen__js__sourcemap__SourcePositionType v__gen__js__sourcemap__SourcePositionType;
 typedef struct v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__NameIndexType;
 typedef struct x__json2__Any x__json2__Any;
@@ -356,6 +357,8 @@ typedef struct v__gen__js__MutArg v__gen__js__MutArg;
 typedef struct v__gen__js__SourcemapHelper v__gen__js__SourcemapHelper;
 typedef struct v__gen__js__Namespace v__gen__js__Namespace;
 typedef struct v__gen__js__JsGen v__gen__js__JsGen;
+typedef struct v__gen__js__CondString v__gen__js__CondString;
+typedef struct v__gen__js__CondExpr v__gen__js__CondExpr;
 typedef struct v__gen__js__JsDoc v__gen__js__JsDoc;
 typedef struct v__gen__native__Amd64 v__gen__native__Amd64;
 typedef struct v__gen__native__Arm64 v__gen__native__Arm64;
@@ -2691,6 +2694,24 @@ struct v__gen__js__JsDoc {
 
 
 
+// Union sum type v__gen__js__MatchCond = 
+//          |  530 = v__gen__js__CondExpr
+//          |  531 = v__gen__js__CondString
+struct v__gen__js__MatchCond {
+	union {
+		v__gen__js__CondExpr* _v__gen__js__CondExpr;
+		v__gen__js__CondString* _v__gen__js__CondString;
+	};
+	int _typ;
+};
+
+
+struct v__gen__js__CondString {
+	string s;
+};
+
+
+
 struct v__gen__js__sourcemap__Empty {
 	EMPTY_STRUCT_DECLARATION;
 };
@@ -2698,7 +2719,7 @@ struct v__gen__js__sourcemap__Empty {
 
 
 // Union sum type v__gen__js__sourcemap__SourcePositionType = 
-//          |  562 = v__gen__js__sourcemap__Empty
+//          |  565 = v__gen__js__sourcemap__Empty
 //          |  528 = v__gen__js__sourcemap__SourcePosition
 struct v__gen__js__sourcemap__SourcePositionType {
 	union {
@@ -2710,8 +2731,8 @@ struct v__gen__js__sourcemap__SourcePositionType {
 
 
 // Union sum type v__gen__js__sourcemap__NameIndexType = 
-//          |  562 = v__gen__js__sourcemap__Empty
-//          |  563 = v__gen__js__sourcemap__IndexNumber
+//          |  565 = v__gen__js__sourcemap__Empty
+//          |  566 = v__gen__js__sourcemap__IndexNumber
 struct v__gen__js__sourcemap__NameIndexType {
 	union {
 		v__gen__js__sourcemap__Empty* _v__gen__js__sourcemap__Empty;
@@ -2722,14 +2743,14 @@ struct v__gen__js__sourcemap__NameIndexType {
 
 
 // Union sum type x__json2__Any = 
-//          |  615 = x__json2__Null      
-//          |  579 = Array_x__json2__Any 
+//          |  618 = x__json2__Null      
+//          |  582 = Array_x__json2__Any 
 //          |   16 = bool                
 //          |   13 = f32                 
 //          |   14 = f64                 
 //          |    8 = i64                 
 //          |    7 = int                 
-//          |  575 = Map_string_x__json2__Any
+//          |  578 = Map_string_x__json2__Any
 //          |   18 = string              
 //          |   12 = u64                 
 struct x__json2__Any {
@@ -3679,6 +3700,12 @@ struct v__gen__js__Namespace {
 struct v__gen__js__sourcemap__SourcePosition {
 	u32 source_line;
 	u32 source_column;
+};
+
+
+
+struct v__gen__js__CondExpr {
+	v__ast__Expr expr;
 };
 
 
@@ -7564,10 +7591,6 @@ int os__geteuid();
 int os__getgid();
 int os__getegid();
 void os__posix_set_permission_bit(string path_s, u32 mode, bool enable);
-os__Process* os__new_process(string filename);
-void os__Process_set_args(os__Process* p, Array_string pargs);
-void os__Process_set_environment(os__Process* p, Map_string_string envs);
-void os__Process_run(os__Process* p);
 void os__Process_signal_kill(os__Process* p);
 void os__Process_signal_pgkill(os__Process* p);
 void os__Process_signal_stop(os__Process* p);
@@ -7590,6 +7613,10 @@ VV_LOCAL_SYMBOL void os__Process__signal_kill(os__Process* p);
 VV_LOCAL_SYMBOL void os__Process__signal_pgkill(os__Process* p);
 VV_LOCAL_SYMBOL void os__Process__wait(os__Process* p);
 VV_LOCAL_SYMBOL bool os__Process__is_alive(os__Process* p);
+void os__Process_run(os__Process* p);
+os__Process* os__new_process(string filename);
+void os__Process_set_args(os__Process* p, Array_string pargs);
+void os__Process_set_environment(os__Process* p, Map_string_string envs);
 VV_LOCAL_SYMBOL os__FN_NTSuspendResume os__ntdll_fn(char* name);
 VV_LOCAL_SYMBOL void os__failed_cfn_report_error(bool ok, string label);
 VV_LOCAL_SYMBOL void os__close_valid_handle(voidptr p);
@@ -9273,10 +9300,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__as
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_ident(v__gen__js__JsGen* g, v__ast__Ident node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_lock_expr(v__gen__js__JsGen* g, v__ast__LockExpr node);
 VV_LOCAL_SYMBOL bool v__gen__js__JsGen_need_tmp_var_in_match(v__gen__js__JsGen* g, v__ast__MatchExpr node);
-VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, string cond_var, string tmp_var);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, v__gen__js__MatchCond cond_var, string tmp_var);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_cond(v__gen__js__JsGen* g, v__gen__js__MatchCond cond);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr(v__gen__js__JsGen* g, v__ast__MatchExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmts_with_tmp_var(v__gen__js__JsGen* g, Array_v__ast__Stmt stmts, string tmp_var);
-VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, string cond_var, string tmp_var);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, v__gen__js__MatchCond cond_var, string tmp_var);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__ast__IndexExpr expr);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_deref_ptr(v__gen__js__JsGen* g, v__ast__Type ty);
@@ -10944,17 +10972,17 @@ static inline x__json2__Any bool_to_sumtype_x__json2__Any(bool* x) {
 
 static inline x__json2__Any x__json2__Null_to_sumtype_x__json2__Any(x__json2__Null* x) {
 	x__json2__Null* ptr = memdup(x, sizeof(x__json2__Null));
-	return (x__json2__Any){ ._x__json2__Null = ptr, ._typ = 615};
+	return (x__json2__Any){ ._x__json2__Null = ptr, ._typ = 618};
 }
 
 static inline x__json2__Any Array_x__json2__Any_to_sumtype_x__json2__Any(Array_x__json2__Any* x) {
 	Array_x__json2__Any* ptr = memdup(x, sizeof(Array_x__json2__Any));
-	return (x__json2__Any){ ._Array_x__json2__Any = ptr, ._typ = 579};
+	return (x__json2__Any){ ._Array_x__json2__Any = ptr, ._typ = 582};
 }
 
 static inline x__json2__Any Map_string_x__json2__Any_to_sumtype_x__json2__Any(Map_string_x__json2__Any* x) {
 	Map_string_x__json2__Any* ptr = memdup(x, sizeof(Map_string_x__json2__Any));
-	return (x__json2__Any){ ._Map_string_x__json2__Any = ptr, ._typ = 575};
+	return (x__json2__Any){ ._Map_string_x__json2__Any = ptr, ._typ = 578};
 }
 
 static bool Array_rune_contains(Array_rune a, rune v) {
@@ -10981,12 +11009,12 @@ static bool v__gen__js__sourcemap__IndexNumber_alias_eq(v__gen__js__sourcemap__I
 
 static inline v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__IndexNumber_to_sumtype_v__gen__js__sourcemap__NameIndexType(v__gen__js__sourcemap__IndexNumber* x) {
 	v__gen__js__sourcemap__IndexNumber* ptr = memdup(x, sizeof(v__gen__js__sourcemap__IndexNumber));
-	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__IndexNumber = ptr, ._typ = 563};
+	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__IndexNumber = ptr, ._typ = 566};
 }
 
 static inline v__gen__js__sourcemap__NameIndexType v__gen__js__sourcemap__Empty_to_sumtype_v__gen__js__sourcemap__NameIndexType(v__gen__js__sourcemap__Empty* x) {
 	v__gen__js__sourcemap__Empty* ptr = memdup(x, sizeof(v__gen__js__sourcemap__Empty));
-	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__Empty = ptr, ._typ = 562};
+	return (v__gen__js__sourcemap__NameIndexType){ ._v__gen__js__sourcemap__Empty = ptr, ._typ = 565};
 }
 
 static inline x__json2__Any int_to_sumtype_x__json2__Any(int* x) {
@@ -12066,6 +12094,16 @@ static bool Array_v__ast__Kind_contains(Array_v__ast__Kind a, v__ast__Kind v) {
 	return false;
 }
 
+static inline v__gen__js__MatchCond v__gen__js__CondString_to_sumtype_v__gen__js__MatchCond(v__gen__js__CondString* x) {
+	v__gen__js__CondString* ptr = memdup(x, sizeof(v__gen__js__CondString));
+	return (v__gen__js__MatchCond){ ._v__gen__js__CondString = ptr, ._typ = 531};
+}
+
+static inline v__gen__js__MatchCond v__gen__js__CondExpr_to_sumtype_v__gen__js__MatchCond(v__gen__js__CondExpr* x) {
+	v__gen__js__CondExpr* ptr = memdup(x, sizeof(v__gen__js__CondExpr));
+	return (v__gen__js__MatchCond){ ._v__gen__js__CondExpr = ptr, ._typ = 530};
+}
+
 static bool v__token__Position_struct_eq(v__token__Position a, v__token__Position b) {
 	return a.len == b.len
 		&& a.line_nr == b.line_nr
@@ -12267,16 +12305,16 @@ static int v_typeof_interface_idx_IError(int sidx) { /* IError */
 	if (sidx == _IError_Error_index) return 88;
 	if (sidx == _IError_os__ErrFileNotOpened_index) return 65659;
 	if (sidx == _IError_os__ErrSizeOfTypeIs0_index) return 65660;
-	if (sidx == _IError_flag__UnkownFlagError_index) return 66122;
-	if (sidx == _IError_flag__MinimumArgsCountError_index) return 66123;
-	if (sidx == _IError_flag__MaximumArgsCountError_index) return 66124;
-	if (sidx == _IError_flag__NoArgsExpectedError_index) return 66125;
-	if (sidx == _IError_semver__InvalidComparatorFormatError_index) return 66137;
-	if (sidx == _IError_semver__EmptyInputError_index) return 66139;
-	if (sidx == _IError_semver__InvalidVersionFormatError_index) return 66140;
-	if (sidx == _IError_x__json2__InvalidTokenError_index) return 66155;
-	if (sidx == _IError_x__json2__UnknownTokenError_index) return 66156;
-	if (sidx == _IError_semver__InvalidComparatorCountError_index) return 600;
+	if (sidx == _IError_flag__UnkownFlagError_index) return 66125;
+	if (sidx == _IError_flag__MinimumArgsCountError_index) return 66126;
+	if (sidx == _IError_flag__MaximumArgsCountError_index) return 66127;
+	if (sidx == _IError_flag__NoArgsExpectedError_index) return 66128;
+	if (sidx == _IError_semver__InvalidComparatorFormatError_index) return 66140;
+	if (sidx == _IError_semver__EmptyInputError_index) return 66142;
+	if (sidx == _IError_semver__InvalidVersionFormatError_index) return 66143;
+	if (sidx == _IError_x__json2__InvalidTokenError_index) return 66158;
+	if (sidx == _IError_x__json2__UnknownTokenError_index) return 66159;
+	if (sidx == _IError_semver__InvalidComparatorCountError_index) return 603;
 	if (sidx == _IError_voidptr_index) return 2;
 	return 28;
 }
@@ -12682,6 +12720,23 @@ int v_typeof_sumtype_idx_v__ast__TypeInfo(int sidx) { /* v.ast.TypeInfo */
 		default: return 460;
 	}
 }
+static char * v_typeof_sumtype_v__gen__js__MatchCond(int sidx) { /* v.gen.js.MatchCond */ 
+	switch(sidx) {
+		case 529: return "v.gen.js.MatchCond";
+		case 530: return "v.gen.js.CondExpr";
+		case 531: return "v.gen.js.CondString";
+		default: return "unknown v.gen.js.MatchCond";
+	}
+}
+
+int v_typeof_sumtype_idx_v__gen__js__MatchCond(int sidx) { /* v.gen.js.MatchCond */ 
+	switch(sidx) {
+		case 529: return 529;
+		case 530: return 530;
+		case 531: return 531;
+		default: return 529;
+	}
+}
 static char * v_typeof_interface_v__gen__native__CodeGen(int sidx) { /* v.gen.native.CodeGen */ 
 	if (sidx == _v__gen__native__CodeGen_v__gen__native__Arm64_index) return "v.gen.native.Arm64";
 	if (sidx == _v__gen__native__CodeGen_v__gen__native__Amd64_index) return "v.gen.native.Amd64";
@@ -12689,30 +12744,30 @@ static char * v_typeof_interface_v__gen__native__CodeGen(int sidx) { /* v.gen.na
 }
 
 static int v_typeof_interface_idx_v__gen__native__CodeGen(int sidx) { /* v.gen.native.CodeGen */ 
-	if (sidx == _v__gen__native__CodeGen_v__gen__native__Arm64_index) return 535;
-	if (sidx == _v__gen__native__CodeGen_v__gen__native__Amd64_index) return 530;
-	return 538;
+	if (sidx == _v__gen__native__CodeGen_v__gen__native__Arm64_index) return 538;
+	if (sidx == _v__gen__native__CodeGen_v__gen__native__Amd64_index) return 533;
+	return 541;
 }
 static char * v_typeof_interface_hash__Hasher(int sidx) { /* hash.Hasher */ 
 	return "unknown hash.Hasher";
 }
 
 static int v_typeof_interface_idx_hash__Hasher(int sidx) { /* hash.Hasher */ 
-	return 544;
+	return 547;
 }
 static char * v_typeof_interface_hash__Hash32er(int sidx) { /* hash.Hash32er */ 
 	return "unknown hash.Hash32er";
 }
 
 static int v_typeof_interface_idx_hash__Hash32er(int sidx) { /* hash.Hash32er */ 
-	return 545;
+	return 548;
 }
 static char * v_typeof_interface_hash__Hash64er(int sidx) { /* hash.Hash64er */ 
 	return "unknown hash.Hash64er";
 }
 
 static int v_typeof_interface_idx_hash__Hash64er(int sidx) { /* hash.Hash64er */ 
-	return 546;
+	return 549;
 }
 static char * v_typeof_interface_v__ast__walker__Visitor(int sidx) { /* v.ast.walker.Visitor */ 
 	if (sidx == _v__ast__walker__Visitor_v__ast__walker__Inspector_index) return "v.ast.walker.Inspector";
@@ -12721,14 +12776,14 @@ static char * v_typeof_interface_v__ast__walker__Visitor(int sidx) { /* v.ast.wa
 }
 
 static int v_typeof_interface_idx_v__ast__walker__Visitor(int sidx) { /* v.ast.walker.Visitor */ 
-	if (sidx == _v__ast__walker__Visitor_v__ast__walker__Inspector_index) return 557;
+	if (sidx == _v__ast__walker__Visitor_v__ast__walker__Inspector_index) return 560;
 	if (sidx == _v__ast__walker__Visitor_v__callgraph__Mapper_index) return 66031;
-	return 555;
+	return 558;
 }
 static char * v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType(int sidx) { /* v.gen.js.sourcemap.SourcePositionType */ 
 	switch(sidx) {
-		case 564: return "v.gen.js.sourcemap.SourcePositionType";
-		case 562: return "v.gen.js.sourcemap.Empty";
+		case 567: return "v.gen.js.sourcemap.SourcePositionType";
+		case 565: return "v.gen.js.sourcemap.Empty";
 		case 528: return "v.gen.js.sourcemap.SourcePosition";
 		default: return "unknown v.gen.js.sourcemap.SourcePositionType";
 	}
@@ -12736,27 +12791,27 @@ static char * v_typeof_sumtype_v__gen__js__sourcemap__SourcePositionType(int sid
 
 int v_typeof_sumtype_idx_v__gen__js__sourcemap__SourcePositionType(int sidx) { /* v.gen.js.sourcemap.SourcePositionType */ 
 	switch(sidx) {
-		case 564: return 564;
-		case 562: return 562;
+		case 567: return 567;
+		case 565: return 565;
 		case 528: return 528;
-		default: return 564;
+		default: return 567;
 	}
 }
 static char * v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType(int sidx) { /* v.gen.js.sourcemap.NameIndexType */ 
 	switch(sidx) {
-		case 565: return "v.gen.js.sourcemap.NameIndexType";
-		case 562: return "v.gen.js.sourcemap.Empty";
-		case 563: return "v.gen.js.sourcemap.IndexNumber";
+		case 568: return "v.gen.js.sourcemap.NameIndexType";
+		case 565: return "v.gen.js.sourcemap.Empty";
+		case 566: return "v.gen.js.sourcemap.IndexNumber";
 		default: return "unknown v.gen.js.sourcemap.NameIndexType";
 	}
 }
 
 int v_typeof_sumtype_idx_v__gen__js__sourcemap__NameIndexType(int sidx) { /* v.gen.js.sourcemap.NameIndexType */ 
 	switch(sidx) {
+		case 568: return 568;
 		case 565: return 565;
-		case 562: return 562;
-		case 563: return 563;
-		default: return 565;
+		case 566: return 566;
+		default: return 568;
 	}
 }
 static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */ 
@@ -12769,24 +12824,24 @@ static char * v_typeof_interface_io__Writer(int sidx) { /* io.Writer */
 }
 
 static int v_typeof_interface_idx_io__Writer(int sidx) { /* io.Writer */ 
-	if (sidx == _io__Writer_io__MultiWriter_index) return 66145;
-	if (sidx == _io__Writer_v__gen__js__sourcemap__StringWriter_index) return 577;
+	if (sidx == _io__Writer_io__MultiWriter_index) return 66148;
+	if (sidx == _io__Writer_v__gen__js__sourcemap__StringWriter_index) return 580;
 	if (sidx == _io__Writer_os__File_index) return 121;
 	if (sidx == _io__Writer_voidptr_index) return 2;
-	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 613;
-	return 571;
+	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 616;
+	return 574;
 }
 static char * v_typeof_sumtype_x__json2__Any(int sidx) { /* x.json2.Any */ 
 	switch(sidx) {
-		case 574: return "x.json2.Any";
-		case 615: return "x.json2.Null";
-		case 579: return "[]x.json2.Any";
+		case 577: return "x.json2.Any";
+		case 618: return "x.json2.Null";
+		case 582: return "[]x.json2.Any";
 		case 16: return "bool";
 		case 13: return "f32";
 		case 14: return "f64";
 		case 8: return "i64";
 		case 7: return "int";
-		case 575: return "map[string]x.json2.Any";
+		case 578: return "map[string]x.json2.Any";
 		case 18: return "string";
 		case 12: return "u64";
 		default: return "unknown x.json2.Any";
@@ -12795,18 +12850,18 @@ static char * v_typeof_sumtype_x__json2__Any(int sidx) { /* x.json2.Any */
 
 int v_typeof_sumtype_idx_x__json2__Any(int sidx) { /* x.json2.Any */ 
 	switch(sidx) {
-		case 574: return 574;
-		case 615: return 615;
-		case 579: return 579;
+		case 577: return 577;
+		case 618: return 618;
+		case 582: return 582;
 		case 16: return 16;
 		case 13: return 13;
 		case 14: return 14;
 		case 8: return 8;
 		case 7: return 7;
-		case 575: return 575;
+		case 578: return 578;
 		case 18: return 18;
 		case 12: return 12;
-		default: return 574;
+		default: return 577;
 	}
 }
 static char * v_typeof_interface_io__Reader(int sidx) { /* io.Reader */ 
@@ -12820,9 +12875,9 @@ static char * v_typeof_interface_io__Reader(int sidx) { /* io.Reader */
 static int v_typeof_interface_idx_io__Reader(int sidx) { /* io.Reader */ 
 	if (sidx == _io__Reader_os__File_index) return 121;
 	if (sidx == _io__Reader_voidptr_index) return 2;
-	if (sidx == _io__Reader_io__BufferedReader_index) return 606;
-	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 613;
-	return 605;
+	if (sidx == _io__Reader_io__BufferedReader_index) return 609;
+	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 616;
+	return 608;
 }
 static char * v_typeof_interface_io__RandomReader(int sidx) { /* io.RandomReader */ 
 	if (sidx == _io__RandomReader_os__File_index) return "os.File";
@@ -12833,7 +12888,7 @@ static char * v_typeof_interface_io__RandomReader(int sidx) { /* io.RandomReader
 static int v_typeof_interface_idx_io__RandomReader(int sidx) { /* io.RandomReader */ 
 	if (sidx == _io__RandomReader_os__File_index) return 121;
 	if (sidx == _io__RandomReader_voidptr_index) return 2;
-	return 611;
+	return 614;
 }
 static char * v_typeof_interface_io__ReaderWriter(int sidx) { /* io.ReaderWriter */ 
 	if (sidx == _io__ReaderWriter_os__File_index) return "os.File";
@@ -12845,8 +12900,8 @@ static char * v_typeof_interface_io__ReaderWriter(int sidx) { /* io.ReaderWriter
 static int v_typeof_interface_idx_io__ReaderWriter(int sidx) { /* io.ReaderWriter */ 
 	if (sidx == _io__ReaderWriter_os__File_index) return 121;
 	if (sidx == _io__ReaderWriter_voidptr_index) return 2;
-	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return 613;
-	return 612;
+	if (sidx == _io__ReaderWriter_io__ReaderWriterImpl_index) return 616;
+	return 615;
 }
 static char * v_typeof_interface_io__RandomWriter(int sidx) { /* io.RandomWriter */ 
 	if (sidx == _io__RandomWriter_os__File_index) return "os.File";
@@ -12857,14 +12912,14 @@ static char * v_typeof_interface_io__RandomWriter(int sidx) { /* io.RandomWriter
 static int v_typeof_interface_idx_io__RandomWriter(int sidx) { /* io.RandomWriter */ 
 	if (sidx == _io__RandomWriter_os__File_index) return 121;
 	if (sidx == _io__RandomWriter_voidptr_index) return 2;
-	return 614;
+	return 617;
 }
 static char * v_typeof_interface_x__json2__Serializable(int sidx) { /* x.json2.Serializable */ 
 	return "unknown x.json2.Serializable";
 }
 
 static int v_typeof_interface_idx_x__json2__Serializable(int sidx) { /* x.json2.Serializable */ 
-	return 621;
+	return 624;
 }
 // << typeof() support for sum types
 
@@ -23935,49 +23990,6 @@ inline int os__getegid(void) {
 void os__posix_set_permission_bit(string path_s, u32 mode, bool enable) {
 }
 
-os__Process* os__new_process(string filename) {
-	return (os__Process*)memdup(&(os__Process){.filename = filename,.pid = 0,.code = -1,.status = os__ProcessState__not_started,.err = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 0, sizeof(string)),.env_is_custom = 0,.env = __new_array(0, 0, sizeof(string)),.use_stdio_ctl = 0,.use_pgroup = 0,.stdio_fd = {-1, -1, -1},.wdata = 0,}, sizeof(os__Process));
-}
-
-void os__Process_set_args(os__Process* p, Array_string pargs) {
-	if (p->status != os__ProcessState__not_started) {
-		return;
-	}
-	p->args = pargs;
-	return;
-}
-
-void os__Process_set_environment(os__Process* p, Map_string_string envs) {
-	if (p->status != os__ProcessState__not_started) {
-		return;
-	}
-	p->env_is_custom = true;
-	p->env = __new_array_with_default(0, 0, sizeof(string), 0);
-	int _t2 = envs.key_values.len;
-	for (int _t1 = 0; _t1 < _t2; ++_t1 ) {
-		int _t3 = envs.key_values.len - _t2;
-		_t2 = envs.key_values.len;
-		if (_t3 < 0) {
-			_t1 = -1;
-			continue;
-		}
-		if (!DenseArray_has_index(&envs.key_values, _t1)) {continue;}
-		string k = /*key*/ *(string*)DenseArray_key(&envs.key_values, _t1);
-		k = string_clone(k);
-		string v = (*(string*)DenseArray_value(&envs.key_values, _t1));
-		array_push((array*)&p->env, _MOV((string[]){  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = k}}, {_SLIT("="), 0xfe10, {.d_s = v}}, {_SLIT0, 0, { .d_c = 0 }}})) }));
-	}
-	return;
-}
-
-void os__Process_run(os__Process* p) {
-	if (p->status != os__ProcessState__not_started) {
-		return;
-	}
-	os__Process__spawn(p);
-	return;
-}
-
 void os__Process_signal_kill(os__Process* p) {
 	if (!(p->status == os__ProcessState__running || p->status == os__ProcessState__stopped)) {
 		return;
@@ -24129,8 +24141,8 @@ string os__Process_stdout_read(os__Process* p) {
 	os__Process__check_redirection_call(p, _SLIT("stdout_read"));
 	#if defined(_WIN32)
 	{
-		multi_return_string_int mr_6006 = os__Process_win_read_string(p, 1, 4096);
-		string s = mr_6006.arg0;
+		multi_return_string_int mr_3471 = os__Process_win_read_string(p, 1, 4096);
+		string s = mr_3471.arg0;
 		return s;
 	}
 	#else
@@ -24144,8 +24156,8 @@ string os__Process_stderr_read(os__Process* p) {
 	os__Process__check_redirection_call(p, _SLIT("stderr_read"));
 	#if defined(_WIN32)
 	{
-		multi_return_string_int mr_6224 = os__Process_win_read_string(p, 2, 4096);
-		string s = mr_6224.arg0;
+		multi_return_string_int mr_3689 = os__Process_win_read_string(p, 2, 4096);
+		string s = mr_3689.arg0;
 		return s;
 	}
 	#else
@@ -24231,6 +24243,49 @@ VV_LOCAL_SYMBOL bool os__Process__is_alive(os__Process* p) {
 	}
 	#endif
 	return 0;
+}
+
+void os__Process_run(os__Process* p) {
+	if (p->status != os__ProcessState__not_started) {
+		return;
+	}
+	os__Process__spawn(p);
+	return;
+}
+
+os__Process* os__new_process(string filename) {
+	return (os__Process*)memdup(&(os__Process){.filename = filename,.pid = 0,.code = -1,.status = os__ProcessState__not_started,.err = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 0, sizeof(string)),.env_is_custom = 0,.env = __new_array(0, 0, sizeof(string)),.use_stdio_ctl = 0,.use_pgroup = 0,.stdio_fd = {-1, -1, -1},.wdata = 0,}, sizeof(os__Process));
+}
+
+void os__Process_set_args(os__Process* p, Array_string pargs) {
+	if (p->status != os__ProcessState__not_started) {
+		return;
+	}
+	p->args = pargs;
+	return;
+}
+
+void os__Process_set_environment(os__Process* p, Map_string_string envs) {
+	if (p->status != os__ProcessState__not_started) {
+		return;
+	}
+	p->env_is_custom = true;
+	p->env = __new_array_with_default(0, 0, sizeof(string), 0);
+	int _t2 = envs.key_values.len;
+	for (int _t1 = 0; _t1 < _t2; ++_t1 ) {
+		int _t3 = envs.key_values.len - _t2;
+		_t2 = envs.key_values.len;
+		if (_t3 < 0) {
+			_t1 = -1;
+			continue;
+		}
+		if (!DenseArray_has_index(&envs.key_values, _t1)) {continue;}
+		string k = /*key*/ *(string*)DenseArray_key(&envs.key_values, _t1);
+		k = string_clone(k);
+		string v = (*(string*)DenseArray_value(&envs.key_values, _t1));
+		array_push((array*)&p->env, _MOV((string[]){  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = k}}, {_SLIT("="), 0xfe10, {.d_s = v}}, {_SLIT0, 0, { .d_c = 0 }}})) }));
+	}
+	return;
 }
 
 // TypeDecl
@@ -28136,15 +28191,15 @@ string x__json2__Any_json_str(x__json2__Any f) {
 		string _t9 = bool_str((*f._bool));
 		return _t9;
 	}
-	else if (f._typ == 575 /* map[string]x.json2.Any */) {
+	else if (f._typ == 578 /* map[string]x.json2.Any */) {
 		string _t10 = Map_string_x__json2__Any_str((*f._Map_string_x__json2__Any));
 		return _t10;
 	}
-	else if (f._typ == 579 /* []x.json2.Any */) {
+	else if (f._typ == 582 /* []x.json2.Any */) {
 		string _t11 = Array_x__json2__Any_str((*f._Array_x__json2__Any));
 		return _t11;
 	}
-	else if (f._typ == 615 /* x.json2.Null */) {
+	else if (f._typ == 618 /* x.json2.Null */) {
 		string _t12 = _SLIT("null");
 		return _t12;
 	}
@@ -28237,10 +28292,10 @@ Option_x__json2__Any x__json2__fast_raw_decode(string src) {
 
 
 Map_string_x__json2__Any x__json2__Any_as_map(x__json2__Any f) {
-	if ((f)._typ == 575 /* map[string]x.json2.Any */) {
+	if ((f)._typ == 578 /* map[string]x.json2.Any */) {
 		Map_string_x__json2__Any _t1 = (*f._Map_string_x__json2__Any);
 		return _t1;
-	} else if ((f)._typ == 579 /* []x.json2.Any */) {
+	} else if ((f)._typ == 582 /* []x.json2.Any */) {
 		Map_string_x__json2__Any mp = new_map(sizeof(string), sizeof(x__json2__Any), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string);
 		for (int i = 0; i < (*f._Array_x__json2__Any).len; ++i) {
 			x__json2__Any fi = ((x__json2__Any*)(*f._Array_x__json2__Any).data)[i];
@@ -28400,10 +28455,10 @@ f64 x__json2__Any_f64(x__json2__Any f) {
 }
 
 Array_x__json2__Any x__json2__Any_arr(x__json2__Any f) {
-	if ((f)._typ == 579 /* []x.json2.Any */) {
+	if ((f)._typ == 582 /* []x.json2.Any */) {
 		Array_x__json2__Any _t1 = (*f._Array_x__json2__Any);
 		return _t1;
-	} else if ((f)._typ == 575 /* map[string]x.json2.Any */) {
+	} else if ((f)._typ == 578 /* map[string]x.json2.Any */) {
 		Array_x__json2__Any arr = __new_array_with_default(0, 0, sizeof(x__json2__Any), 0);
 		int _t3 = (*f._Map_string_x__json2__Any).key_values.len;
 		for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
@@ -31340,7 +31395,7 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 		}
 		;
 		previous_generated_column = mapping.GenPosition.gen_column;
-		if (mapping.source_position._typ == 562 /* v.gen.js.sourcemap.Empty */) {
+		if (mapping.source_position._typ == 565 /* v.gen.js.sourcemap.Empty */) {
 		}
 		else if (mapping.source_position._typ == 528 /* v.gen.js.sourcemap.SourcePosition */) {
 			Option_void _t5 = v__gen__js__sourcemap__vlq__encode(((i64)(mapping.sources_ind - previous_source_index)), output);
@@ -31367,9 +31422,9 @@ VV_LOCAL_SYMBOL Option_void v__gen__js__sourcemap__Mappings_export_mappings(v__g
 			}
 			;
 			previous_source_column = (*mapping.source_position._v__gen__js__sourcemap__SourcePosition).source_column;
-			if (mapping.names_ind._typ == 562 /* v.gen.js.sourcemap.Empty */) {
+			if (mapping.names_ind._typ == 565 /* v.gen.js.sourcemap.Empty */) {
 			}
-			else if (mapping.names_ind._typ == 563 /* v.gen.js.sourcemap.IndexNumber */) {
+			else if (mapping.names_ind._typ == 566 /* v.gen.js.sourcemap.IndexNumber */) {
 				Option_void _t11 = v__gen__js__sourcemap__vlq__encode(((i64)((*mapping.names_ind._v__gen__js__sourcemap__IndexNumber) - previous_name_index)), output);
 				if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
 					Option_void _t12;
@@ -31410,7 +31465,7 @@ VV_LOCAL_SYMBOL bool v__gen__js__sourcemap__compare_by_generated_positions_infla
 			return _t5;
 		}
 	}
-	if (string__eq(charptr_vstring_literal( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_a.names_ind)._typ )), charptr_vstring_literal( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_b.names_ind)._typ ))) && (mapping_a.names_ind)._typ == 563 /* v.gen.js.sourcemap.IndexNumber */ && (mapping_b.names_ind)._typ == 563 /* v.gen.js.sourcemap.IndexNumber */) {
+	if (string__eq(charptr_vstring_literal( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_a.names_ind)._typ )), charptr_vstring_literal( /* v.gen.js.sourcemap.NameIndexType */ v_typeof_sumtype_v__gen__js__sourcemap__NameIndexType( (mapping_b.names_ind)._typ ))) && (mapping_a.names_ind)._typ == 566 /* v.gen.js.sourcemap.IndexNumber */ && (mapping_b.names_ind)._typ == 566 /* v.gen.js.sourcemap.IndexNumber */) {
 		bool _t6 = !v__gen__js__sourcemap__IndexNumber_alias_eq((*mapping_a.names_ind._v__gen__js__sourcemap__IndexNumber), (*mapping_b.names_ind._v__gen__js__sourcemap__IndexNumber));
 		return _t6;
 	} else {
@@ -31922,7 +31977,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("f87a638")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("76205cf")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65360,7 +65415,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_builtin_type_defs(v__gen__js__JsGen* 
 			});
 		}
 		else if (string__eq(typ_name, _SLIT("f32")) || string__eq(typ_name, _SLIT("f64")) || string__eq(typ_name, _SLIT("float_literal"))) {
-			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Number(0)"),.constructor = _SLIT("this.val = +val"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.val"),.to_jsval = _SLIT("+this"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
+			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Number(0)"),.constructor = _SLIT("this.val = Number(val)"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.val"),.to_jsval = _SLIT("+this"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
 		}
 		else if (string__eq(typ_name, _SLIT("bool"))) {
 			v__gen__js__JsGen_gen_builtin_prototype(g, (v__gen__js__BuiltinPrototypeConfig){.typ_name = typ_name,.val_name = _SLIT("val"),.default_value = _SLIT("new Boolean(false)"),.constructor = _SLIT("this.val = +val !== 0"),.value_of = _SLIT("this.val"),.to_string = _SLIT("this.val.toString()"),.eq = _SLIT("this.val === other.valueOf()"),.to_jsval = _SLIT("+this != 0"),.extras = (string){.str=(byteptr)"", .is_lit=1},.has_strfn = 0,});
@@ -67340,6 +67395,15 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__as
 	}
 	array_push((array*)&g->call_stack, _MOV((v__ast__CallExpr[]){ it }));
 	string name = v__gen__js__JsGen_js_name(g, it.name);
+	v__ast__TypeSymbol* ret_sym = v__ast__Table_get_type_symbol(g->table, it.return_type);
+	if (it.language == v__ast__Language__js && (Array_string_contains(_const_v__gen__js__v_types, ret_sym->name)) && !string__eq(ret_sym->name, _SLIT("void"))) {
+		v__gen__js__JsGen_write(g, _SLIT("new "));
+		if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("builtin."));
+		}
+		v__gen__js__JsGen_write(g, ret_sym->name);
+		v__gen__js__JsGen_write(g, _SLIT("("));
+	}
 	bool call_return_is_optional = v__ast__Type_has_flag(it.return_type, v__ast__TypeFlag__optional);
 	if (call_return_is_optional) {
 		v__gen__js__JsGen_writeln(g, _SLIT("(function(){"));
@@ -67389,6 +67453,9 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_call_expr(v__gen__js__JsGen* g, v__as
 		v__gen__js__JsGen_dec_indent(g);
 		v__gen__js__JsGen_write(g, _SLIT("})()"));
 	}
+	if (it.language == v__ast__Language__js && (Array_string_contains(_const_v__gen__js__v_types, ret_sym->name)) && !string__eq(ret_sym->name, _SLIT("void"))) {
+		v__gen__js__JsGen_write(g, _SLIT(")"));
+	}
 	array_delete_last(&g->call_stack);
 }
 
@@ -67431,7 +67498,7 @@ VV_LOCAL_SYMBOL bool v__gen__js__JsGen_need_tmp_var_in_match(v__gen__js__JsGen* 
 	return _t5;
 }
 
-VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, string cond_var, string tmp_var) {
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, v__gen__js__MatchCond cond_var, string tmp_var) {
 	v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(g->table, node.cond_type);
 	for (int j = 0; j < node.branches.len; ++j) {
 		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node.branches.data)[j];
@@ -67472,27 +67539,37 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, 
 				}
 
 				if (type_sym->kind == (v__ast__Kind__array)) {
-					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("vEq("), 0xfe10, {.d_s = cond_var}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_write(g, _SLIT("vEq("));
+					v__gen__js__JsGen_match_cond(g, cond_var);
+					v__gen__js__JsGen_write(g, _SLIT(","));
 					v__gen__js__JsGen_expr(g, expr);
 					v__gen__js__JsGen_write(g, _SLIT(")"));
 				}
 				else if (type_sym->kind == (v__ast__Kind__array_fixed)) {
-					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("vEq("), 0xfe10, {.d_s = cond_var}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_write(g, _SLIT("vEq("));
+					v__gen__js__JsGen_match_cond(g, cond_var);
+					v__gen__js__JsGen_write(g, _SLIT(","));
 					v__gen__js__JsGen_expr(g, expr);
 					v__gen__js__JsGen_write(g, _SLIT(")"));
 				}
 				else if (type_sym->kind == (v__ast__Kind__map)) {
-					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("vEq("), 0xfe10, {.d_s = cond_var}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_write(g, _SLIT("vEq("));
+					v__gen__js__JsGen_match_cond(g, cond_var);
+					v__gen__js__JsGen_write(g, _SLIT(","));
 					v__gen__js__JsGen_expr(g, expr);
 					v__gen__js__JsGen_write(g, _SLIT(")"));
 				}
 				else if (type_sym->kind == (v__ast__Kind__string)) {
-					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("vEq("), 0xfe10, {.d_s = cond_var}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_write(g, _SLIT("vEq("));
+					v__gen__js__JsGen_match_cond(g, cond_var);
+					v__gen__js__JsGen_write(g, _SLIT(","));
 					v__gen__js__JsGen_expr(g, expr);
 					v__gen__js__JsGen_write(g, _SLIT(")"));
 				}
 				else if (type_sym->kind == (v__ast__Kind__struct_)) {
-					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("vEq("), 0xfe10, {.d_s = cond_var}}, {_SLIT(", "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_write(g, _SLIT("vEq("));
+					v__gen__js__JsGen_match_cond(g, cond_var);
+					v__gen__js__JsGen_write(g, _SLIT(","));
 					v__gen__js__JsGen_expr(g, expr);
 					v__gen__js__JsGen_write(g, _SLIT(")"));
 				}
@@ -67506,15 +67583,19 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, 
 						}
 						v__gen__js__JsGen_write(g, _SLIT("("));
 						if (!skip_low) {
-							v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cond_var}}, {_SLIT(" >= "), 0, { .d_c = 0 }}})));
+							v__gen__js__JsGen_match_cond(g, cond_var);
+							v__gen__js__JsGen_write(g, _SLIT(" >= "));
 							v__gen__js__JsGen_expr(g, (*expr._v__ast__RangeExpr).low);
 							v__gen__js__JsGen_write(g, _SLIT(" && "));
 						}
-						v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = cond_var}}, {_SLIT(" <= "), 0, { .d_c = 0 }}})));
+						v__gen__js__JsGen_match_cond(g, cond_var);
+						v__gen__js__JsGen_write(g, _SLIT(" <= "));
 						v__gen__js__JsGen_expr(g, (*expr._v__ast__RangeExpr).high);
 						v__gen__js__JsGen_write(g, _SLIT(")"));
 					} else {
-						v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("vEq("), 0xfe10, {.d_s = cond_var}}, {_SLIT(","), 0, { .d_c = 0 }}})));
+						v__gen__js__JsGen_write(g, _SLIT("vEq("));
+						v__gen__js__JsGen_match_cond(g, cond_var);
+						v__gen__js__JsGen_write(g, _SLIT(","));
 						v__gen__js__JsGen_expr(g, expr);
 						v__gen__js__JsGen_write(g, _SLIT(")"));
 					}
@@ -67533,6 +67614,17 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_classic(v__gen__js__JsGen* g, 
 	}
 }
 
+// TypeDecl
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_cond(v__gen__js__JsGen* g, v__gen__js__MatchCond cond) {
+	if (cond._typ == 531 /* v.gen.js.CondString */) {
+		v__gen__js__JsGen_writeln(g, (*cond._v__gen__js__CondString).s);
+	}
+	else if (cond._typ == 530 /* v.gen.js.CondExpr */) {
+		v__gen__js__JsGen_expr(g, (*cond._v__gen__js__CondExpr).expr);
+	}
+	;
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr(v__gen__js__JsGen* g, v__ast__MatchExpr node) {
 	if (node.cond_type == 0) {
 		v__gen__js__JsGen_writeln(g, _SLIT("// match 0"));
@@ -67541,15 +67633,20 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr(v__gen__js__JsGen* g, v__ast__
 	bool prev = g->inside_ternary;
 	bool need_tmp_var = v__gen__js__JsGen_need_tmp_var_in_match(g, node);
 	bool is_expr = (node.is_expr && !v__ast__Type_alias_eq(node.return_type, _const_v__ast__void_type)) || g->inside_ternary;
-	string cond_var = _SLIT("");
+	v__gen__js__MatchCond cond_var = v__gen__js__CondString_to_sumtype_v__gen__js__MatchCond(ADDR(v__gen__js__CondString, ((v__gen__js__CondString){.s = _SLIT(""),})));
 	string tmp_var = _SLIT("");
 	if (is_expr && !need_tmp_var) {
 		g->inside_ternary = true;
 	}
-	cond_var = v__gen__js__JsGen_new_tmp_var(g);
-	v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = cond_var}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-	v__gen__js__JsGen_expr(g, node.cond);
-	v__gen__js__JsGen_write(g, _SLIT(";"));
+	if ((node.cond)._typ == 280 /* v.ast.Ident */ || (node.cond)._typ == 300 /* v.ast.SelectorExpr */ || (node.cond)._typ == 285 /* v.ast.IntegerLiteral */ || (node.cond)._typ == 304 /* v.ast.StringLiteral */ || (node.cond)._typ == 278 /* v.ast.FloatLiteral */) {
+		cond_var = v__gen__js__CondExpr_to_sumtype_v__gen__js__MatchCond(ADDR(v__gen__js__CondExpr, ((v__gen__js__CondExpr){.expr = node.cond,})));
+	} else {
+		string s = v__gen__js__JsGen_new_tmp_var(g);
+		cond_var = v__gen__js__CondString_to_sumtype_v__gen__js__MatchCond(ADDR(v__gen__js__CondString, ((v__gen__js__CondString){.s = s,})));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = s}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_expr(g, node.cond);
+		v__gen__js__JsGen_writeln(g, _SLIT(";"));
+	}
 	if (need_tmp_var) {
 		tmp_var = v__gen__js__JsGen_new_tmp_var(g);
 		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = tmp_var}}, {_SLIT(" = undefined;"), 0, { .d_c = 0 }}})));
@@ -67595,7 +67692,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmts_with_tmp_var(v__gen__js__JsGen* g, 
 	}
 }
 
-VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, string cond_var, string tmp_var) {
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, v__gen__js__MatchCond cond_var, string tmp_var) {
 	for (int j = 0; j < node.branches.len; ++j) {
 		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node.branches.data)[j];
 		int sumtype_index = 0;
@@ -67622,7 +67719,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, 
 				} else {
 					v__gen__js__JsGen_write(g, _SLIT("if ("));
 				}
-				v__gen__js__JsGen_write(g, cond_var);
+				v__gen__js__JsGen_match_cond(g, cond_var);
 				if (sym->kind == v__ast__Kind__sum_type) {
 					v__gen__js__JsGen_write(g, _SLIT(" instanceof "));
 					v__gen__js__JsGen_expr(g, (*(v__ast__Expr*)/*ee elem_typ */array_get(branch.exprs, sumtype_index)));
@@ -68306,16 +68403,18 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_float_literal_expr(v__gen__js__JsGen*
 	v__ast__Type typ = ((v__ast__Type)(_const_v__ast__f32_type));
 	if (g->call_stack.len > 0) {
 		v__ast__CallExpr call = (*(v__ast__CallExpr*)/*ee elem_typ */array_get(g->call_stack, g->call_stack.len - 1));
-		for (int i = 0; i < call.args.len; ++i) {
-			v__ast__CallArg t = ((v__ast__CallArg*)call.args.data)[i];
-			if ((t.expr)._typ == 278 /* v.ast.FloatLiteral */) {
-				if (v__ast__FloatLiteral_struct_eq((*t.expr._v__ast__FloatLiteral), it)) {
-					if ((Array_int_contains(_const_v__ast__integer_type_idxs, (*(v__ast__Type*)/*ee elem_typ */array_get(call.expected_arg_types, i))))) {
-						v__gen__js__JsGen_write(g, int_str(((int)(string_f64(it.val)))));
-					} else {
-						v__gen__js__JsGen_write(g, it.val);
+		if (call.language == v__ast__Language__js) {
+			for (int i = 0; i < call.args.len; ++i) {
+				v__ast__CallArg t = ((v__ast__CallArg*)call.args.data)[i];
+				if ((t.expr)._typ == 278 /* v.ast.FloatLiteral */) {
+					if (v__ast__FloatLiteral_struct_eq((*t.expr._v__ast__FloatLiteral), it)) {
+						if ((Array_int_contains(_const_v__ast__integer_type_idxs, (*(v__ast__Type*)/*ee elem_typ */array_get(call.expected_arg_types, i))))) {
+							v__gen__js__JsGen_write(g, int_str(((int)(string_f64(it.val)))));
+						} else {
+							v__gen__js__JsGen_write(g, it.val);
+						}
+						return;
 					}
-					return;
 				}
 			}
 		}
