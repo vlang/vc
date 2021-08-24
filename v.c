@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "833bf2c"
+#define V_COMMIT_HASH "57b1480"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3249f8f"
+	#define V_COMMIT_HASH "833bf2c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "833bf2c"
+	#define V_CURRENT_COMMIT_HASH "57b1480"
 #endif
 
 // V comptime_defines:
@@ -9315,6 +9315,7 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 VV_LOCAL_SYMBOL void v__gen__native__Gen_expr(v__gen__native__Gen* g, v__ast__Expr node);
 VV_LOCAL_SYMBOL void v__gen__native__Gen_postfix_expr(v__gen__native__Gen* g, v__ast__PostfixExpr node);
 void v__gen__native__Gen_n_error(v__gen__native__Gen* g, string s);
+void v__gen__native__Gen_warning(v__gen__native__Gen* g, string s, v__token__Position pos);
 void v__gen__native__Gen_v_error(v__gen__native__Gen* g, string s, v__token__Position pos);
 #define _const_v__gen__native__s_attr_some_instructions 1024
 #define _const_v__gen__native__s_attr_pure_instructions 2147483648
@@ -32868,7 +32869,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("3249f8f")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("833bf2c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -70702,6 +70703,19 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_assign_stmt(v__gen__native__Gen* g, v__
 		else if (right._typ == 244 /* v.ast.GoExpr */) {
 			v__gen__native__Gen_v_error(g, _SLIT("threads not implemented for the native backend"), node.pos);
 		}
+		else if (right._typ == 233 /* v.ast.CastExpr */) {
+			v__gen__native__Gen_warning(g, _SLIT("cast expressions are work in progress"), (*right._v__ast__CastExpr).pos);
+
+			if (string__eq((*right._v__ast__CastExpr).typname, _SLIT("u64"))) {
+				v__gen__native__Gen_allocate_var(g, name, 8, string_int(v__ast__Expr_str((*right._v__ast__CastExpr).expr)));
+			}
+			else if (string__eq((*right._v__ast__CastExpr).typname, _SLIT("int"))) {
+				v__gen__native__Gen_allocate_var(g, name, 4, string_int(v__ast__Expr_str((*right._v__ast__CastExpr).expr)));
+			}
+			else {
+				v__gen__native__Gen_v_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unsupported cast type "), 0xfe07, {.d_i32 = (*right._v__ast__CastExpr).typ}}, {_SLIT0, 0, { .d_c = 0 }}})), node.pos);
+			};
+		}
 		
 		else {
 			v__gen__native__Gen_v_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unhandled assign_stmt expression: "), 0xfe10, {.d_s = charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (right)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(right));
@@ -71220,7 +71234,7 @@ multi_return_int_int v__gen__native__gen(Array_v__ast__File_ptr files, v__ast__T
 	for (int _t2 = 0; _t2 < files.len; ++_t2) {
 		v__ast__File* file = ((v__ast__File**)files.data)[_t2];
 		if (file->warnings.len > 0) {
-			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("Warning: "), 0xfe10, {.d_s = v__errors__Warning_str((*(v__errors__Warning*)/*ee elem_typ */array_get(file->warnings, 0)))}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("warning: "), 0xfe10, {.d_s = v__errors__Warning_str((*(v__errors__Warning*)/*ee elem_typ */array_get(file->warnings, 0)))}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
 		if (file->errors.len > 0) {
 			v__gen__native__Gen_n_error(g, v__errors__Error_str((*(v__errors__Error*)/*ee elem_typ */array_get(file->errors, 0))));
@@ -71469,14 +71483,21 @@ VV_LOCAL_SYMBOL void v__gen__native__Gen_stmt(v__gen__native__Gen* g, v__ast__St
 		}
 		else if (e0._typ == 249 /* v.ast.InfixExpr */) {
 		}
+		else if (e0._typ == 233 /* v.ast.CastExpr */) {
+			v__gen__native__Gen_mov64(g, v__gen__native__Register__rax, string_int(v__ast__Expr_str((*e0._v__ast__CastExpr).expr)));
+		}
 		else if (e0._typ == 269 /* v.ast.StringLiteral */) {
 			s = string_str((*e0._v__ast__StringLiteral).val);
 			v__gen__native__Gen_expr(g, (*(v__ast__Expr*)/*ee elem_typ */array_get((*node._v__ast__Return).exprs, 0)));
 			v__gen__native__Gen_mov64(g, v__gen__native__Register__rax, v__gen__native__Gen_allocate_string(g, s, 2));
 		}
+		else if (e0._typ == 245 /* v.ast.Ident */) {
+			v__gen__native__Gen_expr(g, e0);
+			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("ident "), 0xfe10, {.d_s = (*e0._v__ast__Ident).name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		}
 		
 		else {
-			v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown return type "), 0xfe10, {.d_s = v__ast__Expr_str(e0)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			v__gen__native__Gen_n_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown return type "), 0xfe10, {.d_s = charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (e0)._typ ))}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
 		;
 		v__gen__native__Gen_add8(g, v__gen__native__Register__rsp, 0x20);
@@ -71562,6 +71583,15 @@ VNORETURN void v__gen__native__Gen_n_error(v__gen__native__Gen* g, string s) {
 	v__util__verror(_SLIT("native error"), s);
 	VUNREACHABLE();
 	while(1);
+}
+
+void v__gen__native__Gen_warning(v__gen__native__Gen* g, string s, v__token__Position pos) {
+	if (g->pref->output_mode == v__pref__OutputMode__stdout) {
+		string werror = v__util__formatted_error(_SLIT("warning"), s, g->pref->path, pos);
+		eprintln(werror);
+	} else {
+		array_push((array*)&g->warnings, _MOV((v__errors__Warning[]){ (v__errors__Warning){.message = s,.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = g->pref->path,.pos = pos,.reporter = v__errors__Reporter__gen,} }));
+	}
 }
 
 void v__gen__native__Gen_v_error(v__gen__native__Gen* g, string s, v__token__Position pos) {
