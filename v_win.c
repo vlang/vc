@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "83e2a84"
+#define V_COMMIT_HASH "4824b40"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d78e7e3"
+	#define V_COMMIT_HASH "83e2a84"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "83e2a84"
+	#define V_CURRENT_COMMIT_HASH "4824b40"
 #endif
 
 // V comptime_defines:
@@ -10472,7 +10472,7 @@ void vinit_string_literals(){
 	_const_v__checker__hex_lit_overflow_message = _SLIT("hex character literal overflows string");
 	_const_v__checker__vroot_is_deprecated_message = _SLIT("@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead");
 	_const_v__builder__c_verror_message_marker = _SLIT("VERROR_MESSAGE ");
-	_const_v__builder__c_error_info = _SLIT("\n==================\nC error. This should never happen.\n\nIf you were not working with C interop, this is a compiler bug, please report the bug using `v bug file.v`.\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
+	_const_v__builder__c_error_info = _SLIT("\n==================\nC error. This should never happen.\n\nThis is a compiler bug, please report it using `v bug file.v`.\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
 	_const_v__builder__no_compiler_error = _SLIT("\n==================\nError: no C compiler detected.\n\nYou can find instructions on how to install one in the V wiki:\nhttps://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows\n\nIf you think you have one installed, make sure it is in your PATH.\nIf you do have one in your PATH, please raise an issue on GitHub:\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use `v doctor`, to see what V knows about your current environment.\n\nYou can also seek #help on Discord: https://discord.gg/vlang\n");
 	_const_v__builder__mingw_cc = _SLIT("x86_64-w64-mingw32-gcc");
 }
@@ -31977,7 +31977,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("d78e7e3")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("83e2a84")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -81930,10 +81930,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	}
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	_PUSH_MANY(&ccoptions.o_args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t28, Array_string);
-	multi_return_Array_string_Array_string_Array_string mr_11149 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_11149.arg0;
-	Array_string others = mr_11149.arg1;
-	Array_string libs = mr_11149.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_11104 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_11104.arg0;
+	Array_string others = mr_11104.arg1;
+	Array_string libs = mr_11104.arg2;
 	_PUSH_MANY(&ccoptions.pre_args, (defines), _t29, Array_string);
 	_PUSH_MANY(&ccoptions.pre_args, (others), _t30, Array_string);
 	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t31, Array_string);
@@ -82321,10 +82321,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_24229 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_24229.arg0;
-	Array_string others = mr_24229.arg1;
-	Array_string libs = mr_24229.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24184 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24184.arg0;
+	Array_string others = mr_24184.arg1;
+	Array_string libs = mr_24184.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
