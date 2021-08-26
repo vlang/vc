@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "db194ab"
+#define V_COMMIT_HASH "bdf11d9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "187c1c1"
+	#define V_COMMIT_HASH "db194ab"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "db194ab"
+	#define V_CURRENT_COMMIT_HASH "bdf11d9"
 #endif
 
 // V comptime_defines:
@@ -9248,8 +9248,11 @@ VV_LOCAL_SYMBOL Option_string v__gen__js__JsGen_comp_if_to_ifdef(v__gen__js__JsG
 Array_string _const_v__gen__js__js_reserved; // inited later
 Array_string _const_v__gen__js__v_types; // inited later
 Array_v__ast__Kind _const_v__gen__js__shallow_equatables; // inited later
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_write_tests_definitions(v__gen__js__JsGen* g);
 string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pref__Preferences* pref);
 VV_LOCAL_SYMBOL string v__gen__js__JsGen_create_sourcemap(v__gen__js__JsGen* g);
+void v__gen__js__JsGen_gen_js_main_for_tests(v__gen__js__JsGen* g);
+VV_LOCAL_SYMBOL Array_string v__gen__js__JsGen_get_all_test_function_names(v__gen__js__JsGen* g);
 void v__gen__js__JsGen_enter_namespace(v__gen__js__JsGen* g, string name);
 void v__gen__js__JsGen_escape_namespace(v__gen__js__JsGen* g);
 void v__gen__js__JsGen_push_pub_var(v__gen__js__JsGen* g, string s);
@@ -9272,6 +9275,8 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_global_decl(v__gen__js__JsGen* g, v__
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmt_no_semi(v__gen__js__JsGen* g, v__ast__Stmt node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmt(v__gen__js__JsGen* g, v__ast__Stmt node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr node);
+VV_LOCAL_SYMBOL string v__gen__js__JsGen_gen_assert_metainfo(v__gen__js__JsGen* g, v__ast__AssertStmt node);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assert_single_expr(v__gen__js__JsGen* g, v__ast__Expr expr, v__ast__Type typ);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assert_stmt(v__gen__js__JsGen* g, v__ast__AssertStmt a);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assign_stmt(v__gen__js__JsGen* g, v__ast__AssignStmt stmt, bool semicolon);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_attrs(v__gen__js__JsGen* g, Array_v__ast__Attr attrs);
@@ -31985,7 +31990,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("187c1c1")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("db194ab")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65873,6 +65878,11 @@ VV_LOCAL_SYMBOL Option_string v__gen__js__JsGen_comp_if_to_ifdef(v__gen__js__JsG
 	return (Option_string){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
 }
 
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_write_tests_definitions(v__gen__js__JsGen* g) {
+	strings__Builder_writeln(&g->definitions, _SLIT("globalThis.g_test_oks = 0;"));
+	strings__Builder_writeln(&g->definitions, _SLIT("globalThis.g_test_fails = 0;"));
+}
+
 string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pref__Preferences* pref) {
 	v__gen__js__JsGen* g = (v__gen__js__JsGen*)memdup(&(v__gen__js__JsGen){.pref = pref,
 		.table = table,
@@ -65915,6 +65925,7 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 		v__gen__js__sourcemap__Generator* sg = v__gen__js__sourcemap__generate_empty_map();
 		g->sourcemap = *v__gen__js__sourcemap__Generator_add_map(sg, _SLIT(""), _SLIT(""), g->pref->sourcemap_src_included, 0, 0);
 	}
+	bool tests_inited = false;
 	for (int _t1 = 0; _t1 < files.len; ++_t1) {
 		v__ast__File* file = ((v__ast__File**)files.data)[_t1];
 		g->file = file;
@@ -65942,9 +65953,16 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 			v__gen__js__JsGen_writeln(g, _SLIT("Object.defineProperty(array.prototype,\"length\", { get: function() {return new builtin.int(this.arr.length);}, set: function(l) { this.arr.length = l.valueOf(); } }); "));
 			g->generated_builtin = true;
 		}
+		if (g->is_test && !tests_inited) {
+			v__gen__js__JsGen_write_tests_definitions(g);
+			tests_inited = true;
+		}
 		v__gen__js__JsGen_stmts(g, file->stmts);
 		v__gen__js__JsGen_writeln(g, _SLIT("try { init() } catch (_) {}"));
 		v__gen__js__JsGen_escape_namespace(g);
+	}
+	if (g->pref->is_test) {
+		v__gen__js__JsGen_gen_js_main_for_tests(g);
 	}
 	v__depgraph__DepGraph* deps_resolved = v__depgraph__DepGraph_resolve(graph);
 	Array_v__depgraph__DepGraphNode nodes = deps_resolved->nodes;
@@ -66083,6 +66101,70 @@ VV_LOCAL_SYMBOL string v__gen__js__JsGen_create_sourcemap(v__gen__js__JsGen* g) 
 	out = /*f*/string__plus(out, _SLIT("\n"));
 	string _t1 = out;
 	return _t1;
+}
+
+void v__gen__js__JsGen_gen_js_main_for_tests(v__gen__js__JsGen* g) {
+	v__gen__js__JsGen_enter_namespace(g, _SLIT("main"));
+	v__gen__js__JsGen_writeln(g, _SLIT("(function() {  "));
+	v__gen__js__JsGen_inc_indent(g);
+	Array_string all_tfuncs = v__gen__js__JsGen_get_all_test_function_names(g);
+	v__gen__js__JsGen_writeln(g, _SLIT(""));
+	v__gen__js__JsGen_writeln(g, _SLIT("globalThis.VTEST=1"));
+	for (int _t1 = 0; _t1 < all_tfuncs.len; ++_t1) {
+		string tname = ((string*)all_tfuncs.data)[_t1];
+		string tcname = v__gen__js__JsGen_js_name(g, tname);
+		if (g->pref->is_stats) {
+		}
+		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("try { "), 0xfe10, {.d_s = tcname}}, {_SLIT("(); } catch (_e) {} "), 0, { .d_c = 0 }}})));
+		if (g->pref->is_stats) {
+		}
+	}
+	v__gen__js__JsGen_writeln(g, _SLIT(""));
+	if (g->pref->is_stats) {
+	}
+	v__gen__js__JsGen_dec_indent(g);
+	v__gen__js__JsGen_writeln(g, _SLIT("})();"));
+	v__gen__js__JsGen_escape_namespace(g);
+}
+
+VV_LOCAL_SYMBOL Array_string v__gen__js__JsGen_get_all_test_function_names(v__gen__js__JsGen* g) {
+	Array_string tfuncs = __new_array_with_default(0, 0, sizeof(string), 0);
+	string tsuite_begin = _SLIT("");
+	string tsuite_end = _SLIT("");
+	Map_string_v__ast__Fn _t1 = g->table->fns;
+	int _t3 = _t1.key_values.len;
+	for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
+		int _t4 = _t1.key_values.len - _t3;
+		_t3 = _t1.key_values.len;
+		if (_t4 < 0) {
+			_t2 = -1;
+			continue;
+		}
+		if (!DenseArray_has_index(&_t1.key_values, _t2)) {continue;}
+		v__ast__Fn f = (*(v__ast__Fn*)DenseArray_value(&_t1.key_values, _t2));
+		if (string_ends_with(f.name, _SLIT(".testsuite_begin"))) {
+			tsuite_begin = f.name;
+			continue;
+		}
+		if (string_contains(f.name, _SLIT(".test_"))) {
+			array_push((array*)&tfuncs, _MOV((string[]){ string_clone(f.name) }));
+			continue;
+		}
+		if (string_ends_with(f.name, _SLIT(".testsuite_end"))) {
+			tsuite_end = f.name;
+			continue;
+		}
+	}
+	Array_string all_tfuncs = __new_array_with_default(0, 0, sizeof(string), 0);
+	if (tsuite_begin.len > 0) {
+		array_push((array*)&all_tfuncs, _MOV((string[]){ string_clone(tsuite_begin) }));
+	}
+	_PUSH_MANY(&all_tfuncs, (tfuncs), _t7, Array_string);
+	if (tsuite_end.len > 0) {
+		array_push((array*)&all_tfuncs, _MOV((string[]){ string_clone(tsuite_end) }));
+	}
+	Array_string _t9 = all_tfuncs;
+	return _t9;
 }
 
 void v__gen__js__JsGen_enter_namespace(v__gen__js__JsGen* g, string name) {
@@ -66698,6 +66780,72 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 	;
 }
 
+VV_LOCAL_SYMBOL string v__gen__js__JsGen_gen_assert_metainfo(v__gen__js__JsGen* g, v__ast__AssertStmt node) {
+	string mod_path = g->file->path;
+	string fn_name = g->fn_decl->name;
+	int line_nr = node.pos.line_nr;
+	string src = v__ast__Expr_str(node.expr);
+	string metaname =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("v_assert_meta_info_"), 0xfe10, {.d_s = v__gen__js__JsGen_new_tmp_var(g)}}, {_SLIT0, 0, { .d_c = 0 }}}));
+	v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = metaname}}, {_SLIT(" = {}"), 0, { .d_c = 0 }}})));
+	v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = metaname}}, {_SLIT(".fpath = new builtin.string(\""), 0xfe10, {.d_s = mod_path}}, {_SLIT("\");"), 0, { .d_c = 0 }}})));
+	v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = metaname}}, {_SLIT(".line_nr = new builtin.int(\""), 0xfe07, {.d_i32 = line_nr}}, {_SLIT("\")"), 0, { .d_c = 0 }}})));
+	v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = metaname}}, {_SLIT(".fn_name = new builtin.string(\""), 0xfe10, {.d_s = fn_name}}, {_SLIT("\")"), 0, { .d_c = 0 }}})));
+	string metasrc = src;
+	v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = metaname}}, {_SLIT(".src = \""), 0xfe10, {.d_s = metasrc}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
+	if (node.expr._typ == 284 /* v.ast.InfixExpr */) {
+		string expr_op_str = v__token__Kind_str((*node.expr._v__ast__InfixExpr).op);
+		string expr_left_str = v__ast__Expr_str((*node.expr._v__ast__InfixExpr).left);
+		string expr_right_str = v__ast__Expr_str((*node.expr._v__ast__InfixExpr).right);
+		v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = metaname}}, {_SLIT(".op = new builtin.string(\""), 0xfe10, {.d_s = expr_op_str}}, {_SLIT("\");"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = metaname}}, {_SLIT(".llabel = new builtin.string(\""), 0xfe10, {.d_s = expr_left_str}}, {_SLIT("\");"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = metaname}}, {_SLIT(".rlabel = new builtin.string(\""), 0xfe10, {.d_s = expr_right_str}}, {_SLIT("\");"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = metaname}}, {_SLIT(".lvalue = new builtin.string(\""), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_gen_assert_single_expr(g, (*node.expr._v__ast__InfixExpr).left, (*node.expr._v__ast__InfixExpr).left_type);
+		v__gen__js__JsGen_writeln(g, _SLIT("\");"));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = metaname}}, {_SLIT(".rvalue = new builtin.string(\""), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_gen_assert_single_expr(g, (*node.expr._v__ast__InfixExpr).right, (*node.expr._v__ast__InfixExpr).right_type);
+		v__gen__js__JsGen_writeln(g, _SLIT("\");"));
+	}
+	else if (node.expr._typ == 267 /* v.ast.CallExpr */) {
+		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t"), 0xfe10, {.d_s = metaname}}, {_SLIT(".op = new builtin.string(\"call\");"), 0, { .d_c = 0 }}})));
+	}
+	
+	else {
+	}
+	;
+	string _t1 = metaname;
+	return _t1;
+}
+
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assert_single_expr(v__gen__js__JsGen* g, v__ast__Expr expr, v__ast__Type typ) {
+	string unknown_value = _SLIT("*unknown value*");
+	if (expr._typ == 268 /* v.ast.CastExpr */) {
+		v__gen__js__JsGen_write(g, unknown_value);
+	}
+	else if (expr._typ == 281 /* v.ast.IfExpr */) {
+		v__gen__js__JsGen_write(g, unknown_value);
+	}
+	else if (expr._typ == 283 /* v.ast.IndexExpr */) {
+		v__gen__js__JsGen_write(g, unknown_value);
+	}
+	else if (expr._typ == 290 /* v.ast.MatchExpr */) {
+		v__gen__js__JsGen_write(g, unknown_value);
+	}
+	else if (expr._typ == 297 /* v.ast.PrefixExpr */) {
+		v__gen__js__JsGen_write(g, unknown_value);
+	}
+	else if (expr._typ == 306 /* v.ast.TypeNode */) {
+		v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(g->table, v__gen__js__JsGen_unwrap_generic(g, typ));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	}
+	
+	else {
+		v__gen__js__JsGen_writeln(g, unknown_value);
+	}
+	;
+	v__gen__js__JsGen_write(g, string__plus(string__plus(string__plus(string__plus(_SLIT(" /* typeof: "), charptr_vstring_literal( /* v.ast.Expr */ v_typeof_sumtype_v__ast__Expr( (expr)._typ ))), _SLIT(" type: ")), v__ast__Type_str(typ)), _SLIT(" */ ")));
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assert_stmt(v__gen__js__JsGen* g, v__ast__AssertStmt a) {
 	if (!a.is_used) {
 		return;
@@ -66709,12 +66857,14 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_assert_stmt(v__gen__js__JsGen* g, v__
 	string s_assertion = string_replace(v__ast__Expr_str(a.expr), _SLIT("\""), _SLIT("'"));
 	string mod_path = string_replace(g->file->path, _SLIT("\\"), _SLIT("\\\\"));
 	if (g->is_test) {
+		string metaname_ok = v__gen__js__JsGen_gen_assert_metainfo(g, a);
 		v__gen__js__JsGen_writeln(g, _SLIT("	g_test_oks++;"));
-		v__gen__js__JsGen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("	cb_assertion_ok(\""), 0xfe10, {.d_s = mod_path}}, {_SLIT("\", "), 0xfe07, {.d_i32 = a.pos.line_nr + 1}}, {_SLIT(", \"assert "), 0xfe10, {.d_s = s_assertion}}, {_SLIT("\", \""), 0xfe10, {.d_s = g->fn_decl->name}}, {_SLIT("()\" );"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("	cb_assertion_ok("), 0xfe10, {.d_s = metaname_ok}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
 		v__gen__js__JsGen_writeln(g, _SLIT("} else {"));
+		string metaname_fail = v__gen__js__JsGen_gen_assert_metainfo(g, a);
 		v__gen__js__JsGen_writeln(g, _SLIT("	g_test_fails++;"));
-		v__gen__js__JsGen_writeln(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("	cb_assertion_failed(\""), 0xfe10, {.d_s = mod_path}}, {_SLIT("\", "), 0xfe07, {.d_i32 = a.pos.line_nr + 1}}, {_SLIT(", \"assert "), 0xfe10, {.d_s = s_assertion}}, {_SLIT("\", \""), 0xfe10, {.d_s = g->fn_decl->name}}, {_SLIT("()\" );"), 0, { .d_c = 0 }}})));
-		v__gen__js__JsGen_writeln(g, _SLIT("	exit(1);"));
+		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("	cb_assertion_failed("), 0xfe10, {.d_s = metaname_fail}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_writeln(g, _SLIT("	builtin.exit(1);"));
 		v__gen__js__JsGen_writeln(g, _SLIT("}"));
 		return;
 	}
