@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b635ff8"
+#define V_COMMIT_HASH "187c1c1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "714fa32"
+	#define V_COMMIT_HASH "b635ff8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b635ff8"
+	#define V_CURRENT_COMMIT_HASH "187c1c1"
 #endif
 
 // V comptime_defines:
@@ -31985,7 +31985,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("714fa32")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("b635ff8")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -42437,32 +42437,32 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	v__token__Position start_pos = v__token__Token_position(&p->prev_tok);
 	string error_msg = _SLIT("only `$tmpl()`, `$env()`, `$embed_file()`, `$pkgconfig()` and `$vweb.html()` comptime functions are supported right now");
 	if (p->peek_tok.kind == v__token__Kind__dot) {
-		string n = v__parser__Parser_check_name(p);
-		if (!string__eq(n, _SLIT("vweb"))) {
+		string name = v__parser__Parser_check_name(p);
+		if (!string__eq(name, _SLIT("vweb"))) {
 			v__parser__Parser_error(p, error_msg);
 			v__ast__ComptimeCall _t1 = (*(err_node));
 			return _t1;
 		}
 		v__parser__Parser_check(p, v__token__Kind__dot);
 	}
-	string n = v__parser__Parser_check_name(p);
-	if (!(Array_string_contains(_const_v__parser__supported_comptime_calls, n))) {
+	string method_name = v__parser__Parser_check_name(p);
+	if (!(Array_string_contains(_const_v__parser__supported_comptime_calls, method_name))) {
 		v__parser__Parser_error(p, error_msg);
 		v__ast__ComptimeCall _t2 = (*(err_node));
 		return _t2;
 	}
-	bool is_embed_file = string__eq(n, _SLIT("embed_file"));
-	bool is_html = string__eq(n, _SLIT("html"));
+	bool is_embed_file = string__eq(method_name, _SLIT("embed_file"));
+	bool is_html = string__eq(method_name, _SLIT("html"));
 	v__parser__Parser_check(p, v__token__Kind__lpar);
 	v__token__Position spos = v__token__Token_position(&p->tok);
-	if (string__eq(n, _SLIT("env"))) {
+	if (string__eq(method_name, _SLIT("env"))) {
 		string s = p->tok.lit;
 		v__parser__Parser_check(p, v__token__Kind__string);
 		v__parser__Parser_check(p, v__token__Kind__rpar);
 		v__ast__ComptimeCall _t3 = (v__ast__ComptimeCall){
 			.pos = v__token__Position_extend(spos, v__token__Token_position(&p->prev_tok)),
 			.has_parens = 0,
-			.method_name = n,
+			.method_name = method_name,
 			.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},
 			.scope = 0,
 			.left = {0},
@@ -42481,14 +42481,14 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		};
 		return _t3;
 	}
-	if (string__eq(n, _SLIT("pkgconfig"))) {
+	if (string__eq(method_name, _SLIT("pkgconfig"))) {
 		string s = p->tok.lit;
 		v__parser__Parser_check(p, v__token__Kind__string);
 		v__parser__Parser_check(p, v__token__Kind__rpar);
 		v__ast__ComptimeCall _t4 = (v__ast__ComptimeCall){
 			.pos = v__token__Position_extend(spos, v__token__Token_position(&p->prev_tok)),
 			.has_parens = 0,
-			.method_name = n,
+			.method_name = method_name,
 			.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},
 			.scope = 0,
 			.left = {0},
@@ -42560,7 +42560,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 		}
 		if (!os__exists(path)) {
 			if (p->pref->is_fmt) {
-				v__ast__ComptimeCall _t9 = (v__ast__ComptimeCall){.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),.has_parens = 0,.method_name = n,.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.scope = 0,.left = {0},.args_var = literal_string_param,.is_vweb = true,.vweb_tmpl = (v__ast__File){.nr_lines = 0,.nr_bytes = 0,.mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},.global_scope = 0,.is_test = 0,.path = (string){.str=(byteptr)"", .is_lit=1},.path_base = (string){.str=(byteptr)"", .is_lit=1},.scope = 0,.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.imports = __new_array(0, 0, sizeof(v__ast__Import)),.auto_imports = __new_array(0, 0, sizeof(string)),.embedded_files = __new_array(0, 0, sizeof(v__ast__EmbeddedFile)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors = __new_array(0, 0, sizeof(v__errors__Error)),.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),.notices = __new_array(0, 0, sizeof(v__errors__Notice)),.generic_fns = __new_array(0, 0, sizeof(v__ast__FnDecl*)),.global_labels = __new_array(0, 0, sizeof(string)),},.is_embed = 0,.embed_file = (v__ast__EmbeddedFile){.rpath = (string){.str=(byteptr)"", .is_lit=1},.apath = (string){.str=(byteptr)"", .is_lit=1},},.is_env = 0,.env_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_pkgconfig = 0,.sym = (v__ast__TypeSymbol){.parent_idx = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.cname = (string){.str=(byteptr)"", .is_lit=1},.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = (string){.str=(byteptr)"", .is_lit=1},.is_public = 0,.idx = 0,},.result_type = 0,.env_value = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 0, sizeof(v__ast__CallArg)),};
+				v__ast__ComptimeCall _t9 = (v__ast__ComptimeCall){.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),.has_parens = 0,.method_name = method_name,.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.scope = 0,.left = {0},.args_var = literal_string_param,.is_vweb = true,.vweb_tmpl = (v__ast__File){.nr_lines = 0,.nr_bytes = 0,.mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},.global_scope = 0,.is_test = 0,.path = (string){.str=(byteptr)"", .is_lit=1},.path_base = (string){.str=(byteptr)"", .is_lit=1},.scope = 0,.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.imports = __new_array(0, 0, sizeof(v__ast__Import)),.auto_imports = __new_array(0, 0, sizeof(string)),.embedded_files = __new_array(0, 0, sizeof(v__ast__EmbeddedFile)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.errors = __new_array(0, 0, sizeof(v__errors__Error)),.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),.notices = __new_array(0, 0, sizeof(v__errors__Notice)),.generic_fns = __new_array(0, 0, sizeof(v__ast__FnDecl*)),.global_labels = __new_array(0, 0, sizeof(string)),},.is_embed = 0,.embed_file = (v__ast__EmbeddedFile){.rpath = (string){.str=(byteptr)"", .is_lit=1},.apath = (string){.str=(byteptr)"", .is_lit=1},},.is_env = 0,.env_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_pkgconfig = 0,.sym = (v__ast__TypeSymbol){.parent_idx = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.cname = (string){.str=(byteptr)"", .is_lit=1},.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = (string){.str=(byteptr)"", .is_lit=1},.is_public = 0,.idx = 0,},.result_type = 0,.env_value = (string){.str=(byteptr)"", .is_lit=1},.args = __new_array(0, 0, sizeof(v__ast__CallArg)),};
 				return _t9;
 			}
 			if (is_html) {
@@ -42607,7 +42607,7 @@ VV_LOCAL_SYMBOL v__ast__ComptimeCall v__parser__Parser_comp_call(v__parser__Pars
 	v__ast__ComptimeCall _t16 = (v__ast__ComptimeCall){
 		.pos = v__token__Position_extend(start_pos, v__token__Token_position(&p->prev_tok)),
 		.has_parens = 0,
-		.method_name = n,
+		.method_name = method_name,
 		.method_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},
 		.scope = 0,
 		.left = {0},
