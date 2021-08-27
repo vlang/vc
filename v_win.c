@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5f90d57"
+#define V_COMMIT_HASH "a85467e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "16455a7"
+	#define V_COMMIT_HASH "5f90d57"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5f90d57"
+	#define V_CURRENT_COMMIT_HASH "a85467e"
 #endif
 
 // V comptime_defines:
@@ -31990,7 +31990,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("16455a7")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("5f90d57")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51485,6 +51485,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_prepend(v__gen__c__Gen* g, v__ast_
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_contains_method(v__gen__c__Gen* g, v__ast__Type left_type) {
 	v__ast__Type unwrap_left_type = v__gen__c__Gen_unwrap_generic(g, left_type);
+	if (v__ast__Type_share(unwrap_left_type) == v__ast__ShareType__shared_t) {
+		unwrap_left_type = v__ast__Type_clear_flag(unwrap_left_type, v__ast__TypeFlag__shared_f);
+	}
 	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, unwrap_left_type);
 	v__ast__TypeSymbol* left_final_sym = v__ast__Table_get_final_type_symbol(g->table, unwrap_left_type);
 	string left_type_str = string_replace(v__gen__c__Gen_typ(g, unwrap_left_type), _SLIT("*"), _SLIT(""));
@@ -51532,10 +51535,13 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_array_contains_method(v__gen__c__Gen* 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_array_contains(v__gen__c__Gen* g, v__ast__CallExpr node) {
 	string fn_name = v__gen__c__Gen_gen_array_contains_method(g, node.left_type);
 	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = fn_name}}, {_SLIT("("), 0, { .d_c = 0 }}})));
-	if (v__ast__Type_is_ptr(node.left_type)) {
+	if (v__ast__Type_is_ptr(node.left_type) && v__ast__Type_share(node.left_type) != v__ast__ShareType__shared_t) {
 		v__gen__c__Gen_write(g, _SLIT("*"));
 	}
 	v__gen__c__Gen_expr(g, node.left);
+	if (v__ast__Type_share(node.left_type) == v__ast__ShareType__shared_t) {
+		v__gen__c__Gen_write(g, _SLIT("->val"));
+	}
 	v__gen__c__Gen_write(g, _SLIT(", "));
 	v__gen__c__Gen_expr(g, (*(v__ast__CallArg*)/*ee elem_typ */array_get(node.args, 0)).expr);
 	v__gen__c__Gen_write(g, _SLIT(")"));
@@ -63186,10 +63192,13 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_infix_expr_in_op(v__gen__c__Gen* g, v__ast__
 		}
 		string fn_name = v__gen__c__Gen_gen_array_contains_method(g, node.right_type);
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("("), 0xfe10, {.d_s = fn_name}}, {_SLIT("("), 0, { .d_c = 0 }}})));
-		if (v__ast__Type_is_ptr(right.typ)) {
+		if (v__ast__Type_is_ptr(right.typ) && v__ast__Type_share(right.typ) != v__ast__ShareType__shared_t) {
 			v__gen__c__Gen_write(g, _SLIT("*"));
 		}
 		v__gen__c__Gen_expr(g, node.right);
+		if (v__ast__Type_share(right.typ) == v__ast__ShareType__shared_t) {
+			v__gen__c__Gen_write(g, _SLIT("->val"));
+		}
 		v__gen__c__Gen_write(g, _SLIT(", "));
 		v__gen__c__Gen_expr(g, node.left);
 		v__gen__c__Gen_write(g, _SLIT("))"));
