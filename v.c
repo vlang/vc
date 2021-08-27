@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c954c28"
+#define V_COMMIT_HASH "4d5521b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a85467e"
+	#define V_COMMIT_HASH "c954c28"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c954c28"
+	#define V_CURRENT_COMMIT_HASH "4d5521b"
 #endif
 
 // V comptime_defines:
@@ -32881,7 +32881,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("a85467e")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("c954c28")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -41828,7 +41828,12 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_dec_number(v__scanner__Scanner*
 				call_method = true;
 				s->pos--;
 			} else {
-				v__scanner__Scanner_warn(s, _SLIT("float literals should have a digit after the decimal point, e.g. `5.0`"));
+				int symbol_length = 0;
+				for (int i = s->pos - 2; i > 0 && byte_is_digit(s->text.str[ i - 1]); i--) {
+					symbol_length++;
+				}
+				string float_symbol = string_substr(s->text, s->pos - 2 - symbol_length, s->pos - 1);
+				v__scanner__Scanner_warn(s,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("float literals should have a digit after the decimal point, e.g. `"), 0xfe10, {.d_s = float_symbol}}, {_SLIT(".0`"), 0, { .d_c = 0 }}})));
 			}
 		}
 	}
