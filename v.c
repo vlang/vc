@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f731060"
+#define V_COMMIT_HASH "e90a624"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "29f5501"
+	#define V_COMMIT_HASH "f731060"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f731060"
+	#define V_CURRENT_COMMIT_HASH "e90a624"
 #endif
 
 // V comptime_defines:
@@ -32889,7 +32889,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("29f5501")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("f731060")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -73081,7 +73081,9 @@ void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__
 				}
 			} else if (v__ast__Type_has_flag(param.typ, v__ast__TypeFlag__generic)) {
 				v__ast__TypeSymbol* arg_sym = v__ast__Table_get_type_symbol(c->table, arg.typ);
-				if (arg_sym->kind == v__ast__Kind__array && param_type_sym->kind == v__ast__Kind__array) {
+				if (v__ast__Type_has_flag(param.typ, v__ast__TypeFlag__variadic)) {
+					to_set = v__ast__Table_mktyp(c->table, arg.typ);
+				} else if (arg_sym->kind == v__ast__Kind__array && param_type_sym->kind == v__ast__Kind__array) {
 					v__ast__Array arg_elem_info = /* as */ *(v__ast__Array*)__as_cast((arg_sym->info)._v__ast__Array,(arg_sym->info)._typ, 391) /*expected idx: 391, name: v.ast.Array */ ;
 					v__ast__Array param_elem_info = /* as */ *(v__ast__Array*)__as_cast((param_type_sym->info)._v__ast__Array,(param_type_sym->info)._typ, 391) /*expected idx: 391, name: v.ast.Array */ ;
 					v__ast__TypeSymbol* arg_elem_sym = v__ast__Table_get_type_symbol(c->table, arg_elem_info.elem_type);
@@ -73122,8 +73124,6 @@ void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__
 					if (v__ast__Type_has_flag(param_map_info.value_type, v__ast__TypeFlag__generic) && string__eq(v__ast__Table_get_type_symbol(c->table, param_map_info.value_type)->name, gt_name)) {
 						typ = arg_map_info.value_type;
 					}
-				} else if (v__ast__Type_has_flag(param.typ, v__ast__TypeFlag__variadic)) {
-					to_set = v__ast__Table_mktyp(c->table, arg.typ);
 				} else if ((arg_sym->kind == v__ast__Kind__struct_ || arg_sym->kind == v__ast__Kind__interface_ || arg_sym->kind == v__ast__Kind__sum_type)) {
 					Array_v__ast__Type generic_types = __new_array_with_default(0, 0, sizeof(v__ast__Type), 0);
 					Array_v__ast__Type concrete_types = __new_array_with_default(0, 0, sizeof(v__ast__Type), 0);
