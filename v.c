@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "858ba25"
+#define V_COMMIT_HASH "853d3cb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e85311c"
+	#define V_COMMIT_HASH "858ba25"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "858ba25"
+	#define V_CURRENT_COMMIT_HASH "853d3cb"
 #endif
 
 // V comptime_defines:
@@ -7345,7 +7345,7 @@ int os__fork();
 int os__wait();
 int os__file_last_mod_unix(string path);
 void os__flush();
-void os__chmod(string path, int mode);
+Option_void os__chmod(string path, int mode);
 Option_void os__chown(string path, int owner, int group);
 Option_os__File os__open_append(string path);
 Option_void os__execvp(string cmdpath, Array_string cmdargs);
@@ -23385,11 +23385,11 @@ void os__flush(void) {
 	fflush(stdout);
 }
 
-void os__chmod(string path, int mode) {
+Option_void os__chmod(string path, int mode) {
 	if (chmod(((char*)(path.str)), mode) != 0) {
-		_v_panic(string__plus(_SLIT("chmod failed: "), os__posix_get_error_msg(errno)));
-		VUNREACHABLE();
+		return (Option_void){ .state=2, .err=error_with_code(string__plus(_SLIT("chmod failed: "), os__posix_get_error_msg(errno)), errno), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
+	return (Option_void){0};
 }
 
 Option_void os__chown(string path, int owner, int group) {
@@ -30261,7 +30261,14 @@ string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key
 			;
 			}
 			;
-			os__chmod(cprefix_folder, 0777);
+			Option_void _t4 = os__chmod(cprefix_folder, 0777);
+			if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
+				IError err = _t4.err;
+				_v_panic(IError_str(err));
+				VUNREACHABLE();
+			;
+			}
+			;
 		}
 		v__vcache__dlog(_SLIT("key2cpath"), _SLIT("new hk"));
 		v__vcache__dlog(_SLIT("key2cpath"),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("       key: "), 0xfe10, {.d_s = key}}, {_SLIT0, 0, { .d_c = 0 }}})));
@@ -30270,8 +30277,8 @@ string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key
 		map_set(&cm->k2cpath, &(string[]){key}, &(string[]) { cpath });
 	}
 	v__vcache__dlog(_SLIT("key2cpath"),  str_intp(3, _MOV((StrIntpData[]){{_SLIT("key: "), 0x3cfe10, {.d_s = key}}, {_SLIT(" => cpath: "), 0xfe10, {.d_s = cpath}}, {_SLIT0, 0, { .d_c = 0 }}})));
-	string _t4 = cpath;
-	return _t4;
+	string _t5 = cpath;
+	return _t5;
 }
 
 string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key) {
@@ -32882,7 +32889,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e85311c")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("858ba25")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -71666,7 +71673,14 @@ void v__gen__native__Gen_create_executable(v__gen__native__Gen* g) {
 	;
 	}
 	;
-	os__chmod(g->out_name, 0775);
+	Option_void _t2 = os__chmod(g->out_name, 0775);
+	if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
+		IError err = _t2.err;
+		_v_panic(IError_str(err));
+		VUNREACHABLE();
+	;
+	}
+	;
 	if (g->pref->is_verbose) {
 		println( str_intp(2, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = g->out_name}}, {_SLIT(": native binary has been successfully generated"), 0, { .d_c = 0 }}})));
 	}
@@ -84112,7 +84126,14 @@ VV_LOCAL_SYMBOL void v__builder__Builder_ensure_linuxroot_exists(v__builder__Bui
 			v__builder__verror( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Failed to clone `"), 0xfe10, {.d_s = crossrepo_url}}, {_SLIT("` to `"), 0xfe10, {.d_s = sysroot}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		}
-		os__chmod(os__join_path(sysroot, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("ld.lld")}))), 0755);
+		Option_void _t2 = os__chmod(os__join_path(sysroot, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("ld.lld")}))), 0755);
+		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
+			IError err = _t2.err;
+			_v_panic(IError_str(err));
+			VUNREACHABLE();
+		;
+		}
+		;
 	}
 }
 
@@ -84135,10 +84156,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_24208 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_24208.arg0;
-	Array_string others = mr_24208.arg1;
-	Array_string libs = mr_24208.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_24226 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_24226.arg0;
+	Array_string others = mr_24226.arg1;
+	Array_string libs = mr_24226.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
