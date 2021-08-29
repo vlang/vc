@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "985fe85"
+#define V_COMMIT_HASH "61ac7b6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ac442ab"
+	#define V_COMMIT_HASH "985fe85"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "985fe85"
+	#define V_CURRENT_COMMIT_HASH "61ac7b6"
 #endif
 
 // V comptime_defines:
@@ -5975,6 +5975,7 @@ struct v__gen__js__JsGen {
 	bool inside_loop;
 	bool inside_map_set;
 	bool inside_builtin;
+	bool inside_if_optional;
 	bool generated_builtin;
 	bool inside_def_typ_decl;
 	bool is_test;
@@ -9305,6 +9306,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_for_stmt(v__gen__js__JsGen* g, v__ast
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_go_expr(v__gen__js__JsGen* g, v__ast__GoExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_import_stmt(v__gen__js__JsGen* g, v__ast__Import it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_interface_decl(v__gen__js__JsGen* g, v__ast__InterfaceDecl it);
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_optional_error(v__gen__js__JsGen* g, v__ast__Expr expr);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__ast__Return it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_hash_stmt(v__gen__js__JsGen* g, v__ast__HashStmt it);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_struct_decl(v__gen__js__JsGen* g, v__ast__StructDecl node);
@@ -9320,6 +9322,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_cond(v__gen__js__JsGen* g, v__gen__
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr(v__gen__js__JsGen* g, v__ast__MatchExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmts_with_tmp_var(v__gen__js__JsGen* g, Array_v__ast__Stmt stmts, string tmp_var);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, v__ast__MatchExpr node, bool is_expr, v__gen__js__MatchCond cond_var, string tmp_var);
+VV_LOCAL_SYMBOL bool v__gen__js__JsGen_need_tmp_var_in_if(v__gen__js__JsGen* g, v__ast__IfExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr node);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_index_expr(v__gen__js__JsGen* g, v__ast__IndexExpr expr);
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_deref_ptr(v__gen__js__JsGen* g, v__ast__Type ty);
@@ -32006,7 +32009,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("ac442ab")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("985fe85")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -65944,6 +65947,7 @@ string v__gen__js__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pr
 		.inside_loop = 0,
 		.inside_map_set = 0,
 		.inside_builtin = 0,
+		.inside_if_optional = 0,
 		.generated_builtin = 0,
 		.inside_def_typ_decl = 0,
 		.is_test = 0,
@@ -66734,10 +66738,11 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 	else if (node._typ == 289 /* v.ast.MapInit */) {
 		v__gen__js__JsGen_gen_map_init_expr(g, (*node._v__ast__MapInit));
 	}
+	else if (node._typ == 292 /* v.ast.None */) {
+		v__gen__js__JsGen_write(g, _SLIT("builtin.none__"));
+	}
 	else if (node._typ == 290 /* v.ast.MatchExpr */) {
 		v__gen__js__JsGen_match_expr(g, (*node._v__ast__MatchExpr));
-	}
-	else if (node._typ == 292 /* v.ast.None */) {
 	}
 	else if (node._typ == 294 /* v.ast.OrExpr */) {
 	}
@@ -67132,7 +67137,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_enum_decl(v__gen__js__JsGen* g, v__as
 
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_expr_stmt(v__gen__js__JsGen* g, v__ast__ExprStmt it) {
 	v__gen__js__JsGen_expr(g, it.expr);
-	if (!it.is_expr && (it.expr)._typ != 281 /* v.ast.IfExpr */ && !g->inside_ternary) {
+	if (!it.is_expr && (it.expr)._typ != 281 /* v.ast.IfExpr */ && !g->inside_ternary && !g->inside_if_optional) {
 		v__gen__js__JsGen_writeln(g, _SLIT(";"));
 	}
 }
@@ -67428,10 +67433,39 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_interface_decl(v__gen__js__JsGen* g, 
 	v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("function "), 0xfe10, {.d_s = v__gen__js__JsGen_js_name(g, it.name)}}, {_SLIT(" (arg) { return arg; }"), 0, { .d_c = 0 }}})));
 }
 
+VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_optional_error(v__gen__js__JsGen* g, v__ast__Expr expr) {
+	v__gen__js__JsGen_write(g, _SLIT("new builtin.Option({ state:  new builtin.byte(2),err: "));
+	v__gen__js__JsGen_expr(g, expr);
+	v__gen__js__JsGen_write(g, _SLIT("})"));
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__ast__Return it) {
-	if (it.exprs.len == 0) {
-		v__gen__js__JsGen_writeln(g, _SLIT("return;"));
+	v__ast__Return node = it;
+	bool fn_return_is_optional = v__ast__Type_has_flag(g->fn_decl->return_type, v__ast__TypeFlag__optional);
+	if (node.exprs.len == 0) {
+		if (fn_return_is_optional) {
+			v__gen__js__JsGen_writeln(g, _SLIT("return {}"));
+		} else {
+			v__gen__js__JsGen_writeln(g, _SLIT("return;"));
+		}
 		return;
+	}
+	if (fn_return_is_optional) {
+		bool optional_none = ((*(v__ast__Expr*)/*ee elem_typ */array_get(node.exprs, 0)))._typ == 292 /* v.ast.None */;
+		string ftyp = v__gen__js__JsGen_typ(g, (*(v__ast__Type*)/*ee elem_typ */array_get(node.types, 0)));
+		bool is_regular_option = string__eq(ftyp, _SLIT("Option"));
+		if (optional_none || is_regular_option || (*(v__ast__Type*)/*ee elem_typ */array_get(node.types, 0)) == _const_v__ast__error_type_idx) {
+			if (!isnil(g->fn_decl) && g->fn_decl->is_test) {
+				string test_error_var = v__gen__js__JsGen_new_tmp_var(g);
+				v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = test_error_var}}, {_SLIT(" = \"TODO\";"), 0, { .d_c = 0 }}})));
+				v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("return "), 0xfe10, {.d_s = test_error_var}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+				return;
+			}
+			v__gen__js__JsGen_write(g, _SLIT("return "));
+			v__gen__js__JsGen_gen_optional_error(g, (*(v__ast__Expr*)/*ee elem_typ */array_get(it.exprs, 0)));
+			v__gen__js__JsGen_writeln(g, _SLIT(";"));
+			return;
+		}
 	}
 	v__gen__js__JsGen_write(g, _SLIT("return "));
 	if (it.exprs.len == 1) {
@@ -68023,11 +68057,29 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_stmts_with_tmp_var(v__gen__js__JsGen* g, 
 	for (int i = 0; i < stmts.len; ++i) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)stmts.data)[i];
 		if (i == stmts.len - 1 && (tmp_var).len != 0) {
-			v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp_var}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
-			v__gen__js__JsGen_stmt(g, stmt);
-			v__gen__js__JsGen_writeln(g, _SLIT(""));
+			if (g->inside_if_optional) {
+				if ((stmt)._typ == 320 /* v.ast.ExprStmt */) {
+					if ((*stmt._v__ast__ExprStmt).typ == _const_v__ast__error_type_idx || ((*stmt._v__ast__ExprStmt).expr)._typ == 292 /* v.ast.None */) {
+						v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp_var}}, {_SLIT(".state = 2;"), 0, { .d_c = 0 }}})));
+						v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp_var}}, {_SLIT(".err = "), 0, { .d_c = 0 }}})));
+						v__gen__js__JsGen_expr(g, (*stmt._v__ast__ExprStmt).expr);
+						v__gen__js__JsGen_writeln(g, _SLIT(";"));
+					} else {
+						v__gen__js__JsGen_write(g, _SLIT("builtin.opt_ok("));
+						v__gen__js__JsGen_stmt(g, stmt);
+						v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", "), 0xfe10, {.d_s = tmp_var}}, {_SLIT(");"), 0, { .d_c = 0 }}})));
+					}
+				}
+			} else {
+				v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp_var}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+				v__gen__js__JsGen_stmt(g, stmt);
+				v__gen__js__JsGen_writeln(g, _SLIT(""));
+			}
 		} else {
 			v__gen__js__JsGen_stmt(g, stmt);
+			if (g->inside_if_optional && (stmt)._typ == 320 /* v.ast.ExprStmt */) {
+				v__gen__js__JsGen_writeln(g, _SLIT(";"));
+			}
 		}
 		if (g->inside_ternary && i < stmts.len - 1) {
 			v__gen__js__JsGen_write(g, _SLIT(","));
@@ -68092,14 +68144,53 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_match_expr_sumtype(v__gen__js__JsGen* g, 
 	}
 }
 
+VV_LOCAL_SYMBOL bool v__gen__js__JsGen_need_tmp_var_in_if(v__gen__js__JsGen* g, v__ast__IfExpr node) {
+	if (node.is_expr && g->inside_ternary) {
+		if (v__ast__Type_has_flag(node.typ, v__ast__TypeFlag__optional)) {
+			bool _t1 = true;
+			return _t1;
+		}
+		for (int _t2 = 0; _t2 < node.branches.len; ++_t2) {
+			v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[_t2];
+			if ((branch.cond)._typ == 282 /* v.ast.IfGuardExpr */ || branch.stmts.len > 1) {
+				bool _t3 = true;
+				return _t3;
+			}
+			if (branch.stmts.len == 1) {
+				if (((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, 0)))._typ == 320 /* v.ast.ExprStmt */) {
+					v__ast__ExprStmt stmt = /* as */ *(v__ast__ExprStmt*)__as_cast(((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, 0)))._v__ast__ExprStmt,((*(v__ast__Stmt*)/*ee elem_typ */array_get(branch.stmts, 0)))._typ, 320) /*expected idx: 320, name: v.ast.ExprStmt */ ;
+					if ((stmt.expr)._typ == 267 /* v.ast.CallExpr */) {
+						if ((*stmt.expr._v__ast__CallExpr).is_method) {
+							v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(g->table, (*stmt.expr._v__ast__CallExpr).receiver_type);
+							if ((left_sym->kind == v__ast__Kind__array || left_sym->kind == v__ast__Kind__array_fixed || left_sym->kind == v__ast__Kind__map)) {
+								bool _t4 = true;
+								return _t4;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	bool _t5 = false;
+	return _t5;
+}
+
 VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast__IfExpr node) {
 	if (node.is_comptime) {
 		v__gen__js__JsGen_comp_if(g, node);
 		return;
 	}
-	v__ast__TypeSymbol* type_sym = v__ast__Table_get_type_symbol(g->table, node.typ);
-	if (node.is_expr && node.branches.len >= 2 && node.has_else && type_sym->kind != v__ast__Kind__void) {
+	bool needs_tmp_var = v__gen__js__JsGen_need_tmp_var_in_if(g, node);
+	string tmp = (needs_tmp_var ? (v__gen__js__JsGen_new_tmp_var(g)) : (_SLIT("")));
+	if (needs_tmp_var) {
+		if (v__ast__Type_has_flag(node.typ, v__ast__TypeFlag__optional)) {
+			g->inside_if_optional = true;
+		}
+		v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = tmp}}, {_SLIT("; /* if prepend */"), 0, { .d_c = 0 }}})));
+	} else if (node.is_expr || g->inside_ternary) {
 		v__gen__js__JsGen_write(g, _SLIT("("));
+		bool prev = g->inside_ternary;
 		g->inside_ternary = true;
 		for (int i = 0; i < node.branches.len; ++i) {
 			v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[i];
@@ -68109,48 +68200,93 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_if_expr(v__gen__js__JsGen* g, v__ast_
 			if (i < node.branches.len - 1 || !node.has_else) {
 				v__gen__js__JsGen_write(g, _SLIT("("));
 				v__gen__js__JsGen_expr(g, branch.cond);
-				v__gen__js__JsGen_write(g, _SLIT(")"));
-				v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
+				v__gen__js__JsGen_write(g, _SLIT(").valueOf()"));
 				v__gen__js__JsGen_write(g, _SLIT(" ? "));
 			}
 			v__gen__js__JsGen_stmts(g, branch.stmts);
 		}
-		g->inside_ternary = false;
+		g->inside_ternary = prev;
 		v__gen__js__JsGen_write(g, _SLIT(")"));
-	} else {
-		for (int i = 0; i < node.branches.len; ++i) {
-			v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[i];
-			if (i == 0) {
-				if (branch.cond._typ == 282 /* v.ast.IfGuardExpr */) {
-				}
-				
-				else {
-					v__gen__js__JsGen_write(g, _SLIT("if ("));
-					if (string__eq( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(branch.cond)}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("js"))) {
-						v__gen__js__JsGen_write(g, _SLIT("true"));
-					} else {
-						v__gen__js__JsGen_write(g, _SLIT("("));
-						v__gen__js__JsGen_expr(g, branch.cond);
-						v__gen__js__JsGen_write(g, _SLIT(")"));
-						v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
-					}
-					v__gen__js__JsGen_writeln(g, _SLIT(") {"));
-				}
-				;
-			} else if (i < node.branches.len - 1 || !node.has_else) {
-				v__gen__js__JsGen_write(g, _SLIT("} else if ("));
-				v__gen__js__JsGen_write(g, _SLIT("("));
-				v__gen__js__JsGen_expr(g, branch.cond);
-				v__gen__js__JsGen_write(g, _SLIT(")"));
-				v__gen__js__JsGen_write(g, _SLIT(".valueOf()"));
-				v__gen__js__JsGen_writeln(g, _SLIT(") {"));
-			} else if (i == node.branches.len - 1 && node.has_else) {
-				v__gen__js__JsGen_writeln(g, _SLIT("} else {"));
+		return;
+	}
+	bool is_guard = false;
+	int guard_idx = 0;
+	Array_string guard_vars = __new_array_with_default(0, 0, sizeof(string), 0);
+	for (int i = 0; i < node.branches.len; ++i) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[i];
+		v__ast__Expr cond = branch.cond;
+		if ((cond)._typ == 282 /* v.ast.IfGuardExpr */) {
+			if (!is_guard) {
+				is_guard = true;
+				guard_idx = i;
+				guard_vars = __new_array_with_default(node.branches.len, 0, sizeof(string), &(string[]){_SLIT("")});
 			}
+			if (((*cond._v__ast__IfGuardExpr).expr)._typ != 283 /* v.ast.IndexExpr */ && ((*cond._v__ast__IfGuardExpr).expr)._typ != 297 /* v.ast.PrefixExpr */) {
+				string var_name = v__gen__js__JsGen_new_tmp_var(g);
+				array_set(&guard_vars, i, &(string[]) { var_name });
+				v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("let "), 0xfe10, {.d_s = var_name}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+			} else {
+				array_set(&guard_vars, i, &(string[]) { _SLIT("") });
+			}
+		}
+	}
+	for (int i = 0; i < node.branches.len; ++i) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[i];
+		if (i > 0) {
+			v__gen__js__JsGen_write(g, _SLIT("} else "));
+		}
+		if (i == node.branches.len - 1 && node.has_else) {
+			v__gen__js__JsGen_writeln(g, _SLIT("{"));
+			if (is_guard && guard_idx == i - 1) {
+				string cvar_name = (*(string*)/*ee elem_typ */array_get(guard_vars, guard_idx));
+				v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tlet err = "), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err;"), 0, { .d_c = 0 }}})));
+			}
+		} else {
+			if (branch.cond._typ == 282 /* v.ast.IfGuardExpr */) {
+				string var_name = (*(string*)/*ee elem_typ */array_get(guard_vars, i));
+				bool short_opt = false;
+				if ((var_name).len == 0) {
+					short_opt = true;
+					var_name = v__gen__js__JsGen_new_tmp_var(g);
+					array_set(&guard_vars, i, &(string[]) { var_name });
+					g->tmp_count--;
+					v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = var_name}}, {_SLIT(".state == 0) {"), 0, { .d_c = 0 }}})));
+				} else {
+					v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("if ("), 0xfe10, {.d_s = var_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+					v__gen__js__JsGen_expr(g, (*branch.cond._v__ast__IfGuardExpr).expr);
+					v__gen__js__JsGen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT(", "), 0xfe10, {.d_s = var_name}}, {_SLIT(".state == 0) {"), 0, { .d_c = 0 }}})));
+				}
+				if (short_opt || !string__eq((*branch.cond._v__ast__IfGuardExpr).var_name, _SLIT("_"))) {
+					if (short_opt) {
+						string cond_var_name = (string__eq((*branch.cond._v__ast__IfGuardExpr).var_name, _SLIT("_")) ? ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("_dummy_"), 0xfe07, {.d_i32 = g->tmp_count + 1}}, {_SLIT0, 0, { .d_c = 0 }}}))) : ((*branch.cond._v__ast__IfGuardExpr).var_name));
+						v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tlet "), 0xfe10, {.d_s = cond_var_name}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
+						v__gen__js__JsGen_expr(g, (*branch.cond._v__ast__IfGuardExpr).expr);
+						v__gen__js__JsGen_writeln(g, _SLIT(";"));
+					} else {
+						v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tlet "), 0xfe10, {.d_s = (*branch.cond._v__ast__IfGuardExpr).var_name}}, {_SLIT(" = "), 0xfe10, {.d_s = var_name}}, {_SLIT(".data;"), 0, { .d_c = 0 }}})));
+					}
+				}
+			}
+			
+			else {
+				v__gen__js__JsGen_write(g, _SLIT("if (("));
+				v__gen__js__JsGen_expr(g, branch.cond);
+				v__gen__js__JsGen_writeln(g, _SLIT(").valueOf()) {"));
+			}
+			;
+		}
+		if (needs_tmp_var) {
+			v__gen__js__JsGen_stmts_with_tmp_var(g, branch.stmts, tmp);
+		} else {
 			v__gen__js__JsGen_stmts(g, branch.stmts);
 		}
-		v__gen__js__JsGen_writeln(g, _SLIT("}"));
-		v__gen__js__JsGen_writeln(g, _SLIT(""));
+	}
+	v__gen__js__JsGen_writeln(g, _SLIT("}"));
+	if (needs_tmp_var) {
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	}
+	if (v__ast__Type_has_flag(node.typ, v__ast__TypeFlag__optional)) {
+		g->inside_if_optional = false;
 	}
 }
 
