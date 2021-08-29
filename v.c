@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8be2be8"
+#define V_COMMIT_HASH "4ce9ad6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "118c5fd"
+	#define V_COMMIT_HASH "8be2be8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8be2be8"
+	#define V_CURRENT_COMMIT_HASH "4ce9ad6"
 #endif
 
 // V comptime_defines:
@@ -32896,7 +32896,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("118c5fd")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8be2be8")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -34524,7 +34524,7 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 	}
 	Array_string path_parts = string_split(path, _const_os__path_separator);
 	string mod_path = string_replace(mod, _SLIT("."), _const_os__path_separator);
-	for (int i = path_parts.len - 1; i >= 0; i--) {
+	for (int i = path_parts.len - 1; i > 0; i--) {
 		string try_path = os__join_path(Array_string_join(array_slice(path_parts, 0, i), _const_os__path_separator), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){mod_path})));
 		if (os__is_dir(try_path)) {
 			if (in_vmod_path) {
