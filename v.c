@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8dcb27a"
+#define V_COMMIT_HASH "f33f216"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9496fcd"
+	#define V_COMMIT_HASH "8dcb27a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8dcb27a"
+	#define V_CURRENT_COMMIT_HASH "f33f216"
 #endif
 
 // V comptime_defines:
@@ -32900,7 +32900,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("9496fcd")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8dcb27a")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51326,7 +51326,7 @@ bool v__markused__mark_used_defer_0 = false;
 	Map_string_v__ast__GlobalField all_globals = mr_434.arg2;
 	v__util__timing_start(_SLIT("mark_used"));
 	v__markused__mark_used_defer_0 = true;
-	Array_string all_fn_root_names = new_array_from_c_array(94, 94, sizeof(string), _MOV((string[94]){
+	Array_string all_fn_root_names = new_array_from_c_array(95, 95, sizeof(string), _MOV((string[95]){
 			_SLIT("main.main"), _SLIT("__new_array"), _SLIT("str_intp"), _SLIT("format_sb"), _SLIT("__new_array_with_default"), _SLIT("__new_array_with_array_default"), _SLIT("v_realloc"), _SLIT("malloc"), _SLIT("malloc_noscan"),
 			_SLIT("vcalloc"), _SLIT("vcalloc_noscan"), _SLIT("new_array_from_c_array"), _SLIT("v_fixed_index"), _SLIT("memdup"), _SLIT("vstrlen"), _SLIT("__as_cast"), _SLIT("tos"),
 			_SLIT("tos2"), _SLIT("tos3"), _SLIT("isnil"), _SLIT("opt_ok"), _SLIT("error"), _SLIT("__print_assert_failure"), _SLIT("utf8_str_visible_length"), _SLIT("compare_ints"),
@@ -51338,7 +51338,7 @@ bool v__markused__mark_used_defer_0 = false;
 			_SLIT("20.pointers"), _SLIT("20.reverse"), _SLIT("20.repeat_to_depth"), _SLIT("20.slice"), _SLIT("20.slice2"), _SLIT("59.get"), _SLIT("59.set"), _SLIT("65556.last"),
 			_SLIT("65556.pop"), _SLIT("65556.push"), _SLIT("65556.insert_many"), _SLIT("65556.prepend_many"), _SLIT("65556.reverse"), _SLIT("65556.set"), _SLIT("65556.set_unsafe"), _SLIT("json.decode_string"),
 			_SLIT("json.decode_int"), _SLIT("json.decode_bool"), _SLIT("json.decode_u64"), _SLIT("json.encode_int"), _SLIT("json.encode_string"), _SLIT("json.encode_bool"), _SLIT("json.encode_u64"), _SLIT("json.json_print"),
-			_SLIT("json.json_parse"), _SLIT("main.cb_propagate_test_error"), _SLIT("os.getwd"), _SLIT("os.init_os_args"), _SLIT("os.init_os_args_wide")}));
+			_SLIT("json.json_parse"), _SLIT("main.cb_propagate_test_error"), _SLIT("os.getwd"), _SLIT("os.init_os_args"), _SLIT("os.init_os_args_wide"), _SLIT("v.embed_file.find_index_entry_by_path")}));
 	if (pref->is_bare) {
 		_PUSH_MANY(&all_fn_root_names, (new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("strlen"), _SLIT("memcmp"), _SLIT("memcpy"), _SLIT("realloc"), _SLIT("vsnprintf"), _SLIT("vsprintf")}))), _t1, Array_string);
 	}
