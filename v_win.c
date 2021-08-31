@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e72af5e"
+#define V_COMMIT_HASH "f68bdb7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "37b4553"
+	#define V_COMMIT_HASH "e72af5e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e72af5e"
+	#define V_CURRENT_COMMIT_HASH "f68bdb7"
 #endif
 
 // V comptime_defines:
@@ -32011,7 +32011,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("37b4553")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e72af5e")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -50680,6 +50680,14 @@ void v__markused__Walker_stmt(v__markused__Walker* w, v__ast__Stmt node) {
 		if ((*node._v__ast__ForInStmt).kind == v__ast__Kind__map) {
 			w->table->used_maps++;
 		}
+		if ((*node._v__ast__ForInStmt).kind == v__ast__Kind__struct_) {
+			v__ast__TypeSymbol* cond_type_sym = v__ast__Table_get_type_symbol(w->table, (*node._v__ast__ForInStmt).cond_type);
+			Option_v__ast__Fn _t1;
+			if (_t1 = v__ast__TypeSymbol_find_method(cond_type_sym, _SLIT("next")), _t1.state == 0) {
+				v__ast__Fn next_fn = *(v__ast__Fn*)_t1.data;
+				v__markused__Walker_fn_decl(w, ((v__ast__FnDecl*)(next_fn.source_fn)));
+			}
+		}
 	}
 	else if (node._typ == 323 /* v.ast.ForStmt */) {
 		v__markused__Walker_expr(w, (*node._v__ast__ForStmt).cond);
@@ -50690,8 +50698,8 @@ void v__markused__Walker_stmt(v__markused__Walker* w, v__ast__Stmt node) {
 	}
 	else if (node._typ == 332 /* v.ast.SqlStmt */) {
 		v__markused__Walker_expr(w, (*node._v__ast__SqlStmt).db_expr);
-		for (int _t1 = 0; _t1 < (*node._v__ast__SqlStmt).lines.len; ++_t1) {
-			v__ast__SqlStmtLine line = ((v__ast__SqlStmtLine*)(*node._v__ast__SqlStmt).lines.data)[_t1];
+		for (int _t2 = 0; _t2 < (*node._v__ast__SqlStmt).lines.len; ++_t2) {
+			v__ast__SqlStmtLine line = ((v__ast__SqlStmtLine*)(*node._v__ast__SqlStmt).lines.data)[_t2];
 			v__markused__Walker_expr(w, line.where_expr);
 			v__markused__Walker_exprs(w, line.update_exprs);
 		}
@@ -50703,8 +50711,8 @@ void v__markused__Walker_stmt(v__markused__Walker* w, v__ast__Stmt node) {
 		v__markused__Walker_stmts(w, (*node._v__ast__DeferStmt).stmts);
 	}
 	else if (node._typ == 324 /* v.ast.GlobalDecl */) {
-		for (int _t2 = 0; _t2 < (*node._v__ast__GlobalDecl).fields.len; ++_t2) {
-			v__ast__GlobalField gf = ((v__ast__GlobalField*)(*node._v__ast__GlobalDecl).fields.data)[_t2];
+		for (int _t3 = 0; _t3 < (*node._v__ast__GlobalDecl).fields.len; ++_t3) {
+			v__ast__GlobalField gf = ((v__ast__GlobalField*)(*node._v__ast__GlobalDecl).fields.data)[_t3];
 			if (gf.has_expr) {
 				v__markused__Walker_expr(w, gf.expr);
 			}
