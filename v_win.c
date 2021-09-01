@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "63ff569"
+#define V_COMMIT_HASH "bd33eaa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "56993b9"
+	#define V_COMMIT_HASH "63ff569"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "63ff569"
+	#define V_CURRENT_COMMIT_HASH "bd33eaa"
 #endif
 
 // V comptime_defines:
@@ -7542,6 +7542,7 @@ string os__get_lines_joined();
 string os__get_raw_lines_joined();
 string os__user_os();
 string os__home_dir();
+string os__expand_tilde_to_home(string path);
 Option_void os__write_file(string path, string text);
 VV_LOCAL_SYMBOL string os__executable_fallback();
 Option_string os__find_abs_path_of_executable(string exepath);
@@ -23348,6 +23349,16 @@ string os__home_dir(void) {
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
 
+string os__expand_tilde_to_home(string path) {
+	if (string__eq(path, _SLIT("~"))) {
+		return string_trim_right(os__home_dir(), _const_os__path_separator);
+	}
+	if (string_starts_with(path, string__plus(_SLIT("~"), _const_os__path_separator))) {
+		return string_replace_once(path, string__plus(_SLIT("~"), _const_os__path_separator), string__plus(string_trim_right(os__home_dir(), _const_os__path_separator), _const_os__path_separator));
+	}
+	return path;
+}
+
 Option_void os__write_file(string path, string text) {
 	Option_os__File _t1 = os__create(path);
 	if (_t1.state != 0) { /*or block*/ 
@@ -32011,7 +32022,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("56993b9")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("63ff569")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
