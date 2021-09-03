@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bd33eaa"
+#define V_COMMIT_HASH "08c517c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "63ff569"
+	#define V_COMMIT_HASH "bd33eaa"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bd33eaa"
+	#define V_CURRENT_COMMIT_HASH "08c517c"
 #endif
 
 // V comptime_defines:
@@ -6827,6 +6827,13 @@ Array_u64 _const_strconv__pow5_split_32; // inited later
 Array_u64 _const_strconv__pow5_inv_split_32; // inited later
 Array_strconv__Uint128 _const_strconv__pow5_split_64; // inited later
 Array_strconv__Uint128 _const_strconv__pow5_inv_split_64; // inited later
+string strconv__f32_to_str_l(f32 f);
+string strconv__f32_to_str_l_no_dot(f32 f);
+string strconv__f64_to_str_l(f64 f);
+string strconv__f64_to_str_l_no_dot(f64 f);
+string strconv__fxx_to_str_l_parse(string s);
+string strconv__fxx_to_str_l_parse_no_dot(string s);
+int strconv__dec_digits(u64 n);
 VV_LOCAL_SYMBOL int strconv__bool_to_int(bool b);
 VV_LOCAL_SYMBOL u32 strconv__bool_to_u32(bool b);
 VV_LOCAL_SYMBOL u64 strconv__bool_to_u64(bool b);
@@ -6845,13 +6852,6 @@ VV_LOCAL_SYMBOL u64 strconv__mul_shift_64(u64 m, strconv__Uint128 mul, int shift
 VV_LOCAL_SYMBOL u32 strconv__pow5_factor_64(u64 v_i);
 VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_five_64(u64 v, u32 p);
 VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_two_64(u64 v, u32 p);
-string strconv__f32_to_str_l(f32 f);
-string strconv__f32_to_str_l_no_dot(f32 f);
-string strconv__f64_to_str_l(f64 f);
-string strconv__f64_to_str_l_no_dot(f64 f);
-string strconv__fxx_to_str_l_parse(string s);
-string strconv__fxx_to_str_l_parse_no_dot(string s);
-int strconv__dec_digits(u64 n);
 void strconv__v_printf(string str, Array_voidptr pt);
 string strconv__v_sprintf(string str, Array_voidptr pt);
 VV_LOCAL_SYMBOL void strconv__v_sprintf_panic(int idx, int len);
@@ -15143,142 +15143,6 @@ string strconv__format_uint(u64 n, int radix) {
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
 
-// Attr: [inline]
-inline VV_LOCAL_SYMBOL int strconv__bool_to_int(bool b) {
-	if (b) {
-		return 1;
-	}
-	return 0;
-}
-
-// Attr: [inline]
-inline VV_LOCAL_SYMBOL u32 strconv__bool_to_u32(bool b) {
-	if (b) {
-		return ((u32)(1U));
-	}
-	return ((u32)(0U));
-}
-
-// Attr: [inline]
-inline VV_LOCAL_SYMBOL u64 strconv__bool_to_u64(bool b) {
-	if (b) {
-		return ((u64)(1U));
-	}
-	return ((u64)(0U));
-}
-
-VV_LOCAL_SYMBOL string strconv__get_string_special(bool neg, bool expZero, bool mantZero) {
-	if (!mantZero) {
-		return _SLIT("nan");
-	}
-	if (!expZero) {
-		if (neg) {
-			return _SLIT("-inf");
-		} else {
-			return _SLIT("+inf");
-		}
-	}
-	if (neg) {
-		return _SLIT("-0e+00");
-	}
-	return _SLIT("0e+00");
-}
-
-VV_LOCAL_SYMBOL u32 strconv__mul_shift_32(u32 m, u64 mul, int ishift) {
-	multi_return_u64_u64 mr_1329 = math__bits__mul_64(((u64)(m)), mul);
-	u64 hi = mr_1329.arg0;
-	u64 lo = mr_1329.arg1;
-	u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
-	;
-	return ((u32)(shifted_sum));
-}
-
-VV_LOCAL_SYMBOL u32 strconv__mul_pow5_invdiv_pow2(u32 m, u32 q, int j) {
-	return strconv__mul_shift_32(m, (*(u64*)/*ee elem_typ */array_get(_const_strconv__pow5_inv_split_32, q)), j);
-}
-
-VV_LOCAL_SYMBOL u32 strconv__mul_pow5_div_pow2(u32 m, u32 i, int j) {
-	return strconv__mul_shift_32(m, (*(u64*)/*ee elem_typ */array_get(_const_strconv__pow5_split_32, i)), j);
-}
-
-VV_LOCAL_SYMBOL u32 strconv__pow5_factor_32(u32 i_v) {
-	u32 v = i_v;
-	for (u32 n = ((u32)(0U)); true; n++) {
-		u32 q = v / 5U;
-		u32 r = v % 5U;
-		if (r != 0U) {
-			return n;
-		}
-		v = q;
-	}
-	return v;
-}
-
-VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_five_32(u32 v, u32 p) {
-	return strconv__pow5_factor_32(v) >= p;
-}
-
-VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_two_32(u32 v, u32 p) {
-	return ((u32)(math__bits__trailing_zeros_32(v))) >= p;
-}
-
-VV_LOCAL_SYMBOL u32 strconv__log10_pow2(int e) {
-	;
-	;
-	return (((u32)(e)) * 78913U) >> 18U;
-}
-
-VV_LOCAL_SYMBOL u32 strconv__log10_pow5(int e) {
-	;
-	;
-	return (((u32)(e)) * 732923U) >> 20U;
-}
-
-VV_LOCAL_SYMBOL int strconv__pow5_bits(int e) {
-	;
-	;
-	return ((int)(((((u32)(e)) * 1217359U) >> 19U) + 1U));
-}
-
-VV_LOCAL_SYMBOL u64 strconv__shift_right_128(strconv__Uint128 v, int shift) {
-	;
-	return ((v.hi << ((u64)(64 - shift))) | (v.lo >> ((u32)(shift))));
-}
-
-VV_LOCAL_SYMBOL u64 strconv__mul_shift_64(u64 m, strconv__Uint128 mul, int shift) {
-	multi_return_u64_u64 mr_3648 = math__bits__mul_64(m, mul.hi);
-	u64 hihi = mr_3648.arg0;
-	u64 hilo = mr_3648.arg1;
-	multi_return_u64_u64 mr_3683 = math__bits__mul_64(m, mul.lo);
-	u64 lohi = mr_3683.arg0;
-	strconv__Uint128 sum = (strconv__Uint128){.lo = lohi + hilo,.hi = hihi,};
-	if (sum.lo < lohi) {
-		sum.hi++;
-	}
-	return strconv__shift_right_128(sum, shift - 64);
-}
-
-VV_LOCAL_SYMBOL u32 strconv__pow5_factor_64(u64 v_i) {
-	u64 v = v_i;
-	for (u32 n = ((u32)(0U)); true; n++) {
-		u64 q = v / 5U;
-		u64 r = v % 5U;
-		if (r != 0U) {
-			return n;
-		}
-		v = q;
-	}
-	return ((u32)(0U));
-}
-
-VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_five_64(u64 v, u32 p) {
-	return strconv__pow5_factor_64(v) >= p;
-}
-
-VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_two_64(u64 v, u32 p) {
-	return ((u32)(math__bits__trailing_zeros_64(v))) >= p;
-}
-
 // Attr: [manualfree]
 string strconv__f32_to_str_l(f32 f) {
 	string s = strconv__f32_to_str(f, 6);
@@ -15609,6 +15473,142 @@ int strconv__dec_digits(u64 n) {
 		}
 	}
 	return 0;
+}
+
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL int strconv__bool_to_int(bool b) {
+	if (b) {
+		return 1;
+	}
+	return 0;
+}
+
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL u32 strconv__bool_to_u32(bool b) {
+	if (b) {
+		return ((u32)(1U));
+	}
+	return ((u32)(0U));
+}
+
+// Attr: [inline]
+inline VV_LOCAL_SYMBOL u64 strconv__bool_to_u64(bool b) {
+	if (b) {
+		return ((u64)(1U));
+	}
+	return ((u64)(0U));
+}
+
+VV_LOCAL_SYMBOL string strconv__get_string_special(bool neg, bool expZero, bool mantZero) {
+	if (!mantZero) {
+		return _SLIT("nan");
+	}
+	if (!expZero) {
+		if (neg) {
+			return _SLIT("-inf");
+		} else {
+			return _SLIT("+inf");
+		}
+	}
+	if (neg) {
+		return _SLIT("-0e+00");
+	}
+	return _SLIT("0e+00");
+}
+
+VV_LOCAL_SYMBOL u32 strconv__mul_shift_32(u32 m, u64 mul, int ishift) {
+	multi_return_u64_u64 mr_746 = math__bits__mul_64(((u64)(m)), mul);
+	u64 hi = mr_746.arg0;
+	u64 lo = mr_746.arg1;
+	u64 shifted_sum = (lo >> ((u64)(ishift))) + (hi << ((u64)(64 - ishift)));
+	;
+	return ((u32)(shifted_sum));
+}
+
+VV_LOCAL_SYMBOL u32 strconv__mul_pow5_invdiv_pow2(u32 m, u32 q, int j) {
+	return strconv__mul_shift_32(m, (*(u64*)/*ee elem_typ */array_get(_const_strconv__pow5_inv_split_32, q)), j);
+}
+
+VV_LOCAL_SYMBOL u32 strconv__mul_pow5_div_pow2(u32 m, u32 i, int j) {
+	return strconv__mul_shift_32(m, (*(u64*)/*ee elem_typ */array_get(_const_strconv__pow5_split_32, i)), j);
+}
+
+VV_LOCAL_SYMBOL u32 strconv__pow5_factor_32(u32 i_v) {
+	u32 v = i_v;
+	for (u32 n = ((u32)(0U)); true; n++) {
+		u32 q = v / 5U;
+		u32 r = v % 5U;
+		if (r != 0U) {
+			return n;
+		}
+		v = q;
+	}
+	return v;
+}
+
+VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_five_32(u32 v, u32 p) {
+	return strconv__pow5_factor_32(v) >= p;
+}
+
+VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_two_32(u32 v, u32 p) {
+	return ((u32)(math__bits__trailing_zeros_32(v))) >= p;
+}
+
+VV_LOCAL_SYMBOL u32 strconv__log10_pow2(int e) {
+	;
+	;
+	return (((u32)(e)) * 78913U) >> 18U;
+}
+
+VV_LOCAL_SYMBOL u32 strconv__log10_pow5(int e) {
+	;
+	;
+	return (((u32)(e)) * 732923U) >> 20U;
+}
+
+VV_LOCAL_SYMBOL int strconv__pow5_bits(int e) {
+	;
+	;
+	return ((int)(((((u32)(e)) * 1217359U) >> 19U) + 1U));
+}
+
+VV_LOCAL_SYMBOL u64 strconv__shift_right_128(strconv__Uint128 v, int shift) {
+	;
+	return ((v.hi << ((u64)(64 - shift))) | (v.lo >> ((u32)(shift))));
+}
+
+VV_LOCAL_SYMBOL u64 strconv__mul_shift_64(u64 m, strconv__Uint128 mul, int shift) {
+	multi_return_u64_u64 mr_3065 = math__bits__mul_64(m, mul.hi);
+	u64 hihi = mr_3065.arg0;
+	u64 hilo = mr_3065.arg1;
+	multi_return_u64_u64 mr_3100 = math__bits__mul_64(m, mul.lo);
+	u64 lohi = mr_3100.arg0;
+	strconv__Uint128 sum = (strconv__Uint128){.lo = lohi + hilo,.hi = hihi,};
+	if (sum.lo < lohi) {
+		sum.hi++;
+	}
+	return strconv__shift_right_128(sum, shift - 64);
+}
+
+VV_LOCAL_SYMBOL u32 strconv__pow5_factor_64(u64 v_i) {
+	u64 v = v_i;
+	for (u32 n = ((u32)(0U)); true; n++) {
+		u64 q = v / 5U;
+		u64 r = v % 5U;
+		if (r != 0U) {
+			return n;
+		}
+		v = q;
+	}
+	return ((u32)(0U));
+}
+
+VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_five_64(u64 v, u32 p) {
+	return strconv__pow5_factor_64(v) >= p;
+}
+
+VV_LOCAL_SYMBOL bool strconv__multiple_of_power_of_two_64(u64 v, u32 p) {
+	return ((u32)(math__bits__trailing_zeros_64(v))) >= p;
 }
 
 void strconv__v_printf(string str, Array_voidptr pt) {
@@ -32913,7 +32913,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("63ff569")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("bd33eaa")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -33631,6 +33631,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_
 			res->out_name = os__cmdline__option(current_args, arg, _SLIT(""));
 			if (string_ends_with(res->out_name, _SLIT(".js"))) {
 				res->backend = v__pref__Backend__js_node;
+				res->output_cross_c = true;
 			}
 			if (!os__is_abs_path(res->out_name)) {
 				res->out_name = os__join_path(os__getwd(), new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){res->out_name})));
@@ -68166,7 +68167,7 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_expr(v__gen__js__JsGen* g, v__ast__Expr n
 		v__gen__js__JsGen_gen_type_cast_expr(g, (*node._v__ast__CastExpr));
 	}
 	else if (node._typ == 235 /* v.ast.CharLiteral */) {
-		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("new builtin.string('"), 0xfe10, {.d_s = (*node._v__ast__CharLiteral).val}}, {_SLIT("')"), 0, { .d_c = 0 }}})));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("new builtin.byte('"), 0xfe10, {.d_s = (*node._v__ast__CharLiteral).val}}, {_SLIT("')"), 0, { .d_c = 0 }}})));
 	}
 	else if (node._typ == 236 /* v.ast.Comment */) {
 	}
@@ -68938,6 +68939,23 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_return_stmt(v__gen__js__JsGen* g, v__
 			v__gen__js__JsGen_writeln(g, _SLIT(";"));
 			return;
 		}
+	}
+	if (fn_return_is_optional) {
+		string tmp = v__gen__js__JsGen_new_tmp_var(g);
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("const "), 0xfe10, {.d_s = tmp}}, {_SLIT(" = new "), 0, { .d_c = 0 }}})));
+		if (!string__eq(g->ns->name, _SLIT("builtin"))) {
+			v__gen__js__JsGen_write(g, _SLIT("builtin."));
+		}
+		v__gen__js__JsGen_writeln(g, _SLIT("Option({});"));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp}}, {_SLIT(".data = "), 0, { .d_c = 0 }}})));
+		if (it.exprs.len == 1) {
+			v__gen__js__JsGen_expr(g, (*(v__ast__Expr*)/*ee elem_typ */array_get(it.exprs, 0)));
+		} else {
+			v__gen__js__JsGen_gen_array_init_values(g, it.exprs);
+		}
+		v__gen__js__JsGen_writeln(g, _SLIT(""));
+		v__gen__js__JsGen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("return "), 0xfe10, {.d_s = tmp}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+		return;
 	}
 	v__gen__js__JsGen_write(g, _SLIT("return "));
 	if (it.exprs.len == 1) {
