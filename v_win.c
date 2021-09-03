@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "67ab5b8"
+#define V_COMMIT_HASH "a4df418"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "939a641"
+	#define V_COMMIT_HASH "67ab5b8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "67ab5b8"
+	#define V_CURRENT_COMMIT_HASH "a4df418"
 #endif
 
 // V comptime_defines:
@@ -32022,7 +32022,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("939a641")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("67ab5b8")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -67513,6 +67513,15 @@ VV_LOCAL_SYMBOL void v__gen__js__JsGen_gen_method_decl(v__gen__js__JsGen* g, v__
 	}
 	v__gen__js__JsGen_stmts(g, it.stmts);
 	v__gen__js__JsGen_writeln(g, _SLIT("}"));
+	for (int _t1 = 0; _t1 < it.attrs.len; ++_t1) {
+		v__ast__Attr attr = ((v__ast__Attr*)it.attrs.data)[_t1];
+
+		if (string__eq(attr.name, _SLIT("export"))) {
+			v__gen__js__JsGen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("globalThis."), 0xfe10, {.d_s = attr.arg}}, {_SLIT(" = "), 0xfe10, {.d_s = v__gen__js__JsGen_js_name(g, it.name)}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
+		}
+		else {
+		};
+	}
 	if (is_main) {
 		v__gen__js__JsGen_write(g, _SLIT(")();"));
 	} else if (typ != v__gen__js__FnGenType__struct_method) {
