@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5181031"
+#define V_COMMIT_HASH "289e77d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9b983bd"
+	#define V_COMMIT_HASH "5181031"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5181031"
+	#define V_CURRENT_COMMIT_HASH "289e77d"
 #endif
 
 // V comptime_defines:
@@ -7876,47 +7876,47 @@ string term__rgb(int r, int g, int b, string msg);
 string term__bg_rgb(int r, int g, int b, string msg);
 string term__hex(int hex, string msg);
 string term__bg_hex(int hex, string msg);
-string term__bg_black(string msg);
-string term__bright_bg_black(string msg);
-string term__bg_blue(string msg);
-string term__bright_bg_blue(string msg);
-string term__bg_cyan(string msg);
-string term__bright_bg_cyan(string msg);
-string term__bg_green(string msg);
-string term__bright_bg_green(string msg);
-string term__bg_magenta(string msg);
-string term__bright_bg_magenta(string msg);
-string term__bg_red(string msg);
-string term__bright_bg_red(string msg);
-string term__bg_white(string msg);
-string term__bright_bg_white(string msg);
-string term__bg_yellow(string msg);
-string term__bright_bg_yellow(string msg);
-string term__black(string msg);
-string term__bright_black(string msg);
-string term__blue(string msg);
-string term__bright_blue(string msg);
-string term__bold(string msg);
-string term__cyan(string msg);
-string term__bright_cyan(string msg);
-string term__dim(string msg);
-string term__green(string msg);
-string term__bright_green(string msg);
-string term__gray(string msg);
-string term__hidden(string msg);
-string term__italic(string msg);
-string term__inverse(string msg);
-string term__magenta(string msg);
-string term__bright_magenta(string msg);
 string term__reset(string msg);
-string term__red(string msg);
-string term__bright_red(string msg);
-string term__strikethrough(string msg);
+string term__bold(string msg);
+string term__dim(string msg);
+string term__italic(string msg);
 string term__underline(string msg);
-string term__white(string msg);
-string term__bright_white(string msg);
+string term__inverse(string msg);
+string term__hidden(string msg);
+string term__strikethrough(string msg);
+string term__black(string msg);
+string term__red(string msg);
+string term__green(string msg);
 string term__yellow(string msg);
+string term__blue(string msg);
+string term__magenta(string msg);
+string term__cyan(string msg);
+string term__white(string msg);
+string term__bg_black(string msg);
+string term__bg_red(string msg);
+string term__bg_green(string msg);
+string term__bg_yellow(string msg);
+string term__bg_blue(string msg);
+string term__bg_magenta(string msg);
+string term__bg_cyan(string msg);
+string term__bg_white(string msg);
+string term__gray(string msg);
+string term__bright_black(string msg);
+string term__bright_red(string msg);
+string term__bright_green(string msg);
 string term__bright_yellow(string msg);
+string term__bright_blue(string msg);
+string term__bright_magenta(string msg);
+string term__bright_cyan(string msg);
+string term__bright_white(string msg);
+string term__bright_bg_black(string msg);
+string term__bright_bg_red(string msg);
+string term__bright_bg_green(string msg);
+string term__bright_bg_yellow(string msg);
+string term__bright_bg_blue(string msg);
+string term__bright_bg_magenta(string msg);
+string term__bright_bg_cyan(string msg);
+string term__bright_bg_white(string msg);
 string term__highlight_command(string command);
 void term__set_cursor_position(term__Coord c);
 void term__move(int n, string direction);
@@ -29591,103 +29591,8 @@ string term__bg_hex(int hex, string msg) {
 	return _t1;
 }
 
-string term__bg_black(string msg) {
-	string _t1 = term__format(msg, _SLIT("40"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_black(string msg) {
-	string _t1 = term__format(msg, _SLIT("100"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("44"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("104"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("46"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("106"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_green(string msg) {
-	string _t1 = term__format(msg, _SLIT("42"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_green(string msg) {
-	string _t1 = term__format(msg, _SLIT("102"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("45"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("105"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_red(string msg) {
-	string _t1 = term__format(msg, _SLIT("41"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_red(string msg) {
-	string _t1 = term__format(msg, _SLIT("101"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_white(string msg) {
-	string _t1 = term__format(msg, _SLIT("47"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_white(string msg) {
-	string _t1 = term__format(msg, _SLIT("107"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bg_yellow(string msg) {
-	string _t1 = term__format(msg, _SLIT("43"), _SLIT("49"));
-	return _t1;
-}
-
-string term__bright_bg_yellow(string msg) {
-	string _t1 = term__format(msg, _SLIT("103"), _SLIT("49"));
-	return _t1;
-}
-
-string term__black(string msg) {
-	string _t1 = term__format(msg, _SLIT("30"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_black(string msg) {
-	string _t1 = term__format(msg, _SLIT("90"), _SLIT("39"));
-	return _t1;
-}
-
-string term__blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("34"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_blue(string msg) {
-	string _t1 = term__format(msg, _SLIT("94"), _SLIT("39"));
+string term__reset(string msg) {
+	string _t1 = term__format(msg, _SLIT("0"), _SLIT("0"));
 	return _t1;
 }
 
@@ -29696,38 +29601,8 @@ string term__bold(string msg) {
 	return _t1;
 }
 
-string term__cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("36"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_cyan(string msg) {
-	string _t1 = term__format(msg, _SLIT("96"), _SLIT("39"));
-	return _t1;
-}
-
 string term__dim(string msg) {
 	string _t1 = term__format(msg, _SLIT("2"), _SLIT("22"));
-	return _t1;
-}
-
-string term__green(string msg) {
-	string _t1 = term__format(msg, _SLIT("32"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_green(string msg) {
-	string _t1 = term__format(msg, _SLIT("92"), _SLIT("39"));
-	return _t1;
-}
-
-string term__gray(string msg) {
-	string _t1 = term__bright_black(msg);
-	return _t1;
-}
-
-string term__hidden(string msg) {
-	string _t1 = term__format(msg, _SLIT("8"), _SLIT("28"));
 	return _t1;
 }
 
@@ -29736,33 +29611,18 @@ string term__italic(string msg) {
 	return _t1;
 }
 
+string term__underline(string msg) {
+	string _t1 = term__format(msg, _SLIT("4"), _SLIT("24"));
+	return _t1;
+}
+
 string term__inverse(string msg) {
 	string _t1 = term__format(msg, _SLIT("7"), _SLIT("27"));
 	return _t1;
 }
 
-string term__magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("35"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_magenta(string msg) {
-	string _t1 = term__format(msg, _SLIT("95"), _SLIT("39"));
-	return _t1;
-}
-
-string term__reset(string msg) {
-	string _t1 = term__format(msg, _SLIT("0"), _SLIT("0"));
-	return _t1;
-}
-
-string term__red(string msg) {
-	string _t1 = term__format(msg, _SLIT("31"), _SLIT("39"));
-	return _t1;
-}
-
-string term__bright_red(string msg) {
-	string _t1 = term__format(msg, _SLIT("91"), _SLIT("39"));
+string term__hidden(string msg) {
+	string _t1 = term__format(msg, _SLIT("8"), _SLIT("28"));
 	return _t1;
 }
 
@@ -29771,18 +29631,18 @@ string term__strikethrough(string msg) {
 	return _t1;
 }
 
-string term__underline(string msg) {
-	string _t1 = term__format(msg, _SLIT("4"), _SLIT("24"));
+string term__black(string msg) {
+	string _t1 = term__format(msg, _SLIT("30"), _SLIT("39"));
 	return _t1;
 }
 
-string term__white(string msg) {
-	string _t1 = term__format(msg, _SLIT("37"), _SLIT("39"));
+string term__red(string msg) {
+	string _t1 = term__format(msg, _SLIT("31"), _SLIT("39"));
 	return _t1;
 }
 
-string term__bright_white(string msg) {
-	string _t1 = term__format(msg, _SLIT("97"), _SLIT("39"));
+string term__green(string msg) {
+	string _t1 = term__format(msg, _SLIT("32"), _SLIT("39"));
 	return _t1;
 }
 
@@ -29791,8 +29651,148 @@ string term__yellow(string msg) {
 	return _t1;
 }
 
+string term__blue(string msg) {
+	string _t1 = term__format(msg, _SLIT("34"), _SLIT("39"));
+	return _t1;
+}
+
+string term__magenta(string msg) {
+	string _t1 = term__format(msg, _SLIT("35"), _SLIT("39"));
+	return _t1;
+}
+
+string term__cyan(string msg) {
+	string _t1 = term__format(msg, _SLIT("36"), _SLIT("39"));
+	return _t1;
+}
+
+string term__white(string msg) {
+	string _t1 = term__format(msg, _SLIT("37"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bg_black(string msg) {
+	string _t1 = term__format(msg, _SLIT("40"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_red(string msg) {
+	string _t1 = term__format(msg, _SLIT("41"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_green(string msg) {
+	string _t1 = term__format(msg, _SLIT("42"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_yellow(string msg) {
+	string _t1 = term__format(msg, _SLIT("43"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_blue(string msg) {
+	string _t1 = term__format(msg, _SLIT("44"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_magenta(string msg) {
+	string _t1 = term__format(msg, _SLIT("45"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_cyan(string msg) {
+	string _t1 = term__format(msg, _SLIT("46"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bg_white(string msg) {
+	string _t1 = term__format(msg, _SLIT("47"), _SLIT("49"));
+	return _t1;
+}
+
+string term__gray(string msg) {
+	string _t1 = term__bright_black(msg);
+	return _t1;
+}
+
+string term__bright_black(string msg) {
+	string _t1 = term__format(msg, _SLIT("90"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_red(string msg) {
+	string _t1 = term__format(msg, _SLIT("91"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_green(string msg) {
+	string _t1 = term__format(msg, _SLIT("92"), _SLIT("39"));
+	return _t1;
+}
+
 string term__bright_yellow(string msg) {
 	string _t1 = term__format(msg, _SLIT("93"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_blue(string msg) {
+	string _t1 = term__format(msg, _SLIT("94"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_magenta(string msg) {
+	string _t1 = term__format(msg, _SLIT("95"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_cyan(string msg) {
+	string _t1 = term__format(msg, _SLIT("96"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_white(string msg) {
+	string _t1 = term__format(msg, _SLIT("97"), _SLIT("39"));
+	return _t1;
+}
+
+string term__bright_bg_black(string msg) {
+	string _t1 = term__format(msg, _SLIT("100"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_red(string msg) {
+	string _t1 = term__format(msg, _SLIT("101"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_green(string msg) {
+	string _t1 = term__format(msg, _SLIT("102"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_yellow(string msg) {
+	string _t1 = term__format(msg, _SLIT("103"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_blue(string msg) {
+	string _t1 = term__format(msg, _SLIT("104"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_magenta(string msg) {
+	string _t1 = term__format(msg, _SLIT("105"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_cyan(string msg) {
+	string _t1 = term__format(msg, _SLIT("106"), _SLIT("49"));
+	return _t1;
+}
+
+string term__bright_bg_white(string msg) {
+	string _t1 = term__format(msg, _SLIT("107"), _SLIT("49"));
 	return _t1;
 }
 
@@ -32913,7 +32913,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("9b983bd")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("5181031")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
