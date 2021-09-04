@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9b983bd"
+#define V_COMMIT_HASH "5181031"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "923ef73"
+	#define V_COMMIT_HASH "9b983bd"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9b983bd"
+	#define V_CURRENT_COMMIT_HASH "5181031"
 #endif
 
 // V comptime_defines:
@@ -2090,9 +2090,9 @@ typedef i64 time__Duration;
 typedef int v__ast__Type;
 typedef u32 v__gen__js__sourcemap__IndexNumber;
 typedef Map_string_x__json2__Any v__gen__js__sourcemap__SourceMapJson;
+typedef int (*anon_fn_voidptr_voidptr__int)(voidptr,voidptr);
 typedef bool (*anon_fn_voidptr__bool)(voidptr);
 typedef voidptr (*anon_fn_voidptr__voidptr)(voidptr);
-typedef int (*anon_fn_voidptr_voidptr__int)(voidptr,voidptr);
 typedef int (*anon_fn_int_int__int)(int,int);
 typedef void (*FnExitCb)();
 typedef int (*VectoredExceptionHandler)(ExceptionPointers*);
@@ -6907,7 +6907,7 @@ VV_LOCAL_SYMBOL array new_array_from_c_array_no_alloc(int len, int cap, int elm_
 VV_LOCAL_SYMBOL void array_ensure_cap(array* a, int required);
 array array_repeat(array a, int count);
 array array_repeat_to_depth(array a, int count, int depth);
-void array_sort_with_compare(array* a, voidptr compare);
+void array_sort_with_compare(array* a, int (*callback)(voidptr , voidptr ));
 void array_insert(array* a, int i, voidptr val);
 void array_insert_many(array* a, int i, voidptr val, int size);
 void array_prepend(array* a, voidptr val);
@@ -16367,13 +16367,13 @@ array array_repeat_to_depth(array a, int count, int depth) {
 	return arr;
 }
 
-void array_sort_with_compare(array* a, voidptr compare) {
+void array_sort_with_compare(array* a, int (*callback)(voidptr , voidptr )) {
 	#if defined(_VFREESTANDING)
 	{
 	}
 	#else
 	{
-		vqsort(a->data, ((size_t)(a->len)), ((size_t)(a->element_size)), (voidptr)compare);
+		vqsort(a->data, ((size_t)(a->len)), ((size_t)(a->element_size)), (voidptr)callback);
 	}
 	#endif
 }
@@ -20271,11 +20271,11 @@ VV_LOCAL_SYMBOL int compare_lower_strings(string* a, string* b) {
 }
 
 void Array_string_sort_ignore_case(Array_string* s) {
-	array_sort_with_compare(s, compare_lower_strings);
+	array_sort_with_compare(s, (voidptr)compare_lower_strings);
 }
 
 void Array_string_sort_by_len(Array_string* s) {
-	array_sort_with_compare(s, compare_strings_by_len);
+	array_sort_with_compare(s, (voidptr)compare_strings_by_len);
 }
 
 string string_str(string s) {
@@ -32022,7 +32022,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("923ef73")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("9b983bd")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
