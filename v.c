@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3fd2dd4"
+#define V_COMMIT_HASH "71f1be5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aefe267"
+	#define V_COMMIT_HASH "3fd2dd4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3fd2dd4"
+	#define V_CURRENT_COMMIT_HASH "71f1be5"
 #endif
 
 // V comptime_defines:
@@ -32914,7 +32914,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("aefe267")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("3fd2dd4")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -86504,7 +86504,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 		_SLIT("wait"), _SLIT("any"), _SLIT("all"), _SLIT("first"), _SLIT("last"), _SLIT("pop")}));
 	_const_v__checker__reserved_type_names = new_array_from_c_array(13, 13, sizeof(string), _MOV((string[13]){
 		_SLIT("bool"), _SLIT("i8"), _SLIT("i16"), _SLIT("int"), _SLIT("i64"), _SLIT("byte"), _SLIT("u16"), _SLIT("u32"), _SLIT("u64"),
-		_SLIT("f32"), _SLIT("f64"), _SLIT("string"), _SLIT("tune")}));
+		_SLIT("f32"), _SLIT("f64"), _SLIT("string"), _SLIT("rune")}));
 	// Initializations for module v.callgraph :
 	// Initializations for module v.builder :
 	_const_v__builder__hkey_local_machine = ((v__builder__RegKey)(0x80000002));
