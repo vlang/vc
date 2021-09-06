@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bd10a63"
+#define V_COMMIT_HASH "905c292"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fae0f8d"
+	#define V_COMMIT_HASH "bd10a63"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bd10a63"
+	#define V_CURRENT_COMMIT_HASH "905c292"
 #endif
 
 // V comptime_defines:
@@ -32960,7 +32960,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("fae0f8d")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("bd10a63")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51344,14 +51344,14 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
  			int pos =  (*(int*)_t11.data);
 			strings__Builder_writeln(&source, string__plus(string__plus(_SLIT("for "), string_substr(line, pos + 4, line.len)), _SLIT("{")));
 			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_start);
-		} else if (state == v__parser__State__html && string_contains(line, _SLIT("span.")) && string_ends_with(line, _SLIT("{"))) {
+		} else if (state == v__parser__State__html && string_starts_with(line, _SLIT("span.")) && string_ends_with(line, _SLIT("{"))) {
 			string _v_class = string_trim_space(string_find_between(line, _SLIT("span."), _SLIT("{")));
 			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<span class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
 			in_span = true;
-		} else if (state == v__parser__State__html && string_contains(line, _SLIT(".")) && string_ends_with(line, _SLIT("{"))) {
+		} else if (state == v__parser__State__html && string_starts_with(line, _SLIT(".")) && string_ends_with(line, _SLIT("{"))) {
 			string _v_class = string_trim_space(string_find_between(line, _SLIT("."), _SLIT("{")));
 			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
-		} else if (state == v__parser__State__html && string_contains(line, _SLIT("#")) && string_ends_with(line, _SLIT("{"))) {
+		} else if (state == v__parser__State__html && string_starts_with(line, _SLIT("#")) && string_ends_with(line, _SLIT("{"))) {
 			string _v_class = string_trim_space(string_find_between(line, _SLIT("#"), _SLIT("{")));
 			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div id=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
 		} else if (state == v__parser__State__html && string__eq(line, _SLIT("}"))) {
