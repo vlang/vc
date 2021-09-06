@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "fae0f8d"
+#define V_COMMIT_HASH "bd10a63"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "83d492b"
+	#define V_COMMIT_HASH "fae0f8d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "fae0f8d"
+	#define V_CURRENT_COMMIT_HASH "bd10a63"
 #endif
 
 // V comptime_defines:
@@ -20845,6 +20845,9 @@ VV_LOCAL_SYMBOL void StrIntpData_get_fmt_format(StrIntpData data, strings__Build
 				}
 				strconv__format_dec_sb(abs64(d), bf, sb);
 			} else {
+				if (base == 3) {
+					base = 2;
+				}
 				string hx = strconv__format_int(d, base);
 				if (upper_case) {
 					string tmp = hx;
@@ -20878,6 +20881,9 @@ VV_LOCAL_SYMBOL void StrIntpData_get_fmt_format(StrIntpData data, strings__Build
 				}
 				strconv__format_dec_sb(d, bf, sb);
 			} else {
+				if (base == 3) {
+					base = 2;
+				}
 				string hx = strconv__format_uint(d, base);
 				if (upper_case) {
 					string tmp = hx;
@@ -32050,7 +32056,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("83d492b")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("fae0f8d")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -64954,6 +64960,9 @@ VV_LOCAL_SYMBOL multi_return_u64_string v__gen__c__Gen_str_format(v__gen__c__Gen
 		if (fspec == 'o') {
 			base = 8 - 2;
 		}
+		if (fspec == 'b') {
+			base = 1;
+		}
 		if (fspec == 'c') {
 			fmt_type = StrIntpType__si_c;
 		} else {
@@ -65058,9 +65067,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal(v__gen__c__Gen* g, v__a
 			v__gen__c__Gen_write(g, _SLIT("0, { .d_c = 0 }}"));
 			break;
 		}
-		multi_return_u64_string mr_4426 = v__gen__c__Gen_str_format(g, node, i);
-		u64 ft_u64 = mr_4426.arg0;
-		string ft_str = mr_4426.arg1;
+		multi_return_u64_string mr_4526 = v__gen__c__Gen_str_format(g, node, i);
+		u64 ft_u64 = mr_4526.arg0;
+		string ft_str = mr_4526.arg1;
 		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("0x"), 0xfe10, {.d_s = u64_hex(ft_u64)}}, {_SLIT(", {.d_"), 0xfe10, {.d_s = ft_str}}, {_SLIT(" = "), 0, { .d_c = 0 }}})));
 		if (ft_str.str[0] == 'p') {
 			v__gen__c__Gen_write(g, _SLIT("(void*)("));
@@ -71994,7 +72003,7 @@ v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast
 		array_push((array*)&node->expr_types, _MOV((v__ast__Type[]){ ftyp }));
 		v__ast__Type typ = v__ast__Table_unalias_num_type(c->table, ftyp);
 		byte fmt = (*(byte*)/*ee elem_typ */array_get(node->fmts, i));
-		if (!(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g' || fmt == 'd' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c' || fmt == 's' || fmt == 'S' || fmt == 'p' || fmt == '_')) {
+		if (!(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g' || fmt == 'd' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c' || fmt == 's' || fmt == 'S' || fmt == 'p' || fmt == 'b' || fmt == '_')) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown format specifier `"), 0xfe01, {.d_c = fmt}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 		}
 		if (fmt == '_') {
@@ -72014,7 +72023,7 @@ v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast
 			if ((*(bool*)/*ee elem_typ */array_get(node->pluss, i)) && !v__ast__Type_is_number(typ)) {
 				v__checker__Checker_error(c, _SLIT("plus prefix only allowed for numbers"), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 			}
-			if ((v__ast__Type_is_unsigned(typ) && !(fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c')) || (v__ast__Type_is_signed(typ) && !(fmt == 'd' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c')) || (v__ast__Type_is_int_literal(typ) && !(fmt == 'd' || fmt == 'c' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o')) || (v__ast__Type_is_float(typ) && !(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g')) || (v__ast__Type_is_pointer(typ) && !(fmt == 'p' || fmt == 'x' || fmt == 'X')) || (v__ast__Type_is_string(typ) && !(fmt == 's' || fmt == 'S')) || ((v__ast__Type_idx(typ) == _const_v__ast__i64_type_idx || v__ast__Type_idx(typ) == _const_v__ast__f64_type_idx) && fmt == 'c')) {
+			if ((v__ast__Type_is_unsigned(typ) && !(fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c' || fmt == 'b')) || (v__ast__Type_is_signed(typ) && !(fmt == 'd' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'c' || fmt == 'b')) || (v__ast__Type_is_int_literal(typ) && !(fmt == 'd' || fmt == 'c' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'u' || fmt == 'x' || fmt == 'X' || fmt == 'o' || fmt == 'b')) || (v__ast__Type_is_float(typ) && !(fmt == 'E' || fmt == 'F' || fmt == 'G' || fmt == 'e' || fmt == 'f' || fmt == 'g')) || (v__ast__Type_is_pointer(typ) && !(fmt == 'p' || fmt == 'x' || fmt == 'X')) || (v__ast__Type_is_string(typ) && !(fmt == 's' || fmt == 'S')) || ((v__ast__Type_idx(typ) == _const_v__ast__i64_type_idx || v__ast__Type_idx(typ) == _const_v__ast__f64_type_idx) && fmt == 'c')) {
 				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("illegal format specifier `"), 0xfe01, {.d_c = fmt}}, {_SLIT("` for type `"), 0xfe10, {.d_s = v__ast__Table_get_type_name(c->table, ftyp)}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*(v__token__Position*)/*ee elem_typ */array_get(node->fmt_poss, i)));
 			}
 			(*(bool*)/*ee elem_typ */array_get(node->need_fmts, i)) = fmt != v__checker__Checker_get_default_fmt(c, ftyp, typ);
