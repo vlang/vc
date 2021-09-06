@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "2cfc6e0"
+#define V_COMMIT_HASH "87f38bf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "438bdd1"
+	#define V_COMMIT_HASH "2cfc6e0"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "2cfc6e0"
+	#define V_CURRENT_COMMIT_HASH "87f38bf"
 #endif
 
 // V comptime_defines:
@@ -10342,7 +10342,7 @@ void vinit_string_literals(){
 	_const_v__util__double_escape = _SLIT("\\\\");
 	_const_v__util__map_prefix = _SLIT("map[string]");
 	_const_v__parser__tmpl_str_start = _SLIT("sb.write_string('");
-	_const_v__parser__tmpl_str_end = _SLIT("' ) ");
+	_const_v__parser__tmpl_str_end = _SLIT("')\n");
 	_const_v__gen__c__si_s_code = _SLIT("0xfe10");
 	_const_v__gen__c__c_commit_hash_default = _SLIT("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
 	_const_v__gen__c__c_current_commit_hash_default = _SLIT("\n#ifndef V_CURRENT_COMMIT_HASH\n	#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
@@ -32914,7 +32914,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("438bdd1")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("2cfc6e0")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -51167,16 +51167,15 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 	int start_of_line_pos = 0;
 	int tline_number = -1;
 	for (int i = 0; i < lines.len; i++) {
-		string oline = (*(string*)/*ee elem_typ */array_get(lines, i));
+		string line = (*(string*)/*ee elem_typ */array_get(lines, i));
 		tline_number++;
 		start_of_line_pos = end_of_line_pos;
-		end_of_line_pos += oline.len + 1;
+		end_of_line_pos += line.len + 1;
 		#if defined(CUSTOM_DEFINE_trace_tmpl)
 		{
-			eprintln( str_intp(7, _MOV((StrIntpData[]){{_SLIT(">>> tfile: "), 0xfe10, {.d_s = template_file}}, {_SLIT(", spos: "), 0xcfe27, {.d_i32 = start_of_line_pos}}, {_SLIT(", epos:"), 0xcfe27, {.d_i32 = end_of_line_pos}}, {_SLIT(", fi: "), 0xafe27, {.d_i32 = tline_number}}, {_SLIT(", i: "), 0xafe27, {.d_i32 = i}}, {_SLIT(", line: "), 0xfe10, {.d_s = oline}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			eprintln( str_intp(7, _MOV((StrIntpData[]){{_SLIT(">>> tfile: "), 0xfe10, {.d_s = template_file}}, {_SLIT(", spos: "), 0xcfe27, {.d_i32 = start_of_line_pos}}, {_SLIT(", epos:"), 0xcfe27, {.d_i32 = end_of_line_pos}}, {_SLIT(", fi: "), 0xafe27, {.d_i32 = tline_number}}, {_SLIT(", i: "), 0xafe27, {.d_i32 = i}}, {_SLIT(", line: "), 0xfe10, {.d_s = line}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		}
 		#endif
-		string line = string_trim_space(oline);
 		if (v__parser__is_html_open_tag(_SLIT("style"), line)) {
 			state = v__parser__State__css;
 		} else if (string__eq(line, _SLIT("</style>"))) {
@@ -51321,7 +51320,9 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 		} else if (state == v__parser__State__css) {
 			strings__Builder_writeln(&source, string_replace(string_replace(line, _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
 		} else {
-			strings__Builder_writeln(&source, string_replace(string_replace(string_replace(string_replace(line, _SLIT("@"), _SLIT("$")), _SLIT("$$"), _SLIT("@")), _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
+			strings__Builder_writeln(&source, string_replace_each(line, new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
+					_SLIT("@"), _SLIT("$"), _SLIT("$$"), _SLIT("@"), _SLIT(".$"), _SLIT(".@"), _SLIT("'"), _SLIT("\\'"), _SLIT("\\"),
+					string_clone(string__plus(string__plus(_const_v__parser__tmpl_str_end, _SLIT("sb.write_b(92)\n")), _const_v__parser__tmpl_str_start))}))));
 		}
 	}
 	strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
