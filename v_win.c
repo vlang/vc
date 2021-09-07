@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "aec016b"
+#define V_COMMIT_HASH "0b6d585"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "aedb6b8"
+	#define V_COMMIT_HASH "aec016b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "aec016b"
+	#define V_CURRENT_COMMIT_HASH "0b6d585"
 #endif
 
 // V comptime_defines:
@@ -32062,7 +32062,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("aedb6b8")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("aec016b")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -52066,20 +52066,21 @@ bool v__gen__c__Gen_gen_struct_equality_fn_defer_0 = false;
 strings__Builder fn_builder;
 	v__gen__c__Type left = v__gen__c__Gen_unwrap(g, left_type);
 	string ptr_styp = v__gen__c__Gen_typ(g, v__ast__Type_set_nr_muls(left.typ, 0));
-	if ((Array_string_contains(g->struct_fn_definitions, ptr_styp))) {
-		string _t1 = ptr_styp;
+	string fn_name = string_replace(ptr_styp, _SLIT("struct "), _SLIT(""));
+	if ((Array_string_contains(g->struct_fn_definitions, fn_name))) {
+		string _t1 = fn_name;
 		return _t1;
 	}
-	array_push((array*)&g->struct_fn_definitions, _MOV((string[]){ string_clone(ptr_styp) }));
+	array_push((array*)&g->struct_fn_definitions, _MOV((string[]){ string_clone(fn_name) }));
 	v__ast__Struct info = v__ast__TypeSymbol_struct_info(left.sym);
-	strings__Builder_writeln(&g->type_definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("static bool "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT("_struct_eq("), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" a, "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" b); // auto"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(&g->type_definitions,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("static bool "), 0xfe10, {.d_s = fn_name}}, {_SLIT("_struct_eq("), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" a, "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" b); // auto"), 0, { .d_c = 0 }}})));
 	fn_builder = strings__new_builder(512);
 	v__gen__c__Gen_gen_struct_equality_fn_defer_0 = true;
-	strings__Builder_writeln(&fn_builder,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("static bool "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT("_struct_eq("), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" a, "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" b) {"), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(&fn_builder,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("static bool "), 0xfe10, {.d_s = fn_name}}, {_SLIT("_struct_eq("), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" a, "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT(" b) {"), 0, { .d_c = 0 }}})));
 	if (v__ast__TypeSymbol_has_method(left.sym, _SLIT("=="))) {
-		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\treturn "), 0xfe10, {.d_s = ptr_styp}}, {_SLIT("__eq(a, b);"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\treturn "), 0xfe10, {.d_s = fn_name}}, {_SLIT("__eq(a, b);"), 0, { .d_c = 0 }}})));
 		strings__Builder_writeln(&fn_builder, _SLIT("}"));
-		string _t3 = ptr_styp;
+		string _t3 = fn_name;
 		// Defer begin
 		if (v__gen__c__Gen_gen_struct_equality_fn_defer_0) {
 			array_push((array*)&g->auto_fn_definitions, _MOV((string[]){ string_clone(strings__Builder_str(&fn_builder)) }));
@@ -52127,7 +52128,7 @@ strings__Builder fn_builder;
 	}
 	strings__Builder_writeln(&fn_builder, _SLIT(";"));
 	strings__Builder_writeln(&fn_builder, _SLIT("}"));
-	string _t5 = ptr_styp;
+	string _t5 = fn_name;
 	// Defer begin
 	if (v__gen__c__Gen_gen_struct_equality_fn_defer_0) {
 		array_push((array*)&g->auto_fn_definitions, _MOV((string[]){ string_clone(strings__Builder_str(&fn_builder)) }));
@@ -63087,20 +63088,25 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_infix_expr_arrow_op(v__gen__c__Gen* g, v__as
 VV_LOCAL_SYMBOL void v__gen__c__Gen_infix_expr_eq_op(v__gen__c__Gen* g, v__ast__InfixExpr node) {
 	v__gen__c__Type left = v__gen__c__Gen_unwrap(g, node.left_type);
 	v__gen__c__Type right = v__gen__c__Gen_unwrap(g, node.right_type);
-	bool has_operator_overloading = v__ast__Table_type_has_method(g->table, left.sym, _SLIT("=="));
+	bool has_defined_eq_operator = v__ast__Table_type_has_method(g->table, left.sym, _SLIT("=="));
+	bool has_alias_eq_op_overload = (left.sym->info)._typ == 455 /* v.ast.Alias */ && v__ast__TypeSymbol_has_method(left.sym, _SLIT("=="));
 	if ((v__ast__Type_is_ptr(left.typ) && v__ast__Type_is_int(right.typ)) || (v__ast__Type_is_ptr(right.typ) && v__ast__Type_is_int(left.typ))) {
 		v__gen__c__Gen_gen_plain_infix_expr(g, node);
-	} else if ((v__ast__Type_idx(left.typ) == _const_v__ast__string_type_idx || (!has_operator_overloading && v__ast__Type_idx(left.unaliased) == _const_v__ast__string_type_idx)) && (node.right)._typ == 310 /* v.ast.StringLiteral */ && ((/* as */ *(v__ast__StringLiteral*)__as_cast((node.right)._v__ast__StringLiteral,(node.right)._typ, 310) /*expected idx: 310, name: v.ast.StringLiteral */ ).val).len == 0) {
+	} else if ((v__ast__Type_idx(left.typ) == _const_v__ast__string_type_idx || (!has_defined_eq_operator && v__ast__Type_idx(left.unaliased) == _const_v__ast__string_type_idx)) && (node.right)._typ == 310 /* v.ast.StringLiteral */ && ((/* as */ *(v__ast__StringLiteral*)__as_cast((node.right)._v__ast__StringLiteral,(node.right)._typ, 310) /*expected idx: 310, name: v.ast.StringLiteral */ ).val).len == 0) {
 		v__gen__c__Gen_write(g, _SLIT("("));
 		v__gen__c__Gen_expr(g, node.left);
 		v__gen__c__Gen_write(g, _SLIT(")"));
 		string arrow = (v__ast__Type_is_ptr(left.typ) ? (_SLIT("->")) : (_SLIT(".")));
 		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = arrow}}, {_SLIT("len "), 0xfe10, {.d_s = v__token__Kind_str(node.op)}}, {_SLIT(" 0"), 0, { .d_c = 0 }}})));
-	} else if (has_operator_overloading) {
+	} else if (has_defined_eq_operator) {
 		if (node.op == v__token__Kind__ne) {
 			v__gen__c__Gen_write(g, _SLIT("!"));
 		}
-		v__gen__c__Gen_write(g, v__gen__c__Gen_typ(g, v__ast__Type_set_nr_muls(left.unaliased, 0)));
+		if (has_alias_eq_op_overload) {
+			v__gen__c__Gen_write(g, v__gen__c__Gen_typ(g, v__ast__Type_set_nr_muls(left.typ, 0)));
+		} else {
+			v__gen__c__Gen_write(g, v__gen__c__Gen_typ(g, v__ast__Type_set_nr_muls(left.unaliased, 0)));
+		}
 		v__gen__c__Gen_write(g, _SLIT("__eq("));
 		v__gen__c__Gen_write(g, string_repeat(_SLIT("*"), v__ast__Type_nr_muls(left.typ)));
 		v__gen__c__Gen_expr(g, node.left);
