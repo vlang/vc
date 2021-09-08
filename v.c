@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cc8ee5f"
+#define V_COMMIT_HASH "8929710"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "577fedf"
+	#define V_COMMIT_HASH "cc8ee5f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cc8ee5f"
+	#define V_CURRENT_COMMIT_HASH "8929710"
 #endif
 
 // V comptime_defines:
@@ -33033,7 +33033,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("577fedf")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("cc8ee5f")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -48856,8 +48856,11 @@ VV_LOCAL_SYMBOL bool v__parser__Parser_is_generic_call(v__parser__Parser* p) {
 		}
 		bool _t5 = 0;
 		
-		if (kind3 == (v__token__Kind__gt) || kind3 == (v__token__Kind__lt)) {
+		if (kind3 == (v__token__Kind__gt)) {
 			_t5 = true;
+		}
+		else if (kind3 == (v__token__Kind__lt)) {
+			_t5 = !(tok4.lit.len == 1 && byte_is_capital(string_at(tok4.lit, 0)));
 		}
 		else if (kind3 == (v__token__Kind__comma)) {
 			_t5 = v__parser__Parser_is_typename(p, tok2);
@@ -49797,9 +49800,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t1 = (v__ast__Return){.pos = first_pos,.comments = comments,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t1;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_74064 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_74064.arg0;
-	Array_v__ast__Comment comments2 = mr_74064.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_74191 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_74191.arg0;
+	Array_v__ast__Comment comments2 = mr_74191.arg1;
 	_PUSH_MANY(&comments, (comments2), _t2, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.comments = comments,.exprs = exprs,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
