@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e3b6509"
+#define V_COMMIT_HASH "bef3390"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8929710"
+	#define V_COMMIT_HASH "e3b6509"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e3b6509"
+	#define V_CURRENT_COMMIT_HASH "bef3390"
 #endif
 
 // V comptime_defines:
@@ -7069,6 +7069,7 @@ bool f32_eq_epsilon(f32 a, f32 b);
 bool f64_eq_epsilon(f64 a, f64 b);
 VV_LOCAL_SYMBOL void float_test();
 string ptr_str(voidptr ptr);
+string isize_str(isize x);
 string usize_str(usize x);
 string char_str(char* cptr);
 string _const_digit_pairs; // a string literal, inited later
@@ -17750,6 +17751,10 @@ VV_LOCAL_SYMBOL void float_test(void) {
 string ptr_str(voidptr ptr) {
 	string buf1 = u64_hex(((u64)(ptr)));
 	return buf1;
+}
+
+string isize_str(isize x) {
+	return i64_str(((i64)(x)));
 }
 
 string usize_str(usize x) {
@@ -32129,7 +32134,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8929710")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e3b6509")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -45889,8 +45894,8 @@ v__ast__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__ast__Lang
 v__ast__Type v__parser__Parser_find_type_or_add_placeholder(v__parser__Parser* p, string name, v__ast__Language language) {
 	int idx = v__ast__Table_find_type_idx(p->table, name);
 	if (idx > 0) {
-		if (idx == _const_v__ast__size_t_type_idx) {
-			if (!p->pref->is_fmt && !p->builtin_mod) {
+		if (!p->builtin_mod && idx == _const_v__ast__size_t_type_idx) {
+			if (!p->pref->is_fmt) {
 				v__parser__Parser_warn_with_pos(p, _SLIT("`size_t` is deprecated, use `usize` instead"), v__token__Token_position(&p->prev_tok));
 			}
 			v__ast__Type _t1 = v__ast__new_type(_const_v__ast__usize_type_idx);
