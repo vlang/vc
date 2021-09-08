@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bef3390"
+#define V_COMMIT_HASH "e5360e1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e3b6509"
+	#define V_COMMIT_HASH "bef3390"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bef3390"
+	#define V_CURRENT_COMMIT_HASH "e5360e1"
 #endif
 
 // V comptime_defines:
@@ -13282,7 +13282,7 @@ int math__bits__ones_count_64(u64 x) {
 inline byte math__bits__rotate_left_8(byte x, int k) {
 	byte n = ((byte)(8));
 	byte s = (((byte)(k)) & (n - ((byte)(1))));
-	byte _t1 = (((x << s) | (x >> (n - s))));
+	byte _t1 = ((x << s) | (x >> (n - s)));
 	return _t1;
 }
 
@@ -13290,7 +13290,7 @@ inline byte math__bits__rotate_left_8(byte x, int k) {
 inline u16 math__bits__rotate_left_16(u16 x, int k) {
 	u16 n = ((u16)(16U));
 	u16 s = (((u16)(k)) & (n - ((u16)(1U))));
-	u16 _t1 = (((x << s) | (x >> (n - s))));
+	u16 _t1 = ((x << s) | (x >> (n - s)));
 	return _t1;
 }
 
@@ -13298,7 +13298,7 @@ inline u16 math__bits__rotate_left_16(u16 x, int k) {
 inline u32 math__bits__rotate_left_32(u32 x, int k) {
 	u32 n = ((u32)(32U));
 	u32 s = (((u32)(k)) & (n - ((u32)(1U))));
-	u32 _t1 = (((x << s) | (x >> (n - s))));
+	u32 _t1 = ((x << s) | (x >> (n - s)));
 	return _t1;
 }
 
@@ -13306,7 +13306,7 @@ inline u32 math__bits__rotate_left_32(u32 x, int k) {
 inline u64 math__bits__rotate_left_64(u64 x, int k) {
 	u64 n = ((u64)(64U));
 	u64 s = (((u64)(k)) & (n - ((u64)(1U))));
-	u64 _t1 = (((x << s) | (x >> (n - s))));
+	u64 _t1 = ((x << s) | (x >> (n - s)));
 	return _t1;
 }
 
@@ -13517,8 +13517,8 @@ u32 math__bits__rem_32(u32 hi, u32 lo, u32 y) {
 }
 
 u64 math__bits__rem_64(u64 hi, u64 lo, u64 y) {
-	multi_return_u64_u64 mr_15622 = math__bits__div_64(hi % y, lo, y);
-	u64 rem = mr_15622.arg1;
+	multi_return_u64_u64 mr_15614 = math__bits__div_64(hi % y, lo, y);
+	u64 rem = mr_15614.arg1;
 	u64 _t1 = rem;
 	return _t1;
 }
@@ -13580,7 +13580,7 @@ VV_LOCAL_SYMBOL bool strconv__is_digit(byte x) {
 }
 
 VV_LOCAL_SYMBOL bool strconv__is_space(byte x) {
-	return (x == '\t' || x == '\n' || x == '\v' || x == '\f' || x == '\r' || x == ' ');
+	return x == '\t' || x == '\n' || x == '\v' || x == '\f' || x == '\r' || x == ' ';
 }
 
 VV_LOCAL_SYMBOL bool strconv__is_exp(byte x) {
@@ -13692,29 +13692,29 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	s2 = ((u32)(0U));
 	for (;;) {
 		if (!(pn->exponent > 0)) break;
-		multi_return_u32_u32_u32 mr_5662 = strconv__lsl96(s2, s1, s0);
-		q2 = mr_5662.arg0;
-		q1 = mr_5662.arg1;
-		q0 = mr_5662.arg2;
-		multi_return_u32_u32_u32 mr_5708 = strconv__lsl96(q2, q1, q0);
-		r2 = mr_5708.arg0;
-		r1 = mr_5708.arg1;
-		r0 = mr_5708.arg2;
-		multi_return_u32_u32_u32 mr_5764 = strconv__lsl96(r2, r1, r0);
-		s2 = mr_5764.arg0;
-		s1 = mr_5764.arg1;
-		s0 = mr_5764.arg2;
-		multi_return_u32_u32_u32 mr_5820 = strconv__add96(s2, s1, s0, q2, q1, q0);
-		s2 = mr_5820.arg0;
-		s1 = mr_5820.arg1;
-		s0 = mr_5820.arg2;
+		multi_return_u32_u32_u32 mr_5660 = strconv__lsl96(s2, s1, s0);
+		q2 = mr_5660.arg0;
+		q1 = mr_5660.arg1;
+		q0 = mr_5660.arg2;
+		multi_return_u32_u32_u32 mr_5706 = strconv__lsl96(q2, q1, q0);
+		r2 = mr_5706.arg0;
+		r1 = mr_5706.arg1;
+		r0 = mr_5706.arg2;
+		multi_return_u32_u32_u32 mr_5762 = strconv__lsl96(r2, r1, r0);
+		s2 = mr_5762.arg0;
+		s1 = mr_5762.arg1;
+		s0 = mr_5762.arg2;
+		multi_return_u32_u32_u32 mr_5818 = strconv__add96(s2, s1, s0, q2, q1, q0);
+		s2 = mr_5818.arg0;
+		s1 = mr_5818.arg1;
+		s0 = mr_5818.arg2;
 		pn->exponent--;
 		for (;;) {
 			if (!(((s2 & mask28)) != 0U)) break;
-			multi_return_u32_u32_u32 mr_5943 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_5943.arg0;
-			q1 = mr_5943.arg1;
-			q0 = mr_5943.arg2;
+			multi_return_u32_u32_u32 mr_5941 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_5941.arg0;
+			q1 = mr_5941.arg1;
+			q0 = mr_5941.arg2;
 			binexp++;
 			s2 = q2;
 			s1 = q1;
@@ -13725,10 +13725,10 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 		if (!(pn->exponent < 0)) break;
 		for (;;) {
 			if (!(!(((s2 & (((u32)(1U)) << 31U))) != 0U))) break;
-			multi_return_u32_u32_u32 mr_6090 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_6090.arg0;
-			q1 = mr_6090.arg1;
-			q0 = mr_6090.arg2;
+			multi_return_u32_u32_u32 mr_6088 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_6088.arg0;
+			q1 = mr_6088.arg1;
+			q0 = mr_6088.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -13754,10 +13754,10 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	if (s2 != 0U || s1 != 0U || s0 != 0U) {
 		for (;;) {
 			if (!(((s2 & mask28)) == 0U)) break;
-			multi_return_u32_u32_u32 mr_6825 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_6825.arg0;
-			q1 = mr_6825.arg1;
-			q0 = mr_6825.arg2;
+			multi_return_u32_u32_u32 mr_6823 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_6823.arg0;
+			q1 = mr_6823.arg1;
+			q0 = mr_6823.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -13769,25 +13769,25 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 check_round_mask = ((u32)(0xFFFFFFFFU)) << ((u32)(nbit));
 	if (((s1 & check_round_bit)) != 0U) {
 		if (((s1 & ~check_round_mask)) != 0U) {
-			multi_return_u32_u32_u32 mr_7907 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
-			s2 = mr_7907.arg0;
-			s1 = mr_7907.arg1;
-			s0 = mr_7907.arg2;
+			multi_return_u32_u32_u32 mr_7905 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
+			s2 = mr_7905.arg0;
+			s1 = mr_7905.arg1;
+			s0 = mr_7905.arg2;
 		} else {
 			if (((s1 & (check_round_bit << ((u32)(1U))))) != 0U) {
-				multi_return_u32_u32_u32 mr_8099 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
-				s2 = mr_8099.arg0;
-				s1 = mr_8099.arg1;
-				s0 = mr_8099.arg2;
+				multi_return_u32_u32_u32 mr_8097 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
+				s2 = mr_8097.arg0;
+				s1 = mr_8097.arg1;
+				s0 = mr_8097.arg2;
 			}
 		}
 		s1 = (s1 & check_round_mask);
 		s0 = ((u32)(0U));
 		if ((s2 & (mask28 << ((u32)(1U)))) != 0U) {
-			multi_return_u32_u32_u32 mr_8303 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_8303.arg0;
-			q1 = mr_8303.arg1;
-			q0 = mr_8303.arg2;
+			multi_return_u32_u32_u32 mr_8301 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_8301.arg0;
+			q1 = mr_8301.arg1;
+			q0 = mr_8301.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -13823,9 +13823,9 @@ f64 strconv__atof64(string s) {
 	strconv__PrepNumber pn = (strconv__PrepNumber){.negative = 0,.exponent = 0,.mantissa = 0,};
 	int res_parsing = 0;
 	strconv__Float64u res = (strconv__Float64u){0};
-	multi_return_int_strconv__PrepNumber mr_9338 = strconv__parser(s);
-	res_parsing = mr_9338.arg0;
-	pn = mr_9338.arg1;
+	multi_return_int_strconv__PrepNumber mr_9336 = strconv__parser(s);
+	res_parsing = mr_9336.arg0;
+	pn = mr_9336.arg1;
 
 	if (res_parsing == (_const_strconv__parser_ok)) {
 		res.u = strconv__converter((voidptr)&/*qq*/pn);
@@ -22136,7 +22136,7 @@ Option_int os__File_writeln(os__File* f, string s) {
 		return (Option_int){ .state=2, .err=_v_error(_SLIT("could not add newline")), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	Option_int _t4;
-	opt_ok(&(int[]) { (written + 1) }, (Option*)(&_t4), sizeof(int));
+	opt_ok(&(int[]) { written + 1 }, (Option*)(&_t4), sizeof(int));
 	return _t4;
 }
 
@@ -23040,7 +23040,7 @@ bool os__is_executable(string path) {
 	#if defined(_WIN32)
 	{
 		string p = os__real_path(path);
-		return (os__exists(p) && string_ends_with(p, _SLIT(".exe")));
+		return os__exists(p) && string_ends_with(p, _SLIT(".exe"));
 	}
 	#endif
 	#if defined(__sun)
@@ -33038,7 +33038,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("e3b6509")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("bef3390")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
