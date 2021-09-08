@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8929710"
+#define V_COMMIT_HASH "e3b6509"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cc8ee5f"
+	#define V_COMMIT_HASH "8929710"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8929710"
+	#define V_CURRENT_COMMIT_HASH "e3b6509"
 #endif
 
 // V comptime_defines:
@@ -7046,7 +7046,7 @@ voidptr vmemcpy(voidptr dest, const voidptr const_src, int n);
 voidptr vmemmove(voidptr dest, const voidptr const_src, int n);
 int vmemcmp(const voidptr const_s1, const voidptr const_s2, int n);
 voidptr vmemset(voidptr s, int c, int n);
-VV_LOCAL_SYMBOL void vqsort(voidptr base, size_t nmemb, size_t size, int (*sort_cb)(const voidptr const_a, const voidptr const_b));
+VV_LOCAL_SYMBOL void vqsort(voidptr base, usize nmemb, usize size, int (*sort_cb)(const voidptr const_a, const voidptr const_b));
 void chan_close(chan ch);
 ChanState chan_try_pop(chan ch, voidptr obj);
 ChanState chan_try_push(chan ch, voidptr obj);
@@ -7069,7 +7069,7 @@ bool f32_eq_epsilon(f32 a, f32 b);
 bool f64_eq_epsilon(f64 a, f64 b);
 VV_LOCAL_SYMBOL void float_test();
 string ptr_str(voidptr ptr);
-string size_t_str(size_t x);
+string usize_str(usize x);
 string char_str(char* cptr);
 string _const_digit_pairs; // a string literal, inited later
 VV_LOCAL_SYMBOL string int_str_l(int nn, int max);
@@ -7486,7 +7486,7 @@ Option_int os__File_writeln(os__File* f, string s);
 Option_int os__File_write_string(os__File* f, string s);
 Option_int os__File_write_to(os__File* f, u64 pos, Array_byte buf);
 int os__File_write_ptr(os__File* f, voidptr data, int size);
-Option_void os__File_write_full_buffer(os__File* f, voidptr buffer, size_t buffer_len);
+Option_void os__File_write_full_buffer(os__File* f, voidptr buffer, usize buffer_len);
 int os__File_write_ptr_at(os__File* f, voidptr data, int size, u64 pos);
 VV_LOCAL_SYMBOL Option_int os__fread(voidptr ptr, int item_size, int items, FILE* stream);
 Array_byte os__File_read_bytes(os__File* f, int size);
@@ -16456,7 +16456,7 @@ void array_sort_with_compare(array* a, int (*callback)(voidptr , voidptr )) {
 	}
 	#else
 	{
-		vqsort(a->data, ((size_t)(a->len)), ((size_t)(a->element_size)), (voidptr)callback);
+		vqsort(a->data, ((usize)(a->len)), ((usize)(a->element_size)), (voidptr)callback);
 	}
 	#endif
 }
@@ -17569,7 +17569,7 @@ inline voidptr vmemset(voidptr s, int c, int n) {
 // TypeDecl
 // Attr: [inline]
 // Attr: [unsafe]
-inline VV_LOCAL_SYMBOL void vqsort(voidptr base, size_t nmemb, size_t size, int (*sort_cb)(const voidptr const_a, const voidptr const_b)) {
+inline VV_LOCAL_SYMBOL void vqsort(voidptr base, usize nmemb, usize size, int (*sort_cb)(const voidptr const_a, const voidptr const_b)) {
 	qsort(base, nmemb, size, ((voidptr)(sort_cb)));
 }
 
@@ -17752,7 +17752,7 @@ string ptr_str(voidptr ptr) {
 	return buf1;
 }
 
-string size_t_str(size_t x) {
+string usize_str(usize x) {
 	return u64_str(((u64)(x)));
 }
 
@@ -21893,7 +21893,7 @@ Option_int os__File_writeln(os__File* f, string s) {
 }
 
 Option_int os__File_write_string(os__File* f, string s) {
-		Option_void _t1 = os__File_write_full_buffer(f, s.str, ((size_t)(s.len)));
+		Option_void _t1 = os__File_write_full_buffer(f, s.str, ((usize)(s.len)));
 	if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 		Option_int _t2;
 		memcpy(&_t2, &_t1, sizeof(Option));
@@ -21952,8 +21952,8 @@ int os__File_write_ptr(os__File* f, voidptr data, int size) {
 }
 
 // Attr: [unsafe]
-Option_void os__File_write_full_buffer(os__File* f, voidptr buffer, size_t buffer_len) {
-	if (buffer_len <= ((size_t)(0))) {
+Option_void os__File_write_full_buffer(os__File* f, voidptr buffer, usize buffer_len) {
+	if (buffer_len <= ((usize)(0))) {
 		return (Option_void){0};
 	}
 	if (!f->is_opened) {
@@ -23046,7 +23046,7 @@ Option_void os__write_file_array(string path, array buffer) {
 	}
 	
  	os__File f =  (*(os__File*)_t1.data);
-		Option_void _t3 = os__File_write_full_buffer(&f, buffer.data, ((size_t)(buffer.len * buffer.element_size)));
+		Option_void _t3 = os__File_write_full_buffer(&f, buffer.data, ((usize)(buffer.len * buffer.element_size)));
 	if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 		Option_void _t4;
 		memcpy(&_t4, &_t3, sizeof(Option));
@@ -23472,7 +23472,7 @@ Option_void os__write_file(string path, string text) {
 	}
 	
  	os__File f =  (*(os__File*)_t1.data);
-		Option_void _t3 = os__File_write_full_buffer(&f, text.str, ((size_t)(text.len)));
+		Option_void _t3 = os__File_write_full_buffer(&f, text.str, ((usize)(text.len)));
 	if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 		Option_void _t4;
 		memcpy(&_t4, &_t3, sizeof(Option));
@@ -32129,7 +32129,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("cc8ee5f")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
+	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(_SLIT("8929710")),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
 	}
@@ -45889,12 +45889,19 @@ v__ast__Type v__parser__Parser_parse_any_type(v__parser__Parser* p, v__ast__Lang
 v__ast__Type v__parser__Parser_find_type_or_add_placeholder(v__parser__Parser* p, string name, v__ast__Language language) {
 	int idx = v__ast__Table_find_type_idx(p->table, name);
 	if (idx > 0) {
-		v__ast__Type _t1 = v__ast__new_type(idx);
-		return _t1;
+		if (idx == _const_v__ast__size_t_type_idx) {
+			if (!p->pref->is_fmt && !p->builtin_mod) {
+				v__parser__Parser_warn_with_pos(p, _SLIT("`size_t` is deprecated, use `usize` instead"), v__token__Token_position(&p->prev_tok));
+			}
+			v__ast__Type _t1 = v__ast__new_type(_const_v__ast__usize_type_idx);
+			return _t1;
+		}
+		v__ast__Type _t2 = v__ast__new_type(idx);
+		return _t2;
 	}
 	idx = v__ast__Table_add_placeholder_type(p->table, name, language);
-	v__ast__Type _t2 = v__ast__new_type(idx);
-	return _t2;
+	v__ast__Type _t3 = v__ast__new_type(idx);
+	return _t3;
 }
 
 v__ast__Type v__parser__Parser_parse_generic_type(v__parser__Parser* p, string name) {
@@ -85347,11 +85354,11 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__ast__byteptr_types = new_array_from_c_array(2, 2, sizeof(v__ast__Type), _MOV((v__ast__Type[2]){_const_v__ast__byteptr_type, v__ast__Type_set_nr_muls(v__ast__new_type(_const_v__ast__byte_type_idx), 1)}));
 	_const_v__ast__voidptr_types = new_array_from_c_array(2, 2, sizeof(v__ast__Type), _MOV((v__ast__Type[2]){_const_v__ast__voidptr_type, v__ast__Type_set_nr_muls(v__ast__new_type(_const_v__ast__voidptr_type_idx), 1)}));
 	_const_v__ast__cptr_types = v__ast__merge_types(new_array_from_c_array(3, 3, sizeof(Array_v__ast__Type), _MOV((Array_v__ast__Type[3]){_const_v__ast__voidptr_types, _const_v__ast__byteptr_types, _const_v__ast__charptr_types})));
-	_const_v__ast__builtin_type_names = new_array_from_c_array(32, 32, sizeof(string), _MOV((string[32]){
-		_SLIT("void"), _SLIT("voidptr"), _SLIT("charptr"), _SLIT("byteptr"), _SLIT("i8"), _SLIT("i16"), _SLIT("int"), _SLIT("i64"), _SLIT("u16"),
-		_SLIT("u32"), _SLIT("u64"), _SLIT("int_literal"), _SLIT("f32"), _SLIT("f64"), _SLIT("float_literal"), _SLIT("string"), _SLIT("char"),
-		_SLIT("byte"), _SLIT("bool"), _SLIT("none"), _SLIT("array"), _SLIT("array_fixed"), _SLIT("map"), _SLIT("chan"), _SLIT("any"),
-		_SLIT("struct"), _SLIT("mapnode"), _SLIT("size_t"), _SLIT("rune"), _SLIT("thread"), _SLIT("Error"), _SLIT("u8")}));
+	_const_v__ast__builtin_type_names = new_array_from_c_array(31, 31, sizeof(string), _MOV((string[31]){
+		_SLIT("void"), _SLIT("voidptr"), _SLIT("byteptr"), _SLIT("charptr"), _SLIT("i8"), _SLIT("i16"), _SLIT("int"), _SLIT("i64"), _SLIT("isize"),
+		_SLIT("byte"), _SLIT("u16"), _SLIT("u32"), _SLIT("u64"), _SLIT("usize"), _SLIT("f32"), _SLIT("f64"), _SLIT("char"),
+		_SLIT("bool"), _SLIT("none"), _SLIT("string"), _SLIT("rune"), _SLIT("array"), _SLIT("map"), _SLIT("chan"), _SLIT("size_t"),
+		_SLIT("any"), _SLIT("float_literal"), _SLIT("int_literal"), _SLIT("thread"), _SLIT("Error"), _SLIT("u8")}));
 	// Initializations for module v.scanner :
 	// Initializations for module v.transformer :
 	// Initializations for module v.parser :
