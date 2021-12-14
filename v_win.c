@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "731015c"
+#define V_COMMIT_HASH "eed8829"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b4b2a21"
+	#define V_COMMIT_HASH "731015c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "731015c"
+	#define V_CURRENT_COMMIT_HASH "eed8829"
 #endif
 
 // V comptime_defines:
@@ -30719,7 +30719,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("b4b2a21");
+	string vhash = _SLIT("731015c");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -76269,6 +76269,15 @@ VV_LOCAL_SYMBOL v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser
 					break;
 				}
 				v__parser__Parser_check(p, v__token__Kind__comma);
+				if (p->pref->is_fmt) {
+					if (p->tok.kind == v__token__Kind__lcbr) {
+						break;
+					}
+					for (;;) {
+						if (!(p->tok.kind == v__token__Kind__comma)) break;
+						v__parser__Parser_next(p);
+					}
+				}
 			}
 			is_sum_type = true;
 		} else {
@@ -76292,6 +76301,15 @@ VV_LOCAL_SYMBOL v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser
 					break;
 				}
 				v__parser__Parser_check(p, v__token__Kind__comma);
+				if (p->pref->is_fmt) {
+					if (p->tok.kind == v__token__Kind__lcbr) {
+						break;
+					}
+					for (;;) {
+						if (!(p->tok.kind == v__token__Kind__comma)) break;
+						v__parser__Parser_next(p);
+					}
+				}
 			}
 		}
 		v__token__Position branch_last_pos = v__token__Token_position(&p->prev_tok);
@@ -76370,9 +76388,9 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 			}
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8236 = v__parser__Parser_expr_list(p);
-			Array_v__ast__Expr exprs = mr_8236.arg0;
-			Array_v__ast__Comment comments = mr_8236.arg1;
+			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8501 = v__parser__Parser_expr_list(p);
+			Array_v__ast__Expr exprs = mr_8501.arg0;
+			Array_v__ast__Comment comments = mr_8501.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, _SLIT("only one expression allowed as `select` key"));
 				v__ast__SelectExpr _t3 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
