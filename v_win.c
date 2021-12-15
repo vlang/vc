@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "11d2b8b"
+#define V_COMMIT_HASH "65f12f3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "df7f2aa"
+	#define V_COMMIT_HASH "11d2b8b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "11d2b8b"
+	#define V_CURRENT_COMMIT_HASH "65f12f3"
 #endif
 
 // V comptime_defines:
@@ -30727,7 +30727,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("df7f2aa");
+	string vhash = _SLIT("11d2b8b");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -46849,20 +46849,25 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 			if (_t3.state == 0) {
 				v__ast__EnumDecl enum_decl = *(v__ast__EnumDecl*)_t3.data;
 				bool in_range = false;
-				int enum_val = 0;
-				for (int _t5 = 0; _t5 < enum_decl.fields.len; ++_t5) {
-					v__ast__EnumField enum_field = ((v__ast__EnumField*)enum_decl.fields.data)[_t5];
-					if ((enum_field.expr)._typ == 304 /* v.ast.IntegerLiteral */) {
-						enum_val = string_int((*enum_field.expr._v__ast__IntegerLiteral).val);
+				if (enum_decl.is_flag) {
+					int max_val = (1 << enum_decl.fields.len) - 1;
+					in_range = node_val >= 0 && node_val <= max_val;
+				} else {
+					int enum_val = 0;
+					for (int _t5 = 0; _t5 < enum_decl.fields.len; ++_t5) {
+						v__ast__EnumField enum_field = ((v__ast__EnumField*)enum_decl.fields.data)[_t5];
+						if ((enum_field.expr)._typ == 304 /* v.ast.IntegerLiteral */) {
+							enum_val = string_int((*enum_field.expr._v__ast__IntegerLiteral).val);
+						}
+						if (node_val == enum_val) {
+							in_range = true;
+							break;
+						}
+						enum_val += 1;
 					}
-					if (node_val == enum_val) {
-						in_range = true;
-						break;
-					}
-					enum_val += 1;
 				}
 				if (!in_range) {
-					v__checker__Checker_warn(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = node_val}}, {_SLIT(" does not represents a value of enum "), 0xfe10, {.d_s = enum_typ_name}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
+					v__checker__Checker_warn(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe07, {.d_i32 = node_val}}, {_SLIT(" does not represent a value of enum "), 0xfe10, {.d_s = enum_typ_name}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
 				}
 			}
 		}
@@ -47438,8 +47443,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_133121 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_133121.arg0;
+		multi_return_string_v__token__Position mr_133381 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_133381.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
