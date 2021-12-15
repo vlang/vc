@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d90ef1f"
+#define V_COMMIT_HASH "1261468"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c44115c"
+	#define V_COMMIT_HASH "d90ef1f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d90ef1f"
+	#define V_CURRENT_COMMIT_HASH "1261468"
 #endif
 
 // V comptime_defines:
@@ -30727,7 +30727,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("c44115c");
+	string vhash = _SLIT("d90ef1f");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -84485,6 +84485,8 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag 
 			array_push((array*)&real_libs, _MOV((string[]){ string_clone(lib_lib) }));
 		} else if (string__eq(flag.name, _SLIT("-I"))) {
 			array_push((array*)&inc_paths, _MOV((string[]){ string_clone(v__cflag__CFlag_format(&flag)) }));
+		} else if (string__eq(flag.name, _SLIT("-D"))) {
+			array_push((array*)&defines, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("/D"), 0xfe10, {.d_s = flag.value}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
 		} else if (string__eq(flag.name, _SLIT("-L"))) {
 			array_push((array*)&lib_paths, _MOV((string[]){ string_clone(flag.value) }));
 			array_push((array*)&lib_paths, _MOV((string[]){ string_clone(string__plus(string__plus(flag.value, _const_os__path_separator), _SLIT("msvc"))) }));
@@ -84497,12 +84499,12 @@ v__builder__MsvcStringFlags v__builder__msvc_string_flags(Array_v__cflag__CFlag 
 		}
 	}
 	Array_string lpaths = __new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t9 = 0; _t9 < lib_paths.len; ++_t9) {
-		string l = ((string*)lib_paths.data)[_t9];
+	for (int _t10 = 0; _t10 < lib_paths.len; ++_t10) {
+		string l = ((string*)lib_paths.data)[_t10];
 		array_push((array*)&lpaths, _MOV((string[]){ string_clone(string__plus(string__plus(_SLIT("/LIBPATH:\""), os__real_path(l)), _SLIT("\""))) }));
 	}
-	v__builder__MsvcStringFlags _t11 = (v__builder__MsvcStringFlags){.real_libs = real_libs,.inc_paths = inc_paths,.lib_paths = lpaths,.defines = defines,.other_flags = other_flags,};
-	return _t11;
+	v__builder__MsvcStringFlags _t12 = (v__builder__MsvcStringFlags){.real_libs = real_libs,.inc_paths = inc_paths,.lib_paths = lpaths,.defines = defines,.other_flags = other_flags,};
+	return _t12;
 }
 
 void v__builder__Builder_rebuild_modules(v__builder__Builder* b) {
