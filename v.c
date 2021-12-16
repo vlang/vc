@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d8a3330"
+#define V_COMMIT_HASH "674f99a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1261468"
+	#define V_COMMIT_HASH "d8a3330"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d8a3330"
+	#define V_CURRENT_COMMIT_HASH "674f99a"
 #endif
 
 // V comptime_defines:
@@ -31986,7 +31986,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("1261468");
+	string vhash = _SLIT("d8a3330");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -49679,7 +49679,6 @@ VV_LOCAL_SYMBOL Option_void v__checker__Checker_ensure_type_exists(v__checker__C
 }
 
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Checker* c, v__ast__ComptimeCall* node) {
-	v__ast__TypeSymbol* sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, node->left)));
 	node->left_type = v__checker__Checker_expr(c, node->left);
 	if (node->is_env) {
 		Option_string _t1 = v__util__resolve_env_value( str_intp(2, _MOV((StrIntpData[]){{_SLIT("$env('"), 0xfe10, {.d_s = node->args_var}}, {_SLIT("')"), 0, { .d_c = 0 }}})), false);
@@ -49789,7 +49788,8 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_comptime_call(v__checker__Check
 	} else {
 		v__checker__Checker_error(c, _SLIT("todo: not a string literal"), node->method_pos);
 	}
-	Option_v__ast__Fn _t20 = v__ast__TypeSymbol_find_method(sym, method_name);
+	v__ast__TypeSymbol* left_sym = v__ast__Table_get_type_symbol(c->table, v__checker__Checker_unwrap_generic(c, node->left_type));
+	Option_v__ast__Fn _t20 = v__ast__TypeSymbol_find_method(left_sym, method_name);
 	if (_t20.state != 0) { /*or block*/ 
 		IError err = _t20.err;
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not find method `"), 0xfe10, {.d_s = method_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->method_pos);
@@ -50996,10 +50996,10 @@ VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Chec
 		for (int _t2 = 0; _t2 < sym_app->methods.len; ++_t2) {
 			v__ast__Fn m = ((v__ast__Fn*)sym_app->methods.data)[_t2];
 			if (m.return_type == typ_vweb_result) {
-				multi_return_bool_int_int mr_10229 = v__checker__Checker_verify_vweb_params_for_method(c, m);
-				bool is_ok = mr_10229.arg0;
-				int nroute_attributes = mr_10229.arg1;
-				int nargs = mr_10229.arg2;
+				multi_return_bool_int_int mr_10173 = v__checker__Checker_verify_vweb_params_for_method(c, m);
+				bool is_ok = mr_10173.arg0;
+				int nroute_attributes = mr_10173.arg1;
+				int nargs = mr_10173.arg2;
 				if (!is_ok) {
 					v__ast__FnDecl* f = ((v__ast__FnDecl*)(m.source_fn));
 					if (isnil(f)) {
