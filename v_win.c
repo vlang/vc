@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6ff953d"
+#define V_COMMIT_HASH "8a34fb7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "caac89d"
+	#define V_COMMIT_HASH "6ff953d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6ff953d"
+	#define V_CURRENT_COMMIT_HASH "8a34fb7"
 #endif
 
 // V comptime_defines:
@@ -30755,7 +30755,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("caac89d");
+	string vhash = _SLIT("6ff953d");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -85688,9 +85688,9 @@ void _vinit(int ___argc, voidptr ___argv) {
 	{ // Initializations for module rand.wyrand :
 	}
 	{ // Initializations for module v.pkgconfig :
-	_const_v__pkgconfig__default_paths = new_array_from_c_array(10, 10, sizeof(string), _MOV((string[10]){
-		_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig"), _SLIT("/opt/homebrew/lib/pkgconfig"),
-		_SLIT("/usr/local/libdata/pkgconfig")}));
+	_const_v__pkgconfig__default_paths = new_array_from_c_array(11, 11, sizeof(string), _MOV((string[11]){
+		_SLIT("/usr/local/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/local/lib64/pkgconfig"), _SLIT("/usr/local/lib/pkgconfig"), _SLIT("/usr/local/share/pkgconfig"), _SLIT("/usr/lib/x86_64-linux-gnu/pkgconfig"), _SLIT("/usr/lib/aarch64-linux-gnu/pkgconfig"), _SLIT("/usr/lib64/pkgconfig"), _SLIT("/usr/lib/pkgconfig"), _SLIT("/usr/share/pkgconfig"),
+		_SLIT("/opt/homebrew/lib/pkgconfig"), _SLIT("/usr/local/libdata/pkgconfig")}));
 	}
 	{ // Initializations for module runtime :
 	}
