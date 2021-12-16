@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8a34fb7"
+#define V_COMMIT_HASH "c6b902d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6ff953d"
+	#define V_COMMIT_HASH "8a34fb7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8a34fb7"
+	#define V_CURRENT_COMMIT_HASH "c6b902d"
 #endif
 
 // V comptime_defines:
@@ -8689,6 +8689,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_check_noscan(v__gen__c__Gen* g, v__ast__Ty
 string _const_v__gen__c__c_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c__c_current_commit_hash_default; // a string literal, inited later
 string _const_v__gen__c__c_concurrency_helpers; // a string literal, inited later
+VV_LOCAL_SYMBOL string v__gen__c__arm_bytes(int nargs);
 VV_LOCAL_SYMBOL string v__gen__c__c_closure_helpers(v__pref__Preferences* pref);
 string _const_v__gen__c__c_common_macros; // a string literal, inited later
 string _const_v__gen__c__c_unsigned_comparison_functions; // a string literal, inited later
@@ -32014,7 +32015,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("6ff953d");
+	string vhash = _SLIT("8a34fb7");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -67600,12 +67601,18 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_check_noscan(v__gen__c__Gen* g, v__ast__Ty
 	return _t2;
 }
 
+VV_LOCAL_SYMBOL string v__gen__c__arm_bytes(int nargs) {
+	string bytes = _SLIT("0xd0, 0xff, 0xff, 0x58, 0x6<REG>, 0xff, 0xff, 0x58, 0x00, 0x02, 0x1f, 0xd6");
+	string _t1 = string_replace(bytes, _SLIT("<REG>"), int_str(nargs));
+	return _t1;
+}
+
 VV_LOCAL_SYMBOL string v__gen__c__c_closure_helpers(v__pref__Preferences* pref) {
 	if (pref->os == v__pref__OS__windows) {
 		v__gen__c__verror(_SLIT("closures are not implemented on Windows yet"));
 		VUNREACHABLE();
 	}
-	if (pref->arch != v__pref__Arch__amd64) {
+	if (!(pref->arch == v__pref__Arch__amd64 || pref->arch == v__pref__Arch__arm64)) {
 		v__gen__c__verror( str_intp(2, _MOV((StrIntpData[]){{_SLIT("closures are not implemented on this architecture yet: "), 0xfe10, {.d_s = v__pref__Arch_str(pref->arch)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		VUNREACHABLE();
 	}
@@ -67615,6 +67622,8 @@ VV_LOCAL_SYMBOL string v__gen__c__c_closure_helpers(v__pref__Preferences* pref) 
 	}
 	if (pref->arch == v__pref__Arch__amd64) {
 		strings__Builder_write_string(&builder, _SLIT("\nstatic unsigned char __closure_thunk[6][13] = {\n    {\n        0x48, 0x8b, 0x3d, 0xe9, 0xff, 0xff, 0xff,\n        0xff, 0x25, 0xeb, 0xff, 0xff, 0xff\n    }, {\n        0x48, 0x8b, 0x35, 0xe9, 0xff, 0xff, 0xff,\n        0xff, 0x25, 0xeb, 0xff, 0xff, 0xff\n    }, {\n        0x48, 0x8b, 0x15, 0xe9, 0xff, 0xff, 0xff,\n        0xff, 0x25, 0xeb, 0xff, 0xff, 0xff\n    }, {\n        0x48, 0x8b, 0x0d, 0xe9, 0xff, 0xff, 0xff,\n        0xff, 0x25, 0xeb, 0xff, 0xff, 0xff\n    }, {\n        0x4C, 0x8b, 0x05, 0xe9, 0xff, 0xff, 0xff,\n        0xff, 0x25, 0xeb, 0xff, 0xff, 0xff\n    }, {\n        0x4C, 0x8b, 0x0d, 0xe9, 0xff, 0xff, 0xff,\n        0xff, 0x25, 0xeb, 0xff, 0xff, 0xff\n    },\n};\n"));
+	} else if (pref->arch == v__pref__Arch__arm64) {
+		strings__Builder_write_string(&builder,  str_intp(7, _MOV((StrIntpData[]){{_SLIT("\nstatic unsigned char __closure_thunk[6][12] = {\n    {\n        "), 0xfe10, {.d_s = v__gen__c__arm_bytes(0)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm_bytes(1)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm_bytes(2)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm_bytes(3)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm_bytes(4)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm_bytes(5)}}, {_SLIT("\n    },\n};\n"), 0, { .d_c = 0 }}})));
 	}
 	strings__Builder_write_string(&builder, _SLIT("\nstatic void __closure_set_data(void *closure, void *data) {\n    void **p = closure;\n    p[-2] = data;\n}\n\nstatic void __closure_set_function(void *closure, void *f) {\n    void **p = closure;\n    p[-1] = f;\n}\n"));
 	if (pref->os != v__pref__OS__windows) {
