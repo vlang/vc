@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5e5c78e"
+#define V_COMMIT_HASH "2ab861e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "de92f81"
+	#define V_COMMIT_HASH "5e5c78e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5e5c78e"
+	#define V_CURRENT_COMMIT_HASH "2ab861e"
 #endif
 
 // V comptime_defines:
@@ -30774,7 +30774,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("de92f81");
+	string vhash = _SLIT("5e5c78e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -68791,6 +68791,7 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_ref_or_deref_arg(v__gen__c__Gen* g, v
 		v__gen__c__Gen_checker_bug(g, _SLIT("ref_or_deref_arg expected_type is 0"), arg.pos);
 	}
 	v__ast__TypeSymbol* exp_sym = v__ast__Table_get_type_symbol(g->table, expected_type);
+	v__ast__Type arg_typ = v__gen__c__Gen_unwrap_generic(g, arg.typ);
 	bool needs_closing = false;
 	if (arg.is_mut && !arg_is_ptr) {
 		v__gen__c__Gen_write(g, _SLIT("&/*mut*/"));
@@ -68809,10 +68810,10 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_ref_or_deref_arg(v__gen__c__Gen* g, v
 			}
 		}
 		if (!g->is_json_fn) {
-			if (arg.typ == 0) {
+			if (arg_typ == 0) {
 				v__gen__c__Gen_checker_bug(g, _SLIT("ref_or_deref_arg arg.typ is 0"), arg.pos);
 			}
-			v__ast__TypeSymbol* arg_typ_sym = v__ast__Table_get_type_symbol(g->table, arg.typ);
+			v__ast__TypeSymbol* arg_typ_sym = v__ast__Table_get_type_symbol(g->table, arg_typ);
 			v__ast__Type expected_deref_type = (v__ast__Type_is_ptr(expected_type) ? (v__ast__Type_deref(expected_type)) : (expected_type));
 			v__ast__TypeSymbol* deref_sym = v__ast__Table_get_type_symbol(g->table, expected_deref_type);
 			if (!((arg_typ_sym->kind == v__ast__Kind__function) || (deref_sym->kind == v__ast__Kind__sum_type || deref_sym->kind == v__ast__Kind__interface_)) && lang != v__ast__Language__c) {
@@ -68832,7 +68833,7 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_ref_or_deref_arg(v__gen__c__Gen* g, v
 				}
 			}
 		}
-	} else if (v__ast__Type_has_flag(arg.typ, v__ast__TypeFlag__shared_f) && !v__ast__Type_has_flag(expected_type, v__ast__TypeFlag__shared_f)) {
+	} else if (v__ast__Type_has_flag(arg_typ, v__ast__TypeFlag__shared_f) && !v__ast__Type_has_flag(expected_type, v__ast__TypeFlag__shared_f)) {
 		if (v__ast__Type_is_ptr(expected_type)) {
 			v__gen__c__Gen_write(g, _SLIT("&"));
 		}
@@ -68840,7 +68841,7 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_ref_or_deref_arg(v__gen__c__Gen* g, v
 		v__gen__c__Gen_write(g, _SLIT("->val"));
 		return;
 	}
-	v__gen__c__Gen_expr_with_cast(g, arg.expr, arg.typ, expected_type);
+	v__gen__c__Gen_expr_with_cast(g, arg.expr, arg_typ, expected_type);
 	if (needs_closing) {
 		v__gen__c__Gen_write(g, _SLIT(")"));
 	}
