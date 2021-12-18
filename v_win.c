@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "50d988e"
+#define V_COMMIT_HASH "7c255f0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "75830f1"
+	#define V_COMMIT_HASH "50d988e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "50d988e"
+	#define V_CURRENT_COMMIT_HASH "7c255f0"
 #endif
 
 // V comptime_defines:
@@ -6614,6 +6614,7 @@ string strconv__format_dec_old(u64 d, strconv__BF_param p);
 VV_LOCAL_SYMBOL array __new_array(int mylen, int cap, int elm_size);
 VV_LOCAL_SYMBOL array __new_array_with_default(int mylen, int cap, int elm_size, voidptr val);
 VV_LOCAL_SYMBOL array __new_array_with_array_default(int mylen, int cap, int elm_size, array val);
+VV_LOCAL_SYMBOL array __new_array_with_map_default(int mylen, int cap, int elm_size, map val);
 VV_LOCAL_SYMBOL array new_array_from_c_array(int len, int cap, int elm_size, voidptr c_array);
 VV_LOCAL_SYMBOL array new_array_from_c_array_no_alloc(int len, int cap, int elm_size, voidptr c_array);
 VV_LOCAL_SYMBOL void array_ensure_cap(array* a, int required);
@@ -15419,6 +15420,16 @@ VV_LOCAL_SYMBOL array __new_array_with_array_default(int mylen, int cap, int elm
 	array arr = (array){.element_size = elm_size,.data = _v_malloc(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,.flags = 0,};
 	for (int i = 0; i < arr.len; ++i) {
 		array val_clone = array_clone_to_depth(&val, 1);
+		array_set_unsafe(&arr, i, &val_clone);
+	}
+	return arr;
+}
+
+VV_LOCAL_SYMBOL array __new_array_with_map_default(int mylen, int cap, int elm_size, map val) {
+	int cap_ = (cap < mylen ? (mylen) : (cap));
+	array arr = (array){.element_size = elm_size,.data = _v_malloc(cap_ * elm_size),.offset = 0,.len = mylen,.cap = cap_,.flags = 0,};
+	for (int i = 0; i < arr.len; ++i) {
+		map val_clone = map_clone(&val);
 		array_set_unsafe(&arr, i, &val_clone);
 	}
 	return arr;
@@ -30759,7 +30770,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("75830f1");
+	string vhash = _SLIT("50d988e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -55224,6 +55235,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayI
 	string noscan = v__gen__c__Gen_check_noscan(g, elem_type.typ);
 	if (node.exprs.len == 0) {
 		bool is_default_array = elem_type.unaliased_sym->kind == v__ast__Kind__array && node.has_default;
+		bool is_default_map = elem_type.unaliased_sym->kind == v__ast__Kind__map && node.has_default;
 		if (node.has_it) {
 			g->inside_lambda = true;
 			string tmp = v__gen__c__Gen_new_tmp_var(g);
@@ -55236,6 +55248,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayI
 			v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ret_typ}}, {_SLIT(" "), 0xfe10, {.d_s = tmp}}, {_SLIT(" ="), 0, { .d_c = 0 }}})));
 			if (is_default_array) {
 				v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("__new_array_with_array_default"), 0xfe10, {.d_s = noscan}}, {_SLIT("("), 0, { .d_c = 0 }}})));
+			} else if (is_default_map) {
+				v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("__new_array_with_map_default"), 0xfe10, {.d_s = noscan}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("__new_array_with_default"), 0xfe10, {.d_s = noscan}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 			}
@@ -55300,6 +55314,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayI
 		}
 		if (is_default_array) {
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("__new_array_with_array_default"), 0xfe10, {.d_s = noscan}}, {_SLIT("("), 0, { .d_c = 0 }}})));
+		} else if (is_default_map) {
+			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("__new_array_with_map_default"), 0xfe10, {.d_s = noscan}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 		} else {
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("__new_array_with_default"), 0xfe10, {.d_s = noscan}}, {_SLIT("("), 0, { .d_c = 0 }}})));
 		}
@@ -55320,7 +55336,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayI
 		} else {
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sizeof("), 0xfe10, {.d_s = elem_styp}}, {_SLIT("), "), 0, { .d_c = 0 }}})));
 		}
-		if (is_default_array) {
+		if (is_default_array || is_default_map) {
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("("), 0xfe10, {.d_s = elem_styp}}, {_SLIT("[]){"), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_expr(g, node.default_expr);
 			v__gen__c__Gen_write(g, _SLIT("}[0])"));
