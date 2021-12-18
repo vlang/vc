@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "de92f81"
+#define V_COMMIT_HASH "5e5c78e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3a50448"
+	#define V_COMMIT_HASH "de92f81"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "de92f81"
+	#define V_CURRENT_COMMIT_HASH "5e5c78e"
 #endif
 
 // V comptime_defines:
@@ -5487,22 +5487,24 @@ struct v__gen__c__Gen {
 	int tmp_count2;
 	int tmp_count_declarations;
 	int global_tmp_count;
-	bool is_assign_lhs;
 	bool discard_or_result;
+	bool is_assign_lhs;
 	bool is_void_expr_stmt;
 	bool is_arraymap_set;
 	bool is_amp;
 	bool is_sql;
 	bool is_shared;
 	bool is_vlines_enabled;
-	int inside_cast_in_heap;
-	int arraymap_set_pos;
+	bool is_autofree;
+	bool is_builtin_mod;
+	bool is_json_fn;
+	bool is_js_call;
+	bool is_fn_index_call;
 	string vlines_path;
 	Map_string_string optionals;
 	__shared__Array_string* done_optionals;
 	Map_string_string chan_pop_optionals;
 	Map_string_string chan_push_optionals;
-	v__ast__LockExpr cur_lock;
 	string mtxs;
 	Map_string_v__ast__Stmt_ptr labeled_loops;
 	v__ast__Stmt* inner_loop;
@@ -5514,31 +5516,42 @@ struct v__gen__c__Gen {
 	bool inside_opt_data;
 	bool inside_if_optional;
 	bool inside_match_optional;
+	bool inside_vweb_tmpl;
+	bool inside_return;
+	bool inside_or_block;
+	bool inside_call;
+	int inside_cast_in_heap;
+	bool inside_const;
+	bool inside_lambda;
 	int loop_depth;
 	Map_string_string ternary_names;
 	Map_string_Array_string ternary_level_names;
+	int arraymap_set_pos;
 	Array_int stmt_path_pos;
 	bool skip_stmt_pos;
 	bool right_is_opt;
-	bool is_autofree;
 	int indent;
 	bool empty_line;
 	v__token__Kind assign_op;
 	Array_v__ast__DeferStmt defer_stmts;
 	string defer_ifdef;
 	string defer_profile_code;
+	Array_string defer_vars;
 	Array_v__gen__c__StrType str_types;
 	Array_v__gen__c__StrType generated_str_fns;
 	__shared__Array_string* threaded_fns;
 	Array_string waiter_fns;
+	Array_v__ast__Type needed_equality_fns;
+	Array_v__ast__Type generated_eq_fns;
+	__shared__Array_string* array_sort_fn;
+	Array_v__ast__Type array_contains_types;
+	Array_v__ast__Type array_index_types;
 	Array_string auto_fn_definitions;
 	Array_v__gen__c__SumtypeCastingFn sumtype_casting_fns;
 	Array_string anon_fn_definitions;
 	Map_int_bool sumtype_definitions;
-	bool is_json_fn;
 	Array_v__ast__Type json_types;
 	Array_v__gen__c__ProfileCounterMeta pcs;
-	bool is_builtin_mod;
 	Array_string hotcode_fn_names;
 	Array_v__ast__EmbeddedFile embedded_files;
 	int sql_i;
@@ -5551,44 +5564,31 @@ struct v__gen__c__Gen {
 	string sql_fkey;
 	string sql_parent_id;
 	v__gen__c__SqlExprSide sql_side;
-	bool inside_vweb_tmpl;
-	bool inside_return;
-	bool inside_or_block;
 	Array_string strs_to_free0;
-	bool inside_call;
-	bool has_main;
-	bool inside_const;
 	string comptime_for_method;
 	string comptime_for_field_var;
 	v__ast__StructField comptime_for_field_value;
 	v__ast__Type comptime_for_field_type;
 	Map_string_v__ast__Type comptime_var_type_map;
-	string called_fn_name;
-	v__ast__Module cur_mod;
-	bool is_js_call;
-	bool is_fn_index_call;
-	bool inside_lambda;
 	bool prevent_sum_type_unwrapping_once;
 	int aggregate_type_idx;
-	string returned_var_name;
 	int branch_parent_pos;
+	string returned_var_name;
 	string infix_left_var_name;
+	string called_fn_name;
 	v__util__Timers* timers;
 	bool force_main_console;
 	Map_string_string as_cast_type_names;
 	Map_string_string obf_table;
 	int nr_closures;
-	__shared__Array_string* array_sort_fn;
 	v__ast__Type expected_cast_type;
-	Array_string defer_vars;
 	bool anon_fn;
 	bool tests_inited;
+	bool has_main;
+	v__ast__Module cur_mod;
 	Array_v__ast__Type cur_concrete_types;
 	v__ast__FnDecl* cur_fn;
-	Array_v__ast__Type needed_equality_fns;
-	Array_v__ast__Type generated_eq_fns;
-	Array_v__ast__Type array_contains_types;
-	Array_v__ast__Type array_index_types;
+	v__ast__LockExpr cur_lock;
 };
 
 
@@ -30774,7 +30774,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("3a50448");
+	string vhash = _SLIT("de92f81");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -57979,22 +57979,24 @@ string v__gen__c__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pre
 		.tmp_count2 = 0,
 		.tmp_count_declarations = 0,
 		.global_tmp_count = 0,
-		.is_assign_lhs = 0,
 		.discard_or_result = 0,
+		.is_assign_lhs = 0,
 		.is_void_expr_stmt = 0,
 		.is_arraymap_set = 0,
 		.is_amp = 0,
 		.is_sql = 0,
 		.is_shared = 0,
 		.is_vlines_enabled = 0,
-		.inside_cast_in_heap = 0,
-		.arraymap_set_pos = 0,
+		.is_autofree = pref->autofree,
+		.is_builtin_mod = 0,
+		.is_json_fn = 0,
+		.is_js_call = 0,
+		.is_fn_index_call = 0,
 		.vlines_path = (string){.str=(byteptr)"", .is_lit=1},
 		.optionals = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.done_optionals = (__shared__Array_string*)__dup_shared_array(&(__shared__Array_string){.mtx = {0}, .val =__new_array(0, 0, sizeof(string))}, sizeof(__shared__Array_string)),
 		.chan_pop_optionals = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.chan_push_optionals = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
-		.cur_lock = (v__ast__LockExpr){.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.is_rlock = __new_array(0, 0, sizeof(bool)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.lockeds = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.is_expr = 0,.typ = 0,.scope = 0,},
 		.mtxs = (string){.str=(byteptr)"", .is_lit=1},
 		.labeled_loops = new_map(sizeof(string), sizeof(v__ast__Stmt*), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.inner_loop = HEAP(v__ast__Stmt, v__ast__EmptyStmt_to_sumtype_v__ast__Stmt((v__ast__EmptyStmt*)memdup(&(v__ast__EmptyStmt){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},}, sizeof(v__ast__EmptyStmt)))),
@@ -58006,31 +58008,42 @@ string v__gen__c__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pre
 		.inside_opt_data = 0,
 		.inside_if_optional = 0,
 		.inside_match_optional = 0,
+		.inside_vweb_tmpl = 0,
+		.inside_return = 0,
+		.inside_or_block = 0,
+		.inside_call = 0,
+		.inside_cast_in_heap = 0,
+		.inside_const = 0,
+		.inside_lambda = 0,
 		.loop_depth = 0,
 		.ternary_names = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.ternary_level_names = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
+		.arraymap_set_pos = 0,
 		.stmt_path_pos = __new_array(0, 0, sizeof(int)),
 		.skip_stmt_pos = 0,
 		.right_is_opt = 0,
-		.is_autofree = pref->autofree,
 		.indent = -1,
 		.empty_line = 0,
 		.assign_op = 0,
 		.defer_stmts = __new_array(0, 0, sizeof(v__ast__DeferStmt)),
 		.defer_ifdef = (string){.str=(byteptr)"", .is_lit=1},
 		.defer_profile_code = (string){.str=(byteptr)"", .is_lit=1},
+		.defer_vars = __new_array(0, 0, sizeof(string)),
 		.str_types = __new_array(0, 0, sizeof(v__gen__c__StrType)),
 		.generated_str_fns = __new_array(0, 0, sizeof(v__gen__c__StrType)),
 		.threaded_fns = (__shared__Array_string*)__dup_shared_array(&(__shared__Array_string){.mtx = {0}, .val =__new_array(0, 0, sizeof(string))}, sizeof(__shared__Array_string)),
 		.waiter_fns = __new_array(0, 0, sizeof(string)),
+		.needed_equality_fns = __new_array(0, 0, sizeof(v__ast__Type)),
+		.generated_eq_fns = __new_array(0, 0, sizeof(v__ast__Type)),
+		.array_sort_fn = (__shared__Array_string*)__dup_shared_array(&(__shared__Array_string){.mtx = {0}, .val =__new_array(0, 0, sizeof(string))}, sizeof(__shared__Array_string)),
+		.array_contains_types = __new_array(0, 0, sizeof(v__ast__Type)),
+		.array_index_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.auto_fn_definitions = __new_array(0, 0, sizeof(string)),
 		.sumtype_casting_fns = __new_array(0, 0, sizeof(v__gen__c__SumtypeCastingFn)),
 		.anon_fn_definitions = __new_array(0, 0, sizeof(string)),
 		.sumtype_definitions = new_map(sizeof(int), sizeof(bool), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),
-		.is_json_fn = 0,
 		.json_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.pcs = __new_array(0, 0, sizeof(v__gen__c__ProfileCounterMeta)),
-		.is_builtin_mod = 0,
 		.hotcode_fn_names = __new_array(0, 0, sizeof(string)),
 		.embedded_files = __new_array(0, 0, sizeof(v__ast__EmbeddedFile)),
 		.sql_i = 0,
@@ -58043,44 +58056,31 @@ string v__gen__c__gen(Array_v__ast__File_ptr files, v__ast__Table* table, v__pre
 		.sql_fkey = (string){.str=(byteptr)"", .is_lit=1},
 		.sql_parent_id = (string){.str=(byteptr)"", .is_lit=1},
 		.sql_side = 0,
-		.inside_vweb_tmpl = 0,
-		.inside_return = 0,
-		.inside_or_block = 0,
 		.strs_to_free0 = __new_array(0, 0, sizeof(string)),
-		.inside_call = 0,
-		.has_main = 0,
-		.inside_const = 0,
 		.comptime_for_method = (string){.str=(byteptr)"", .is_lit=1},
 		.comptime_for_field_var = (string){.str=(byteptr)"", .is_lit=1},
 		.comptime_for_field_value = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},
 		.comptime_for_field_type = 0,
 		.comptime_var_type_map = new_map(sizeof(string), sizeof(v__ast__Type), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
-		.called_fn_name = (string){.str=(byteptr)"", .is_lit=1},
-		.cur_mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},
-		.is_js_call = 0,
-		.is_fn_index_call = 0,
-		.inside_lambda = 0,
 		.prevent_sum_type_unwrapping_once = 0,
 		.aggregate_type_idx = 0,
-		.returned_var_name = (string){.str=(byteptr)"", .is_lit=1},
 		.branch_parent_pos = 0,
+		.returned_var_name = (string){.str=(byteptr)"", .is_lit=1},
 		.infix_left_var_name = (string){.str=(byteptr)"", .is_lit=1},
+		.called_fn_name = (string){.str=(byteptr)"", .is_lit=1},
 		.timers = v__util__new_timers((v__util__TimerParams){.should_print = timers_should_print,.label = _SLIT("global_cgen"),}),
 		.force_main_console = 0,
 		.as_cast_type_names = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.obf_table = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.nr_closures = 0,
-		.array_sort_fn = (__shared__Array_string*)__dup_shared_array(&(__shared__Array_string){.mtx = {0}, .val =__new_array(0, 0, sizeof(string))}, sizeof(__shared__Array_string)),
 		.expected_cast_type = 0,
-		.defer_vars = __new_array(0, 0, sizeof(string)),
 		.anon_fn = 0,
 		.tests_inited = 0,
+		.has_main = 0,
+		.cur_mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},
 		.cur_concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.cur_fn = 0,
-		.needed_equality_fns = __new_array(0, 0, sizeof(v__ast__Type)),
-		.generated_eq_fns = __new_array(0, 0, sizeof(v__ast__Type)),
-		.array_contains_types = __new_array(0, 0, sizeof(v__ast__Type)),
-		.array_index_types = __new_array(0, 0, sizeof(v__ast__Type)),
+		.cur_lock = (v__ast__LockExpr){.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.is_rlock = __new_array(0, 0, sizeof(bool)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.lockeds = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.is_expr = 0,.typ = 0,.scope = 0,},
 	};
 	if (pref->is_test) {
 		v__gen__c__Gen_write_tests_definitions(&global_g);
@@ -58606,22 +58606,24 @@ VV_LOCAL_SYMBOL v__gen__c__Gen* v__gen__c__cgen_process_one_file_cb(sync__pool__
 		.tmp_count2 = 0,
 		.tmp_count_declarations = 0,
 		.global_tmp_count = 0,
-		.is_assign_lhs = 0,
 		.discard_or_result = 0,
+		.is_assign_lhs = 0,
 		.is_void_expr_stmt = 0,
 		.is_arraymap_set = 0,
 		.is_amp = 0,
 		.is_sql = 0,
 		.is_shared = 0,
 		.is_vlines_enabled = 0,
-		.inside_cast_in_heap = 0,
-		.arraymap_set_pos = 0,
+		.is_autofree = global_g->pref->autofree,
+		.is_builtin_mod = 0,
+		.is_json_fn = 0,
+		.is_js_call = 0,
+		.is_fn_index_call = 0,
 		.vlines_path = (string){.str=(byteptr)"", .is_lit=1},
 		.optionals = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.done_optionals = global_g->done_optionals,
 		.chan_pop_optionals = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.chan_push_optionals = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
-		.cur_lock = (v__ast__LockExpr){.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.is_rlock = __new_array(0, 0, sizeof(bool)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.lockeds = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.is_expr = 0,.typ = 0,.scope = 0,},
 		.mtxs = (string){.str=(byteptr)"", .is_lit=1},
 		.labeled_loops = new_map(sizeof(string), sizeof(v__ast__Stmt*), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.inner_loop = HEAP(v__ast__Stmt, v__ast__EmptyStmt_to_sumtype_v__ast__Stmt((v__ast__EmptyStmt*)memdup(&(v__ast__EmptyStmt){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},}, sizeof(v__ast__EmptyStmt)))),
@@ -58633,31 +58635,42 @@ VV_LOCAL_SYMBOL v__gen__c__Gen* v__gen__c__cgen_process_one_file_cb(sync__pool__
 		.inside_opt_data = 0,
 		.inside_if_optional = 0,
 		.inside_match_optional = 0,
+		.inside_vweb_tmpl = 0,
+		.inside_return = 0,
+		.inside_or_block = 0,
+		.inside_call = 0,
+		.inside_cast_in_heap = 0,
+		.inside_const = 0,
+		.inside_lambda = 0,
 		.loop_depth = 0,
 		.ternary_names = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.ternary_level_names = new_map(sizeof(string), sizeof(Array_string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
+		.arraymap_set_pos = 0,
 		.stmt_path_pos = __new_array(0, 0, sizeof(int)),
 		.skip_stmt_pos = 0,
 		.right_is_opt = 0,
-		.is_autofree = global_g->pref->autofree,
 		.indent = -1,
 		.empty_line = 0,
 		.assign_op = 0,
 		.defer_stmts = __new_array(0, 0, sizeof(v__ast__DeferStmt)),
 		.defer_ifdef = (string){.str=(byteptr)"", .is_lit=1},
 		.defer_profile_code = (string){.str=(byteptr)"", .is_lit=1},
+		.defer_vars = __new_array(0, 0, sizeof(string)),
 		.str_types = __new_array(0, 0, sizeof(v__gen__c__StrType)),
 		.generated_str_fns = __new_array(0, 0, sizeof(v__gen__c__StrType)),
 		.threaded_fns = global_g->threaded_fns,
 		.waiter_fns = __new_array(0, 0, sizeof(string)),
+		.needed_equality_fns = __new_array(0, 0, sizeof(v__ast__Type)),
+		.generated_eq_fns = __new_array(0, 0, sizeof(v__ast__Type)),
+		.array_sort_fn = global_g->array_sort_fn,
+		.array_contains_types = __new_array(0, 0, sizeof(v__ast__Type)),
+		.array_index_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.auto_fn_definitions = __new_array(0, 0, sizeof(string)),
 		.sumtype_casting_fns = __new_array(0, 0, sizeof(v__gen__c__SumtypeCastingFn)),
 		.anon_fn_definitions = __new_array(0, 0, sizeof(string)),
 		.sumtype_definitions = new_map(sizeof(int), sizeof(bool), &map_hash_int_4, &map_eq_int_4, &map_clone_int_4, &map_free_nop),
-		.is_json_fn = 0,
 		.json_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.pcs = __new_array(0, 0, sizeof(v__gen__c__ProfileCounterMeta)),
-		.is_builtin_mod = 0,
 		.hotcode_fn_names = __new_array(0, 0, sizeof(string)),
 		.embedded_files = __new_array(0, 0, sizeof(v__ast__EmbeddedFile)),
 		.sql_i = 0,
@@ -58670,44 +58683,31 @@ VV_LOCAL_SYMBOL v__gen__c__Gen* v__gen__c__cgen_process_one_file_cb(sync__pool__
 		.sql_fkey = (string){.str=(byteptr)"", .is_lit=1},
 		.sql_parent_id = (string){.str=(byteptr)"", .is_lit=1},
 		.sql_side = 0,
-		.inside_vweb_tmpl = 0,
-		.inside_return = 0,
-		.inside_or_block = 0,
 		.strs_to_free0 = __new_array(0, 0, sizeof(string)),
-		.inside_call = 0,
-		.has_main = 0,
-		.inside_const = 0,
 		.comptime_for_method = (string){.str=(byteptr)"", .is_lit=1},
 		.comptime_for_field_var = (string){.str=(byteptr)"", .is_lit=1},
 		.comptime_for_field_value = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},
 		.comptime_for_field_type = 0,
 		.comptime_var_type_map = new_map(sizeof(string), sizeof(v__ast__Type), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
-		.called_fn_name = (string){.str=(byteptr)"", .is_lit=1},
-		.cur_mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},
-		.is_js_call = 0,
-		.is_fn_index_call = 0,
-		.inside_lambda = 0,
 		.prevent_sum_type_unwrapping_once = 0,
 		.aggregate_type_idx = 0,
-		.returned_var_name = (string){.str=(byteptr)"", .is_lit=1},
 		.branch_parent_pos = 0,
+		.returned_var_name = (string){.str=(byteptr)"", .is_lit=1},
 		.infix_left_var_name = (string){.str=(byteptr)"", .is_lit=1},
+		.called_fn_name = (string){.str=(byteptr)"", .is_lit=1},
 		.timers = v__util__new_timers((v__util__TimerParams){.should_print = global_g->timers_should_print,.label =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cgen_process_one_file_cb idx: "), 0xfe07, {.d_i32 = idx}}, {_SLIT(", wid: "), 0xfe07, {.d_i32 = wid}}, {_SLIT0, 0, { .d_c = 0 }}})),}),
 		.force_main_console = 0,
 		.as_cast_type_names = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.obf_table = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),
 		.nr_closures = 0,
-		.array_sort_fn = global_g->array_sort_fn,
 		.expected_cast_type = 0,
-		.defer_vars = __new_array(0, 0, sizeof(string)),
 		.anon_fn = 0,
 		.tests_inited = 0,
+		.has_main = 0,
+		.cur_mod = (v__ast__Module){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_skipped = 0,},
 		.cur_concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.cur_fn = 0,
-		.needed_equality_fns = __new_array(0, 0, sizeof(v__ast__Type)),
-		.generated_eq_fns = __new_array(0, 0, sizeof(v__ast__Type)),
-		.array_contains_types = __new_array(0, 0, sizeof(v__ast__Type)),
-		.array_index_types = __new_array(0, 0, sizeof(v__ast__Type)),
+		.cur_lock = (v__ast__LockExpr){.stmts = __new_array(0, 0, sizeof(v__ast__Stmt)),.is_rlock = __new_array(0, 0, sizeof(bool)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.lockeds = __new_array(0, 0, sizeof(v__ast__Expr)),.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.is_expr = 0,.typ = 0,.scope = 0,},
 	}, sizeof(v__gen__c__Gen));
 	v__gen__c__Gen_gen_file(g);
 	v__gen__c__Gen* _t1 = g;
@@ -59132,9 +59132,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_optional_type_text(v__gen__c__Gen* g, stri
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__Gen_register_optional(v__gen__c__Gen* g, v__ast__Type t) {
-	multi_return_string_string mr_33943 = v__gen__c__Gen_optional_type_name(g, t);
-	string styp = mr_33943.arg0;
-	string base = mr_33943.arg1;
+	multi_return_string_string mr_33945 = v__gen__c__Gen_optional_type_name(g, t);
+	string styp = mr_33945.arg0;
+	string base = mr_33945.arg1;
 	map_set(&g->optionals, &(string[]){base}, &(string[]) { styp });
 	string _t1 = styp;
 	return _t1;
@@ -60461,8 +60461,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_sumtype_casting_fn(v__gen__c__Gen* g, 
 			*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t4.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 		}
 		
- 		Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_72914 =  _t4 /*U*/;
-		Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_72914.data).arg1;
+ 		Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_72916 =  _t4 /*U*/;
+		Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_72916.data).arg1;
 		if (embed_types.len > 0) {
 			v__ast__TypeSymbol* embed_sym = v__ast__Table_get_type_symbol(g->table, (*(v__ast__Type*)array_last(embed_types)));
 			ptr =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__TypeSymbol_embed_name(embed_sym)}}, {_SLIT("_ptr"), 0, { .d_c = 0 }}}));
@@ -62975,11 +62975,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, unwrap_val_typ);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_get_type_symbol(g->table, unwrap_val_typ);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_get_final_type_symbol(g->table, unwrap_key_typ);
-	multi_return_string_string_string_string mr_142901 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_142901.arg0;
-	string key_eq_fn = mr_142901.arg1;
-	string clone_fn = mr_142901.arg2;
-	string free_fn = mr_142901.arg3;
+	multi_return_string_string_string_string mr_142903 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_142903.arg0;
+	string key_eq_fn = mr_142903.arg1;
+	string clone_fn = mr_142903.arg2;
+	string free_fn = mr_142903.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -64596,9 +64596,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*sym->info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_190078 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_190078.arg0;
-						string base = mr_190078.arg1;
+						multi_return_string_string mr_190080 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_190080.arg0;
+						string base = mr_190080.arg1;
 						sync__RwMutex_lock(&g->done_optionals->mtx);
 						/*lock*/ {
 							if (!Array_string_contains(g->done_optionals->val, base)) {
@@ -64854,11 +64854,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_198794 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_198794.arg0;
-				string pafile = mr_198794.arg1;
-				string pamod = mr_198794.arg2;
-				string pafn = mr_198794.arg3;
+				multi_return_int_string_string_string mr_198796 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_198796.arg0;
+				string pafile = mr_198796.arg1;
+				string pamod = mr_198796.arg2;
+				string pafn = mr_198796.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -64963,11 +64963,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 			{
 				v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 				v__ast__TypeSymbol* key_typ = v__ast__Table_get_type_symbol(g->table, info.key_type);
-				multi_return_string_string_string_string mr_201462 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-				string hash_fn = mr_201462.arg0;
-				string key_eq_fn = mr_201462.arg1;
-				string clone_fn = mr_201462.arg2;
-				string free_fn = mr_201462.arg3;
+				multi_return_string_string_string_string mr_201464 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+				string hash_fn = mr_201464.arg0;
+				string key_eq_fn = mr_201464.arg1;
+				string clone_fn = mr_201464.arg2;
+				string free_fn = mr_201464.arg3;
 				string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 				string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 				string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -65684,8 +65684,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls(st, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_222435 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
-					Array_string fargs = mr_222435.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_222437 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
+					Array_string fargs = mr_222437.arg0;
 					strings__Builder_write_string(&methods_wrapper, strings__Builder_cut_last(&g->out, g->out.len - params_start_pos));
 					strings__Builder_writeln(&methods_wrapper, _SLIT(") {"));
 					strings__Builder_write_string(&methods_wrapper, _SLIT("\t"));
@@ -65698,8 +65698,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 						*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t25.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=(v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 					}
 					
- 					Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_222743 =  _t25 /*U*/;
-					Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_222743.data).arg1;
+ 					Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_222745 =  _t25 /*U*/;
+					Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_222745.data).arg1;
 					if (embed_types.len > 0 && !Array_string_contains(method_names, method.name)) {
 						v__ast__TypeSymbol* embed_sym = v__ast__Table_get_type_symbol(g->table, (*(v__ast__Type*)array_last(embed_types)));
 						string method_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = embed_sym->cname}}, {_SLIT("_"), 0xfe10, {.d_s = method.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
