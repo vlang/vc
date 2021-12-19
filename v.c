@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "840a92c"
+#define V_COMMIT_HASH "d079753"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cd0b581"
+	#define V_COMMIT_HASH "840a92c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "840a92c"
+	#define V_CURRENT_COMMIT_HASH "d079753"
 #endif
 
 // V comptime_definitions:
@@ -7331,7 +7331,6 @@ time__Time time__new_time(time__Time t);
 i64 time__ticks(void);
 string time__Time_str(time__Time t);
 VV_LOCAL_SYMBOL time__Time time__convert_ctime(struct tm t, int microsecond);
-time__Duration _const_time__infinite; // inited later
 string _const_time__days_string; // a string literal, inited later
 Array_int _const_time__month_days; // inited later
 string _const_time__months_string; // a string literal, inited later
@@ -7367,12 +7366,14 @@ time__Duration _const_time__millisecond; // inited later
 time__Duration _const_time__second; // inited later
 time__Duration _const_time__minute; // inited later
 time__Duration _const_time__hour; // inited later
+time__Duration _const_time__infinite; // inited later
 i64 time__Duration_nanoseconds(time__Duration d);
 i64 time__Duration_microseconds(time__Duration d);
 i64 time__Duration_milliseconds(time__Duration d);
 f64 time__Duration_seconds(time__Duration d);
 f64 time__Duration_minutes(time__Duration d);
 f64 time__Duration_hours(time__Duration d);
+string time__Duration_str(time__Duration d);
 int time__offset(void);
 VV_LOCAL_SYMBOL u64 time__sys_mono_now_darwin(void);
 time__Time time__darwin_now(void);
@@ -27288,6 +27289,47 @@ f64 time__Duration_hours(time__Duration d) {
 	return _t1;
 }
 
+string time__Duration_str(time__Duration d) {
+	if (time__Duration_alias_eq(d, _const_time__infinite)) {
+		string _t1 = _SLIT("inf");
+		return _t1;
+	}
+	i64 t = ((i64)(d));
+	i64 hr = t / _const_time__hour;
+	t -= hr * _const_time__hour;
+	i64 min = t / _const_time__minute;
+	t -= min * _const_time__minute;
+	i64 sec = t / _const_time__second;
+	t -= sec * _const_time__second;
+	i64 ms = t / _const_time__millisecond;
+	t -= ms * _const_time__millisecond;
+	i64 us = t / _const_time__microsecond;
+	t -= us * _const_time__microsecond;
+	i64 ns = t;
+	if (hr > 0) {
+		string _t2 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe09, {.d_i64 = hr}}, {_SLIT(":"), 0x8004fe29, {.d_i64 = min}}, {_SLIT(":"), 0x8004fe29, {.d_i64 = sec}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		return _t2;
+	}
+	if (min > 0) {
+		string _t3 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe09, {.d_i64 = min}}, {_SLIT(":"), 0x8004fe29, {.d_i64 = sec}}, {_SLIT("."), 0x8006fe29, {.d_i64 = ms}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		return _t3;
+	}
+	if (sec > 0) {
+		string _t4 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe09, {.d_i64 = sec}}, {_SLIT("."), 0x8006fe29, {.d_i64 = ms}}, {_SLIT("s"), 0, { .d_c = 0 }}}));
+		return _t4;
+	}
+	if (ms > 0) {
+		string _t5 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe09, {.d_i64 = ms}}, {_SLIT("."), 0x8006fe29, {.d_i64 = us}}, {_SLIT("ms"), 0, { .d_c = 0 }}}));
+		return _t5;
+	}
+	if (us > 0) {
+		string _t6 =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe09, {.d_i64 = us}}, {_SLIT("."), 0x8006fe29, {.d_i64 = ns}}, {_SLIT("us"), 0, { .d_c = 0 }}}));
+		return _t6;
+	}
+	string _t7 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe09, {.d_i64 = ns}}, {_SLIT("ns"), 0, { .d_c = 0 }}}));
+	return _t7;
+}
+
 int time__offset(void) {
 	time__Time t = time__now();
 	time__Time local = time__Time_local(t);
@@ -32030,7 +32072,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("cd0b581");
+	string vhash = _SLIT("840a92c");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -87745,7 +87787,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__token__precedences = v__token__build_precedences();
 	}
 	{ // Initializations for module time :
-	_const_time__infinite = ((time__Duration)(INT64_MAX));
 	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
 		31, 28, 31, 30, 31, 30, 31, 31, 30,
 		31, 30, 31}));
@@ -87760,6 +87801,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_time__second = ((1000 * _const_time__millisecond));
 	_const_time__minute = ((60 * _const_time__second));
 	_const_time__hour = ((60 * _const_time__minute));
+	_const_time__infinite = ((((i64)(9223372036854775807))));
 	}
 	{ // Initializations for module v.dotgraph :
 	}
