@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c85c2a"
+#define V_COMMIT_HASH "f81654e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d079753"
+	#define V_COMMIT_HASH "7c85c2a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c85c2a"
+	#define V_CURRENT_COMMIT_HASH "f81654e"
 #endif
 
 // V comptime_definitions:
@@ -6943,6 +6943,7 @@ string string_repeat(string s, int count);
 Array_string string_fields(string s);
 string string_strip_margin(string s);
 string string_strip_margin_custom(string s, byte del);
+bool string_match_glob(string name, string pattern);
 Array_byte byteptr_vbytes(byteptr data, int len);
 string byteptr_vstring(byteptr bp);
 string byteptr_vstring_with_len(byteptr bp, int len);
@@ -20166,6 +20167,91 @@ string string_strip_margin_custom(string s, byte del) {
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
 
+// Attr: [direct_array_access]
+bool string_match_glob(string name, string pattern) {
+	int px = 0;
+	int nx = 0;
+	int next_px = 0;
+	int next_nx = 0;
+	int plen = pattern.len;
+	int nlen = name.len;
+	for (;;) {
+		if (!(px < plen || nx < nlen)) break;
+		if (px < plen) {
+			byte c = pattern.str[ px];
+
+			if (c == ('?')) {
+				if (nx < nlen) {
+					px++;
+					nx++;
+					continue;
+				}
+			}
+			else if (c == ('*')) {
+				next_px = px;
+				next_nx = nx + 1;
+				px++;
+				continue;
+			}
+			else if (c == ('[')) {
+				if (nx < nlen) {
+					byte wanted_c = name.str[ nx];
+					int bstart = px;
+					bool is_inverted = false;
+					bool inner_match = false;
+					int inner_idx = bstart + 1;
+					int inner_c = 0;
+					if (inner_idx < plen) {
+						inner_c = pattern.str[ inner_idx];
+						if (inner_c == '^') {
+							is_inverted = true;
+							inner_idx++;
+						}
+					}
+					for (; inner_idx < plen; inner_idx++) {
+						inner_c = pattern.str[ inner_idx];
+						if (inner_c == ']') {
+							break;
+						}
+						if (inner_c == wanted_c) {
+							inner_match = true;
+							for (;;) {
+								if (!(px < plen && pattern.str[ px] != ']')) break;
+								px++;
+							}
+							break;
+						}
+					}
+					if (is_inverted) {
+						if (inner_match) {
+							return false;
+						} else {
+							px = inner_idx;
+						}
+					}
+				}
+				px++;
+				nx++;
+				continue;
+			}
+			else {
+				if (nx < nlen && name.str[ nx] == c) {
+					px++;
+					nx++;
+					continue;
+				}
+			};
+		}
+		if (0 < next_nx && next_nx <= nlen) {
+			px = next_px;
+			nx = next_nx;
+			continue;
+		}
+		return false;
+	}
+	return true;
+}
+
 // Attr: [unsafe]
 Array_byte byteptr_vbytes(byteptr data, int len) {
 	return voidptr_vbytes(((voidptr)(data)), len);
@@ -32072,7 +32158,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("d079753");
+	string vhash = _SLIT("7c85c2a");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
