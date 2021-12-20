@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9f7d71d"
+#define V_COMMIT_HASH "460f7c6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "68ada04"
+	#define V_COMMIT_HASH "9f7d71d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9f7d71d"
+	#define V_CURRENT_COMMIT_HASH "460f7c6"
 #endif
 
 // V comptime_definitions:
@@ -32160,7 +32160,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("68ada04");
+	string vhash = _SLIT("9f7d71d");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -58135,6 +58135,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_alias_equality_fn(v__gen__c__Gen* g, v
 	} else if (sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(left.typ)) {
 		string eq_fn = v__gen__c__Gen_gen_struct_equality_fn(g, info.parent_type);
 		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\treturn "), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_struct_eq(a, b);"), 0, { .d_c = 0 }}})));
+	} else if (sym->kind == v__ast__Kind__interface_ && !v__ast__Type_is_ptr(left.typ)) {
+		string eq_fn = v__gen__c__Gen_gen_interface_equality_fn(g, info.parent_type);
+		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\treturn "), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_interface_eq(a, b);"), 0, { .d_c = 0 }}})));
 	} else if (sym->kind == v__ast__Kind__array && !v__ast__Type_is_ptr(left.typ)) {
 		string eq_fn = v__gen__c__Gen_gen_array_equality_fn(g, info.parent_type);
 		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\treturn "), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_arr_eq(a, b);"), 0, { .d_c = 0 }}})));
@@ -58233,6 +58236,9 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_fixed_array_equality_fn(v__gen__c__Gen
 	} else if (elem.sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(elem.typ)) {
 		string eq_fn = v__gen__c__Gen_gen_struct_equality_fn(g, elem.typ);
 		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif (!"), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_struct_eq(a[i], b[i])) {"), 0, { .d_c = 0 }}})));
+	} else if (elem.sym->kind == v__ast__Kind__interface_ && !v__ast__Type_is_ptr(elem.typ)) {
+		string eq_fn = v__gen__c__Gen_gen_interface_equality_fn(g, elem.typ);
+		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif (!"), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_interface_eq(a[i], b[i])) {"), 0, { .d_c = 0 }}})));
 	} else if (elem.sym->kind == v__ast__Kind__array && !v__ast__Type_is_ptr(elem.typ)) {
 		string eq_fn = v__gen__c__Gen_gen_array_equality_fn(g, elem.typ);
 		strings__Builder_writeln(&fn_builder,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tif (!"), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_arr_eq(a[i], b[i])) {"), 0, { .d_c = 0 }}})));
@@ -58313,6 +58319,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_map_equality_fn(v__gen__c__Gen* g, v__
 				string eq_fn = v__gen__c__Gen_gen_struct_equality_fn(g, value.typ);
 				strings__Builder_writeln(&fn_builder,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t\tif (!"), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_struct_eq(*("), 0xfe10, {.d_s = ptr_value_styp}}, {_SLIT("*)map_get(&b, k, &("), 0xfe10, {.d_s = ptr_value_styp}}, {_SLIT("[]){ 0 }), v)) {"), 0, { .d_c = 0 }}})));
 			} break;
+		case v__ast__Kind__interface_: 
+			{
+				string eq_fn = v__gen__c__Gen_gen_interface_equality_fn(g, value.typ);
+				strings__Builder_writeln(&fn_builder,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\t\tif (!"), 0xfe10, {.d_s = eq_fn}}, {_SLIT("_interface_eq(*("), 0xfe10, {.d_s = ptr_value_styp}}, {_SLIT("*)map_get(&b, k, &("), 0xfe10, {.d_s = ptr_value_styp}}, {_SLIT("[]){ 0 }), v)) {"), 0, { .d_c = 0 }}})));
+			} break;
 		case v__ast__Kind__array: 
 			{
 				string eq_fn = v__gen__c__Gen_gen_array_equality_fn(g, value.typ);
@@ -58364,7 +58375,6 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_gen_map_equality_fn(v__gen__c__Gen* g, v__
 		case v__ast__Kind__generic_inst:
 		case v__ast__Kind__multi_return:
 		case v__ast__Kind__enum_:
-		case v__ast__Kind__interface_:
 		case v__ast__Kind__float_literal:
 		case v__ast__Kind__int_literal:
 		case v__ast__Kind__aggregate:
