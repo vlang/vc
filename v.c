@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cfb814a"
+#define V_COMMIT_HASH "2693631"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7b4d836"
+	#define V_COMMIT_HASH "cfb814a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cfb814a"
+	#define V_CURRENT_COMMIT_HASH "2693631"
 #endif
 
 // V comptime_definitions:
@@ -32164,7 +32164,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("7b4d836");
+	string vhash = _SLIT("cfb814a");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -80009,7 +80009,7 @@ bool v__parser__Parser_parse_defer_0 = false;
 		_PUSH_MANY(&notices, (p->scanner->notices), _t8, Array_v__errors__Notice);
 	}
 	if (p->codegen_text.len > 0 && !p->pref->is_fmt) {
-		string ptext = string__plus(string__plus(_SLIT("module "), string_all_after(p->mod, _SLIT("."))), p->codegen_text);
+		string ptext = string__plus(string__plus(_SLIT("module "), string_all_after_last(p->mod, _SLIT("."))), p->codegen_text);
 		v__ast__File* codegen_file = v__parser__parse_text(ptext, p->file_name, p->table, p->comments_mode, p->pref);
 		_PUSH_MANY(&stmts, (codegen_file->stmts), _t9, Array_v__ast__Stmt);
 	}
@@ -81481,9 +81481,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parse
 	v__token__Position pos = v__token__Token_position(&tok);
 	Array_v__ast__Ident defer_vars = p->defer_vars;
 	p->defer_vars = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_46095 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_46095.arg0;
-	Array_v__ast__Comment left_comments = mr_46095.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_46100 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_46100.arg0;
+	Array_v__ast__Comment left_comments = mr_46100.arg1;
 	if (!(p->inside_defer && p->tok.kind == v__token__Kind__decl_assign)) {
 		_PUSH_MANY(&defer_vars, (p->defer_vars), _t1, Array_v__ast__Ident);
 	}
@@ -82661,9 +82661,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t1 = (v__ast__Return){.pos = first_pos,.comments = comments,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t1;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_79424 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_79424.arg0;
-	Array_v__ast__Comment comments2 = mr_79424.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_79429 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_79429.arg0;
+	Array_v__ast__Comment comments2 = mr_79429.arg1;
 	_PUSH_MANY(&comments, (comments2), _t2, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.comments = comments,.exprs = exprs,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
@@ -82912,8 +82912,8 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 		return _t2;
 	}
 	Array_v__ast__TypeNode sum_variants = __new_array_with_default(0, 0, sizeof(v__ast__TypeNode), 0);
-	multi_return_Array_v__ast__Type_Array_string mr_85730 = v__parser__Parser_parse_generic_types(p);
-	Array_v__ast__Type generic_types = mr_85730.arg0;
+	multi_return_Array_v__ast__Type_Array_string mr_85735 = v__parser__Parser_parse_generic_types(p);
+	Array_v__ast__Type generic_types = mr_85735.arg0;
 	v__token__Position decl_pos_with_generics = v__token__Position_extend(decl_pos, v__token__Token_position(&p->prev_tok));
 	v__parser__Parser_check(p, v__token__Kind__assign);
 	v__token__Position type_pos = v__token__Token_position(&p->tok);
