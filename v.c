@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b88a40a"
+#define V_COMMIT_HASH "ad1ef6a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a2468e1"
+	#define V_COMMIT_HASH "b88a40a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b88a40a"
+	#define V_CURRENT_COMMIT_HASH "ad1ef6a"
 #endif
 
 // V comptime_definitions:
@@ -32249,7 +32249,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("a2468e1");
+	string vhash = _SLIT("b88a40a");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -58264,6 +58264,7 @@ string sref_name;
 			if ((val)._typ == 264 /* v.ast.IndexExpr */) {
 				g->assign_op = v__token__Kind__decl_assign;
 			}
+			g->is_assign_lhs = false;
 			if (is_call) {
 				bool old_is_void_expr_stmt = g->is_void_expr_stmt;
 				g->is_void_expr_stmt = true;
@@ -58276,7 +58277,6 @@ string sref_name;
 				v__gen__c__Gen_expr(g, val);
 				v__gen__c__Gen_writeln(g, _SLIT(";}"));
 			}
-			g->is_assign_lhs = false;
 		} else if (node.op == v__token__Kind__assign && (is_fixed_array_init || (right_sym->kind == v__ast__Kind__array_fixed && (val)._typ == 261 /* v.ast.Ident */))) {
 			string v_var = _SLIT("");
 			string arr_typ = string_trim(styp, _SLIT("*"));
