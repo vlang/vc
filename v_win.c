@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b4723c1"
+#define V_COMMIT_HASH "d3ccdfd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "db1175e"
+	#define V_COMMIT_HASH "b4723c1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b4723c1"
+	#define V_CURRENT_COMMIT_HASH "d3ccdfd"
 #endif
 
 // V comptime_definitions:
@@ -30971,7 +30971,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("db1175e");
+	string vhash = _SLIT("b4723c1");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -69868,7 +69868,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_infix_expr_arrow_op(v__gen__c__Gen* g, v__as
 	}
 	v__gen__c__Gen_expr(g, node.left);
 	v__gen__c__Gen_write(g, _SLIT(", "));
-	v__gen__c__Gen_expr(g, node.right);
+	if (v__ast__Table_sym(g->table, elem_type)->kind == v__ast__Kind__sum_type || v__ast__Table_sym(g->table, elem_type)->kind == v__ast__Kind__interface_) {
+		v__gen__c__Gen_expr_with_cast(g, node.right, node.right_type, elem_type);
+	} else {
+		v__gen__c__Gen_expr(g, node.right);
+	}
 	v__gen__c__Gen_write(g, _SLIT(")"));
 	if (gen_or) {
 		v__gen__c__Gen_or_block(g, tmp_opt, node.or_block, _const_v__ast__void_type);
