@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d69d2c6"
+#define V_COMMIT_HASH "a83786d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c0dcd1a"
+	#define V_COMMIT_HASH "d69d2c6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d69d2c6"
+	#define V_CURRENT_COMMIT_HASH "a83786d"
 #endif
 
 // V comptime_definitions:
@@ -30971,7 +30971,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("c0dcd1a");
+	string vhash = _SLIT("d69d2c6");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -47020,7 +47020,7 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 		if (!v__checker__Checker_check_types(c, from_type, (*to_type_sym->info._v__ast__Alias).parent_type)) {
 			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot convert type `"), 0xfe10, {.d_s = from_type_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = to_type_sym->name}}, {_SLIT("` (alias to `"), 0xfe10, {.d_s = to_type_sym_final->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 		}
-	} else if (to_type_sym->kind == v__ast__Kind__byte && !v__ast__Type_alias_eq(from_type, _const_v__ast__voidptr_type) && from_type_sym->kind != v__ast__Kind__enum_ && !v__ast__Type_is_int(from_type) && !v__ast__Type_is_float(from_type) && !v__ast__Type_alias_eq(from_type, _const_v__ast__bool_type) && !v__ast__Type_is_ptr(from_type) && from_type_sym->kind == v__ast__Kind__alias && !string__eq(from_type_sym_final->name, _SLIT("byte"))) {
+	} else if (to_type_sym->kind == v__ast__Kind__byte && from_type_sym->kind == v__ast__Kind__alias && from_type_sym_final->kind != v__ast__Kind__byte && !v__ast__Type_is_ptr(from_type)) {
 		string type_name = v__ast__Table_type_to_str(c->table, from_type);
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = type_name}}, {_SLIT("` to `byte`"), 0, { .d_c = 0 }}})), node->pos);
 	} else if (to_type_sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(to_type) && !(/* as */ *(v__ast__Struct*)__as_cast((to_type_sym->info)._v__ast__Struct,(to_type_sym->info)._typ, 445) /*expected idx: 445, name: v.ast.Struct */ ).is_typedef) {
@@ -47716,8 +47716,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_132721 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_132721.arg0;
+		multi_return_string_v__token__Position mr_132573 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_132573.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
