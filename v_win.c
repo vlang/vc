@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8a10dbc"
+#define V_COMMIT_HASH "55d9c24"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2210f89"
+	#define V_COMMIT_HASH "8a10dbc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8a10dbc"
+	#define V_CURRENT_COMMIT_HASH "55d9c24"
 #endif
 
 // V comptime_definitions:
@@ -39,7 +39,7 @@ typedef struct multi_return_strconv__Dec64_bool multi_return_strconv__Dec64_bool
 typedef struct multi_return_string_int multi_return_string_int;
 typedef struct multi_return_int_bool multi_return_int_bool;
 typedef struct multi_return_int_int multi_return_int_int;
-typedef struct multi_return_v__pref__Preferences_string multi_return_v__pref__Preferences_string;
+typedef struct multi_return_ref_v__pref__Preferences_string multi_return_ref_v__pref__Preferences_string;
 typedef struct multi_return_string_string multi_return_string_string;
 typedef struct multi_return_u64_u64 multi_return_u64_u64;
 typedef struct multi_return_f64_int multi_return_f64_int;
@@ -55,7 +55,7 @@ typedef struct multi_return_string_v__token__Position multi_return_string_v__tok
 typedef struct multi_return_bool_int_int multi_return_bool_int_int;
 typedef struct multi_return_Array_v__ast__Param_bool_bool multi_return_Array_v__ast__Param_bool_bool;
 typedef struct multi_return_Array_v__ast__Expr_Array_v__ast__Comment multi_return_Array_v__ast__Expr_Array_v__ast__Comment;
-typedef struct multi_return_v__ast__File_Array_v__vet__Error multi_return_v__ast__File_Array_v__vet__Error;
+typedef struct multi_return_ref_v__ast__File_Array_v__vet__Error multi_return_ref_v__ast__File_Array_v__vet__Error;
 typedef struct multi_return_Array_v__ast__Type_Array_string multi_return_Array_v__ast__Type_Array_string;
 typedef struct multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField_Map_string_v__ast__GlobalField multi_return_Map_string_v__ast__FnDecl_Map_string_v__ast__ConstField_Map_string_v__ast__GlobalField;
 typedef struct multi_return_bool_Array_string multi_return_bool_Array_string;
@@ -5772,7 +5772,7 @@ struct multi_return_int_int {
 	int arg1;
 };
 
-struct multi_return_v__pref__Preferences_string {
+struct multi_return_ref_v__pref__Preferences_string {
 	v__pref__Preferences* arg0;
 	string arg1;
 };
@@ -5860,7 +5860,7 @@ struct multi_return_Array_v__ast__Expr_Array_v__ast__Comment {
 	Array_v__ast__Comment arg1;
 };
 
-struct multi_return_v__ast__File_Array_v__vet__Error {
+struct multi_return_ref_v__ast__File_Array_v__vet__Error {
 	v__ast__File* arg0;
 	Array_v__vet__Error arg1;
 };
@@ -7984,8 +7984,8 @@ string v__pref__OS_str(v__pref__OS o);
 v__pref__OS v__pref__get_host_os(void);
 bool v__pref__Backend_is_js(v__pref__Backend b);
 Array_string _const_v__pref__list_of_flags_with_param; // inited later
-multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args);
-multi_return_v__pref__Preferences_string v__pref__parse_args_and_show_errors(Array_string known_external_commands, Array_string args, bool show_output);
+multi_return_ref_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args);
+multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors(Array_string known_external_commands, Array_string args, bool show_output);
 void v__pref__eprintln_cond(bool condition, string s);
 void v__pref__Preferences_vrun_elog(v__pref__Preferences* pref, string s);
 bool v__pref__Preferences_should_output_to_stdout(v__pref__Preferences* pref);
@@ -9130,7 +9130,7 @@ void v__parser__Parser_free(v__parser__Parser* p);
 void v__parser__Parser_free_scanner(v__parser__Parser* p);
 void v__parser__Parser_set_path(v__parser__Parser* p, string path);
 v__ast__File* v__parser__parse_file(string path, v__ast__Table* table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
-multi_return_v__ast__File_Array_v__vet__Error v__parser__parse_vet_file(string path, v__ast__Table* table_, v__pref__Preferences* pref);
+multi_return_ref_v__ast__File_Array_v__vet__Error v__parser__parse_vet_file(string path, v__ast__Table* table_, v__pref__Preferences* pref);
 v__ast__File* v__parser__Parser_parse(v__parser__Parser* p);
 Array_v__ast__File_ptr v__parser__parse_files(Array_string paths, v__ast__Table* table, v__pref__Preferences* pref);
 void v__parser__Parser_codegen(v__parser__Parser* p, string code);
@@ -30983,7 +30983,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("2210f89");
+	string vhash = _SLIT("8a10dbc");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -31308,12 +31308,12 @@ bool v__pref__Backend_is_js(v__pref__Backend b) {
 	return _t1;
 }
 
-multi_return_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args) {
-	multi_return_v__pref__Preferences_string _t1 = v__pref__parse_args_and_show_errors(known_external_commands, args, false);
+multi_return_ref_v__pref__Preferences_string v__pref__parse_args(Array_string known_external_commands, Array_string args) {
+	multi_return_ref_v__pref__Preferences_string _t1 = v__pref__parse_args_and_show_errors(known_external_commands, args, false);
 	return _t1;
 }
 
-multi_return_v__pref__Preferences_string v__pref__parse_args_and_show_errors(Array_string known_external_commands, Array_string args, bool show_output) {
+multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors(Array_string known_external_commands, Array_string args, bool show_output) {
 	v__pref__Preferences* res = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.no_builtin = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.run_only = __new_array(0, 0, sizeof(string)),.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.use_color = 0,.no_parallel = 0,.is_vweb = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.message_limit = 100,.nofloat = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences));
 	#if defined(TARGET_IS_64BIT)
 	{
@@ -31900,7 +31900,7 @@ multi_return_v__pref__Preferences_string v__pref__parse_args_and_show_errors(Arr
 	}
 	res->build_options = map_keys(&m);
 	v__pref__Preferences_fill_with_defaults(res);
-	return (multi_return_v__pref__Preferences_string){.arg0=res, .arg1=command};
+	return (multi_return_ref_v__pref__Preferences_string){.arg0=res, .arg1=command};
 }
 
 void v__pref__eprintln_cond(bool condition, string s) {
@@ -38875,8 +38875,11 @@ int v__ast__Table_find_or_register_multi_return(v__ast__Table* t, Array_v__ast__
 	for (int i = 0; i < mr_typs.len; ++i) {
 		v__ast__Type mr_typ = ((v__ast__Type*)mr_typs.data)[i];
 		v__ast__TypeSymbol* mr_type_sym = v__ast__Table_sym(t, mr_typ);
-		name = /*f*/string__plus(name, mr_type_sym->name);
-		cname = /*f*/string__plus(cname,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_"), 0xfe10, {.d_s = mr_type_sym->cname}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		multi_return_string_string mr_28236 = (v__ast__Type_is_ptr(mr_typ) ? ((multi_return_string_string){.arg0=_SLIT("&"),.arg1=_SLIT("ref_")}) : ((multi_return_string_string){.arg0=_SLIT(""),.arg1=_SLIT("")}));
+		string ref = mr_28236.arg0;
+		string cref = mr_28236.arg1;
+		name = /*f*/string__plus(name,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ref}}, {_SLIT0, 0xfe10, {.d_s = mr_type_sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		cname = /*f*/string__plus(cname,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_"), 0xfe10, {.d_s = cref}}, {_SLIT0, 0xfe10, {.d_s = mr_type_sym->cname}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		if (i < mr_typs.len - 1) {
 			name = /*f*/string__plus(name, _SLIT(", "));
 		}
@@ -78395,7 +78398,7 @@ v__ast__File* v__parser__parse_file(string path, v__ast__Table* table, v__scanne
 	return _t1;
 }
 
-multi_return_v__ast__File_Array_v__vet__Error v__parser__parse_vet_file(string path, v__ast__Table* table_, v__pref__Preferences* pref) {
+multi_return_ref_v__ast__File_Array_v__vet__Error v__parser__parse_vet_file(string path, v__ast__Table* table_, v__pref__Preferences* pref) {
 	v__ast__Scope* global_scope = (v__ast__Scope*)memdup(&(v__ast__Scope){.objects = new_map(sizeof(string), sizeof(v__ast__ScopeObject), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.struct_fields = new_map(sizeof(string), sizeof(v__ast__ScopeStructField), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.parent = 0,.detached_from_parent = 0,.children = __new_array(0, 0, sizeof(v__ast__Scope*)),.start_pos = 0,.end_pos = 0,}, sizeof(v__ast__Scope));
 	v__parser__Parser p = (v__parser__Parser){
 		.pref = pref,
@@ -78489,7 +78492,7 @@ multi_return_v__ast__File_Array_v__vet__Error v__parser__parse_vet_file(string p
 	_PUSH_MANY(&p.vet_errors, (p.scanner->vet_errors), _t2, Array_v__vet__Error);
 	v__ast__File* file = v__parser__Parser_parse(&p);
 	v__parser__Parser_free_scanner(&p);
-	return (multi_return_v__ast__File_Array_v__vet__Error){.arg0=file, .arg1=p.vet_errors};
+	return (multi_return_ref_v__ast__File_Array_v__vet__Error){.arg0=file, .arg1=p.vet_errors};
 }
 
 v__ast__File* v__parser__Parser_parse(v__parser__Parser* p) {
@@ -85546,7 +85549,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_handle_usecache(v__builder__Builder* b,
 
 void v__builder__cbuilder__start(void) {
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_178 = v__pref__parse_args(__new_array_with_default(0, 0, sizeof(string), 0), args_and_flags);
+	multi_return_ref_v__pref__Preferences_string mr_178 = v__pref__parse_args(__new_array_with_default(0, 0, sizeof(string), 0), args_and_flags);
 	v__pref__Preferences* prefs = mr_178.arg0;
 	v__builder__compile(_SLIT("build"), prefs, (voidptr)v__builder__cbuilder__compile_c);
 }
@@ -85656,7 +85659,7 @@ v__util__Timers* timers;
 		return;
 	}
 	Array_string args_and_flags = array_slice(v__util__join_env_vflags_and_os_args(), 1, v__util__join_env_vflags_and_os_args().len);
-	multi_return_v__pref__Preferences_string mr_2214 = v__pref__parse_args_and_show_errors(_const_main__external_tools, args_and_flags, true);
+	multi_return_ref_v__pref__Preferences_string mr_2214 = v__pref__parse_args_and_show_errors(_const_main__external_tools, args_and_flags, true);
 	v__pref__Preferences* prefs = mr_2214.arg0;
 	string command = mr_2214.arg1;
 	if (prefs->use_cache && string__eq(os__user_os(), _SLIT("windows"))) {
