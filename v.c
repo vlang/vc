@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "03864e4"
+#define V_COMMIT_HASH "3b5de71"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "10f63b3"
+	#define V_COMMIT_HASH "03864e4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "03864e4"
+	#define V_CURRENT_COMMIT_HASH "3b5de71"
 #endif
 
 // V comptime_definitions:
@@ -6807,6 +6807,7 @@ IError error_with_code(string message, int code);
 VV_LOCAL_SYMBOL void opt_ok(voidptr data, Option* option, int size);
 void Error_free(Error* e);
 void None___free(None__* n);
+string none_str(none _d2);
 #define _const_prealloc_block_size 16777216
 VMemoryBlock*  g_memory_block; // global
 VV_LOCAL_SYMBOL VMemoryBlock* vmemory_block_new(VMemoryBlock* prev, int at_least);
@@ -18268,6 +18269,10 @@ void Error_free(Error* e) {
 // Attr: [unsafe]
 void None___free(None__* n) {
 	string_free(&n->msg);
+}
+
+string none_str(none _d2) {
+	return _SLIT("none");
 }
 
 // Attr: [unsafe]
@@ -32256,7 +32261,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("10f63b3");
+	string vhash = _SLIT("03864e4");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
