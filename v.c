@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "10f63b3"
+#define V_COMMIT_HASH "03864e4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "3528239"
+	#define V_COMMIT_HASH "10f63b3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "10f63b3"
+	#define V_CURRENT_COMMIT_HASH "03864e4"
 #endif
 
 // V comptime_definitions:
@@ -32256,7 +32256,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("3528239");
+	string vhash = _SLIT("10f63b3");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -48492,7 +48492,7 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = from_type_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = to_type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
 		}
 	} else if ((to_type_sym->info)._typ == 422 /* v.ast.Alias */) {
-		if (!v__checker__Checker_check_types(c, from_type, (*to_type_sym->info._v__ast__Alias).parent_type)) {
+		if (!v__checker__Checker_check_types(c, from_type, (*to_type_sym->info._v__ast__Alias).parent_type) && !(v__ast__TypeSymbol_is_int(to_type_sym_final) && from_type_sym_final->kind == v__ast__Kind__enum_)) {
 			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot convert type `"), 0xfe10, {.d_s = from_type_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = to_type_sym->name}}, {_SLIT("` (alias to `"), 0xfe10, {.d_s = to_type_sym_final->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 		}
 	} else if (to_type_sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(to_type) && !(/* as */ *(v__ast__Struct*)__as_cast((to_type_sym->info)._v__ast__Struct,(to_type_sym->info)._typ, 407) /*expected idx: 407, name: v.ast.Struct */ ).is_typedef) {
@@ -49190,8 +49190,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_132569 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_132569.arg0;
+		multi_return_string_v__token__Position mr_132643 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_132643.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
