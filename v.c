@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "34e175a"
+#define V_COMMIT_HASH "14648fa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a2eb90e"
+	#define V_COMMIT_HASH "34e175a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "34e175a"
+	#define V_CURRENT_COMMIT_HASH "14648fa"
 #endif
 
 // V comptime_definitions:
@@ -8899,7 +8899,7 @@ Option_void v__ast__walker__Inspector_visit(v__ast__walker__Inspector* i, v__ast
 void v__ast__walker__inspect(v__ast__Node* node, voidptr data, bool (*inspector_callback)(v__ast__Node* node, voidptr data));
 void v__ast__walker__walk(v__ast__walker__Visitor* visitor, v__ast__Node* node);
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p);
-#define _const_v__parser__max_expr_level 2500
+#define _const_v__parser__max_expr_level 310
 VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, Array_v__ast__Expr exprs, v__ast__Expr val);
 VV_LOCAL_SYMBOL bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, Array_v__ast__Expr exprs, v__ast__Expr val);
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, Array_v__ast__Expr left, Array_v__ast__Comment left_comments);
@@ -32275,7 +32275,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("a2eb90e");
+	string vhash = _SLIT("34e175a");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -76135,9 +76135,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 	_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t2, Array_v__ast__Comment);
 	Array_v__ast__Comment right_comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	Array_v__ast__Expr right = __new_array_with_default(0, left.len, sizeof(v__ast__Expr), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3346 = v__parser__Parser_expr_list(p);
-	right = mr_3346.arg0;
-	right_comments = mr_3346.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3345 = v__parser__Parser_expr_list(p);
+	right = mr_3345.arg0;
+	right_comments = mr_3345.arg1;
 	_PUSH_MANY(&comments, (right_comments), _t3, Array_v__ast__Comment);
 	Array_v__ast__Comment end_comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = true,.follow_up = 0,});
 	bool has_cross_var = false;
