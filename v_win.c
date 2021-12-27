@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "35418b8"
+#define V_COMMIT_HASH "a2eb90e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c26e040"
+	#define V_COMMIT_HASH "35418b8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "35418b8"
+	#define V_CURRENT_COMMIT_HASH "a2eb90e"
 #endif
 
 // V comptime_definitions:
@@ -5070,6 +5070,7 @@ struct v__parser__Parser {
 	v__ast__Table* table;
 	v__ast__Language language;
 	v__ast__Language fn_language;
+	int expr_level;
 	bool inside_vlib_file;
 	bool inside_test_file;
 	bool inside_if;
@@ -9069,6 +9070,7 @@ Option_void v__ast__walker__Inspector_visit(v__ast__walker__Inspector* i, v__ast
 void v__ast__walker__inspect(v__ast__Node* node, voidptr data, bool (*inspector_callback)(v__ast__Node* node, voidptr data));
 void v__ast__walker__walk(v__ast__walker__Visitor* visitor, v__ast__Node* node);
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p);
+#define _const_v__parser__max_expr_level 2500
 VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, Array_v__ast__Expr exprs, v__ast__Expr val);
 VV_LOCAL_SYMBOL bool v__parser__Parser_check_cross_variables(v__parser__Parser* p, Array_v__ast__Expr exprs, v__ast__Expr val);
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Parser* p, Array_v__ast__Expr left, Array_v__ast__Comment left_comments);
@@ -30995,7 +30997,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("c26e040");
+	string vhash = _SLIT("35418b8");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -74044,161 +74046,249 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_assign_stmt(v__parser__Parser* p)
 }
 
 VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parser__Parser* p, Array_v__ast__Expr exprs, v__ast__Expr val) {
+bool v__parser__Parser_check_undefined_variables_defer_0 = false;
+	p->expr_level++;
+	v__parser__Parser_check_undefined_variables_defer_0 = true;
+	if (p->expr_level > _const_v__parser__max_expr_level) {
+		Option_void _t1 = (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("expr level > "), 0xfe07, {.d_i32 = _const_v__parser__max_expr_level}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+		return _t1;
+	}
 	if (val._typ == 299 /* v.ast.Ident */) {
-		for (int _t1 = 0; _t1 < exprs.len; ++_t1) {
-			v__ast__Expr expr = ((v__ast__Expr*)exprs.data)[_t1];
+		for (int _t2 = 0; _t2 < exprs.len; ++_t2) {
+			v__ast__Expr expr = ((v__ast__Expr*)exprs.data)[_t2];
 			if ((expr)._typ == 299 /* v.ast.Ident */) {
 				if (string__eq((*expr._v__ast__Ident).name, (*val._v__ast__Ident).name) && (*expr._v__ast__Ident).kind != v__ast__IdentKind__blank_ident) {
 					v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*val._v__ast__Ident).pos);
-					return (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+					Option_void _t3 = (Option_void){ .state=2, .err=_v_error( str_intp(2, _MOV((StrIntpData[]){{_SLIT("undefined variable: `"), 0xfe10, {.d_s = (*val._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+					// Defer begin
+					if (v__parser__Parser_check_undefined_variables_defer_0) {
+						p->expr_level--;
+					}
+					// Defer end
+					return _t3;
 				}
 			}
 		}
 	}
 	else if (val._typ == 280 /* v.ast.ArrayInit */) {
 		if ((*val._v__ast__ArrayInit).has_cap) {
-			Option_void _t3 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ArrayInit).cap_expr);
-			if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
-				Option_void _t4;
-				memcpy(&_t4, &_t3, sizeof(Option));
-				return _t4;
+			Option_void _t4 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ArrayInit).cap_expr);
+			if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t5;
+				memcpy(&_t5, &_t4, sizeof(Option));
+				return _t5;
 			}
 			
  ;
 		}
 		if ((*val._v__ast__ArrayInit).has_len) {
-			Option_void _t5 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ArrayInit).len_expr);
-			if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
-				Option_void _t6;
-				memcpy(&_t6, &_t5, sizeof(Option));
-				return _t6;
+			Option_void _t6 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ArrayInit).len_expr);
+			if (_t6.state != 0 && _t6.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t7;
+				memcpy(&_t7, &_t6, sizeof(Option));
+				return _t7;
 			}
 			
  ;
 		}
 		if ((*val._v__ast__ArrayInit).has_default) {
-			Option_void _t7 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ArrayInit).default_expr);
-			if (_t7.state != 0 && _t7.err._typ != _IError_None___index) {
-				Option_void _t8;
-				memcpy(&_t8, &_t7, sizeof(Option));
-				return _t8;
+			Option_void _t8 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ArrayInit).default_expr);
+			if (_t8.state != 0 && _t8.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t9;
+				memcpy(&_t9, &_t8, sizeof(Option));
+				return _t9;
 			}
 			
  ;
 		}
-		for (int _t9 = 0; _t9 < (*val._v__ast__ArrayInit).exprs.len; ++_t9) {
-			v__ast__Expr expr = ((v__ast__Expr*)(*val._v__ast__ArrayInit).exprs.data)[_t9];
-			Option_void _t10 = v__parser__Parser_check_undefined_variables(p, exprs, expr);
-			if (_t10.state != 0 && _t10.err._typ != _IError_None___index) {
-				Option_void _t11;
-				memcpy(&_t11, &_t10, sizeof(Option));
-				return _t11;
+		for (int _t10 = 0; _t10 < (*val._v__ast__ArrayInit).exprs.len; ++_t10) {
+			v__ast__Expr expr = ((v__ast__Expr*)(*val._v__ast__ArrayInit).exprs.data)[_t10];
+			Option_void _t11 = v__parser__Parser_check_undefined_variables(p, exprs, expr);
+			if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t12;
+				memcpy(&_t12, &_t11, sizeof(Option));
+				return _t12;
 			}
 			
  ;
 		}
 	}
 	else if (val._typ == 286 /* v.ast.CallExpr */) {
-		Option_void _t12 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__CallExpr).left);
-		if (_t12.state != 0 && _t12.err._typ != _IError_None___index) {
-			Option_void _t13;
-			memcpy(&_t13, &_t12, sizeof(Option));
-			return _t13;
+		Option_void _t13 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__CallExpr).left);
+		if (_t13.state != 0 && _t13.err._typ != _IError_None___index) {
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+			Option_void _t14;
+			memcpy(&_t14, &_t13, sizeof(Option));
+			return _t14;
 		}
 		
  ;
-		for (int _t14 = 0; _t14 < (*val._v__ast__CallExpr).args.len; ++_t14) {
-			v__ast__CallArg arg = ((v__ast__CallArg*)(*val._v__ast__CallExpr).args.data)[_t14];
-			Option_void _t15 = v__parser__Parser_check_undefined_variables(p, exprs, arg.expr);
-			if (_t15.state != 0 && _t15.err._typ != _IError_None___index) {
-				Option_void _t16;
-				memcpy(&_t16, &_t15, sizeof(Option));
-				return _t16;
+		for (int _t15 = 0; _t15 < (*val._v__ast__CallExpr).args.len; ++_t15) {
+			v__ast__CallArg arg = ((v__ast__CallArg*)(*val._v__ast__CallExpr).args.data)[_t15];
+			Option_void _t16 = v__parser__Parser_check_undefined_variables(p, exprs, arg.expr);
+			if (_t16.state != 0 && _t16.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t17;
+				memcpy(&_t17, &_t16, sizeof(Option));
+				return _t17;
 			}
 			
  ;
 		}
 	}
 	else if (val._typ == 303 /* v.ast.InfixExpr */) {
-		Option_void _t17 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).left);
-		if (_t17.state != 0 && _t17.err._typ != _IError_None___index) {
-			Option_void _t18;
-			memcpy(&_t18, &_t17, sizeof(Option));
-			return _t18;
+		Option_void _t18 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).left);
+		if (_t18.state != 0 && _t18.err._typ != _IError_None___index) {
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+			Option_void _t19;
+			memcpy(&_t19, &_t18, sizeof(Option));
+			return _t19;
 		}
 		
  ;
-		Option_void _t19 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).right);
-		if (_t19.state != 0 && _t19.err._typ != _IError_None___index) {
-			Option_void _t20;
-			memcpy(&_t20, &_t19, sizeof(Option));
-			return _t20;
+		Option_void _t20 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__InfixExpr).right);
+		if (_t20.state != 0 && _t20.err._typ != _IError_None___index) {
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+			Option_void _t21;
+			memcpy(&_t21, &_t20, sizeof(Option));
+			return _t21;
 		}
 		
  ;
 	}
 	else if (val._typ == 308 /* v.ast.MapInit */) {
-		for (int _t21 = 0; _t21 < (*val._v__ast__MapInit).keys.len; ++_t21) {
-			v__ast__Expr key = ((v__ast__Expr*)(*val._v__ast__MapInit).keys.data)[_t21];
-			Option_void _t22 = v__parser__Parser_check_undefined_variables(p, exprs, key);
-			if (_t22.state != 0 && _t22.err._typ != _IError_None___index) {
-				Option_void _t23;
-				memcpy(&_t23, &_t22, sizeof(Option));
-				return _t23;
+		for (int _t22 = 0; _t22 < (*val._v__ast__MapInit).keys.len; ++_t22) {
+			v__ast__Expr key = ((v__ast__Expr*)(*val._v__ast__MapInit).keys.data)[_t22];
+			Option_void _t23 = v__parser__Parser_check_undefined_variables(p, exprs, key);
+			if (_t23.state != 0 && _t23.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t24;
+				memcpy(&_t24, &_t23, sizeof(Option));
+				return _t24;
 			}
 			
  ;
 		}
-		for (int _t24 = 0; _t24 < (*val._v__ast__MapInit).vals.len; ++_t24) {
-			v__ast__Expr value = ((v__ast__Expr*)(*val._v__ast__MapInit).vals.data)[_t24];
-			Option_void _t25 = v__parser__Parser_check_undefined_variables(p, exprs, value);
-			if (_t25.state != 0 && _t25.err._typ != _IError_None___index) {
-				Option_void _t26;
-				memcpy(&_t26, &_t25, sizeof(Option));
-				return _t26;
+		for (int _t25 = 0; _t25 < (*val._v__ast__MapInit).vals.len; ++_t25) {
+			v__ast__Expr value = ((v__ast__Expr*)(*val._v__ast__MapInit).vals.data)[_t25];
+			Option_void _t26 = v__parser__Parser_check_undefined_variables(p, exprs, value);
+			if (_t26.state != 0 && _t26.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t27;
+				memcpy(&_t27, &_t26, sizeof(Option));
+				return _t27;
 			}
 			
  ;
 		}
 	}
 	else if (val._typ == 314 /* v.ast.ParExpr */) {
-		Option_void _t27 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ParExpr).expr);
-		if (_t27.state != 0 && _t27.err._typ != _IError_None___index) {
-			Option_void _t28;
-			memcpy(&_t28, &_t27, sizeof(Option));
-			return _t28;
+		Option_void _t28 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__ParExpr).expr);
+		if (_t28.state != 0 && _t28.err._typ != _IError_None___index) {
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+			Option_void _t29;
+			memcpy(&_t29, &_t28, sizeof(Option));
+			return _t29;
 		}
 		
  ;
 	}
 	else if (val._typ == 315 /* v.ast.PostfixExpr */) {
-		Option_void _t29 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PostfixExpr).expr);
-		if (_t29.state != 0 && _t29.err._typ != _IError_None___index) {
-			Option_void _t30;
-			memcpy(&_t30, &_t29, sizeof(Option));
-			return _t30;
+		Option_void _t30 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PostfixExpr).expr);
+		if (_t30.state != 0 && _t30.err._typ != _IError_None___index) {
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+			Option_void _t31;
+			memcpy(&_t31, &_t30, sizeof(Option));
+			return _t31;
 		}
 		
  ;
 	}
 	else if (val._typ == 316 /* v.ast.PrefixExpr */) {
-		Option_void _t31 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PrefixExpr).right);
-		if (_t31.state != 0 && _t31.err._typ != _IError_None___index) {
-			Option_void _t32;
-			memcpy(&_t32, &_t31, sizeof(Option));
-			return _t32;
+		Option_void _t32 = v__parser__Parser_check_undefined_variables(p, exprs, (*val._v__ast__PrefixExpr).right);
+		if (_t32.state != 0 && _t32.err._typ != _IError_None___index) {
+		// Defer begin
+		if (v__parser__Parser_check_undefined_variables_defer_0) {
+			p->expr_level--;
+		}
+		// Defer end
+			Option_void _t33;
+			memcpy(&_t33, &_t32, sizeof(Option));
+			return _t33;
 		}
 		
  ;
 	}
 	else if (val._typ == 322 /* v.ast.StringInterLiteral */) {
-		for (int _t33 = 0; _t33 < (*val._v__ast__StringInterLiteral).exprs.len; ++_t33) {
-			v__ast__Expr expr_ = ((v__ast__Expr*)(*val._v__ast__StringInterLiteral).exprs.data)[_t33];
-			Option_void _t34 = v__parser__Parser_check_undefined_variables(p, exprs, expr_);
-			if (_t34.state != 0 && _t34.err._typ != _IError_None___index) {
-				Option_void _t35;
-				memcpy(&_t35, &_t34, sizeof(Option));
-				return _t35;
+		for (int _t34 = 0; _t34 < (*val._v__ast__StringInterLiteral).exprs.len; ++_t34) {
+			v__ast__Expr expr_ = ((v__ast__Expr*)(*val._v__ast__StringInterLiteral).exprs.data)[_t34];
+			Option_void _t35 = v__parser__Parser_check_undefined_variables(p, exprs, expr_);
+			if (_t35.state != 0 && _t35.err._typ != _IError_None___index) {
+			// Defer begin
+			if (v__parser__Parser_check_undefined_variables_defer_0) {
+				p->expr_level--;
+			}
+			// Defer end
+				Option_void _t36;
+				memcpy(&_t36, &_t35, sizeof(Option));
+				return _t36;
 			}
 			
  ;
@@ -74208,6 +74298,11 @@ VV_LOCAL_SYMBOL Option_void v__parser__Parser_check_undefined_variables(v__parse
 	else {
 	}
 	;
+	// Defer begin
+	if (v__parser__Parser_check_undefined_variables_defer_0) {
+		p->expr_level--;
+	}
+	// Defer end
 	return (Option_void){0};
 }
 
@@ -74272,9 +74367,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 	_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t2, Array_v__ast__Comment);
 	Array_v__ast__Comment right_comments = __new_array_with_default(0, 0, sizeof(v__ast__Comment), 0);
 	Array_v__ast__Expr right = __new_array_with_default(0, left.len, sizeof(v__ast__Expr), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3172 = v__parser__Parser_expr_list(p);
-	right = mr_3172.arg0;
-	right_comments = mr_3172.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_3346 = v__parser__Parser_expr_list(p);
+	right = mr_3346.arg0;
+	right_comments = mr_3346.arg1;
 	_PUSH_MANY(&comments, (right_comments), _t3, Array_v__ast__Comment);
 	Array_v__ast__Comment end_comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = true,.follow_up = 0,});
 	bool has_cross_var = false;
@@ -74284,7 +74379,7 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 			Option_void _t5 = v__parser__Parser_check_undefined_variables(p, left, r);
 			if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
 				IError err = _t5.err;
-				v__ast__Stmt _t6 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error(p, _SLIT("check_undefined_variables failed")))));
+				v__ast__Stmt _t6 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, (*(err.msg)), pos))));
 				return _t6;
 			}
 			
@@ -78148,7 +78243,7 @@ v__ast__Type v__parser__Parser_parse_generic_inst_type(v__parser__Parser* p, str
 
 v__ast__Stmt v__parser__parse_stmt(string text, v__ast__Table* table, v__ast__Scope* scope) {
 bool v__parser__parse_stmt_defer_0 = false;
-	v__parser__Parser p = (v__parser__Parser){.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.no_builtin = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.run_only = __new_array(0, 0, sizeof(string)),.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.use_color = 0,.no_parallel = 0,.is_vweb = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.message_limit = 100,.nofloat = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences)),.file_base = (string){.str=(byteptr)"", .is_lit=1},.file_name = (string){.str=(byteptr)"", .is_lit=1},.file_name_dir = (string){.str=(byteptr)"", .is_lit=1},.unique_prefix = (string){.str=(byteptr)"", .is_lit=1},.file_backend_mode = 0,.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode__skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.no_builtin = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.run_only = __new_array(0, 0, sizeof(string)),.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.use_color = 0,.no_parallel = 0,.is_vweb = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.message_limit = 100,.nofloat = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences))),.comments_mode = v__scanner__CommentsMode__skip_comments,.tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.prev_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.peek_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.table = table,.language = 0,.fn_language = 0,.inside_vlib_file = 0,.inside_test_file = true,.inside_if = 0,.inside_if_expr = 0,.inside_ct_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_unsafe_fn = 0,.inside_str_interp = 0,.inside_array_lit = 0,.inside_in_array = 0,.inside_match = 0,.inside_select = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.inside_sum_type = 0,.inside_asm_template = 0,.inside_asm = 0,.inside_defer = 0,.inside_generic_params = 0,.inside_receiver_param = 0,.or_is_handled = 0,.builtin_mod = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.is_manualfree = 0,.has_globals = 0,.is_generated = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.expr_mod = (string){.str=(byteptr)"", .is_lit=1},.scope = scope,.imports = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.ast_imports = __new_array(0, 0, sizeof(v__ast__Import)),.used_imports = __new_array(0, 0, sizeof(string)),.auto_imports = __new_array(0, 0, sizeof(string)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.is_amp = 0,.returns = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 0, sizeof(v__errors__Error)),.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),.notices = __new_array(0, 0, sizeof(v__errors__Notice)),.vet_errors = __new_array(0, 0, sizeof(v__vet__Error)),.cur_fn_name = (string){.str=(byteptr)"", .is_lit=1},.label_names = __new_array(0, 0, sizeof(string)),.name_error = 0,.n_asm = 0,.global_labels = __new_array(0, 0, sizeof(string)),.comptime_if_cond = 0,.defer_vars = __new_array(0, 0, sizeof(v__ast__Ident)),.should_abort = 0,.codegen_text = (string){.str=(byteptr)"", .is_lit=1},};
+	v__parser__Parser p = (v__parser__Parser){.pref = (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.no_builtin = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.run_only = __new_array(0, 0, sizeof(string)),.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.use_color = 0,.no_parallel = 0,.is_vweb = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.message_limit = 100,.nofloat = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences)),.file_base = (string){.str=(byteptr)"", .is_lit=1},.file_name = (string){.str=(byteptr)"", .is_lit=1},.file_name_dir = (string){.str=(byteptr)"", .is_lit=1},.unique_prefix = (string){.str=(byteptr)"", .is_lit=1},.file_backend_mode = 0,.scanner = v__scanner__new_scanner(text, v__scanner__CommentsMode__skip_comments, (v__pref__Preferences*)memdup(&(v__pref__Preferences){.os = 0,.backend = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.translated = 0,.is_prod = 0,.obfuscate = 0,.is_repl = 0,.is_run = 0,.is_debug = 0,.is_vlines = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.is_stats = 0,.cflags = (string){.str=(byteptr)"", .is_lit=1},.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_type = 0,.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.autofree = 0,.compress = 0,.no_builtin = 0,.enable_globals = 0,.is_fmt = 0,.is_vet = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = __new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.path = (string){.str=(byteptr)"", .is_lit=1},.run_only = __new_array(0, 0, sizeof(string)),.compile_defines = __new_array(0, 0, sizeof(string)),.compile_defines_all = __new_array(0, 0, sizeof(string)),.run_args = __new_array(0, 0, sizeof(string)),.printfn_list = __new_array(0, 0, sizeof(string)),.print_v_files = 0,.skip_running = 0,.skip_warnings = 0,.warn_impure_v = 0,.warns_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.use_color = 0,.no_parallel = 0,.is_vweb = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.show_timings = 0,.is_ios_simulator = 0,.is_apk = 0,.cleanup_files = __new_array(0, 0, sizeof(string)),.build_options = __new_array(0, 0, sizeof(string)),.cache_manager = (v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),},.is_help = 0,.gc_mode = v__pref__GarbageCollectionMode__no_gc,.is_cstrict = 0,.assert_failure_mode = 0,.message_limit = 100,.nofloat = 0,.checker_match_exhaustive_cutoff_limit = 12,}, sizeof(v__pref__Preferences))),.comments_mode = v__scanner__CommentsMode__skip_comments,.tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.prev_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.peek_tok = (v__token__Token){.lit = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.pos = 0,.len = 0,.tidx = 0,},.table = table,.language = 0,.fn_language = 0,.expr_level = 0,.inside_vlib_file = 0,.inside_test_file = true,.inside_if = 0,.inside_if_expr = 0,.inside_ct_if_expr = 0,.inside_or_expr = 0,.inside_for = 0,.inside_fn = 0,.inside_unsafe_fn = 0,.inside_str_interp = 0,.inside_array_lit = 0,.inside_in_array = 0,.inside_match = 0,.inside_select = 0,.inside_match_case = 0,.inside_match_body = 0,.inside_unsafe = 0,.inside_sum_type = 0,.inside_asm_template = 0,.inside_asm = 0,.inside_defer = 0,.inside_generic_params = 0,.inside_receiver_param = 0,.or_is_handled = 0,.builtin_mod = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.is_manualfree = 0,.has_globals = 0,.is_generated = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.expr_mod = (string){.str=(byteptr)"", .is_lit=1},.scope = scope,.imports = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.ast_imports = __new_array(0, 0, sizeof(v__ast__Import)),.used_imports = __new_array(0, 0, sizeof(string)),.auto_imports = __new_array(0, 0, sizeof(string)),.imported_symbols = new_map(sizeof(string), sizeof(string), &map_hash_string, &map_eq_string, &map_clone_string, &map_free_string),.is_amp = 0,.returns = 0,.is_stmt_ident = 0,.expecting_type = 0,.errors = __new_array(0, 0, sizeof(v__errors__Error)),.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),.notices = __new_array(0, 0, sizeof(v__errors__Notice)),.vet_errors = __new_array(0, 0, sizeof(v__vet__Error)),.cur_fn_name = (string){.str=(byteptr)"", .is_lit=1},.label_names = __new_array(0, 0, sizeof(string)),.name_error = 0,.n_asm = 0,.global_labels = __new_array(0, 0, sizeof(string)),.comptime_if_cond = 0,.defer_vars = __new_array(0, 0, sizeof(v__ast__Ident)),.should_abort = 0,.codegen_text = (string){.str=(byteptr)"", .is_lit=1},};
 	v__parser__Parser_init_parse_fns(&p);
 	v__util__timing_start(_SLIT("PARSE stmt"));
 	v__parser__parse_stmt_defer_0 = true;
@@ -78178,6 +78273,7 @@ v__ast__File* v__parser__parse_comptime(string text, v__ast__Table* table, v__pr
 		.table = table,
 		.language = 0,
 		.fn_language = 0,
+		.expr_level = 0,
 		.inside_vlib_file = 0,
 		.inside_test_file = 0,
 		.inside_if = 0,
@@ -78255,6 +78351,7 @@ v__ast__File* v__parser__parse_text(string text, string path, v__ast__Table* tab
 		.table = table,
 		.language = 0,
 		.fn_language = 0,
+		.expr_level = 0,
 		.inside_vlib_file = 0,
 		.inside_test_file = 0,
 		.inside_if = 0,
@@ -78390,6 +78487,7 @@ v__ast__File* v__parser__parse_file(string path, v__ast__Table* table, v__scanne
 		.table = table,
 		.language = 0,
 		.fn_language = 0,
+		.expr_level = 0,
 		.inside_vlib_file = 0,
 		.inside_test_file = 0,
 		.inside_if = 0,
@@ -78469,6 +78567,7 @@ multi_return_ref_v__ast__File_Array_v__vet__Error v__parser__parse_vet_file(stri
 		.table = table_,
 		.language = 0,
 		.fn_language = 0,
+		.expr_level = 0,
 		.inside_vlib_file = 0,
 		.inside_test_file = 0,
 		.inside_if = 0,
@@ -80065,9 +80164,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parse
 	v__token__Position pos = v__token__Token_position(&tok);
 	Array_v__ast__Ident defer_vars = p->defer_vars;
 	p->defer_vars = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_46416 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_46416.arg0;
-	Array_v__ast__Comment left_comments = mr_46416.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_46501 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_46501.arg0;
+	Array_v__ast__Comment left_comments = mr_46501.arg1;
 	if (!(p->inside_defer && p->tok.kind == v__token__Kind__decl_assign)) {
 		_PUSH_MANY(&defer_vars, (p->defer_vars), _t1, Array_v__ast__Ident);
 	}
@@ -81252,9 +81351,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t1 = (v__ast__Return){.pos = first_pos,.comments = comments,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t1;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_79894 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_79894.arg0;
-	Array_v__ast__Comment comments2 = mr_79894.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_79979 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_79979.arg0;
+	Array_v__ast__Comment comments2 = mr_79979.arg1;
 	_PUSH_MANY(&comments, (comments2), _t2, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.comments = comments,.exprs = exprs,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
@@ -81503,8 +81602,8 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 		return _t2;
 	}
 	Array_v__ast__TypeNode sum_variants = __new_array_with_default(0, 0, sizeof(v__ast__TypeNode), 0);
-	multi_return_Array_v__ast__Type_Array_string mr_86200 = v__parser__Parser_parse_generic_types(p);
-	Array_v__ast__Type generic_types = mr_86200.arg0;
+	multi_return_Array_v__ast__Type_Array_string mr_86285 = v__parser__Parser_parse_generic_types(p);
+	Array_v__ast__Type generic_types = mr_86285.arg0;
 	v__token__Position decl_pos_with_generics = v__token__Position_extend(decl_pos, v__token__Token_position(&p->prev_tok));
 	v__parser__Parser_check(p, v__token__Kind__assign);
 	v__token__Position type_pos = v__token__Token_position(&p->tok);
