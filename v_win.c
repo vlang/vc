@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c1711b8"
+#define V_COMMIT_HASH "730b2a9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6176ce9"
+	#define V_COMMIT_HASH "c1711b8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c1711b8"
+	#define V_CURRENT_COMMIT_HASH "730b2a9"
 #endif
 
 // V comptime_definitions:
@@ -1068,14 +1068,14 @@ static inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; 
 
 
 
-// added by module `sync.atomic2`
+// added by module `sync.stdatomic`
 
 #if defined(__has_include)
 
 #if __has_include(<atomic.h>)
 #include <atomic.h>
 #else
-#error VERROR_MESSAGE Header file <atomic.h>, needed for module `sync.atomic2` was not found. Please install the corresponding development headers.
+#error VERROR_MESSAGE Header file <atomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
 #endif
 
 #else
@@ -1158,24 +1158,6 @@ static inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; 
 
 #else
 #include <signal.h>
-#endif
-
-
-
-
-
-// added by module `sync`
-
-#if defined(__has_include)
-
-#if __has_include(<atomic.h>)
-#include <atomic.h>
-#else
-#error VERROR_MESSAGE Header file <atomic.h>, needed for module `sync` was not found. Please install the corresponding development headers.
-#endif
-
-#else
-#include <atomic.h>
 #endif
 
 
@@ -7383,14 +7365,15 @@ VV_LOCAL_SYMBOL Option_semver__Version semver__coerce_version(string input);
 VV_LOCAL_SYMBOL semver__Version semver__increment_version(semver__Version ver, semver__Increment typ);
 VV_LOCAL_SYMBOL bool semver__is_valid_string(string input);
 VV_LOCAL_SYMBOL bool semver__is_valid_number(string input);
-bool sync__atomic2__add_u64(u64* ptr, int delta);
-bool sync__atomic2__sub_u64(u64* ptr, int delta);
-bool sync__atomic2__add_i64(i64* ptr, int delta);
-bool sync__atomic2__sub_i64(i64* ptr, int delta);
-void sync__atomic2__store_u64(u64* ptr, u64 val);
-u64 sync__atomic2__load_u64(u64* ptr);
-void sync__atomic2__store_i64(i64* ptr, i64 val);
-i64 sync__atomic2__load_i64(i64* ptr);
+#define _const_sync__stdatomic__used 1
+bool sync__stdatomic__add_u64(u64* ptr, int delta);
+bool sync__stdatomic__sub_u64(u64* ptr, int delta);
+bool sync__stdatomic__add_i64(i64* ptr, int delta);
+bool sync__stdatomic__sub_i64(i64* ptr, int delta);
+void sync__stdatomic__store_u64(u64* ptr, u64 val);
+u64 sync__stdatomic__load_u64(u64* ptr);
+void sync__stdatomic__store_i64(i64* ptr, i64 val);
+i64 sync__stdatomic__load_i64(i64* ptr);
 Array_string os__args_after(string cut_word);
 Array_string os__args_before(string cut_word);
 #define _const_os__success 0
@@ -8009,6 +7992,7 @@ bool v__pref__Preferences_should_compile_native(v__pref__Preferences* prefs, str
 bool v__pref__Preferences_should_compile_c(v__pref__Preferences* prefs, string file);
 bool v__pref__Preferences_should_compile_asm(v__pref__Preferences* prefs, string path);
 bool v__pref__Preferences_should_compile_js(v__pref__Preferences* prefs, string file);
+#define _const_sync__aops_used 1
 #define _const_sync__spinloops 750
 #define _const_sync__spinloops_sem 4000
 VV_LOCAL_SYMBOL sync__Channel* sync__new_channel_st(u32 n, u32 st);
@@ -24327,44 +24311,47 @@ VV_LOCAL_SYMBOL bool semver__is_valid_number(string input) {
 	return _t3;
 }
 
-bool sync__atomic2__add_u64(u64* ptr, int delta) {
+#if defined(_WIN32)
+#else
+#endif
+bool sync__stdatomic__add_u64(u64* ptr, int delta) {
 	u64 res = atomic_fetch_add_u64(((voidptr)(ptr)), delta);
 	bool _t1 = res == 0U;
 	return _t1;
 }
 
-bool sync__atomic2__sub_u64(u64* ptr, int delta) {
+bool sync__stdatomic__sub_u64(u64* ptr, int delta) {
 	u64 res = atomic_fetch_sub_u64(((voidptr)(ptr)), delta);
 	bool _t1 = res == 0U;
 	return _t1;
 }
 
-bool sync__atomic2__add_i64(i64* ptr, int delta) {
+bool sync__stdatomic__add_i64(i64* ptr, int delta) {
 	u64 res = atomic_fetch_add_u64(((voidptr)(ptr)), delta);
 	bool _t1 = res == 0U;
 	return _t1;
 }
 
-bool sync__atomic2__sub_i64(i64* ptr, int delta) {
+bool sync__stdatomic__sub_i64(i64* ptr, int delta) {
 	u64 res = atomic_fetch_sub_u64(((voidptr)(ptr)), delta);
 	bool _t1 = res == 0U;
 	return _t1;
 }
 
-void sync__atomic2__store_u64(u64* ptr, u64 val) {
+void sync__stdatomic__store_u64(u64* ptr, u64 val) {
 	atomic_store_u64(((voidptr)(ptr)), val);
 }
 
-u64 sync__atomic2__load_u64(u64* ptr) {
+u64 sync__stdatomic__load_u64(u64* ptr) {
 	u64 _t1 = atomic_load_u64(((voidptr)(ptr)));
 	return _t1;
 }
 
-void sync__atomic2__store_i64(i64* ptr, i64 val) {
+void sync__stdatomic__store_i64(i64* ptr, i64 val) {
 	atomic_store_u64(((voidptr)(ptr)), val);
 }
 
-i64 sync__atomic2__load_i64(i64* ptr) {
+i64 sync__stdatomic__load_i64(i64* ptr) {
 	i64 _t1 = ((i64)(atomic_load_u64(((voidptr)(ptr)))));
 	return _t1;
 }
@@ -30999,7 +30986,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("6176ce9");
+	string vhash = _SLIT("c1711b8");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -32365,9 +32352,6 @@ bool v__pref__Preferences_should_compile_js(v__pref__Preferences* prefs, string 
 	return _t2;
 }
 
-#if defined(_WIN32)
-#else
-#endif
 VV_LOCAL_SYMBOL sync__Channel* sync__new_channel_st(u32 n, u32 st) {
 	u32 wsem = (n > 0U ? (n) : (1));
 	u32 rsem = (n > 0U ? (((u32)(0U))) : (1));
@@ -32490,9 +32474,9 @@ VV_LOCAL_SYMBOL ChanState sync__Channel_try_push_priv(sync__Channel* ch, voidptr
 		ChanState _t1 = ChanState__closed;
 		return _t1;
 	}
-	multi_return_int_literal_int_literal mr_6753 = (no_block ? ((multi_return_int_literal_int_literal){.arg0=1,.arg1=1}) : ((multi_return_int_literal_int_literal){.arg0=_const_sync__spinloops,.arg1=_const_sync__spinloops_sem}));
-	int spinloops_sem_ = mr_6753.arg0;
-	int spinloops_ = mr_6753.arg1;
+	multi_return_int_literal_int_literal mr_4432 = (no_block ? ((multi_return_int_literal_int_literal){.arg0=1,.arg1=1}) : ((multi_return_int_literal_int_literal){.arg0=_const_sync__spinloops,.arg1=_const_sync__spinloops_sem}));
+	int spinloops_sem_ = mr_4432.arg0;
+	int spinloops_ = mr_4432.arg1;
 	bool have_swapped = false;
 	for (;;) {
 		bool got_sem = false;
@@ -32679,9 +32663,9 @@ inline ChanState sync__Channel_try_pop(sync__Channel* ch, voidptr dest) {
 }
 
 VV_LOCAL_SYMBOL ChanState sync__Channel_try_pop_priv(sync__Channel* ch, voidptr dest, bool no_block) {
-	multi_return_int_literal_int_literal mr_11736 = (no_block ? ((multi_return_int_literal_int_literal){.arg0=1,.arg1=1}) : ((multi_return_int_literal_int_literal){.arg0=_const_sync__spinloops,.arg1=_const_sync__spinloops_sem}));
-	int spinloops_sem_ = mr_11736.arg0;
-	int spinloops_ = mr_11736.arg1;
+	multi_return_int_literal_int_literal mr_9415 = (no_block ? ((multi_return_int_literal_int_literal){.arg0=1,.arg1=1}) : ((multi_return_int_literal_int_literal){.arg0=_const_sync__spinloops,.arg1=_const_sync__spinloops_sem}));
+	int spinloops_sem_ = mr_9415.arg0;
+	int spinloops_ = mr_9415.arg1;
 	bool have_swapped = false;
 	bool write_in_progress = false;
 	for (;;) {
@@ -32853,7 +32837,7 @@ int sync__channel_select(Array_sync__Channel_ptr* channels, Array_sync__Directio
 	if (!(channels->len == dir.len)) {
 		VAssertMetaInfo v_assert_meta_info__t1 = {0};
 		v_assert_meta_info__t1.fpath = _SLIT("/home/runner/work/v/v/vlib/sync/channels.c.v");
-		v_assert_meta_info__t1.line_nr = 610;
+		v_assert_meta_info__t1.line_nr = 549;
 		v_assert_meta_info__t1.fn_name = _SLIT("sync.channel_select");
 		v_assert_meta_info__t1.src = _SLIT("channels.len == dir.len");
 		v_assert_meta_info__t1.op = _SLIT("==");
@@ -32868,7 +32852,7 @@ int sync__channel_select(Array_sync__Channel_ptr* channels, Array_sync__Directio
 	if (!(dir.len == objrefs->len)) {
 		VAssertMetaInfo v_assert_meta_info__t2 = {0};
 		v_assert_meta_info__t2.fpath = _SLIT("/home/runner/work/v/v/vlib/sync/channels.c.v");
-		v_assert_meta_info__t2.line_nr = 611;
+		v_assert_meta_info__t2.line_nr = 550;
 		v_assert_meta_info__t2.fn_name = _SLIT("sync.channel_select");
 		v_assert_meta_info__t2.src = _SLIT("dir.len == objrefs.len");
 		v_assert_meta_info__t2.op = _SLIT("==");
@@ -33007,7 +32991,7 @@ sync__ManyTimes* sync__new_many_times(u64 times) {
 }
 
 void sync__ManyTimes_do(sync__ManyTimes* m, void (*f)(void)) {
-	if (sync__atomic2__load_u64(&m->count) < m->times) {
+	if (sync__stdatomic__load_u64(&m->count) < m->times) {
 		sync__ManyTimes_do_slow(m, (voidptr)f);
 	}
 }
@@ -33015,7 +32999,7 @@ void sync__ManyTimes_do(sync__ManyTimes* m, void (*f)(void)) {
 VV_LOCAL_SYMBOL void sync__ManyTimes_do_slow(sync__ManyTimes* m, void (*f)(void)) {
 	sync__RwMutex_lock(&m->m);
 	if (m->count < m->times) {
-		sync__atomic2__store_u64(&m->count, m->count + 1U);
+		sync__stdatomic__store_u64(&m->count, m->count + 1U);
 		f();
 	}
 	sync__RwMutex_unlock(&m->m);
@@ -33029,7 +33013,7 @@ sync__Once* sync__new_once(void) {
 }
 
 void sync__Once_do(sync__Once* o, void (*f)(void)) {
-	if (sync__atomic2__load_u64(&o->count) < 1U) {
+	if (sync__stdatomic__load_u64(&o->count) < 1U) {
 		sync__Once_do_slow(o, (voidptr)f);
 	}
 }
@@ -33037,7 +33021,7 @@ void sync__Once_do(sync__Once* o, void (*f)(void)) {
 VV_LOCAL_SYMBOL void sync__Once_do_slow(sync__Once* o, void (*f)(void)) {
 	sync__RwMutex_lock(&o->m);
 	if (o->count < 1U) {
-		sync__atomic2__store_u64(&o->count, 1U);
+		sync__stdatomic__store_u64(&o->count, 1U);
 		f();
 	}
 	sync__RwMutex_unlock(&o->m);
@@ -86485,7 +86469,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	{ // Initializations for module semver :
 	_const_semver__versions = new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_semver__ver_major, _const_semver__ver_minor, _const_semver__ver_patch}));
 	}
-	{ // Initializations for module sync.atomic2 :
+	{ // Initializations for module sync.stdatomic :
 	}
 	{ // Initializations for module sync.threads :
 	}
