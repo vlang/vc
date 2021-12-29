@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "9b8cf1a"
+#define V_COMMIT_HASH "7c78bf9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5607cfb"
+	#define V_COMMIT_HASH "9b8cf1a"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "9b8cf1a"
+	#define V_CURRENT_COMMIT_HASH "7c78bf9"
 #endif
 
 // V comptime_definitions:
@@ -7431,8 +7431,10 @@ u32 _const_hash__fnv1a__fnv32_offset_basis = 2166136261; // precomputed
 u32 _const_hash__fnv1a__fnv32_prime = 16777619; // precomputed
 u32 hash__fnv1a__sum32_string(string data);
 u32 hash__fnv1a__sum32(Array_byte data);
+u32 hash__fnv1a__sum32_bytes(byte* data, int data_len);
 u64 hash__fnv1a__sum64_string(string data);
 u64 hash__fnv1a__sum64(Array_byte data);
+u64 hash__fnv1a__sum64_bytes(byte* data, int data_len);
 u64 _const_rand__constants__lower_mask = 4294967295U; // precomputed
 #define _const_rand__constants__max_u32 4294967295
 u64 _const_rand__constants__max_u64 = 18446744073709551615U; // precomputed
@@ -27920,41 +27922,69 @@ inline VV_LOCAL_SYMBOL u64 hash__wyr8(byte* p) {
 	return 0;
 }
 
+// Attr: [direct_array_access]
 // Attr: [inline]
 inline u32 hash__fnv1a__sum32_string(string data) {
 	u32 hash = _const_hash__fnv1a__fnv32_offset_basis;
 	for (int i = 0; i < data.len; ++i) {
-		hash = ((hash ^ ((u32)(string_at(data, i))))) * _const_hash__fnv1a__fnv32_prime;
+		hash = ((hash ^ ((u32)(data.str[ i])))) * _const_hash__fnv1a__fnv32_prime;
 	}
 	u32 _t1 = hash;
 	return _t1;
 }
 
+// Attr: [direct_array_access]
 // Attr: [inline]
 inline u32 hash__fnv1a__sum32(Array_byte data) {
 	u32 hash = _const_hash__fnv1a__fnv32_offset_basis;
 	for (int i = 0; i < data.len; ++i) {
-		hash = ((hash ^ ((u32)((*(byte*)/*ee elem_typ */array_get(data, i)))))) * _const_hash__fnv1a__fnv32_prime;
+		hash = ((hash ^ ((u32)(((byte*)data.data)[i])))) * _const_hash__fnv1a__fnv32_prime;
 	}
 	u32 _t1 = hash;
 	return _t1;
 }
 
+// Attr: [direct_array_access]
+// Attr: [inline]
+// Attr: [unsafe]
+inline u32 hash__fnv1a__sum32_bytes(byte* data, int data_len) {
+	u32 hash = _const_hash__fnv1a__fnv32_offset_basis;
+	for (int i = 0; i < data_len; ++i) {
+		hash = ((hash ^ ((u32)(data[i])))) * _const_hash__fnv1a__fnv32_prime;
+	}
+	u32 _t1 = hash;
+	return _t1;
+}
+
+// Attr: [direct_array_access]
 // Attr: [inline]
 inline u64 hash__fnv1a__sum64_string(string data) {
 	u64 hash = _const_hash__fnv1a__fnv64_offset_basis;
 	for (int i = 0; i < data.len; ++i) {
-		hash = ((hash ^ ((u64)(string_at(data, i))))) * _const_hash__fnv1a__fnv64_prime;
+		hash = ((hash ^ ((u64)(data.str[ i])))) * _const_hash__fnv1a__fnv64_prime;
 	}
 	u64 _t1 = hash;
 	return _t1;
 }
 
+// Attr: [direct_array_access]
 // Attr: [inline]
 inline u64 hash__fnv1a__sum64(Array_byte data) {
 	u64 hash = _const_hash__fnv1a__fnv64_offset_basis;
 	for (int i = 0; i < data.len; ++i) {
-		hash = ((hash ^ ((u64)((*(byte*)/*ee elem_typ */array_get(data, i)))))) * _const_hash__fnv1a__fnv64_prime;
+		hash = ((hash ^ ((u64)(((byte*)data.data)[i])))) * _const_hash__fnv1a__fnv64_prime;
+	}
+	u64 _t1 = hash;
+	return _t1;
+}
+
+// Attr: [direct_array_access]
+// Attr: [inline]
+// Attr: [unsafe]
+inline u64 hash__fnv1a__sum64_bytes(byte* data, int data_len) {
+	u64 hash = _const_hash__fnv1a__fnv64_offset_basis;
+	for (int i = 0; i < data_len; ++i) {
+		hash = ((hash ^ ((u64)(data[i])))) * _const_hash__fnv1a__fnv64_prime;
 	}
 	u64 _t1 = hash;
 	return _t1;
@@ -32271,7 +32301,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("5607cfb");
+	string vhash = _SLIT("9b8cf1a");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
