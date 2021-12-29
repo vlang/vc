@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5607cfb"
+#define V_COMMIT_HASH "9b8cf1a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "43fee6b"
+	#define V_COMMIT_HASH "5607cfb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5607cfb"
+	#define V_CURRENT_COMMIT_HASH "9b8cf1a"
 #endif
 
 // V comptime_definitions:
@@ -32271,7 +32271,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("43fee6b");
+	string vhash = _SLIT("5607cfb");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -56623,6 +56623,9 @@ void v__markused__Walker_stmt(v__markused__Walker* w, v__ast__Stmt node) {
 			w->table->used_maps++;
 		}
 		if ((*node._v__ast__ForInStmt).kind == v__ast__Kind__struct_) {
+			if ((*node._v__ast__ForInStmt).cond_type == 0) {
+				return;
+			}
 			v__ast__TypeSymbol* cond_type_sym = v__ast__Table_sym(w->table, (*node._v__ast__ForInStmt).cond_type);
 			Option_v__ast__Fn _t1;
 			if (_t1 = v__ast__TypeSymbol_find_method(cond_type_sym, _SLIT("next")), _t1.state == 0) {
@@ -56771,6 +56774,9 @@ VV_LOCAL_SYMBOL void v__markused__Walker_expr(v__markused__Walker* w, v__ast__Ex
 		v__markused__Walker_expr(w, (*node._v__ast__IndexExpr).left);
 		v__markused__Walker_expr(w, (*node._v__ast__IndexExpr).index);
 		v__markused__Walker_or_block(w, (*node._v__ast__IndexExpr).or_expr);
+		if ((*node._v__ast__IndexExpr).left_type == 0) {
+			return;
+		}
 		v__ast__TypeSymbol* sym = v__ast__Table_final_sym(w->table, (*node._v__ast__IndexExpr).left_type);
 		if (sym->kind == v__ast__Kind__map) {
 			w->table->used_maps++;
@@ -56790,6 +56796,9 @@ VV_LOCAL_SYMBOL void v__markused__Walker_expr(v__markused__Walker* w, v__ast__Ex
 				v__ast__Fn opmethod = *(v__ast__Fn*)_t1.data;
 				v__markused__Walker_fn_decl(w, ((v__ast__FnDecl*)(opmethod.source_fn)));
 			}
+		}
+		if ((*node._v__ast__InfixExpr).right_type == 0) {
+			return;
 		}
 		v__ast__TypeSymbol* right_sym = v__ast__Table_sym(w->table, (*node._v__ast__InfixExpr).right_type);
 		if (((*node._v__ast__InfixExpr).op == v__token__Kind__not_in || (*node._v__ast__InfixExpr).op == v__token__Kind__key_in) && right_sym->kind == v__ast__Kind__map) {
@@ -56876,6 +56885,9 @@ VV_LOCAL_SYMBOL void v__markused__Walker_expr(v__markused__Walker* w, v__ast__Ex
 		v__markused__Walker_expr(w, (*node._v__ast__SqlExpr).where_expr);
 	}
 	else if (node._typ == 286 /* v.ast.StructInit */) {
+		if ((*node._v__ast__StructInit).typ == 0) {
+			return;
+		}
 		v__ast__TypeSymbol* sym = v__ast__Table_sym(w->table, (*node._v__ast__StructInit).typ);
 		if (sym->kind == v__ast__Kind__struct_) {
 			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 408) /*expected idx: 408, name: v.ast.Struct */ ;
@@ -56884,9 +56896,11 @@ VV_LOCAL_SYMBOL void v__markused__Walker_expr(v__markused__Walker* w, v__ast__Ex
 				if (ifield.has_default_expr) {
 					v__markused__Walker_expr(w, ifield.default_expr);
 				}
-				v__ast__TypeSymbol* fsym = v__ast__Table_sym(w->table, ifield.typ);
-				if (fsym->kind == v__ast__Kind__map) {
-					w->table->used_maps++;
+				if (ifield.typ != 0) {
+					v__ast__TypeSymbol* fsym = v__ast__Table_sym(w->table, ifield.typ);
+					if (fsym->kind == v__ast__Kind__map) {
+						w->table->used_maps++;
+					}
 				}
 			}
 		}
