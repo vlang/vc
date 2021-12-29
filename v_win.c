@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "69c90ef"
+#define V_COMMIT_HASH "cc577e1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7c78bf9"
+	#define V_COMMIT_HASH "69c90ef"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "69c90ef"
+	#define V_CURRENT_COMMIT_HASH "cc577e1"
 #endif
 
 // V comptime_definitions:
@@ -31023,7 +31023,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("7c78bf9");
+	string vhash = _SLIT("69c90ef");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -74467,31 +74467,6 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 	_PUSH_MANY(&comments, (right_comments), _t3, Array_v__ast__Comment);
 	Array_v__ast__Comment end_comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = true,.follow_up = 0,});
 	bool has_cross_var = false;
-	if (op == v__token__Kind__decl_assign) {
-		for (int _t4 = 0; _t4 < right.len; ++_t4) {
-			v__ast__Expr r = ((v__ast__Expr*)right.data)[_t4];
-			Option_void _t5 = v__parser__Parser_check_undefined_variables(p, left, r);
-			if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
-				IError err = _t5.err;
-				v__ast__Stmt _t6 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, (*(err.msg)), pos))));
-				return _t6;
-			}
-			
- ;
-		}
-	} else if (left.len > 1) {
-		for (int _t7 = 0; _t7 < right.len; ++_t7) {
-			v__ast__Expr r = ((v__ast__Expr*)right.data)[_t7];
-			has_cross_var = v__parser__Parser_check_cross_variables(p, left, r);
-			if (!(op == v__token__Kind__assign || op == v__token__Kind__decl_assign)) {
-				v__ast__Stmt _t8 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected "), 0xfe10, {.d_s = v__token__Kind_str(op)}}, {_SLIT(", expecting := or = or comma"), 0, { .d_c = 0 }}})), pos))));
-				return _t8;
-			}
-			if (has_cross_var) {
-				break;
-			}
-		}
-	}
 	bool is_static = false;
 	bool is_volatile = false;
 	for (int i = 0; i < left.len; ++i) {
@@ -74499,8 +74474,8 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 		if (lx._typ == 299 /* v.ast.Ident */) {
 			if (op == v__token__Kind__decl_assign) {
 				if (v__ast__Scope_known_var(p->scope, (*lx._v__ast__Ident).name)) {
-					v__ast__Stmt _t9 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("redefinition of `"), 0xfe10, {.d_s = (*lx._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*lx._v__ast__Ident).pos))));
-					return _t9;
+					v__ast__Stmt _t4 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("redefinition of `"), 0xfe10, {.d_s = (*lx._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*lx._v__ast__Ident).pos))));
+					return _t4;
 				}
 				v__ast__ShareType share = ((v__ast__ShareType)(0));
 				if (((*lx._v__ast__Ident).info)._typ == 408 /* v.ast.IdentVar */) {
@@ -74508,8 +74483,8 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 					share = iv.share;
 					if (iv.is_static) {
 						if (!p->pref->translated && !p->pref->is_fmt && !p->inside_unsafe_fn) {
-							v__ast__Stmt _t10 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, _SLIT("static variables are supported only in -translated mode or in [unsafe] fn"), (*lx._v__ast__Ident).pos))));
-							return _t10;
+							v__ast__Stmt _t5 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, _SLIT("static variables are supported only in -translated mode or in [unsafe] fn"), (*lx._v__ast__Ident).pos))));
+							return _t5;
 						}
 						is_static = true;
 					}
@@ -74552,8 +74527,8 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 		}
 		else if (lx._typ == 302 /* v.ast.IndexExpr */) {
 			if (op == v__token__Kind__decl_assign) {
-				v__ast__Stmt _t11 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("non-name `"), 0xfe10, {.d_s = v__ast__Expr_str((*lx._v__ast__IndexExpr).left)}}, {_SLIT("["), 0xfe10, {.d_s = v__ast__Expr_str((*lx._v__ast__IndexExpr).index)}}, {_SLIT("]` on left side of `:=`"), 0, { .d_c = 0 }}})), (*lx._v__ast__IndexExpr).pos))));
-				return _t11;
+				v__ast__Stmt _t6 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("non-name `"), 0xfe10, {.d_s = v__ast__Expr_str((*lx._v__ast__IndexExpr).left)}}, {_SLIT("["), 0xfe10, {.d_s = v__ast__Expr_str((*lx._v__ast__IndexExpr).index)}}, {_SLIT("]` on left side of `:=`"), 0, { .d_c = 0 }}})), (*lx._v__ast__IndexExpr).pos))));
+				return _t6;
 			}
 			(*lx._v__ast__IndexExpr).is_setter = true;
 		}
@@ -74563,14 +74538,39 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_partial_assign_stmt(v__parser__Pa
 		}
 		else if (lx._typ == 319 /* v.ast.SelectorExpr */) {
 			if (op == v__token__Kind__decl_assign) {
-				v__ast__Stmt _t12 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, _SLIT("struct fields can only be declared during the initialization"), (*lx._v__ast__SelectorExpr).pos))));
-				return _t12;
+				v__ast__Stmt _t7 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, _SLIT("struct fields can only be declared during the initialization"), (*lx._v__ast__SelectorExpr).pos))));
+				return _t7;
 			}
 		}
 		
 		else {
 		}
 		;
+	}
+	if (op == v__token__Kind__decl_assign) {
+		for (int _t8 = 0; _t8 < right.len; ++_t8) {
+			v__ast__Expr r = ((v__ast__Expr*)right.data)[_t8];
+			Option_void _t9 = v__parser__Parser_check_undefined_variables(p, left, r);
+			if (_t9.state != 0 && _t9.err._typ != _IError_None___index) {
+				IError err = _t9.err;
+				v__ast__Stmt _t10 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p, (*(err.msg)), pos))));
+				return _t10;
+			}
+			
+ ;
+		}
+	} else if (left.len > 1) {
+		for (int _t11 = 0; _t11 < right.len; ++_t11) {
+			v__ast__Expr r = ((v__ast__Expr*)right.data)[_t11];
+			has_cross_var = v__parser__Parser_check_cross_variables(p, left, r);
+			if (!(op == v__token__Kind__assign || op == v__token__Kind__decl_assign)) {
+				v__ast__Stmt _t12 = v__ast__NodeError_to_sumtype_v__ast__Stmt(ADDR(v__ast__NodeError, (v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected "), 0xfe10, {.d_s = v__token__Kind_str(op)}}, {_SLIT(", expecting := or = or comma"), 0, { .d_c = 0 }}})), pos))));
+				return _t12;
+			}
+			if (has_cross_var) {
+				break;
+			}
+		}
 	}
 	v__token__Position_update_last_line(&pos, p->prev_tok.line_nr);
 	v__ast__Stmt _t13 = v__ast__AssignStmt_to_sumtype_v__ast__Stmt(ADDR(v__ast__AssignStmt, ((v__ast__AssignStmt){
