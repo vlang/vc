@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ca51547"
+#define V_COMMIT_HASH "99fdcd2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "537760e"
+	#define V_COMMIT_HASH "ca51547"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ca51547"
+	#define V_CURRENT_COMMIT_HASH "99fdcd2"
 #endif
 
 // V comptime_definitions:
@@ -32327,7 +32327,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("537760e");
+	string vhash = _SLIT("ca51547");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -86032,7 +86032,9 @@ VV_LOCAL_SYMBOL Array_string v__builder__Builder_all_args(v__builder__Builder* v
 	_PUSH_MANY(&all, (ccoptions.pre_args), _t5, Array_string);
 	_PUSH_MANY(&all, (ccoptions.source_args), _t6, Array_string);
 	_PUSH_MANY(&all, (ccoptions.post_args), _t7, Array_string);
-	_PUSH_MANY(&all, (ccoptions.linker_flags), _t8, Array_string);
+	if (v->pref->build_mode != v__pref__BuildMode__build_module) {
+		_PUSH_MANY(&all, (ccoptions.linker_flags), _t8, Array_string);
+	}
 	array_push((array*)&all, _MOV((string[]){ string_clone(ccoptions.env_ldflags) }));
 	Array_string _t10 = all;
 	return _t10;
@@ -86412,10 +86414,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_21829 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_21829.arg0;
-	Array_string others = mr_21829.arg1;
-	Array_string libs = mr_21829.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_21997 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_21997.arg0;
+	Array_string others = mr_21997.arg1;
+	Array_string libs = mr_21997.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
