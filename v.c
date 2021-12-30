@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ae036b6"
+#define V_COMMIT_HASH "b10ff1e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "df8384b"
+	#define V_COMMIT_HASH "ae036b6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ae036b6"
+	#define V_CURRENT_COMMIT_HASH "b10ff1e"
 #endif
 
 // V comptime_definitions:
@@ -32333,7 +32333,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("df8384b");
+	string vhash = _SLIT("ae036b6");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -48582,9 +48582,9 @@ bool v__checker__Checker_expr_defer_0 = false;
 v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastExpr* node) {
 	node->expr_type = v__checker__Checker_expr(c, node->expr);
 	v__ast__Type from_type = node->expr_type;
-	v__ast__Type to_type = node->typ;
 	v__ast__TypeSymbol* from_sym = v__ast__Table_sym(c->table, from_type);
 	v__ast__TypeSymbol* final_from_sym = v__ast__Table_final_sym(c->table, from_type);
+	v__ast__Type to_type = node->typ;
 	v__ast__TypeSymbol* to_sym = v__ast__Table_sym(c->table, to_type);
 	v__ast__TypeSymbol* final_to_sym = v__ast__Table_final_sym(c->table, to_type);
 	if ((v__ast__TypeSymbol_is_number(to_sym) && string__eq(from_sym->name, _SLIT("JS.Number"))) || (v__ast__TypeSymbol_is_number(to_sym) && string__eq(from_sym->name, _SLIT("JS.BigInt"))) || (v__ast__TypeSymbol_is_string(to_sym) && string__eq(from_sym->name, _SLIT("JS.String"))) || (v__ast__Type_is_bool(to_type) && string__eq(from_sym->name, _SLIT("JS.Boolean"))) || (v__ast__Type_is_bool(from_type) && string__eq(to_sym->name, _SLIT("JS.Boolean"))) || (v__ast__TypeSymbol_is_number(from_sym) && string__eq(to_sym->name, _SLIT("JS.Number"))) || (v__ast__TypeSymbol_is_number(from_sym) && string__eq(to_sym->name, _SLIT("JS.BigInt"))) || (v__ast__TypeSymbol_is_string(from_sym) && string__eq(to_sym->name, _SLIT("JS.String")))) {
@@ -48634,6 +48634,14 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 		if (v__checker__Checker_type_implements(c, from_type, to_type, node->pos)) {
 			if (!v__ast__Type_is_ptr(from_type) && !v__ast__Type_is_pointer(from_type) && from_sym->kind != v__ast__Kind__interface_ && !c->inside_unsafe) {
 				v__checker__Checker_mark_as_referenced(c, &node->expr, true);
+			}
+			if ((/* as */ *(v__ast__Interface*)__as_cast((to_sym->info)._v__ast__Interface,(to_sym->info)._typ, 425) /*expected idx: 425, name: v.ast.Interface */ ).is_generic) {
+				v__ast__Type inferred_type = v__checker__Checker_resolve_generic_interface(c, from_type, to_type, node->pos);
+				if (inferred_type != 0) {
+					to_type = inferred_type;
+					to_sym = v__ast__Table_sym(c->table, to_type);
+					final_to_sym = v__ast__Table_final_sym(c->table, to_type);
+				}
 			}
 		}
 	} else if (v__ast__Type_alias_eq(to_type, _const_v__ast__bool_type) && !v__ast__Type_alias_eq(from_type, _const_v__ast__bool_type) && !c->inside_unsafe) {
@@ -49316,8 +49324,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_130311 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_130311.arg0;
+		multi_return_string_v__token__Position mr_130603 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_130603.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
@@ -53948,7 +53956,9 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_resolve_generic_interface(v__ch
 						Option_v__ast__Fn _t8 = v__ast__TypeSymbol_find_method_with_generic_parent(typ_sym, imethod.name);
 						if (_t8.state != 0) { /*or block*/ 
 							err = _t8.err;
-							*(v__ast__Fn*) _t8.data = (v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,};
+							v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("can not find method `"), 0xfe10, {.d_s = imethod.name}}, {_SLIT("` on `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`, needed for interface: `"), 0xfe10, {.d_s = inter_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), pos);
+							v__ast__Type _t9 = 0;
+							return _t9;
 						}
 						
  						*(v__ast__Fn*) _t7.data =  (*(v__ast__Fn*)_t8.data);
@@ -53958,6 +53968,16 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_resolve_generic_interface(v__ch
 					if (v__ast__Type_has_flag(imethod.return_type, v__ast__TypeFlag__generic)) {
 						v__ast__TypeSymbol* imret_sym = v__ast__Table_sym(c->table, imethod.return_type);
 						v__ast__TypeSymbol* mret_sym = v__ast__Table_sym(c->table, method.return_type);
+						if (v__ast__Type_alias_eq(method.return_type, _const_v__ast__void_type) && !v__ast__Type_alias_eq(imethod.return_type, method.return_type)) {
+							v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("interface method `"), 0xfe10, {.d_s = imethod.name}}, {_SLIT("` returns `"), 0xfe10, {.d_s = imret_sym->name}}, {_SLIT("`, but implementation method `"), 0xfe10, {.d_s = method.name}}, {_SLIT("` returns no value"), 0, { .d_c = 0 }}})), pos);
+							v__ast__Type _t10 = 0;
+							return _t10;
+						}
+						if (v__ast__Type_alias_eq(imethod.return_type, _const_v__ast__void_type) && !v__ast__Type_alias_eq(imethod.return_type, method.return_type)) {
+							v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("interface method `"), 0xfe10, {.d_s = imethod.name}}, {_SLIT("` returns no value, but implementation method `"), 0xfe10, {.d_s = method.name}}, {_SLIT("` returns `"), 0xfe10, {.d_s = mret_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), pos);
+							v__ast__Type _t11 = 0;
+							return _t11;
+						}
 						if ((imret_sym->info)._typ == 432 /* v.ast.MultiReturn */ && (mret_sym->info)._typ == 432 /* v.ast.MultiReturn */) {
 							for (int i = 0; i < (*imret_sym->info._v__ast__MultiReturn).types.len; ++i) {
 								v__ast__Type mr_typ = ((v__ast__Type*)(*imret_sym->info._v__ast__MultiReturn).types.data)[i];
@@ -53975,46 +53995,46 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_resolve_generic_interface(v__ch
 					}
 					for (int i = 0; i < imethod.params.len; ++i) {
 						v__ast__Param iparam = ((v__ast__Param*)imethod.params.data)[i];
-						v__ast__Param* _t10 = (v__ast__Param*)/*ee elem_ptr_typ */(array_get_with_check(method.params, i));
-						Option_v__ast__Param _t9 = {0};
-						if (_t10) {
-							*((v__ast__Param*)&_t9.data) = *((v__ast__Param*)_t10);
+						v__ast__Param* _t13 = (v__ast__Param*)/*ee elem_ptr_typ */(array_get_with_check(method.params, i));
+						Option_v__ast__Param _t12 = {0};
+						if (_t13) {
+							*((v__ast__Param*)&_t12.data) = *((v__ast__Param*)_t13);
 						} else {
-							_t9.state = 2; _t9.err = _v_error(_SLIT("array index out of range"));
+							_t12.state = 2; _t12.err = _v_error(_SLIT("array index out of range"));
 						}
 						;
-						if (_t9.state != 0) { /*or block*/ 
-							IError err = _t9.err;
-							*(v__ast__Param*) _t9.data = (v__ast__Param){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_hidden = 0,.typ = 0,};
+						if (_t12.state != 0) { /*or block*/ 
+							IError err = _t12.err;
+							*(v__ast__Param*) _t12.data = (v__ast__Param){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_auto_rec = 0,.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_hidden = 0,.typ = 0,};
 						}
 						
-						v__ast__Param param = *(v__ast__Param*)_t9.data;
+						v__ast__Param param = *(v__ast__Param*)_t12.data;
 						if (v__ast__Type_has_flag(iparam.typ, v__ast__TypeFlag__generic) && string__eq(v__ast__Table_get_type_name(c->table, iparam.typ), gt_name)) {
 							inferred_type = param.typ;
 						}
 					}
 				}
 				if (v__ast__Type_alias_eq(inferred_type, _const_v__ast__void_type)) {
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not infer generic type `"), 0xfe10, {.d_s = gt_name}}, {_SLIT("` in interface"), 0, { .d_c = 0 }}})), pos);
-					v__ast__Type _t11 = interface_type;
-					return _t11;
+					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("could not infer generic type `"), 0xfe10, {.d_s = gt_name}}, {_SLIT("` in interface `"), 0xfe10, {.d_s = inter_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), pos);
+					v__ast__Type _t14 = interface_type;
+					return _t14;
 				}
 				array_push((array*)&inferred_types, _MOV((v__ast__Type[]){ inferred_type }));
 			}
-			for (int _t13 = 0; _t13 < (*inter_sym->info._v__ast__Interface).methods.len; ++_t13) {
-				v__ast__Fn imethod = ((v__ast__Fn*)(*inter_sym->info._v__ast__Interface).methods.data)[_t13];
+			for (int _t16 = 0; _t16 < (*inter_sym->info._v__ast__Interface).methods.len; ++_t16) {
+				v__ast__Fn imethod = ((v__ast__Fn*)(*inter_sym->info._v__ast__Interface).methods.data)[_t16];
 				string im_fkey = v__ast__Fn_fkey(&imethod);
 				if (!Array_Array_v__ast__Type_contains((*(Array_Array_v__ast__Type*)map_get(ADDR(map, c->table->fn_generic_types), &(string[]){im_fkey}, &(Array_Array_v__ast__Type[]){ __new_array(0, 0, sizeof(Array_v__ast__Type)) })), inferred_types)) {
 					array_push((array*)&(*(Array_Array_v__ast__Type*)map_get_and_set((map*)&c->table->fn_generic_types, &(string[]){im_fkey}, &(Array_Array_v__ast__Type[]){ __new_array(0, 0, sizeof(Array_v__ast__Type)) })), _MOV((Array_v__ast__Type[]){ inferred_types }));
 				}
 			}
 			(*inter_sym->info._v__ast__Interface).concrete_types = inferred_types;
-			v__ast__Type _t15 = v__ast__Table_unwrap_generic_type(c->table, interface_type, generic_names, (*inter_sym->info._v__ast__Interface).concrete_types);
-			return _t15;
+			v__ast__Type _t18 = v__ast__Table_unwrap_generic_type(c->table, interface_type, generic_names, (*inter_sym->info._v__ast__Interface).concrete_types);
+			return _t18;
 		}
 	}
-	v__ast__Type _t16 = interface_type;
-	return _t16;
+	v__ast__Type _t19 = interface_type;
+	return _t19;
 }
 
 v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__MatchExpr* node) {
