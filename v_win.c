@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "93c40e6"
+#define V_COMMIT_HASH "df8384b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d421f28"
+	#define V_COMMIT_HASH "93c40e6"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "93c40e6"
+	#define V_CURRENT_COMMIT_HASH "df8384b"
 #endif
 
 // V comptime_definitions:
@@ -3440,6 +3440,7 @@ struct v__scanner__Scanner {
 	int tidx;
 	int eofs;
 	v__pref__Preferences* pref;
+	Array_string error_details;
 	Array_v__errors__Error errors;
 	Array_v__errors__Warning warnings;
 	Array_v__errors__Notice notices;
@@ -9075,6 +9076,9 @@ VV_LOCAL_SYMBOL void v__scanner__Scanner_ignore_line(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL void v__scanner__Scanner_eat_to_end_of_line(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s);
 void v__scanner__Scanner_note(v__scanner__Scanner* s, string msg);
+void v__scanner__Scanner_add_error_detail(v__scanner__Scanner* s, string msg);
+void v__scanner__Scanner_add_error_detail_with_pos(v__scanner__Scanner* s, string msg, v__token__Position pos);
+VV_LOCAL_SYMBOL string v__scanner__Scanner_eat_details(v__scanner__Scanner* s);
 void v__scanner__Scanner_warn(v__scanner__Scanner* s, string msg);
 void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg);
 VV_LOCAL_SYMBOL void v__scanner__Scanner_vet_error(v__scanner__Scanner* s, string msg, v__vet__FixKind fix);
@@ -31051,7 +31055,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("d421f28");
+	string vhash = _SLIT("93c40e6");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -72756,6 +72760,7 @@ v__scanner__Scanner* v__scanner__new_scanner_file(string file_path, v__scanner__
 		.tidx = 0,
 		.eofs = 0,
 		.pref = pref,
+		.error_details = __new_array(0, 0, sizeof(string)),
 		.errors = __new_array(0, 0, sizeof(v__errors__Error)),
 		.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),
 		.notices = __new_array(0, 0, sizeof(v__errors__Notice)),
@@ -72796,6 +72801,7 @@ v__scanner__Scanner* v__scanner__new_scanner(string text, v__scanner__CommentsMo
 		.tidx = 0,
 		.eofs = 0,
 		.pref = pref,
+		.error_details = __new_array(0, 0, sizeof(string)),
 		.errors = __new_array(0, 0, sizeof(v__errors__Error)),
 		.warnings = __new_array(0, 0, sizeof(v__errors__Warning)),
 		.notices = __new_array(0, 0, sizeof(v__errors__Notice)),
@@ -73870,6 +73876,7 @@ VV_LOCAL_SYMBOL int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner*
 
 // Attr: [direct_array_access]
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) {
+	v__token__Position lspos = (v__token__Position){.len = 0,.line_nr = s->line_nr,.pos = s->pos,.col = s->pos - s->last_nl_pos - 1,.last_line = 0,};
 	byte q = s->text.str[ s->pos];
 	bool is_quote = q == _const_v__scanner__single_quote || q == _const_v__scanner__double_quote;
 	bool is_raw = is_quote && s->pos > 0 && s->text.str[ s->pos - 1] == 'r' && !s->is_inside_string;
@@ -73895,6 +73902,9 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 	for (;;) {
 		s->pos++;
 		if (s->pos >= s->text.len) {
+			if (lspos.line_nr + 1 < s->line_nr) {
+				v__scanner__Scanner_add_error_detail_with_pos(s, _SLIT("literal started here"), lspos);
+			}
 			v__scanner__Scanner_error(s, _SLIT("unfinished string literal"));
 			break;
 		}
@@ -74111,27 +74121,54 @@ void v__scanner__Scanner_note(v__scanner__Scanner* s, string msg) {
 	}
 }
 
+void v__scanner__Scanner_add_error_detail(v__scanner__Scanner* s, string msg) {
+	array_push((array*)&s->error_details, _MOV((string[]){ string_clone(msg) }));
+}
+
+void v__scanner__Scanner_add_error_detail_with_pos(v__scanner__Scanner* s, string msg, v__token__Position pos) {
+	string details = v__util__formatted_error(_SLIT("details:"), msg, s->file_path, pos);
+	v__scanner__Scanner_add_error_detail(s, details);
+}
+
+VV_LOCAL_SYMBOL string v__scanner__Scanner_eat_details(v__scanner__Scanner* s) {
+	string details = _SLIT("");
+	if (s->error_details.len > 0) {
+		details = Array_string_join(s->error_details, _SLIT("\n"));
+		s->error_details = __new_array_with_default(0, 0, sizeof(string), 0);
+	}
+	string _t1 = details;
+	return _t1;
+}
+
 void v__scanner__Scanner_warn(v__scanner__Scanner* s, string msg) {
 	if (s->pref->warns_are_errors) {
 		v__scanner__Scanner_error(s, msg);
 		return;
 	}
 	v__token__Position pos = (v__token__Position){.len = 0,.line_nr = s->line_nr,.pos = s->pos,.col = v__scanner__Scanner_current_column(s) - 1,.last_line = 0,};
+	string details = v__scanner__Scanner_eat_details(s);
 	if (s->pref->output_mode == v__pref__OutputMode__stdout && !s->pref->check_only) {
 		eprintln(v__util__formatted_error(_SLIT("warning:"), msg, s->file_path, pos));
+		if (details.len > 0) {
+			eprintln(details);
+		}
 	} else {
 		if (s->pref->message_limit >= 0 && s->warnings.len >= s->pref->message_limit) {
 			s->should_abort = true;
 			return;
 		}
-		array_push((array*)&s->warnings, _MOV((v__errors__Warning[]){ (v__errors__Warning){.message = msg,.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = s->file_path,.pos = pos,.reporter = v__errors__Reporter__scanner,} }));
+		array_push((array*)&s->warnings, _MOV((v__errors__Warning[]){ (v__errors__Warning){.message = msg,.details = details,.file_path = s->file_path,.pos = pos,.reporter = v__errors__Reporter__scanner,} }));
 	}
 }
 
 void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
 	v__token__Position pos = (v__token__Position){.len = 0,.line_nr = s->line_nr,.pos = s->pos,.col = v__scanner__Scanner_current_column(s) - 1,.last_line = 0,};
+	string details = v__scanner__Scanner_eat_details(s);
 	if (s->pref->output_mode == v__pref__OutputMode__stdout && !s->pref->check_only) {
 		eprintln(v__util__formatted_error(_SLIT("error:"), msg, s->file_path, pos));
+		if (details.len > 0) {
+			eprintln(details);
+		}
 		_v_exit(1);
 		VUNREACHABLE();
 	} else {
@@ -74143,7 +74180,7 @@ void v__scanner__Scanner_error(v__scanner__Scanner* s, string msg) {
 			s->should_abort = true;
 			return;
 		}
-		array_push((array*)&s->errors, _MOV((v__errors__Error[]){ (v__errors__Error){.message = msg,.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = s->file_path,.pos = pos,.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__scanner,} }));
+		array_push((array*)&s->errors, _MOV((v__errors__Error[]){ (v__errors__Error){.message = msg,.details = details,.file_path = s->file_path,.pos = pos,.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__scanner,} }));
 	}
 }
 
