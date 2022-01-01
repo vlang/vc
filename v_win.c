@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "697eca5"
+#define V_COMMIT_HASH "0e1cfd4"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "908296c"
+	#define V_COMMIT_HASH "697eca5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "697eca5"
+	#define V_CURRENT_COMMIT_HASH "0e1cfd4"
 #endif
 
 // V comptime_definitions:
@@ -31060,7 +31060,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("908296c");
+	string vhash = _SLIT("697eca5");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -42315,25 +42315,29 @@ bool v__checker__Checker_check_types(v__checker__Checker* c, v__ast__Type got, v
 			bool _t2 = true;
 			return _t2;
 		}
+		if (v__ast__Type_alias_eq(expected, _const_v__ast__voidptr_type)) {
+			bool _t3 = true;
+			return _t3;
+		}
 		if (v__ast__Type_is_any_kind_of_pointer(expected)) {
-			v__ast__Type deref = v__ast__Type_set_nr_muls(expected, 0);
+			v__ast__Type deref = v__ast__Type_deref(expected);
 			v__ast__TypeSymbol* got_sym = v__ast__Table_sym(c->table, got);
 			if (v__ast__Type_is_number(deref) && (v__ast__TypeSymbol_is_number(got_sym) || got_sym->kind == v__ast__Kind__enum_)) {
-				bool _t3 = true;
-				return _t3;
+				bool _t4 = true;
+				return _t4;
 			}
 		}
 		v__ast__TypeSymbol* got_sym = v__ast__Table_sym(c->table, got);
 		v__ast__TypeSymbol* expected_sym = v__ast__Table_sym(c->table, expected);
 		if (got_sym->kind == v__ast__Kind__enum_) {
 			if (v__ast__TypeSymbol_is_number(expected_sym)) {
-				bool _t4 = true;
-				return _t4;
+				bool _t5 = true;
+				return _t5;
 			}
 		} else if (got_sym->kind == v__ast__Kind__array_fixed) {
 			if (v__ast__TypeSymbol_is_number(expected_sym)) {
-				bool _t5 = true;
-				return _t5;
+				bool _t6 = true;
+				return _t6;
 			}
 		}
 	}
@@ -42341,71 +42345,71 @@ bool v__checker__Checker_check_types(v__checker__Checker* c, v__ast__Type got, v
 	bool exp_is_ptr = v__ast__Type_is_ptr(expected);
 	if (got_is_ptr && exp_is_ptr) {
 		if (v__ast__Type_nr_muls(got) != v__ast__Type_nr_muls(expected)) {
-			bool _t6 = false;
-			return _t6;
+			bool _t7 = false;
+			return _t7;
 		}
 	}
 	int exp_idx = v__ast__Type_idx(expected);
 	int got_idx = v__ast__Type_idx(got);
 	if (exp_idx == got_idx) {
-		bool _t7 = true;
-		return _t7;
+		bool _t8 = true;
+		return _t8;
 	}
 	if (exp_idx == _const_v__ast__voidptr_type_idx || exp_idx == _const_v__ast__byteptr_type_idx || (v__ast__Type_is_ptr(expected) && v__ast__Type_idx(v__ast__Type_deref(expected)) == _const_v__ast__byte_type_idx)) {
 		if (v__ast__Type_is_ptr(got) || v__ast__Type_is_pointer(got)) {
-			bool _t8 = true;
-			return _t8;
-		}
-	}
-	if (v__ast__Type_is_real_pointer(expected)) {
-		if (v__ast__Type_alias_eq(got, _const_v__ast__int_literal_type)) {
 			bool _t9 = true;
 			return _t9;
 		}
 	}
-	if (got_idx == _const_v__ast__voidptr_type_idx || got_idx == _const_v__ast__byteptr_type_idx || (got_idx == _const_v__ast__byte_type_idx && v__ast__Type_is_ptr(got))) {
-		if (v__ast__Type_is_ptr(expected) || v__ast__Type_is_pointer(expected)) {
+	if (v__ast__Type_is_real_pointer(expected)) {
+		if (v__ast__Type_alias_eq(got, _const_v__ast__int_literal_type)) {
 			bool _t10 = true;
 			return _t10;
 		}
 	}
+	if (got_idx == _const_v__ast__voidptr_type_idx || got_idx == _const_v__ast__byteptr_type_idx || (got_idx == _const_v__ast__byte_type_idx && v__ast__Type_is_ptr(got))) {
+		if (v__ast__Type_is_ptr(expected) || v__ast__Type_is_pointer(expected)) {
+			bool _t11 = true;
+			return _t11;
+		}
+	}
 	if (v__ast__Type_alias_eq(expected, _const_v__ast__charptr_type) && v__ast__Type_alias_eq(got, v__ast__Type_ref(_const_v__ast__char_type))) {
-		bool _t11 = true;
-		return _t11;
+		bool _t12 = true;
+		return _t12;
 	}
 	if (v__ast__Type_has_flag(expected, v__ast__TypeFlag__optional)) {
 		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, got);
 		if ((sym->kind == v__ast__Kind__interface_ && string__eq(sym->name, _SLIT("IError"))) || (got == _const_v__ast__none_type || got == _const_v__ast__error_type)) {
-			bool _t12 = true;
-			return _t12;
-		} else if (!v__checker__Checker_check_basic(c, got, v__ast__Type_clear_flag(expected, v__ast__TypeFlag__optional))) {
-			bool _t13 = false;
+			bool _t13 = true;
 			return _t13;
+		} else if (!v__checker__Checker_check_basic(c, got, v__ast__Type_clear_flag(expected, v__ast__TypeFlag__optional))) {
+			bool _t14 = false;
+			return _t14;
 		}
 	}
 	if (!v__checker__Checker_check_basic(c, got, expected)) {
-		bool _t14 = false;
-		return _t14;
+		bool _t15 = false;
+		return _t15;
 	}
 	if (v__ast__Type_is_number(got) && v__ast__Type_is_number(expected)) {
 		if (v__ast__Type_alias_eq(got, _const_v__ast__rune_type) && v__ast__Type_alias_eq(expected, _const_v__ast__byte_type)) {
-			bool _t15 = true;
-			return _t15;
-		} else if (v__ast__Type_alias_eq(expected, _const_v__ast__rune_type) && v__ast__Type_alias_eq(got, _const_v__ast__byte_type)) {
 			bool _t16 = true;
 			return _t16;
+		} else if (v__ast__Type_alias_eq(expected, _const_v__ast__rune_type) && v__ast__Type_alias_eq(got, _const_v__ast__byte_type)) {
+			bool _t17 = true;
+			return _t17;
 		}
 		if (!v__ast__Type_alias_eq(v__checker__Checker_promote_num(c, expected, got), expected)) {
-			bool _t17 = false;
-			return _t17;
+			bool _t18 = false;
+			return _t18;
 		}
 	}
 	if (v__ast__Type_has_flag(expected, v__ast__TypeFlag__generic)) {
-		bool _t18 = false;
-		return _t18;
+		bool _t19 = false;
+		return _t19;
 	}
-	bool _t19 = true;
-	return _t19;
+	bool _t20 = true;
+	return _t20;
 }
 
 Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected_, v__ast__Language language, v__ast__CallArg arg) {
@@ -42694,10 +42698,10 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_promote_num(v__checker__Checker
 	v__ast__Type type_hi = left_type;
 	v__ast__Type type_lo = right_type;
 	if (v__ast__Type_idx(type_hi) < v__ast__Type_idx(type_lo)) {
-		v__ast__Type _var_14422 = type_hi;
-		v__ast__Type _var_14431 = type_lo;
-		type_hi = _var_14431;
-		type_lo = _var_14422;
+		v__ast__Type _var_14477 = type_hi;
+		v__ast__Type _var_14486 = type_lo;
+		type_hi = _var_14486;
+		type_lo = _var_14477;
 	}
 	int idx_hi = v__ast__Type_idx(type_hi);
 	int idx_lo = v__ast__Type_idx(type_lo);
@@ -75528,7 +75532,8 @@ bool inside_array_lit;
 				v__parser__Parser_check(p, v__token__Kind__lpar);
 				v__token__Position pos = v__token__Token_position(&p->tok);
 				bool is_known_var = v__parser__Parser_mark_var_as_used(p, p->tok.lit) || v__ast__Scope_known_const(p->table->global_scope, string__plus(string__plus(p->mod, _SLIT(".")), p->tok.lit));
-				if (is_known_var || !(v__parser__Parser_known_import(p, p->tok.lit) || v__token__Kind_is_start_of_type(p->tok.kind))) {
+				bool is_type = v__parser__Parser_known_import(p, p->tok.lit) || v__token__Kind_is_start_of_type(p->tok.kind) || (p->tok.lit.len > 0 && byte_is_capital(string_at(p->tok.lit, 0)));
+				if (is_known_var || !is_type) {
 					v__ast__Expr expr = v__parser__Parser_expr(p, 0);
 					if (is_reftype) {
 						node = v__ast__IsRefType_to_sumtype_v__ast__Expr(ADDR(v__ast__IsRefType, ((v__ast__IsRefType){.is_type = false,.expr = expr,.pos = pos,.typ = 0,})));
@@ -82083,13 +82088,17 @@ bool v__parser__Parser_mark_var_as_used(v__parser__Parser* p, string varname) {
 			bool _t2 = true;
 			return _t2;
 		}
+		else if (obj._typ == 356 /* v.ast.GlobalField */) {
+			bool _t3 = true;
+			return _t3;
+		}
 		
 		else {
 		}
 		;
 	}
-	bool _t3 = false;
-	return _t3;
+	bool _t4 = false;
+	return _t4;
 }
 
 VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_unsafe_stmt(v__parser__Parser* p) {
