@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "41078bc"
+#define V_COMMIT_HASH "64f1ea6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1521d08"
+	#define V_COMMIT_HASH "41078bc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "41078bc"
+	#define V_CURRENT_COMMIT_HASH "64f1ea6"
 #endif
 
 // V comptime_definitions:
@@ -8553,8 +8553,6 @@ void v__checker__Checker_alias_type_decl(v__checker__Checker* c, v__ast__AliasTy
 void v__checker__Checker_fn_type_decl(v__checker__Checker* c, v__ast__FnTypeDecl node);
 void v__checker__Checker_sum_type_decl(v__checker__Checker* c, v__ast__SumTypeDecl node);
 Array_v__ast__InterfaceEmbedding v__checker__Checker_expand_iface_embeds(v__checker__Checker* c, v__ast__InterfaceDecl* idecl, int level, Array_v__ast__InterfaceEmbedding iface_embeds);
-void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl* node);
-v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_div_mod_by_zero(v__checker__Checker* c, v__ast__Expr expr, v__token__Kind op_kind);
 v__ast__Type v__checker__Checker_infix_expr(v__checker__Checker* c, v__ast__InfixExpr* node);
 VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_if_immutable(v__checker__Checker* c, v__ast__Expr expr);
@@ -8564,17 +8562,11 @@ void v__checker__Checker_check_or_expr(v__checker__Checker* c, v__ast__OrExpr no
 v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__SelectorExpr* node);
 void v__checker__Checker_const_decl(v__checker__Checker* c, v__ast__ConstDecl* node);
 void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl* node);
-VV_LOCAL_SYMBOL void v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos);
-void v__checker__Checker_ensure_sumtype_array_has_default_value(v__checker__Checker* c, v__ast__ArrayInit node);
-v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__ArrayInit* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_loop_label(v__checker__Checker* c, string label, v__token__Position pos);
 VV_LOCAL_SYMBOL void v__checker__Checker_stmt(v__checker__Checker* c, v__ast__Stmt node);
 VV_LOCAL_SYMBOL void v__checker__Checker_assert_stmt(v__checker__Checker* c, v__ast__AssertStmt node);
 VV_LOCAL_SYMBOL void v__checker__Checker_block(v__checker__Checker* c, v__ast__Block node);
 VV_LOCAL_SYMBOL void v__checker__Checker_branch_stmt(v__checker__Checker* c, v__ast__BranchStmt node);
-VV_LOCAL_SYMBOL void v__checker__Checker_for_c_stmt(v__checker__Checker* c, v__ast__ForCStmt node);
-VV_LOCAL_SYMBOL void v__checker__Checker_for_in_stmt(v__checker__Checker* c, v__ast__ForInStmt* node);
-VV_LOCAL_SYMBOL void v__checker__Checker_for_stmt(v__checker__Checker* c, v__ast__ForStmt* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_global_decl(v__checker__Checker* c, v__ast__GlobalDecl* node);
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_go_expr(v__checker__Checker* c, v__ast__GoExpr* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_asm_stmt(v__checker__Checker* c, v__ast__AsmStmt* stmt);
@@ -8607,7 +8599,6 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 v__ast__Type v__checker__Checker_chan_init(v__checker__Checker* c, v__ast__ChanInit* node);
 v__ast__Type v__checker__Checker_offset_of(v__checker__Checker* c, v__ast__OffsetOf node);
 void v__checker__Checker_check_dup_keys(v__checker__Checker* c, v__ast__MapInit* node, int i);
-v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapInit* node);
 void v__checker__Checker_add_error_detail(v__checker__Checker* c, string s);
 void v__checker__Checker_warn(v__checker__Checker* c, string s, v__token__Position pos);
 void v__checker__Checker_error(v__checker__Checker* c, string message, v__token__Position pos);
@@ -8625,6 +8616,10 @@ VV_LOCAL_SYMBOL multi_return_bool_int_int v__checker__Checker_verify_vweb_params
 VV_LOCAL_SYMBOL void v__checker__Checker_verify_all_vweb_routes(v__checker__Checker* c);
 VV_LOCAL_SYMBOL bool v__checker__Checker_evaluate_once_comptime_if_attribute(v__checker__Checker* c, v__ast__Attr* node);
 VV_LOCAL_SYMBOL bool v__checker__Checker_comptime_if_branch(v__checker__Checker* c, v__ast__Expr cond, v__token__Position pos);
+v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__ArrayInit* node);
+VV_LOCAL_SYMBOL void v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos);
+void v__checker__Checker_ensure_sumtype_array_has_default_value(v__checker__Checker* c, v__ast__ArrayInit node);
+v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapInit* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* node);
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_anon_fn(v__checker__Checker* c, v__ast__AnonFn* node);
 v__ast__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__CallExpr* node);
@@ -8639,6 +8634,9 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_map_builtin_method_call(v__chec
 VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_array_builtin_method_call(v__checker__Checker* c, v__ast__CallExpr* node, v__ast__Type left_type, v__ast__TypeSymbol left_sym);
 VV_LOCAL_SYMBOL void v__checker__scope_register_it(v__ast__Scope* s, v__token__Position pos, v__ast__Type typ);
 VV_LOCAL_SYMBOL void v__checker__scope_register_a_b(v__ast__Scope* s, v__token__Position pos, v__ast__Type typ);
+VV_LOCAL_SYMBOL void v__checker__Checker_for_c_stmt(v__checker__Checker* c, v__ast__ForCStmt node);
+VV_LOCAL_SYMBOL void v__checker__Checker_for_in_stmt(v__checker__Checker* c, v__ast__ForInStmt* node);
+VV_LOCAL_SYMBOL void v__checker__Checker_for_stmt(v__checker__Checker* c, v__ast__ForStmt* node);
 v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr* node);
 VV_LOCAL_SYMBOL void v__checker__Checker_smartcast_if_conds(v__checker__Checker* c, v__ast__Expr node, v__ast__Scope* scope);
 void v__checker__Checker_interface_decl(v__checker__Checker* c, v__ast__InterfaceDecl* node);
@@ -8655,6 +8653,8 @@ VV_LOCAL_SYMBOL bool v__checker__has_top_return(Array_v__ast__Stmt stmts);
 VV_LOCAL_SYMBOL void v__checker__Checker_check_noreturn_fn_decl(v__checker__Checker* c, v__ast__FnDecl* node);
 VV_LOCAL_SYMBOL bool v__checker__uses_return_stmt(Array_v__ast__Stmt stmts);
 VV_LOCAL_SYMBOL bool v__checker__is_noreturn_callexpr(v__ast__Expr expr);
+void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl* node);
+v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* node);
 VV_LOCAL_SYMBOL bool v__transformer__IndexState_safe_access(v__transformer__IndexState* i, string key, int _v_new);
 VV_LOCAL_SYMBOL int v__transformer__IndexState_safe_offset(v__transformer__IndexState* i, string key);
 VV_LOCAL_SYMBOL void v__transformer__IndexState_indent(v__transformer__IndexState* i, bool is_function);
@@ -31060,7 +31060,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("1521d08");
+	string vhash = _SLIT("41078bc");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -43720,390 +43720,6 @@ Array_v__ast__InterfaceEmbedding v__checker__Checker_expand_iface_embeds(v__chec
 	return _t11;
 }
 
-void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl* node) {
-	if (node->language == v__ast__Language__v && !c->is_builtin_mod) {
-		v__checker__Checker_check_valid_pascal_case(c, node->name, _SLIT("struct name"), node->pos);
-	}
-	Option_v__ast__TypeSymbol_ptr _t1 = v__ast__Table_find_type(c->table, node->name);
-	if (_t1.state != 0) { /*or block*/ 
-		IError err = _t1.err;
-		*(v__ast__TypeSymbol**) _t1.data = _const_v__ast__invalid_type_symbol;
-	}
-	
- 	v__ast__TypeSymbol* struct_sym =  (*(v__ast__TypeSymbol**)_t1.data);
-	bool has_generic_types = false;
-	if ((struct_sym->info)._typ == 446 /* v.ast.Struct */) {
-		for (int _t2 = 0; _t2 < node->embeds.len; ++_t2) {
-			v__ast__Embed embed = ((v__ast__Embed*)node->embeds.data)[_t2];
-			if (v__ast__Type_has_flag(embed.typ, v__ast__TypeFlag__generic)) {
-				has_generic_types = true;
-			}
-			v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(c->table, embed.typ);
-			if (embed_sym->kind != v__ast__Kind__struct_) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = embed_sym->name}}, {_SLIT("` is not a struct"), 0, { .d_c = 0 }}})), embed.pos);
-			} else {
-				v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((embed_sym->info)._v__ast__Struct,(embed_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-				if (info.is_heap && !v__ast__Type_is_ptr(embed.typ)) {
-					(*struct_sym->info._v__ast__Struct).is_heap = true;
-				}
-			}
-		}
-		for (int _t3 = 0; _t3 < node->attrs.len; ++_t3) {
-			v__ast__Attr attr = ((v__ast__Attr*)node->attrs.data)[_t3];
-			if (string__eq(attr.name, _SLIT("typedef")) && node->language != v__ast__Language__c) {
-				v__checker__Checker_error(c, _SLIT("`typedef` attribute can only be used with C structs"), node->pos);
-			}
-		}
-		for (int i = 0; i < node->fields.len; ++i) {
-			v__ast__StructField field = ((v__ast__StructField*)node->fields.data)[i];
-			if (v__ast__Type_alias_eq(field.typ, _const_v__ast__any_type)) {
-				v__checker__Checker_error(c, _SLIT("struct field cannot be the `any` type, use generics instead"), field.type_pos);
-			}
-			Option_void _t4 = v__checker__Checker_ensure_type_exists(c, field.typ, field.type_pos);
-			if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
-				IError err = _t4.err;
-				return;
-			}
-			
- ;
-			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__generic)) {
-				has_generic_types = true;
-			}
-			if (node->language == v__ast__Language__v) {
-				v__checker__Checker_check_valid_snake_case(c, field.name, _SLIT("field name"), field.pos);
-			}
-			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, field.typ);
-			for (int j = 0; j < i; ++j) {
-				if (string__eq(field.name, (*(v__ast__StructField*)/*ee elem_typ */array_get(node->fields, j)).name)) {
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("field name `"), 0xfe10, {.d_s = field.name}}, {_SLIT("` duplicate"), 0, { .d_c = 0 }}})), field.pos);
-				}
-			}
-			if (sym->kind == v__ast__Kind__struct_) {
-				v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-				if (info.is_heap && !v__ast__Type_is_ptr(field.typ)) {
-					(*struct_sym->info._v__ast__Struct).is_heap = true;
-				}
-			}
-			if (field.has_default_expr) {
-				c->expected_type = field.typ;
-				v__ast__Type field_expr_type = v__checker__Checker_expr(c, field.default_expr);
-				if (!v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-					v__checker__Checker_check_expr_opt_call(c, field.default_expr, field_expr_type);
-				}
-				(*(v__ast__StructField*)/*ee elem_typ */array_get((*struct_sym->info._v__ast__Struct).fields, i)).default_expr_typ = field_expr_type;
-				Option_void _t5 = v__checker__Checker_check_expected(c, field_expr_type, field.typ);
-				if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
-					IError err = _t5.err;
-					if (sym->kind == v__ast__Kind__interface_ && v__checker__Checker_type_implements(c, field_expr_type, field.typ, field.pos)) {
-						if (!v__ast__Type_is_ptr(field_expr_type) && !v__ast__Type_is_pointer(field_expr_type) && !c->inside_unsafe) {
-							v__ast__TypeSymbol* field_expr_type_sym = v__ast__Table_sym(c->table, field_expr_type);
-							if (field_expr_type_sym->kind != v__ast__Kind__interface_) {
-								v__checker__Checker_mark_as_referenced(c, &(*(v__ast__StructField*)/*ee elem_typ */array_get(node->fields, i)).default_expr, true);
-							}
-						}
-					} else {
-						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("incompatible initializer for field `"), 0xfe10, {.d_s = field.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(field.default_expr));
-					}
-				;
-				}
-				
- ;
-				if (v__ast__Type_is_ptr(field.typ)) {
-					continue;
-				}
-				if ((field.default_expr)._typ == 304 /* v.ast.IntegerLiteral */) {
-					if (string__eq((*field.default_expr._v__ast__IntegerLiteral).val, _SLIT("0"))) {
-						v__checker__Checker_warn(c, _SLIT("unnecessary default value of `0`: struct fields are zeroed by default"), (*field.default_expr._v__ast__IntegerLiteral).pos);
-					}
-				} else if ((field.default_expr)._typ == 323 /* v.ast.StringLiteral */) {
-					if (((*field.default_expr._v__ast__StringLiteral).val).len == 0) {
-						v__checker__Checker_warn(c, _SLIT("unnecessary default value of '': struct fields are zeroed by default"), (*field.default_expr._v__ast__StringLiteral).pos);
-					}
-				} else if ((field.default_expr)._typ == 284 /* v.ast.BoolLiteral */) {
-					if ((*field.default_expr._v__ast__BoolLiteral).val == false) {
-						v__checker__Checker_warn(c, _SLIT("unnecessary default value `false`: struct fields are zeroed by default"), (*field.default_expr._v__ast__BoolLiteral).pos);
-					}
-				}
-			}
-		}
-		if (node->generic_types.len == 0 && has_generic_types) {
-			v__checker__Checker_error(c, _SLIT("generic struct declaration must specify the generic type names, e.g. Foo<T>"), node->pos);
-		}
-	}
-}
-
-v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* node) {
-	if (v__ast__Type_alias_eq(node->typ, _const_v__ast__void_type)) {
-		if (v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type)) {
-			v__checker__Checker_error(c, _SLIT("unexpected short struct syntax"), node->pos);
-			v__ast__Type _t1 = _const_v__ast__void_type;
-			return _t1;
-		}
-		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, c->expected_type);
-		if (sym->kind == v__ast__Kind__array) {
-			node->typ = v__ast__Table_value_type(c->table, c->expected_type);
-		} else {
-			node->typ = c->expected_type;
-		}
-	}
-	v__ast__TypeSymbol* struct_sym = v__ast__Table_sym(c->table, node->typ);
-	if ((struct_sym->info)._typ == 446 /* v.ast.Struct */) {
-		if ((*struct_sym->info._v__ast__Struct).generic_types.len > 0 && (*struct_sym->info._v__ast__Struct).concrete_types.len == 0 && c->table->cur_concrete_types.len == 0) {
-			v__checker__Checker_error(c, _SLIT("generic struct init must specify type parameter, e.g. Foo<int>"), node->pos);
-		}
-	} else if ((struct_sym->info)._typ == 460 /* v.ast.Alias */) {
-		v__ast__TypeSymbol* parent_sym = v__ast__Table_sym(c->table, (*struct_sym->info._v__ast__Alias).parent_type);
-		if (parent_sym->kind == v__ast__Kind__map) {
-			string alias_str = v__ast__Table_type_to_str(c->table, node->typ);
-			string map_str = v__ast__Table_type_to_str(c->table, (*struct_sym->info._v__ast__Alias).parent_type);
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("direct map alias init is not possible, use `"), 0xfe10, {.d_s = alias_str}}, {_SLIT("("), 0xfe10, {.d_s = map_str}}, {_SLIT("{})` instead"), 0, { .d_c = 0 }}})), node->pos);
-			v__ast__Type _t2 = _const_v__ast__void_type;
-			return _t2;
-		}
-	}
-	if (c->table->cur_fn->generic_names.len > 0) {
-		v__ast__Table_unwrap_generic_type(c->table, node->typ, c->table->cur_fn->generic_names, c->table->cur_concrete_types);
-	}
-	Option_void _t3 = v__checker__Checker_ensure_type_exists(c, node->typ, node->pos);
-	if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
-		IError err = _t3.err;
-	}
-	
- ;
-	v__ast__TypeSymbol* type_sym = v__ast__Table_sym(c->table, node->typ);
-	if (!c->inside_unsafe && type_sym->kind == v__ast__Kind__sum_type) {
-		v__checker__Checker_note(c, _SLIT("direct sum type init (`x := SumType{}`) will be removed soon"), node->pos);
-	}
-	if (!c->is_builtin_mod && !c->inside_unsafe && type_sym->language == v__ast__Language__v && c->table->cur_concrete_types.len == 0) {
-		Option_int _t4 = string_last_index(type_sym->name, _SLIT("."));
-		if (_t4.state != 0) { /*or block*/ 
-			IError err = _t4.err;
-			*(int*) _t4.data = -1;
-		}
-		
- 		int pos =  (*(int*)_t4.data);
-		byte first_letter = string_at(type_sym->name, pos + 1);
-		if (!byte_is_capital(first_letter)) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot initialize builtin type `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
-		}
-	}
-	if (type_sym->kind == v__ast__Kind__sum_type && node->fields.len == 1) {
-		string sexpr = v__ast__Expr_str((*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, 0)).expr);
-		v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("cast to sum type using `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("("), 0xfe10, {.d_s = sexpr}}, {_SLIT(")` not `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("{"), 0xfe10, {.d_s = sexpr}}, {_SLIT("}`"), 0, { .d_c = 0 }}})), node->pos);
-	}
-	if (type_sym->kind == v__ast__Kind__interface_ && type_sym->language != v__ast__Language__js) {
-		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot instantiate interface `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
-	}
-	if ((type_sym->info)._typ == 460 /* v.ast.Alias */) {
-		if (v__ast__Type_is_number((*type_sym->info._v__ast__Alias).parent_type)) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot instantiate number type alias `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
-			v__ast__Type _t5 = _const_v__ast__void_type;
-			return _t5;
-		}
-	}
-	if (!type_sym->is_public && type_sym->kind != v__ast__Kind__placeholder && type_sym->language != v__ast__Language__c && (!string__eq(type_sym->mod, c->mod) && !(v__ast__Type_has_flag(node->typ, v__ast__TypeFlag__generic) && !string__eq(type_sym->mod, _SLIT("builtin"))))) {
-		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("type `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("` is private"), 0, { .d_c = 0 }}})), node->pos);
-	}
-	if (type_sym->kind == v__ast__Kind__struct_) {
-		v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((type_sym->info)._v__ast__Struct,(type_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-		if (info.attrs.len > 0 && string__eq((*(v__ast__Attr*)/*ee elem_typ */array_get(info.attrs, 0)).name, _SLIT("noinit")) && !string__eq(type_sym->mod, c->mod)) {
-			v__checker__Checker_error(c, string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("struct `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("` is declared with a `[noinit]` attribute, so "), 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("it cannot be initialized with `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("{}`"), 0, { .d_c = 0 }}}))), node->pos);
-		}
-	}
-	if (type_sym->name.len == 1 && c->table->cur_fn->generic_names.len == 0) {
-		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown struct `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
-		v__ast__Type _t6 = 0;
-		return _t6;
-	}
-
-	if (type_sym->kind == (v__ast__Kind__placeholder)) {
-		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown struct: "), 0xfe10, {.d_s = type_sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
-		v__ast__Type _t7 = _const_v__ast__void_type;
-		return _t7;
-	}
-	else if (type_sym->kind == (v__ast__Kind__struct_) || type_sym->kind == (v__ast__Kind__string) || type_sym->kind == (v__ast__Kind__array) || type_sym->kind == (v__ast__Kind__alias)) {
-		v__ast__Struct info = (v__ast__Struct){.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.embeds = __new_array(0, 0, sizeof(v__ast__Type)),.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.is_typedef = 0,.is_union = 0,.is_heap = 0,.is_generic = 0,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,};
-		if (type_sym->kind == v__ast__Kind__alias) {
-			v__ast__Alias info_t = /* as */ *(v__ast__Alias*)__as_cast((type_sym->info)._v__ast__Alias,(type_sym->info)._typ, 460) /*expected idx: 460, name: v.ast.Alias */ ;
-			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, info_t.parent_type);
-			if (sym->kind == v__ast__Kind__placeholder) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown struct: "), 0xfe10, {.d_s = type_sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
-				v__ast__Type _t8 = _const_v__ast__void_type;
-				return _t8;
-			}
-			if (sym->kind == v__ast__Kind__struct_) {
-				info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-			} else {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("alias type name: "), 0xfe10, {.d_s = sym->name}}, {_SLIT(" is not struct type"), 0, { .d_c = 0 }}})), node->pos);
-			}
-		} else {
-			info = /* as */ *(v__ast__Struct*)__as_cast((type_sym->info)._v__ast__Struct,(type_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-		}
-		if (node->is_short) {
-			int exp_len = info.fields.len;
-			int got_len = node->fields.len;
-			if (exp_len != got_len) {
-				string amount = (exp_len < got_len ? (_SLIT("many")) : (_SLIT("few")));
-				v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("too "), 0xfe10, {.d_s = amount}}, {_SLIT(" fields in `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("` literal (expecting "), 0xfe07, {.d_i32 = exp_len}}, {_SLIT(", got "), 0xfe07, {.d_i32 = got_len}}, {_SLIT(")"), 0, { .d_c = 0 }}})), node->pos);
-			}
-		}
-		Array_string inited_fields = __new_array_with_default(0, 0, sizeof(string), 0);
-		for (int i = 0; i < node->fields.len; ++i) {
-			v__ast__StructInitField* field = ((v__ast__StructInitField*)node->fields.data) + i;
-			v__ast__StructField field_info = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
-			string field_name = _SLIT("");
-			if (node->is_short) {
-				if (i >= info.fields.len) {
-					break;
-				}
-				field_info = (*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i));
-				field_name = field_info.name;
-				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).name = field_name;
-			} else {
-				field_name = field->name;
-				bool exists = true;
-				Option_v__ast__StructField _t9 = v__ast__Table_find_field_with_embeds(c->table, type_sym, field_name);
-				if (_t9.state != 0) { /*or block*/ 
-					IError err = _t9.err;
-					exists = false;
-					*(v__ast__StructField*) _t9.data = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
-				}
-				
- 				field_info =  (*(v__ast__StructField*)_t9.data);
-				if (!exists) {
-					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("unknown field `"), 0xfe10, {.d_s = field->name}}, {_SLIT("` in struct literal of type `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), field->pos);
-					continue;
-				}
-				if (Array_string_contains(inited_fields, field_name)) {
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("duplicate field name in struct literal: `"), 0xfe10, {.d_s = field_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), field->pos);
-					continue;
-				}
-			}
-			v__ast__Type expr_type = ((v__ast__Type)(0));
-			v__ast__Type expected_type = ((v__ast__Type)(0));
-			array_push((array*)&inited_fields, _MOV((string[]){ string_clone(field_name) }));
-			v__ast__TypeSymbol* field_type_sym = v__ast__Table_sym(c->table, field_info.typ);
-			expected_type = field_info.typ;
-			c->expected_type = expected_type;
-			expr_type = v__checker__Checker_expr(c, field->expr);
-			if (!v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__optional)) {
-				expr_type = v__checker__Checker_check_expr_opt_call(c, field->expr, expr_type);
-			}
-			v__ast__TypeSymbol* expr_type_sym = v__ast__Table_sym(c->table, expr_type);
-			if (field_type_sym->kind == v__ast__Kind__interface_) {
-				if (v__checker__Checker_type_implements(c, expr_type, field_info.typ, field->pos)) {
-					if (!v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && expr_type_sym->kind != v__ast__Kind__interface_ && !c->inside_unsafe) {
-						v__checker__Checker_mark_as_referenced(c, &field->expr, true);
-					}
-				}
-			} else if (!v__ast__Type_alias_eq(expr_type, _const_v__ast__void_type) && expr_type_sym->kind != v__ast__Kind__placeholder) {
-				Option_void _t11 = v__checker__Checker_check_expected(c, v__checker__Checker_unwrap_generic(c, expr_type), v__checker__Checker_unwrap_generic(c, field_info.typ));
-				if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
-					IError err = _t11.err;
-					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot assign to field `"), 0xfe10, {.d_s = field_info.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), field->pos);
-				;
-				}
-				
- ;
-			}
-			if (v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__shared_f)) {
-				if (!v__ast__Type_has_flag(expr_type, v__ast__TypeFlag__shared_f) && v__ast__Type_is_ptr(expr_type)) {
-					v__checker__Checker_error(c, _SLIT("`shared` field must be initialized with `shared` or value"), field->pos);
-				}
-			} else {
-				if (v__ast__Type_is_ptr(field_info.typ) && !v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && !v__ast__Type_is_number(expr_type)) {
-					v__checker__Checker_error(c, _SLIT("reference field must be initialized with reference"), field->pos);
-				}
-			}
-			(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).typ = expr_type;
-			(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).expected_type = field_info.typ;
-			if (v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__optional)) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = field_info.name}}, {_SLIT("` is optional, but initialization of optional fields currently unsupported"), 0, { .d_c = 0 }}})), field->pos);
-			}
-			if (v__ast__Type_is_ptr(expr_type) && v__ast__Type_is_ptr(expected_type)) {
-				if ((field->expr)._typ == 299 /* v.ast.Ident */) {
-					if (((*field->expr._v__ast__Ident).obj)._typ == 357 /* v.ast.Var */) {
-						v__ast__Var* obj = &(*(*field->expr._v__ast__Ident).obj._v__ast__Var);
-						if (c->fn_scope != ((voidptr)(0))) {
-							Option_v__ast__Var_ptr _t12 = v__ast__Scope_find_var(c->fn_scope, obj->name);
-							if (_t12.state != 0) { /*or block*/ 
-								IError err = _t12.err;
-								*(v__ast__Var**) _t12.data = obj;
-							}
-							
- 							obj =  (*(v__ast__Var**)_t12.data);
-						}
-						if (obj->is_stack_obj && !c->inside_unsafe) {
-							v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, v__ast__Type_set_nr_muls(obj->typ, 0));
-							if (!v__ast__TypeSymbol_is_heap(sym) && !c->pref->translated) {
-								string suggestion = (sym->kind == v__ast__Kind__struct_ ? ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("declaring `"), 0xfe10, {.d_s = sym->name}}, {_SLIT("` as `[heap]`"), 0, { .d_c = 0 }}}))) : ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("wrapping the `"), 0xfe10, {.d_s = sym->name}}, {_SLIT("` object in a `struct` declared as `[heap]`"), 0, { .d_c = 0 }}}))));
-								v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = (*field->expr._v__ast__Ident).name}}, {_SLIT("` cannot be assigned outside `unsafe` blocks as it might refer to an object stored on stack. Consider "), 0xfe10, {.d_s = suggestion}}, {_SLIT("."), 0, { .d_c = 0 }}})), (*field->expr._v__ast__Ident).pos);
-							}
-						}
-					}
-				}
-			}
-		}
-		for (int _t13 = 0; _t13 < info.fields.len; ++_t13) {
-			v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[_t13];
-			if (field.has_default_expr || Array_string_contains(inited_fields, field.name)) {
-				continue;
-			}
-			if (v__ast__Type_is_ptr(field.typ) && !v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__shared_f) && !node->has_update_expr && !c->pref->translated) {
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("reference field `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT("` must be initialized"), 0, { .d_c = 0 }}})), node->pos);
-			}
-			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, field.typ);
-			bool has_noinit = false;
-			for (int _t14 = 0; _t14 < field.attrs.len; ++_t14) {
-				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t14];
-				if (string__eq(attr.name, _SLIT("noinit"))) {
-					has_noinit = true;
-					break;
-				}
-			}
-			if (sym->kind == v__ast__Kind__interface_ && (!has_noinit && sym->language != v__ast__Language__js)) {
-				v__checker__Checker_note(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("interface field `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT("` must be initialized"), 0, { .d_c = 0 }}})), node->pos);
-			}
-			if (Array_v__ast__Attr_contains(field.attrs, _SLIT("required")) && !node->is_short && !node->has_update_expr) {
-				bool found = false;
-				for (int _t15 = 0; _t15 < node->fields.len; ++_t15) {
-					v__ast__StructInitField init_field = ((v__ast__StructInitField*)node->fields.data)[_t15];
-					if (string__eq(field.name, init_field.name)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT("` must be initialized"), 0, { .d_c = 0 }}})), node->pos);
-				}
-			}
-		}
-	}
-	else {
-	};
-	if (node->has_update_expr) {
-		v__ast__Type update_type = v__checker__Checker_expr(c, node->update_expr);
-		node->update_expr_type = update_type;
-		if (v__ast__Table_type_kind(c->table, update_type) != v__ast__Kind__struct_) {
-			string s = v__ast__Table_type_to_str(c->table, update_type);
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expected struct, found `"), 0xfe10, {.d_s = s}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(node->update_expr));
-		} else if (!v__ast__Type_alias_eq(update_type, node->typ)) {
-			v__ast__TypeSymbol* from_sym = v__ast__Table_sym(c->table, update_type);
-			v__ast__TypeSymbol* to_sym = v__ast__Table_sym(c->table, node->typ);
-			v__ast__Struct from_info = /* as */ *(v__ast__Struct*)__as_cast((from_sym->info)._v__ast__Struct,(from_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-			v__ast__Struct to_info = /* as */ *(v__ast__Struct*)__as_cast((to_sym->info)._v__ast__Struct,(to_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
-			if (!v__checker__Checker_check_struct_signature(c, from_info, to_info)) {
-				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("struct `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` is not compatible with struct `"), 0xfe10, {.d_s = to_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(node->update_expr));
-			}
-		}
-		if (!v__ast__Expr_is_lvalue(node->update_expr)) {
-			v__checker__Checker_error(c, _SLIT("expression is not an lvalue"), v__ast__Expr_position(node->update_expr));
-		}
-	}
-	v__ast__Type _t16 = node->typ;
-	return _t16;
-}
-
 VV_LOCAL_SYMBOL void v__checker__Checker_check_div_mod_by_zero(v__checker__Checker* c, v__ast__Expr expr, v__token__Kind op_kind) {
 	if (expr._typ == 297 /* v.ast.FloatLiteral */) {
 		if (string_f64((*expr._v__ast__FloatLiteral).val) == 0.0) {
@@ -44408,8 +44024,8 @@ v__ast__Type former_expected_type;
 						v__checker__Checker_error(c, _SLIT("array append cannot be used in an expression"), node->pos);
 					}
 					v__checker__Checker_check_expr_opt_call(c, node->right, right_type);
-					multi_return_string_v__token__Position mr_42793 = v__checker__Checker_fail_if_immutable(c, node->left);
-					node->auto_locked = mr_42793.arg0;
+					multi_return_string_v__token__Position mr_29096 = v__checker__Checker_fail_if_immutable(c, node->left);
+					node->auto_locked = mr_29096.arg0;
 					v__ast__Type left_value_type = v__ast__Table_value_type(c->table, v__checker__Checker_unwrap_generic(c, left_type));
 					v__ast__TypeSymbol* left_value_sym = v__ast__Table_sym(c->table, v__checker__Checker_unwrap_generic(c, left_value_type));
 					if (left_value_sym->kind == v__ast__Kind__interface_) {
@@ -44816,19 +44432,19 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 		if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__shared_f)) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("you have to create a handle and `lock` it to modify `shared` "), 0xfe10, {.d_s = kind}}, {_SLIT(" element"), 0, { .d_c = 0 }}})), v__token__Position_extend(v__ast__Expr_position((*expr._v__ast__IndexExpr).left), (*expr._v__ast__IndexExpr).pos));
 		}
-		multi_return_string_v__token__Position mr_52380 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
-		to_lock = mr_52380.arg0;
-		pos = mr_52380.arg1;
+		multi_return_string_v__token__Position mr_38683 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__IndexExpr).left);
+		to_lock = mr_38683.arg0;
+		pos = mr_38683.arg1;
 	}
 	else if (expr._typ == 314 /* v.ast.ParExpr */) {
-		multi_return_string_v__token__Position mr_52449 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
-		to_lock = mr_52449.arg0;
-		pos = mr_52449.arg1;
+		multi_return_string_v__token__Position mr_38752 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__ParExpr).expr);
+		to_lock = mr_38752.arg0;
+		pos = mr_38752.arg1;
 	}
 	else if (expr._typ == 316 /* v.ast.PrefixExpr */) {
-		multi_return_string_v__token__Position mr_52521 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
-		to_lock = mr_52521.arg0;
-		pos = mr_52521.arg1;
+		multi_return_string_v__token__Position mr_38824 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__PrefixExpr).right);
+		to_lock = mr_38824.arg0;
+		pos = mr_38824.arg1;
 	}
 	else if (expr._typ == 319 /* v.ast.SelectorExpr */) {
 		if ((*expr._v__ast__SelectorExpr).expr_type == 0) {
@@ -44878,9 +44494,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 							string type_str = v__ast__Table_type_to_str(c->table, (*expr._v__ast__SelectorExpr).expr_type);
 							v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*expr._v__ast__SelectorExpr).field_name}}, {_SLIT("` of struct `"), 0xfe10, {.d_s = type_str}}, {_SLIT("` is immutable"), 0, { .d_c = 0 }}})), (*expr._v__ast__SelectorExpr).pos);
 						}
-						multi_return_string_v__token__Position mr_53960 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
-						to_lock = mr_53960.arg0;
-						pos = mr_53960.arg1;
+						multi_return_string_v__token__Position mr_40263 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__SelectorExpr).expr);
+						to_lock = mr_40263.arg0;
+						pos = mr_40263.arg1;
 					}
 					if ((to_lock).len != 0) {
 						explicit_lock_needed = true;
@@ -44981,9 +44597,9 @@ VV_LOCAL_SYMBOL multi_return_string_v__token__Position v__checker__Checker_fail_
 	}
 	else if (expr._typ == 286 /* v.ast.CallExpr */) {
 		if (string__eq((*expr._v__ast__CallExpr).name, _SLIT("slice"))) {
-			multi_return_string_v__token__Position mr_55783 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
-			to_lock = mr_55783.arg0;
-			pos = mr_55783.arg1;
+			multi_return_string_v__token__Position mr_42086 = v__checker__Checker_fail_if_immutable(c, (*expr._v__ast__CallExpr).left);
+			to_lock = mr_42086.arg0;
+			pos = mr_42086.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -45351,9 +44967,9 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 				*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t13.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 			}
 			
- 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_67391 =  _t13 /*U*/;
-			field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_67391.data).arg0;
-			embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_67391.data).arg1;
+ 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_53694 =  _t13 /*U*/;
+			field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_53694.data).arg0;
+			embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_53694.data).arg1;
 			node->from_embed_types = embed_types;
 			if (sym->kind == v__ast__Kind__aggregate || sym->kind == v__ast__Kind__sum_type) {
 				unknown_field_msg = (*(err.msg));
@@ -45387,9 +45003,9 @@ v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v__ast__S
 					*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t15.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=(v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_68216 =  _t15 /*U*/;
-				field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_68216.data).arg0;
-				embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_68216.data).arg1;
+ 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_54519 =  _t15 /*U*/;
+				field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_54519.data).arg0;
+				embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_54519.data).arg1;
 				node->from_embed_types = embed_types;
 			}
 		}
@@ -45530,210 +45146,6 @@ void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDecl* nod
 			}
 		}
 	}
-}
-
-VV_LOCAL_SYMBOL void v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos) {
-	v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, v__checker__Checker_expr(c, expr));
-	if (!(sym->kind == v__ast__Kind__int || sym->kind == v__ast__Kind__int_literal)) {
-		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("array "), 0xfe10, {.d_s = para}}, {_SLIT(" needs to be an int"), 0, { .d_c = 0 }}})), pos);
-	}
-}
-
-void v__checker__Checker_ensure_sumtype_array_has_default_value(v__checker__Checker* c, v__ast__ArrayInit node) {
-	v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, node.elem_type);
-	if (sym->kind == v__ast__Kind__sum_type && !node.has_default) {
-		v__checker__Checker_error(c, _SLIT("cannot initialize sum type array without default value"), node.pos);
-	}
-}
-
-v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__ArrayInit* node) {
-	v__ast__Type elem_type = _const_v__ast__void_type;
-	if (!v__ast__Type_alias_eq(node->typ, _const_v__ast__void_type)) {
-		if (node->exprs.len == 0) {
-			if (node->has_cap) {
-				v__checker__Checker_check_array_init_para_type(c, _SLIT("cap"), node->cap_expr, node->pos);
-			}
-			if (node->has_len) {
-				v__checker__Checker_check_array_init_para_type(c, _SLIT("len"), node->len_expr, node->pos);
-			}
-		}
-		if (node->has_default) {
-			v__ast__Expr default_expr = node->default_expr;
-			v__ast__Type default_typ = v__checker__Checker_check_expr_opt_call(c, default_expr, v__checker__Checker_expr(c, default_expr));
-			Option_void _t1 = v__checker__Checker_check_expected(c, default_typ, node->elem_type);
-			if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
-				IError err = _t1.err;
-				v__checker__Checker_error(c, (*(err.msg)), v__ast__Expr_position(default_expr));
-			;
-			}
-			
- ;
-		}
-		if (node->has_len) {
-			if (node->has_len && !node->has_default) {
-				v__ast__TypeSymbol* elem_type_sym = v__ast__Table_sym(c->table, node->elem_type);
-				if (elem_type_sym->kind == v__ast__Kind__interface_) {
-					v__checker__Checker_error(c, _SLIT("cannot instantiate an array of interfaces without also giving a default `init:` value"), v__ast__Expr_position(node->len_expr));
-				}
-			}
-			v__checker__Checker_ensure_sumtype_array_has_default_value(c, *node);
-		}
-		Option_void _t2 = v__checker__Checker_ensure_type_exists(c, node->elem_type, node->elem_type_pos);
-		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
-			IError err = _t2.err;
-		}
-		
- ;
-		if (v__ast__Type_has_flag(node->typ, v__ast__TypeFlag__generic) && c->table->cur_fn->generic_names.len == 0) {
-			v__checker__Checker_error(c, _SLIT("generic struct cannot use in non-generic function"), node->pos);
-		}
-		v__ast__Type _t3 = node->typ;
-		return _t3;
-	}
-	if (node->is_fixed) {
-		v__checker__Checker_ensure_sumtype_array_has_default_value(c, *node);
-		Option_void _t4 = v__checker__Checker_ensure_type_exists(c, node->elem_type, node->elem_type_pos);
-		if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
-			IError err = _t4.err;
-		}
-		
- ;
-	}
-	if (node->exprs.len == 0) {
-		if (v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type) && !v__ast__Type_alias_eq(c->expected_or_type, _const_v__ast__void_type)) {
-			c->expected_type = c->expected_or_type;
-		}
-		v__ast__TypeSymbol* type_sym = v__ast__Table_sym(c->table, c->expected_type);
-		if (type_sym->kind != v__ast__Kind__array || v__ast__Type_alias_eq(v__ast__TypeSymbol_array_info(type_sym).elem_type, _const_v__ast__void_type)) {
-			v__checker__Checker_error(c, _SLIT("array_init: no type specified (maybe: `[]Type{}` instead of `[]`)"), node->pos);
-			v__ast__Type _t5 = _const_v__ast__void_type;
-			return _t5;
-		}
-		v__ast__Array array_info = v__ast__TypeSymbol_array_info(type_sym);
-		node->elem_type = array_info.elem_type;
-		v__ast__Type _t6 = v__ast__Type_clear_flag(c->expected_type, v__ast__TypeFlag__optional);
-		return _t6;
-	}
-	if (node->exprs.len > 0 && v__ast__Type_alias_eq(node->elem_type, _const_v__ast__void_type)) {
-		v__ast__Type expected_value_type = _const_v__ast__void_type;
-		bool expecting_interface_array = false;
-		if (c->expected_type != 0) {
-			expected_value_type = v__ast__Table_value_type(c->table, c->expected_type);
-			if (v__ast__Table_sym(c->table, expected_value_type)->kind == v__ast__Kind__interface_) {
-				expecting_interface_array = true;
-			}
-		}
-		for (int i = 0; i < node->exprs.len; ++i) {
-			v__ast__Expr* expr = ((v__ast__Expr*)node->exprs.data) + i;
-			v__ast__Type typ = v__checker__Checker_check_expr_opt_call(c, *expr, v__checker__Checker_expr(c, *expr));
-			array_push((array*)&node->expr_types, _MOV((v__ast__Type[]){ typ }));
-			if (expecting_interface_array) {
-				if (i == 0) {
-					elem_type = expected_value_type;
-					c->expected_type = elem_type;
-					v__checker__Checker_type_implements(c, typ, elem_type, v__ast__Expr_position(/*rec*/*expr));
-				}
-				if (!v__ast__Type_is_ptr(typ) && !v__ast__Type_is_pointer(typ) && !c->inside_unsafe) {
-					v__ast__TypeSymbol* typ_sym = v__ast__Table_sym(c->table, typ);
-					if (typ_sym->kind != v__ast__Kind__interface_) {
-						v__checker__Checker_mark_as_referenced(c, expr, true);
-					}
-				}
-				continue;
-			}
-			if (i == 0) {
-				if (v__ast__Expr_is_auto_deref_var(/*rec*/*expr)) {
-					elem_type = v__ast__Table_mktyp(c->table, v__ast__Type_deref(typ));
-				} else {
-					elem_type = v__ast__Table_mktyp(c->table, typ);
-				}
-				c->expected_type = elem_type;
-				continue;
-			}
-			if ((expr)->_typ != 325 /* v.ast.TypeNode */) {
-				Option_void _t8 = v__checker__Checker_check_expected(c, typ, elem_type);
-				if (_t8.state != 0 && _t8.err._typ != _IError_None___index) {
-					IError err = _t8.err;
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid array element: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(/*rec*/*expr));
-				;
-				}
-				
- ;
-			}
-		}
-		if (node->is_fixed) {
-			int idx = v__ast__Table_find_or_register_array_fixed(c->table, elem_type, node->exprs.len, v__ast__empty_expr());
-			if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__generic)) {
-				node->typ = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
-			} else {
-				node->typ = v__ast__new_type(idx);
-			}
-		} else {
-			int idx = v__ast__Table_find_or_register_array(c->table, elem_type);
-			if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__generic)) {
-				node->typ = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
-			} else {
-				node->typ = v__ast__new_type(idx);
-			}
-		}
-		node->elem_type = elem_type;
-	} else if (node->is_fixed && node->exprs.len == 1 && !v__ast__Type_alias_eq(node->elem_type, _const_v__ast__void_type)) {
-		i64 fixed_size = ((i64)(0));
-		v__ast__Expr init_expr = (*(v__ast__Expr*)/*ee elem_typ */array_get(node->exprs, 0));
-		v__checker__Checker_expr(c, init_expr);
-		if (init_expr._typ == 304 /* v.ast.IntegerLiteral */) {
-			fixed_size = string_int((*init_expr._v__ast__IntegerLiteral).val);
-		}
-		else if (init_expr._typ == 299 /* v.ast.Ident */) {
-			if (((*init_expr._v__ast__Ident).obj)._typ == 355 /* v.ast.ConstField */) {
-				Option_v__ast__ComptTimeConstValue _t9;
-				if (_t9 = v__checker__Checker_eval_comptime_const_expr(c, (*(*init_expr._v__ast__Ident).obj._v__ast__ConstField).expr, 0), _t9.state == 0) {
-					v__ast__ComptTimeConstValue comptime_value = *(v__ast__ComptTimeConstValue*)_t9.data;
-					Option_i64 _t10 = v__ast__ComptTimeConstValue_i64(comptime_value);
-					if (_t10.state != 0) { /*or block*/ 
-						IError err = _t10.err;
-						*(i64*) _t10.data = fixed_size;
-					}
-					
- 					fixed_size =  (*(i64*)_t10.data);
-				}
-			} else {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("non-constant array bound `"), 0xfe10, {.d_s = (*init_expr._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*init_expr._v__ast__Ident).pos);
-			}
-		}
-		else if (init_expr._typ == 303 /* v.ast.InfixExpr */) {
-			Option_v__ast__ComptTimeConstValue _t11;
-			if (_t11 = v__checker__Checker_eval_comptime_const_expr(c, init_expr, 0), _t11.state == 0) {
-				v__ast__ComptTimeConstValue comptime_value = *(v__ast__ComptTimeConstValue*)_t11.data;
-				Option_i64 _t12 = v__ast__ComptTimeConstValue_i64(comptime_value);
-				if (_t12.state != 0) { /*or block*/ 
-					IError err = _t12.err;
-					*(i64*) _t12.data = fixed_size;
-				}
-				
- 				fixed_size =  (*(i64*)_t12.data);
-			}
-		}
-		
-		else {
-			v__checker__Checker_error(c, _SLIT("expecting `int` for fixed size"), node->pos);
-		}
-		;
-		if (fixed_size <= 0) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fixed size cannot be zero or negative (fixed_size: "), 0xfe09, {.d_i64 = fixed_size}}, {_SLIT(")"), 0, { .d_c = 0 }}})), v__ast__Expr_position(init_expr));
-		}
-		int idx = v__ast__Table_find_or_register_array_fixed(c->table, node->elem_type, ((int)(fixed_size)), init_expr);
-		if (v__ast__Type_has_flag(node->elem_type, v__ast__TypeFlag__generic)) {
-			node->typ = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
-		} else {
-			node->typ = v__ast__new_type(idx);
-		}
-		if (node->has_default) {
-			v__checker__Checker_expr(c, node->default_expr);
-		}
-	}
-	v__ast__Type _t13 = node->typ;
-	return _t13;
 }
 
 // Attr: [inline]
@@ -45936,168 +45348,6 @@ VV_LOCAL_SYMBOL void v__checker__Checker_branch_stmt(v__checker__Checker* c, v__
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid label name `"), 0xfe10, {.d_s = node.label}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node.pos);
 		}
 	}
-}
-
-VV_LOCAL_SYMBOL void v__checker__Checker_for_c_stmt(v__checker__Checker* c, v__ast__ForCStmt node) {
-	c->in_for_count++;
-	string prev_loop_label = c->loop_label;
-	if (node.has_init) {
-		v__checker__Checker_stmt(c, node.init);
-	}
-	v__checker__Checker_expr(c, node.cond);
-	if (node.has_inc) {
-		v__checker__Checker_stmt(c, node.inc);
-	}
-	v__checker__Checker_check_loop_label(c, node.label, node.pos);
-	v__checker__Checker_stmts(c, node.stmts);
-	c->loop_label = prev_loop_label;
-	c->in_for_count--;
-}
-
-VV_LOCAL_SYMBOL void v__checker__Checker_for_in_stmt(v__checker__Checker* c, v__ast__ForInStmt* node) {
-	c->in_for_count++;
-	string prev_loop_label = c->loop_label;
-	v__ast__Type typ = v__checker__Checker_expr(c, node->cond);
-	int typ_idx = v__ast__Type_idx(typ);
-	if (node->key_var.len > 0 && !string__eq(node->key_var, _SLIT("_"))) {
-		v__checker__Checker_check_valid_snake_case(c, node->key_var, _SLIT("variable name"), node->pos);
-	}
-	if (node->val_var.len > 0 && !string__eq(node->val_var, _SLIT("_"))) {
-		v__checker__Checker_check_valid_snake_case(c, node->val_var, _SLIT("variable name"), node->pos);
-	}
-	if (node->is_range) {
-		v__ast__Type high_type = v__checker__Checker_expr(c, node->high);
-		int high_type_idx = v__ast__Type_idx(high_type);
-		if (Array_int_contains(_const_v__ast__integer_type_idxs, typ_idx) && !Array_int_contains(_const_v__ast__integer_type_idxs, high_type_idx)) {
-			v__checker__Checker_error(c, _SLIT("range types do not match"), v__ast__Expr_position(node->cond));
-		} else if (Array_int_contains(_const_v__ast__float_type_idxs, typ_idx) || Array_int_contains(_const_v__ast__float_type_idxs, high_type_idx)) {
-			v__checker__Checker_error(c, _SLIT("range type can not be float"), v__ast__Expr_position(node->cond));
-		} else if (typ_idx == _const_v__ast__bool_type_idx || high_type_idx == _const_v__ast__bool_type_idx) {
-			v__checker__Checker_error(c, _SLIT("range type can not be bool"), v__ast__Expr_position(node->cond));
-		} else if (typ_idx == _const_v__ast__string_type_idx || high_type_idx == _const_v__ast__string_type_idx) {
-			v__checker__Checker_error(c, _SLIT("range type can not be string"), v__ast__Expr_position(node->cond));
-		}
-		if (high_type == _const_v__ast__int_type || high_type == _const_v__ast__int_literal_type) {
-			node->val_type = typ;
-		} else {
-			node->val_type = high_type;
-		}
-		node->high_type = high_type;
-		v__ast__Scope_update_var_type(node->scope, node->val_var, node->val_type);
-	} else {
-		v__ast__TypeSymbol* sym = v__ast__Table_final_sym(c->table, typ);
-		if (sym->kind == v__ast__Kind__struct_) {
-			Option_v__ast__Fn _t1 = v__ast__TypeSymbol_find_method_with_generic_parent(sym, _SLIT("next"));
-			if (_t1.state != 0) { /*or block*/ 
-				IError err = _t1.err;
-				v__checker__Checker_error(c, _SLIT("a struct must have a `next()` method to be an iterator"), v__ast__Expr_position(node->cond));
-				return;
-			}
-			
- 			v__ast__Fn next_fn =  (*(v__ast__Fn*)_t1.data);
-			if (!v__ast__Type_has_flag(next_fn.return_type, v__ast__TypeFlag__optional)) {
-				v__checker__Checker_error(c, _SLIT("iterator method `next()` must return an optional"), v__ast__Expr_position(node->cond));
-			}
-			if (next_fn.params.len != 1) {
-				v__checker__Checker_error(c, _SLIT("iterator method `next()` must have 0 parameters"), v__ast__Expr_position(node->cond));
-			}
-			v__ast__Type val_type = v__ast__Type_clear_flag(next_fn.return_type, v__ast__TypeFlag__optional);
-			if (node->val_is_mut) {
-				val_type = v__ast__Type_ref(val_type);
-			}
-			node->cond_type = typ;
-			node->kind = sym->kind;
-			node->val_type = val_type;
-			v__ast__Scope_update_var_type(node->scope, node->val_var, val_type);
-		} else if (sym->kind == v__ast__Kind__string && node->val_is_mut) {
-			v__checker__Checker_error(c, _SLIT("string type is immutable, it cannot be changed"), node->pos);
-		} else {
-			if (sym->kind == v__ast__Kind__map && !(node->key_var.len > 0 && node->val_var.len > 0)) {
-				v__checker__Checker_error(c, string__plus(_SLIT("declare a key and a value variable when ranging a map: `for key, val in map {`\n"), _SLIT("use `_` if you do not need the variable")), node->pos);
-			}
-			if (node->key_var.len > 0) {
-				v__ast__Type key_type = ((sym->kind == (v__ast__Kind__map)) ? (v__ast__TypeSymbol_map_info(sym).key_type) : (_const_v__ast__int_type));
-				node->key_type = key_type;
-				v__ast__Scope_update_var_type(node->scope, node->key_var, key_type);
-			}
-			v__ast__Type value_type = v__ast__Table_value_type(c->table, typ);
-			if (v__ast__Type_alias_eq(value_type, _const_v__ast__void_type) || v__ast__Type_has_flag(typ, v__ast__TypeFlag__optional)) {
-				if (!v__ast__Type_alias_eq(typ, _const_v__ast__void_type)) {
-					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("for in: cannot index `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, typ)}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(node->cond));
-				}
-			}
-			if (node->val_is_mut) {
-				value_type = v__ast__Type_ref(value_type);
-				if (node->cond._typ == 299 /* v.ast.Ident */) {
-					if (((*node->cond._v__ast__Ident).obj)._typ == 357 /* v.ast.Var */) {
-						v__ast__Var obj = /* as */ *(v__ast__Var*)__as_cast(((*node->cond._v__ast__Ident).obj)._v__ast__Var,((*node->cond._v__ast__Ident).obj)._typ, 357) /*expected idx: 357, name: v.ast.Var */ ;
-						if (!obj.is_mut) {
-							v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = obj.name}}, {_SLIT("` is immutable, it cannot be changed"), 0, { .d_c = 0 }}})), (*node->cond._v__ast__Ident).pos);
-						}
-					}
-				}
-				else if (node->cond._typ == 280 /* v.ast.ArrayInit */) {
-					v__checker__Checker_error(c, _SLIT("array literal is immutable, it cannot be changed"), (*node->cond._v__ast__ArrayInit).pos);
-				}
-				else if (node->cond._typ == 308 /* v.ast.MapInit */) {
-					v__checker__Checker_error(c, _SLIT("map literal is immutable, it cannot be changed"), (*node->cond._v__ast__MapInit).pos);
-				}
-				else if (node->cond._typ == 319 /* v.ast.SelectorExpr */) {
-					Option_v__ast__Ident _t2 = v__ast__SelectorExpr_root_ident(&(*node->cond._v__ast__SelectorExpr));
-					if (_t2.state != 0) { /*or block*/ 
-						IError err = _t2.err;
-						*(v__ast__Ident*) _t2.data = /* as */ *(v__ast__Ident*)__as_cast(((*node->cond._v__ast__SelectorExpr).expr)._v__ast__Ident,((*node->cond._v__ast__SelectorExpr).expr)._typ, 299) /*expected idx: 299, name: v.ast.Ident */ ;
-					}
-					
- 					v__ast__Ident root_ident =  (*(v__ast__Ident*)_t2.data);
-					if (!(/* as */ *(v__ast__Var*)__as_cast((root_ident.obj)._v__ast__Var,(root_ident.obj)._typ, 357) /*expected idx: 357, name: v.ast.Var */ ).is_mut) {
-						v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*node->cond._v__ast__SelectorExpr).field_name}}, {_SLIT("` is immutable, it cannot be changed"), 0, { .d_c = 0 }}})), (*node->cond._v__ast__SelectorExpr).pos);
-					}
-				}
-				
-				else {
-				}
-				;
-			}
-			node->cond_type = typ;
-			node->kind = sym->kind;
-			node->val_type = value_type;
-			v__ast__Scope_update_var_type(node->scope, node->val_var, value_type);
-		}
-	}
-	v__checker__Checker_check_loop_label(c, node->label, node->pos);
-	v__checker__Checker_stmts(c, node->stmts);
-	c->loop_label = prev_loop_label;
-	c->in_for_count--;
-}
-
-VV_LOCAL_SYMBOL void v__checker__Checker_for_stmt(v__checker__Checker* c, v__ast__ForStmt* node) {
-	c->in_for_count++;
-	string prev_loop_label = c->loop_label;
-	c->expected_type = _const_v__ast__bool_type;
-	v__ast__Type typ = v__checker__Checker_expr(c, node->cond);
-	if (!node->is_inf && v__ast__Type_idx(typ) != _const_v__ast__bool_type_idx && !c->pref->translated) {
-		v__checker__Checker_error(c, _SLIT("non-bool used as for condition"), node->pos);
-	}
-	if ((node->cond)._typ == 303 /* v.ast.InfixExpr */) {
-		v__ast__InfixExpr infix = (*node->cond._v__ast__InfixExpr);
-		if (infix.op == v__token__Kind__key_is) {
-			if (((infix.left)._typ == 299 /* v.ast.Ident */ || (infix.left)._typ == 319 /* v.ast.SelectorExpr */) && (infix.right)._typ == 325 /* v.ast.TypeNode */) {
-				bool is_variable = ((infix.left)._typ == 299 /* v.ast.Ident */ ? ((*infix.left._v__ast__Ident).kind == v__ast__IdentKind__variable) : (true));
-				v__ast__Type left_type = v__checker__Checker_expr(c, infix.left);
-				v__ast__TypeSymbol* left_sym = v__ast__Table_sym(c->table, left_type);
-				if (is_variable) {
-					if (left_sym->kind == v__ast__Kind__sum_type || left_sym->kind == v__ast__Kind__interface_) {
-						v__checker__Checker_smartcast(c, infix.left, infix.left_type, (*infix.right._v__ast__TypeNode).typ, node->scope);
-					}
-				}
-			}
-		}
-	}
-	v__checker__Checker_check_loop_label(c, node->label, node->pos);
-	v__checker__Checker_stmts(c, node->stmts);
-	c->loop_label = prev_loop_label;
-	c->in_for_count--;
 }
 
 VV_LOCAL_SYMBOL void v__checker__Checker_global_decl(v__checker__Checker* c, v__ast__GlobalDecl* node) {
@@ -47862,8 +47112,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_130727 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_130727.arg0;
+		multi_return_string_v__token__Position mr_105700 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_105700.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
@@ -48284,103 +47534,6 @@ void v__checker__Checker_check_dup_keys(v__checker__Checker* c, v__ast__MapInit*
 			}
 		}
 	}
-}
-
-v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapInit* node) {
-	if (node->keys.len == 0 && node->vals.len == 0 && node->typ == 0) {
-		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, c->expected_type);
-		if (sym->kind == v__ast__Kind__map) {
-			v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
-			node->typ = c->expected_type;
-			node->key_type = info.key_type;
-			node->value_type = info.value_type;
-			v__ast__Type _t1 = node->typ;
-			return _t1;
-		} else {
-			if (sym->kind == v__ast__Kind__struct_) {
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`{}` can not be used for initialising empty structs any more. Use `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, c->expected_type)}}, {_SLIT("{}` instead."), 0, { .d_c = 0 }}})), node->pos);
-			} else {
-				v__checker__Checker_error(c, _SLIT("invalid empty map initialisation syntax, use e.g. map[string]int{} instead"), node->pos);
-			}
-			v__ast__Type _t2 = _const_v__ast__void_type;
-			return _t2;
-		}
-	}
-	if (node->typ != 0) {
-		v__ast__Map info = v__ast__TypeSymbol_map_info(v__ast__Table_sym(c->table, node->typ));
-		Option_void _t3 = v__checker__Checker_ensure_type_exists(c, info.key_type, node->pos);
-		if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
-			IError err = _t3.err;
-		}
-		
- ;
-		Option_void _t4 = v__checker__Checker_ensure_type_exists(c, info.value_type, node->pos);
-		if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
-			IError err = _t4.err;
-		}
-		
- ;
-		node->key_type = info.key_type;
-		node->value_type = info.value_type;
-		v__ast__Type _t5 = node->typ;
-		return _t5;
-	}
-	if (node->keys.len > 0 && node->vals.len > 0) {
-		v__ast__Type key0_type = _const_v__ast__void_type;
-		v__ast__Type val0_type = _const_v__ast__void_type;
-		bool use_expected_type = !v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type) && !c->inside_const && v__ast__Table_sym(c->table, c->expected_type)->kind == v__ast__Kind__map;
-		if (use_expected_type) {
-			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, c->expected_type);
-			v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
-			key0_type = v__checker__Checker_unwrap_generic(c, info.key_type);
-			val0_type = v__checker__Checker_unwrap_generic(c, info.value_type);
-		} else {
-			key0_type = v__ast__Table_mktyp(c->table, v__checker__Checker_expr(c, (*(v__ast__Expr*)/*ee elem_typ */array_get(node->keys, 0))));
-			if (v__ast__Expr_is_auto_deref_var((*(v__ast__Expr*)/*ee elem_typ */array_get(node->keys, 0)))) {
-				key0_type = v__ast__Type_deref(key0_type);
-			}
-			val0_type = v__ast__Table_mktyp(c->table, v__checker__Checker_expr(c, (*(v__ast__Expr*)/*ee elem_typ */array_get(node->vals, 0))));
-			if (v__ast__Expr_is_auto_deref_var((*(v__ast__Expr*)/*ee elem_typ */array_get(node->vals, 0)))) {
-				val0_type = v__ast__Type_deref(val0_type);
-			}
-		}
-		bool same_key_type = true;
-		for (int i = 0; i < node->keys.len; ++i) {
-			v__ast__Expr key = ((v__ast__Expr*)node->keys.data)[i];
-			if (i == 0 && !use_expected_type) {
-				continue;
-			}
-			v__ast__Expr val = (*(v__ast__Expr*)/*ee elem_typ */array_get(node->vals, i));
-			c->expected_type = key0_type;
-			v__ast__Type key_type = v__checker__Checker_expr(c, key);
-			c->expected_type = val0_type;
-			v__ast__Type val_type = v__checker__Checker_expr(c, val);
-			if (!v__checker__Checker_check_types(c, key_type, key0_type) || (i == 0 && v__ast__Type_is_number(key_type) && v__ast__Type_is_number(key0_type) && !v__ast__Type_alias_eq(key0_type, v__ast__Table_mktyp(c->table, key_type)))) {
-				string msg = v__checker__Checker_expected_msg(c, key_type, key0_type);
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid map key: "), 0xfe10, {.d_s = msg}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(key));
-				same_key_type = false;
-			}
-			if (!v__checker__Checker_check_types(c, val_type, val0_type) || (i == 0 && v__ast__Type_is_number(val_type) && v__ast__Type_is_number(val0_type) && !v__ast__Type_alias_eq(val0_type, v__ast__Table_mktyp(c->table, val_type)))) {
-				string msg = v__checker__Checker_expected_msg(c, val_type, val0_type);
-				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid map value: "), 0xfe10, {.d_s = msg}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(val));
-			}
-		}
-		if (same_key_type) {
-			for (int i = 1; i < node->keys.len; ++i) {
-				v__checker__Checker_check_dup_keys(c, node, i);
-			}
-		}
-		key0_type = v__checker__Checker_unwrap_generic(c, key0_type);
-		val0_type = v__checker__Checker_unwrap_generic(c, val0_type);
-		v__ast__Type map_type = v__ast__new_type(v__ast__Table_find_or_register_map(c->table, key0_type, val0_type));
-		node->typ = map_type;
-		node->key_type = key0_type;
-		node->value_type = val0_type;
-		v__ast__Type _t6 = map_type;
-		return _t6;
-	}
-	v__ast__Type _t7 = node->typ;
-	return _t7;
 }
 
 void v__checker__Checker_add_error_detail(v__checker__Checker* c, string s) {
@@ -50276,6 +49429,307 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comptime_if_branch(v__checker__Checker*
 	return _t42;
 }
 
+v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__ArrayInit* node) {
+	v__ast__Type elem_type = _const_v__ast__void_type;
+	if (!v__ast__Type_alias_eq(node->typ, _const_v__ast__void_type)) {
+		if (node->exprs.len == 0) {
+			if (node->has_cap) {
+				v__checker__Checker_check_array_init_para_type(c, _SLIT("cap"), node->cap_expr, node->pos);
+			}
+			if (node->has_len) {
+				v__checker__Checker_check_array_init_para_type(c, _SLIT("len"), node->len_expr, node->pos);
+			}
+		}
+		if (node->has_default) {
+			v__ast__Expr default_expr = node->default_expr;
+			v__ast__Type default_typ = v__checker__Checker_check_expr_opt_call(c, default_expr, v__checker__Checker_expr(c, default_expr));
+			Option_void _t1 = v__checker__Checker_check_expected(c, default_typ, node->elem_type);
+			if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
+				IError err = _t1.err;
+				v__checker__Checker_error(c, (*(err.msg)), v__ast__Expr_position(default_expr));
+			;
+			}
+			
+ ;
+		}
+		if (node->has_len) {
+			if (node->has_len && !node->has_default) {
+				v__ast__TypeSymbol* elem_type_sym = v__ast__Table_sym(c->table, node->elem_type);
+				if (elem_type_sym->kind == v__ast__Kind__interface_) {
+					v__checker__Checker_error(c, _SLIT("cannot instantiate an array of interfaces without also giving a default `init:` value"), v__ast__Expr_position(node->len_expr));
+				}
+			}
+			v__checker__Checker_ensure_sumtype_array_has_default_value(c, *node);
+		}
+		Option_void _t2 = v__checker__Checker_ensure_type_exists(c, node->elem_type, node->elem_type_pos);
+		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
+			IError err = _t2.err;
+		}
+		
+ ;
+		if (v__ast__Type_has_flag(node->typ, v__ast__TypeFlag__generic) && c->table->cur_fn->generic_names.len == 0) {
+			v__checker__Checker_error(c, _SLIT("generic struct cannot use in non-generic function"), node->pos);
+		}
+		v__ast__Type _t3 = node->typ;
+		return _t3;
+	}
+	if (node->is_fixed) {
+		v__checker__Checker_ensure_sumtype_array_has_default_value(c, *node);
+		Option_void _t4 = v__checker__Checker_ensure_type_exists(c, node->elem_type, node->elem_type_pos);
+		if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
+			IError err = _t4.err;
+		}
+		
+ ;
+	}
+	if (node->exprs.len == 0) {
+		if (v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type) && !v__ast__Type_alias_eq(c->expected_or_type, _const_v__ast__void_type)) {
+			c->expected_type = c->expected_or_type;
+		}
+		v__ast__TypeSymbol* type_sym = v__ast__Table_sym(c->table, c->expected_type);
+		if (type_sym->kind != v__ast__Kind__array || v__ast__Type_alias_eq(v__ast__TypeSymbol_array_info(type_sym).elem_type, _const_v__ast__void_type)) {
+			v__checker__Checker_error(c, _SLIT("array_init: no type specified (maybe: `[]Type{}` instead of `[]`)"), node->pos);
+			v__ast__Type _t5 = _const_v__ast__void_type;
+			return _t5;
+		}
+		v__ast__Array array_info = v__ast__TypeSymbol_array_info(type_sym);
+		node->elem_type = array_info.elem_type;
+		v__ast__Type _t6 = v__ast__Type_clear_flag(c->expected_type, v__ast__TypeFlag__optional);
+		return _t6;
+	}
+	if (node->exprs.len > 0 && v__ast__Type_alias_eq(node->elem_type, _const_v__ast__void_type)) {
+		v__ast__Type expected_value_type = _const_v__ast__void_type;
+		bool expecting_interface_array = false;
+		if (c->expected_type != 0) {
+			expected_value_type = v__ast__Table_value_type(c->table, c->expected_type);
+			if (v__ast__Table_sym(c->table, expected_value_type)->kind == v__ast__Kind__interface_) {
+				expecting_interface_array = true;
+			}
+		}
+		for (int i = 0; i < node->exprs.len; ++i) {
+			v__ast__Expr* expr = ((v__ast__Expr*)node->exprs.data) + i;
+			v__ast__Type typ = v__checker__Checker_check_expr_opt_call(c, *expr, v__checker__Checker_expr(c, *expr));
+			array_push((array*)&node->expr_types, _MOV((v__ast__Type[]){ typ }));
+			if (expecting_interface_array) {
+				if (i == 0) {
+					elem_type = expected_value_type;
+					c->expected_type = elem_type;
+					v__checker__Checker_type_implements(c, typ, elem_type, v__ast__Expr_position(/*rec*/*expr));
+				}
+				if (!v__ast__Type_is_ptr(typ) && !v__ast__Type_is_pointer(typ) && !c->inside_unsafe) {
+					v__ast__TypeSymbol* typ_sym = v__ast__Table_sym(c->table, typ);
+					if (typ_sym->kind != v__ast__Kind__interface_) {
+						v__checker__Checker_mark_as_referenced(c, expr, true);
+					}
+				}
+				continue;
+			}
+			if (i == 0) {
+				if (v__ast__Expr_is_auto_deref_var(/*rec*/*expr)) {
+					elem_type = v__ast__Table_mktyp(c->table, v__ast__Type_deref(typ));
+				} else {
+					elem_type = v__ast__Table_mktyp(c->table, typ);
+				}
+				c->expected_type = elem_type;
+				continue;
+			}
+			if ((expr)->_typ != 325 /* v.ast.TypeNode */) {
+				Option_void _t8 = v__checker__Checker_check_expected(c, typ, elem_type);
+				if (_t8.state != 0 && _t8.err._typ != _IError_None___index) {
+					IError err = _t8.err;
+					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid array element: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(/*rec*/*expr));
+				;
+				}
+				
+ ;
+			}
+		}
+		if (node->is_fixed) {
+			int idx = v__ast__Table_find_or_register_array_fixed(c->table, elem_type, node->exprs.len, v__ast__empty_expr());
+			if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__generic)) {
+				node->typ = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
+			} else {
+				node->typ = v__ast__new_type(idx);
+			}
+		} else {
+			int idx = v__ast__Table_find_or_register_array(c->table, elem_type);
+			if (v__ast__Type_has_flag(elem_type, v__ast__TypeFlag__generic)) {
+				node->typ = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
+			} else {
+				node->typ = v__ast__new_type(idx);
+			}
+		}
+		node->elem_type = elem_type;
+	} else if (node->is_fixed && node->exprs.len == 1 && !v__ast__Type_alias_eq(node->elem_type, _const_v__ast__void_type)) {
+		i64 fixed_size = ((i64)(0));
+		v__ast__Expr init_expr = (*(v__ast__Expr*)/*ee elem_typ */array_get(node->exprs, 0));
+		v__checker__Checker_expr(c, init_expr);
+		if (init_expr._typ == 304 /* v.ast.IntegerLiteral */) {
+			fixed_size = string_int((*init_expr._v__ast__IntegerLiteral).val);
+		}
+		else if (init_expr._typ == 299 /* v.ast.Ident */) {
+			if (((*init_expr._v__ast__Ident).obj)._typ == 355 /* v.ast.ConstField */) {
+				Option_v__ast__ComptTimeConstValue _t9;
+				if (_t9 = v__checker__Checker_eval_comptime_const_expr(c, (*(*init_expr._v__ast__Ident).obj._v__ast__ConstField).expr, 0), _t9.state == 0) {
+					v__ast__ComptTimeConstValue comptime_value = *(v__ast__ComptTimeConstValue*)_t9.data;
+					Option_i64 _t10 = v__ast__ComptTimeConstValue_i64(comptime_value);
+					if (_t10.state != 0) { /*or block*/ 
+						IError err = _t10.err;
+						*(i64*) _t10.data = fixed_size;
+					}
+					
+ 					fixed_size =  (*(i64*)_t10.data);
+				}
+			} else {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("non-constant array bound `"), 0xfe10, {.d_s = (*init_expr._v__ast__Ident).name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), (*init_expr._v__ast__Ident).pos);
+			}
+		}
+		else if (init_expr._typ == 303 /* v.ast.InfixExpr */) {
+			Option_v__ast__ComptTimeConstValue _t11;
+			if (_t11 = v__checker__Checker_eval_comptime_const_expr(c, init_expr, 0), _t11.state == 0) {
+				v__ast__ComptTimeConstValue comptime_value = *(v__ast__ComptTimeConstValue*)_t11.data;
+				Option_i64 _t12 = v__ast__ComptTimeConstValue_i64(comptime_value);
+				if (_t12.state != 0) { /*or block*/ 
+					IError err = _t12.err;
+					*(i64*) _t12.data = fixed_size;
+				}
+				
+ 				fixed_size =  (*(i64*)_t12.data);
+			}
+		}
+		
+		else {
+			v__checker__Checker_error(c, _SLIT("expecting `int` for fixed size"), node->pos);
+		}
+		;
+		if (fixed_size <= 0) {
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("fixed size cannot be zero or negative (fixed_size: "), 0xfe09, {.d_i64 = fixed_size}}, {_SLIT(")"), 0, { .d_c = 0 }}})), v__ast__Expr_position(init_expr));
+		}
+		int idx = v__ast__Table_find_or_register_array_fixed(c->table, node->elem_type, ((int)(fixed_size)), init_expr);
+		if (v__ast__Type_has_flag(node->elem_type, v__ast__TypeFlag__generic)) {
+			node->typ = v__ast__Type_set_flag(v__ast__new_type(idx), v__ast__TypeFlag__generic);
+		} else {
+			node->typ = v__ast__new_type(idx);
+		}
+		if (node->has_default) {
+			v__checker__Checker_expr(c, node->default_expr);
+		}
+	}
+	v__ast__Type _t13 = node->typ;
+	return _t13;
+}
+
+VV_LOCAL_SYMBOL void v__checker__Checker_check_array_init_para_type(v__checker__Checker* c, string para, v__ast__Expr expr, v__token__Position pos) {
+	v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, v__checker__Checker_expr(c, expr));
+	if (!(sym->kind == v__ast__Kind__int || sym->kind == v__ast__Kind__int_literal)) {
+		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("array "), 0xfe10, {.d_s = para}}, {_SLIT(" needs to be an int"), 0, { .d_c = 0 }}})), pos);
+	}
+}
+
+void v__checker__Checker_ensure_sumtype_array_has_default_value(v__checker__Checker* c, v__ast__ArrayInit node) {
+	v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, node.elem_type);
+	if (sym->kind == v__ast__Kind__sum_type && !node.has_default) {
+		v__checker__Checker_error(c, _SLIT("cannot initialize sum type array without default value"), node.pos);
+	}
+}
+
+v__ast__Type v__checker__Checker_map_init(v__checker__Checker* c, v__ast__MapInit* node) {
+	if (node->keys.len == 0 && node->vals.len == 0 && node->typ == 0) {
+		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, c->expected_type);
+		if (sym->kind == v__ast__Kind__map) {
+			v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
+			node->typ = c->expected_type;
+			node->key_type = info.key_type;
+			node->value_type = info.value_type;
+			v__ast__Type _t1 = node->typ;
+			return _t1;
+		} else {
+			if (sym->kind == v__ast__Kind__struct_) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`{}` can not be used for initialising empty structs any more. Use `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, c->expected_type)}}, {_SLIT("{}` instead."), 0, { .d_c = 0 }}})), node->pos);
+			} else {
+				v__checker__Checker_error(c, _SLIT("invalid empty map initialisation syntax, use e.g. map[string]int{} instead"), node->pos);
+			}
+			v__ast__Type _t2 = _const_v__ast__void_type;
+			return _t2;
+		}
+	}
+	if (node->typ != 0) {
+		v__ast__Map info = v__ast__TypeSymbol_map_info(v__ast__Table_sym(c->table, node->typ));
+		Option_void _t3 = v__checker__Checker_ensure_type_exists(c, info.key_type, node->pos);
+		if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
+			IError err = _t3.err;
+		}
+		
+ ;
+		Option_void _t4 = v__checker__Checker_ensure_type_exists(c, info.value_type, node->pos);
+		if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
+			IError err = _t4.err;
+		}
+		
+ ;
+		node->key_type = info.key_type;
+		node->value_type = info.value_type;
+		v__ast__Type _t5 = node->typ;
+		return _t5;
+	}
+	if (node->keys.len > 0 && node->vals.len > 0) {
+		v__ast__Type key0_type = _const_v__ast__void_type;
+		v__ast__Type val0_type = _const_v__ast__void_type;
+		bool use_expected_type = !v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type) && !c->inside_const && v__ast__Table_sym(c->table, c->expected_type)->kind == v__ast__Kind__map;
+		if (use_expected_type) {
+			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, c->expected_type);
+			v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
+			key0_type = v__checker__Checker_unwrap_generic(c, info.key_type);
+			val0_type = v__checker__Checker_unwrap_generic(c, info.value_type);
+		} else {
+			key0_type = v__ast__Table_mktyp(c->table, v__checker__Checker_expr(c, (*(v__ast__Expr*)/*ee elem_typ */array_get(node->keys, 0))));
+			if (v__ast__Expr_is_auto_deref_var((*(v__ast__Expr*)/*ee elem_typ */array_get(node->keys, 0)))) {
+				key0_type = v__ast__Type_deref(key0_type);
+			}
+			val0_type = v__ast__Table_mktyp(c->table, v__checker__Checker_expr(c, (*(v__ast__Expr*)/*ee elem_typ */array_get(node->vals, 0))));
+			if (v__ast__Expr_is_auto_deref_var((*(v__ast__Expr*)/*ee elem_typ */array_get(node->vals, 0)))) {
+				val0_type = v__ast__Type_deref(val0_type);
+			}
+		}
+		bool same_key_type = true;
+		for (int i = 0; i < node->keys.len; ++i) {
+			v__ast__Expr key = ((v__ast__Expr*)node->keys.data)[i];
+			if (i == 0 && !use_expected_type) {
+				continue;
+			}
+			v__ast__Expr val = (*(v__ast__Expr*)/*ee elem_typ */array_get(node->vals, i));
+			c->expected_type = key0_type;
+			v__ast__Type key_type = v__checker__Checker_expr(c, key);
+			c->expected_type = val0_type;
+			v__ast__Type val_type = v__checker__Checker_expr(c, val);
+			if (!v__checker__Checker_check_types(c, key_type, key0_type) || (i == 0 && v__ast__Type_is_number(key_type) && v__ast__Type_is_number(key0_type) && !v__ast__Type_alias_eq(key0_type, v__ast__Table_mktyp(c->table, key_type)))) {
+				string msg = v__checker__Checker_expected_msg(c, key_type, key0_type);
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid map key: "), 0xfe10, {.d_s = msg}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(key));
+				same_key_type = false;
+			}
+			if (!v__checker__Checker_check_types(c, val_type, val0_type) || (i == 0 && v__ast__Type_is_number(val_type) && v__ast__Type_is_number(val0_type) && !v__ast__Type_alias_eq(val0_type, v__ast__Table_mktyp(c->table, val_type)))) {
+				string msg = v__checker__Checker_expected_msg(c, val_type, val0_type);
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid map value: "), 0xfe10, {.d_s = msg}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(val));
+			}
+		}
+		if (same_key_type) {
+			for (int i = 1; i < node->keys.len; ++i) {
+				v__checker__Checker_check_dup_keys(c, node, i);
+			}
+		}
+		key0_type = v__checker__Checker_unwrap_generic(c, key0_type);
+		val0_type = v__checker__Checker_unwrap_generic(c, val0_type);
+		v__ast__Type map_type = v__ast__new_type(v__ast__Table_find_or_register_map(c->table, key0_type, val0_type));
+		node->typ = map_type;
+		node->key_type = key0_type;
+		node->value_type = val0_type;
+		v__ast__Type _t6 = map_type;
+		return _t6;
+	}
+	v__ast__Type _t7 = node->typ;
+	return _t7;
+}
+
 VV_LOCAL_SYMBOL void v__checker__Checker_fn_decl(v__checker__Checker* c, v__ast__FnDecl* node) {
 bool v__checker__Checker_fn_decl_defer_0 = false;
 int prev_stmt_level;
@@ -51960,6 +51414,168 @@ VV_LOCAL_SYMBOL void v__checker__scope_register_a_b(v__ast__Scope* s, v__token__
 	v__ast__Scope_register(s, v__ast__Var_to_sumtype_v__ast__ScopeObject(ADDR(v__ast__Var, ((v__ast__Var){.name = _SLIT("b"),.expr = {0},.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.is_auto_deref = 0,.is_inherited = 0,.typ = v__ast__Type_ref(typ),.orig_type = 0,.smartcasts = __new_array(0, 0, sizeof(v__ast__Type)),.pos = pos,.is_used = true,.is_changed = 0,.is_or = 0,.is_tmp = 0,.is_auto_heap = 0,.is_stack_obj = 0,}))));
 }
 
+VV_LOCAL_SYMBOL void v__checker__Checker_for_c_stmt(v__checker__Checker* c, v__ast__ForCStmt node) {
+	c->in_for_count++;
+	string prev_loop_label = c->loop_label;
+	if (node.has_init) {
+		v__checker__Checker_stmt(c, node.init);
+	}
+	v__checker__Checker_expr(c, node.cond);
+	if (node.has_inc) {
+		v__checker__Checker_stmt(c, node.inc);
+	}
+	v__checker__Checker_check_loop_label(c, node.label, node.pos);
+	v__checker__Checker_stmts(c, node.stmts);
+	c->loop_label = prev_loop_label;
+	c->in_for_count--;
+}
+
+VV_LOCAL_SYMBOL void v__checker__Checker_for_in_stmt(v__checker__Checker* c, v__ast__ForInStmt* node) {
+	c->in_for_count++;
+	string prev_loop_label = c->loop_label;
+	v__ast__Type typ = v__checker__Checker_expr(c, node->cond);
+	int typ_idx = v__ast__Type_idx(typ);
+	if (node->key_var.len > 0 && !string__eq(node->key_var, _SLIT("_"))) {
+		v__checker__Checker_check_valid_snake_case(c, node->key_var, _SLIT("variable name"), node->pos);
+	}
+	if (node->val_var.len > 0 && !string__eq(node->val_var, _SLIT("_"))) {
+		v__checker__Checker_check_valid_snake_case(c, node->val_var, _SLIT("variable name"), node->pos);
+	}
+	if (node->is_range) {
+		v__ast__Type high_type = v__checker__Checker_expr(c, node->high);
+		int high_type_idx = v__ast__Type_idx(high_type);
+		if (Array_int_contains(_const_v__ast__integer_type_idxs, typ_idx) && !Array_int_contains(_const_v__ast__integer_type_idxs, high_type_idx)) {
+			v__checker__Checker_error(c, _SLIT("range types do not match"), v__ast__Expr_position(node->cond));
+		} else if (Array_int_contains(_const_v__ast__float_type_idxs, typ_idx) || Array_int_contains(_const_v__ast__float_type_idxs, high_type_idx)) {
+			v__checker__Checker_error(c, _SLIT("range type can not be float"), v__ast__Expr_position(node->cond));
+		} else if (typ_idx == _const_v__ast__bool_type_idx || high_type_idx == _const_v__ast__bool_type_idx) {
+			v__checker__Checker_error(c, _SLIT("range type can not be bool"), v__ast__Expr_position(node->cond));
+		} else if (typ_idx == _const_v__ast__string_type_idx || high_type_idx == _const_v__ast__string_type_idx) {
+			v__checker__Checker_error(c, _SLIT("range type can not be string"), v__ast__Expr_position(node->cond));
+		}
+		if (high_type == _const_v__ast__int_type || high_type == _const_v__ast__int_literal_type) {
+			node->val_type = typ;
+		} else {
+			node->val_type = high_type;
+		}
+		node->high_type = high_type;
+		v__ast__Scope_update_var_type(node->scope, node->val_var, node->val_type);
+	} else {
+		v__ast__TypeSymbol* sym = v__ast__Table_final_sym(c->table, typ);
+		if (sym->kind == v__ast__Kind__struct_) {
+			Option_v__ast__Fn _t1 = v__ast__TypeSymbol_find_method_with_generic_parent(sym, _SLIT("next"));
+			if (_t1.state != 0) { /*or block*/ 
+				IError err = _t1.err;
+				v__checker__Checker_error(c, _SLIT("a struct must have a `next()` method to be an iterator"), v__ast__Expr_position(node->cond));
+				return;
+			}
+			
+ 			v__ast__Fn next_fn =  (*(v__ast__Fn*)_t1.data);
+			if (!v__ast__Type_has_flag(next_fn.return_type, v__ast__TypeFlag__optional)) {
+				v__checker__Checker_error(c, _SLIT("iterator method `next()` must return an optional"), v__ast__Expr_position(node->cond));
+			}
+			if (next_fn.params.len != 1) {
+				v__checker__Checker_error(c, _SLIT("iterator method `next()` must have 0 parameters"), v__ast__Expr_position(node->cond));
+			}
+			v__ast__Type val_type = v__ast__Type_clear_flag(next_fn.return_type, v__ast__TypeFlag__optional);
+			if (node->val_is_mut) {
+				val_type = v__ast__Type_ref(val_type);
+			}
+			node->cond_type = typ;
+			node->kind = sym->kind;
+			node->val_type = val_type;
+			v__ast__Scope_update_var_type(node->scope, node->val_var, val_type);
+		} else if (sym->kind == v__ast__Kind__string && node->val_is_mut) {
+			v__checker__Checker_error(c, _SLIT("string type is immutable, it cannot be changed"), node->pos);
+		} else {
+			if (sym->kind == v__ast__Kind__map && !(node->key_var.len > 0 && node->val_var.len > 0)) {
+				v__checker__Checker_error(c, string__plus(_SLIT("declare a key and a value variable when ranging a map: `for key, val in map {`\n"), _SLIT("use `_` if you do not need the variable")), node->pos);
+			}
+			if (node->key_var.len > 0) {
+				v__ast__Type key_type = ((sym->kind == (v__ast__Kind__map)) ? (v__ast__TypeSymbol_map_info(sym).key_type) : (_const_v__ast__int_type));
+				node->key_type = key_type;
+				v__ast__Scope_update_var_type(node->scope, node->key_var, key_type);
+			}
+			v__ast__Type value_type = v__ast__Table_value_type(c->table, typ);
+			if (v__ast__Type_alias_eq(value_type, _const_v__ast__void_type) || v__ast__Type_has_flag(typ, v__ast__TypeFlag__optional)) {
+				if (!v__ast__Type_alias_eq(typ, _const_v__ast__void_type)) {
+					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("for in: cannot index `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, typ)}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(node->cond));
+				}
+			}
+			if (node->val_is_mut) {
+				value_type = v__ast__Type_ref(value_type);
+				if (node->cond._typ == 299 /* v.ast.Ident */) {
+					if (((*node->cond._v__ast__Ident).obj)._typ == 357 /* v.ast.Var */) {
+						v__ast__Var obj = /* as */ *(v__ast__Var*)__as_cast(((*node->cond._v__ast__Ident).obj)._v__ast__Var,((*node->cond._v__ast__Ident).obj)._typ, 357) /*expected idx: 357, name: v.ast.Var */ ;
+						if (!obj.is_mut) {
+							v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = obj.name}}, {_SLIT("` is immutable, it cannot be changed"), 0, { .d_c = 0 }}})), (*node->cond._v__ast__Ident).pos);
+						}
+					}
+				}
+				else if (node->cond._typ == 280 /* v.ast.ArrayInit */) {
+					v__checker__Checker_error(c, _SLIT("array literal is immutable, it cannot be changed"), (*node->cond._v__ast__ArrayInit).pos);
+				}
+				else if (node->cond._typ == 308 /* v.ast.MapInit */) {
+					v__checker__Checker_error(c, _SLIT("map literal is immutable, it cannot be changed"), (*node->cond._v__ast__MapInit).pos);
+				}
+				else if (node->cond._typ == 319 /* v.ast.SelectorExpr */) {
+					Option_v__ast__Ident _t2 = v__ast__SelectorExpr_root_ident(&(*node->cond._v__ast__SelectorExpr));
+					if (_t2.state != 0) { /*or block*/ 
+						IError err = _t2.err;
+						*(v__ast__Ident*) _t2.data = /* as */ *(v__ast__Ident*)__as_cast(((*node->cond._v__ast__SelectorExpr).expr)._v__ast__Ident,((*node->cond._v__ast__SelectorExpr).expr)._typ, 299) /*expected idx: 299, name: v.ast.Ident */ ;
+					}
+					
+ 					v__ast__Ident root_ident =  (*(v__ast__Ident*)_t2.data);
+					if (!(/* as */ *(v__ast__Var*)__as_cast((root_ident.obj)._v__ast__Var,(root_ident.obj)._typ, 357) /*expected idx: 357, name: v.ast.Var */ ).is_mut) {
+						v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = (*node->cond._v__ast__SelectorExpr).field_name}}, {_SLIT("` is immutable, it cannot be changed"), 0, { .d_c = 0 }}})), (*node->cond._v__ast__SelectorExpr).pos);
+					}
+				}
+				
+				else {
+				}
+				;
+			}
+			node->cond_type = typ;
+			node->kind = sym->kind;
+			node->val_type = value_type;
+			v__ast__Scope_update_var_type(node->scope, node->val_var, value_type);
+		}
+	}
+	v__checker__Checker_check_loop_label(c, node->label, node->pos);
+	v__checker__Checker_stmts(c, node->stmts);
+	c->loop_label = prev_loop_label;
+	c->in_for_count--;
+}
+
+VV_LOCAL_SYMBOL void v__checker__Checker_for_stmt(v__checker__Checker* c, v__ast__ForStmt* node) {
+	c->in_for_count++;
+	string prev_loop_label = c->loop_label;
+	c->expected_type = _const_v__ast__bool_type;
+	v__ast__Type typ = v__checker__Checker_expr(c, node->cond);
+	if (!node->is_inf && v__ast__Type_idx(typ) != _const_v__ast__bool_type_idx && !c->pref->translated) {
+		v__checker__Checker_error(c, _SLIT("non-bool used as for condition"), node->pos);
+	}
+	if ((node->cond)._typ == 303 /* v.ast.InfixExpr */) {
+		v__ast__InfixExpr infix = (*node->cond._v__ast__InfixExpr);
+		if (infix.op == v__token__Kind__key_is) {
+			if (((infix.left)._typ == 299 /* v.ast.Ident */ || (infix.left)._typ == 319 /* v.ast.SelectorExpr */) && (infix.right)._typ == 325 /* v.ast.TypeNode */) {
+				bool is_variable = ((infix.left)._typ == 299 /* v.ast.Ident */ ? ((*infix.left._v__ast__Ident).kind == v__ast__IdentKind__variable) : (true));
+				v__ast__Type left_type = v__checker__Checker_expr(c, infix.left);
+				v__ast__TypeSymbol* left_sym = v__ast__Table_sym(c->table, left_type);
+				if (is_variable) {
+					if (left_sym->kind == v__ast__Kind__sum_type || left_sym->kind == v__ast__Kind__interface_) {
+						v__checker__Checker_smartcast(c, infix.left, infix.left_type, (*infix.right._v__ast__TypeNode).typ, node->scope);
+					}
+				}
+			}
+		}
+	}
+	v__checker__Checker_check_loop_label(c, node->label, node->pos);
+	v__checker__Checker_stmts(c, node->stmts);
+	c->loop_label = prev_loop_label;
+	c->in_for_count--;
+}
+
 v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr* node) {
 	string if_kind = (node->is_comptime ? (_SLIT("$if")) : (_SLIT("if")));
 	bool node_is_expr = false;
@@ -53475,6 +53091,390 @@ VV_LOCAL_SYMBOL bool v__checker__is_noreturn_callexpr(v__ast__Expr expr) {
 	}
 	bool _t2 = false;
 	return _t2;
+}
+
+void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl* node) {
+	if (node->language == v__ast__Language__v && !c->is_builtin_mod) {
+		v__checker__Checker_check_valid_pascal_case(c, node->name, _SLIT("struct name"), node->pos);
+	}
+	Option_v__ast__TypeSymbol_ptr _t1 = v__ast__Table_find_type(c->table, node->name);
+	if (_t1.state != 0) { /*or block*/ 
+		IError err = _t1.err;
+		*(v__ast__TypeSymbol**) _t1.data = _const_v__ast__invalid_type_symbol;
+	}
+	
+ 	v__ast__TypeSymbol* struct_sym =  (*(v__ast__TypeSymbol**)_t1.data);
+	bool has_generic_types = false;
+	if ((struct_sym->info)._typ == 446 /* v.ast.Struct */) {
+		for (int _t2 = 0; _t2 < node->embeds.len; ++_t2) {
+			v__ast__Embed embed = ((v__ast__Embed*)node->embeds.data)[_t2];
+			if (v__ast__Type_has_flag(embed.typ, v__ast__TypeFlag__generic)) {
+				has_generic_types = true;
+			}
+			v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(c->table, embed.typ);
+			if (embed_sym->kind != v__ast__Kind__struct_) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = embed_sym->name}}, {_SLIT("` is not a struct"), 0, { .d_c = 0 }}})), embed.pos);
+			} else {
+				v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((embed_sym->info)._v__ast__Struct,(embed_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+				if (info.is_heap && !v__ast__Type_is_ptr(embed.typ)) {
+					(*struct_sym->info._v__ast__Struct).is_heap = true;
+				}
+			}
+		}
+		for (int _t3 = 0; _t3 < node->attrs.len; ++_t3) {
+			v__ast__Attr attr = ((v__ast__Attr*)node->attrs.data)[_t3];
+			if (string__eq(attr.name, _SLIT("typedef")) && node->language != v__ast__Language__c) {
+				v__checker__Checker_error(c, _SLIT("`typedef` attribute can only be used with C structs"), node->pos);
+			}
+		}
+		for (int i = 0; i < node->fields.len; ++i) {
+			v__ast__StructField field = ((v__ast__StructField*)node->fields.data)[i];
+			if (v__ast__Type_alias_eq(field.typ, _const_v__ast__any_type)) {
+				v__checker__Checker_error(c, _SLIT("struct field cannot be the `any` type, use generics instead"), field.type_pos);
+			}
+			Option_void _t4 = v__checker__Checker_ensure_type_exists(c, field.typ, field.type_pos);
+			if (_t4.state != 0 && _t4.err._typ != _IError_None___index) {
+				IError err = _t4.err;
+				return;
+			}
+			
+ ;
+			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__generic)) {
+				has_generic_types = true;
+			}
+			if (node->language == v__ast__Language__v) {
+				v__checker__Checker_check_valid_snake_case(c, field.name, _SLIT("field name"), field.pos);
+			}
+			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, field.typ);
+			for (int j = 0; j < i; ++j) {
+				if (string__eq(field.name, (*(v__ast__StructField*)/*ee elem_typ */array_get(node->fields, j)).name)) {
+					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("field name `"), 0xfe10, {.d_s = field.name}}, {_SLIT("` duplicate"), 0, { .d_c = 0 }}})), field.pos);
+				}
+			}
+			if (sym->kind == v__ast__Kind__struct_) {
+				v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+				if (info.is_heap && !v__ast__Type_is_ptr(field.typ)) {
+					(*struct_sym->info._v__ast__Struct).is_heap = true;
+				}
+			}
+			if (field.has_default_expr) {
+				c->expected_type = field.typ;
+				v__ast__Type field_expr_type = v__checker__Checker_expr(c, field.default_expr);
+				if (!v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
+					v__checker__Checker_check_expr_opt_call(c, field.default_expr, field_expr_type);
+				}
+				(*(v__ast__StructField*)/*ee elem_typ */array_get((*struct_sym->info._v__ast__Struct).fields, i)).default_expr_typ = field_expr_type;
+				Option_void _t5 = v__checker__Checker_check_expected(c, field_expr_type, field.typ);
+				if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
+					IError err = _t5.err;
+					if (sym->kind == v__ast__Kind__interface_ && v__checker__Checker_type_implements(c, field_expr_type, field.typ, field.pos)) {
+						if (!v__ast__Type_is_ptr(field_expr_type) && !v__ast__Type_is_pointer(field_expr_type) && !c->inside_unsafe) {
+							v__ast__TypeSymbol* field_expr_type_sym = v__ast__Table_sym(c->table, field_expr_type);
+							if (field_expr_type_sym->kind != v__ast__Kind__interface_) {
+								v__checker__Checker_mark_as_referenced(c, &(*(v__ast__StructField*)/*ee elem_typ */array_get(node->fields, i)).default_expr, true);
+							}
+						}
+					} else {
+						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("incompatible initializer for field `"), 0xfe10, {.d_s = field.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), v__ast__Expr_position(field.default_expr));
+					}
+				;
+				}
+				
+ ;
+				if (v__ast__Type_is_ptr(field.typ)) {
+					continue;
+				}
+				if ((field.default_expr)._typ == 304 /* v.ast.IntegerLiteral */) {
+					if (string__eq((*field.default_expr._v__ast__IntegerLiteral).val, _SLIT("0"))) {
+						v__checker__Checker_warn(c, _SLIT("unnecessary default value of `0`: struct fields are zeroed by default"), (*field.default_expr._v__ast__IntegerLiteral).pos);
+					}
+				} else if ((field.default_expr)._typ == 323 /* v.ast.StringLiteral */) {
+					if (((*field.default_expr._v__ast__StringLiteral).val).len == 0) {
+						v__checker__Checker_warn(c, _SLIT("unnecessary default value of '': struct fields are zeroed by default"), (*field.default_expr._v__ast__StringLiteral).pos);
+					}
+				} else if ((field.default_expr)._typ == 284 /* v.ast.BoolLiteral */) {
+					if ((*field.default_expr._v__ast__BoolLiteral).val == false) {
+						v__checker__Checker_warn(c, _SLIT("unnecessary default value `false`: struct fields are zeroed by default"), (*field.default_expr._v__ast__BoolLiteral).pos);
+					}
+				}
+			}
+		}
+		if (node->generic_types.len == 0 && has_generic_types) {
+			v__checker__Checker_error(c, _SLIT("generic struct declaration must specify the generic type names, e.g. Foo<T>"), node->pos);
+		}
+	}
+}
+
+v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* node) {
+	if (v__ast__Type_alias_eq(node->typ, _const_v__ast__void_type)) {
+		if (v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type)) {
+			v__checker__Checker_error(c, _SLIT("unexpected short struct syntax"), node->pos);
+			v__ast__Type _t1 = _const_v__ast__void_type;
+			return _t1;
+		}
+		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, c->expected_type);
+		if (sym->kind == v__ast__Kind__array) {
+			node->typ = v__ast__Table_value_type(c->table, c->expected_type);
+		} else {
+			node->typ = c->expected_type;
+		}
+	}
+	v__ast__TypeSymbol* struct_sym = v__ast__Table_sym(c->table, node->typ);
+	if ((struct_sym->info)._typ == 446 /* v.ast.Struct */) {
+		if ((*struct_sym->info._v__ast__Struct).generic_types.len > 0 && (*struct_sym->info._v__ast__Struct).concrete_types.len == 0 && c->table->cur_concrete_types.len == 0) {
+			v__checker__Checker_error(c, _SLIT("generic struct init must specify type parameter, e.g. Foo<int>"), node->pos);
+		}
+	} else if ((struct_sym->info)._typ == 460 /* v.ast.Alias */) {
+		v__ast__TypeSymbol* parent_sym = v__ast__Table_sym(c->table, (*struct_sym->info._v__ast__Alias).parent_type);
+		if (parent_sym->kind == v__ast__Kind__map) {
+			string alias_str = v__ast__Table_type_to_str(c->table, node->typ);
+			string map_str = v__ast__Table_type_to_str(c->table, (*struct_sym->info._v__ast__Alias).parent_type);
+			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("direct map alias init is not possible, use `"), 0xfe10, {.d_s = alias_str}}, {_SLIT("("), 0xfe10, {.d_s = map_str}}, {_SLIT("{})` instead"), 0, { .d_c = 0 }}})), node->pos);
+			v__ast__Type _t2 = _const_v__ast__void_type;
+			return _t2;
+		}
+	}
+	if (c->table->cur_fn->generic_names.len > 0) {
+		v__ast__Table_unwrap_generic_type(c->table, node->typ, c->table->cur_fn->generic_names, c->table->cur_concrete_types);
+	}
+	Option_void _t3 = v__checker__Checker_ensure_type_exists(c, node->typ, node->pos);
+	if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
+		IError err = _t3.err;
+	}
+	
+ ;
+	v__ast__TypeSymbol* type_sym = v__ast__Table_sym(c->table, node->typ);
+	if (!c->inside_unsafe && type_sym->kind == v__ast__Kind__sum_type) {
+		v__checker__Checker_note(c, _SLIT("direct sum type init (`x := SumType{}`) will be removed soon"), node->pos);
+	}
+	if (!c->is_builtin_mod && !c->inside_unsafe && type_sym->language == v__ast__Language__v && c->table->cur_concrete_types.len == 0) {
+		Option_int _t4 = string_last_index(type_sym->name, _SLIT("."));
+		if (_t4.state != 0) { /*or block*/ 
+			IError err = _t4.err;
+			*(int*) _t4.data = -1;
+		}
+		
+ 		int pos =  (*(int*)_t4.data);
+		byte first_letter = string_at(type_sym->name, pos + 1);
+		if (!byte_is_capital(first_letter)) {
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot initialize builtin type `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
+		}
+	}
+	if (type_sym->kind == v__ast__Kind__sum_type && node->fields.len == 1) {
+		string sexpr = v__ast__Expr_str((*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, 0)).expr);
+		v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("cast to sum type using `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("("), 0xfe10, {.d_s = sexpr}}, {_SLIT(")` not `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("{"), 0xfe10, {.d_s = sexpr}}, {_SLIT("}`"), 0, { .d_c = 0 }}})), node->pos);
+	}
+	if (type_sym->kind == v__ast__Kind__interface_ && type_sym->language != v__ast__Language__js) {
+		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot instantiate interface `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
+	}
+	if ((type_sym->info)._typ == 460 /* v.ast.Alias */) {
+		if (v__ast__Type_is_number((*type_sym->info._v__ast__Alias).parent_type)) {
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot instantiate number type alias `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
+			v__ast__Type _t5 = _const_v__ast__void_type;
+			return _t5;
+		}
+	}
+	if (!type_sym->is_public && type_sym->kind != v__ast__Kind__placeholder && type_sym->language != v__ast__Language__c && (!string__eq(type_sym->mod, c->mod) && !(v__ast__Type_has_flag(node->typ, v__ast__TypeFlag__generic) && !string__eq(type_sym->mod, _SLIT("builtin"))))) {
+		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("type `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("` is private"), 0, { .d_c = 0 }}})), node->pos);
+	}
+	if (type_sym->kind == v__ast__Kind__struct_) {
+		v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((type_sym->info)._v__ast__Struct,(type_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+		if (info.attrs.len > 0 && string__eq((*(v__ast__Attr*)/*ee elem_typ */array_get(info.attrs, 0)).name, _SLIT("noinit")) && !string__eq(type_sym->mod, c->mod)) {
+			v__checker__Checker_error(c, string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT("struct `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("` is declared with a `[noinit]` attribute, so "), 0, { .d_c = 0 }}})),  str_intp(2, _MOV((StrIntpData[]){{_SLIT("it cannot be initialized with `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("{}`"), 0, { .d_c = 0 }}}))), node->pos);
+		}
+	}
+	if (type_sym->name.len == 1 && c->table->cur_fn->generic_names.len == 0) {
+		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown struct `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
+		v__ast__Type _t6 = 0;
+		return _t6;
+	}
+
+	if (type_sym->kind == (v__ast__Kind__placeholder)) {
+		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown struct: "), 0xfe10, {.d_s = type_sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
+		v__ast__Type _t7 = _const_v__ast__void_type;
+		return _t7;
+	}
+	else if (type_sym->kind == (v__ast__Kind__struct_) || type_sym->kind == (v__ast__Kind__string) || type_sym->kind == (v__ast__Kind__array) || type_sym->kind == (v__ast__Kind__alias)) {
+		v__ast__Struct info = (v__ast__Struct){.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.embeds = __new_array(0, 0, sizeof(v__ast__Type)),.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.is_typedef = 0,.is_union = 0,.is_heap = 0,.is_generic = 0,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,};
+		if (type_sym->kind == v__ast__Kind__alias) {
+			v__ast__Alias info_t = /* as */ *(v__ast__Alias*)__as_cast((type_sym->info)._v__ast__Alias,(type_sym->info)._typ, 460) /*expected idx: 460, name: v.ast.Alias */ ;
+			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, info_t.parent_type);
+			if (sym->kind == v__ast__Kind__placeholder) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown struct: "), 0xfe10, {.d_s = type_sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
+				v__ast__Type _t8 = _const_v__ast__void_type;
+				return _t8;
+			}
+			if (sym->kind == v__ast__Kind__struct_) {
+				info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+			} else {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("alias type name: "), 0xfe10, {.d_s = sym->name}}, {_SLIT(" is not struct type"), 0, { .d_c = 0 }}})), node->pos);
+			}
+		} else {
+			info = /* as */ *(v__ast__Struct*)__as_cast((type_sym->info)._v__ast__Struct,(type_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+		}
+		if (node->is_short) {
+			int exp_len = info.fields.len;
+			int got_len = node->fields.len;
+			if (exp_len != got_len) {
+				string amount = (exp_len < got_len ? (_SLIT("many")) : (_SLIT("few")));
+				v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("too "), 0xfe10, {.d_s = amount}}, {_SLIT(" fields in `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("` literal (expecting "), 0xfe07, {.d_i32 = exp_len}}, {_SLIT(", got "), 0xfe07, {.d_i32 = got_len}}, {_SLIT(")"), 0, { .d_c = 0 }}})), node->pos);
+			}
+		}
+		Array_string inited_fields = __new_array_with_default(0, 0, sizeof(string), 0);
+		for (int i = 0; i < node->fields.len; ++i) {
+			v__ast__StructInitField* field = ((v__ast__StructInitField*)node->fields.data) + i;
+			v__ast__StructField field_info = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
+			string field_name = _SLIT("");
+			if (node->is_short) {
+				if (i >= info.fields.len) {
+					break;
+				}
+				field_info = (*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i));
+				field_name = field_info.name;
+				(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).name = field_name;
+			} else {
+				field_name = field->name;
+				bool exists = true;
+				Option_v__ast__StructField _t9 = v__ast__Table_find_field_with_embeds(c->table, type_sym, field_name);
+				if (_t9.state != 0) { /*or block*/ 
+					IError err = _t9.err;
+					exists = false;
+					*(v__ast__StructField*) _t9.data = (v__ast__StructField){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_default_expr = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.default_expr = {0},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,};
+				}
+				
+ 				field_info =  (*(v__ast__StructField*)_t9.data);
+				if (!exists) {
+					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("unknown field `"), 0xfe10, {.d_s = field->name}}, {_SLIT("` in struct literal of type `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), field->pos);
+					continue;
+				}
+				if (Array_string_contains(inited_fields, field_name)) {
+					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("duplicate field name in struct literal: `"), 0xfe10, {.d_s = field_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), field->pos);
+					continue;
+				}
+			}
+			v__ast__Type expr_type = ((v__ast__Type)(0));
+			v__ast__Type expected_type = ((v__ast__Type)(0));
+			array_push((array*)&inited_fields, _MOV((string[]){ string_clone(field_name) }));
+			v__ast__TypeSymbol* field_type_sym = v__ast__Table_sym(c->table, field_info.typ);
+			expected_type = field_info.typ;
+			c->expected_type = expected_type;
+			expr_type = v__checker__Checker_expr(c, field->expr);
+			if (!v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__optional)) {
+				expr_type = v__checker__Checker_check_expr_opt_call(c, field->expr, expr_type);
+			}
+			v__ast__TypeSymbol* expr_type_sym = v__ast__Table_sym(c->table, expr_type);
+			if (field_type_sym->kind == v__ast__Kind__interface_) {
+				if (v__checker__Checker_type_implements(c, expr_type, field_info.typ, field->pos)) {
+					if (!v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && expr_type_sym->kind != v__ast__Kind__interface_ && !c->inside_unsafe) {
+						v__checker__Checker_mark_as_referenced(c, &field->expr, true);
+					}
+				}
+			} else if (!v__ast__Type_alias_eq(expr_type, _const_v__ast__void_type) && expr_type_sym->kind != v__ast__Kind__placeholder) {
+				Option_void _t11 = v__checker__Checker_check_expected(c, v__checker__Checker_unwrap_generic(c, expr_type), v__checker__Checker_unwrap_generic(c, field_info.typ));
+				if (_t11.state != 0 && _t11.err._typ != _IError_None___index) {
+					IError err = _t11.err;
+					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot assign to field `"), 0xfe10, {.d_s = field_info.name}}, {_SLIT("`: "), 0xfe10, {.d_s = (*(err.msg))}}, {_SLIT0, 0, { .d_c = 0 }}})), field->pos);
+				;
+				}
+				
+ ;
+			}
+			if (v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__shared_f)) {
+				if (!v__ast__Type_has_flag(expr_type, v__ast__TypeFlag__shared_f) && v__ast__Type_is_ptr(expr_type)) {
+					v__checker__Checker_error(c, _SLIT("`shared` field must be initialized with `shared` or value"), field->pos);
+				}
+			} else {
+				if (v__ast__Type_is_ptr(field_info.typ) && !v__ast__Type_is_ptr(expr_type) && !v__ast__Type_is_pointer(expr_type) && !v__ast__Type_is_number(expr_type)) {
+					v__checker__Checker_error(c, _SLIT("reference field must be initialized with reference"), field->pos);
+				}
+			}
+			(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).typ = expr_type;
+			(*(v__ast__StructInitField*)/*ee elem_typ */array_get(node->fields, i)).expected_type = field_info.typ;
+			if (v__ast__Type_has_flag(field_info.typ, v__ast__TypeFlag__optional)) {
+				v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = field_info.name}}, {_SLIT("` is optional, but initialization of optional fields currently unsupported"), 0, { .d_c = 0 }}})), field->pos);
+			}
+			if (v__ast__Type_is_ptr(expr_type) && v__ast__Type_is_ptr(expected_type)) {
+				if ((field->expr)._typ == 299 /* v.ast.Ident */) {
+					if (((*field->expr._v__ast__Ident).obj)._typ == 357 /* v.ast.Var */) {
+						v__ast__Var* obj = &(*(*field->expr._v__ast__Ident).obj._v__ast__Var);
+						if (c->fn_scope != ((voidptr)(0))) {
+							Option_v__ast__Var_ptr _t12 = v__ast__Scope_find_var(c->fn_scope, obj->name);
+							if (_t12.state != 0) { /*or block*/ 
+								IError err = _t12.err;
+								*(v__ast__Var**) _t12.data = obj;
+							}
+							
+ 							obj =  (*(v__ast__Var**)_t12.data);
+						}
+						if (obj->is_stack_obj && !c->inside_unsafe) {
+							v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, v__ast__Type_set_nr_muls(obj->typ, 0));
+							if (!v__ast__TypeSymbol_is_heap(sym) && !c->pref->translated) {
+								string suggestion = (sym->kind == v__ast__Kind__struct_ ? ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("declaring `"), 0xfe10, {.d_s = sym->name}}, {_SLIT("` as `[heap]`"), 0, { .d_c = 0 }}}))) : ( str_intp(2, _MOV((StrIntpData[]){{_SLIT("wrapping the `"), 0xfe10, {.d_s = sym->name}}, {_SLIT("` object in a `struct` declared as `[heap]`"), 0, { .d_c = 0 }}}))));
+								v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = (*field->expr._v__ast__Ident).name}}, {_SLIT("` cannot be assigned outside `unsafe` blocks as it might refer to an object stored on stack. Consider "), 0xfe10, {.d_s = suggestion}}, {_SLIT("."), 0, { .d_c = 0 }}})), (*field->expr._v__ast__Ident).pos);
+							}
+						}
+					}
+				}
+			}
+		}
+		for (int _t13 = 0; _t13 < info.fields.len; ++_t13) {
+			v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[_t13];
+			if (field.has_default_expr || Array_string_contains(inited_fields, field.name)) {
+				continue;
+			}
+			if (v__ast__Type_is_ptr(field.typ) && !v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__shared_f) && !node->has_update_expr && !c->pref->translated) {
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("reference field `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT("` must be initialized"), 0, { .d_c = 0 }}})), node->pos);
+			}
+			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, field.typ);
+			bool has_noinit = false;
+			for (int _t14 = 0; _t14 < field.attrs.len; ++_t14) {
+				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t14];
+				if (string__eq(attr.name, _SLIT("noinit"))) {
+					has_noinit = true;
+					break;
+				}
+			}
+			if (sym->kind == v__ast__Kind__interface_ && (!has_noinit && sym->language != v__ast__Language__js)) {
+				v__checker__Checker_note(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("interface field `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT("` must be initialized"), 0, { .d_c = 0 }}})), node->pos);
+			}
+			if (Array_v__ast__Attr_contains(field.attrs, _SLIT("required")) && !node->is_short && !node->has_update_expr) {
+				bool found = false;
+				for (int _t15 = 0; _t15 < node->fields.len; ++_t15) {
+					v__ast__StructInitField init_field = ((v__ast__StructInitField*)node->fields.data)[_t15];
+					if (string__eq(field.name, init_field.name)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = type_sym->name}}, {_SLIT("."), 0xfe10, {.d_s = field.name}}, {_SLIT("` must be initialized"), 0, { .d_c = 0 }}})), node->pos);
+				}
+			}
+		}
+	}
+	else {
+	};
+	if (node->has_update_expr) {
+		v__ast__Type update_type = v__checker__Checker_expr(c, node->update_expr);
+		node->update_expr_type = update_type;
+		if (v__ast__Table_type_kind(c->table, update_type) != v__ast__Kind__struct_) {
+			string s = v__ast__Table_type_to_str(c->table, update_type);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expected struct, found `"), 0xfe10, {.d_s = s}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(node->update_expr));
+		} else if (!v__ast__Type_alias_eq(update_type, node->typ)) {
+			v__ast__TypeSymbol* from_sym = v__ast__Table_sym(c->table, update_type);
+			v__ast__TypeSymbol* to_sym = v__ast__Table_sym(c->table, node->typ);
+			v__ast__Struct from_info = /* as */ *(v__ast__Struct*)__as_cast((from_sym->info)._v__ast__Struct,(from_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+			v__ast__Struct to_info = /* as */ *(v__ast__Struct*)__as_cast((to_sym->info)._v__ast__Struct,(to_sym->info)._typ, 446) /*expected idx: 446, name: v.ast.Struct */ ;
+			if (!v__checker__Checker_check_struct_signature(c, from_info, to_info)) {
+				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("struct `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` is not compatible with struct `"), 0xfe10, {.d_s = to_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(node->update_expr));
+			}
+		}
+		if (!v__ast__Expr_is_lvalue(node->update_expr)) {
+			v__checker__Checker_error(c, _SLIT("expression is not an lvalue"), v__ast__Expr_position(node->update_expr));
+		}
+	}
+	v__ast__Type _t16 = node->typ;
+	return _t16;
 }
 
 VV_LOCAL_SYMBOL bool v__transformer__IndexState_safe_access(v__transformer__IndexState* i, string key, int _v_new) {
