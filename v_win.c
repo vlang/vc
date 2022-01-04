@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "054bb27"
+#define V_COMMIT_HASH "b94c5c2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "59ed4be"
+	#define V_COMMIT_HASH "054bb27"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "054bb27"
+	#define V_CURRENT_COMMIT_HASH "b94c5c2"
 #endif
 
 // V comptime_definitions:
@@ -31067,7 +31067,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("59ed4be");
+	string vhash = _SLIT("054bb27");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -38015,10 +38015,14 @@ string v__ast__Table_fn_type_signature(v__ast__Table* t, v__ast__Fn* f) {
 		v__ast__Param arg = ((v__ast__Param*)f->params.data)[i];
 		v__ast__Type typ = v__ast__Type_set_nr_muls(arg.typ, 0);
 		v__ast__TypeSymbol* arg_type_sym = v__ast__Table_sym(t, typ);
-		sig = /*f*/string__plus(sig, string_replace_each(string_to_lower(v__ast__TypeSymbol_str(arg_type_sym)), new_array_from_c_array(20, 20, sizeof(string), _MOV((string[20]){
-				_SLIT("."), _SLIT("__"), _SLIT("&"), _SLIT(""), _SLIT("["), _SLIT("arr_"), _SLIT("chan "), _SLIT("chan_"), _SLIT("map["),
-				_SLIT("map_of_"), _SLIT("]"), _SLIT("_to_"), _SLIT("<"), _SLIT("_T_"), _SLIT(","), _SLIT("_"), _SLIT(" "),
-				_SLIT(""), _SLIT(">"), _SLIT("")}))));
+		if (arg_type_sym->kind == v__ast__Kind__alias) {
+			sig = /*f*/string__plus(sig, arg_type_sym->cname);
+		} else {
+			sig = /*f*/string__plus(sig, string_replace_each(string_to_lower(v__ast__TypeSymbol_str(arg_type_sym)), new_array_from_c_array(20, 20, sizeof(string), _MOV((string[20]){
+					_SLIT("."), _SLIT("__"), _SLIT("&"), _SLIT(""), _SLIT("["), _SLIT("arr_"), _SLIT("chan "), _SLIT("chan_"), _SLIT("map["),
+					_SLIT("map_of_"), _SLIT("]"), _SLIT("_to_"), _SLIT("<"), _SLIT("_T_"), _SLIT(","), _SLIT("_"), _SLIT(" "),
+					_SLIT(""), _SLIT(">"), _SLIT("")}))));
+		}
 		if (i < f->params.len - 1) {
 			sig = /*f*/string__plus(sig, _SLIT("_"));
 		}
@@ -38026,7 +38030,11 @@ string v__ast__Table_fn_type_signature(v__ast__Table* t, v__ast__Fn* f) {
 	if (f->return_type != 0 && !v__ast__Type_alias_eq(f->return_type, _const_v__ast__void_type)) {
 		v__ast__TypeSymbol* sym = v__ast__Table_sym(t, f->return_type);
 		string opt = (v__ast__Type_has_flag(f->return_type, v__ast__TypeFlag__optional) ? (_SLIT("option_")) : (_SLIT("")));
-		sig = /*f*/string__plus(sig,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("__"), 0xfe10, {.d_s = opt}}, {_SLIT0, 0xfe10, {.d_s = v__ast__Kind_str(sym->kind)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		if (sym->kind == v__ast__Kind__alias) {
+			sig = /*f*/string__plus(sig,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("__"), 0xfe10, {.d_s = opt}}, {_SLIT0, 0xfe10, {.d_s = sym->cname}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		} else {
+			sig = /*f*/string__plus(sig,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("__"), 0xfe10, {.d_s = opt}}, {_SLIT0, 0xfe10, {.d_s = v__ast__Kind_str(sym->kind)}}, {_SLIT0, 0, { .d_c = 0 }}})));
+		}
 	}
 	string _t1 = sig;
 	return _t1;
@@ -38247,9 +38255,9 @@ Option_multi_return_v__ast__Fn_Array_v__ast__Type v__ast__Table_find_method_from
 					continue;
 				}
 				
- 				Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_11415 =  _t5 /*U*/;
-				v__ast__Fn method = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_11415.data).arg0;
-				Array_v__ast__Type types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_11415.data).arg1;
+ 				Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_11571 =  _t5 /*U*/;
+				v__ast__Fn method = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_11571.data).arg0;
+				Array_v__ast__Type types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_11571.data).arg1;
 				array_push((array*)&found_methods, _MOV((v__ast__Fn[]){ method }));
 				array_push((array*)&embed_of_found_methods, _MOV((v__ast__Type[]){ embed }));
 				_PUSH_MANY(&embed_of_found_methods, (types), _t8, Array_v__ast__Type);
@@ -38272,9 +38280,9 @@ Option_multi_return_v__ast__Fn_Array_v__ast__Type v__ast__Table_find_method_from
 				continue;
 			}
 			
- 			Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_11878 =  _t12 /*U*/;
-			v__ast__Fn method = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_11878.data).arg0;
-			Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_11878.data).arg1;
+ 			Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_12034 =  _t12 /*U*/;
+			v__ast__Fn method = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_12034.data).arg0;
+			Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_12034.data).arg1;
 			if (embed_types.len != 0) {
 				Option_multi_return_v__ast__Fn_Array_v__ast__Type _t13;
 				opt_ok(&(multi_return_v__ast__Fn_Array_v__ast__Type/*X*/[]) { (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=method, .arg1=embed_types} }, (Option*)(&_t13), sizeof(multi_return_v__ast__Fn_Array_v__ast__Type));
@@ -38301,8 +38309,8 @@ Option_v__ast__Fn v__ast__Table_find_method_with_embeds(v__ast__Table* t, v__ast
 			return (Option_v__ast__Fn){ .state=2, .err=first_err, .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
- 		Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_12339 =  _t3 /*U*/;
-		v__ast__Fn func = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_12339.data).arg0;
+ 		Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_12495 =  _t3 /*U*/;
+		v__ast__Fn func = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_12495.data).arg0;
 		Option_v__ast__Fn _t5;
 		opt_ok(&(v__ast__Fn[]) { func }, (Option*)(&_t5), sizeof(v__ast__Fn));
 		return _t5;
@@ -38451,9 +38459,9 @@ Option_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_fi
 					continue;
 				}
 				
- 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_15313 =  _t5 /*U*/;
-				v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15313.data).arg0;
-				Array_v__ast__Type types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15313.data).arg1;
+ 				Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_15469 =  _t5 /*U*/;
+				v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15469.data).arg0;
+				Array_v__ast__Type types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15469.data).arg1;
 				array_push((array*)&found_fields, _MOV((v__ast__StructField[]){ field }));
 				array_push((array*)&embeds_of_found_fields, _MOV((v__ast__Type[]){ embed }));
 				_PUSH_MANY(&embeds_of_found_fields, (types), _t8, Array_v__ast__Type);
@@ -38476,9 +38484,9 @@ Option_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_fi
 				continue;
 			}
 			
- 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_15766 =  _t12 /*U*/;
-			v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15766.data).arg0;
-			Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15766.data).arg1;
+ 			Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_15922 =  _t12 /*U*/;
+			v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15922.data).arg0;
+			Array_v__ast__Type embed_types = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_15922.data).arg1;
 			if (embed_types.len > 0) {
 				Option_multi_return_v__ast__StructField_Array_v__ast__Type _t13;
 				opt_ok(&(multi_return_v__ast__StructField_Array_v__ast__Type/*X*/[]) { (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=field, .arg1=embed_types} }, (Option*)(&_t13), sizeof(multi_return_v__ast__StructField_Array_v__ast__Type));
@@ -38509,8 +38517,8 @@ Option_v__ast__StructField v__ast__Table_find_field_with_embeds(v__ast__Table* t
 			return (Option_v__ast__StructField){ .state=2, .err=first_err, .data={EMPTY_STRUCT_INITIALIZATION} };
 		}
 		
- 		Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_16364 =  _t3 /*U*/;
-		v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_16364.data).arg0;
+ 		Option_multi_return_v__ast__StructField_Array_v__ast__Type mr_16520 =  _t3 /*U*/;
+		v__ast__StructField field = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)mr_16520.data).arg0;
 		Option_v__ast__StructField _t5;
 		opt_ok(&(v__ast__StructField[]) { field }, (Option*)(&_t5), sizeof(v__ast__StructField));
 		return _t5;
@@ -38996,9 +39004,9 @@ int v__ast__Table_find_or_register_multi_return(v__ast__Table* t, Array_v__ast__
 	for (int i = 0; i < mr_typs.len; ++i) {
 		v__ast__Type mr_typ = ((v__ast__Type*)mr_typs.data)[i];
 		v__ast__TypeSymbol* mr_type_sym = v__ast__Table_sym(t, mr_typ);
-		multi_return_string_string mr_28755 = (v__ast__Type_is_ptr(mr_typ) ? ((multi_return_string_string){.arg0=_SLIT("&"),.arg1=_SLIT("ref_")}) : ((multi_return_string_string){.arg0=_SLIT(""),.arg1=_SLIT("")}));
-		string ref = mr_28755.arg0;
-		string cref = mr_28755.arg1;
+		multi_return_string_string mr_28911 = (v__ast__Type_is_ptr(mr_typ) ? ((multi_return_string_string){.arg0=_SLIT("&"),.arg1=_SLIT("ref_")}) : ((multi_return_string_string){.arg0=_SLIT(""),.arg1=_SLIT("")}));
+		string ref = mr_28911.arg0;
+		string cref = mr_28911.arg1;
 		name = /*f*/string__plus(name,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ref}}, {_SLIT0, 0xfe10, {.d_s = mr_type_sym->name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		cname = /*f*/string__plus(cname,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_"), 0xfe10, {.d_s = cref}}, {_SLIT0, 0xfe10, {.d_s = mr_type_sym->cname}}, {_SLIT0, 0, { .d_c = 0 }}})));
 		if (i < mr_typs.len - 1) {
