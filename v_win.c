@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b2538e8"
+#define V_COMMIT_HASH "0f01236"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b94c5c2"
+	#define V_COMMIT_HASH "b2538e8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b2538e8"
+	#define V_CURRENT_COMMIT_HASH "0f01236"
 #endif
 
 // V comptime_definitions:
@@ -12786,29 +12786,29 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	s2 = ((u32)(0U));
 	for (;;) {
 		if (!(pn->exponent > 0)) break;
-		multi_return_u32_u32_u32 mr_5660 = strconv__lsl96(s2, s1, s0);
-		q2 = mr_5660.arg0;
-		q1 = mr_5660.arg1;
-		q0 = mr_5660.arg2;
-		multi_return_u32_u32_u32 mr_5706 = strconv__lsl96(q2, q1, q0);
-		r2 = mr_5706.arg0;
-		r1 = mr_5706.arg1;
-		r0 = mr_5706.arg2;
-		multi_return_u32_u32_u32 mr_5762 = strconv__lsl96(r2, r1, r0);
-		s2 = mr_5762.arg0;
-		s1 = mr_5762.arg1;
-		s0 = mr_5762.arg2;
-		multi_return_u32_u32_u32 mr_5818 = strconv__add96(s2, s1, s0, q2, q1, q0);
-		s2 = mr_5818.arg0;
-		s1 = mr_5818.arg1;
-		s0 = mr_5818.arg2;
+		multi_return_u32_u32_u32 mr_5642 = strconv__lsl96(s2, s1, s0);
+		q2 = mr_5642.arg0;
+		q1 = mr_5642.arg1;
+		q0 = mr_5642.arg2;
+		multi_return_u32_u32_u32 mr_5688 = strconv__lsl96(q2, q1, q0);
+		r2 = mr_5688.arg0;
+		r1 = mr_5688.arg1;
+		r0 = mr_5688.arg2;
+		multi_return_u32_u32_u32 mr_5744 = strconv__lsl96(r2, r1, r0);
+		s2 = mr_5744.arg0;
+		s1 = mr_5744.arg1;
+		s0 = mr_5744.arg2;
+		multi_return_u32_u32_u32 mr_5800 = strconv__add96(s2, s1, s0, q2, q1, q0);
+		s2 = mr_5800.arg0;
+		s1 = mr_5800.arg1;
+		s0 = mr_5800.arg2;
 		pn->exponent--;
 		for (;;) {
 			if (!(((s2 & mask28)) != 0U)) break;
-			multi_return_u32_u32_u32 mr_5941 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_5941.arg0;
-			q1 = mr_5941.arg1;
-			q0 = mr_5941.arg2;
+			multi_return_u32_u32_u32 mr_5923 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_5923.arg0;
+			q1 = mr_5923.arg1;
+			q0 = mr_5923.arg2;
 			binexp++;
 			s2 = q2;
 			s1 = q1;
@@ -12819,10 +12819,10 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 		if (!(pn->exponent < 0)) break;
 		for (;;) {
 			if (!(!(((s2 & (((u32)(1U)) << 31U))) != 0U))) break;
-			multi_return_u32_u32_u32 mr_6088 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_6088.arg0;
-			q1 = mr_6088.arg1;
-			q0 = mr_6088.arg2;
+			multi_return_u32_u32_u32 mr_6070 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_6070.arg0;
+			q1 = mr_6070.arg1;
+			q0 = mr_6070.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -12848,10 +12848,10 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	if (s2 != 0U || s1 != 0U || s0 != 0U) {
 		for (;;) {
 			if (!(((s2 & mask28)) == 0U)) break;
-			multi_return_u32_u32_u32 mr_6823 = strconv__lsl96(s2, s1, s0);
-			q2 = mr_6823.arg0;
-			q1 = mr_6823.arg1;
-			q0 = mr_6823.arg2;
+			multi_return_u32_u32_u32 mr_6805 = strconv__lsl96(s2, s1, s0);
+			q2 = mr_6805.arg0;
+			q1 = mr_6805.arg1;
+			q0 = mr_6805.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -12863,25 +12863,25 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 	u32 check_round_mask = ((u32)(0xFFFFFFFFU)) << ((u32)(nbit));
 	if (((s1 & check_round_bit)) != 0U) {
 		if (((s1 & ~check_round_mask)) != 0U) {
-			multi_return_u32_u32_u32 mr_7905 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
-			s2 = mr_7905.arg0;
-			s1 = mr_7905.arg1;
-			s0 = mr_7905.arg2;
+			multi_return_u32_u32_u32 mr_7887 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
+			s2 = mr_7887.arg0;
+			s1 = mr_7887.arg1;
+			s0 = mr_7887.arg2;
 		} else {
 			if (((s1 & (check_round_bit << ((u32)(1U))))) != 0U) {
-				multi_return_u32_u32_u32 mr_8097 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
-				s2 = mr_8097.arg0;
-				s1 = mr_8097.arg1;
-				s0 = mr_8097.arg2;
+				multi_return_u32_u32_u32 mr_8079 = strconv__add96(s2, s1, s0, 0U, check_round_bit, 0U);
+				s2 = mr_8079.arg0;
+				s1 = mr_8079.arg1;
+				s0 = mr_8079.arg2;
 			}
 		}
 		s1 = (s1 & check_round_mask);
 		s0 = ((u32)(0U));
 		if ((s2 & (mask28 << ((u32)(1U)))) != 0U) {
-			multi_return_u32_u32_u32 mr_8301 = strconv__lsr96(s2, s1, s0);
-			q2 = mr_8301.arg0;
-			q1 = mr_8301.arg1;
-			q0 = mr_8301.arg2;
+			multi_return_u32_u32_u32 mr_8283 = strconv__lsr96(s2, s1, s0);
+			q2 = mr_8283.arg0;
+			q1 = mr_8283.arg1;
+			q0 = mr_8283.arg2;
 			binexp--;
 			s2 = q2;
 			s1 = q1;
@@ -12914,12 +12914,15 @@ VV_LOCAL_SYMBOL u64 strconv__converter(strconv__PrepNumber* pn) {
 }
 
 f64 strconv__atof64(string s) {
+	if (s.len == 0) {
+		return 0;
+	}
 	strconv__PrepNumber pn = (strconv__PrepNumber){.negative = 0,.exponent = 0,.mantissa = 0,};
 	int res_parsing = 0;
 	strconv__Float64u res = (strconv__Float64u){0};
-	multi_return_int_strconv__PrepNumber mr_9336 = strconv__parser(s);
-	res_parsing = mr_9336.arg0;
-	pn = mr_9336.arg1;
+	multi_return_int_strconv__PrepNumber mr_9346 = strconv__parser(s);
+	res_parsing = mr_9346.arg0;
+	pn = mr_9346.arg1;
 
 	if (res_parsing == (_const_strconv__parser_ok)) {
 		res.u = strconv__converter((voidptr)&/*qq*/pn);
@@ -31067,7 +31070,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("b94c5c2");
+	string vhash = _SLIT("b2538e8");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
