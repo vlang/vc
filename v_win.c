@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6c1ae4f"
+#define V_COMMIT_HASH "b3930c3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0f01236"
+	#define V_COMMIT_HASH "6c1ae4f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6c1ae4f"
+	#define V_CURRENT_COMMIT_HASH "b3930c3"
 #endif
 
 // V comptime_definitions:
@@ -31070,7 +31070,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("0f01236");
+	string vhash = _SLIT("6c1ae4f");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -51400,6 +51400,10 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_array_builtin_method_call(v__ch
 		v__ast__TypeSymbol* arg_sym = v__ast__Table_sym(c->table, arg_type);
 		v__ast__Type ret_type = ((arg_sym->info._typ == 472 /* v.ast.FnType */) ? ((*arg_sym->info._v__ast__FnType).func.return_type) : (arg_type));
 		node->return_type = v__ast__Table_find_or_register_array(c->table, v__checker__Checker_unwrap_generic(c, ret_type));
+		v__ast__TypeSymbol* ret_sym = v__ast__Table_sym(c->table, ret_type);
+		if (ret_sym->kind == v__ast__Kind__multi_return) {
+			v__checker__Checker_error(c, _SLIT("returning multiple values is not supported in .map() calls"), node->pos);
+		}
 	} else if (string__eq(method_name, _SLIT("filter"))) {
 		v__checker__Checker_check_map_and_filter(c, false, elem_typ, *node);
 	} else if (string__eq(method_name, _SLIT("any")) || string__eq(method_name, _SLIT("all"))) {
