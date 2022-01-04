@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "00a0c18"
+#define V_COMMIT_HASH "feadf77"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4b55800"
+	#define V_COMMIT_HASH "00a0c18"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "00a0c18"
+	#define V_CURRENT_COMMIT_HASH "feadf77"
 #endif
 
 // V comptime_definitions:
@@ -31067,7 +31067,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("4b55800");
+	string vhash = _SLIT("00a0c18");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -84852,13 +84852,13 @@ VV_LOCAL_SYMBOL string v__builder__missing_compiler_info(void) {
 
 VV_LOCAL_SYMBOL Array_string v__builder__error_context_lines(string text, string keyword, int before, int after) {
 	string khighlight = (term__can_show_color_on_stdout() ? (term__red(keyword)) : (keyword));
-	int eline_idx = 0;
+	int eline_idx = -1;
 	Array_string lines = string_split_into_lines(text);
 	for (int idx = 0; idx < lines.len; ++idx) {
 		string eline = ((string*)lines.data)[idx];
 		if (string_contains(eline, keyword)) {
 			array_set(&lines, idx, &(string[]) { string_replace((*(string*)/*ee elem_typ */array_get(lines, idx)), keyword, khighlight) });
-			if (eline_idx == 0) {
+			if (eline_idx == -1) {
 				eline_idx = idx;
 			}
 		}
