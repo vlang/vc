@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "b94c5c2"
+#define V_COMMIT_HASH "b2538e8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "054bb27"
+	#define V_COMMIT_HASH "b94c5c2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "b94c5c2"
+	#define V_CURRENT_COMMIT_HASH "b2538e8"
 #endif
 
 // V comptime_definitions:
@@ -32345,7 +32345,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("054bb27");
+	string vhash = _SLIT("b94c5c2");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -50879,7 +50879,7 @@ VV_LOCAL_SYMBOL bool v__checker__Checker_comptime_if_branch(v__checker__Checker*
 				bool _t33 = false;
 				return _t33;
 			}
-			v__ast__Type typ = v__checker__Checker_expr(c, cond);
+			v__ast__Type typ = v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, cond));
 			if (((*cond._v__ast__Ident).obj)._typ != 319 /* v.ast.Var */ && ((*cond._v__ast__Ident).obj)._typ != 317 /* v.ast.ConstField */ && ((*cond._v__ast__Ident).obj)._typ != 318 /* v.ast.GlobalField */) {
 				if (!c->inside_ct_attr) {
 					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown var: `"), 0xfe10, {.d_s = cname}}, {_SLIT("`"), 0, { .d_c = 0 }}})), pos);
@@ -53131,7 +53131,7 @@ v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr*
 				(*(v__ast__IfBranch*)/*ee elem_typ */array_get(node->branches, i)).pkg_exist = !should_skip;
 			} else {
 				c->expected_type = _const_v__ast__bool_type;
-				v__ast__Type cond_typ = v__checker__Checker_expr(c, branch.cond);
+				v__ast__Type cond_typ = v__checker__Checker_unwrap_generic(c, v__checker__Checker_expr(c, branch.cond));
 				if ((v__ast__Type_idx(cond_typ) != _const_v__ast__bool_type_idx || v__ast__Type_has_flag(cond_typ, v__ast__TypeFlag__optional)) && !c->pref->translated) {
 					v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("non-bool type `"), 0xfe10, {.d_s = v__ast__Table_type_to_str(c->table, cond_typ)}}, {_SLIT("` used as if condition"), 0, { .d_c = 0 }}})), v__ast__Expr_position(branch.cond));
 				}
