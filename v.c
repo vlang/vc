@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "de711da"
+#define V_COMMIT_HASH "59357e8"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "897bbb7"
+	#define V_COMMIT_HASH "de711da"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "de711da"
+	#define V_CURRENT_COMMIT_HASH "59357e8"
 #endif
 
 // V comptime_definitions:
@@ -7271,8 +7271,6 @@ Array_string os__cmdline__options_before(Array_string args, Array_string what);
 Array_string os__cmdline__options_after(Array_string args, Array_string what);
 Array_string os__cmdline__only_non_options(Array_string args);
 Array_string os__cmdline__only_options(Array_string args);
-int math__mathutil__min_T_int(int a, int b);
-int math__mathutil__max_T_int(int a, int b);
 #define _const_v__token__max_keyword_len 20
 v__token__KeywordsMatcher v__token__new_keywords_matcher_T_v__token__Kind(Map_string_v__token__Kind kw_map);
 VV_LOCAL_SYMBOL int compare_7621314236064146737_v__token__WIndex_by_word(v__token__WIndex* a, v__token__WIndex* b) {
@@ -7311,6 +7309,8 @@ bool v__token__Kind_is_relational(v__token__Kind tok);
 bool v__token__Kind_is_start_of_type(v__token__Kind k);
 bool v__token__Kind_is_prefix(v__token__Kind kind);
 bool v__token__Kind_is_infix(v__token__Kind kind);
+int v__mathutil__min_T_int(int a, int b);
+int v__mathutil__max_T_int(int a, int b);
 i64 time__portable_timegm(struct tm* t);
 int time__days_from_civil(int oy, int m, int d);
 string time__Time_format(time__Time t);
@@ -26175,18 +26175,6 @@ Array_string os__cmdline__only_options(Array_string args) {
 	return _t1;
 }
 
-// Attr: [inline]
-inline int math__mathutil__min_T_int(int a, int b) {
-	int _t1 = (a < b ? (a) : (b));
-	return _t1;
-}
-
-// Attr: [inline]
-inline int math__mathutil__max_T_int(int a, int b) {
-	int _t1 = (a > b ? (a) : (b));
-	return _t1;
-}
-
 v__token__KeywordsMatcher v__token__new_keywords_matcher_T_v__token__Kind(Map_string_v__token__Kind kw_map) {
 	v__token__KeywordsMatcher km = (v__token__KeywordsMatcher){.len_min = 9999,.len_max = -1,.words = {0},};
 	for (int i = 0; i < _const_v__token__max_keyword_len; ++i) {
@@ -26600,6 +26588,18 @@ inline bool v__token__Kind_is_prefix(v__token__Kind kind) {
 // Attr: [inline]
 inline bool v__token__Kind_is_infix(v__token__Kind kind) {
 	bool _t1 = (kind == v__token__Kind__plus || kind == v__token__Kind__minus || kind == v__token__Kind__mod || kind == v__token__Kind__mul || kind == v__token__Kind__div || kind == v__token__Kind__eq || kind == v__token__Kind__ne || kind == v__token__Kind__gt || kind == v__token__Kind__lt || kind == v__token__Kind__key_in || kind == v__token__Kind__key_as || kind == v__token__Kind__ge || kind == v__token__Kind__le || kind == v__token__Kind__logical_or || kind == v__token__Kind__xor || kind == v__token__Kind__not_in || kind == v__token__Kind__key_is || kind == v__token__Kind__not_is || kind == v__token__Kind__and || kind == v__token__Kind__dot || kind == v__token__Kind__pipe || kind == v__token__Kind__amp || kind == v__token__Kind__left_shift || kind == v__token__Kind__right_shift || kind == v__token__Kind__unsigned_right_shift || kind == v__token__Kind__arrow);
+	return _t1;
+}
+
+// Attr: [inline]
+inline int v__mathutil__min_T_int(int a, int b) {
+	int _t1 = (a < b ? (a) : (b));
+	return _t1;
+}
+
+// Attr: [inline]
+inline int v__mathutil__max_T_int(int a, int b) {
+	int _t1 = (a > b ? (a) : (b));
 	return _t1;
 }
 
@@ -32364,7 +32364,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 		}
 		#endif
 	}
-	string vhash = _SLIT("897bbb7");
+	string vhash = _SLIT("de711da");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -34888,7 +34888,7 @@ string v__util__formatted_error(string kind, string omsg, string filepath, v__to
 			path = string_replace(path, workdir, _SLIT(""));
 		}
 	}
-	string position =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = path}}, {_SLIT(":"), 0xfe07, {.d_i32 = pos.line_nr + 1}}, {_SLIT(":"), 0xfe07, {.d_i32 = math__mathutil__max_T_int(1, pos.col + 1)}}, {_SLIT(":"), 0, { .d_c = 0 }}}));
+	string position =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = path}}, {_SLIT(":"), 0xfe07, {.d_i32 = pos.line_nr + 1}}, {_SLIT(":"), 0xfe07, {.d_i32 = v__mathutil__max_T_int(1, pos.col + 1)}}, {_SLIT(":"), 0, { .d_c = 0 }}}));
 	string scontext = Array_string_join(v__util__source_file_context(kind, filepath, pos), _SLIT("\n"));
 	string final_position = v__util__bold(position);
 	string final_kind = v__util__bold(v__util__color(kind, kind));
@@ -34944,13 +34944,13 @@ Array_string v__util__source_file_context(string kind, string filepath, v__token
 		Array_string _t1 = clines;
 		return _t1;
 	}
-	int bline = math__mathutil__max_T_int(0, pos.line_nr - _const_v__util__error_context_before);
-	int aline = math__mathutil__max_T_int(0, math__mathutil__min_T_int(source_lines.len - 1, pos.line_nr + _const_v__util__error_context_after));
+	int bline = v__mathutil__max_T_int(0, pos.line_nr - _const_v__util__error_context_before);
+	int aline = v__mathutil__max_T_int(0, v__mathutil__min_T_int(source_lines.len - 1, pos.line_nr + _const_v__util__error_context_after));
 	string tab_spaces = _SLIT("    ");
 	for (int iline = bline; iline <= aline; iline++) {
 		string sline = (*(string*)/*ee elem_typ */array_get(source_lines, iline));
-		int start_column = math__mathutil__max_T_int(0, math__mathutil__min_T_int(pos.col, sline.len));
-		int end_column = math__mathutil__max_T_int(0, math__mathutil__min_T_int(pos.col + math__mathutil__max_T_int(0, pos.len), sline.len));
+		int start_column = v__mathutil__max_T_int(0, v__mathutil__min_T_int(pos.col, sline.len));
+		int end_column = v__mathutil__max_T_int(0, v__mathutil__min_T_int(pos.col + v__mathutil__max_T_int(0, pos.len), sline.len));
 		string cline = (iline == pos.line_nr ? (string__plus(string__plus(string_substr(sline, 0, start_column), v__util__color(kind, string_substr(sline, start_column, end_column))), string_substr(sline, end_column, sline.len))) : (sline));
 		array_push((array*)&clines, _MOV((string[]){ string_clone(string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xafe27, {.d_i32 = iline + 1}}, {_SLIT(" | "), 0, { .d_c = 0 }}})), string_replace(cline, _SLIT("\t"), tab_spaces))) }));
 		if (iline == pos.line_nr) {
@@ -74732,7 +74732,7 @@ inline VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_new_token(v__scanner_
 		.kind = tok_kind,
 		.lit = lit,
 		.line_nr = s->line_nr + line_offset,
-		.col = math__mathutil__max_T_int(1, v__scanner__Scanner_current_column(s) - len + 1),
+		.col = v__mathutil__max_T_int(1, v__scanner__Scanner_current_column(s) - len + 1),
 		.pos = s->pos - len + 1,
 		.len = len,
 		.tidx = cidx,
@@ -74762,7 +74762,7 @@ inline VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_new_multiline_token(v
 		.kind = tok_kind,
 		.lit = lit,
 		.line_nr = start_line + 1,
-		.col = math__mathutil__max_T_int(1, v__scanner__Scanner_current_column(s) - len + 1),
+		.col = v__mathutil__max_T_int(1, v__scanner__Scanner_current_column(s) - len + 1),
 		.pos = s->pos - len + 1,
 		.len = len,
 		.tidx = cidx,
@@ -75749,7 +75749,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 
 VV_LOCAL_SYMBOL void v__scanner__Scanner_invalid_character(v__scanner__Scanner* s) {
 	int len = utf8_char_len(string_at(s->text, s->pos));
-	int end = math__mathutil__min_T_int(s->pos + len, s->text.len);
+	int end = v__mathutil__min_T_int(s->pos + len, s->text.len);
 	string c = string_substr(s->text, s->pos, end);
 	v__scanner__Scanner_error(s,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("invalid character `"), 0xfe10, {.d_s = c}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
 }
@@ -75999,7 +75999,7 @@ inline VV_LOCAL_SYMBOL void v__scanner__Scanner_eat_to_end_of_line(v__scanner__S
 
 // Attr: [inline]
 inline VV_LOCAL_SYMBOL void v__scanner__Scanner_inc_line_number(v__scanner__Scanner* s) {
-	s->last_nl_pos = math__mathutil__min_T_int(s->text.len - 1, s->pos);
+	s->last_nl_pos = v__mathutil__min_T_int(s->text.len - 1, s->pos);
 	if (s->is_crlf) {
 		s->last_nl_pos++;
 	}
@@ -88814,8 +88814,6 @@ void _vinit(int ___argc, voidptr ___argv) {
 	}
 	{ // Initializations for module os.cmdline :
 	}
-	{ // Initializations for module math.mathutil :
-	}
 	{ // Initializations for module v.token :
 	_const_v__token__assign_tokens = new_array_from_c_array(12, 12, sizeof(v__token__Kind), _MOV((v__token__Kind[12]){
 		v__token__Kind__assign, v__token__Kind__plus_assign, v__token__Kind__minus_assign, v__token__Kind__mult_assign, v__token__Kind__div_assign, v__token__Kind__xor_assign, v__token__Kind__mod_assign, v__token__Kind__or_assign, v__token__Kind__and_assign,
@@ -88828,6 +88826,8 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__token__keywords = v__token__build_keys();
 	_const_v__token__matcher = v__token__new_keywords_matcher_T_v__token__Kind(_const_v__token__keywords);
 	_const_v__token__precedences = v__token__build_precedences();
+	}
+	{ // Initializations for module v.mathutil :
 	}
 	{ // Initializations for module time :
 	_const_time__month_days = new_array_from_c_array(12, 12, sizeof(int), _MOV((int[12]){
