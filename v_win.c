@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "214853c"
+#define V_COMMIT_HASH "8088f46"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ec91de3"
+	#define V_COMMIT_HASH "214853c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "214853c"
+	#define V_CURRENT_COMMIT_HASH "8088f46"
 #endif
 
 // V comptime_definitions:
@@ -6589,12 +6589,6 @@ void array_grow_len(array* a, int amount);
 Array_voidptr array_pointers(array a);
 Array_byte voidptr_vbytes(voidptr data, int len);
 Array_byte byte_vbytes(byte* data, int len);
-bool ArrayFlags_is_empty(ArrayFlags* e);
-bool ArrayFlags_has(ArrayFlags* e, ArrayFlags flag);
-bool ArrayFlags_all(ArrayFlags* e, ArrayFlags flag);
-void ArrayFlags_set(ArrayFlags* e, ArrayFlags flag);
-void ArrayFlags_clear(ArrayFlags* e, ArrayFlags flag);
-void ArrayFlags_toggle(ArrayFlags* e, ArrayFlags flag);
 VV_LOCAL_SYMBOL array __new_array_noscan(int mylen, int cap, int elm_size);
 VV_LOCAL_SYMBOL void vhalt(void);
 void _v_exit(int code);
@@ -6982,6 +6976,12 @@ int string_utf32_code(string _rune);
 VV_LOCAL_SYMBOL int utf8_len(byte c);
 int utf8_str_len(string s);
 int utf8_str_visible_length(string s);
+bool ArrayFlags_is_empty(ArrayFlags* e);
+bool ArrayFlags_has(ArrayFlags* e, ArrayFlags flag);
+bool ArrayFlags_all(ArrayFlags* e, ArrayFlags flag);
+void ArrayFlags_set(ArrayFlags* e, ArrayFlags flag);
+void ArrayFlags_clear(ArrayFlags* e, ArrayFlags flag);
+void ArrayFlags_toggle(ArrayFlags* e, ArrayFlags flag);
 #define _const_dl__version 1
 string _const_dl__dl_ext; // inited later
 string dl__get_shared_library_extension(void);
@@ -9086,6 +9086,7 @@ v__ast__Type v__parser__Parser_find_type_or_add_placeholder(v__parser__Parser* p
 v__ast__Type v__parser__Parser_parse_generic_type(v__parser__Parser* p, string name);
 v__ast__Type v__parser__Parser_parse_generic_inst_type(v__parser__Parser* p, string name);
 Array_string _const_v__parser__builtin_functions; // inited later
+Array_v__ast__File_ptr  codegen_files;
 v__ast__Stmt v__parser__parse_stmt(string text, v__ast__Table* table, v__ast__Scope* scope);
 v__ast__File* v__parser__parse_comptime(string text, v__ast__Table* table, v__pref__Preferences* pref, v__ast__Scope* scope);
 v__ast__File* v__parser__parse_text(string text, string path, v__ast__Table* table, v__scanner__CommentsMode comments_mode, v__pref__Preferences* pref);
@@ -16046,42 +16047,6 @@ Array_byte byte_vbytes(byte* data, int len) {
 	return voidptr_vbytes(((voidptr)(data)), len);
 }
 
-// Attr: [inline]
-inline bool ArrayFlags_is_empty(ArrayFlags* e) {
-	return ((int)(*e)) == 0;
-}
-
-// Attr: [inline]
-inline bool ArrayFlags_has(ArrayFlags* e, ArrayFlags flag) {
-	return ((((int)(*e)) & (((int)(flag))))) != 0;
-}
-
-// Attr: [inline]
-inline bool ArrayFlags_all(ArrayFlags* e, ArrayFlags flag) {
-	return ((((int)(*e)) & (((int)(flag))))) == ((int)(flag));
-}
-
-// Attr: [inline]
-inline void ArrayFlags_set(ArrayFlags* e, ArrayFlags flag) {
-	{ // Unsafe block
-		*e = ((ArrayFlags)((((int)(*e)) | (((int)(flag))))));
-	}
-}
-
-// Attr: [inline]
-inline void ArrayFlags_clear(ArrayFlags* e, ArrayFlags flag) {
-	{ // Unsafe block
-		*e = ((ArrayFlags)((((int)(*e)) & ~(((int)(flag))))));
-	}
-}
-
-// Attr: [inline]
-inline void ArrayFlags_toggle(ArrayFlags* e, ArrayFlags flag) {
-	{ // Unsafe block
-		*e = ((ArrayFlags)((((int)(*e)) ^ (((int)(flag))))));
-	}
-}
-
 VV_LOCAL_SYMBOL array __new_array_noscan(int mylen, int cap, int elm_size) {
 	return (array){.element_size = 0,.data = 0,.offset = 0,.len = 0,.cap = 0,.flags = 0,};
 }
@@ -21133,6 +21098,42 @@ int utf8_str_visible_length(string s) {
 		};
 	}
 	return l;
+}
+
+// Attr: [inline]
+inline bool ArrayFlags_is_empty(ArrayFlags* e) {
+	return ((int)(*e)) == 0;
+}
+
+// Attr: [inline]
+inline bool ArrayFlags_has(ArrayFlags* e, ArrayFlags flag) {
+	return ((((int)(*e)) & (((int)(flag))))) != 0;
+}
+
+// Attr: [inline]
+inline bool ArrayFlags_all(ArrayFlags* e, ArrayFlags flag) {
+	return ((((int)(*e)) & (((int)(flag))))) == ((int)(flag));
+}
+
+// Attr: [inline]
+inline void ArrayFlags_set(ArrayFlags* e, ArrayFlags flag) {
+	{ // Unsafe block
+		*e = ((ArrayFlags)((((int)(*e)) | (((int)(flag))))));
+	}
+}
+
+// Attr: [inline]
+inline void ArrayFlags_clear(ArrayFlags* e, ArrayFlags flag) {
+	{ // Unsafe block
+		*e = ((ArrayFlags)((((int)(*e)) & ~(((int)(flag))))));
+	}
+}
+
+// Attr: [inline]
+inline void ArrayFlags_toggle(ArrayFlags* e, ArrayFlags flag) {
+	{ // Unsafe block
+		*e = ((ArrayFlags)((((int)(*e)) ^ (((int)(flag))))));
+	}
 }
 
 // Attr: [inline]
@@ -31093,7 +31094,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("ec91de3");
+	string vhash = _SLIT("214853c");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -79090,8 +79091,7 @@ bool v__parser__Parser_parse_defer_0 = false;
 	}
 	if (p->codegen_text.len > 0 && !p->pref->is_fmt) {
 		string ptext = string__plus(string__plus(_SLIT("module "), string_all_after_last(p->mod, _SLIT("."))), p->codegen_text);
-		v__ast__File* codegen_file = v__parser__parse_text(ptext, p->file_name, p->table, p->comments_mode, p->pref);
-		_PUSH_MANY(&stmts, (codegen_file->stmts), _t9, Array_v__ast__Stmt);
+		array_push((array*)&codegen_files, _MOV((v__ast__File*[]){ v__parser__parse_text(ptext, p->file_name, p->table, p->comments_mode, p->pref) }));
 	}
 	v__ast__File* _t10 = (v__ast__File*)memdup(&(v__ast__File){.nr_lines = p->scanner->line_nr,
 		.nr_bytes = p->scanner->text.len,
@@ -79130,8 +79130,12 @@ Array_v__ast__File_ptr v__parser__parse_files(Array_string paths, v__ast__Table*
 		array_push((array*)&files, _MOV((v__ast__File*[]){ v__parser__parse_file(path, table, v__scanner__CommentsMode__skip_comments, pref) }));
 		v__util__Timers_show(timers,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("parse_file "), 0xfe10, {.d_s = path}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	}
-	Array_v__ast__File_ptr _t3 = files;
-	return _t3;
+	if (codegen_files.len > 0) {
+		_PUSH_MANY(&files, (codegen_files), _t3, Array_v__ast__File_ptr);
+		array_clear(&codegen_files);
+	}
+	Array_v__ast__File_ptr _t4 = files;
+	return _t4;
 }
 
 void v__parser__Parser_codegen(v__parser__Parser* p, string code) {
@@ -80553,9 +80557,9 @@ VV_LOCAL_SYMBOL v__ast__Stmt v__parser__Parser_parse_multi_expr(v__parser__Parse
 	v__token__Position pos = v__token__Token_position(&tok);
 	Array_v__ast__Ident defer_vars = p->defer_vars;
 	p->defer_vars = __new_array_with_default(0, 0, sizeof(v__ast__Ident), 0);
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_46501 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr left = mr_46501.arg0;
-	Array_v__ast__Comment left_comments = mr_46501.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_46606 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr left = mr_46606.arg0;
+	Array_v__ast__Comment left_comments = mr_46606.arg1;
 	if (!(p->inside_defer && p->tok.kind == v__token__Kind__decl_assign)) {
 		_PUSH_MANY(&defer_vars, (p->defer_vars), _t1, Array_v__ast__Ident);
 	}
@@ -81740,9 +81744,9 @@ VV_LOCAL_SYMBOL v__ast__Return v__parser__Parser_return_stmt(v__parser__Parser* 
 		v__ast__Return _t1 = (v__ast__Return){.pos = first_pos,.comments = comments,.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.types = __new_array(0, 0, sizeof(v__ast__Type)),};
 		return _t1;
 	}
-	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_79979 = v__parser__Parser_expr_list(p);
-	Array_v__ast__Expr exprs = mr_79979.arg0;
-	Array_v__ast__Comment comments2 = mr_79979.arg1;
+	multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_80084 = v__parser__Parser_expr_list(p);
+	Array_v__ast__Expr exprs = mr_80084.arg0;
+	Array_v__ast__Comment comments2 = mr_80084.arg1;
 	_PUSH_MANY(&comments, (comments2), _t2, Array_v__ast__Comment);
 	v__token__Position end_pos = v__ast__Expr_position((*(v__ast__Expr*)array_last(exprs)));
 	v__ast__Return _t3 = (v__ast__Return){.pos = v__token__Position_extend(first_pos, end_pos),.comments = comments,.exprs = exprs,.types = __new_array(0, 0, sizeof(v__ast__Type)),};
@@ -81991,8 +81995,8 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 		return _t2;
 	}
 	Array_v__ast__TypeNode sum_variants = __new_array_with_default(0, 0, sizeof(v__ast__TypeNode), 0);
-	multi_return_Array_v__ast__Type_Array_string mr_86285 = v__parser__Parser_parse_generic_types(p);
-	Array_v__ast__Type generic_types = mr_86285.arg0;
+	multi_return_Array_v__ast__Type_Array_string mr_86390 = v__parser__Parser_parse_generic_types(p);
+	Array_v__ast__Type generic_types = mr_86390.arg0;
 	v__token__Position decl_pos_with_generics = v__token__Position_extend(decl_pos, v__token__Token_position(&p->prev_tok));
 	v__parser__Parser_check(p, v__token__Kind__assign);
 	v__token__Position type_pos = v__token__Token_position(&p->tok);
@@ -87055,6 +87059,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 	_const_v__parser__supported_comptime_calls = new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_SLIT("html"), _SLIT("tmpl"), _SLIT("env"), _SLIT("embed_file"), _SLIT("pkgconfig")}));
 	_const_v__parser__builtin_functions = new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){_SLIT("print"), _SLIT("println"), _SLIT("eprint"), _SLIT("eprintln"), _SLIT("isnil"), _SLIT("panic"), _SLIT("exit")}));
 	_const_v__parser__valid_tokens_inside_types = new_array_from_c_array(7, 7, sizeof(v__token__Kind), _MOV((v__token__Kind[7]){v__token__Kind__lsbr, v__token__Kind__rsbr, v__token__Kind__name, v__token__Kind__dot, v__token__Kind__comma, v__token__Kind__key_fn, v__token__Kind__lt}));
+	codegen_files = __new_array_with_default(0, 0, sizeof(v__ast__File*), 0); // global
 	}
 	{ // Initializations for module v.callgraph :
 	}
