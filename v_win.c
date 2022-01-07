@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "3e9c1c1"
+#define V_COMMIT_HASH "5717066"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1791143"
+	#define V_COMMIT_HASH "3e9c1c1"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "3e9c1c1"
+	#define V_CURRENT_COMMIT_HASH "5717066"
 #endif
 
 // V comptime_definitions:
@@ -31097,7 +31097,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("1791143");
+	string vhash = _SLIT("3e9c1c1");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -83326,16 +83326,17 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 	int tline_number = -1;
 	for (int i = 0; i < lines.len; i++) {
 		string line = (*(string*)/*ee elem_typ */array_get(lines, i));
+		string trimmed_line = string_trim_space(line);
 		tline_number++;
 		start_of_line_pos = end_of_line_pos;
 		end_of_line_pos += line.len + 1;
 		if (v__parser__is_html_open_tag(_SLIT("style"), line)) {
 			state = v__parser__State__css;
-		} else if (string__eq(line, _SLIT("</style>"))) {
+		} else if (string__eq(trimmed_line, _SLIT("</style>"))) {
 			state = v__parser__State__html;
 		} else if (v__parser__is_html_open_tag(_SLIT("script"), line)) {
 			state = v__parser__State__js;
-		} else if (string__eq(line, _SLIT("</script>"))) {
+		} else if (string__eq(trimmed_line, _SLIT("</script>"))) {
 			state = v__parser__State__html;
 		}
 		if (string_contains(line, _SLIT("@header"))) {
