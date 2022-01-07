@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "d3317cb"
+#define V_COMMIT_HASH "a73e146"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "571aa1b"
+	#define V_COMMIT_HASH "d3317cb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "d3317cb"
+	#define V_CURRENT_COMMIT_HASH "a73e146"
 #endif
 
 // V comptime_definitions:
@@ -9176,7 +9176,9 @@ VV_LOCAL_SYMBOL Option_bool v__parser__Parser_check_sql_keyword(v__parser__Parse
 VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, bool short_syntax);
 VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p);
+string _const_v__parser__tmpl_str_end; // a string literal, inited later
 VV_LOCAL_SYMBOL bool v__parser__is_html_open_tag(string name, string s);
+VV_LOCAL_SYMBOL string v__parser__insert_template_code(string fn_name, string tmpl_str_start, string line);
 string v__parser__Parser_compile_template_file(v__parser__Parser* p, string template_file, string fn_name);
 void v__callgraph__show(v__ast__Table* table, v__pref__Preferences* pref, Array_v__ast__File_ptr ast_files);
 VV_LOCAL_SYMBOL string v__callgraph__Mapper_dot_normalise_node_name(v__callgraph__Mapper* m, string name);
@@ -9790,6 +9792,7 @@ void vinit_string_literals(void){
 	_const_v__gen__c__closure_ctx = _SLIT("_V_closure_ctx");
 	_const_v__gen__c__posix_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
 	_const_v__gen__c__windows_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
+	_const_v__parser__tmpl_str_end = _SLIT("')\n");
 	_const_v__builder__c_verror_message_marker = _SLIT("VERROR_MESSAGE ");
 	_const_v__builder__c_error_info = _SLIT("\n==================\nC error. This should never happen.\n\nThis is a compiler bug, please report it using `v bug file.v`.\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
 	_const_v__builder__no_compiler_error = _SLIT("\n==================\nError: no C compiler detected.\n\nYou can find instructions on how to install one in the V wiki:\nhttps://github.com/vlang/v/wiki/Installing-a-C-compiler-on-Windows\n\nIf you think you have one installed, make sure it is in your PATH.\nIf you do have one in your PATH, please raise an issue on GitHub:\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use `v doctor`, to see what V knows about your current environment.\n\nYou can also seek #help on Discord: https://discord.gg/vlang\n");
@@ -31094,7 +31097,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("571aa1b");
+	string vhash = _SLIT("d3317cb");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -83243,27 +83246,28 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 }
 
 VV_LOCAL_SYMBOL bool v__parser__is_html_open_tag(string name, string s) {
-	int len = s.len;
+	string trimmed_line = string_trim_space(s);
+	int len = trimmed_line.len;
 	if (len < name.len) {
 		bool _t1 = false;
 		return _t1;
 	}
-	string sub = string_substr(s, 0, 1);
+	string sub = string_substr(trimmed_line, 0, 1);
 	if (!string__eq(sub, _SLIT("<"))) {
 		bool _t2 = false;
 		return _t2;
 	}
-	sub = string_substr(s, len - 1, len);
+	sub = string_substr(trimmed_line, len - 1, len);
 	if (!string__eq(sub, _SLIT(">"))) {
 		bool _t3 = false;
 		return _t3;
 	}
-	sub = string_substr(s, len - 2, len - 1);
+	sub = string_substr(trimmed_line, len - 2, len - 1);
 	if (string__eq(sub, _SLIT("/"))) {
 		bool _t4 = false;
 		return _t4;
 	}
-	sub = string_substr(s, 1, len - 1);
+	sub = string_substr(trimmed_line, 1, len - 1);
 	if (string_contains_any(sub, _SLIT("<>"))) {
 		bool _t5 = false;
 		return _t5;
@@ -83287,6 +83291,18 @@ VV_LOCAL_SYMBOL bool v__parser__is_html_open_tag(string name, string s) {
 	return 0;
 }
 
+VV_LOCAL_SYMBOL string v__parser__insert_template_code(string fn_name, string tmpl_str_start, string line) {
+	string trailing_bs = string__plus(string__plus(_const_v__parser__tmpl_str_end,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_b(92)\n"), 0, { .d_c = 0 }}}))), tmpl_str_start);
+	Array_string round1 = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("\\"), _SLIT("\\\\"), _SLIT("'"), _SLIT("\\'"), _SLIT("@"), _SLIT("$")}));
+	Array_string round2 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("$$"), _SLIT("\\@"), _SLIT(".$"), _SLIT(".@")}));
+	string rline = string_replace_each(string_replace_each(line, round1), round2);
+	if (string_ends_with(rline, _SLIT("\\"))) {
+		rline = string__plus(string_substr(rline, 0, rline.len - 2), trailing_bs);
+	}
+	string _t1 = rline;
+	return _t1;
+}
+
 string v__parser__Parser_compile_template_file(v__parser__Parser* p, string template_file, string fn_name) {
 	Option_Array_string _t1 = os__read_lines(template_file);
 	if (_t1.state != 0) { /*or block*/ 
@@ -83300,7 +83316,6 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 	string basepath = os__dir(template_file);
 	int lstartlength = lines.len * 30;
 	string tmpl_str_start =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_string('"), 0, { .d_c = 0 }}}));
-	string tmpl_str_end = _SLIT("')\n");
 	strings__Builder source = strings__new_builder(1000);
 	strings__Builder_writeln(&source,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\nimport strings\n// === vweb html template ===\nfn vweb_tmpl_"), 0xfe10, {.d_s = fn_name}}, {_SLIT("() string {\n	mut sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(" := strings.new_builder("), 0xfe07, {.d_i32 = lstartlength}}, {_SLIT(")\n\n\n"), 0, { .d_c = 0 }}})));
 	strings__Builder_write_string(&source, tmpl_str_start);
@@ -83400,7 +83415,7 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 			strings__Builder_write_string(&source, string_substr(line, pos + 6, line.len - 1));
 			strings__Builder_writeln(&source, _SLIT("\" rel=\"stylesheet\" type=\"text/css\">"));
 		} else if (string_contains(line, _SLIT("@if "))) {
-			strings__Builder_writeln(&source, tmpl_str_end);
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
 			Option_int _t10 = string_index(line, _SLIT("@if"));
 			if (_t10.state != 0) { /*or block*/ 
 				IError err = _t10.err;
@@ -83412,16 +83427,16 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 			strings__Builder_writeln(&source, tmpl_str_start);
 		} else if (string_contains(line, _SLIT("@end"))) {
 			strings__Builder_go_back(&source, 1);
-			strings__Builder_writeln(&source, tmpl_str_end);
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
 			strings__Builder_writeln(&source, _SLIT("}"));
 			strings__Builder_writeln(&source, tmpl_str_start);
 		} else if (string_contains(line, _SLIT("@else"))) {
 			strings__Builder_go_back(&source, 1);
-			strings__Builder_writeln(&source, tmpl_str_end);
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
 			strings__Builder_writeln(&source, _SLIT(" } else { "));
 			strings__Builder_writeln(&source, tmpl_str_start);
 		} else if (string_contains(line, _SLIT("@for"))) {
-			strings__Builder_writeln(&source, tmpl_str_end);
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
 			Option_int _t11 = string_index(line, _SLIT("@for"));
 			if (_t11.state != 0) { /*or block*/ 
 				IError err = _t11.err;
@@ -83453,22 +83468,18 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 				strings__Builder_writeln(&source, _SLIT("</div>"));
 			}
 		} else if (state == v__parser__State__js) {
-			strings__Builder_writeln(&source, string_replace(string_replace(string_replace(string_replace(line, _SLIT("$"), _SLIT("\\$")), _SLIT("$$"), _SLIT("@")), _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
+			if (string_contains(line, _SLIT("//V_TEMPLATE"))) {
+				strings__Builder_writeln(&source, v__parser__insert_template_code(fn_name, tmpl_str_start, line));
+			} else {
+				strings__Builder_writeln(&source, string_replace(string_replace(string_replace(string_replace(line, _SLIT("$"), _SLIT("\\$")), _SLIT("$$"), _SLIT("@")), _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
+			}
 		} else if (state == v__parser__State__css) {
 			strings__Builder_writeln(&source, string_replace(string_replace(line, _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
 		} else {
-			string trailing_bs = string__plus(string__plus(tmpl_str_end,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_b(92)\n"), 0, { .d_c = 0 }}}))), tmpl_str_start);
-			Array_string round1 = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("\\"), _SLIT("\\\\"), _SLIT("'"), _SLIT("\\'"), _SLIT("@"), _SLIT("$")}));
-			Array_string round2 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("$$"), _SLIT("\\@"), _SLIT(".$"), _SLIT(".@")}));
-			string rline = string_replace_each(string_replace_each(line, round1), round2);
-			if (string_ends_with(rline, _SLIT("\\"))) {
-				strings__Builder_writeln(&source, string__plus(string_substr(rline, 0, rline.len - 2), trailing_bs));
-			} else {
-				strings__Builder_writeln(&source, rline);
-			}
+			strings__Builder_writeln(&source, v__parser__insert_template_code(fn_name, tmpl_str_start, line));
 		}
 	}
-	strings__Builder_writeln(&source, tmpl_str_end);
+	strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
 	strings__Builder_writeln(&source,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_tmpl_res_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(" := sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".str() "), 0, { .d_c = 0 }}})));
 	strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("return _tmpl_res_"), 0xfe10, {.d_s = fn_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	strings__Builder_writeln(&source, _SLIT("}"));
