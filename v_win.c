@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4d166e3"
+#define V_COMMIT_HASH "9cbfa88"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ec55c0f"
+	#define V_COMMIT_HASH "4d166e3"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4d166e3"
+	#define V_CURRENT_COMMIT_HASH "9cbfa88"
 #endif
 
 // V comptime_definitions:
@@ -4051,6 +4051,7 @@ struct v__ast__SumTypeDecl {
 	Array_v__ast__Comment comments;
 	v__ast__Type typ;
 	Array_v__ast__Type generic_types;
+	Array_v__ast__Attr attrs;
 	Array_v__ast__TypeNode variants;
 };
 
@@ -31100,7 +31101,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("ec55c0f");
+	string vhash = _SLIT("4d166e3");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -82120,7 +82121,7 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 		});
 		if (typ == -1) {
 			v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot register sum type `"), 0xfe10, {.d_s = name}}, {_SLIT("`, another type with this name exists"), 0, { .d_c = 0 }}})), name_pos);
-			v__ast__TypeDecl _t9 = v__ast__SumTypeDecl_to_sumtype_v__ast__TypeDecl(ADDR(v__ast__SumTypeDecl, ((v__ast__SumTypeDecl){.name = (string){.str=(byteptr)"", .is_lit=1},.is_pub = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ = 0,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.variants = __new_array(0, 0, sizeof(v__ast__TypeNode)),})));
+			v__ast__TypeDecl _t9 = v__ast__SumTypeDecl_to_sumtype_v__ast__TypeDecl(ADDR(v__ast__SumTypeDecl, ((v__ast__SumTypeDecl){.name = (string){.str=(byteptr)"", .is_lit=1},.is_pub = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ = 0,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.variants = __new_array(0, 0, sizeof(v__ast__TypeNode)),})));
 			return _t9;
 		}
 		comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = true,.follow_up = 0,});
@@ -82131,6 +82132,7 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 			.comments = comments,
 			.typ = typ,
 			.generic_types = generic_types,
+			.attrs = p->attrs,
 			.variants = sum_variants,
 		})));
 		return _t10;
