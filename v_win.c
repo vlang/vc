@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "0ac4509"
+#define V_COMMIT_HASH "236a1d0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "86ba451"
+	#define V_COMMIT_HASH "0ac4509"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "0ac4509"
+	#define V_CURRENT_COMMIT_HASH "236a1d0"
 #endif
 
 // V comptime_definitions:
@@ -31101,7 +31101,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("86ba451");
+	string vhash = _SLIT("0ac4509");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -69009,6 +69009,17 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 					return;
 				}
 			}
+		} else if ((node.left)._typ == 290 /* v.ast.ComptimeCall */) {
+			if (string__eq((*node.left._v__ast__ComptimeCall).method_name, _SLIT("method"))) {
+				v__ast__TypeSymbol* sym = v__ast__Table_sym(g->table, v__gen__c__Gen_unwrap_generic(g, (*node.left._v__ast__ComptimeCall).left_type));
+				Option_v__ast__Fn _t12;
+				if (_t12 = v__ast__TypeSymbol_find_method(sym, g->comptime_for_method), _t12.state == 0) {
+					v__ast__Fn m = *(v__ast__Fn*)_t12.data;
+					rec_type = m.return_type;
+					v__gen__c__Gen_gen_expr_to_string(g, node.left, rec_type);
+					return;
+				}
+			}
 		} else if ((node.left)._typ == 298 /* v.ast.Ident */) {
 			if (((*node.left._v__ast__Ident).obj)._typ == 356 /* v.ast.Var */) {
 				if (g->comptime_var_type_map.len > 0) {
@@ -69074,22 +69085,22 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		v__ast__TypeSymbol* sym = v__ast__Table_sym(g->table, node.receiver_type);
 		string key = string__plus(string__plus(sym->name, _SLIT(".")), node.name);
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("/* obf method call: "), 0xfe10, {.d_s = key}}, {_SLIT(" */"), 0, { .d_c = 0 }}})));
-		string* _t13 = (string*)/*ee elem_ptr_typ */(map_get_check(ADDR(map, g->obf_table), &(string[]){key}));
-		Option_string _t12 = {0};
-		if (_t13) {
-			*((string*)&_t12.data) = *((string*)_t13);
+		string* _t14 = (string*)/*ee elem_ptr_typ */(map_get_check(ADDR(map, g->obf_table), &(string[]){key}));
+		Option_string _t13 = {0};
+		if (_t14) {
+			*((string*)&_t13.data) = *((string*)_t14);
 		} else {
-			_t12.state = 2; _t12.err = _v_error(_SLIT("array index out of range"));
+			_t13.state = 2; _t13.err = _v_error(_SLIT("array index out of range"));
 		}
 		;
-		if (_t12.state != 0) { /*or block*/ 
-			IError err = _t12.err;
+		if (_t13.state != 0) { /*or block*/ 
+			IError err = _t13.err;
 			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("cgen: obf name \""), 0xfe10, {.d_s = key}}, {_SLIT("\" not found, this should never happen"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
 		
-		name = *(string*)_t12.data;
+		name = *(string*)_t13.data;
 	}
 	bool is_range_slice = false;
 	if (v__ast__Type_is_ptr(node.receiver_type) && !v__ast__Type_is_ptr(node.left_type)) {
@@ -69153,8 +69164,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		} else {
 			v__gen__c__Gen_expr(g, node.left);
 		}
-		for (int _t14 = 0; _t14 < node.from_embed_types.len; ++_t14) {
-			v__ast__Type embed = ((v__ast__Type*)node.from_embed_types.data)[_t14];
+		for (int _t15 = 0; _t15 < node.from_embed_types.len; ++_t15) {
+			v__ast__Type embed = ((v__ast__Type*)node.from_embed_types.data)[_t15];
 			v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(g->table, embed);
 			string embed_name = v__ast__TypeSymbol_embed_name(embed_sym);
 			if (v__ast__Type_is_ptr(node.left_type)) {
@@ -69335,6 +69346,15 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 							typ = *(v__ast__Type*)_t4.data;
 						}
 					}
+				} else if ((expr)._typ == 290 /* v.ast.ComptimeCall */) {
+					if (string__eq((*expr._v__ast__ComptimeCall).method_name, _SLIT("method"))) {
+						v__ast__TypeSymbol* sym = v__ast__Table_sym(g->table, v__gen__c__Gen_unwrap_generic(g, (*expr._v__ast__ComptimeCall).left_type));
+						Option_v__ast__Fn _t6;
+						if (_t6 = v__ast__TypeSymbol_find_method(sym, g->comptime_for_method), _t6.state == 0) {
+							v__ast__Fn m = *(v__ast__Fn*)_t6.data;
+							typ = m.return_type;
+						}
+					}
 				} else if ((expr)._typ == 298 /* v.ast.Ident */) {
 					if (((*expr._v__ast__Ident).obj)._typ == 356 /* v.ast.Var */) {
 						typ = (*(*expr._v__ast__Ident).obj._v__ast__Var).typ;
@@ -69354,22 +69374,22 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_36997 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_36997.arg0;
-			string pafile = mr_36997.arg1;
-			string pamod = mr_36997.arg2;
-			string pafn = mr_36997.arg3;
+			multi_return_int_string_string_string mr_37534 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_37534.arg0;
+			string pafile = mr_37534.arg1;
+			string pamod = mr_37534.arg2;
+			string pafn = mr_37534.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
 		} else {
 			bool is_fn_var = false;
-			Option_v__ast__ScopeObject _t6;
-			if (_t6 = v__ast__Scope_find(node.scope, node.name), _t6.state == 0) {
-				v__ast__ScopeObject obj = *(v__ast__ScopeObject*)_t6.data;
+			Option_v__ast__ScopeObject _t7;
+			if (_t7 = v__ast__Scope_find(node.scope, node.name), _t7.state == 0) {
+				v__ast__ScopeObject obj = *(v__ast__ScopeObject*)_t7.data;
 				if (obj._typ == 356 /* v.ast.Var */) {
 					if ((*obj._v__ast__Var).smartcasts.len > 0) {
-						for (int _t7 = 0; _t7 < (*obj._v__ast__Var).smartcasts.len; ++_t7) {
+						for (int _t8 = 0; _t8 < (*obj._v__ast__Var).smartcasts.len; ++_t8) {
 							v__gen__c__Gen_write(g, _SLIT("(*"));
 						}
 						for (int i = 0; i < (*obj._v__ast__Var).smartcasts.len; ++i) {
