@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5e5d62e"
+#define V_COMMIT_HASH "86ba451"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "05ec8ec"
+	#define V_COMMIT_HASH "5e5d62e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5e5d62e"
+	#define V_CURRENT_COMMIT_HASH "86ba451"
 #endif
 
 // V comptime_definitions:
@@ -31101,7 +31101,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("05ec8ec");
+	string vhash = _SLIT("5e5d62e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -76878,7 +76878,7 @@ bool v__parser__Parser_anon_fn_defer_0 = false;
 	bool is_variadic = mr_17826.arg2;
 	for (int _t2 = 0; _t2 < args.len; ++_t2) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t2];
-		if (arg.name.len == 0) {
+		if (arg.name.len == 0 && v__ast__Table_sym(p->table, arg.typ)->kind != v__ast__Kind__placeholder) {
 			v__parser__Parser_error_with_pos(p, _SLIT("use `_` to name an unused parameter"), arg.pos);
 		}
 		bool is_stack_obj = !v__ast__Type_has_flag(arg.typ, v__ast__TypeFlag__shared_f) && (arg.is_mut || v__ast__Type_is_ptr(arg.typ));
@@ -77062,7 +77062,7 @@ VV_LOCAL_SYMBOL multi_return_Array_v__ast__Param_bool_bool v__parser__Parser_fn_
 			if (alanguage != v__ast__Language__v) {
 				v__parser__Parser_check_for_impure_v(p, alanguage, pos);
 			}
-			array_push((array*)&args, _MOV((v__ast__Param[]){ (v__ast__Param){.pos = pos,.name = _SLIT(""),.is_mut = is_mut,.is_auto_rec = 0,.type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_hidden = 0,.typ = arg_type,} }));
+			array_push((array*)&args, _MOV((v__ast__Param[]){ (v__ast__Param){.pos = pos,.name = _SLIT(""),.is_mut = is_mut,.is_auto_rec = 0,.type_pos = pos,.is_hidden = 0,.typ = arg_type,} }));
 			arg_no++;
 			if (arg_no > 1024) {
 				v__parser__Parser_error_with_pos(p, _SLIT("too many args"), pos);
