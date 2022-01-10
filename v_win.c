@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "02f791d"
+#define V_COMMIT_HASH "4ce6e66"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7f1cc44"
+	#define V_COMMIT_HASH "02f791d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "02f791d"
+	#define V_CURRENT_COMMIT_HASH "4ce6e66"
 #endif
 
 // V comptime_definitions:
@@ -31101,7 +31101,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("7f1cc44");
+	string vhash = _SLIT("02f791d");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -67165,7 +67165,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_comptime_call(v__gen__c__Gen* g, v__ast__Com
 		}
 		bool expand_strs =  _t5;
 		if (m.params.len - 1 != node->args.len && !expand_strs) {
-			v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("/* skipping "), 0xfe10, {.d_s = sym->name}}, {_SLIT("."), 0xfe10, {.d_s = m.name}}, {_SLIT(" due to mismatched arguments list */"), 0, { .d_c = 0 }}})));
+			if (g->inside_call) {
+				v__gen__c__Gen_error(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("expected "), 0xfe07, {.d_i32 = m.params.len - 1}}, {_SLIT(" arguments to method "), 0xfe10, {.d_s = sym->name}}, {_SLIT("."), 0xfe10, {.d_s = m.name}}, {_SLIT(", but got "), 0xfe07, {.d_i32 = node->args.len}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
+				VUNREACHABLE();
+			} else {
+				v__gen__c__Gen_writeln(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("/* skipping "), 0xfe10, {.d_s = sym->name}}, {_SLIT("."), 0xfe10, {.d_s = m.name}}, {_SLIT(" due to mismatched arguments list */"), 0, { .d_c = 0 }}})));
+			}
 			return;
 		}
 		v__gen__c__Gen_write(g,  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__util__no_dots(sym->name)}}, {_SLIT("_"), 0xfe10, {.d_s = g->comptime_for_method}}, {_SLIT("("), 0, { .d_c = 0 }}})));
