@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ecc7acc"
+#define V_COMMIT_HASH "10efe47"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cb684b5"
+	#define V_COMMIT_HASH "ecc7acc"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ecc7acc"
+	#define V_CURRENT_COMMIT_HASH "10efe47"
 #endif
 
 // V comptime_definitions:
@@ -4250,6 +4250,7 @@ struct v__ast__IfExpr {
 
 struct v__ast__IfGuardExpr {
 	string var_name;
+	bool is_mut;
 	v__token__Position pos;
 	v__ast__Expr expr;
 	v__ast__Type expr_type;
@@ -31133,7 +31134,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("cb684b5");
+	string vhash = _SLIT("ecc7acc");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -77569,9 +77570,14 @@ bool was_inside_ct_if_expr;
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t6, Array_v__ast__Comment);
 		v__ast__Expr cond = v__ast__empty_expr();
 		bool is_guard = false;
-		if (!is_comptime && p->peek_tok.kind == v__token__Kind__decl_assign) {
+		if (!is_comptime && (p->peek_tok.kind == v__token__Kind__decl_assign || (p->tok.kind == v__token__Kind__key_mut && v__parser__Parser_peek_token(p, 2).kind == v__token__Kind__decl_assign))) {
 			v__parser__Parser_open_scope(p);
 			is_guard = true;
+			bool is_mut = false;
+			if (p->tok.kind == v__token__Kind__key_mut) {
+				is_mut = true;
+				v__parser__Parser_check(p, v__token__Kind__key_mut);
+			}
 			v__token__Position var_pos = v__token__Token_position(&p->tok);
 			string var_name = v__parser__Parser_check_name(p);
 			if (v__ast__Scope_known_var(p->scope, var_name)) {
@@ -77581,8 +77587,8 @@ bool was_inside_ct_if_expr;
 			v__parser__Parser_check(p, v__token__Kind__decl_assign);
 			_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,})), _t8, Array_v__ast__Comment);
 			v__ast__Expr expr = v__parser__Parser_expr(p, 0);
-			cond = v__ast__IfGuardExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__IfGuardExpr, ((v__ast__IfGuardExpr){.var_name = var_name,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.expr = expr,.expr_type = 0,})));
-			v__ast__Scope_register(p->scope, v__ast__Var_to_sumtype_v__ast__ScopeObject(ADDR(v__ast__Var, ((v__ast__Var){.name = var_name,.expr = cond,.share = 0,.is_mut = 0,.is_autofree_tmp = 0,.is_arg = 0,.is_auto_deref = 0,.is_inherited = 0,.typ = 0,.orig_type = 0,.smartcasts = __new_array(0, 0, sizeof(v__ast__Type)),.pos = var_pos,.is_used = 0,.is_changed = 0,.is_or = 0,.is_tmp = 0,.is_auto_heap = 0,.is_stack_obj = 0,}))));
+			cond = v__ast__IfGuardExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__IfGuardExpr, ((v__ast__IfGuardExpr){.var_name = var_name,.is_mut = is_mut,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.expr = expr,.expr_type = 0,})));
+			v__ast__Scope_register(p->scope, v__ast__Var_to_sumtype_v__ast__ScopeObject(ADDR(v__ast__Var, ((v__ast__Var){.name = var_name,.expr = cond,.share = 0,.is_mut = is_mut,.is_autofree_tmp = 0,.is_arg = 0,.is_auto_deref = 0,.is_inherited = 0,.typ = 0,.orig_type = 0,.smartcasts = __new_array(0, 0, sizeof(v__ast__Type)),.pos = var_pos,.is_used = 0,.is_changed = 0,.is_or = 0,.is_tmp = 0,.is_auto_heap = 0,.is_stack_obj = 0,}))));
 			prev_guard = true;
 		} else {
 			prev_guard = false;
@@ -77807,9 +77813,9 @@ VV_LOCAL_SYMBOL v__ast__SelectExpr v__parser__Parser_select_expr(v__parser__Pars
 			}
 			p->inside_match = true;
 			p->inside_select = true;
-			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8501 = v__parser__Parser_expr_list(p);
-			Array_v__ast__Expr exprs = mr_8501.arg0;
-			Array_v__ast__Comment comments = mr_8501.arg1;
+			multi_return_Array_v__ast__Expr_Array_v__ast__Comment mr_8712 = v__parser__Parser_expr_list(p);
+			Array_v__ast__Expr exprs = mr_8712.arg0;
+			Array_v__ast__Comment comments = mr_8712.arg1;
 			if (exprs.len != 1) {
 				v__parser__Parser_error(p, _SLIT("only one expression allowed as `select` key"));
 				v__ast__SelectExpr _t3 = (v__ast__SelectExpr){.branches = __new_array(0, 0, sizeof(v__ast__SelectBranch)),.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.has_exception = 0,.is_expr = 0,.expected_type = 0,};
