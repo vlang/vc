@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "cb684b5"
+#define V_COMMIT_HASH "ecc7acc"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1e52b2c"
+	#define V_COMMIT_HASH "cb684b5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "cb684b5"
+	#define V_CURRENT_COMMIT_HASH "ecc7acc"
 #endif
 
 // V comptime_definitions:
@@ -6986,6 +6986,7 @@ int utf8_getchar(void);
 int utf8_char_len(byte b);
 string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, byte* buf);
+int utf32_decode_to_buffer(u32 code, byte* buf);
 int string_utf32_code(string _rune);
 VV_LOCAL_SYMBOL int utf8_len(byte c);
 int utf8_str_len(string s);
@@ -17329,6 +17330,7 @@ string byte_ascii_str(byte b) {
 	return str;
 }
 
+// Attr: [manualfree]
 string byte_str_escaped(byte b) {
 	string _t1 = (string){.str=(byteptr)"", .is_lit=1};
 	
@@ -17363,7 +17365,10 @@ string byte_str_escaped(byte b) {
 		_t1 = byte_ascii_str(b);
 	}
 	else {
-		_t1 = string__plus(_SLIT("0x"), byte_hex(b));
+		string xx = byte_hex(b);
+		string yy = string__plus(_SLIT("0x"), xx);
+		string_free(&xx);
+		_t1 = yy;
 	}string str = _t1;
 	return str;
 }
@@ -18201,8 +18206,11 @@ string rune_repeat(rune c, int count) {
 	return string_repeat(res, count);
 }
 
+// Attr: [manualfree]
 Array_byte rune_bytes(rune c) {
-	return string_bytes(rune_str(c));
+	Array_byte res = __new_array_with_default(0, 5, sizeof(byte), 0);
+	res.len = utf32_decode_to_buffer(((u32)(c)), ((byte*)(res.data)));
+	return res;
 }
 
 int rune_length_in_bytes(rune c) {
@@ -21002,33 +21010,43 @@ string utf32_to_str(u32 code) {
 // Attr: [unsafe]
 string utf32_to_str_no_malloc(u32 code, byte* buf) {
 	{ // Unsafe block
+		int len = utf32_decode_to_buffer(code, buf);
+		if (len == 0) {
+			return _SLIT("");
+		}
+		buf[len] = 0;
+		return tos(buf, len);
+	}
+	return (string){.str=(byteptr)"", .is_lit=1};
+}
+
+// Attr: [manualfree]
+// Attr: [unsafe]
+int utf32_decode_to_buffer(u32 code, byte* buf) {
+	{ // Unsafe block
 		int icode = ((int)(code));
 		byte* buffer = ((byte*)(buf));
 		if (icode <= 127) {
 			buffer[0] = ((byte)(icode));
-			buffer[1] = 0;
-			return tos(buffer, 1);
+			return 1;
 		} else if (icode <= 2047) {
 			buffer[0] = (192 | ((byte)(icode >> 6)));
 			buffer[1] = (128 | ((byte)((icode & 63))));
-			buffer[2] = 0;
-			return tos(buffer, 2);
+			return 2;
 		} else if (icode <= 65535) {
 			buffer[0] = (224 | ((byte)(icode >> 12)));
 			buffer[1] = (128 | ((((byte)(icode >> 6)) & 63)));
 			buffer[2] = (128 | ((byte)((icode & 63))));
-			buffer[3] = 0;
-			return tos(buffer, 3);
+			return 3;
 		} else if (icode <= 1114111) {
 			buffer[0] = (240 | ((byte)(icode >> 18)));
 			buffer[1] = (128 | ((((byte)(icode >> 12)) & 63)));
 			buffer[2] = (128 | ((((byte)(icode >> 6)) & 63)));
 			buffer[3] = (128 | ((byte)((icode & 63))));
-			buffer[4] = 0;
-			return tos(buffer, 4);
+			return 4;
 		}
 	}
-	return _SLIT("");
+	return 0;
 }
 
 int string_utf32_code(string _rune) {
@@ -31115,7 +31133,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("1e52b2c");
+	string vhash = _SLIT("cb684b5");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
