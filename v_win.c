@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "791972e"
+#define V_COMMIT_HASH "078229f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f54ad51"
+	#define V_COMMIT_HASH "791972e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "791972e"
+	#define V_CURRENT_COMMIT_HASH "078229f"
 #endif
 
 // V comptime_definitions:
@@ -6811,6 +6811,7 @@ VV_LOCAL_SYMBOL byte* prealloc_calloc(int n);
 string rune_str(rune c);
 string Array_rune_string(Array_rune ra);
 string rune_repeat(rune c, int count);
+Array_byte rune_bytes(rune c);
 int rune_length_in_bytes(rune c);
 #define _const_degree 6
 #define _const_mid_index 5
@@ -18198,6 +18199,10 @@ string rune_repeat(rune c, int count) {
 	Array_fixed_byte_5 buffer = {0};
 	string res = utf32_to_str_no_malloc(((u32)(c)), &buffer[0]);
 	return string_repeat(res, count);
+}
+
+Array_byte rune_bytes(rune c) {
+	return string_bytes(rune_str(c));
 }
 
 int rune_length_in_bytes(rune c) {
@@ -31110,7 +31115,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("f54ad51");
+	string vhash = _SLIT("791972e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
