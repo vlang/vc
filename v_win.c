@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "ea66031"
+#define V_COMMIT_HASH "ab642ca"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c27ffc6"
+	#define V_COMMIT_HASH "ea66031"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "ea66031"
+	#define V_CURRENT_COMMIT_HASH "ab642ca"
 #endif
 
 // V comptime_definitions:
@@ -8466,7 +8466,7 @@ bool v__checker__Checker_symmetric_check(v__checker__Checker* c, v__ast__Type le
 byte v__checker__Checker_get_default_fmt(v__checker__Checker* c, v__ast__Type ftyp, v__ast__Type typ);
 void v__checker__Checker_fail_if_unreadable(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type typ, string what);
 v__ast__Type v__checker__Checker_string_inter_lit(v__checker__Checker* c, v__ast__StringInterLiteral* node);
-string _const_v__checker__hex_lit_overflow_message; // a string literal, inited later
+string _const_v__checker__unicode_lit_overflow_message; // a string literal, inited later
 v__ast__Type v__checker__Checker_string_lit(v__checker__Checker* c, v__ast__StringLiteral* node);
 v__ast__Type v__checker__Checker_int_lit(v__checker__Checker* c, v__ast__IntegerLiteral* node);
 void v__checker__Checker_infer_fn_generic_types(v__checker__Checker* c, v__ast__Fn func, v__ast__CallExpr* node);
@@ -8766,6 +8766,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_get_sumtype_casting_fn(v__gen__c__Gen* g, 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_write_sumtype_casting_fn(v__gen__c__Gen* g, v__gen__c__SumtypeCastingFn fun);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_call_cfn_for_casting_expr(v__gen__c__Gen* g, string fname, v__ast__Expr expr, bool exp_is_ptr, string exp_styp, bool got_is_ptr, string got_styp);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_with_cast(v__gen__c__Gen* g, v__ast__Expr expr, v__ast__Type got_type_raw, v__ast__Type expected_type);
+VV_LOCAL_SYMBOL string v__gen__c__cescape_nonascii(string original);
 VV_LOCAL_SYMBOL string v__gen__c__cestring(string s);
 VV_LOCAL_SYMBOL string v__gen__c__ctoslit(string s);
 VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_attrs(v__gen__c__Gen* g, Array_v__ast__Attr attrs);
@@ -9015,6 +9016,7 @@ VV_LOCAL_SYMBOL void v__scanner__Scanner_invalid_character(v__scanner__Scanner* 
 VV_LOCAL_SYMBOL int v__scanner__Scanner_current_column(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner* s, int p, byte sym);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s);
+VV_LOCAL_SYMBOL string v__scanner__decode_h_escapes(string s, int start, Array_int escapes_pos);
 VV_LOCAL_SYMBOL string v__scanner__decode_u_escapes(string s, int start, Array_int escapes_pos);
 VV_LOCAL_SYMBOL string v__scanner__trim_slash_line_break(string s);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s);
@@ -9794,20 +9796,20 @@ void vinit_string_literals(void){
 	_const_help__unknown_topic = _SLIT("`v help`: unknown help topic provided. Use `v help` for usage information.");
 	_const_v__util__double_escape = _SLIT("\\\\");
 	_const_v__util__map_prefix = _SLIT("map[string]");
-	_const_v__checker__hex_lit_overflow_message = _SLIT("hex character literal overflows string");
+	_const_v__checker__unicode_lit_overflow_message = _SLIT("unicode character exceeds max allowed value of 0x10ffff, consider using a unicode literal (\\u####)");
 	_const_v__checker__vroot_is_deprecated_message = _SLIT("@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead");
 	_const_v__gen__c__si_s_code = _SLIT("0xfe10");
-	_const_v__gen__c__c_commit_hash_default = _SLIT("\n#ifndef V_COMMIT_HASH\n	#define V_COMMIT_HASH \"@@@\"\n#endif\n");
-	_const_v__gen__c__c_current_commit_hash_default = _SLIT("\n#ifndef V_CURRENT_COMMIT_HASH\n	#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
-	_const_v__gen__c__c_concurrency_helpers = _SLIT("\ntypedef struct __shared_map __shared_map;\nstruct __shared_map {\n	sync__RwMutex mtx;\n	map val;\n};\nstatic inline voidptr __dup_shared_map(voidptr src, int sz) {\n	__shared_map* dest = memdup(src, sz);\n	sync__RwMutex_init(&dest->mtx);\n	return dest;\n}\ntypedef struct __shared_array __shared_array;\nstruct __shared_array {\n	sync__RwMutex mtx;\n	array val;\n};\nstatic inline voidptr __dup_shared_array(voidptr src, int sz) {\n	__shared_array* dest = memdup(src, sz);\n	sync__RwMutex_init(&dest->mtx);\n	return dest;\n}\nstatic inline void __sort_ptr(uintptr_t a[], bool b[], int l) {\n	for (int i=1; i<l; i++) {\n		uintptr_t ins = a[i];\n		bool insb = b[i];\n		int j = i;\n		while(j>0 && a[j-1] > ins) {\n			a[j] = a[j-1];\n			b[j] = b[j-1];\n			j--;\n		}\n		a[j] = ins;\n		b[j] = insb;\n	}\n}\n");
-	_const_v__gen__c__c_common_macros = _SLIT("\n#define EMPTY_VARG_INITIALIZATION 0\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#define __V_architecture 0\n#if defined(__x86_64__)\n	#define __V_amd64  1\n	#undef __V_architecture\n	#define __V_architecture 1\n#endif\n\n#if defined(__aarch64__) || defined(__arm64__)\n	#define __V_arm64  1\n	#undef __V_architecture\n	#define __V_architecture 2\n#endif\n\n// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:\n#ifdef __GNUC__\n	#define __V_GCC__\n#endif\n#ifdef __TINYC__\n	#undef __V_GCC__\n#endif\n#ifdef __cplusplus\n	#undef __V_GCC__\n#endif\n#ifdef __clang__\n	#undef __V_GCC__\n#endif\n#ifdef _MSC_VER\n	#undef __V_GCC__\n	#undef EMPTY_STRUCT_INITIALIZATION\n	#define EMPTY_STRUCT_INITIALIZATION 0\n#endif\n\n#ifdef __TINYC__\n	#undef EMPTY_STRUCT_DECLARATION\n	#define EMPTY_STRUCT_DECLARATION char _dummy\n	#undef EMPTY_ARRAY_OF_ELEMS\n	#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n	#undef __NOINLINE\n	#undef __IRQHANDLER\n	// tcc does not support inlining at all\n	#define __NOINLINE\n	#define __IRQHANDLER\n	#undef TCCSKIP\n	#define TCCSKIP(x)\n	// #include <byteswap.h>\n	#ifndef _WIN32\n		#include <execinfo.h>\n		int tcc_backtrace(const char *fmt, ...);\n	#endif\n#endif\n\n// Use __offsetof_ptr instead of __offset_of, when you *do* have a valid pointer, to avoid UB:\n#ifndef __offsetof_ptr\n	#define __offsetof_ptr(ptr,PTYPE,FIELDNAME) ((size_t)((byte *)&((PTYPE *)ptr)->FIELDNAME - (byte *)ptr))\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n	#define __offsetof(PTYPE,FIELDNAME) ((size_t)((char *)&((PTYPE *)0)->FIELDNAME - (char *)0))\n#endif\n\n// returns the number of CPU registers that TYPE takes up\n#define _REG_WIDTH(T) (((sizeof(T) + sizeof(void*) - 1) & ~(sizeof(void*) - 1)) / sizeof(void*))\n// parameters of size <= 2 registers are spilled across those two registers; larger types are passed as one pointer to some stack location\n#define _REG_WIDTH_BOUNDED(T) (_REG_WIDTH(T) <= 2 ? _REG_WIDTH(T) : 1)\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n	#ifdef PRIx64\n		#define V64_PRINTFORMAT \"0x%\"PRIx64\n	#elif defined(__WIN32__)\n		#define V64_PRINTFORMAT \"0x%I64x\"\n	#elif defined(__linux__) && defined(__LP64__)\n		#define V64_PRINTFORMAT \"0x%lx\"\n	#else\n		#define V64_PRINTFORMAT \"0x%llx\"\n	#endif\n#endif\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n	#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n	#define VV_LOCAL_SYMBOL static\n#else\n	// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n	// and does not support __has_attribute(visibility) ...\n	#ifndef __has_attribute\n		#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n	#endif\n	#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n		#ifdef ARM\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((externally_visible,visibility(\"default\")))\n		#else\n			#define VV_EXPORTED_SYMBOL  extern __attribute__((visibility(\"default\")))\n		#endif\n		#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n	#else\n		#define VV_EXPORTED_SYMBOL extern\n		#define VV_LOCAL_SYMBOL static\n	#endif\n#endif\n\n#ifdef __cplusplus\n	#include <utility>\n	#define _MOV std::move\n#else\n	#define _MOV\n#endif\n\n// tcc does not support has_include properly yet, turn it off completely\n#if defined(__TINYC__) && defined(__has_include)\n#undef __has_include\n#endif\n\n\n#if !defined(VWEAK)\n	#define VWEAK __attribute__((weak))\n	#ifdef _MSC_VER\n		#undef VWEAK\n		#define VWEAK\n	#endif\n#endif\n\n#if !defined(VNORETURN)\n	#if defined(__TINYC__)\n		#include <stdnoreturn.h>\n		#define VNORETURN noreturn\n	#endif\n	# if !defined(__TINYC__) && defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L\n	#  define VNORETURN _Noreturn\n	# elif defined(__GNUC__) && __GNUC__ >= 2\n	#  define VNORETURN __attribute__((noreturn))\n	# endif\n	#ifndef VNORETURN\n		#define VNORETURN\n	#endif\n#endif\n\n#if !defined(VUNREACHABLE)\n	#if defined(__GNUC__) && !defined(__clang__)\n		#define V_GCC_VERSION  (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)\n		#if (V_GCC_VERSION >= 40500L)\n			#define VUNREACHABLE()  do { __builtin_unreachable(); } while (0)\n		#endif\n	#endif\n	#if defined(__clang__) && defined(__has_builtin)\n		#if __has_builtin(__builtin_unreachable)\n			#define VUNREACHABLE()  do { __builtin_unreachable(); } while (0)\n		#endif\n	#endif\n	#ifndef VUNREACHABLE\n		#define VUNREACHABLE() do { } while (0)\n	#endif\n	#if defined(__FreeBSD__) && defined(__TINYC__)\n		#define VUNREACHABLE() do { } while (0)\n	#endif\n#endif\n\n//likely and unlikely macros\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n	#define _likely_(x)  __builtin_expect(x,1)\n	#define _unlikely_(x)  __builtin_expect(x,0)\n#else\n	#define _likely_(x) (x)\n	#define _unlikely_(x) (x)\n#endif\n\n");
+	_const_v__gen__c__c_commit_hash_default = _SLIT("\n#ifndef V_COMMIT_HASH\n\011#define V_COMMIT_HASH \"@@@\"\n#endif\n");
+	_const_v__gen__c__c_current_commit_hash_default = _SLIT("\n#ifndef V_CURRENT_COMMIT_HASH\n\011#define V_CURRENT_COMMIT_HASH \"@@@\"\n#endif\n");
+	_const_v__gen__c__c_concurrency_helpers = _SLIT("\ntypedef struct __shared_map __shared_map;\nstruct __shared_map {\n\011sync__RwMutex mtx;\n\011map val;\n};\nstatic inline voidptr __dup_shared_map(voidptr src, int sz) {\n\011__shared_map* dest = memdup(src, sz);\n\011sync__RwMutex_init(&dest->mtx);\n\011return dest;\n}\ntypedef struct __shared_array __shared_array;\nstruct __shared_array {\n\011sync__RwMutex mtx;\n\011array val;\n};\nstatic inline voidptr __dup_shared_array(voidptr src, int sz) {\n\011__shared_array* dest = memdup(src, sz);\n\011sync__RwMutex_init(&dest->mtx);\n\011return dest;\n}\nstatic inline void __sort_ptr(uintptr_t a[], bool b[], int l) {\n\011for (int i=1; i<l; i++) {\n\011\011uintptr_t ins = a[i];\n\011\011bool insb = b[i];\n\011\011int j = i;\n\011\011while(j>0 && a[j-1] > ins) {\n\011\011\011a[j] = a[j-1];\n\011\011\011b[j] = b[j-1];\n\011\011\011j--;\n\011\011}\n\011\011a[j] = ins;\n\011\011b[j] = insb;\n\011}\n}\n");
+	_const_v__gen__c__c_common_macros = _SLIT("\n#define EMPTY_VARG_INITIALIZATION 0\n#define EMPTY_STRUCT_DECLARATION\n#define EMPTY_STRUCT_INITIALIZATION\n// Due to a tcc bug, the length of an array needs to be specified, but GCC crashes if it is...\n#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[])\n#define TCCSKIP(x) x\n\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n\n#define __V_architecture 0\n#if defined(__x86_64__)\n\011#define __V_amd64  1\n\011#undef __V_architecture\n\011#define __V_architecture 1\n#endif\n\n#if defined(__aarch64__) || defined(__arm64__)\n\011#define __V_arm64  1\n\011#undef __V_architecture\n\011#define __V_architecture 2\n#endif\n\n// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:\n#ifdef __GNUC__\n\011#define __V_GCC__\n#endif\n#ifdef __TINYC__\n\011#undef __V_GCC__\n#endif\n#ifdef __cplusplus\n\011#undef __V_GCC__\n#endif\n#ifdef __clang__\n\011#undef __V_GCC__\n#endif\n#ifdef _MSC_VER\n\011#undef __V_GCC__\n\011#undef EMPTY_STRUCT_INITIALIZATION\n\011#define EMPTY_STRUCT_INITIALIZATION 0\n#endif\n\n#ifdef __TINYC__\n\011#undef EMPTY_STRUCT_DECLARATION\n\011#define EMPTY_STRUCT_DECLARATION char _dummy\n\011#undef EMPTY_ARRAY_OF_ELEMS\n\011#define EMPTY_ARRAY_OF_ELEMS(x,n) (x[n])\n\011#undef __NOINLINE\n\011#undef __IRQHANDLER\n\011// tcc does not support inlining at all\n\011#define __NOINLINE\n\011#define __IRQHANDLER\n\011#undef TCCSKIP\n\011#define TCCSKIP(x)\n\011// #include <byteswap.h>\n\011#ifndef _WIN32\n\011\011#include <execinfo.h>\n\011\011int tcc_backtrace(const char *fmt, ...);\n\011#endif\n#endif\n\n// Use __offsetof_ptr instead of __offset_of, when you *do* have a valid pointer, to avoid UB:\n#ifndef __offsetof_ptr\n\011#define __offsetof_ptr(ptr,PTYPE,FIELDNAME) ((size_t)((byte *)&((PTYPE *)ptr)->FIELDNAME - (byte *)ptr))\n#endif\n\n// for __offset_of\n#ifndef __offsetof\n\011#define __offsetof(PTYPE,FIELDNAME) ((size_t)((char *)&((PTYPE *)0)->FIELDNAME - (char *)0))\n#endif\n\n// returns the number of CPU registers that TYPE takes up\n#define _REG_WIDTH(T) (((sizeof(T) + sizeof(void*) - 1) & ~(sizeof(void*) - 1)) / sizeof(void*))\n// parameters of size <= 2 registers are spilled across those two registers; larger types are passed as one pointer to some stack location\n#define _REG_WIDTH_BOUNDED(T) (_REG_WIDTH(T) <= 2 ? _REG_WIDTH(T) : 1)\n\n#define OPTION_CAST(x) (x)\n\n#ifndef V64_PRINTFORMAT\n\011#ifdef PRIx64\n\011\011#define V64_PRINTFORMAT \"0x%\"PRIx64\n\011#elif defined(__WIN32__)\n\011\011#define V64_PRINTFORMAT \"0x%I64x\"\n\011#elif defined(__linux__) && defined(__LP64__)\n\011\011#define V64_PRINTFORMAT \"0x%lx\"\n\011#else\n\011\011#define V64_PRINTFORMAT \"0x%llx\"\n\011#endif\n#endif\n\n#if defined(_WIN32) || defined(__CYGWIN__)\n\011#define VV_EXPORTED_SYMBOL extern __declspec(dllexport)\n\011#define VV_LOCAL_SYMBOL static\n#else\n\011// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n\011// and does not support __has_attribute(visibility) ...\n\011#ifndef __has_attribute\n\011\011#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n\011#endif\n\011#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n\011\011#ifdef ARM\n\011\011\011#define VV_EXPORTED_SYMBOL  extern __attribute__((externally_visible,visibility(\"default\")))\n\011\011#else\n\011\011\011#define VV_EXPORTED_SYMBOL  extern __attribute__((visibility(\"default\")))\n\011\011#endif\n\011\011#define VV_LOCAL_SYMBOL  __attribute__ ((visibility (\"hidden\")))\n\011#else\n\011\011#define VV_EXPORTED_SYMBOL extern\n\011\011#define VV_LOCAL_SYMBOL static\n\011#endif\n#endif\n\n#ifdef __cplusplus\n\011#include <utility>\n\011#define _MOV std::move\n#else\n\011#define _MOV\n#endif\n\n// tcc does not support has_include properly yet, turn it off completely\n#if defined(__TINYC__) && defined(__has_include)\n#undef __has_include\n#endif\n\n\n#if !defined(VWEAK)\n\011#define VWEAK __attribute__((weak))\n\011#ifdef _MSC_VER\n\011\011#undef VWEAK\n\011\011#define VWEAK\n\011#endif\n#endif\n\n#if !defined(VNORETURN)\n\011#if defined(__TINYC__)\n\011\011#include <stdnoreturn.h>\n\011\011#define VNORETURN noreturn\n\011#endif\n\011# if !defined(__TINYC__) && defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L\n\011#  define VNORETURN _Noreturn\n\011# elif defined(__GNUC__) && __GNUC__ >= 2\n\011#  define VNORETURN __attribute__((noreturn))\n\011# endif\n\011#ifndef VNORETURN\n\011\011#define VNORETURN\n\011#endif\n#endif\n\n#if !defined(VUNREACHABLE)\n\011#if defined(__GNUC__) && !defined(__clang__)\n\011\011#define V_GCC_VERSION  (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)\n\011\011#if (V_GCC_VERSION >= 40500L)\n\011\011\011#define VUNREACHABLE()  do { __builtin_unreachable(); } while (0)\n\011\011#endif\n\011#endif\n\011#if defined(__clang__) && defined(__has_builtin)\n\011\011#if __has_builtin(__builtin_unreachable)\n\011\011\011#define VUNREACHABLE()  do { __builtin_unreachable(); } while (0)\n\011\011#endif\n\011#endif\n\011#ifndef VUNREACHABLE\n\011\011#define VUNREACHABLE() do { } while (0)\n\011#endif\n\011#if defined(__FreeBSD__) && defined(__TINYC__)\n\011\011#define VUNREACHABLE() do { } while (0)\n\011#endif\n#endif\n\n//likely and unlikely macros\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n\011#define _likely_(x)  __builtin_expect(x,1)\n\011#define _unlikely_(x)  __builtin_expect(x,0)\n#else\n\011#define _likely_(x) (x)\n\011#define _unlikely_(x) (x)\n#endif\n\n");
 	_const_v__gen__c__c_unsigned_comparison_functions = _SLIT("\n// unsigned/signed comparisons\nstatic inline bool _us32_gt(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a > b; }\nstatic inline bool _us32_ge(uint32_t a, int32_t b) { return a >= INT32_MAX || (int32_t)a >= b; }\nstatic inline bool _us32_eq(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a == b; }\nstatic inline bool _us32_ne(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a != b; }\nstatic inline bool _us32_le(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a <= b; }\nstatic inline bool _us32_lt(uint32_t a, int32_t b) { return a < INT32_MAX && (int32_t)a < b; }\nstatic inline bool _us64_gt(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a > b; }\nstatic inline bool _us64_ge(uint64_t a, int64_t b) { return a >= INT64_MAX || (int64_t)a >= b; }\nstatic inline bool _us64_eq(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a == b; }\nstatic inline bool _us64_ne(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a != b; }\nstatic inline bool _us64_le(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a <= b; }\nstatic inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (int64_t)a < b; }\n");
 	_const_v__gen__c__c_helper_macros = _SLIT("//============================== HELPER C MACROS =============================*/\n// _SLIT0 is used as NULL string for literal arguments\n// `\"\" s` is used to enforce a string literal argument\n#define _SLIT0 (string){.str=(byteptr)(\"\"), .len=0, .is_lit=1}\n#define _SLIT(s) ((string){.str=(byteptr)(\"\" s), .len=(sizeof(s)-1), .is_lit=1})\n#define _SLEN(s, n) ((string){.str=(byteptr)(\"\" s), .len=n, .is_lit=1})\n\n// take the address of an rvalue\n#define ADDR(type, expr) (&((type[]){expr}[0]))\n\n// copy something to the heap\n#define HEAP(type, expr) ((type*)memdup((void*)&((type[]){expr}[0]), sizeof(type)))\n#define HEAP_noscan(type, expr) ((type*)memdup_noscan((void*)&((type[]){expr}[0]), sizeof(type)))\n\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many(arr, tmp.data, tmp.len);}\n#define _PUSH_MANY_noscan(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); array_push_many_noscan(arr, tmp.data, tmp.len);}\n");
-	_const_v__gen__c__c_builtin_types = _SLIT("\n//================================== builtin types ================================*/\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint8_t u8;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef size_t usize;\ntypedef ptrdiff_t isize;\n#ifndef VNOFLOAT \ntypedef float f32;\ntypedef double f64;\n#else\ntypedef int32_t f32;\ntypedef int64_t f64;\n#endif\ntypedef int64_t int_literal;\n#ifndef VNOFLOAT\ntypedef double float_literal;\n#else\ntypedef int64_t float_literal;\n#endif\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef byte array_fixed_byte_300 [300];\n\ntypedef struct sync__Channel* chan;\n\n#ifndef __cplusplus\n	#ifndef bool\n		#ifdef CUSTOM_DEFINE_4bytebool\n			typedef int bool;\n		#else\n			typedef byte bool;\n		#endif\n		#define true 1\n		#define false 0\n	#endif\n#endif\n\ntypedef u64 (*MapHashFn)(voidptr);\ntypedef bool (*MapEqFn)(voidptr, voidptr);\ntypedef void (*MapCloneFn)(voidptr, voidptr);\ntypedef void (*MapFreeFn)(voidptr);\n");
-	_const_v__gen__c__c_wyhash_headers = _SLIT("\n// ============== wyhash ==============\n#ifndef wyhash_final_version_3\n#define wyhash_final_version_3\n\n#ifndef WYHASH_CONDOM\n// protections that produce different results:\n// 1: normal valid behavior\n// 2: extra protection against entropy loss (probability=2^-63), aka. \"blind multiplication\"\n#define WYHASH_CONDOM 1\n#endif\n\n#ifndef WYHASH_32BIT_MUM\n// 0: normal version, slow on 32 bit systems\n// 1: faster on 32 bit systems but produces different results, incompatible with wy2u0k function\n#define WYHASH_32BIT_MUM 0\n#endif\n\n// includes\n#include <stdint.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n	#include <intrin.h>\n	#pragma intrinsic(_umul128)\n#endif\n\n// 128bit multiply function\nstatic inline uint64_t _wyrot(uint64_t x) { return (x>>32)|(x<<32); }\nstatic inline void _wymum(uint64_t *A, uint64_t *B){\n#if(WYHASH_32BIT_MUM)\n	uint64_t hh=(*A>>32)*(*B>>32), hl=(*A>>32)*(uint32_t)*B, lh=(uint32_t)*A*(*B>>32), ll=(uint64_t)(uint32_t)*A*(uint32_t)*B;\n	#if(WYHASH_CONDOM>1)\n	*A^=_wyrot(hl)^hh; *B^=_wyrot(lh)^ll;\n	#else\n	*A=_wyrot(hl)^hh; *B=_wyrot(lh)^ll;\n	#endif\n#elif defined(__SIZEOF_INT128__) && !defined(VWASM)\n	__uint128_t r=*A; r*=*B;\n	#if(WYHASH_CONDOM>1)\n	*A^=(uint64_t)r; *B^=(uint64_t)(r>>64);\n	#else\n	*A=(uint64_t)r; *B=(uint64_t)(r>>64);\n	#endif\n#elif defined(_MSC_VER) && defined(_M_X64)\n	#if(WYHASH_CONDOM>1)\n	uint64_t  a,  b;\n	a=_umul128(*A,*B,&b);\n	*A^=a;  *B^=b;\n	#else\n	*A=_umul128(*A,*B,B);\n	#endif\n#else\n	uint64_t ha=*A>>32, hb=*B>>32, la=(uint32_t)*A, lb=(uint32_t)*B, hi, lo;\n	uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n	lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n	#if(WYHASH_CONDOM>1)\n	*A^=lo;  *B^=hi;\n	#else\n	*A=lo;  *B=hi;\n	#endif\n#endif\n}\n\n// multiply and xor mix function, aka MUM\nstatic inline uint64_t _wymix(uint64_t A, uint64_t B){ _wymum(&A,&B); return A^B; }\n\n// endian macros\n#ifndef WYHASH_LITTLE_ENDIAN\n	#ifdef TARGET_ORDER_IS_LITTLE\n		#define WYHASH_LITTLE_ENDIAN 1\n	#else\n		#define WYHASH_LITTLE_ENDIAN 0\n	#endif\n#endif\n\n// read functions\n#if (WYHASH_LITTLE_ENDIAN)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return v;}\n#elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n	static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n	static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#else\n	static inline uint64_t _wyr8(const uint8_t *p) {\n		uint64_t v; memcpy(&v, p, 8);\n		return (((v >> 56) & 0xff)| ((v >> 40) & 0xff00)| ((v >> 24) & 0xff0000)| ((v >>  8) & 0xff000000)| ((v <<  8) & 0xff00000000)| ((v << 24) & 0xff0000000000)| ((v << 40) & 0xff000000000000)| ((v << 56) & 0xff00000000000000));\n	}\n	static inline uint64_t _wyr4(const uint8_t *p) {\n		uint32_t v; memcpy(&v, p, 4);\n		return (((v >> 24) & 0xff)| ((v >>  8) & 0xff00)| ((v <<  8) & 0xff0000)| ((v << 24) & 0xff000000));\n	}\n#endif\nstatic inline uint64_t _wyr3(const uint8_t *p, size_t k) { return (((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];}\n// wyhash main function\nstatic inline uint64_t wyhash(const void *key, size_t len, uint64_t seed, const uint64_t *secret){\n	const uint8_t *p=(const uint8_t *)key; seed^=*secret;	uint64_t a, b;\n	if (_likely_(len<=16)) {\n		if (_likely_(len>=4)) { a=(_wyr4(p)<<32)|_wyr4(p+((len>>3)<<2)); b=(_wyr4(p+len-4)<<32)|_wyr4(p+len-4-((len>>3)<<2)); }\n		else if (_likely_(len>0)) { a=_wyr3(p,len); b=0; }\n		else a=b=0;\n	} else {\n		size_t i=len;\n		if (_unlikely_(i>48)) {\n			uint64_t see1=seed, see2=seed;\n			do {\n				seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);\n				see1=_wymix(_wyr8(p+16)^secret[2],_wyr8(p+24)^see1);\n				see2=_wymix(_wyr8(p+32)^secret[3],_wyr8(p+40)^see2);\n				p+=48; i-=48;\n			} while(_likely_(i>48));\n			seed^=see1^see2;\n		}\n		while(_unlikely_(i>16)) { seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);  i-=16; p+=16; }\n		a=_wyr8(p+i-16);  b=_wyr8(p+i-8);\n	}\n	return _wymix(secret[1]^len,_wymix(a^secret[1],b^seed));\n}\n// the default secret parameters\nstatic const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};\n\n// a useful 64bit-64bit mix function to produce deterministic pseudo random numbers that can pass BigCrush and PractRand\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){ A^=0xa0761d6478bd642full; B^=0xe7037ed1a0b428dbull; _wymum(&A,&B); return _wymix(A^0xa0761d6478bd642full,B^0xe7037ed1a0b428dbull);}\n\n// the wyrand PRNG that pass BigCrush and PractRand\nstatic inline uint64_t wyrand(uint64_t *seed){ *seed+=0xa0761d6478bd642full; return _wymix(*seed,*seed^0xe7037ed1a0b428dbull);}\n\n#ifndef __vinix__\n// convert any 64 bit pseudo random numbers to uniform distribution [0,1). It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2u01(uint64_t r){ const double _wynorm=1.0/(1ull<<52); return (r>>12)*_wynorm;}\n\n// convert any 64 bit pseudo random numbers to APPROXIMATE Gaussian distribution. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2gau(uint64_t r){ const double _wynorm=1.0/(1ull<<20); return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;}\n#endif\n\n#if(!WYHASH_32BIT_MUM)\n// fast range integer random number generation on [0,k) credit to Daniel Lemire. May not work when WYHASH_32BIT_MUM=1. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; }\n#endif\n#endif\n\n#define _IN_MAP(val, m) map_exists(m, val)\n\n");
+	_const_v__gen__c__c_builtin_types = _SLIT("\n//================================== builtin types ================================*/\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint8_t u8;\ntypedef uint16_t u16;\ntypedef uint8_t byte;\ntypedef uint32_t rune;\ntypedef size_t usize;\ntypedef ptrdiff_t isize;\n#ifndef VNOFLOAT \ntypedef float f32;\ntypedef double f64;\n#else\ntypedef int32_t f32;\ntypedef int64_t f64;\n#endif\ntypedef int64_t int_literal;\n#ifndef VNOFLOAT\ntypedef double float_literal;\n#else\ntypedef int64_t float_literal;\n#endif\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef byte array_fixed_byte_300 [300];\n\ntypedef struct sync__Channel* chan;\n\n#ifndef __cplusplus\n\011#ifndef bool\n\011\011#ifdef CUSTOM_DEFINE_4bytebool\n\011\011\011typedef int bool;\n\011\011#else\n\011\011\011typedef byte bool;\n\011\011#endif\n\011\011#define true 1\n\011\011#define false 0\n\011#endif\n#endif\n\ntypedef u64 (*MapHashFn)(voidptr);\ntypedef bool (*MapEqFn)(voidptr, voidptr);\ntypedef void (*MapCloneFn)(voidptr, voidptr);\ntypedef void (*MapFreeFn)(voidptr);\n");
+	_const_v__gen__c__c_wyhash_headers = _SLIT("\n// ============== wyhash ==============\n#ifndef wyhash_final_version_3\n#define wyhash_final_version_3\n\n#ifndef WYHASH_CONDOM\n// protections that produce different results:\n// 1: normal valid behavior\n// 2: extra protection against entropy loss (probability=2^-63), aka. \"blind multiplication\"\n#define WYHASH_CONDOM 1\n#endif\n\n#ifndef WYHASH_32BIT_MUM\n// 0: normal version, slow on 32 bit systems\n// 1: faster on 32 bit systems but produces different results, incompatible with wy2u0k function\n#define WYHASH_32BIT_MUM 0\n#endif\n\n// includes\n#include <stdint.h>\n#if defined(_MSC_VER) && defined(_M_X64)\n\011#include <intrin.h>\n\011#pragma intrinsic(_umul128)\n#endif\n\n// 128bit multiply function\nstatic inline uint64_t _wyrot(uint64_t x) { return (x>>32)|(x<<32); }\nstatic inline void _wymum(uint64_t *A, uint64_t *B){\n#if(WYHASH_32BIT_MUM)\n\011uint64_t hh=(*A>>32)*(*B>>32), hl=(*A>>32)*(uint32_t)*B, lh=(uint32_t)*A*(*B>>32), ll=(uint64_t)(uint32_t)*A*(uint32_t)*B;\n\011#if(WYHASH_CONDOM>1)\n\011*A^=_wyrot(hl)^hh; *B^=_wyrot(lh)^ll;\n\011#else\n\011*A=_wyrot(hl)^hh; *B=_wyrot(lh)^ll;\n\011#endif\n#elif defined(__SIZEOF_INT128__) && !defined(VWASM)\n\011__uint128_t r=*A; r*=*B;\n\011#if(WYHASH_CONDOM>1)\n\011*A^=(uint64_t)r; *B^=(uint64_t)(r>>64);\n\011#else\n\011*A=(uint64_t)r; *B=(uint64_t)(r>>64);\n\011#endif\n#elif defined(_MSC_VER) && defined(_M_X64)\n\011#if(WYHASH_CONDOM>1)\n\011uint64_t  a,  b;\n\011a=_umul128(*A,*B,&b);\n\011*A^=a;  *B^=b;\n\011#else\n\011*A=_umul128(*A,*B,B);\n\011#endif\n#else\n\011uint64_t ha=*A>>32, hb=*B>>32, la=(uint32_t)*A, lb=(uint32_t)*B, hi, lo;\n\011uint64_t rh=ha*hb, rm0=ha*lb, rm1=hb*la, rl=la*lb, t=rl+(rm0<<32), c=t<rl;\n\011lo=t+(rm1<<32); c+=lo<t; hi=rh+(rm0>>32)+(rm1>>32)+c;\n\011#if(WYHASH_CONDOM>1)\n\011*A^=lo;  *B^=hi;\n\011#else\n\011*A=lo;  *B=hi;\n\011#endif\n#endif\n}\n\n// multiply and xor mix function, aka MUM\nstatic inline uint64_t _wymix(uint64_t A, uint64_t B){ _wymum(&A,&B); return A^B; }\n\n// endian macros\n#ifndef WYHASH_LITTLE_ENDIAN\n\011#ifdef TARGET_ORDER_IS_LITTLE\n\011\011#define WYHASH_LITTLE_ENDIAN 1\n\011#else\n\011\011#define WYHASH_LITTLE_ENDIAN 0\n\011#endif\n#endif\n\n// read functions\n#if (WYHASH_LITTLE_ENDIAN)\n\011static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return v;}\n\011static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return v;}\n#elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n\011static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return __builtin_bswap64(v);}\n\011static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return __builtin_bswap32(v);}\n#elif defined(_MSC_VER)\n\011static inline uint64_t _wyr8(const uint8_t *p) { uint64_t v; memcpy(&v, p, 8); return _byteswap_uint64(v);}\n\011static inline uint64_t _wyr4(const uint8_t *p) { uint32_t v; memcpy(&v, p, 4); return _byteswap_ulong(v);}\n#else\n\011static inline uint64_t _wyr8(const uint8_t *p) {\n\011\011uint64_t v; memcpy(&v, p, 8);\n\011\011return (((v >> 56) & 0xff)| ((v >> 40) & 0xff00)| ((v >> 24) & 0xff0000)| ((v >>  8) & 0xff000000)| ((v <<  8) & 0xff00000000)| ((v << 24) & 0xff0000000000)| ((v << 40) & 0xff000000000000)| ((v << 56) & 0xff00000000000000));\n\011}\n\011static inline uint64_t _wyr4(const uint8_t *p) {\n\011\011uint32_t v; memcpy(&v, p, 4);\n\011\011return (((v >> 24) & 0xff)| ((v >>  8) & 0xff00)| ((v <<  8) & 0xff0000)| ((v << 24) & 0xff000000));\n\011}\n#endif\nstatic inline uint64_t _wyr3(const uint8_t *p, size_t k) { return (((uint64_t)p[0])<<16)|(((uint64_t)p[k>>1])<<8)|p[k-1];}\n// wyhash main function\nstatic inline uint64_t wyhash(const void *key, size_t len, uint64_t seed, const uint64_t *secret){\n\011const uint8_t *p=(const uint8_t *)key; seed^=*secret;\011uint64_t a, b;\n\011if (_likely_(len<=16)) {\n\011\011if (_likely_(len>=4)) { a=(_wyr4(p)<<32)|_wyr4(p+((len>>3)<<2)); b=(_wyr4(p+len-4)<<32)|_wyr4(p+len-4-((len>>3)<<2)); }\n\011\011else if (_likely_(len>0)) { a=_wyr3(p,len); b=0; }\n\011\011else a=b=0;\n\011} else {\n\011\011size_t i=len;\n\011\011if (_unlikely_(i>48)) {\n\011\011\011uint64_t see1=seed, see2=seed;\n\011\011\011do {\n\011\011\011\011seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);\n\011\011\011\011see1=_wymix(_wyr8(p+16)^secret[2],_wyr8(p+24)^see1);\n\011\011\011\011see2=_wymix(_wyr8(p+32)^secret[3],_wyr8(p+40)^see2);\n\011\011\011\011p+=48; i-=48;\n\011\011\011} while(_likely_(i>48));\n\011\011\011seed^=see1^see2;\n\011\011}\n\011\011while(_unlikely_(i>16)) { seed=_wymix(_wyr8(p)^secret[1],_wyr8(p+8)^seed);  i-=16; p+=16; }\n\011\011a=_wyr8(p+i-16);  b=_wyr8(p+i-8);\n\011}\n\011return _wymix(secret[1]^len,_wymix(a^secret[1],b^seed));\n}\n// the default secret parameters\nstatic const uint64_t _wyp[4] = {0xa0761d6478bd642full, 0xe7037ed1a0b428dbull, 0x8ebc6af09c88c6e3ull, 0x589965cc75374cc3ull};\n\n// a useful 64bit-64bit mix function to produce deterministic pseudo random numbers that can pass BigCrush and PractRand\nstatic inline uint64_t wyhash64(uint64_t A, uint64_t B){ A^=0xa0761d6478bd642full; B^=0xe7037ed1a0b428dbull; _wymum(&A,&B); return _wymix(A^0xa0761d6478bd642full,B^0xe7037ed1a0b428dbull);}\n\n// the wyrand PRNG that pass BigCrush and PractRand\nstatic inline uint64_t wyrand(uint64_t *seed){ *seed+=0xa0761d6478bd642full; return _wymix(*seed,*seed^0xe7037ed1a0b428dbull);}\n\n#ifndef __vinix__\n// convert any 64 bit pseudo random numbers to uniform distribution [0,1). It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2u01(uint64_t r){ const double _wynorm=1.0/(1ull<<52); return (r>>12)*_wynorm;}\n\n// convert any 64 bit pseudo random numbers to APPROXIMATE Gaussian distribution. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline double wy2gau(uint64_t r){ const double _wynorm=1.0/(1ull<<20); return ((r&0x1fffff)+((r>>21)&0x1fffff)+((r>>42)&0x1fffff))*_wynorm-3.0;}\n#endif\n\n#if(!WYHASH_32BIT_MUM)\n// fast range integer random number generation on [0,k) credit to Daniel Lemire. May not work when WYHASH_32BIT_MUM=1. It can be combined with wyrand, wyhash64 or wyhash.\nstatic inline uint64_t wy2u0k(uint64_t r, uint64_t k){ _wymum(&r,&k); return k; }\n#endif\n#endif\n\n#define _IN_MAP(val, m) map_exists(m, val)\n\n");
 	_const_v__gen__c__closure_ctx = _SLIT("_V_closure_ctx");
-	_const_v__gen__c__posix_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
-	_const_v__gen__c__windows_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n	@LOAD_FNS@\n}\n");
+	_const_v__gen__c__posix_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n\011@LOAD_FNS@\n}\n");
+	_const_v__gen__c__windows_hotcode_definitions_1 = _SLIT("\nvoid v_bind_live_symbols(void* live_lib){\n\011@LOAD_FNS@\n}\n");
 	_const_v__parser__tmpl_str_end = _SLIT("')\n");
 	_const_v__builder__c_verror_message_marker = _SLIT("VERROR_MESSAGE ");
 	_const_v__builder__c_error_info = _SLIT("\n==================\nC error. This should never happen.\n\nThis is a compiler bug, please report it using `v bug file.v`.\n\nhttps://github.com/vlang/v/issues/new/choose\n\nYou can also use #help on Discord: https://discord.gg/vlang\n");
@@ -28424,12 +28426,12 @@ u64 rand__seed__time_seed_64(void) {
 }
 
 string term__format(string msg, string open, string close) {
-	string _t1 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\x1b["), 0xfe10, {.d_s = open}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("\x1b["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
+	string _t1 =  str_intp(4, _MOV((StrIntpData[]){{_SLIT("["), 0xfe10, {.d_s = open}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
 	return _t1;
 }
 
 string term__format_rgb(int r, int g, int b, string msg, string open, string close) {
-	string _t1 =  str_intp(7, _MOV((StrIntpData[]){{_SLIT("\x1b["), 0xfe10, {.d_s = open}}, {_SLIT(";2;"), 0xfe07, {.d_i32 = r}}, {_SLIT(";"), 0xfe07, {.d_i32 = g}}, {_SLIT(";"), 0xfe07, {.d_i32 = b}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("\x1b["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
+	string _t1 =  str_intp(7, _MOV((StrIntpData[]){{_SLIT("["), 0xfe10, {.d_s = open}}, {_SLIT(";2;"), 0xfe07, {.d_i32 = r}}, {_SLIT(";"), 0xfe07, {.d_i32 = g}}, {_SLIT(";"), 0xfe07, {.d_i32 = b}}, {_SLIT("m"), 0xfe10, {.d_s = msg}}, {_SLIT("["), 0xfe10, {.d_s = close}}, {_SLIT("m"), 0, { .d_c = 0 }}}));
 	return _t1;
 }
 
@@ -28664,11 +28666,11 @@ string term__highlight_command(string command) {
 }
 
 void term__set_cursor_position(term__Coord c) {
-	print(string__plus( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\x1b["), 0xfe07, {.d_i32 = c.y}}, {_SLIT(";"), 0xfe07, {.d_i32 = c.x}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("H")));
+	print(string__plus( str_intp(3, _MOV((StrIntpData[]){{_SLIT("["), 0xfe07, {.d_i32 = c.y}}, {_SLIT(";"), 0xfe07, {.d_i32 = c.x}}, {_SLIT0, 0, { .d_c = 0 }}})), _SLIT("H")));
 }
 
 void term__move(int n, string direction) {
-	print( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\x1b["), 0xfe07, {.d_i32 = n}}, {_SLIT0, 0xfe10, {.d_s = direction}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	print( str_intp(3, _MOV((StrIntpData[]){{_SLIT("["), 0xfe07, {.d_i32 = n}}, {_SLIT0, 0xfe10, {.d_s = direction}}, {_SLIT0, 0, { .d_c = 0 }}})));
 }
 
 void term__cursor_up(int n) {
@@ -28688,7 +28690,7 @@ void term__cursor_back(int n) {
 }
 
 void term__erase_display(string t) {
-	print(string__plus(string__plus(_SLIT("\x1b["), t), _SLIT("J")));
+	print(string__plus(string__plus(_SLIT("\033["), t), _SLIT("J")));
 }
 
 void term__erase_toend(void) {
@@ -28708,7 +28710,7 @@ void term__erase_del_clear(void) {
 }
 
 void term__erase_line(string t) {
-	print(string__plus(string__plus(_SLIT("\x1b["), t), _SLIT("K")));
+	print(string__plus(string__plus(_SLIT("\033["), t), _SLIT("K")));
 }
 
 void term__erase_line_toend(void) {
@@ -28724,15 +28726,15 @@ void term__erase_line_clear(void) {
 }
 
 void term__show_cursor(void) {
-	print(_SLIT("\x1b[?25h"));
+	print(_SLIT("\033[?25h"));
 }
 
 void term__hide_cursor(void) {
-	print(_SLIT("\x1b[?25l"));
+	print(_SLIT("\033[?25l"));
 }
 
 void term__clear_previous_line(void) {
-	print(_SLIT("\r\x1b[1A\x1b[2K"));
+	print(_SLIT("\r\033[1A\033[2K"));
 }
 
 bool term__can_show_color_on_stdout(void) {
@@ -29143,7 +29145,7 @@ v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
 	}
 	string readme_file = os__join_path(vcache_basepath, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("README.md")})));
 	if (!os__is_file(readme_file)) {
-		string readme_content = string_strip_margin(_SLIT("This folder contains cached build artifacts from the V build system.\n		|You can safely delete it, if it is getting too large.\n		|It will be recreated the next time you compile something with V.\n		|You can change its location with the VCACHE environment variable.\n		"));
+		string readme_content = string_strip_margin(_SLIT("This folder contains cached build artifacts from the V build system.\n\011\011|You can safely delete it, if it is getting too large.\n\011\011|It will be recreated the next time you compile something with V.\n\011\011|You can change its location with the VCACHE environment variable.\n\011\011"));
 		Option_void _t2 = os__write_file(readme_file, readme_content);
 		if (_t2.state != 0 && _t2.err._typ != _IError_None___index) {
 			IError err = _t2.err;
@@ -31134,7 +31136,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("c27ffc6");
+	string vhash = _SLIT("ea66031");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -37634,7 +37636,7 @@ string v__ast__Expr_str(v__ast__Expr x) {
 			string _t18 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("/* "), 0xfe07, {.d_i32 = lines.len}}, {_SLIT(" lines comment */"), 0, { .d_c = 0 }}}));
 			return _t18;
 		} else {
-			string text = string_trim_space(string_trim((*x._v__ast__Comment).text, _SLIT("\x01")));
+			string text = string_trim_space(string_trim((*x._v__ast__Comment).text, _SLIT("\001")));
 			string _t19 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("´// "), 0xfe10, {.d_s = text}}, {_SLIT("´"), 0, { .d_c = 0 }}}));
 			return _t19;
 		}
@@ -43092,7 +43094,7 @@ v__ast__Type v__checker__Checker_string_lit(v__checker__Checker* c, v__ast__Stri
 			}
 			
 			byte next_ch = *(byte*)&_t2.data;
-			if (next_ch == 'x') {
+			if (next_ch == 'u') {
 				idx++;
 				Option_byte _t4 = string_at_with_check(node->val, idx);
 				;
@@ -43115,13 +43117,13 @@ v__ast__Type v__checker__Checker_string_lit(v__checker__Checker* c, v__ast__Stri
 						byte first_digit = string_at(node->val, idx - 5) - 48;
 						byte second_digit = string_at(node->val, idx - 4) - 48;
 						if (first_digit > 1) {
-							v__checker__Checker_error(c, _const_v__checker__hex_lit_overflow_message, end_pos);
+							v__checker__Checker_error(c, _const_v__checker__unicode_lit_overflow_message, end_pos);
 						} else if (first_digit == 1 && second_digit > 0) {
-							v__checker__Checker_error(c, _const_v__checker__hex_lit_overflow_message, end_pos);
+							v__checker__Checker_error(c, _const_v__checker__unicode_lit_overflow_message, end_pos);
 						}
 					}
 					else {
-						v__checker__Checker_error(c, _const_v__checker__hex_lit_overflow_message, end_pos);
+						v__checker__Checker_error(c, _const_v__checker__unicode_lit_overflow_message, end_pos);
 					};
 					idx++;
 					Option_byte _t6 = string_at_with_check(node->val, idx);
@@ -60275,7 +60277,7 @@ void v__gen__c__Gen_init(v__gen__c__Gen* g) {
 			strings__Builder_writeln(&g->cheaders, _SLIT("#include <stdint.h>"));
 			strings__Builder_writeln(&g->cheaders, _SLIT("#include <stddef.h>"));
 		} else {
-			string tcc_undef_has_include = _SLIT("\n	#if defined(__TINYC__) && defined(__has_include)\n	// tcc does not support has_include properly yet, turn it off completely\n	#undef __has_include\n	#endif");
+			string tcc_undef_has_include = _SLIT("\n\011#if defined(__TINYC__) && defined(__has_include)\n\011// tcc does not support has_include properly yet, turn it off completely\n\011#undef __has_include\n\011#endif");
 			strings__Builder_writeln(&g->cheaders, tcc_undef_has_include);
 			strings__Builder_writeln(&g->includes, tcc_undef_has_include);
 			if (g->pref->os == v__pref__OS__freebsd) {
@@ -62122,13 +62124,28 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_expr_with_cast(v__gen__c__Gen* g, v__ast__Ex
 	v__gen__c__Gen_expr(g, expr);
 }
 
+VV_LOCAL_SYMBOL string v__gen__c__cescape_nonascii(string original) {
+	strings__Builder b = strings__new_builder(original.len);
+	for (int _t1 = 0; _t1 < original.len; ++_t1) {
+		byte c = original.str[_t1];
+		if (c < 32 || c > 126) {
+			strings__Builder_write_string(&b,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\\"), 0xb006fe22, {.d_u8 = c}}, {_SLIT0, 0, { .d_c = 0 }}})));
+			continue;
+		}
+		strings__Builder_write_b(&b, c);
+	}
+	string res = strings__Builder_str(&b);
+	string _t2 = res;
+	return _t2;
+}
+
 VV_LOCAL_SYMBOL string v__gen__c__cestring(string s) {
 	string _t1 = string_replace(string_replace(s, _SLIT("\\"), _SLIT("\\\\")), _SLIT("\""), _SLIT("'"));
 	return _t1;
 }
 
 VV_LOCAL_SYMBOL string v__gen__c__ctoslit(string s) {
-	string _t1 = string__plus(string__plus(_SLIT("_SLIT(\""), v__gen__c__cestring(s)), _SLIT("\")"));
+	string _t1 = string__plus(string__plus(_SLIT("_SLIT(\""), v__gen__c__cescape_nonascii(v__gen__c__cestring(s))), _SLIT("\")"));
 	return _t1;
 }
 
@@ -63756,11 +63773,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, unwrap_val_typ);
 	v__ast__TypeSymbol* value_typ = v__ast__Table_sym(g->table, unwrap_val_typ);
 	v__ast__TypeSymbol* key_typ = v__ast__Table_final_sym(g->table, unwrap_key_typ);
-	multi_return_string_string_string_string mr_123212 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-	string hash_fn = mr_123212.arg0;
-	string key_eq_fn = mr_123212.arg1;
-	string clone_fn = mr_123212.arg2;
-	string free_fn = mr_123212.arg3;
+	multi_return_string_string_string_string mr_123463 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+	string hash_fn = mr_123463.arg0;
+	string key_eq_fn = mr_123463.arg1;
+	string clone_fn = mr_123463.arg2;
+	string free_fn = mr_123463.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -65387,9 +65404,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*sym->info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_171079 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_171079.arg0;
-						string base = mr_171079.arg1;
+						multi_return_string_string mr_171330 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_171330.arg0;
+						string base = mr_171330.arg1;
 						sync__RwMutex_lock(&g->done_optionals->mtx);
 						/*lock*/ {
 							if (!Array_string_contains(g->done_optionals->val, base)) {
@@ -65645,11 +65662,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_179722 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_179722.arg0;
-				string pafile = mr_179722.arg1;
-				string pamod = mr_179722.arg2;
-				string pafn = mr_179722.arg3;
+				multi_return_int_string_string_string mr_179973 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_179973.arg0;
+				string pafile = mr_179973.arg1;
+				string pamod = mr_179973.arg2;
+				string pafn = mr_179973.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -65754,11 +65771,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 			{
 				v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 				v__ast__TypeSymbol* key_typ = v__ast__Table_sym(g->table, info.key_type);
-				multi_return_string_string_string_string mr_182354 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-				string hash_fn = mr_182354.arg0;
-				string key_eq_fn = mr_182354.arg1;
-				string clone_fn = mr_182354.arg2;
-				string free_fn = mr_182354.arg3;
+				multi_return_string_string_string_string mr_182605 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+				string hash_fn = mr_182605.arg0;
+				string key_eq_fn = mr_182605.arg1;
+				string clone_fn = mr_182605.arg2;
+				string free_fn = mr_182605.arg3;
 				string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 				string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 				string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -66520,8 +66537,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls(st, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_204795 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
-					Array_string fargs = mr_204795.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_205046 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
+					Array_string fargs = mr_205046.arg0;
 					string parameter_name = strings__Builder_cut_last(&g->out, g->out.len - params_start_pos);
 					if (v__ast__Type_is_ptr(st)) {
 						parameter_name = string_trim_string_left(parameter_name, _SLIT("__shared__"));
@@ -66538,8 +66555,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 						*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t25.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=(v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 					}
 					
- 					Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_205245 =  _t25 /*U*/;
-					Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_205245.data).arg1;
+ 					Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_205496 =  _t25 /*U*/;
+					Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_205496.data).arg1;
 					if (embed_types.len > 0 && !Array_string_contains(method_names, method.name)) {
 						v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(g->table, (*(v__ast__Type*)array_last(embed_types)));
 						string method_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = embed_sym->cname}}, {_SLIT("_"), 0xfe10, {.d_s = method.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
@@ -66879,7 +66896,7 @@ VV_LOCAL_SYMBOL string v__gen__c__c_closure_helpers(v__pref__Preferences* pref) 
 	} else if (pref->arch == v__pref__Arch__arm32) {
 		strings__Builder_write_string(&builder,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\nstatic unsigned char __closure_thunk[4][12] = {\n    {\n        "), 0xfe10, {.d_s = v__gen__c__arm32_bytes(0)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm32_bytes(1)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm32_bytes(2)}}, {_SLIT("\n    }, {\n        "), 0xfe10, {.d_s = v__gen__c__arm32_bytes(3)}}, {_SLIT("\n    },\n};\n"), 0, { .d_c = 0 }}})));
 	}
-	strings__Builder_write_string(&builder, _SLIT("\nstatic void __closure_set_data(void *closure, void *data) {\n    void **p = closure;\n    p[-2] = data;\n}\n\nstatic void __closure_set_function(void *closure, void *f) {\n    void **p = closure;\n    p[-1] = f;\n}\n\nstatic inline int __closure_check_nargs(int nargs) {\n	if (nargs > (int)_ARR_LEN(__closure_thunk)) {\n		_v_panic(_SLIT(\"Closure too large. Reduce the number of parameters, or pass the parameters by reference.\"));\n		VUNREACHABLE();\n	}\n	return nargs;\n}\n"));
+	strings__Builder_write_string(&builder, _SLIT("\nstatic void __closure_set_data(void *closure, void *data) {\n    void **p = closure;\n    p[-2] = data;\n}\n\nstatic void __closure_set_function(void *closure, void *f) {\n    void **p = closure;\n    p[-1] = f;\n}\n\nstatic inline int __closure_check_nargs(int nargs) {\n\011if (nargs > (int)_ARR_LEN(__closure_thunk)) {\n\011\011_v_panic(_SLIT(\"Closure too large. Reduce the number of parameters, or pass the parameters by reference.\"));\n\011\011VUNREACHABLE();\n\011}\n\011return nargs;\n}\n"));
 	if (pref->os != v__pref__OS__windows) {
 		strings__Builder_write_string(&builder, _SLIT("\nstatic void * __closure_create(void *f, int nargs, void *userdata) {\n    long page_size = sysconf(_SC_PAGESIZE);\n    int prot = PROT_READ | PROT_WRITE;\n    int flags = MAP_ANONYMOUS | MAP_PRIVATE;\n    char *p = mmap(0, page_size * 2, prot, flags, -1, 0);\n    if (p == MAP_FAILED)\n        return 0;\n    void *closure = p + page_size;\n    memcpy(closure, __closure_thunk[nargs - 1], sizeof(__closure_thunk[0]));\n    mprotect(closure, page_size, PROT_READ | PROT_EXEC);\n    __closure_set_function(closure, f);\n    __closure_set_data(closure, userdata);\n    return closure;\n}\n\nstatic void __closure_destroy(void *closure) {\n    long page_size = sysconf(_SC_PAGESIZE);\n    munmap((char *)closure - page_size, page_size * 2);\n}\n"));
 	}
@@ -66976,13 +66993,13 @@ void v__gen__c__Gen_gen_c_main_footer(v__gen__c__Gen* g) {
 
 void v__gen__c__Gen_gen_c_android_sokol_main(v__gen__c__Gen* g) {
 	if (g->is_autofree) {
-		v__gen__c__Gen_writeln(g, _SLIT("// Wrapping cleanup/free callbacks for sokol to include _vcleanup()\nvoid (*_vsokol_user_cleanup_ptr)(void);\nvoid (*_vsokol_user_cleanup_cb_ptr)(void *);\n\nvoid (_vsokol_cleanup_cb)(void) {\n	if (_vsokol_user_cleanup_ptr) {\n		_vsokol_user_cleanup_ptr();\n	}\n	_vcleanup();\n}\n\nvoid (_vsokol_cleanup_userdata_cb)(void* user_data) {\n	if (_vsokol_user_cleanup_cb_ptr) {\n		_vsokol_user_cleanup_cb_ptr(g_desc.user_data);\n	}\n	_vcleanup();\n}\n"));
+		v__gen__c__Gen_writeln(g, _SLIT("// Wrapping cleanup/free callbacks for sokol to include _vcleanup()\nvoid (*_vsokol_user_cleanup_ptr)(void);\nvoid (*_vsokol_user_cleanup_cb_ptr)(void *);\n\nvoid (_vsokol_cleanup_cb)(void) {\n\011if (_vsokol_user_cleanup_ptr) {\n\011\011_vsokol_user_cleanup_ptr();\n\011}\n\011_vcleanup();\n}\n\nvoid (_vsokol_cleanup_userdata_cb)(void* user_data) {\n\011if (_vsokol_user_cleanup_cb_ptr) {\n\011\011_vsokol_user_cleanup_cb_ptr(g_desc.user_data);\n\011}\n\011_vcleanup();\n}\n"));
 	}
-	v__gen__c__Gen_writeln(g, _SLIT("// The sokol_main entry point on Android\nsapp_desc sokol_main(int argc, char* argv[]) {\n	(void)argc; (void)argv;\n\n	_vinit(argc, (voidptr)argv);\n	main__main();\n"));
+	v__gen__c__Gen_writeln(g, _SLIT("// The sokol_main entry point on Android\nsapp_desc sokol_main(int argc, char* argv[]) {\n\011(void)argc; (void)argv;\n\n\011_vinit(argc, (voidptr)argv);\n\011main__main();\n"));
 	if (g->is_autofree) {
-		v__gen__c__Gen_writeln(g, _SLIT("	// Wrap user provided cleanup/free functions for sokol to be able to call _vcleanup()\n	if (g_desc.cleanup_cb) {\n		_vsokol_user_cleanup_ptr = g_desc.cleanup_cb;\n		g_desc.cleanup_cb = _vsokol_cleanup_cb;\n	}\n	else if (g_desc.cleanup_userdata_cb) {\n		_vsokol_user_cleanup_cb_ptr = g_desc.cleanup_userdata_cb;\n		g_desc.cleanup_userdata_cb = _vsokol_cleanup_userdata_cb;\n	}\n"));
+		v__gen__c__Gen_writeln(g, _SLIT("\011// Wrap user provided cleanup/free functions for sokol to be able to call _vcleanup()\n\011if (g_desc.cleanup_cb) {\n\011\011_vsokol_user_cleanup_ptr = g_desc.cleanup_cb;\n\011\011g_desc.cleanup_cb = _vsokol_cleanup_cb;\n\011}\n\011else if (g_desc.cleanup_userdata_cb) {\n\011\011_vsokol_user_cleanup_cb_ptr = g_desc.cleanup_userdata_cb;\n\011\011g_desc.cleanup_userdata_cb = _vsokol_cleanup_userdata_cb;\n\011}\n"));
 	}
-	v__gen__c__Gen_writeln(g, _SLIT("	return g_desc;"));
+	v__gen__c__Gen_writeln(g, _SLIT("\011return g_desc;"));
 	v__gen__c__Gen_writeln(g, _SLIT("}"));
 }
 
@@ -67970,7 +67987,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_dump_expr_definitions(v__gen__c__Gen* g) {
 		} else {
 			v__util__Surrounder_add(&surrounder,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\tstring value = "), 0xfe10, {.d_s = to_string_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = deref}}, {_SLIT("dump_arg);"), 0, { .d_c = 0 }}})), _SLIT("\tstring_free(&value);"));
 		}
-		v__util__Surrounder_add(&surrounder, _SLIT("\n	strings__Builder sb = strings__new_builder(256);\n"), _SLIT("\n	string res;\n	res = strings__Builder_str(&sb);\n	eprint(res);\n	string_free(&res);\n	strings__Builder_free(&sb);\n"));
+		v__util__Surrounder_add(&surrounder, _SLIT("\n\011strings__Builder sb = strings__new_builder(256);\n"), _SLIT("\n\011string res;\n\011res = strings__Builder_str(&sb);\n\011eprint(res);\n\011string_free(&res);\n\011strings__Builder_free(&sb);\n"));
 		v__util__Surrounder_builder_write_befores(&surrounder, (voidptr)&/*qq*/dump_fns);
 		strings__Builder_writeln(&dump_fns, _SLIT("\tstrings__Builder_write_rune(&sb, '[');"));
 		strings__Builder_writeln(&dump_fns, _SLIT("\tstrings__Builder_write_string(&sb, fpath);"));
@@ -71586,7 +71603,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_generate_hotcode_reloading_declarations(v__g
 		if (g->pref->is_liveshared) {
 			strings__Builder_writeln(&g->hotcode_definitions, _SLIT("HANDLE live_fn_mutex;"));
 		}
-		strings__Builder_writeln(&g->hotcode_definitions, _SLIT("\nvoid pthread_mutex_lock(HANDLE *m) {\n	WaitForSingleObject(*m, INFINITE);\n}\nvoid pthread_mutex_unlock(HANDLE *m) {\n	ReleaseMutex(*m);\n}\n"));
+		strings__Builder_writeln(&g->hotcode_definitions, _SLIT("\nvoid pthread_mutex_lock(HANDLE *m) {\n\011WaitForSingleObject(*m, INFINITE);\n}\nvoid pthread_mutex_unlock(HANDLE *m) {\n\011ReleaseMutex(*m);\n}\n"));
 	} else {
 		if (g->pref->is_livemain) {
 			strings__Builder_writeln(&g->hotcode_definitions, _SLIT("pthread_mutex_t live_fn_mutex = PTHREAD_MUTEX_INITIALIZER;"));
@@ -72680,7 +72697,7 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_get_field_name(v__gen__c__Gen* g, v__ast__
 }
 
 VV_LOCAL_SYMBOL void v__gen__c__Gen_string_literal(v__gen__c__Gen* g, v__ast__StringLiteral node) {
-	string escaped_val = v__util__smart_quote(node.val, node.is_raw);
+	string escaped_val = v__gen__c__cescape_nonascii(v__util__smart_quote(node.val, node.is_raw));
 	if (node.language == v__ast__Language__c) {
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = escaped_val}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
 	} else {
@@ -72694,7 +72711,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_string_inter_literal_sb_optimized(v__gen__c_
 	bool is_nl = string__eq(call_expr.name, _SLIT("writeln"));
 	for (int i = 0; i < node.vals.len; ++i) {
 		string val = ((string*)node.vals.data)[i];
-		string escaped_val = v__util__smart_quote(val, false);
+		string escaped_val = v__gen__c__cescape_nonascii(v__util__smart_quote(val, false));
 		v__gen__c__Gen_write(g, _SLIT("strings__Builder_write_string(&"));
 		v__gen__c__Gen_expr(g, call_expr.left);
 		v__gen__c__Gen_write(g, _SLIT(", _SLIT(\""));
@@ -72737,9 +72754,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_expr_to_string(v__gen__c__Gen* g, v__ast
 			sym = parent_sym;
 		}
 	}
-	multi_return_bool_bool_int mr_2133 = v__ast__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_2133.arg0;
-	bool str_method_expects_ptr = mr_2133.arg1;
+	multi_return_bool_bool_int mr_2169 = v__ast__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_2169.arg0;
+	bool str_method_expects_ptr = mr_2169.arg1;
 	if (v__ast__Type_has_flag(typ, v__ast__TypeFlag__variadic)) {
 		string str_fn_name = v__gen__c__Gen_get_str_fn(g, typ);
 		v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = str_fn_name}}, {_SLIT("("), 0, { .d_c = 0 }}})));
@@ -74120,7 +74137,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 						}
 					}
 					if (is_separate_line_comment) {
-						comment = string__plus(_SLIT("\x01"), comment);
+						comment = string__plus(_SLIT("\001"), comment);
 					}
 					v__token__Token _t82 = v__scanner__Scanner_new_token(s, v__token__Kind__comment, comment, comment.len + 2);
 					return _t82;
@@ -74154,7 +74171,7 @@ VV_LOCAL_SYMBOL v__token__Token v__scanner__Scanner_text_scan(v__scanner__Scanne
 				if (v__scanner__Scanner_should_parse_comment(s)) {
 					string comment = string_trim(string_substr(s->text, start, (s->pos - 1)), _SLIT(" "));
 					if (!string_contains(comment, _SLIT("\n"))) {
-						comment = string__plus(_SLIT("\x01"), comment);
+						comment = string__plus(_SLIT("\001"), comment);
 					}
 					v__token__Token _t83 = v__scanner__Scanner_new_multiline_token(s, v__token__Kind__comment, comment, comment.len + 4, start_line);
 					return _t83;
@@ -74225,6 +74242,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 	}
 	s->is_inside_string = false;
 	Array_int u_escapes_pos = __new_array_with_default(0, 0, sizeof(int), 0);
+	Array_int h_escapes_pos = __new_array_with_default(0, 0, sizeof(int), 0);
 	int backslash_count = (start_char == _const_v__scanner__backslash ? (1) : (0));
 	for (;;) {
 		s->pos++;
@@ -74265,8 +74283,11 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 			}
 		}
 		if (backslash_count % 2 == 1 && !is_raw && !is_cstr) {
-			if (c == 'x' && (s->text.str[ s->pos + 1] == s->quote || !byte_is_hex_digit(s->text.str[ s->pos + 1]))) {
-				v__scanner__Scanner_error(s, _SLIT("`\\x` used with no following hex digits"));
+			if (c == 'x') {
+				if (s->text.str[ s->pos + 1] == s->quote || !(byte_is_hex_digit(s->text.str[ s->pos + 1]) && byte_is_hex_digit(s->text.str[ s->pos + 2]))) {
+					v__scanner__Scanner_error(s, _SLIT("`\\x` used without two following hex digits"));
+				}
+				array_push((array*)&h_escapes_pos, _MOV((int[]){ s->pos - 1 }));
 			}
 			if (c == 'u') {
 				if (s->text.str[ s->pos + 1] == s->quote || s->text.str[ s->pos + 2] == s->quote || s->text.str[ s->pos + 3] == s->quote || s->text.str[ s->pos + 4] == s->quote || !byte_is_hex_digit(s->text.str[ s->pos + 1]) || !byte_is_hex_digit(s->text.str[ s->pos + 2]) || !byte_is_hex_digit(s->text.str[ s->pos + 3]) || !byte_is_hex_digit(s->text.str[ s->pos + 4])) {
@@ -74301,6 +74322,9 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 		if (!s->is_fmt && u_escapes_pos.len > 0) {
 			string_so_far = v__scanner__decode_u_escapes(string_so_far, start, u_escapes_pos);
 		}
+		if (!s->is_fmt && h_escapes_pos.len > 0) {
+			string_so_far = v__scanner__decode_h_escapes(string_so_far, start, h_escapes_pos);
+		}
 		if (n_cr_chars > 0) {
 			string_so_far = string_replace(string_so_far, _SLIT("\r"), _SLIT(""));
 		}
@@ -74310,8 +74334,36 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s) 
 			lit = string_so_far;
 		}
 	}
-	string _t2 = lit;
-	return _t2;
+	string _t3 = lit;
+	return _t3;
+}
+
+VV_LOCAL_SYMBOL string v__scanner__decode_h_escapes(string s, int start, Array_int escapes_pos) {
+	if (escapes_pos.len == 0) {
+		string _t1 = s;
+		return _t1;
+	}
+	Array_string ss = __new_array_with_default(0, escapes_pos.len * 2 + 1, sizeof(string), 0);
+	array_push((array*)&ss, _MOV((string[]){ string_clone(string_substr(s, 0, (*(int*)array_first(escapes_pos)) - start)) }));
+	for (int i = 0; i < escapes_pos.len; ++i) {
+		int pos = ((int*)escapes_pos.data)[i];
+		int idx = pos - start;
+		int end_idx = idx + 4;
+		Option_u64 _t4 = strconv__parse_uint(string_substr(s, idx + 2, end_idx), 16, 8);
+		if (_t4.state != 0) { /*or block*/ 
+			IError err = _t4.err;
+			*(u64*) _t4.data = 0U;
+		}
+		
+ 		array_push((array*)&ss, _MOV((string[]){ string_clone(Array_byte_bytestr(new_array_from_c_array(1, 1, sizeof(byte), _MOV((byte[1]){((byte)( (*(u64*)_t4.data)))})))) }));
+		if (i + 1 < escapes_pos.len) {
+			array_push((array*)&ss, _MOV((string[]){ string_clone(string_substr(s, end_idx, (*(int*)/*ee elem_typ */array_get(escapes_pos, i + 1)) - start)) }));
+		} else {
+			array_push((array*)&ss, _MOV((string[]){ string_clone(string_substr(s, end_idx, s.len)) }));
+		}
+	}
+	string _t7 = Array_string_join(ss, _SLIT(""));
+	return _t7;
 }
 
 VV_LOCAL_SYMBOL string v__scanner__decode_u_escapes(string s, int start, Array_int escapes_pos) {
@@ -74359,9 +74411,12 @@ VV_LOCAL_SYMBOL string v__scanner__trim_slash_line_break(string s) {
 }
 
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
+	v__token__Position lspos = (v__token__Position){.len = 0,.line_nr = s->line_nr,.pos = s->pos,.col = s->pos - s->last_nl_pos - 1,.last_line = 0,};
 	int start = s->pos;
 	rune slash = '\\';
 	int len = 0;
+	bool escaped_hex = v__scanner__Scanner_expect(s, _SLIT("\\x"), start + 1);
+	bool escaped_unicode = v__scanner__Scanner_expect(s, _SLIT("\\u"), start + 1);
 	for (;;) {
 		s->pos++;
 		if (s->pos >= s->text.len) {
@@ -74381,17 +74436,64 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
 	len--;
 	string c = string_substr(s->text, start + 1, s->pos);
 	if (len != 1) {
+		if ((c.len % 2 == 0) && (escaped_hex || escaped_unicode)) {
+			if (escaped_unicode) {
+				c = v__scanner__decode_u_escapes(c, 0, new_array_from_c_array(1, 1, sizeof(int), _MOV((int[1]){0})));
+			} else {
+				byte ascii_0 = ((byte)(0x30));
+				byte ascii_a = ((byte)(0x61));
+				Array_byte accumulated = __new_array_with_default(0, 0, sizeof(byte), 0);
+				string val = string_to_lower(string_substr(c, 2, c.len));
+				int offset = 0;
+				for (;;) {
+					if (offset >= val.len - 1) {
+						break;
+					}
+					byte byteval = ((byte)(0));
+					byte big = string_at(val, offset);
+					byte little = string_at(val, offset + 1);
+					if (!byte_is_hex_digit(big)) {
+						array_clear(&accumulated);
+						break;
+					}
+					if (!byte_is_hex_digit(little)) {
+						array_clear(&accumulated);
+						break;
+					}
+					if (byte_is_digit(big)) {
+						byteval |= (big - ascii_0) << 4;
+					} else {
+						byteval |= (big - ascii_a + 10) << 4;
+					}
+					if (byte_is_digit(little)) {
+						byteval |= (little - ascii_0);
+					} else {
+						byteval |= (little - ascii_a + 10);
+					}
+					array_push((array*)&accumulated, _MOV((byte[]){ byteval }));
+					offset += 2;
+				}
+				if (accumulated.len > 0) {
+					c = Array_byte_bytestr(accumulated);
+				}
+			}
+		}
 		Array_rune u = string_runes(c);
 		if (u.len != 1) {
-			v__scanner__Scanner_error(s, string__plus(_SLIT("invalid character literal (more than one character)\n"), _SLIT("use quotes for strings, backticks for characters")));
+			if (escaped_hex || escaped_unicode) {
+				v__scanner__Scanner_error(s, _SLIT("invalid character literal (escape sequence did not refer to a singular rune)"));
+			} else {
+				v__scanner__Scanner_add_error_detail_with_pos(s, _SLIT("use quotes for strings, backticks for characters"), lspos);
+				v__scanner__Scanner_error(s, _SLIT("invalid character literal (more than one character)"));
+			}
 		}
 	}
 	if (string__eq(c, _SLIT("'"))) {
-		string _t1 = string__plus(_SLIT("\\"), c);
-		return _t1;
+		string _t2 = string__plus(_SLIT("\\"), c);
+		return _t2;
 	}
-	string _t2 = c;
-	return _t2;
+	string _t3 = c;
+	return _t3;
 }
 
 // Attr: [direct_array_access]
@@ -80243,7 +80345,7 @@ VV_LOCAL_SYMBOL v__ast__AsmArg v__parser__Parser_reg_or_alias(v__parser__Parser*
 VV_LOCAL_SYMBOL v__ast__AsmAddressing v__parser__Parser_asm_addressing(v__parser__Parser* p) {
 	v__token__Position pos = v__token__Token_position(&p->tok);
 	v__parser__Parser_check(p, v__token__Kind__lsbr);
-	string unknown_addressing_mode = _SLIT("unknown addressing mode. supported ones are [displacement],	[base], [base + displacement], [index ∗ scale + displacement], [base + index ∗ scale + displacement], [base + index + displacement], [rip + displacement]");
+	string unknown_addressing_mode = _SLIT("unknown addressing mode. supported ones are [displacement],\011[base], [base + displacement], [index \342\210\227 scale + displacement], [base + index \342\210\227 scale + displacement], [base + index + displacement], [rip + displacement]");
 	if (p->peek_tok.kind == v__token__Kind__rsbr) {
 		if (p->tok.kind == v__token__Kind__name) {
 			v__ast__AsmArg base = v__parser__Parser_reg_or_alias(p);
@@ -81861,7 +81963,7 @@ VV_LOCAL_SYMBOL v__ast__ConstDecl v__parser__Parser_const_decl(v__parser__Parser
 	for (;;) {
 		comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,});
 		if (is_block && p->tok.kind == v__token__Kind__eof) {
-			v__parser__Parser_error(p, _SLIT("unexpected eof, expecting ´)´"));
+			v__parser__Parser_error(p, _SLIT("unexpected eof, expecting \302\264)\302\264"));
 			v__ast__ConstDecl _t2 = (v__ast__ConstDecl){.is_pub = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.fields = __new_array(0, 0, sizeof(v__ast__ConstField)),.end_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.is_block = 0,};
 			return _t2;
 		}
@@ -81968,7 +82070,7 @@ VV_LOCAL_SYMBOL v__ast__GlobalDecl v__parser__Parser_global_decl(v__parser__Pars
 	for (;;) {
 		comments = v__parser__Parser_eat_comments(p, (v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,});
 		if (is_block && p->tok.kind == v__token__Kind__eof) {
-			v__parser__Parser_error(p, _SLIT("unexpected eof, expecting ´)´"));
+			v__parser__Parser_error(p, _SLIT("unexpected eof, expecting \302\264)\302\264"));
 			v__ast__GlobalDecl _t3 = (v__ast__GlobalDecl){.mod = (string){.str=(byteptr)"", .is_lit=1},.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_block = 0,.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.fields = __new_array(0, 0, sizeof(v__ast__GlobalField)),.end_comments = __new_array(0, 0, sizeof(v__ast__Comment)),};
 			return _t3;
 		}
