@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "155f897"
+#define V_COMMIT_HASH "4189b7e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7fbd856"
+	#define V_COMMIT_HASH "155f897"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "155f897"
+	#define V_CURRENT_COMMIT_HASH "4189b7e"
 #endif
 
 // V comptime_definitions:
@@ -348,6 +348,7 @@ typedef struct v__builder__MsvcStringFlags v__builder__MsvcStringFlags;
 typedef struct Option_int Option_int;
 typedef struct Option_u64 Option_u64;
 typedef struct Option_i64 Option_i64;
+typedef struct Option_rune Option_rune;
 typedef struct Option_byte Option_byte;
 typedef struct Option_voidptr Option_voidptr;
 typedef struct Option_time__Time Option_time__Time;
@@ -5982,6 +5983,12 @@ struct Option_i64 {
 	byte data[sizeof(i64)];
 };
 
+struct Option_rune {
+	byte state;
+	IError err;
+	byte data[sizeof(rune)];
+};
+
 struct Option_byte {
 	byte state;
 	IError err;
@@ -6736,6 +6743,7 @@ string byte_str_escaped(byte b);
 bool byte_is_capital(byte c);
 Array_byte Array_byte_clone(Array_byte b);
 string Array_byte_bytestr(Array_byte b);
+Option_rune Array_byte_byterune(Array_byte b);
 string byte_repeat(byte b, int count);
 VV_LOCAL_SYMBOL bool fast_string_eq(string a, string b);
 VV_LOCAL_SYMBOL u64 map_hash_string(voidptr pkey);
@@ -6990,6 +6998,7 @@ string utf32_to_str(u32 code);
 string utf32_to_str_no_malloc(u32 code, byte* buf);
 int utf32_decode_to_buffer(u32 code, byte* buf);
 int string_utf32_code(string _rune);
+Option_rune Array_byte_utf8_to_utf32(Array_byte _bytes);
 VV_LOCAL_SYMBOL int utf8_len(byte c);
 int utf8_str_len(string s);
 int utf8_str_visible_length(string s);
@@ -17402,6 +17411,20 @@ string Array_byte_bytestr(Array_byte b) {
 	return (string){.str=(byteptr)"", .is_lit=1};
 }
 
+Option_rune Array_byte_byterune(Array_byte b) {
+	Option_rune _t1 = Array_byte_utf8_to_utf32(b);
+	if (_t1.state != 0) { /*or block*/ 
+		Option_rune _t2;
+		memcpy(&_t2, &_t1, sizeof(Option));
+		return _t2;
+	}
+	
+ 	rune r =  (*(rune*)_t1.data);
+	Option_rune _t3;
+	opt_ok(&(rune[]) { ((rune)(r)) }, (Option*)(&_t3), sizeof(rune));
+	return _t3;
+}
+
 string byte_repeat(byte b, int count) {
 	if (count < 0) {
 		_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("byte.repeat: count is negative: "), 0xfe07, {.d_i32 = count}}, {_SLIT0, 0, { .d_c = 0 }}})));
@@ -21056,23 +21079,42 @@ int utf32_decode_to_buffer(u32 code, byte* buf) {
 }
 
 int string_utf32_code(string _rune) {
-	if (_rune.len == 0) {
-		return 0;
+	Option_rune _t2 = Array_byte_utf8_to_utf32(string_bytes(_rune));
+	if (_t2.state != 0) { /*or block*/ 
+		IError err = _t2.err;
+		*(rune*) _t2.data = ((rune)(0));
 	}
-	if (_rune.len == 1) {
-		return ((int)(string_at(_rune, 0)));
+	
+ 	return ((int)( (*(rune*)_t2.data)));
+}
+
+Option_rune Array_byte_utf8_to_utf32(Array_byte _bytes) {
+	if (_bytes.len == 0) {
+		Option_rune _t1;
+		opt_ok(&(rune[]) { 0 }, (Option*)(&_t1), sizeof(rune));
+		return _t1;
 	}
-	byte b = ((byte)(((int)(string_at(_rune, 0)))));
-	b = b << _rune.len;
-	u32 res = ((u32)(b));
-	int shift = 6 - _rune.len;
-	for (int i = 1; i < _rune.len; i++) {
-		u32 c = ((u32)(string_at(_rune, i)));
-		res = ((u32)(res)) << shift;
-		res |= (c & 63U);
+	if (_bytes.len == 1) {
+		Option_rune _t2;
+		opt_ok(&(rune[]) { ((rune)((*(byte*)/*ee elem_typ */array_get(_bytes, 0)))) }, (Option*)(&_t2), sizeof(rune));
+		return _t2;
+	}
+	if (_bytes.len > 4) {
+		return (Option_rune){ .state=2, .err=_v_error(_SLIT("attempted to decode too many bytes, utf-8 is limited to four bytes maximum")), .data={EMPTY_STRUCT_INITIALIZATION} };
+	}
+	byte b = ((byte)(((int)((*(byte*)/*ee elem_typ */array_get(_bytes, 0))))));
+	b = b << _bytes.len;
+	rune res = ((rune)(b));
+	int shift = 6 - _bytes.len;
+	for (int i = 1; i < _bytes.len; i++) {
+		rune c = ((rune)((*(byte*)/*ee elem_typ */array_get(_bytes, i))));
+		res = ((rune)(res)) << shift;
+		res |= (c & 63);
 		shift = 6;
 	}
-	return ((int)(res));
+	Option_rune _t4;
+	opt_ok(&(rune[]) { res }, (Option*)(&_t4), sizeof(rune));
+	return _t4;
 }
 
 VV_LOCAL_SYMBOL int utf8_len(byte c) {
@@ -31139,7 +31181,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("7fbd856");
+	string vhash = _SLIT("155f897");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
