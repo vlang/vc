@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4189b7e"
+#define V_COMMIT_HASH "70aedaf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "155f897"
+	#define V_COMMIT_HASH "4189b7e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4189b7e"
+	#define V_CURRENT_COMMIT_HASH "70aedaf"
 #endif
 
 // V comptime_definitions:
@@ -6885,6 +6885,8 @@ u8 string_byte(string s);
 u16 string_u16(string s);
 u32 string_u32(string s);
 u64 string_u64(string s);
+Option_u64 string_parse_uint(string s, int _base, int _bit_size);
+Option_i64 string_parse_int(string s, int _base, int _bit_size);
 VV_LOCAL_SYMBOL bool string__eq(string s, string a);
 int string_compare(string s, string a);
 VV_LOCAL_SYMBOL bool string__lt(string s, string a);
@@ -19002,6 +19004,14 @@ u64 string_u64(string s) {
 	}
 	
  	return  (*(u64*)_t2.data);
+}
+
+Option_u64 string_parse_uint(string s, int _base, int _bit_size) {
+	return strconv__parse_uint(s, _base, _bit_size);
+}
+
+Option_i64 string_parse_int(string s, int _base, int _bit_size) {
+	return strconv__parse_int(s, _base, _bit_size);
 }
 
 // Attr: [direct_array_access]
@@ -31181,7 +31191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("155f897");
+	string vhash = _SLIT("4189b7e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
