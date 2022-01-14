@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "6168a4d"
+#define V_COMMIT_HASH "4660220"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "70aedaf"
+	#define V_COMMIT_HASH "6168a4d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "6168a4d"
+	#define V_CURRENT_COMMIT_HASH "4660220"
 #endif
 
 // V comptime_definitions:
@@ -31191,7 +31191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("70aedaf");
+	string vhash = _SLIT("6168a4d");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -34823,9 +34823,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_14273 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_14273.arg0;
-	string tool_exe = mr_14273.arg1;
+	multi_return_string_string mr_14275 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_14275.arg0;
+	string tool_exe = mr_14275.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
