@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "879d1d2"
+#define V_COMMIT_HASH "f19197f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "104e0c5"
+	#define V_COMMIT_HASH "879d1d2"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "879d1d2"
+	#define V_CURRENT_COMMIT_HASH "f19197f"
 #endif
 
 // V comptime_definitions:
@@ -6566,9 +6566,9 @@ VV_LOCAL_SYMBOL void array_ensure_cap(array* a, int required);
 array array_repeat(array a, int count);
 array array_repeat_to_depth(array a, int count, int depth);
 void array_insert(array* a, int i, voidptr val);
-void array_insert_many(array* a, int i, voidptr val, int size);
+VV_LOCAL_SYMBOL void array_insert_many(array* a, int i, voidptr val, int size);
 void array_prepend(array* a, voidptr val);
-void array_prepend_many(array* a, voidptr val, int size);
+VV_LOCAL_SYMBOL void array_prepend_many(array* a, voidptr val, int size);
 void array_delete(array* a, int i);
 void array_delete_many(array* a, int i, int size);
 void array_clear(array* a);
@@ -15638,7 +15638,7 @@ void array_insert(array* a, int i, voidptr val) {
 }
 
 // Attr: [unsafe]
-void array_insert_many(array* a, int i, voidptr val, int size) {
+VV_LOCAL_SYMBOL void array_insert_many(array* a, int i, voidptr val, int size) {
 	#if !defined(CUSTOM_DEFINE_no_bounds_checking)
 	{
 		if (i < 0 || i > a->len) {
@@ -15662,7 +15662,7 @@ void array_prepend(array* a, voidptr val) {
 }
 
 // Attr: [unsafe]
-void array_prepend_many(array* a, voidptr val, int size) {
+VV_LOCAL_SYMBOL void array_prepend_many(array* a, voidptr val, int size) {
 	array_insert_many(a, 0, val, size);
 }
 
@@ -31191,7 +31191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("104e0c5");
+	string vhash = _SLIT("879d1d2");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
