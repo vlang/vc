@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "104e0c5"
+#define V_COMMIT_HASH "879d1d2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9329b6c"
+	#define V_COMMIT_HASH "104e0c5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "104e0c5"
+	#define V_CURRENT_COMMIT_HASH "879d1d2"
 #endif
 
 // V comptime_definitions:
@@ -31191,7 +31191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("9329b6c");
+	string vhash = _SLIT("104e0c5");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -69704,6 +69704,52 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_call_args(v__gen__c__Gen* g, v__ast__CallExp
 	}
 	Array_v__ast__CallArg args =  _t1;
 	Array_v__ast__Type expected_types = node.expected_arg_types;
+	bool _t2 = (node.concrete_types.len > 0);
+	bool _t3 = true;
+	if (_t2) {
+		Array_v__ast__Type _t3_orig = node.concrete_types;
+		int _t3_len = _t3_orig.len;
+		for (int _t4 = 0; _t4 < _t3_len; ++_t4) {
+			v__ast__Type it = ((v__ast__Type*) _t3_orig.data)[_t4];
+			if (!(!v__ast__Type_has_flag(it, v__ast__TypeFlag__generic))) {
+				_t3 = false;
+				break;
+			}
+		}
+	}
+	if ( _t2 &&_t3) {
+		if (node.is_method) {
+			Option_v__ast__Fn _t5;
+			if (_t5 = v__ast__Table_find_method(g->table, v__ast__Table_sym(g->table, node.left_type), node.name), _t5.state == 0) {
+				v__ast__Fn func = *(v__ast__Fn*)_t5.data;
+				if (func.generic_names.len > 0) {
+					for (int i = 0; i < expected_types.len; ++i) {
+						v__ast__Table* muttable = ((v__ast__Table*)(g->table));
+						Option_v__ast__Type _t6;
+						if (_t6 = v__ast__Table_resolve_generic_to_concrete(muttable, (*(v__ast__Type*)/*ee elem_typ */array_get(node.expected_arg_types, i)), func.generic_names, node.concrete_types), _t6.state == 0) {
+							v__ast__Type utyp = *(v__ast__Type*)_t6.data;
+							array_set(&expected_types, i, &(v__ast__Type[]) { utyp });
+						}
+					}
+				}
+			}
+		} else {
+			Option_v__ast__Fn _t7;
+			if (_t7 = v__ast__Table_find_fn(g->table, node.name), _t7.state == 0) {
+				v__ast__Fn func = *(v__ast__Fn*)_t7.data;
+				if (func.generic_names.len > 0) {
+					for (int i = 0; i < expected_types.len; ++i) {
+						v__ast__Table* muttable = ((v__ast__Table*)(g->table));
+						Option_v__ast__Type _t8;
+						if (_t8 = v__ast__Table_resolve_generic_to_concrete(muttable, (*(v__ast__Type*)/*ee elem_typ */array_get(node.expected_arg_types, i)), func.generic_names, node.concrete_types), _t8.state == 0) {
+							v__ast__Type utyp = *(v__ast__Type*)_t8.data;
+							array_set(&expected_types, i, &(v__ast__Type[]) { utyp });
+						}
+					}
+				}
+			}
+		}
+	}
 	bool is_variadic = expected_types.len > 0 && v__ast__Type_has_flag((*(v__ast__Type*)array_last(expected_types)), v__ast__TypeFlag__variadic) && node.language == v__ast__Language__v;
 	for (int i = 0; i < args.len; ++i) {
 		v__ast__CallArg arg = ((v__ast__CallArg*)args.data)[i];
@@ -69741,17 +69787,17 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_call_args(v__gen__c__Gen* g, v__ast__CallExp
 		v__ast__TypeSymbol* arr_sym = v__ast__Table_sym(g->table, varg_type);
 		v__ast__Array arr_info = /* as */ *(v__ast__Array*)__as_cast((arr_sym->info)._v__ast__Array,(arr_sym->info)._typ, 440) /*expected idx: 440, name: v.ast.Array */ ;
 		if (v__ast__Type_has_flag(varg_type, v__ast__TypeFlag__generic)) {
-			Option_v__ast__Fn _t2;
-			if (_t2 = v__ast__Table_find_fn(g->table, node.name), _t2.state == 0) {
-				v__ast__Fn fn_def = *(v__ast__Fn*)_t2.data;
+			Option_v__ast__Fn _t9;
+			if (_t9 = v__ast__Table_find_fn(g->table, node.name), _t9.state == 0) {
+				v__ast__Fn fn_def = *(v__ast__Fn*)_t9.data;
 				v__ast__Table* muttable = ((v__ast__Table*)(g->table));
-				Option_v__ast__Type _t3;
-				if (_t3 = v__ast__Table_resolve_generic_to_concrete(muttable, arr_info.elem_type, fn_def.generic_names, node.concrete_types), _t3.state == 0) {
-					v__ast__Type utyp = *(v__ast__Type*)_t3.data;
+				Option_v__ast__Type _t10;
+				if (_t10 = v__ast__Table_resolve_generic_to_concrete(muttable, arr_info.elem_type, fn_def.generic_names, node.concrete_types), _t10.state == 0) {
+					v__ast__Type utyp = *(v__ast__Type*)_t10.data;
 					arr_info.elem_type = utyp;
 				}
 			} else {
-				IError err = _t2.err;
+				IError err = _t9.err;
 				v__gen__c__Gen_error(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unable to find function "), 0xfe10, {.d_s = node.name}}, {_SLIT0, 0, { .d_c = 0 }}})), node.pos);
 				VUNREACHABLE();
 			}
