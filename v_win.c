@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7fe62a8"
+#define V_COMMIT_HASH "dfc23d9"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9fd65b5"
+	#define V_COMMIT_HASH "7fe62a8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7fe62a8"
+	#define V_CURRENT_COMMIT_HASH "dfc23d9"
 #endif
 
 // V comptime_definitions:
@@ -4094,6 +4094,7 @@ struct v__ast__ArrayInit {
 	bool has_it;
 	Array_v__ast__Type expr_types;
 	v__ast__Type elem_type;
+	v__ast__Type default_type;
 	v__ast__Type typ;
 };
 
@@ -31191,7 +31192,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("9fd65b5");
+	string vhash = _SLIT("7fe62a8");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -37041,6 +37042,7 @@ v__ast__Expr v__ast__resolve_init(v__ast__StructInit node, v__ast__Type typ, v__
 			.has_it = 0,
 			.expr_types = __new_array(0, 0, sizeof(v__ast__Type)),
 			.elem_type = array_info.elem_type,
+			.default_type = 0,
 			.typ = typ,
 		})));
 		return _t3;
@@ -49673,6 +49675,7 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 		if (node->has_default) {
 			v__ast__Expr default_expr = node->default_expr;
 			v__ast__Type default_typ = v__checker__Checker_check_expr_opt_call(c, default_expr, v__checker__Checker_expr(c, default_expr));
+			node->default_type = default_typ;
 			Option_void _t1 = v__checker__Checker_check_expected(c, default_typ, node->elem_type);
 			if (_t1.state != 0 && _t1.err._typ != _IError_None___index) {
 				IError err = _t1.err;
@@ -56095,7 +56098,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_array_init(v__gen__c__Gen* g, v__ast__ArrayI
 			v__gen__c__Gen_write(g, _SLIT("}[0])"));
 		} else if (node.has_default) {
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("&("), 0xfe10, {.d_s = elem_styp}}, {_SLIT("[]){"), 0, { .d_c = 0 }}})));
-			v__gen__c__Gen_expr(g, node.default_expr);
+			v__gen__c__Gen_expr_with_cast(g, node.default_expr, node.default_type, node.elem_type);
 			v__gen__c__Gen_write(g, _SLIT("})"));
 		} else if (node.has_len && v__ast__Type_alias_eq(node.elem_type, _const_v__ast__string_type)) {
 			v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("&("), 0xfe10, {.d_s = elem_styp}}, {_SLIT("[]){"), 0, { .d_c = 0 }}})));
@@ -75675,7 +75678,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 					string n = v__parser__Parser_check_name(p);
 					if (!string__eq(n, _SLIT("init"))) {
 						v__parser__Parser_error_with_pos(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expected `init:`, not `"), 0xfe10, {.d_s = n}}, {_SLIT("`"), 0, { .d_c = 0 }}})), pos);
-						v__ast__ArrayInit _t4 = (v__ast__ArrayInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.elem_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 0, sizeof(Array_v__ast__Comment)),.pre_cmnts = __new_array(0, 0, sizeof(v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.has_it = 0,.expr_types = __new_array(0, 0, sizeof(v__ast__Type)),.elem_type = 0,.typ = 0,};
+						v__ast__ArrayInit _t4 = (v__ast__ArrayInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.elem_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 0, sizeof(Array_v__ast__Comment)),.pre_cmnts = __new_array(0, 0, sizeof(v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.has_it = 0,.expr_types = __new_array(0, 0, sizeof(v__ast__Type)),.elem_type = 0,.default_type = 0,.typ = 0,};
 						return _t4;
 					}
 					v__parser__Parser_check(p, v__token__Kind__colon);
@@ -75763,7 +75766,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 			}
 			else {
 				v__parser__Parser_error(p,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("wrong field `"), 0xfe10, {.d_s = key}}, {_SLIT("`, expecting `len`, `cap`, or `init`"), 0, { .d_c = 0 }}})));
-				v__ast__ArrayInit _t9 = (v__ast__ArrayInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.elem_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 0, sizeof(Array_v__ast__Comment)),.pre_cmnts = __new_array(0, 0, sizeof(v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.has_it = 0,.expr_types = __new_array(0, 0, sizeof(v__ast__Type)),.elem_type = 0,.typ = 0,};
+				v__ast__ArrayInit _t9 = (v__ast__ArrayInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.elem_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.exprs = __new_array(0, 0, sizeof(v__ast__Expr)),.ecmnts = __new_array(0, 0, sizeof(Array_v__ast__Comment)),.pre_cmnts = __new_array(0, 0, sizeof(v__ast__Comment)),.is_fixed = 0,.has_val = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.len_expr = {0},.cap_expr = {0},.default_expr = {0},.has_len = 0,.has_cap = 0,.has_default = 0,.has_it = 0,.expr_types = __new_array(0, 0, sizeof(v__ast__Type)),.elem_type = 0,.default_type = 0,.typ = 0,};
 				return _t9;
 			};
 			if (p->tok.kind != v__token__Kind__rcbr) {
@@ -75791,6 +75794,7 @@ VV_LOCAL_SYMBOL v__ast__ArrayInit v__parser__Parser_array_init(v__parser__Parser
 		.has_it = has_it,
 		.expr_types = __new_array(0, 0, sizeof(v__ast__Type)),
 		.elem_type = elem_type,
+		.default_type = 0,
 		.typ = array_type,
 	};
 	return _t10;
