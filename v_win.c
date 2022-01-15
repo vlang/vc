@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f19197f"
+#define V_COMMIT_HASH "9fd65b5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "879d1d2"
+	#define V_COMMIT_HASH "f19197f"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f19197f"
+	#define V_CURRENT_COMMIT_HASH "9fd65b5"
 #endif
 
 // V comptime_definitions:
@@ -31191,7 +31191,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("879d1d2");
+	string vhash = _SLIT("f19197f");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -50295,19 +50295,25 @@ bool keep_inside_anon;
 	keep_fn = c->table->cur_fn;
 	keep_inside_anon = c->inside_anon_fn;
 	v__checker__Checker_anon_fn_defer_0 = true;
+	for (int _t1 = 0; _t1 < node->decl.params.len; ++_t1) {
+		v__ast__Param param = ((v__ast__Param*)node->decl.params.data)[_t1];
+		if (param.name.len == 0) {
+			v__checker__Checker_error(c, _SLIT("use `_` to name an unused parameter"), param.pos);
+		}
+	}
 	c->table->cur_fn = &node->decl;
 	c->inside_anon_fn = true;
-	for (int _t1 = 0; _t1 < node->inherited_vars.len; ++_t1) {
-		v__ast__Param* var = ((v__ast__Param*)node->inherited_vars.data) + _t1;
-		Option_v__ast__Var_ptr _t2 = v__ast__Scope_find_var(node->decl.scope->parent, var->name);
-		if (_t2.state != 0) { /*or block*/ 
-			IError err = _t2.err;
+	for (int _t2 = 0; _t2 < node->inherited_vars.len; ++_t2) {
+		v__ast__Param* var = ((v__ast__Param*)node->inherited_vars.data) + _t2;
+		Option_v__ast__Var_ptr _t3 = v__ast__Scope_find_var(node->decl.scope->parent, var->name);
+		if (_t3.state != 0) { /*or block*/ 
+			IError err = _t3.err;
 			_v_panic( str_intp(2, _MOV((StrIntpData[]){{_SLIT("unexpected checker error: cannot find parent of inherited variable `"), 0xfe10, {.d_s = var->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})));
 			VUNREACHABLE();
 		;
 		}
 		
- 		v__ast__Var* parent_var =  (*(v__ast__Var**)_t2.data);
+ 		v__ast__Var* parent_var =  (*(v__ast__Var**)_t3.data);
 		if (var->is_mut && !parent_var->is_mut) {
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("original `"), 0xfe10, {.d_s = parent_var->name}}, {_SLIT("` is immutable, declare it with `mut` to make it mutable"), 0, { .d_c = 0 }}})), var->pos);
 		}
@@ -50315,14 +50321,14 @@ bool keep_inside_anon;
 	}
 	v__checker__Checker_stmts(c, node->decl.stmts);
 	v__checker__Checker_fn_decl(c, (voidptr)&/*qq*/node->decl);
-	v__ast__Type _t3 = node->typ;
+	v__ast__Type _t4 = node->typ;
 	// Defer begin
 	if (v__checker__Checker_anon_fn_defer_0) {
 		c->table->cur_fn = keep_fn;
 		c->inside_anon_fn = keep_inside_anon;
 	}
 	// Defer end
-	return _t3;
+	return _t4;
 }
 
 v__ast__Type v__checker__Checker_call_expr(v__checker__Checker* c, v__ast__CallExpr* node) {
@@ -50725,9 +50731,9 @@ v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__CallExp
 			v__checker__Checker_error(c, _SLIT("function with `shared` arguments cannot be called inside `lock`/`rlock` block"), call_arg->pos);
 		}
 		if (call_arg->is_mut) {
-			multi_return_string_v__token__Position mr_26725 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
-			string to_lock = mr_26725.arg0;
-			v__token__Position pos = mr_26725.arg1;
+			multi_return_string_v__token__Position mr_26853 = v__checker__Checker_fail_if_immutable(c, call_arg->expr);
+			string to_lock = mr_26853.arg0;
+			v__token__Position pos = mr_26853.arg1;
 			if (!v__ast__Expr_is_lvalue(call_arg->expr)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(call_arg->expr));
 			}
@@ -51060,9 +51066,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t22.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=(v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 			}
 			
- 			Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_39643 =  _t22 /*U*/;
-			method = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_39643.data).arg0;
-			embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_39643.data).arg1;
+ 			Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_39771 =  _t22 /*U*/;
+			method = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_39771.data).arg0;
+			embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_39771.data).arg1;
 			if (embed_types.len != 0) {
 				is_method_from_embed = true;
 				node->from_embed_types = embed_types;
@@ -51083,9 +51089,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 			v__checker__Checker_error(c, _SLIT("method with `shared` receiver cannot be called inside `lock`/`rlock` block"), node->pos);
 		}
 		if ((*(v__ast__Param*)/*ee elem_typ */array_get(method.params, 0)).is_mut) {
-			multi_return_string_v__token__Position mr_40768 = v__checker__Checker_fail_if_immutable(c, node->left);
-			string to_lock = mr_40768.arg0;
-			v__token__Position pos = mr_40768.arg1;
+			multi_return_string_v__token__Position mr_40896 = v__checker__Checker_fail_if_immutable(c, node->left);
+			string to_lock = mr_40896.arg0;
+			v__token__Position pos = mr_40896.arg1;
 			if (!v__ast__Expr_is_lvalue(node->left)) {
 				v__checker__Checker_error(c, _SLIT("cannot pass expression as `mut`"), v__ast__Expr_position(node->left));
 			}
@@ -51178,9 +51184,9 @@ v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__Cal
 				v__checker__Checker_error(c, _SLIT("method with `shared` arguments cannot be called inside `lock`/`rlock` block"), arg->pos);
 			}
 			if (arg->is_mut) {
-				multi_return_string_v__token__Position mr_44828 = v__checker__Checker_fail_if_immutable(c, arg->expr);
-				string to_lock = mr_44828.arg0;
-				v__token__Position pos = mr_44828.arg1;
+				multi_return_string_v__token__Position mr_44956 = v__checker__Checker_fail_if_immutable(c, arg->expr);
+				string to_lock = mr_44956.arg0;
+				v__token__Position pos = mr_44956.arg1;
 				if (!param_is_mut) {
 					string tok = v__ast__ShareType_str(arg->share);
 					v__checker__Checker_error(c,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = node->name}}, {_SLIT("` parameter `"), 0xfe10, {.d_s = param.name}}, {_SLIT("` is not `"), 0xfe10, {.d_s = tok}}, {_SLIT("`, `"), 0xfe10, {.d_s = tok}}, {_SLIT("` is not needed`"), 0, { .d_c = 0 }}})), v__ast__Expr_position(arg->expr));
