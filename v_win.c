@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "315b2de"
+#define V_COMMIT_HASH "2a3a4cf"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ab7cc58"
+	#define V_COMMIT_HASH "315b2de"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "315b2de"
+	#define V_CURRENT_COMMIT_HASH "2a3a4cf"
 #endif
 
 // V comptime_definitions:
@@ -12617,32 +12617,40 @@ multi_return_u64_u64 math__bits__div_64(u64 hi, u64 lo, u64 y1) {
 	y <<= s;
 	u64 yn1 = y >> 32U;
 	u64 yn0 = (y & _const_math__bits__mask32);
-	u64 un32 = ((hi << s) | (lo >> (64 - s)));
+	u64 ss1 = (hi << s);
+	u32 xxx = 64 - s;
+	u64 ss2 = lo >> xxx;
+	if (xxx == 64U) {
+		ss2 = 0U;
+	}
+	u64 un32 = (ss1 | ss2);
 	u64 un10 = lo << s;
 	u64 un1 = un10 >> 32U;
 	u64 un0 = (un10 & _const_math__bits__mask32);
 	u64 q1 = un32 / yn1;
-	u64 rhat = un32 - q1 * yn1;
+	u64 rhat = un32 - (q1 * yn1);
 	for (;;) {
-		if (!(q1 >= _const_math__bits__two32 || q1 * yn0 > _const_math__bits__two32 * rhat + un1)) break;
+		if (!((q1 >= _const_math__bits__two32) || (q1 * yn0) > ((_const_math__bits__two32 * rhat) + un1))) break;
 		q1--;
 		rhat += yn1;
 		if (rhat >= _const_math__bits__two32) {
 			break;
 		}
 	}
-	u64 un21 = un32 * _const_math__bits__two32 + un1 - q1 * y;
+	u64 un21 = (un32 * _const_math__bits__two32) + (un1 - (q1 * y));
 	u64 q0 = un21 / yn1;
 	rhat = un21 - q0 * yn1;
 	for (;;) {
-		if (!(q0 >= _const_math__bits__two32 || q0 * yn0 > _const_math__bits__two32 * rhat + un0)) break;
+		if (!((q0 >= _const_math__bits__two32) || (q0 * yn0) > ((_const_math__bits__two32 * rhat) + un0))) break;
 		q0--;
 		rhat += yn1;
 		if (rhat >= _const_math__bits__two32) {
 			break;
 		}
 	}
-	return (multi_return_u64_u64){.arg0=q1 * _const_math__bits__two32 + q0, .arg1=(un21 * _const_math__bits__two32 + un0 - q0 * y) >> s};
+	u64 qq = ((q1 * _const_math__bits__two32) + q0);
+	u64 rr = ((un21 * _const_math__bits__two32) + un0 - (q0 * y)) >> s;
+	return (multi_return_u64_u64){.arg0=qq, .arg1=rr};
 }
 
 u32 math__bits__rem_32(u32 hi, u32 lo, u32 y) {
@@ -12651,8 +12659,8 @@ u32 math__bits__rem_32(u32 hi, u32 lo, u32 y) {
 }
 
 u64 math__bits__rem_64(u64 hi, u64 lo, u64 y) {
-	multi_return_u64_u64 mr_15611 = math__bits__div_64(hi % y, lo, y);
-	u64 rem = mr_15611.arg1;
+	multi_return_u64_u64 mr_16617 = math__bits__div_64(hi % y, lo, y);
+	u64 rem = mr_16617.arg1;
 	u64 _t1 = rem;
 	return _t1;
 }
@@ -31192,7 +31200,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("ab7cc58");
+	string vhash = _SLIT("315b2de");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
