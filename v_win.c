@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "727c9fb"
+#define V_COMMIT_HASH "4597c74"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d1ac22e"
+	#define V_COMMIT_HASH "727c9fb"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "727c9fb"
+	#define V_CURRENT_COMMIT_HASH "4597c74"
 #endif
 
 // V comptime_definitions:
@@ -31226,7 +31226,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("d1ac22e");
+	string vhash = _SLIT("727c9fb");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -54971,24 +54971,23 @@ bool v__markused__mark_used_defer_0 = false;
 	if (pref->is_bare) {
 		_PUSH_MANY(&all_fn_root_names, (new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("strlen"), _SLIT("memcmp"), _SLIT("memcpy"), _SLIT("realloc"), _SLIT("vsnprintf"), _SLIT("vsprintf")}))), _t1, Array_string);
 	}
-	if (pref->gc_mode == v__pref__GarbageCollectionMode__boehm_full_opt || pref->gc_mode == v__pref__GarbageCollectionMode__boehm_incr_opt) {
-		_PUSH_MANY(&all_fn_root_names, (new_array_from_c_array(19, 19, sizeof(string), _MOV((string[19]){
-				_SLIT("memdup_noscan"), _SLIT("__new_array_noscan"), _SLIT("__new_array_with_default_noscan"), _SLIT("__new_array_with_array_default_noscan"), _SLIT("new_array_from_c_array_noscan"), _SLIT("22.clone_static_to_depth_noscan"), _SLIT("22.clone_to_depth_noscan"), _SLIT("22.reverse_noscan"), _SLIT("22.repeat_to_depth_noscan"),
-				_SLIT("65558.pop_noscan"), _SLIT("65558.push_noscan"), _SLIT("65558.push_many_noscan"), _SLIT("65558.insert_noscan"), _SLIT("65558.insert_many_noscan"), _SLIT("65558.prepend_noscan"), _SLIT("65558.prepend_many_noscan"), _SLIT("65558.reverse_noscan"),
-				_SLIT("65558.grow_cap_noscan"), _SLIT("65558.grow_len_noscan")}))), _t2, Array_string);
-	}
-	int _t4 = all_fns.key_values.len;
-	for (int _t3 = 0; _t3 < _t4; ++_t3 ) {
-		int _t5 = all_fns.key_values.len - _t4;
-		_t4 = all_fns.key_values.len;
-		if (_t5 < 0) {
-			_t3 = -1;
+	bool is_noscan_whitelisted = (pref->gc_mode == v__pref__GarbageCollectionMode__boehm_full_opt || pref->gc_mode == v__pref__GarbageCollectionMode__boehm_incr_opt);
+	int _t3 = all_fns.key_values.len;
+	for (int _t2 = 0; _t2 < _t3; ++_t2 ) {
+		int _t4 = all_fns.key_values.len - _t3;
+		_t3 = all_fns.key_values.len;
+		if (_t4 < 0) {
+			_t2 = -1;
 			continue;
 		}
-		if (!DenseArray_has_index(&all_fns.key_values, _t3)) {continue;}
-		string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t3);
+		if (!DenseArray_has_index(&all_fns.key_values, _t2)) {continue;}
+		string k = /*key*/ *(string*)DenseArray_key(&all_fns.key_values, _t2);
 		k = string_clone(k);
-		v__ast__FnDecl* mfn = &(*(v__ast__FnDecl*)DenseArray_value(&all_fns.key_values, _t3));
+		v__ast__FnDecl* mfn = &(*(v__ast__FnDecl*)DenseArray_value(&all_fns.key_values, _t2));
+		if (is_noscan_whitelisted && string_ends_with(mfn->name, _SLIT("_noscan"))) {
+			array_push((array*)&all_fn_root_names, _MOV((string[]){ string_clone(k) }));
+			continue;
+		}
 		string method_receiver_typename = _SLIT("");
 		if (mfn->is_method) {
 			method_receiver_typename = v__ast__Table_type_to_str(table, mfn->receiver.typ);
