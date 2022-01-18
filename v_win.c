@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "95b0c37"
+#define V_COMMIT_HASH "bb6c46e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1c5eb7c"
+	#define V_COMMIT_HASH "95b0c37"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "95b0c37"
+	#define V_CURRENT_COMMIT_HASH "bb6c46e"
 #endif
 
 // V comptime_definitions:
@@ -31228,7 +31228,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("1c5eb7c");
+	string vhash = _SLIT("95b0c37");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -69950,8 +69950,8 @@ inline VV_LOCAL_SYMBOL void v__gen__c__Gen_ref_or_deref_arg(v__gen__c__Gen* g, v
 					v__gen__c__Gen_write(g, _SLIT("}[0]"));
 				}
 				return;
-			} else if (arg_sym->kind == v__ast__Kind__sum_type && exp_sym->kind == v__ast__Kind__sum_type && (arg.expr)._typ == 298 /* v.ast.Ident */) {
-				v__gen__c__Gen_write(g, _SLIT("&"));
+			} else if (arg_sym->kind == v__ast__Kind__sum_type && exp_sym->kind == v__ast__Kind__sum_type && ((arg.expr)._typ == 298 /* v.ast.Ident */ || (arg.expr)._typ == 318 /* v.ast.SelectorExpr */)) {
+				v__gen__c__Gen_write(g, _SLIT("&/*sum*/"));
 				v__gen__c__Gen_expr(g, arg.expr);
 				return;
 			}
