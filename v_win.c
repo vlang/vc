@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f0b7e50"
+#define V_COMMIT_HASH "91bfab7"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "d826317"
+	#define V_COMMIT_HASH "f0b7e50"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f0b7e50"
+	#define V_CURRENT_COMMIT_HASH "91bfab7"
 #endif
 
 // V comptime_definitions:
@@ -1830,9 +1830,10 @@ typedef enum {
 } v__scanner__CommentsMode;
 
 typedef enum {
-	v__parser__State__html, // 
-	v__parser__State__css, // +1
-	v__parser__State__js, // +2
+	v__parser__State__simple, // 
+	v__parser__State__html, // +1
+	v__parser__State__css, // +2
+	v__parser__State__js, // +3
 } v__parser__State;
 
 
@@ -9210,6 +9211,7 @@ VV_LOCAL_SYMBOL Option_bool v__parser__Parser_check_sql_keyword(v__parser__Parse
 VV_LOCAL_SYMBOL v__ast__StructDecl v__parser__Parser_struct_decl(v__parser__Parser* p);
 VV_LOCAL_SYMBOL v__ast__StructInit v__parser__Parser_struct_init(v__parser__Parser* p, string typ_str, bool short_syntax);
 VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser__Parser* p);
+VV_LOCAL_SYMBOL void v__parser__State_update(v__parser__State* state, string line);
 string _const_v__parser__tmpl_str_end; // a string literal, inited later
 VV_LOCAL_SYMBOL bool v__parser__is_html_open_tag(string name, string s);
 VV_LOCAL_SYMBOL string v__parser__insert_template_code(string fn_name, string tmpl_str_start, string line);
@@ -31226,7 +31228,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("d826317");
+	string vhash = _SLIT("f0b7e50");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -83792,6 +83794,19 @@ VV_LOCAL_SYMBOL v__ast__InterfaceDecl v__parser__Parser_interface_decl(v__parser
 	return _t16;
 }
 
+VV_LOCAL_SYMBOL void v__parser__State_update(v__parser__State* state, string line) {
+	string trimmed_line = string_trim_space(line);
+	if (v__parser__is_html_open_tag(_SLIT("style"), line)) {
+		*state = v__parser__State__css;
+	} else if (string__eq(trimmed_line, _SLIT("</style>"))) {
+		*state = v__parser__State__html;
+	} else if (v__parser__is_html_open_tag(_SLIT("script"), line)) {
+		*state = v__parser__State__js;
+	} else if (string__eq(trimmed_line, _SLIT("</script>"))) {
+		*state = v__parser__State__html;
+	}
+}
+
 VV_LOCAL_SYMBOL bool v__parser__is_html_open_tag(string name, string s) {
 	string trimmed_line = string_trim_space(s);
 	int len = trimmed_line.len;
@@ -83862,29 +83877,26 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
  	Array_string lines =  (*(Array_string*)_t1.data);
 	string basepath = os__dir(template_file);
 	int lstartlength = lines.len * 30;
-	string tmpl_str_start =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_string('"), 0, { .d_c = 0 }}}));
+	string tmpl_str_start =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tsb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_string('"), 0, { .d_c = 0 }}}));
 	strings__Builder source = strings__new_builder(1000);
 	strings__Builder_writeln(&source,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("\nimport strings\n// === vweb html template ===\nfn vweb_tmpl_"), 0xfe10, {.d_s = fn_name}}, {_SLIT("() string {\n	mut sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(" := strings.new_builder("), 0xfe07, {.d_i32 = lstartlength}}, {_SLIT(")\n\n\n"), 0, { .d_c = 0 }}})));
 	strings__Builder_write_string(&source, tmpl_str_start);
-	v__parser__State state = v__parser__State__html;
+	v__parser__State state = v__parser__State__simple;
+	string template_ext = os__file_ext(template_file);
+	if (string__eq(string_to_lower(template_ext), _SLIT(".html"))) {
+		state = v__parser__State__html;
+	}
 	bool in_span = false;
 	int end_of_line_pos = 0;
 	int start_of_line_pos = 0;
 	int tline_number = -1;
 	for (int i = 0; i < lines.len; i++) {
 		string line = (*(string*)/*ee elem_typ */array_get(lines, i));
-		string trimmed_line = string_trim_space(line);
 		tline_number++;
 		start_of_line_pos = end_of_line_pos;
 		end_of_line_pos += line.len + 1;
-		if (v__parser__is_html_open_tag(_SLIT("style"), line)) {
-			state = v__parser__State__css;
-		} else if (string__eq(trimmed_line, _SLIT("</style>"))) {
-			state = v__parser__State__html;
-		} else if (v__parser__is_html_open_tag(_SLIT("script"), line)) {
-			state = v__parser__State__js;
-		} else if (string__eq(trimmed_line, _SLIT("</script>"))) {
-			state = v__parser__State__html;
+		if (state != v__parser__State__simple) {
+			v__parser__State_update(&state, line);
 		}
 		if (string_contains(line, _SLIT("@header"))) {
 			Option_int _t3 = string_index(line, _SLIT("@header"));
@@ -83895,7 +83907,9 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 			
  			int position =  (*(int*)_t3.data);
 			v__parser__Parser_error_with_error(p, (v__errors__Error){.message = _SLIT("Please use @include 'header' instead of @header (deprecated)"),.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = template_file,.pos = (v__token__Position){.len = _SLIT("@header").len,.line_nr = tline_number,.pos = start_of_line_pos + position,.col = 0,.last_line = lines.len,},.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__parser,});
-		} else if (string_contains(line, _SLIT("@footer"))) {
+			continue;
+		}
+		if (string_contains(line, _SLIT("@footer"))) {
 			Option_int _t4 = string_index(line, _SLIT("@footer"));
 			if (_t4.state != 0) { /*or block*/ 
 				IError err = _t4.err;
@@ -83904,6 +83918,7 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 			
  			int position =  (*(int*)_t4.data);
 			v__parser__Parser_error_with_error(p, (v__errors__Error){.message = _SLIT("Please use @include 'footer' instead of @footer (deprecated)"),.details = (string){.str=(byteptr)"", .is_lit=1},.file_path = template_file,.pos = (v__token__Position){.len = _SLIT("@footer").len,.line_nr = tline_number,.pos = start_of_line_pos + position,.col = 0,.last_line = lines.len,},.backtrace = (string){.str=(byteptr)"", .is_lit=1},.reporter = v__errors__Reporter__parser,});
+			continue;
 		}
 		if (string_contains(line, _SLIT("@include "))) {
 			array_delete(&lines, i);
@@ -83940,98 +83955,133 @@ string v__parser__Parser_compile_template_file(v__parser__Parser* p, string temp
 				array_insert(&lines, i, &(string[]){string_clone(f)});
 			}
 			i--;
-		} else if (string_contains(line, _SLIT("@js "))) {
-			Option_int _t8 = string_index(line, _SLIT("@js"));
+			continue;
+		}
+		if (string_contains(line, _SLIT("@if "))) {
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
+			Option_int _t8 = string_index(line, _SLIT("@if"));
 			if (_t8.state != 0) { /*or block*/ 
 				IError err = _t8.err;
 				continue;
 			}
 			
  			int pos =  (*(int*)_t8.data);
-			strings__Builder_write_string(&source, _SLIT("<script src=\""));
-			strings__Builder_write_string(&source, string_substr(line, pos + 5, line.len - 1));
-			strings__Builder_writeln(&source, _SLIT("\"></script>"));
-		} else if (string_contains(line, _SLIT("@css "))) {
-			Option_int _t9 = string_index(line, _SLIT("@css"));
+			strings__Builder_writeln(&source, string__plus(string__plus(_SLIT("if "), string_substr(line, pos + 4, line.len)), _SLIT("{")));
+			strings__Builder_writeln(&source, tmpl_str_start);
+			continue;
+		}
+		if (string_contains(line, _SLIT("@end"))) {
+			strings__Builder_go_back(&source, 1);
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
+			strings__Builder_writeln(&source, _SLIT("}"));
+			strings__Builder_writeln(&source, tmpl_str_start);
+			continue;
+		}
+		if (string_contains(line, _SLIT("@else"))) {
+			strings__Builder_go_back(&source, 1);
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
+			strings__Builder_writeln(&source, _SLIT(" } else { "));
+			strings__Builder_writeln(&source, tmpl_str_start);
+			continue;
+		}
+		if (string_contains(line, _SLIT("@for"))) {
+			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
+			Option_int _t9 = string_index(line, _SLIT("@for"));
 			if (_t9.state != 0) { /*or block*/ 
 				IError err = _t9.err;
 				continue;
 			}
 			
  			int pos =  (*(int*)_t9.data);
-			strings__Builder_write_string(&source, _SLIT("<link href=\""));
-			strings__Builder_write_string(&source, string_substr(line, pos + 6, line.len - 1));
-			strings__Builder_writeln(&source, _SLIT("\" rel=\"stylesheet\" type=\"text/css\">"));
-		} else if (string_contains(line, _SLIT("@if "))) {
-			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
-			Option_int _t10 = string_index(line, _SLIT("@if"));
-			if (_t10.state != 0) { /*or block*/ 
-				IError err = _t10.err;
-				continue;
-			}
-			
- 			int pos =  (*(int*)_t10.data);
-			strings__Builder_writeln(&source, string__plus(string__plus(_SLIT("if "), string_substr(line, pos + 4, line.len)), _SLIT("{")));
-			strings__Builder_writeln(&source, tmpl_str_start);
-		} else if (string_contains(line, _SLIT("@end"))) {
-			strings__Builder_go_back(&source, 1);
-			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
-			strings__Builder_writeln(&source, _SLIT("}"));
-			strings__Builder_writeln(&source, tmpl_str_start);
-		} else if (string_contains(line, _SLIT("@else"))) {
-			strings__Builder_go_back(&source, 1);
-			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
-			strings__Builder_writeln(&source, _SLIT(" } else { "));
-			strings__Builder_writeln(&source, tmpl_str_start);
-		} else if (string_contains(line, _SLIT("@for"))) {
-			strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
-			Option_int _t11 = string_index(line, _SLIT("@for"));
-			if (_t11.state != 0) { /*or block*/ 
-				IError err = _t11.err;
-				continue;
-			}
-			
- 			int pos =  (*(int*)_t11.data);
 			strings__Builder_writeln(&source, string__plus(string__plus(_SLIT("for "), string_substr(line, pos + 4, line.len)), _SLIT("{")));
 			strings__Builder_writeln(&source, tmpl_str_start);
-		} else if (state == v__parser__State__html && string_starts_with(line, _SLIT("span.")) && string_ends_with(line, _SLIT("{"))) {
-			string _v_class = string_trim_space(string_find_between(line, _SLIT("span."), _SLIT("{")));
-			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<span class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
-			in_span = true;
-		} else if (state == v__parser__State__html && string_starts_with(string_trim_space(line), _SLIT(".")) && string_ends_with(line, _SLIT("{"))) {
-			string _v_class = string_trim_space(string_find_between(line, _SLIT("."), _SLIT("{")));
-			string trimmed = string_trim_space(line);
-			strings__Builder_write_string(&source, strings__repeat('\t', line.len - trimmed.len));
-			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
-		} else if (state == v__parser__State__html && string_starts_with(line, _SLIT("#")) && string_ends_with(line, _SLIT("{"))) {
-			string _v_class = string_trim_space(string_find_between(line, _SLIT("#"), _SLIT("{")));
-			strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div id=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
-		} else if (state == v__parser__State__html && string__eq(string_trim_space(line), _SLIT("}"))) {
-			string trimmed = string_trim_space(line);
-			strings__Builder_write_string(&source, strings__repeat('\t', line.len - trimmed.len));
-			if (in_span) {
-				strings__Builder_writeln(&source, _SLIT("</span>"));
-				in_span = false;
-			} else {
-				strings__Builder_writeln(&source, _SLIT("</div>"));
+			continue;
+		}
+		if (state == v__parser__State__simple) {
+			strings__Builder_writeln(&source, v__parser__insert_template_code(fn_name, tmpl_str_start, line));
+			continue;
+		}
+		if (state != v__parser__State__simple) {
+			if (string_contains(line, _SLIT("@js "))) {
+				Option_int _t10 = string_index(line, _SLIT("@js"));
+				if (_t10.state != 0) { /*or block*/ 
+					IError err = _t10.err;
+					continue;
+				}
+				
+ 				int pos =  (*(int*)_t10.data);
+				strings__Builder_write_string(&source, _SLIT("<script src=\""));
+				strings__Builder_write_string(&source, string_substr(line, pos + 5, line.len - 1));
+				strings__Builder_writeln(&source, _SLIT("\"></script>"));
+				continue;
 			}
-		} else if (state == v__parser__State__js) {
+			if (string_contains(line, _SLIT("@css "))) {
+				Option_int _t11 = string_index(line, _SLIT("@css"));
+				if (_t11.state != 0) { /*or block*/ 
+					IError err = _t11.err;
+					continue;
+				}
+				
+ 				int pos =  (*(int*)_t11.data);
+				strings__Builder_write_string(&source, _SLIT("<link href=\""));
+				strings__Builder_write_string(&source, string_substr(line, pos + 6, line.len - 1));
+				strings__Builder_writeln(&source, _SLIT("\" rel=\"stylesheet\" type=\"text/css\">"));
+				continue;
+			}
+		}
+
+		if (state == (v__parser__State__html)) {
+			if (string_starts_with(line, _SLIT("span.")) && string_ends_with(line, _SLIT("{"))) {
+				string _v_class = string_trim_space(string_find_between(line, _SLIT("span."), _SLIT("{")));
+				strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<span class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
+				in_span = true;
+				continue;
+			}
+			if (string_starts_with(string_trim_space(line), _SLIT(".")) && string_ends_with(line, _SLIT("{"))) {
+				string _v_class = string_trim_space(string_find_between(line, _SLIT("."), _SLIT("{")));
+				string trimmed = string_trim_space(line);
+				strings__Builder_write_string(&source, strings__repeat('\t', line.len - trimmed.len));
+				strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div class=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
+				continue;
+			}
+			if (string_starts_with(line, _SLIT("#")) && string_ends_with(line, _SLIT("{"))) {
+				string _v_class = string_trim_space(string_find_between(line, _SLIT("#"), _SLIT("{")));
+				strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("<div id=\""), 0xfe10, {.d_s = _v_class}}, {_SLIT("\">"), 0, { .d_c = 0 }}})));
+				continue;
+			}
+			if (string__eq(string_trim_space(line), _SLIT("}"))) {
+				string trimmed = string_trim_space(line);
+				strings__Builder_write_string(&source, strings__repeat('\t', line.len - trimmed.len));
+				if (in_span) {
+					strings__Builder_writeln(&source, _SLIT("</span>"));
+					in_span = false;
+				} else {
+					strings__Builder_writeln(&source, _SLIT("</div>"));
+				}
+				continue;
+			}
+		}
+		else if (state == (v__parser__State__js)) {
 			if (string_contains(line, _SLIT("//V_TEMPLATE"))) {
 				strings__Builder_writeln(&source, v__parser__insert_template_code(fn_name, tmpl_str_start, line));
 			} else {
 				strings__Builder_writeln(&source, string_replace(string_replace(string_replace(string_replace(line, _SLIT("$"), _SLIT("\\$")), _SLIT("$$"), _SLIT("@")), _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
 			}
-		} else if (state == v__parser__State__css) {
-			strings__Builder_writeln(&source, string_replace(string_replace(line, _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
-		} else {
-			strings__Builder_writeln(&source, v__parser__insert_template_code(fn_name, tmpl_str_start, line));
+			continue;
 		}
+		else if (state == (v__parser__State__css)) {
+			strings__Builder_writeln(&source, string_replace(string_replace(line, _SLIT(".$"), _SLIT(".@")), _SLIT("'"), _SLIT("\\'")));
+			continue;
+		}
+		else {
+		};
+		strings__Builder_writeln(&source, v__parser__insert_template_code(fn_name, tmpl_str_start, line));
 	}
 	strings__Builder_writeln(&source, _const_v__parser__tmpl_str_end);
-	strings__Builder_writeln(&source,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("_tmpl_res_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(" := sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".str() "), 0, { .d_c = 0 }}})));
-	strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("return _tmpl_res_"), 0xfe10, {.d_s = fn_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(&source,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\t_tmpl_res_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(" := sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".str() "), 0, { .d_c = 0 }}})));
+	strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\treturn _tmpl_res_"), 0xfe10, {.d_s = fn_name}}, {_SLIT0, 0, { .d_c = 0 }}})));
 	strings__Builder_writeln(&source, _SLIT("}"));
-	strings__Builder_writeln(&source, _SLIT("// === end of vweb html template ==="));
+	strings__Builder_writeln(&source,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("// === end of vweb html template_file: "), 0xfe10, {.d_s = template_file}}, {_SLIT(" ==="), 0, { .d_c = 0 }}})));
 	string result = strings__Builder_str(&source);
 	string _t12 = result;
 	return _t12;
