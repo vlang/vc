@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c48a9e7"
+#define V_COMMIT_HASH "38d3239"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7a2705d"
+	#define V_COMMIT_HASH "c48a9e7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c48a9e7"
+	#define V_CURRENT_COMMIT_HASH "38d3239"
 #endif
 
 // V comptime_definitions:
@@ -16790,6 +16790,7 @@ int proc_pidpath(int , voidptr , int );
 // Attr: [trusted]
 // Attr: [trusted]
 // Attr: [trusted]
+// Attr: [trusted]
 // Attr: [inline]
 // Attr: [unsafe]
 inline int vstrlen(byte* s) {
@@ -31249,7 +31250,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("7a2705d");
+	string vhash = _SLIT("c48a9e7");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -46717,7 +46718,7 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 				}
 			}
 		}
-	} else if (v__ast__Type_alias_eq(to_type, _const_v__ast__bool_type) && !v__ast__Type_alias_eq(from_type, _const_v__ast__bool_type) && !c->inside_unsafe) {
+	} else if (v__ast__Type_alias_eq(to_type, _const_v__ast__bool_type) && !v__ast__Type_alias_eq(from_type, _const_v__ast__bool_type) && !c->inside_unsafe && !c->pref->translated) {
 		v__checker__Checker_error(c, _SLIT("cannot cast to bool - use e.g. `some_int != 0` instead"), node->pos);
 	} else if (v__ast__Type_alias_eq(from_type, _const_v__ast__none_type) && !v__ast__Type_has_flag(to_type, v__ast__TypeFlag__optional)) {
 		string type_name = v__ast__Table_type_to_str(c->table, to_type);
@@ -47397,8 +47398,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Position mr_105730 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_105730.arg0;
+		multi_return_string_v__token__Position mr_105754 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_105754.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
@@ -51936,7 +51937,7 @@ v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__IfExpr*
 	bool is_comptime_type_is_expr = false;
 	for (int i = 0; i < node->branches.len; ++i) {
 		v__ast__IfBranch branch = (*(v__ast__IfBranch*)/*ee elem_typ */array_get(node->branches, i));
-		if ((branch.cond)._typ == 313 /* v.ast.ParExpr */) {
+		if ((branch.cond)._typ == 313 /* v.ast.ParExpr */ && !c->pref->translated) {
 			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("unnecessary `()` in `"), 0xfe10, {.d_s = if_kind}}, {_SLIT("` condition, use `"), 0xfe10, {.d_s = if_kind}}, {_SLIT(" expr {` instead of `"), 0xfe10, {.d_s = if_kind}}, {_SLIT(" (expr) {`."), 0, { .d_c = 0 }}})), branch.pos);
 		}
 		if (!node->has_else || i < node->branches.len - 1) {
@@ -52507,7 +52508,7 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_resolve_generic_interface(v__ch
 v__ast__Type v__checker__Checker_match_expr(v__checker__Checker* c, v__ast__MatchExpr* node) {
 	node->is_expr = !v__ast__Type_alias_eq(c->expected_type, _const_v__ast__void_type);
 	node->expected_type = c->expected_type;
-	if ((node->cond)._typ == 313 /* v.ast.ParExpr */) {
+	if ((node->cond)._typ == 313 /* v.ast.ParExpr */ && !c->pref->translated) {
 		v__checker__Checker_error(c, _SLIT("unnecessary `()` in `match` condition, use `match expr {` instead of `match (expr) {`."), (*node->cond._v__ast__ParExpr).pos);
 	}
 	v__ast__Type cond_type = v__checker__Checker_expr(c, node->cond);
