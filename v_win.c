@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "bb6c46e"
+#define V_COMMIT_HASH "7a2705d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "95b0c37"
+	#define V_COMMIT_HASH "bb6c46e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "bb6c46e"
+	#define V_CURRENT_COMMIT_HASH "7a2705d"
 #endif
 
 // V comptime_definitions:
@@ -9034,6 +9034,7 @@ VV_LOCAL_SYMBOL int v__scanner__Scanner_current_column(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL int v__scanner__Scanner_count_symbol_before(v__scanner__Scanner* s, int p, byte sym);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_string(v__scanner__Scanner* s);
 VV_LOCAL_SYMBOL string v__scanner__decode_h_escapes(string s, int start, Array_int escapes_pos);
+VV_LOCAL_SYMBOL string v__scanner__decode_o_escapes(string s, int start, Array_int escapes_pos);
 VV_LOCAL_SYMBOL string v__scanner__decode_u_escapes(string s, int start, Array_int escapes_pos);
 VV_LOCAL_SYMBOL string v__scanner__trim_slash_line_break(string s);
 VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s);
@@ -9319,6 +9320,8 @@ static string v__token__Position_str(v__token__Position it); // auto
 static string indent_v__token__Position_str(v__token__Position it, int indent_count); // auto
 static string v__pref__Arch_str(v__pref__Arch it); // auto
 static string v__gen__c__SqlType_str(v__gen__c__SqlType it); // auto
+static string Array_rune_str(Array_rune a); // auto
+static string indent_Array_rune_str(Array_rune a, int indent_count); // auto
 static string v__errors__Reporter_str(v__errors__Reporter it); // auto
 static string Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a); // auto
 static string indent_Array_v__cflag__CFlag_str(Array_v__cflag__CFlag a, int indent_count); // auto
@@ -9976,6 +9979,24 @@ static string v__gen__c__SqlType_str(v__gen__c__SqlType it) { /* gen_str_for_enu
 		case v__gen__c__SqlType__unknown: return _SLIT("unknown");
 		default: return _SLIT("unknown enum value");
 	}
+}
+static string Array_rune_str(Array_rune a) { return indent_Array_rune_str(a, 0);}
+static string indent_Array_rune_str(Array_rune a, int indent_count) {
+	strings__Builder sb = strings__new_builder(a.len * 10);
+	strings__Builder_write_string(&sb, _SLIT("["));
+	for (int i = 0; i < a.len; ++i) {
+		rune it = *(rune*)array_get(a, i);
+		string x = str_intp(2, _MOV((StrIntpData[]){{_SLIT("`"), 0xfe10, {.d_s = rune_str(it) }}, {_SLIT("`"), 0, {.d_c = 0 }}}));
+
+		strings__Builder_write_string(&sb, x);
+		if (i < a.len-1) {
+			strings__Builder_write_string(&sb, _SLIT(", "));
+		}
+	}
+	strings__Builder_write_string(&sb, _SLIT("]"));
+	string res = strings__Builder_str(&sb);
+	strings__Builder_free(&sb);
+	return res;
 }
 static string v__errors__Reporter_str(v__errors__Reporter it) { /* gen_str_for_enum */
 	switch(it) {
@@ -31228,7 +31249,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("95b0c37");
+	string vhash = _SLIT("bb6c46e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -74590,6 +74611,34 @@ VV_LOCAL_SYMBOL string v__scanner__decode_h_escapes(string s, int start, Array_i
 	return _t7;
 }
 
+VV_LOCAL_SYMBOL string v__scanner__decode_o_escapes(string s, int start, Array_int escapes_pos) {
+	if (escapes_pos.len == 0) {
+		string _t1 = s;
+		return _t1;
+	}
+	Array_string ss = __new_array_with_default(0, escapes_pos.len, sizeof(string), 0);
+	array_push((array*)&ss, _MOV((string[]){ string_clone(string_substr(s, 0, (*(int*)array_first(escapes_pos)) - start)) }));
+	for (int i = 0; i < escapes_pos.len; ++i) {
+		int pos = ((int*)escapes_pos.data)[i];
+		int idx = pos - start;
+		int end_idx = idx + 4;
+		Option_u64 _t4 = strconv__parse_uint(string_substr(s, idx + 1, end_idx), 8, 8);
+		if (_t4.state != 0) { /*or block*/ 
+			IError err = _t4.err;
+			*(u64*) _t4.data = 0U;
+		}
+		
+ 		array_push((array*)&ss, _MOV((string[]){ string_clone(Array_byte_bytestr(new_array_from_c_array(1, 1, sizeof(byte), _MOV((byte[1]){((byte)( (*(u64*)_t4.data)))})))) }));
+		if (i + 1 < escapes_pos.len) {
+			array_push((array*)&ss, _MOV((string[]){ string_clone(string_substr(s, end_idx, (*(int*)/*ee elem_typ */array_get(escapes_pos, i + 1)) - start)) }));
+		} else {
+			array_push((array*)&ss, _MOV((string[]){ string_clone(string_substr(s, end_idx, s.len)) }));
+		}
+	}
+	string _t7 = Array_string_join(ss, _SLIT(""));
+	return _t7;
+}
+
 VV_LOCAL_SYMBOL string v__scanner__decode_u_escapes(string s, int start, Array_int escapes_pos) {
 	if (escapes_pos.len == 0) {
 		string _t1 = s;
@@ -74641,6 +74690,7 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
 	int len = 0;
 	bool escaped_hex = v__scanner__Scanner_expect(s, _SLIT("\\x"), start + 1);
 	bool escaped_unicode = v__scanner__Scanner_expect(s, _SLIT("\\u"), start + 1);
+	bool escaped_octal = !escaped_hex && !escaped_unicode && v__scanner__Scanner_expect(s, _SLIT("\\"), start + 1);
 	for (;;) {
 		s->pos++;
 		if (s->pos >= s->text.len) {
@@ -74664,55 +74714,32 @@ VV_LOCAL_SYMBOL string v__scanner__Scanner_ident_char(v__scanner__Scanner* s) {
 		return _t1;
 	}
 	if (len != 1) {
-		if ((c.len % 2 == 0) && (escaped_hex || escaped_unicode)) {
+		string orig = c;
+		if ((c.len % 2 == 0) && (escaped_hex || escaped_unicode || escaped_octal)) {
 			if (escaped_unicode) {
 				c = v__scanner__decode_u_escapes(c, 0, new_array_from_c_array(1, 1, sizeof(int), _MOV((int[1]){0})));
 			} else {
-				byte ascii_0 = ((byte)(0x30));
-				byte ascii_a = ((byte)(0x61));
-				Array_byte accumulated = __new_array_with_default(0, 0, sizeof(byte), 0);
-				string val = string_to_lower(string_substr(c, 2, c.len));
-				int offset = 0;
-				for (;;) {
-					if (offset >= val.len - 1) {
-						break;
+				Array_int escapes_pos = __new_array_with_default(0, 0, sizeof(int), 0);
+				for (int i = 0; i < c.len; ++i) {
+					byte v = c.str[i];
+					if (v == '\\') {
+						array_push((array*)&escapes_pos, _MOV((int[]){ i }));
 					}
-					byte byteval = ((byte)(0));
-					byte big = string_at(val, offset);
-					byte little = string_at(val, offset + 1);
-					if (!byte_is_hex_digit(big)) {
-						array_clear(&accumulated);
-						break;
-					}
-					if (!byte_is_hex_digit(little)) {
-						array_clear(&accumulated);
-						break;
-					}
-					if (byte_is_digit(big)) {
-						byteval |= (big - ascii_0) << 4;
-					} else {
-						byteval |= (big - ascii_a + 10) << 4;
-					}
-					if (byte_is_digit(little)) {
-						byteval |= (little - ascii_0);
-					} else {
-						byteval |= (little - ascii_a + 10);
-					}
-					array_push((array*)&accumulated, _MOV((byte[]){ byteval }));
-					offset += 2;
 				}
-				if (accumulated.len > 0) {
-					c = Array_byte_bytestr(accumulated);
+				if (escaped_hex) {
+					c = v__scanner__decode_h_escapes(c, 0, escapes_pos);
+				} else {
+					c = v__scanner__decode_o_escapes(c, 0, escapes_pos);
 				}
 			}
 		}
 		Array_rune u = string_runes(c);
 		if (u.len != 1) {
 			if (escaped_hex || escaped_unicode) {
-				v__scanner__Scanner_error(s, _SLIT("invalid character literal (escape sequence did not refer to a singular rune)"));
+				v__scanner__Scanner_error(s,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("invalid character literal `"), 0xfe10, {.d_s = orig}}, {_SLIT("` => `"), 0xfe10, {.d_s = c}}, {_SLIT("` ("), 0xfe10, {.d_s = Array_rune_str(u)}}, {_SLIT(") (escape sequence did not refer to a singular rune)"), 0, { .d_c = 0 }}})));
 			} else {
 				v__scanner__Scanner_add_error_detail_with_pos(s, _SLIT("use quotes for strings, backticks for characters"), lspos);
-				v__scanner__Scanner_error(s, _SLIT("invalid character literal (more than one character)"));
+				v__scanner__Scanner_error(s,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("invalid character literal `"), 0xfe10, {.d_s = orig}}, {_SLIT("` => `"), 0xfe10, {.d_s = c}}, {_SLIT("` ("), 0xfe10, {.d_s = Array_rune_str(u)}}, {_SLIT(") (more than one character)"), 0, { .d_c = 0 }}})));
 			}
 		}
 	}
