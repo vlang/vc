@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "5143837"
+#define V_COMMIT_HASH "d553071"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "09797e4"
+	#define V_COMMIT_HASH "5143837"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "5143837"
+	#define V_CURRENT_COMMIT_HASH "d553071"
 #endif
 
 // V comptime_definitions:
@@ -31256,7 +31256,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("09797e4");
+	string vhash = _SLIT("5143837");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -49898,7 +49898,7 @@ v__ast__Type v__checker__Checker_array_init(v__checker__Checker* c, v__ast__Arra
 		}
 		
 		else {
-			v__checker__Checker_error(c, _SLIT("expecting `int` for fixed size"), node->pos);
+			v__checker__Checker_error(c, _SLIT("fixed array size cannot use non-constant value"), v__ast__Expr_position(init_expr));
 		}
 		;
 		if (fixed_size <= 0) {
@@ -78702,7 +78702,7 @@ v__ast__Type v__parser__Parser_parse_array_type(v__parser__Parser* p, v__token__
 			}
 			
 			else {
-				v__parser__Parser_error(p, _SLIT("expecting `int` for fixed size"));
+				v__parser__Parser_error_with_pos(p, _SLIT("fixed array size cannot use non-constant value"), v__ast__Expr_position(size_expr));
 			}
 			;
 		}
@@ -78883,9 +78883,9 @@ v__ast__Type v__parser__Parser_parse_fn_type(v__parser__Parser* p, string name) 
 	v__parser__Parser_check(p, v__token__Kind__key_fn);
 	bool has_generic = false;
 	int line_nr = p->tok.line_nr;
-	multi_return_Array_v__ast__Param_bool_bool mr_6116 = v__parser__Parser_fn_args(p);
-	Array_v__ast__Param args = mr_6116.arg0;
-	bool is_variadic = mr_6116.arg2;
+	multi_return_Array_v__ast__Param_bool_bool mr_6169 = v__parser__Parser_fn_args(p);
+	Array_v__ast__Param args = mr_6169.arg0;
+	bool is_variadic = mr_6169.arg2;
 	for (int _t1 = 0; _t1 < args.len; ++_t1) {
 		v__ast__Param arg = ((v__ast__Param*)args.data)[_t1];
 		if (v__ast__Type_has_flag(arg.typ, v__ast__TypeFlag__generic)) {
