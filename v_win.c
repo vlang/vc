@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "79cb0db"
+#define V_COMMIT_HASH "05ff8f5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6c8e7f5"
+	#define V_COMMIT_HASH "79cb0db"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "79cb0db"
+	#define V_CURRENT_COMMIT_HASH "05ff8f5"
 #endif
 
 // V comptime_definitions:
@@ -3350,11 +3350,11 @@ struct v__ast__Interface {
 
 
 struct v__ast__SumType {
-	Array_v__ast__Type variants;
 	Array_v__ast__StructField fields;
 	bool found_fields;
 	bool is_anon;
 	bool is_generic;
+	Array_v__ast__Type variants;
 	Array_v__ast__Type generic_types;
 	Array_v__ast__Type concrete_types;
 	v__ast__Type parent_type;
@@ -10676,18 +10676,18 @@ static string indent_v__ast__Struct_str(v__ast__Struct it, int indent_count) {
 
 static string indent_v__ast__SumType_str(v__ast__SumType it, int indent_count) {
 	string indents = string_repeat(_SLIT("    "), indent_count);
-	string _t56 = indent_Array_v__ast__Type_str(it.variants, indent_count + 1);
-	string _t57 = indent_Array_v__ast__StructField_str(it.fields, indent_count + 1);
+	string _t56 = indent_Array_v__ast__StructField_str(it.fields, indent_count + 1);
+	string _t57 = indent_Array_v__ast__Type_str(it.variants, indent_count + 1);
 	string _t58 = indent_Array_v__ast__Type_str(it.generic_types, indent_count + 1);
 	string _t59 = indent_Array_v__ast__Type_str(it.concrete_types, indent_count + 1);
 	string _t60 = v__ast__Type_str(it.parent_type);
 	string res = str_intp( 35, _MOV((StrIntpData[]){
 		{_SLIT("v.ast.SumType{\n"), 0, {.d_c=0}},
-		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    variants: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t56}}, {_SLIT(""), 0, {.d_c=0}},
-		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    fields: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t57}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT0, 0xfe10, {.d_s=indents}}, {_SLIT("    fields: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t56}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    found_fields: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.found_fields ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_anon: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_anon ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    is_generic: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=it.is_generic ? _SLIT("true") : _SLIT("false")}}, {_SLIT(""), 0, {.d_c=0}},
+		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    variants: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t57}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    generic_types: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t58}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    concrete_types: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t59}}, {_SLIT(""), 0, {.d_c=0}},
 		{_SLIT("\n"), 0xfe10, {.d_s=indents}}, {_SLIT("    parent_type: "), 0, {.d_c=0}}, {_SLIT(""), 16, {.d_s=_t60}}, {_SLIT(""), 0, {.d_c=0}},
@@ -31257,7 +31257,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("6c8e7f5");
+	string vhash = _SLIT("79cb0db");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -40046,29 +40046,59 @@ v__ast__Type v__ast__Table_unwrap_generic_type(v__ast__Table* t, v__ast__Type ty
 		v__ast__Type _t33 = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(new_idx), typ), v__ast__TypeFlag__generic);
 		return _t33;
 	}
+	else if (ts->info._typ == 463 /* v.ast.SumType */) {
+		Array_v__ast__Type variants = array_clone_to_depth(&(*ts->info._v__ast__SumType).variants, 0);
+		for (int i = 0; i < variants.len; ++i) {
+			if (v__ast__Type_has_flag((*(v__ast__Type*)/*ee elem_typ */array_get(variants, i)), v__ast__TypeFlag__generic)) {
+				v__ast__TypeSymbol* sym = v__ast__Table_sym(t, (*(v__ast__Type*)/*ee elem_typ */array_get(variants, i)));
+				if (sym->kind == v__ast__Kind__struct_ || sym->kind == v__ast__Kind__sum_type || sym->kind == v__ast__Kind__interface_) {
+					array_set(&variants, i, &(v__ast__Type[]) { v__ast__Table_unwrap_generic_type(t, (*(v__ast__Type*)/*ee elem_typ */array_get(variants, i)), generic_names, concrete_types) });
+				} else {
+					Option_v__ast__Type _t34;
+					if (_t34 = v__ast__Table_resolve_generic_to_concrete(t, (*(v__ast__Type*)/*ee elem_typ */array_get(variants, i)), generic_names, concrete_types), _t34.state == 0) {
+						v__ast__Type t_typ = *(v__ast__Type*)_t34.data;
+						array_set(&variants, i, &(v__ast__Type[]) { t_typ });
+					}
+				}
+			}
+		}
+		v__ast__SumType info = (*ts->info._v__ast__SumType);
+		info.is_generic = false;
+		info.concrete_types = final_concrete_types;
+		info.parent_type = typ;
+		info.fields = fields;
+		info.variants = variants;
+		int new_idx = v__ast__Table_register_sym(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(&info),.kind = v__ast__Kind__sum_type,.name = nrt,.cname = v__util__no_dots(c_nrt),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = ts->mod,.is_public = 0,.language = 0,.idx = 0,});
+		for (int _t35 = 0; _t35 < needs_unwrap_types.len; ++_t35) {
+			v__ast__Type typ_ = ((v__ast__Type*)needs_unwrap_types.data)[_t35];
+			v__ast__Table_unwrap_generic_type(t, typ_, generic_names, concrete_types);
+		}
+		v__ast__Type _t36 = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(new_idx), typ), v__ast__TypeFlag__generic);
+		return _t36;
+	}
 	else if (ts->info._typ == 462 /* v.ast.Interface */) {
 		Array_v__ast__Fn imethods = array_clone_to_depth(&(*ts->info._v__ast__Interface).methods, 0);
-		for (int _t34 = 0; _t34 < imethods.len; ++_t34) {
-			v__ast__Fn* method = ((v__ast__Fn*)imethods.data) + _t34;
-			Option_v__ast__Type _t35;
-			if (_t35 = v__ast__Table_resolve_generic_to_concrete(t, method->return_type, generic_names, concrete_types), _t35.state == 0) {
-				v__ast__Type unwrap_typ = *(v__ast__Type*)_t35.data;
+		for (int _t37 = 0; _t37 < imethods.len; ++_t37) {
+			v__ast__Fn* method = ((v__ast__Fn*)imethods.data) + _t37;
+			Option_v__ast__Type _t38;
+			if (_t38 = v__ast__Table_resolve_generic_to_concrete(t, method->return_type, generic_names, concrete_types), _t38.state == 0) {
+				v__ast__Type unwrap_typ = *(v__ast__Type*)_t38.data;
 				method->return_type = unwrap_typ;
 			}
-			for (int _t36 = 0; _t36 < method->params.len; ++_t36) {
-				v__ast__Param* param = ((v__ast__Param*)method->params.data) + _t36;
-				Option_v__ast__Type _t37;
-				if (_t37 = v__ast__Table_resolve_generic_to_concrete(t, param->typ, generic_names, concrete_types), _t37.state == 0) {
-					v__ast__Type unwrap_typ = *(v__ast__Type*)_t37.data;
+			for (int _t39 = 0; _t39 < method->params.len; ++_t39) {
+				v__ast__Param* param = ((v__ast__Param*)method->params.data) + _t39;
+				Option_v__ast__Type _t40;
+				if (_t40 = v__ast__Table_resolve_generic_to_concrete(t, param->typ, generic_names, concrete_types), _t40.state == 0) {
+					v__ast__Type unwrap_typ = *(v__ast__Type*)_t40.data;
 					param->typ = unwrap_typ;
 				}
 			}
 		}
 		Array_v__ast__Fn all_methods = ts->methods;
-		for (int _t38 = 0; _t38 < imethods.len; ++_t38) {
-			v__ast__Fn imethod = ((v__ast__Fn*)imethods.data)[_t38];
-			for (int _t39 = 0; _t39 < all_methods.len; ++_t39) {
-				v__ast__Fn* method = ((v__ast__Fn*)all_methods.data) + _t39;
+		for (int _t41 = 0; _t41 < imethods.len; ++_t41) {
+			v__ast__Fn imethod = ((v__ast__Fn*)imethods.data)[_t41];
+			for (int _t42 = 0; _t42 < all_methods.len; ++_t42) {
+				v__ast__Fn* method = ((v__ast__Fn*)all_methods.data) + _t42;
 				if (string__eq(imethod.name, method->name)) {
 					*method = imethod;
 				}
@@ -40082,19 +40112,19 @@ v__ast__Type v__ast__Table_unwrap_generic_type(v__ast__Table* t, v__ast__Type ty
 		info.methods = imethods;
 		int new_idx = v__ast__Table_register_sym(t, (v__ast__TypeSymbol){.parent_idx = 0,.info = v__ast__Interface_to_sumtype_v__ast__TypeInfo(&info),.kind = v__ast__Kind__interface_,.name = nrt,.cname = v__util__no_dots(c_nrt),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = ts->mod,.is_public = 0,.language = 0,.idx = 0,});
 		v__ast__TypeSymbol* ts_copy = v__ast__Table_sym(t, new_idx);
-		for (int _t40 = 0; _t40 < all_methods.len; ++_t40) {
-			v__ast__Fn method = ((v__ast__Fn*)all_methods.data)[_t40];
+		for (int _t43 = 0; _t43 < all_methods.len; ++_t43) {
+			v__ast__Fn method = ((v__ast__Fn*)all_methods.data)[_t43];
 			v__ast__TypeSymbol_register_method(ts_copy, method);
 		}
-		v__ast__Type _t41 = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(new_idx), typ), v__ast__TypeFlag__generic);
-		return _t41;
+		v__ast__Type _t44 = v__ast__Type_clear_flag(v__ast__Type_derive(v__ast__new_type(new_idx), typ), v__ast__TypeFlag__generic);
+		return _t44;
 	}
 	
 	else {
 	}
 	;
-	v__ast__Type _t42 = typ;
-	return _t42;
+	v__ast__Type _t45 = typ;
+	return _t45;
 }
 
 void v__ast__Table_generic_insts_to_concrete(v__ast__Table* t) {
@@ -40266,7 +40296,7 @@ void v__ast__Table_generic_insts_to_concrete(v__ast__Table* t) {
 							}
 						}
 					}
-					(*typ)->info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__SumType, ((v__ast__SumType){.variants = variants,.fields = fields,parent_info.found_fields,parent_info.is_anon,.is_generic = false,parent_info.generic_types,.concrete_types = array_clone_to_depth(&info.concrete_types, 0),.parent_type = v__ast__Type_set_flag(v__ast__new_type(info.parent_idx), v__ast__TypeFlag__generic),})));
+					(*typ)->info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__SumType, ((v__ast__SumType){.fields = fields,parent_info.found_fields,parent_info.is_anon,.is_generic = false,.variants = variants,parent_info.generic_types,.concrete_types = array_clone_to_depth(&info.concrete_types, 0),.parent_type = v__ast__Type_set_flag(v__ast__new_type(info.parent_idx), v__ast__TypeFlag__generic),})));
 					(*typ)->is_public = true;
 					(*typ)->kind = parent->kind;
 				} else {
@@ -40871,7 +40901,7 @@ inline v__ast__SumType v__ast__TypeSymbol_sumtype_info(v__ast__TypeSymbol* t) {
 	}
 	v__ast__TypeSymbol_no_info_panic(t, _SLIT("TypeSymbol.sumtype_info"));
 	VUNREACHABLE();
-	return (v__ast__SumType){.variants = __new_array(0, 0, sizeof(v__ast__Type)),.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.found_fields = 0,.is_anon = 0,.is_generic = 0,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,};
+	return (v__ast__SumType){.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.found_fields = 0,.is_anon = 0,.is_generic = 0,.variants = __new_array(0, 0, sizeof(v__ast__Type)),.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,};
 }
 
 bool v__ast__TypeSymbol_is_heap(v__ast__TypeSymbol* t) {
@@ -79046,7 +79076,7 @@ v__ast__Type v__parser__Parser_parse_inline_sum_type(v__parser__Parser* p) {
 			v__ast__Type _t5 = v__ast__new_type(idx);
 			return _t5;
 		}
-		idx = v__ast__Table_register_sym(p->table, (v__ast__TypeSymbol){.parent_idx = 0,.info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__SumType, ((v__ast__SumType){.variants = variant_types,.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.found_fields = 0,.is_anon = true,.is_generic = 0,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,}))),.kind = v__ast__Kind__sum_type,.name = prepend_mod_name,.cname = v__util__no_dots(prepend_mod_name),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = p->mod,.is_public = 0,.language = 0,.idx = 0,});
+		idx = v__ast__Table_register_sym(p->table, (v__ast__TypeSymbol){.parent_idx = 0,.info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__SumType, ((v__ast__SumType){.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.found_fields = 0,.is_anon = true,.is_generic = 0,.variants = variant_types,.generic_types = __new_array(0, 0, sizeof(v__ast__Type)),.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,}))),.kind = v__ast__Kind__sum_type,.name = prepend_mod_name,.cname = v__util__no_dots(prepend_mod_name),.methods = __new_array(0, 0, sizeof(v__ast__Fn)),.mod = p->mod,.is_public = 0,.language = 0,.idx = 0,});
 		v__ast__Type _t6 = v__ast__new_type(idx);
 		return _t6;
 	} else if (variants.len == 1) {
@@ -82888,7 +82918,7 @@ VV_LOCAL_SYMBOL v__ast__TypeDecl v__parser__Parser_type_decl(v__parser__Parser* 
 		string prepend_mod_name = v__parser__Parser_prepend_mod(p, name);
 		int typ = v__ast__Table_register_sym(p->table, (v__ast__TypeSymbol){
 			.parent_idx = 0,
-			.info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__SumType, ((v__ast__SumType){.variants = variant_types,.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.found_fields = 0,.is_anon = 0,.is_generic = generic_types.len > 0,.generic_types = generic_types,.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,}))),
+			.info = v__ast__SumType_to_sumtype_v__ast__TypeInfo(ADDR(v__ast__SumType, ((v__ast__SumType){.fields = __new_array(0, 0, sizeof(v__ast__StructField)),.found_fields = 0,.is_anon = 0,.is_generic = generic_types.len > 0,.variants = variant_types,.generic_types = generic_types,.concrete_types = __new_array(0, 0, sizeof(v__ast__Type)),.parent_type = 0,}))),
 			.kind = v__ast__Kind__sum_type,
 			.name = prepend_mod_name,
 			.cname = v__util__no_dots(prepend_mod_name),
