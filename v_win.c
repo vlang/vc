@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "295156e"
+#define V_COMMIT_HASH "edbb39b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9e0156b"
+	#define V_COMMIT_HASH "295156e"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "295156e"
+	#define V_CURRENT_COMMIT_HASH "edbb39b"
 #endif
 
 // V comptime_definitions:
@@ -31257,7 +31257,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("9e0156b");
+	string vhash = _SLIT("295156e");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -53500,7 +53500,7 @@ void v__checker__Checker_struct_decl(v__checker__Checker* c, v__ast__StructDecl*
 			if (field.typ != 0) {
 				if (!v__ast__Type_is_ptr(field.typ)) {
 					if (v__ast__Table_unaliased_type(c->table, field.typ) == struct_typ_idx) {
-						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Field `"), 0xfe10, {.d_s = field.name}}, {_SLIT("` is part of `"), 0xfe10, {.d_s = node->name}}, {_SLIT("`, they can not both have the same type"), 0, { .d_c = 0 }}})), field.type_pos);
+						v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("field `"), 0xfe10, {.d_s = field.name}}, {_SLIT("` is part of `"), 0xfe10, {.d_s = node->name}}, {_SLIT("`, they can not both have the same type"), 0, { .d_c = 0 }}})), field.type_pos);
 					}
 				}
 			}
