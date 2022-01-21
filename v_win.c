@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "05ff8f5"
+#define V_COMMIT_HASH "ffb263c"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "79cb0db"
+	#define V_COMMIT_HASH "05ff8f5"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "05ff8f5"
+	#define V_CURRENT_COMMIT_HASH "ffb263c"
 #endif
 
 // V comptime_definitions:
@@ -8137,6 +8137,7 @@ v__ast__Expr v__ast__empty_expr(void);
 v__ast__Stmt v__ast__empty_stmt(void);
 v__ast__Node v__ast__empty_node(void);
 Option_v__ast__Ident v__ast__SelectorExpr_root_ident(v__ast__SelectorExpr* e);
+bool v__ast__StructField_equals(v__ast__StructField* f, v__ast__StructField* o);
 void v__ast__File_free(v__ast__File* f);
 v__ast__IdentVar v__ast__Ident_var_info(v__ast__Ident* i);
 Map_int_Array_string _const_v__ast__x86_no_number_register_list; // inited later
@@ -8445,7 +8446,6 @@ bool v__ast__TypeSymbol_is_primitive(v__ast__TypeSymbol* t);
 bool v__ast__TypeSymbol_is_builtin(v__ast__TypeSymbol* t);
 string v__ast__Kind_str(v__ast__Kind k);
 string Array_v__ast__Kind_str(Array_v__ast__Kind kinds);
-bool v__ast__StructField_equals(v__ast__StructField* f, v__ast__StructField* o);
 string v__ast__Table_type_to_str(v__ast__Table* t, v__ast__Type typ);
 string v__ast__Table_type_to_code(v__ast__Table* mytable, v__ast__Type t);
 string v__ast__Table_type_to_str_using_aliases(v__ast__Table* t, v__ast__Type typ, Map_string_string import_aliases);
@@ -31257,7 +31257,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("79cb0db");
+	string vhash = _SLIT("05ff8f5");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -35114,6 +35114,11 @@ Option_v__ast__Ident v__ast__SelectorExpr_root_ident(v__ast__SelectorExpr* e) {
 		return _t1;
 	}
 	return (Option_v__ast__Ident){ .state=2, .err=_const_none__, .data={EMPTY_STRUCT_INITIALIZATION} };
+}
+
+bool v__ast__StructField_equals(v__ast__StructField* f, v__ast__StructField* o) {
+	bool _t1 = string__eq(f->name, o->name) && v__ast__Type_alias_eq(f->typ, o->typ) && f->is_pub == o->is_pub && f->is_global == o->is_global;
+	return _t1;
 }
 
 // Attr: [unsafe]
@@ -41176,11 +41181,6 @@ string Array_v__ast__Kind_str(Array_v__ast__Kind kinds) {
 		}
 	}
 	string _t1 = kinds_str;
-	return _t1;
-}
-
-bool v__ast__StructField_equals(v__ast__StructField* f, v__ast__StructField* o) {
-	bool _t1 = string__eq(f->name, o->name) && v__ast__Type_alias_eq(f->typ, o->typ) && f->is_pub == o->is_pub && f->is_global == o->is_global;
 	return _t1;
 }
 
