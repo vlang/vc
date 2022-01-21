@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "edbb39b"
+#define V_COMMIT_HASH "6c8e7f5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "295156e"
+	#define V_COMMIT_HASH "edbb39b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "edbb39b"
+	#define V_CURRENT_COMMIT_HASH "6c8e7f5"
 #endif
 
 // V comptime_definitions:
@@ -31257,7 +31257,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("295156e");
+	string vhash = _SLIT("edbb39b");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -53970,7 +53970,7 @@ void v__transformer__Transformer_transform_files(v__transformer__Transformer* t,
 void v__transformer__Transformer_transform(v__transformer__Transformer* t, v__ast__File* ast_file) {
 	for (int _t1 = 0; _t1 < ast_file->stmts.len; ++_t1) {
 		v__ast__Stmt* stmt = ((v__ast__Stmt*)ast_file->stmts.data) + _t1;
-		v__transformer__Transformer_stmt(t, stmt);
+		*stmt = v__transformer__Transformer_stmt(t, stmt);
 	}
 }
 
@@ -54309,7 +54309,7 @@ v__ast__Expr v__transformer__Transformer_expr_stmt_if_expr(v__transformer__Trans
 		v__transformer__IndexState_indent(t->index, false);
 		for (int _t3 = 0; _t3 < branch->stmts.len; ++_t3) {
 			v__ast__Stmt* stmt = ((v__ast__Stmt*)branch->stmts.data) + _t3;
-			v__transformer__Transformer_stmt(t, stmt);
+			*stmt = v__transformer__Transformer_stmt(t, stmt);
 		}
 		v__transformer__IndexState_unindent(t->index);
 	}
@@ -54349,7 +54349,7 @@ v__ast__Expr v__transformer__Transformer_expr_stmt_match_expr(v__transformer__Tr
 			v__transformer__IndexState_indent(t->index, false);
 			for (int _t2 = 0; _t2 < branch->stmts.len; ++_t2) {
 				v__ast__Stmt* stmt = ((v__ast__Stmt*)branch->stmts.data) + _t2;
-				v__transformer__Transformer_stmt(t, stmt);
+				*stmt = v__transformer__Transformer_stmt(t, stmt);
 			}
 			v__transformer__IndexState_unindent(t->index);
 			continue;
@@ -54569,7 +54569,7 @@ v__ast__Expr v__transformer__Transformer_expr(v__transformer__Transformer* t, v_
 	else if (node->_typ == 312 /* v.ast.OrExpr */) {
 		for (int _t12 = 0; _t12 < (*node->_v__ast__OrExpr).stmts.len; ++_t12) {
 			v__ast__Stmt* stmt = ((v__ast__Stmt*)(*node->_v__ast__OrExpr).stmts.data) + _t12;
-			v__transformer__Transformer_stmt(t, stmt);
+			*stmt = v__transformer__Transformer_stmt(t, stmt);
 		}
 	}
 	else if (node->_typ == 313 /* v.ast.ParExpr */) {
