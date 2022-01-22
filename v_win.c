@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "85ec024"
+#define V_COMMIT_HASH "359b674"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e66e35c"
+	#define V_COMMIT_HASH "85ec024"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "85ec024"
+	#define V_CURRENT_COMMIT_HASH "359b674"
 #endif
 
 // V comptime_definitions:
@@ -7584,6 +7584,7 @@ Array_string os__vmodules_paths(void);
 string os__resource_abs_path(string path);
 os__Result os__execute_or_panic(string cmd);
 os__Result os__execute_or_exit(string cmd);
+string os__quoted_path(string path);
 string _const_os__path_separator; // a string literal, inited later
 string _const_os__path_delimiter; // a string literal, inited later
 VV_LOCAL_SYMBOL Array_string os__init_os_args_wide(int argc, byte** argv);
@@ -27337,6 +27338,19 @@ os__Result os__execute_or_exit(string cmd) {
 	return _t1;
 }
 
+string os__quoted_path(string path) {
+	#if defined(_WIN32)
+	{
+		string _t1 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = path}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
+		return _t1;
+	}
+	#else
+	{
+	}
+	#endif
+	return (string){.str=(byteptr)"", .is_lit=1};
+}
+
 // TypeDecl
 // TypeDecl
 VV_LOCAL_SYMBOL Array_string os__init_os_args_wide(int argc, byte** argv) {
@@ -29471,7 +29485,7 @@ VV_LOCAL_SYMBOL bool v__util__diff__opendiff_exists(void) {
 
 string v__util__diff__color_compare_files(string diff_cmd, string file1, string file2) {
 	if ((diff_cmd).len != 0) {
-		string full_cmd =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = diff_cmd}}, {_SLIT(" --minimal --text --unified=2  --show-function-line=\"fn \" \""), 0xfe10, {.d_s = file1}}, {_SLIT("\" \""), 0xfe10, {.d_s = file2}}, {_SLIT("\" "), 0, { .d_c = 0 }}}));
+		string full_cmd =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = diff_cmd}}, {_SLIT(" --minimal --text --unified=2  --show-function-line=\"fn \" "), 0xfe10, {.d_s = os__quoted_path(file1)}}, {_SLIT(" "), 0xfe10, {.d_s = os__quoted_path(file2)}}, {_SLIT(" "), 0, { .d_c = 0 }}}));
 		os__Result x = os__execute(full_cmd);
 		if (x.exit_code < 0) {
 			string _t1 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("comparison command: `"), 0xfe10, {.d_s = full_cmd}}, {_SLIT("` not found"), 0, { .d_c = 0 }}}));
@@ -31257,7 +31271,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("e66e35c");
+	string vhash = _SLIT("85ec024");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -32124,7 +32138,7 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors
 			string output_option = _SLIT("");
 			if ((tmp_exe_file_path).len == 0) {
 				tmp_exe_file_path =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp_file_path}}, {_SLIT(".exe"), 0, { .d_c = 0 }}}));
-				output_option =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("-o \""), 0xfe10, {.d_s = tmp_exe_file_path}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
+				output_option =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("-o "), 0xfe10, {.d_s = os__quoted_path(tmp_exe_file_path)}}, {_SLIT(" "), 0, { .d_c = 0 }}}));
 			}
 			string tmp_v_file_path =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = tmp_file_path}}, {_SLIT(".v"), 0, { .d_c = 0 }}}));
 			string contents = os__get_raw_lines_joined();
@@ -32140,7 +32154,7 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors
 			string run_options = Array_string_join(os__cmdline__options_before(args, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("run")}))), _SLIT(" "));
 			string command_options = Array_string_join(array_slice(os__cmdline__options_after(args, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("run")}))), 1, os__cmdline__options_after(args, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_SLIT("run")}))).len), _SLIT(" "));
 			string vexe = v__pref__vexe_path();
-			string tmp_cmd =  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = vexe}}, {_SLIT("\" "), 0xfe10, {.d_s = output_option}}, {_SLIT(" "), 0xfe10, {.d_s = run_options}}, {_SLIT(" run \""), 0xfe10, {.d_s = tmp_v_file_path}}, {_SLIT("\" "), 0xfe10, {.d_s = command_options}}, {_SLIT0, 0, { .d_c = 0 }}}));
+			string tmp_cmd =  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" "), 0xfe10, {.d_s = output_option}}, {_SLIT(" "), 0xfe10, {.d_s = run_options}}, {_SLIT(" run "), 0xfe10, {.d_s = os__quoted_path(tmp_v_file_path)}}, {_SLIT(" "), 0xfe10, {.d_s = command_options}}, {_SLIT0, 0, { .d_c = 0 }}}));
 			v__pref__Preferences_vrun_elog(res,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("tmp_cmd: "), 0xfe10, {.d_s = tmp_cmd}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			int tmp_result = os__system(tmp_cmd);
 			v__pref__Preferences_vrun_elog(res,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("exit code: "), 0xfe07, {.d_i32 = tmp_result}}, {_SLIT0, 0, { .d_c = 0 }}})));
@@ -34577,11 +34591,11 @@ VNORETURN void v__util__launch_tool(bool is_verbose, string tool_name, Array_str
 			
   (*(bool*)_t2.data);
 		}
-		string compilation_command =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = vexe}}, {_SLIT("\" -skip-unused "), 0, { .d_c = 0 }}}));
+		string compilation_command =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" -skip-unused "), 0, { .d_c = 0 }}}));
 		if (string__eq(tool_name, _SLIT("vself")) || string__eq(tool_name, _SLIT("vup")) || string__eq(tool_name, _SLIT("vdoctor")) || string__eq(tool_name, _SLIT("vsymlink"))) {
 			compilation_command = /*f*/string__plus(compilation_command, _SLIT(" -g "));
 		}
-		compilation_command = /*f*/string__plus(compilation_command,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = tool_source}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
+		compilation_command = /*f*/string__plus(compilation_command, os__quoted_path(tool_source));
 		if (is_verbose) {
 			println( str_intp(3, _MOV((StrIntpData[]){{_SLIT("Compiling "), 0xfe10, {.d_s = tool_name}}, {_SLIT(" with: \""), 0xfe10, {.d_s = compilation_command}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
 		}
@@ -34594,7 +34608,7 @@ VNORETURN void v__util__launch_tool(bool is_verbose, string tool_name, Array_str
 	}
 	#if defined(_WIN32)
 	{
-		_v_exit(os__system( str_intp(3, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = tool_exe}}, {_SLIT("\" "), 0xfe10, {.d_s = tool_args}}, {_SLIT0, 0, { .d_c = 0 }}}))));
+		_v_exit(os__system( str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(tool_exe)}}, {_SLIT(" "), 0xfe10, {.d_s = tool_args}}, {_SLIT0, 0, { .d_c = 0 }}}))));
 		VUNREACHABLE();
 	}
 	#elif defined(_VJS)
@@ -34658,16 +34672,8 @@ VV_LOCAL_SYMBOL multi_return_string_string v__util__tool_source2name_and_exe(str
 }
 
 string v__util__quote_path(string s) {
-	string qs = s;
-	if (string_contains(qs, _SLIT("&"))) {
-		qs = string_replace(qs, _SLIT("&"), _SLIT("\\&"));
-	}
-	if (string_contains(qs, _SLIT(" "))) {
-		string _t1 =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = qs}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
-		return _t1;
-	}
-	string _t2 = qs;
-	return _t2;
+	string _t1 = os__quoted_path(s);
+	return _t1;
 }
 
 string v__util__args_quote_paths(Array_string args) {
@@ -34780,7 +34786,7 @@ Option_bool v__util__check_module_is_installed(string modulename, bool is_verbos
 	}
 	if (os__exists(mod_v_file)) {
 		string vexe = v__pref__vexe_path();
-		string update_cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = vexe}}, {_SLIT("\" update \""), 0xfe10, {.d_s = modulename}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
+		string update_cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" update '"), 0xfe10, {.d_s = modulename}}, {_SLIT("'"), 0, { .d_c = 0 }}}));
 		if (is_verbose) {
 			eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("check_module_is_installed: updating with "), 0xfe10, {.d_s = update_cmd}}, {_SLIT(" ..."), 0, { .d_c = 0 }}})));
 		}
@@ -34890,9 +34896,9 @@ void v__util__prepare_tool_when_needed(string source_name) {
 	string vexe = os__getenv(_SLIT("VEXE"));
 	string vroot = os__dir(vexe);
 	string stool = os__join_path(vroot, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("cmd"), _SLIT("tools"), source_name})));
-	multi_return_string_string mr_14275 = v__util__tool_source2name_and_exe(stool);
-	string tool_name = mr_14275.arg0;
-	string tool_exe = mr_14275.arg1;
+	multi_return_string_string mr_14235 = v__util__tool_source2name_and_exe(stool);
+	string tool_name = mr_14235.arg0;
+	string tool_exe = mr_14235.arg1;
 	if (v__util__should_recompile_tool(vexe, stool, tool_name, tool_exe)) {
 		time__sleep(1001 * _const_time__millisecond);
 		v__util__recompile_file(vexe, stool);
@@ -34900,7 +34906,7 @@ void v__util__prepare_tool_when_needed(string source_name) {
 }
 
 void v__util__recompile_file(string vexe, string file) {
-	string cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vexe}}, {_SLIT(" "), 0xfe10, {.d_s = file}}, {_SLIT0, 0, { .d_c = 0 }}}));
+	string cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" "), 0xfe10, {.d_s = os__quoted_path(file)}}, {_SLIT0, 0, { .d_c = 0 }}}));
 	int recompile_result = os__system(cmd);
 	if (recompile_result != 0) {
 		eprintln( str_intp(2, _MOV((StrIntpData[]){{_SLIT("could not recompile "), 0xfe10, {.d_s = file}}, {_SLIT0, 0, { .d_c = 0 }}})));
@@ -68519,7 +68525,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_embed_file_init(v__gen__c__Gen* g, v__as
 			}
 			string cache_path = os__join_path(cache_dir, new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){cache_key})));
 			string vexe = v__pref__vexe_path();
-			os__Result result = os__execute( str_intp(5, _MOV((StrIntpData[]){{_SLIT("\""), 0xfe10, {.d_s = vexe}}, {_SLIT("\" compress "), 0xfe10, {.d_s = node->embed_file.compression_type}}, {_SLIT(" \""), 0xfe10, {.d_s = node->embed_file.apath}}, {_SLIT("\" \""), 0xfe10, {.d_s = cache_path}}, {_SLIT("\""), 0, { .d_c = 0 }}})));
+			os__Result result = os__execute( str_intp(5, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" compress "), 0xfe10, {.d_s = node->embed_file.compression_type}}, {_SLIT(" "), 0xfe10, {.d_s = os__quoted_path(node->embed_file.apath)}}, {_SLIT(" "), 0xfe10, {.d_s = os__quoted_path(cache_path)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 			if (result.exit_code != 0) {
 				eprintln( str_intp(3, _MOV((StrIntpData[]){{_SLIT("unable to compress file \""), 0xfe10, {.d_s = node->embed_file.rpath}}, {_SLIT("\": "), 0xfe10, {.d_s = result.output}}, {_SLIT0, 0, { .d_c = 0 }}})));
 				node->embed_file.bytes = file_bytes;
@@ -71726,8 +71732,25 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_jsons(v__gen__c__Gen* g) {
 		v__gen__c__Gen_register_optional(g, utyp);
 		string dec_fn_name = v__gen__c__js_dec_name(styp);
 		string dec_fn_dec =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_"), 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = dec_fn_name}}, {_SLIT("(cJSON* root)"), 0, { .d_c = 0 }}}));
-		string init_styp = v__gen__c__Gen_expr_string(g, v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, ((v__ast__StructInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_short = 0,.unresolved = 0,.pre_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ_str = styp,.typ = utyp,.update_expr = {0},.update_expr_type = 0,.update_expr_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_update_expr = 0,.fields = __new_array(0, 0, sizeof(v__ast__StructInitField)),.embeds = __new_array(0, 0, sizeof(v__ast__StructInitEmbed)),}))));
-		strings__Builder_writeln(&dec,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(" {\n	"), 0xfe10, {.d_s = styp}}, {_SLIT(" res = "), 0xfe10, {.d_s = init_styp}}, {_SLIT(";\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for "), 0xfe10, {.d_s = styp}}, {_SLIT(" error_ptr=: %s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%s\\n\", js.str);\n			return (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2,.err = _v_error(tos2((byteptr)error_ptr)),.data = {0}};\n		}\n	}\n"), 0, { .d_c = 0 }}})));
+		string init_styp =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = styp}}, {_SLIT(" res"), 0, { .d_c = 0 }}}));
+		if (sym->kind == v__ast__Kind__struct_) {
+			int skips = 0;
+			v__ast__Struct info = /* as */ *(v__ast__Struct*)__as_cast((sym->info)._v__ast__Struct,(sym->info)._typ, 445) /*expected idx: 445, name: v.ast.Struct */ ;
+			for (int _t2 = 0; _t2 < info.fields.len; ++_t2) {
+				v__ast__StructField field = ((v__ast__StructField*)info.fields.data)[_t2];
+				for (int _t3 = 0; _t3 < field.attrs.len; ++_t3) {
+					v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t3];
+					if (string__eq(attr.name, _SLIT("skip"))) {
+						skips++;
+					}
+				}
+			}
+			if (skips > 0) {
+				init_styp = /*f*/string__plus(init_styp, _SLIT(" = "));
+				init_styp = /*f*/string__plus(init_styp, v__gen__c__Gen_expr_string(g, v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, ((v__ast__StructInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_short = 0,.unresolved = 0,.pre_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ_str = styp,.typ = utyp,.update_expr = {0},.update_expr_type = 0,.update_expr_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_update_expr = 0,.fields = __new_array(0, 0, sizeof(v__ast__StructInitField)),.embeds = __new_array(0, 0, sizeof(v__ast__StructInitEmbed)),})))));
+			}
+		}
+		strings__Builder_writeln(&dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(" {\n	"), 0xfe10, {.d_s = init_styp}}, {_SLIT(";\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for "), 0xfe10, {.d_s = styp}}, {_SLIT(" error_ptr=: %s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%s\\n\", js.str);\n			return (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2,.err = _v_error(tos2((byteptr)error_ptr)),.data = {0}};\n		}\n	}\n"), 0, { .d_c = 0 }}})));
 		strings__Builder_writeln(&g->json_forward_decls,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
 		string enc_fn_name = v__gen__c__js_enc_name(styp);
 		string enc_fn_dec =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cJSON* "), 0xfe10, {.d_s = enc_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = styp}}, {_SLIT(" val)"), 0, { .d_c = 0 }}}));
@@ -72077,11 +72100,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_decode_map(v__gen__c__Gen* g, v__ast__Type
 	string styp = v__gen__c__Gen_typ(g, key_type);
 	string styp_v = v__gen__c__Gen_typ(g, value_type);
 	v__ast__TypeSymbol* key_type_symbol = v__ast__Table_sym(g->table, key_type);
-	multi_return_string_string_string_string mr_17278 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
-	string hash_fn = mr_17278.arg0;
-	string key_eq_fn = mr_17278.arg1;
-	string clone_fn = mr_17278.arg2;
-	string free_fn = mr_17278.arg3;
+	multi_return_string_string_string_string mr_17557 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
+	string hash_fn = mr_17557.arg0;
+	string key_eq_fn = mr_17557.arg1;
+	string clone_fn = mr_17557.arg2;
+	string free_fn = mr_17557.arg3;
 	string fn_name_v = v__gen__c__js_dec_name(styp_v);
 	string s = _SLIT("");
 	if (v__gen__c__is_js_prim(styp_v)) {
@@ -85039,7 +85062,7 @@ VNORETURN void v__builder__verror(string s) {
 }
 
 Option_void v__builder__Builder_find_win_cc(v__builder__Builder* v) {
-	os__Result ccompiler_version_res = os__execute( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v->pref->ccompiler}}, {_SLIT(" -v"), 0, { .d_c = 0 }}})));
+	os__Result ccompiler_version_res = os__execute( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(v->pref->ccompiler)}}, {_SLIT(" -v"), 0, { .d_c = 0 }}})));
 	if (ccompiler_version_res.exit_code != 0) {
 		if (v->pref->is_verbose) {
 			println( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v->pref->ccompiler}}, {_SLIT(" not found, looking for msvc..."), 0, { .d_c = 0 }}})));
@@ -85052,7 +85075,7 @@ Option_void v__builder__Builder_find_win_cc(v__builder__Builder* v) {
 			}
 			string vpath = os__dir(v__pref__vexe_path());
 			string thirdparty_tcc = os__join_path(vpath, new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("thirdparty"), _SLIT("tcc"), _SLIT("tcc.exe")})));
-			os__Result tcc_version_res = os__execute( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = thirdparty_tcc}}, {_SLIT(" -v"), 0, { .d_c = 0 }}})));
+			os__Result tcc_version_res = os__execute( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(thirdparty_tcc)}}, {_SLIT(" -v"), 0, { .d_c = 0 }}})));
 			if (tcc_version_res.exit_code != 0) {
 				if (v->pref->is_verbose) {
 					println(_SLIT("tcc not found"));
@@ -85165,7 +85188,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 	ccoptions.debug_mode = v->pref->is_debug;
 	ccoptions.guessed_compiler = v->pref->ccompiler;
 	if (string__eq(ccoptions.guessed_compiler, _SLIT("cc")) && v->pref->is_prod) {
-		os__Result ccversion = os__execute(_SLIT("cc --version"));
+		os__Result ccversion = os__execute( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(_SLIT("cc"))}}, {_SLIT(" --version"), 0, { .d_c = 0 }}})));
 		if (ccversion.exit_code == 0) {
 			if (string_contains(ccversion.output, _SLIT("This is free software;")) && string_contains(ccversion.output, _SLIT("Free Software Foundation, Inc."))) {
 				ccoptions.guessed_compiler = _SLIT("gcc");
@@ -85283,10 +85306,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_setup_ccompiler_options(v__builder__Bui
 		Array_string only_o_files = Array_v__cflag__CFlag_c_options_only_object_files(cflags);
 		_PUSH_MANY(&ccoptions.o_args, (only_o_files), _t36, Array_string);
 	}
-	multi_return_Array_string_Array_string_Array_string mr_11127 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_11127.arg0;
-	Array_string others = mr_11127.arg1;
-	Array_string libs = mr_11127.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_11184 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_11184.arg0;
+	Array_string others = mr_11184.arg1;
+	Array_string libs = mr_11184.arg2;
 	_PUSH_MANY(&ccoptions.pre_args, (defines), _t37, Array_string);
 	_PUSH_MANY(&ccoptions.pre_args, (others), _t38, Array_string);
 	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t39, Array_string);
@@ -85500,7 +85523,8 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 						}
 					}
 					if (_t5) {
-						os__execute( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vexe}}, {_SLIT(" run "), 0xfe10, {.d_s = _SLIT("/home/runner/work/v/v")}}, {_SLIT("/thirdparty/stdatomic/nix/cpp/gen.v "), 0xfe10, {.d_s = ccompiler}}, {_SLIT0, 0, { .d_c = 0 }}})));
+						string cppgenv =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = _SLIT("/home/runner/work/v/v")}}, {_SLIT("/thirdparty/stdatomic/nix/cpp/gen.v"), 0, { .d_c = 0 }}}));
+						os__execute( str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" run "), 0xfe10, {.d_s = os__quoted_path(cppgenv)}}, {_SLIT(" "), 0xfe10, {.d_s = os__quoted_path(ccompiler)}}, {_SLIT0, 0, { .d_c = 0 }}})));
 						break;
 					}
 				}
@@ -85517,13 +85541,14 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 		Array_string all_args = v__builder__Builder_all_args(v, v->ccoptions);
 		v__builder__Builder_dump_c_options(v, all_args);
 		string str_args = Array_string_join(all_args, _SLIT(" "));
-		string cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ccompiler}}, {_SLIT(" "), 0xfe10, {.d_s = str_args}}, {_SLIT0, 0, { .d_c = 0 }}}));
+		string cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(ccompiler)}}, {_SLIT(" "), 0xfe10, {.d_s = str_args}}, {_SLIT0, 0, { .d_c = 0 }}}));
 		string response_file = _SLIT("");
 		string response_file_content = str_args;
 		if (!v->pref->no_rsp) {
 			response_file =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v->out_name_c}}, {_SLIT(".rsp"), 0, { .d_c = 0 }}}));
 			response_file_content = string_replace(str_args, _SLIT("\\"), _SLIT("\\\\"));
-			cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = ccompiler}}, {_SLIT(" \"@"), 0xfe10, {.d_s = response_file}}, {_SLIT("\""), 0, { .d_c = 0 }}}));
+			string rspexpr =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("@"), 0xfe10, {.d_s = response_file}}, {_SLIT0, 0, { .d_c = 0 }}}));
+			cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(ccompiler)}}, {_SLIT(" "), 0xfe10, {.d_s = os__quoted_path(rspexpr)}}, {_SLIT0, 0, { .d_c = 0 }}}));
 			Option_void _t8 = os__write_file(response_file, response_file_content);
 			if (_t8.state != 0 && _t8.err._typ != _IError_None___index) {
 				IError err = _t8.err;
@@ -85674,10 +85699,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = string__plus(b->out_name_c, _SLIT(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_22468 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_22468.arg0;
-	Array_string others = mr_22468.arg1;
-	Array_string libs = mr_22468.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_22684 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_22684.arg0;
+	Array_string others = mr_22684.arg1;
+	Array_string libs = mr_22684.arg2;
 	Array_string cc_args = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-w")) }));
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone(_SLIT("-fPIC")) }));
@@ -85690,7 +85715,7 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 	array_push((array*)&cc_args, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-c \""), 0xfe10, {.d_s = b->out_name_c}}, {_SLIT("\""), 0, { .d_c = 0 }}}))) }));
 	_PUSH_MANY(&cc_args, (libs), _t11, Array_string);
 	v__builder__Builder_dump_c_options(b, cc_args);
-	string cc_cmd = string__plus(_SLIT("cc "), Array_string_join(cc_args, _SLIT(" ")));
+	string cc_cmd = string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(_SLIT("cc"))}}, {_SLIT(" "), 0, { .d_c = 0 }}})), Array_string_join(cc_args, _SLIT(" ")));
 	if (b->pref->show_cc) {
 		println(cc_cmd);
 	}
@@ -85706,7 +85731,8 @@ VV_LOCAL_SYMBOL void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) 
 			_SLIT("-lcrypto"), _SLIT("-lssl"), _SLIT("-lpthread"),  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = sysroot}}, {_SLIT("/crtn.o"), 0, { .d_c = 0 }}})), _SLIT("-lm")}));
 	_PUSH_MANY(&linker_args, (Array_v__cflag__CFlag_c_options_only_object_files(cflags)), _t12, Array_string);
 	v__builder__Builder_dump_c_options(b, linker_args);
-	string linker_cmd = string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = sysroot}}, {_SLIT("/ld.lld "), 0, { .d_c = 0 }}})), Array_string_join(linker_args, _SLIT(" ")));
+	string ldlld =  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = sysroot}}, {_SLIT("/ld.lld"), 0, { .d_c = 0 }}}));
+	string linker_cmd = string__plus( str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(ldlld)}}, {_SLIT(" "), 0, { .d_c = 0 }}})), Array_string_join(linker_args, _SLIT(" ")));
 	if (b->pref->show_cc) {
 		println(linker_cmd);
 	}
@@ -85847,10 +85873,10 @@ VV_LOCAL_SYMBOL void v__builder__Builder_build_thirdparty_obj_file(v__builder__B
 	Array_string all_options = __new_array_with_default(0, 0, sizeof(string), 0);
 	array_push((array*)&all_options, _MOV((string[]){ string_clone(v->pref->third_party_option) }));
 	_PUSH_MANY(&all_options, (Array_v__cflag__CFlag_c_options_before_target(moduleflags)), _t4, Array_string);
-	array_push((array*)&all_options, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-o \""), 0xfe10, {.d_s = opath}}, {_SLIT("\""), 0, { .d_c = 0 }}}))) }));
-	array_push((array*)&all_options, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-c \""), 0xfe10, {.d_s = cfile}}, {_SLIT("\""), 0, { .d_c = 0 }}}))) }));
+	array_push((array*)&all_options, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-o "), 0xfe10, {.d_s = os__quoted_path(opath)}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
+	array_push((array*)&all_options, _MOV((string[]){ string_clone( str_intp(2, _MOV((StrIntpData[]){{_SLIT("-c "), 0xfe10, {.d_s = os__quoted_path(cfile)}}, {_SLIT0, 0, { .d_c = 0 }}}))) }));
 	string cc_options = Array_string_join(v__builder__Builder_thirdparty_object_args(v, v->ccoptions, all_options), _SLIT(" "));
-	string cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v->pref->ccompiler}}, {_SLIT(" "), 0xfe10, {.d_s = cc_options}}, {_SLIT0, 0, { .d_c = 0 }}}));
+	string cmd =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(v->pref->ccompiler)}}, {_SLIT(" "), 0xfe10, {.d_s = cc_options}}, {_SLIT0, 0, { .d_c = 0 }}}));
 	os__Result res = os__execute(cmd);
 	Option_void _t7 = os__chdir(current_folder);
 	if (_t7.state != 0 && _t7.err._typ != _IError_None___index) {
@@ -86956,7 +86982,7 @@ string pwd;
 	
  ;
 	string boptions = Array_string_join(b->pref->build_options, _SLIT(" "));
-	string rebuild_cmd =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = vexe}}, {_SLIT(" "), 0xfe10, {.d_s = boptions}}, {_SLIT(" build-module "), 0xfe10, {.d_s = imp_path}}, {_SLIT0, 0, { .d_c = 0 }}}));
+	string rebuild_cmd =  str_intp(4, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = os__quoted_path(vexe)}}, {_SLIT(" "), 0xfe10, {.d_s = boptions}}, {_SLIT(" build-module "), 0xfe10, {.d_s = os__quoted_path(imp_path)}}, {_SLIT0, 0, { .d_c = 0 }}}));
 	;
 	os__system(rebuild_cmd);
 // Defer begin
