@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "e66e35c"
+#define V_COMMIT_HASH "85ec024"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "839ae6b"
+	#define V_COMMIT_HASH "e66e35c"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "e66e35c"
+	#define V_CURRENT_COMMIT_HASH "85ec024"
 #endif
 
 // V comptime_definitions:
@@ -31257,7 +31257,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("839ae6b");
+	string vhash = _SLIT("e66e35c");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -71726,7 +71726,8 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_jsons(v__gen__c__Gen* g) {
 		v__gen__c__Gen_register_optional(g, utyp);
 		string dec_fn_name = v__gen__c__js_dec_name(styp);
 		string dec_fn_dec =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("Option_"), 0xfe10, {.d_s = styp}}, {_SLIT(" "), 0xfe10, {.d_s = dec_fn_name}}, {_SLIT("(cJSON* root)"), 0, { .d_c = 0 }}}));
-		strings__Builder_writeln(&dec,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(" {\n	"), 0xfe10, {.d_s = styp}}, {_SLIT(" res;\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for "), 0xfe10, {.d_s = styp}}, {_SLIT(" error_ptr=: %s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%s\\n\", js.str);\n			return (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2,.err = _v_error(tos2((byteptr)error_ptr)),.data = {0}};\n		}\n	}\n"), 0, { .d_c = 0 }}})));
+		string init_styp = v__gen__c__Gen_expr_string(g, v__ast__StructInit_to_sumtype_v__ast__Expr(ADDR(v__ast__StructInit, ((v__ast__StructInit){.pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.name_pos = (v__token__Position){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.is_short = 0,.unresolved = 0,.pre_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.typ_str = styp,.typ = utyp,.update_expr = {0},.update_expr_type = 0,.update_expr_comments = __new_array(0, 0, sizeof(v__ast__Comment)),.has_update_expr = 0,.fields = __new_array(0, 0, sizeof(v__ast__StructInitField)),.embeds = __new_array(0, 0, sizeof(v__ast__StructInitEmbed)),}))));
+		strings__Builder_writeln(&dec,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("\n"), 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(" {\n	"), 0xfe10, {.d_s = styp}}, {_SLIT(" res = "), 0xfe10, {.d_s = init_styp}}, {_SLIT(";\n	if (!root) {\n		const char *error_ptr = cJSON_GetErrorPtr();\n		if (error_ptr != NULL)	{\n			// fprintf(stderr, \"Error in decode() for "), 0xfe10, {.d_s = styp}}, {_SLIT(" error_ptr=: %s\\n\", error_ptr);\n			// printf(\"\\nbad js=%%s\\n\", js.str);\n			return (Option_"), 0xfe10, {.d_s = styp}}, {_SLIT("){.state = 2,.err = _v_error(tos2((byteptr)error_ptr)),.data = {0}};\n		}\n	}\n"), 0, { .d_c = 0 }}})));
 		strings__Builder_writeln(&g->json_forward_decls,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = dec_fn_dec}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
 		string enc_fn_name = v__gen__c__js_enc_name(styp);
 		string enc_fn_dec =  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cJSON* "), 0xfe10, {.d_s = enc_fn_name}}, {_SLIT("("), 0xfe10, {.d_s = styp}}, {_SLIT(" val)"), 0, { .d_c = 0 }}}));
@@ -72076,11 +72077,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_decode_map(v__gen__c__Gen* g, v__ast__Type
 	string styp = v__gen__c__Gen_typ(g, key_type);
 	string styp_v = v__gen__c__Gen_typ(g, value_type);
 	v__ast__TypeSymbol* key_type_symbol = v__ast__Table_sym(g->table, key_type);
-	multi_return_string_string_string_string mr_17173 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
-	string hash_fn = mr_17173.arg0;
-	string key_eq_fn = mr_17173.arg1;
-	string clone_fn = mr_17173.arg2;
-	string free_fn = mr_17173.arg3;
+	multi_return_string_string_string_string mr_17278 = v__gen__c__Gen_map_fn_ptrs(g, *key_type_symbol);
+	string hash_fn = mr_17278.arg0;
+	string key_eq_fn = mr_17278.arg1;
+	string clone_fn = mr_17278.arg2;
+	string free_fn = mr_17278.arg3;
 	string fn_name_v = v__gen__c__js_dec_name(styp_v);
 	string s = _SLIT("");
 	if (v__gen__c__is_js_prim(styp_v)) {
