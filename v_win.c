@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "4e0e2ef"
+#define V_COMMIT_HASH "edf0bc3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "34f0d44"
+	#define V_COMMIT_HASH "4e0e2ef"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "4e0e2ef"
+	#define V_CURRENT_COMMIT_HASH "edf0bc3"
 #endif
 
 // V comptime_definitions:
@@ -31270,7 +31270,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("34f0d44");
+	string vhash = _SLIT("4e0e2ef");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -53811,10 +53811,18 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 				continue;
 			}
 			if (field.has_default_expr) {
-				if ((field.default_expr)._typ == 323 /* v.ast.StructInit */ && field.default_expr_typ == 0) {
-					int idx = v__ast__Table_find_type_idx(c->table, (*field.default_expr._v__ast__StructInit).typ_str);
-					if (idx != 0) {
-						(*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i)).default_expr_typ = v__ast__new_type(idx);
+				if (field.default_expr_typ == 0) {
+					if ((field.default_expr)._typ == 323 /* v.ast.StructInit */) {
+						int idx = v__ast__Table_find_type_idx(c->table, (*field.default_expr._v__ast__StructInit).typ_str);
+						if (idx != 0) {
+							(*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i)).default_expr_typ = v__ast__new_type(idx);
+						}
+					} else {
+						Option_v__ast__ConstField_ptr _t13;
+						if (_t13 = v__ast__Scope_find_const(c->table->global_scope,  str_intp(2, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__ast__Expr_str(field.default_expr)}}, {_SLIT0, 0, { .d_c = 0 }}}))), _t13.state == 0) {
+							v__ast__ConstField* const_field = *(v__ast__ConstField**)_t13.data;
+							(*(v__ast__StructField*)/*ee elem_typ */array_get(info.fields, i)).default_expr_typ = const_field->typ;
+						}
 					}
 				}
 				continue;
@@ -53824,8 +53832,8 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 			}
 			v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, field.typ);
 			bool has_noinit = false;
-			for (int _t13 = 0; _t13 < field.attrs.len; ++_t13) {
-				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t13];
+			for (int _t14 = 0; _t14 < field.attrs.len; ++_t14) {
+				v__ast__Attr attr = ((v__ast__Attr*)field.attrs.data)[_t14];
 				if (string__eq(attr.name, _SLIT("noinit"))) {
 					has_noinit = true;
 					break;
@@ -53836,8 +53844,8 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 			}
 			if (Array_v__ast__Attr_contains(field.attrs, _SLIT("required")) && !node->is_short && !node->has_update_expr) {
 				bool found = false;
-				for (int _t14 = 0; _t14 < node->fields.len; ++_t14) {
-					v__ast__StructInitField init_field = ((v__ast__StructInitField*)node->fields.data)[_t14];
+				for (int _t15 = 0; _t15 < node->fields.len; ++_t15) {
+					v__ast__StructInitField init_field = ((v__ast__StructInitField*)node->fields.data)[_t15];
 					if (string__eq(field.name, init_field.name)) {
 						found = true;
 						break;
@@ -53870,8 +53878,8 @@ v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__Str
 			v__checker__Checker_error(c, _SLIT("expression is not an lvalue"), v__ast__Expr_position(node->update_expr));
 		}
 	}
-	v__ast__Type _t15 = node->typ;
-	return _t15;
+	v__ast__Type _t16 = node->typ;
+	return _t16;
 }
 
 VV_LOCAL_SYMBOL bool v__transformer__IndexState_safe_access(v__transformer__IndexState* i, string key, int _v_new) {
