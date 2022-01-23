@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "86a2562"
+#define V_COMMIT_HASH "34f0d44"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "22c21e6"
+	#define V_COMMIT_HASH "86a2562"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "86a2562"
+	#define V_CURRENT_COMMIT_HASH "34f0d44"
 #endif
 
 // V comptime_definitions:
@@ -27696,14 +27696,13 @@ Option_bool os__is_writable_folder(string folder) {
 	}
 	string tmp_folder_name = string__plus(_SLIT("tmp_perm_check_pid_"), int_str(os__getpid()));
 	string tmp_perm_check = os__join_path_single(folder, tmp_folder_name);
-	Option_os__File _t3 = os__open_file(tmp_perm_check, _SLIT("w+"), new_array_from_c_array(1, 1, sizeof(int), _MOV((int[1]){0700})));
-	if (_t3.state != 0) { /*or block*/ 
+	Option_void _t3 = os__write_file(tmp_perm_check, _SLIT("test"));
+	if (_t3.state != 0 && _t3.err._typ != _IError_None___index) {
 		IError err = _t3.err;
-		return (Option_bool){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot write to folder "), 0xfe10, {.d_s = folder}}, {_SLIT(": "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
+		return (Option_bool){ .state=2, .err=_v_error( str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot write to folder \""), 0xfe10, {.d_s = folder}}, {_SLIT("\": "), 0xfe10, {.d_s = IError_str(err)}}, {_SLIT0, 0, { .d_c = 0 }}}))), .data={EMPTY_STRUCT_INITIALIZATION} };
 	}
 	
- 	os__File f =  (*(os__File*)_t3.data);
-	os__File_close(&f);
+ ;
 	Option_void _t5 = os__rm(tmp_perm_check);
 	if (_t5.state != 0 && _t5.err._typ != _IError_None___index) {
 		Option_bool _t6;
@@ -31271,7 +31270,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("22c21e6");
+	string vhash = _SLIT("86a2562");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
