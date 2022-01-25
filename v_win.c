@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "009a65b"
+#define V_COMMIT_HASH "a913983"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "5f38ba8"
+	#define V_COMMIT_HASH "009a65b"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "009a65b"
+	#define V_CURRENT_COMMIT_HASH "a913983"
 #endif
 
 // V comptime_definitions:
@@ -31275,7 +31275,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("5f38ba8");
+	string vhash = _SLIT("009a65b");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -68591,7 +68591,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_embed_file_init(v__gen__c__Gen* g, v__as
 		node->embed_file.len = file_bytes.len;
 	}
 	u64 ef_idx = v__ast__EmbeddedFile_hash(node->embed_file);
-	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_v_embed_file_metadata("), 0xfe08, {.d_u64 = ef_idx}}, {_SLIT(")"), 0, { .d_c = 0 }}})));
+	v__gen__c__Gen_write(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("_v_embed_file_metadata( "), 0xfe08, {.d_u64 = ef_idx}}, {_SLIT("U )"), 0, { .d_c = 0 }}})));
 	array_push((array*)&g->file->embedded_files, _MOV((v__ast__EmbeddedFile[]){ node->embed_file }));
 }
 
@@ -68603,7 +68603,7 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_gen_embedded_metadata(v__gen__c__Gen* g) {
 	for (int _t1 = 0; _t1 < g->embedded_files.len; ++_t1) {
 		v__ast__EmbeddedFile emfile = ((v__ast__EmbeddedFile*)g->embedded_files.data)[_t1];
 		u64 ef_idx = v__ast__EmbeddedFile_hash(emfile);
-		strings__Builder_writeln(&g->embedded_data,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tcase "), 0xfe08, {.d_u64 = ef_idx}}, {_SLIT(": {"), 0, { .d_c = 0 }}})));
+		strings__Builder_writeln(&g->embedded_data,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\tcase "), 0xfe08, {.d_u64 = ef_idx}}, {_SLIT("U: {"), 0, { .d_c = 0 }}})));
 		strings__Builder_writeln(&g->embedded_data,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\t\tres.path = "), 0xfe10, {.d_s = v__gen__c__ctoslit(emfile.rpath)}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
 		if (v__gen__c__Gen_embed_file_is_prod_mode(g)) {
 			strings__Builder_writeln(&g->embedded_data,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\t\t\tres.apath = "), 0xfe10, {.d_s = v__gen__c__ctoslit(_SLIT(""))}}, {_SLIT(";"), 0, { .d_c = 0 }}})));
