@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "1fdbdf4"
+#define V_COMMIT_HASH "4715fb6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "95d8632"
+	#define V_COMMIT_HASH "1fdbdf4"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "1fdbdf4"
+	#define V_CURRENT_COMMIT_HASH "4715fb6"
 #endif
 
 // V comptime_definitions:
@@ -16813,6 +16813,8 @@ int proc_pidpath(int , voidptr , int );
 // Attr: [trusted]
 // Attr: [trusted]
 // Attr: [trusted]
+// Attr: [trusted]
+// Attr: [trusted]
 // Attr: [inline]
 // Attr: [unsafe]
 inline int vstrlen(byte* s) {
@@ -31284,7 +31286,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("95d8632");
+	string vhash = _SLIT("1fdbdf4");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -42666,6 +42668,8 @@ bool v__checker__Checker_check_types(v__checker__Checker* c, v__ast__Type got, v
 		bool _t1 = true;
 		return _t1;
 	}
+	bool got_is_ptr = v__ast__Type_is_ptr(got);
+	bool exp_is_ptr = v__ast__Type_is_ptr(expected);
 	if (c->pref->translated) {
 		if (v__ast__Type_alias_eq(expected, _const_v__ast__byteptr_type)) {
 			bool _t2 = true;
@@ -42696,76 +42700,84 @@ bool v__checker__Checker_check_types(v__checker__Checker* c, v__ast__Type got, v
 				return _t6;
 			}
 		}
+		if (expected_sym->kind == v__ast__Kind__enum_ && v__ast__TypeSymbol_is_number(got_sym)) {
+			bool _t7 = true;
+			return _t7;
+		}
+		if (got_is_ptr && exp_is_ptr) {
+			if (v__ast__TypeSymbol_is_number(expected_sym) && v__ast__TypeSymbol_is_number(got_sym)) {
+				bool _t8 = true;
+				return _t8;
+			}
+		}
 	}
-	bool got_is_ptr = v__ast__Type_is_ptr(got);
-	bool exp_is_ptr = v__ast__Type_is_ptr(expected);
 	if (got_is_ptr && exp_is_ptr) {
 		if (v__ast__Type_nr_muls(got) != v__ast__Type_nr_muls(expected)) {
-			bool _t7 = false;
-			return _t7;
+			bool _t9 = false;
+			return _t9;
 		}
 	}
 	int exp_idx = v__ast__Type_idx(expected);
 	int got_idx = v__ast__Type_idx(got);
 	if (exp_idx == got_idx) {
-		bool _t8 = true;
-		return _t8;
+		bool _t10 = true;
+		return _t10;
 	}
 	if (exp_idx == _const_v__ast__voidptr_type_idx || exp_idx == _const_v__ast__byteptr_type_idx || (v__ast__Type_is_ptr(expected) && v__ast__Type_idx(v__ast__Type_deref(expected)) == _const_v__ast__byte_type_idx)) {
 		if (v__ast__Type_is_ptr(got) || v__ast__Type_is_pointer(got)) {
-			bool _t9 = true;
-			return _t9;
-		}
-	}
-	if (v__ast__Type_is_real_pointer(expected)) {
-		if (v__ast__Type_alias_eq(got, _const_v__ast__int_literal_type)) {
-			bool _t10 = true;
-			return _t10;
-		}
-	}
-	if (got_idx == _const_v__ast__voidptr_type_idx || got_idx == _const_v__ast__byteptr_type_idx || (got_idx == _const_v__ast__byte_type_idx && v__ast__Type_is_ptr(got))) {
-		if (v__ast__Type_is_ptr(expected) || v__ast__Type_is_pointer(expected)) {
 			bool _t11 = true;
 			return _t11;
 		}
 	}
+	if (v__ast__Type_is_real_pointer(expected)) {
+		if (v__ast__Type_alias_eq(got, _const_v__ast__int_literal_type)) {
+			bool _t12 = true;
+			return _t12;
+		}
+	}
+	if (got_idx == _const_v__ast__voidptr_type_idx || got_idx == _const_v__ast__byteptr_type_idx || (got_idx == _const_v__ast__byte_type_idx && v__ast__Type_is_ptr(got))) {
+		if (v__ast__Type_is_ptr(expected) || v__ast__Type_is_pointer(expected)) {
+			bool _t13 = true;
+			return _t13;
+		}
+	}
 	if (v__ast__Type_alias_eq(expected, _const_v__ast__charptr_type) && v__ast__Type_alias_eq(got, v__ast__Type_ref(_const_v__ast__char_type))) {
-		bool _t12 = true;
-		return _t12;
+		bool _t14 = true;
+		return _t14;
 	}
 	if (v__ast__Type_has_flag(expected, v__ast__TypeFlag__optional)) {
 		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, got);
 		if ((sym->kind == v__ast__Kind__interface_ && string__eq(sym->name, _SLIT("IError"))) || (got == _const_v__ast__none_type || got == _const_v__ast__error_type)) {
-			bool _t13 = true;
-			return _t13;
+			bool _t15 = true;
+			return _t15;
 		} else if (!v__checker__Checker_check_basic(c, got, v__ast__Type_clear_flag(expected, v__ast__TypeFlag__optional))) {
-			bool _t14 = false;
-			return _t14;
+			bool _t16 = false;
+			return _t16;
 		}
 	}
 	if (!v__checker__Checker_check_basic(c, got, expected)) {
-		bool _t15 = false;
-		return _t15;
+		bool _t17 = false;
+		return _t17;
 	}
 	if (v__ast__Type_is_number(got) && v__ast__Type_is_number(expected)) {
 		if (v__ast__Type_alias_eq(got, _const_v__ast__rune_type) && v__ast__Type_alias_eq(expected, _const_v__ast__byte_type)) {
-			bool _t16 = true;
-			return _t16;
+			bool _t18 = true;
+			return _t18;
 		} else if (v__ast__Type_alias_eq(expected, _const_v__ast__rune_type) && v__ast__Type_alias_eq(got, _const_v__ast__byte_type)) {
-			bool _t17 = true;
-			return _t17;
+			bool _t19 = true;
+			return _t19;
 		}
 		if (!v__ast__Type_alias_eq(v__checker__Checker_promote_num(c, expected, got), expected)) {
-			bool _t18 = false;
-			return _t18;
+			bool _t20 = false;
+			return _t20;
 		}
 	}
 	if (v__ast__Type_has_flag(expected, v__ast__TypeFlag__generic)) {
-		bool _t19 = false;
-		return _t19;
+		bool _t21 = false;
+		return _t21;
 	}
-	bool _t20 = true;
-	return _t20;
+	bool _t22 = true;
+	return _t22;
 }
 
 Option_void v__checker__Checker_check_expected_call_arg(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected_, v__ast__Language language, v__ast__CallArg arg) {
@@ -43054,10 +43066,10 @@ VV_LOCAL_SYMBOL v__ast__Type v__checker__Checker_promote_num(v__checker__Checker
 	v__ast__Type type_hi = left_type;
 	v__ast__Type type_lo = right_type;
 	if (v__ast__Type_idx(type_hi) < v__ast__Type_idx(type_lo)) {
-		v__ast__Type _var_14473 = type_hi;
-		v__ast__Type _var_14482 = type_lo;
-		type_hi = _var_14482;
-		type_lo = _var_14473;
+		v__ast__Type _var_14800 = type_hi;
+		v__ast__Type _var_14809 = type_lo;
+		type_hi = _var_14809;
+		type_lo = _var_14800;
 	}
 	int idx_hi = v__ast__Type_idx(type_hi);
 	int idx_lo = v__ast__Type_idx(type_lo);
