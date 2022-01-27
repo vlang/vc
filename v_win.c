@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f8f7bc8"
+#define V_COMMIT_HASH "9dce819"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ebad730"
+	#define V_COMMIT_HASH "f8f7bc8"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f8f7bc8"
+	#define V_CURRENT_COMMIT_HASH "9dce819"
 #endif
 
 // V comptime_definitions:
@@ -31294,7 +31294,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("ebad730");
+	string vhash = _SLIT("f8f7bc8");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -69881,11 +69881,12 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallE
 		} else {
 			v__gen__c__Gen_expr(g, node.left);
 		}
-		for (int _t15 = 0; _t15 < node.from_embed_types.len; ++_t15) {
-			v__ast__Type embed = ((v__ast__Type*)node.from_embed_types.data)[_t15];
+		for (int i = 0; i < node.from_embed_types.len; ++i) {
+			v__ast__Type embed = ((v__ast__Type*)node.from_embed_types.data)[i];
 			v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(g->table, embed);
 			string embed_name = v__ast__TypeSymbol_embed_name(embed_sym);
-			if (v__ast__Type_is_ptr(node.left_type)) {
+			bool is_left_ptr = (i == 0 ? (v__ast__Type_is_ptr(node.left_type)) : (v__ast__Type_is_ptr((*(v__ast__Type*)/*ee elem_typ */array_get(node.from_embed_types, i - 1)))));
+			if (is_left_ptr) {
 				v__gen__c__Gen_write(g, _SLIT("->"));
 			} else {
 				v__gen__c__Gen_write(g, _SLIT("."));
@@ -70091,11 +70092,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr 
 	}
 	if (!print_auto_str) {
 		if (g->pref->is_debug && string__eq(node.name, _SLIT("panic"))) {
-			multi_return_int_string_string_string mr_37653 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_37653.arg0;
-			string pafile = mr_37653.arg1;
-			string pamod = mr_37653.arg2;
-			string pafn = mr_37653.arg3;
+			multi_return_int_string_string_string mr_37761 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_37761.arg0;
+			string pafile = mr_37761.arg1;
+			string pamod = mr_37761.arg2;
+			string pafn = mr_37761.arg3;
 			v__gen__c__Gen_write(g,  str_intp(5, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"),  "), 0, { .d_c = 0 }}})));
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _SLIT(")"));
