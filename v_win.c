@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "8491e83"
+#define V_COMMIT_HASH "edc6c9e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "41b9b29"
+	#define V_COMMIT_HASH "8491e83"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "8491e83"
+	#define V_CURRENT_COMMIT_HASH "edc6c9e"
 #endif
 
 // V comptime_definitions:
@@ -31294,7 +31294,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("41b9b29");
+	string vhash = _SLIT("8491e83");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -47867,18 +47867,22 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 				v__ast__Type _t1 = _const_v__ast__void_type;
 				return _t1;
 			}
+		} else {
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("unknown enum `"), 0xfe10, {.d_s = node->enum_name}}, {_SLIT("` (type_idx=0)"), 0, { .d_c = 0 }}})), node->pos);
+			v__ast__Type _t2 = _const_v__ast__void_type;
+			return _t2;
 		}
 	}
 	v__ast__Type typ = v__ast__new_type(typ_idx);
 	if (c->pref->translated) {
 		node->typ = typ;
-		v__ast__Type _t2 = typ;
-		return _t2;
+		v__ast__Type _t3 = typ;
+		return _t3;
 	}
 	if (v__ast__Type_alias_eq(typ, _const_v__ast__void_type)) {
 		v__checker__Checker_error(c, _SLIT("not an enum"), node->pos);
-		v__ast__Type _t3 = _const_v__ast__void_type;
-		return _t3;
+		v__ast__Type _t4 = _const_v__ast__void_type;
+		return _t4;
 	}
 	v__ast__TypeSymbol* typ_sym = v__ast__Table_sym(c->table, typ);
 	if (typ_sym->kind == v__ast__Kind__array && node->enum_name.len == 0) {
@@ -47889,13 +47893,13 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 	v__ast__TypeSymbol* fsym = v__ast__Table_final_sym(c->table, typ);
 	if (fsym->kind != v__ast__Kind__enum_ && !c->pref->translated) {
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("expected type is not an enum (`"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
-		v__ast__Type _t4 = _const_v__ast__void_type;
-		return _t4;
+		v__ast__Type _t5 = _const_v__ast__void_type;
+		return _t5;
 	}
 	if ((fsym->info)._typ != 476 /* v.ast.Enum */) {
 		v__checker__Checker_error(c, _SLIT("not an enum"), node->pos);
-		v__ast__Type _t5 = _const_v__ast__void_type;
-		return _t5;
+		v__ast__Type _t6 = _const_v__ast__void_type;
+		return _t6;
 	}
 	if (!(typ_sym->is_public || string__eq(typ_sym->mod, c->mod))) {
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("enum `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("` is private"), 0, { .d_c = 0 }}})), node->pos);
@@ -47906,8 +47910,8 @@ v__ast__Type v__checker__Checker_enum_val(v__checker__Checker* c, v__ast__EnumVa
 		v__checker__Checker_error(c, v__util__Suggestion_say(suggestion,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("enum `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("` does not have a value `"), 0xfe10, {.d_s = node->val}}, {_SLIT("`"), 0, { .d_c = 0 }}}))), node->pos);
 	}
 	node->typ = typ;
-	v__ast__Type _t6 = typ;
-	return _t6;
+	v__ast__Type _t7 = typ;
+	return _t7;
 }
 
 v__ast__Type v__checker__Checker_chan_init(v__checker__Checker* c, v__ast__ChanInit* node) {
