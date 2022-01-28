@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "71d9871"
+#define V_COMMIT_HASH "ceb05b1"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "edc6c9e"
+	#define V_COMMIT_HASH "71d9871"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "71d9871"
+	#define V_CURRENT_COMMIT_HASH "ceb05b1"
 #endif
 
 // V comptime_definitions:
@@ -6375,6 +6375,7 @@ void strings__Builder_write_ptr(strings__Builder* b, byte* ptr, int len);
 void strings__Builder_write_rune(strings__Builder* b, rune r);
 void strings__Builder_write_runes(strings__Builder* b, Array_rune runes);
 void strings__Builder_write_b(strings__Builder* b, byte data);
+void strings__Builder_write_byte(strings__Builder* b, byte data);
 Option_int strings__Builder_write(strings__Builder* b, Array_byte data);
 void strings__Builder_drain_builder(strings__Builder* b, strings__Builder* other, int other_new_cap);
 byte strings__Builder_byte_at(strings__Builder* b, int n);
@@ -12182,7 +12183,13 @@ void strings__Builder_write_runes(strings__Builder* b, Array_rune runes) {
 	}
 }
 
+// Attr: [deprecated]
+// Attr: [deprecated_after]
 void strings__Builder_write_b(strings__Builder* b, byte data) {
+	array_push((array*)b, _MOV((byte[]){ data }));
+}
+
+void strings__Builder_write_byte(strings__Builder* b, byte data) {
 	array_push((array*)b, _MOV((byte[]){ data }));
 }
 
@@ -13924,13 +13931,13 @@ strings__Builder res;
 	strconv__format_str_defer_0 = true;
 	if (p.allign == strconv__Align_text__right) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(&res, p.pad_ch);
+			strings__Builder_write_byte(&res, p.pad_ch);
 		}
 	}
 	strings__Builder_write_string(&res, s);
 	if (p.allign == strconv__Align_text__left) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(&res, p.pad_ch);
+			strings__Builder_write_byte(&res, p.pad_ch);
 		}
 	}
 	string _t3 = strings__Builder_str(&res);
@@ -13954,13 +13961,13 @@ void strconv__format_str_sb(string s, strconv__BF_param p, strings__Builder* sb)
 	}
 	if (p.allign == strconv__Align_text__right) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(sb, p.pad_ch);
+			strings__Builder_write_byte(sb, p.pad_ch);
 		}
 	}
 	strings__Builder_write_string(sb, s);
 	if (p.allign == strconv__Align_text__left) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(sb, p.pad_ch);
+			strings__Builder_write_byte(sb, p.pad_ch);
 		}
 	}
 }
@@ -13976,25 +13983,25 @@ void strconv__format_dec_sb(u64 d, strconv__BF_param p, strings__Builder* res) {
 		if (p.pad_ch == '0') {
 			if (p.positive) {
 				if (p.sign_flag) {
-					strings__Builder_write_b(res, '+');
+					strings__Builder_write_byte(res, '+');
 					sign_written = true;
 				}
 			} else {
-				strings__Builder_write_b(res, '-');
+				strings__Builder_write_byte(res, '-');
 				sign_written = true;
 			}
 		}
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(res, p.pad_ch);
+			strings__Builder_write_byte(res, p.pad_ch);
 		}
 	}
 	if (!sign_written) {
 		if (p.positive) {
 			if (p.sign_flag) {
-				strings__Builder_write_b(res, '+');
+				strings__Builder_write_byte(res, '+');
 			}
 		} else {
-			strings__Builder_write_b(res, '-');
+			strings__Builder_write_byte(res, '-');
 		}
 	}
 	Array_fixed_byte_32 buf = {0};
@@ -14023,11 +14030,11 @@ void strconv__format_dec_sb(u64 d, strconv__BF_param p, strings__Builder* res) {
 		}
 		strings__Builder_write_ptr(res, &buf[i], n_char);
 	} else {
-		strings__Builder_write_b(res, '0');
+		strings__Builder_write_byte(res, '0');
 	}
 	if (p.allign == strconv__Align_text__left) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(res, p.pad_ch);
+			strings__Builder_write_byte(res, p.pad_ch);
 		}
 	}
 	return;
@@ -14954,7 +14961,7 @@ strings__Builder res;
 		}
 		byte ch = string_at(str, i);
 		if (ch != '%' && status == strconv__Char_parse_state__norm_char) {
-			strings__Builder_write_b(&res, ch);
+			strings__Builder_write_byte(&res, ch);
 			i++;
 			continue;
 		}
@@ -14966,7 +14973,7 @@ strings__Builder res;
 		if (ch == 'c' && status == strconv__Char_parse_state__field_char) {
 			strconv__v_sprintf_panic(p_index, pt.len);
 			byte d1 = *(((byte*)((*(voidptr*)/*ee elem_typ */array_get(pt, p_index)))));
-			strings__Builder_write_b(&res, d1);
+			strings__Builder_write_byte(&res, d1);
 			status = strconv__Char_parse_state__reset_params;
 			p_index++;
 			i++;
@@ -15367,11 +15374,11 @@ strings__Builder res;
 		if (p.pad_ch == '0') {
 			if (p.positive) {
 				if (p.sign_flag) {
-					strings__Builder_write_b(&res, '+');
+					strings__Builder_write_byte(&res, '+');
 					sign_len_diff = -1;
 				}
 			} else {
-				strings__Builder_write_b(&res, '-');
+				strings__Builder_write_byte(&res, '-');
 				sign_len_diff = -1;
 			}
 			string tmp = s;
@@ -15397,13 +15404,13 @@ strings__Builder res;
 		int dif = p.len0 - s.len + sign_len_diff;
 		if (p.allign == strconv__Align_text__right) {
 			for (int i1 = 0; i1 < dif; i1++) {
-				strings__Builder_write_b(&res, p.pad_ch);
+				strings__Builder_write_byte(&res, p.pad_ch);
 			}
 		}
 		strings__Builder_write_string(&res, s);
 		if (p.allign == strconv__Align_text__left) {
 			for (int i1 = 0; i1 < dif; i1++) {
-				strings__Builder_write_b(&res, p.pad_ch);
+				strings__Builder_write_byte(&res, p.pad_ch);
 			}
 		}
 		string_free(&s);
@@ -15435,11 +15442,11 @@ strings__Builder res;
 		if (p.pad_ch == '0') {
 			if (p.positive) {
 				if (p.sign_flag) {
-					strings__Builder_write_b(&res, '+');
+					strings__Builder_write_byte(&res, '+');
 					sign_len_diff = -1;
 				}
 			} else {
-				strings__Builder_write_b(&res, '-');
+				strings__Builder_write_byte(&res, '-');
 				sign_len_diff = -1;
 			}
 			string tmp = s;
@@ -15465,13 +15472,13 @@ strings__Builder res;
 		int dif = p.len0 - s.len + sign_len_diff;
 		if (p.allign == strconv__Align_text__right) {
 			for (int i1 = 0; i1 < dif; i1++) {
-				strings__Builder_write_b(&res, p.pad_ch);
+				strings__Builder_write_byte(&res, p.pad_ch);
 			}
 		}
 		strings__Builder_write_string(&res, s);
 		if (p.allign == strconv__Align_text__left) {
 			for (int i1 = 0; i1 < dif; i1++) {
-				strings__Builder_write_b(&res, p.pad_ch);
+				strings__Builder_write_byte(&res, p.pad_ch);
 			}
 		}
 		string_free(&s);
@@ -15537,11 +15544,11 @@ strings__Builder res;
 	if (p.pad_ch == '0') {
 		if (p.positive) {
 			if (p.sign_flag) {
-				strings__Builder_write_b(&res, '+');
+				strings__Builder_write_byte(&res, '+');
 				sign_len_diff = -1;
 			}
 		} else {
-			strings__Builder_write_b(&res, '-');
+			strings__Builder_write_byte(&res, '-');
 			sign_len_diff = -1;
 		}
 		s = u64_str(d);
@@ -15559,13 +15566,13 @@ strings__Builder res;
 	int dif = p.len0 - s.len + sign_len_diff;
 	if (p.allign == strconv__Align_text__right) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(&res, p.pad_ch);
+			strings__Builder_write_byte(&res, p.pad_ch);
 		}
 	}
 	strings__Builder_write_string(&res, s);
 	if (p.allign == strconv__Align_text__left) {
 		for (int i1 = 0; i1 < dif; i1++) {
-			strings__Builder_write_b(&res, p.pad_ch);
+			strings__Builder_write_byte(&res, p.pad_ch);
 		}
 	}
 	string _t1 = strings__Builder_str(&res);
@@ -16057,17 +16064,17 @@ string Array_string_str(Array_string a) {
 	}
 	sb_len += 2;
 	strings__Builder sb = strings__new_builder(sb_len);
-	strings__Builder_write_b(&sb, '[');
+	strings__Builder_write_byte(&sb, '[');
 	for (int i = 0; i < a.len; ++i) {
 		string val = (*(string*)/*ee elem_typ */array_get(a, i));
-		strings__Builder_write_b(&sb, '\'');
+		strings__Builder_write_byte(&sb, '\'');
 		strings__Builder_write_string(&sb, val);
-		strings__Builder_write_b(&sb, '\'');
+		strings__Builder_write_byte(&sb, '\'');
 		if (i < a.len - 1) {
 			strings__Builder_write_string(&sb, _SLIT(", "));
 		}
 	}
-	strings__Builder_write_b(&sb, ']');
+	strings__Builder_write_byte(&sb, ']');
 	string res = strings__Builder_str(&sb);
 	strings__Builder_free(&sb);
 	return res;
@@ -20593,7 +20600,7 @@ VV_LOCAL_SYMBOL void StrIntpData_process_str_intp_data(StrIntpData* data, string
 					string_free(&tmp);
 				}
 				if (write_minus) {
-					strings__Builder_write_b(sb, '-');
+					strings__Builder_write_byte(sb, '-');
 					bf.len0--;
 				}
 				if (width == 0) {
@@ -31294,7 +31301,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("edc6c9e");
+	string vhash = _SLIT("71d9871");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -33807,7 +33814,7 @@ Array_string v__util__source_file_context(string kind, string filepath, v__token
 			strings__Builder pointerline_builder = strings__new_builder(sline.len);
 			for (int i = 0; i < start_column; ) {
 				if (byte_is_space(string_at(sline, i))) {
-					strings__Builder_write_b(&pointerline_builder, string_at(sline, i));
+					strings__Builder_write_byte(&pointerline_builder, string_at(sline, i));
 					i++;
 				} else {
 					int char_len = utf8_char_len(string_at(sline, i));
@@ -34018,8 +34025,8 @@ string v__util__smart_quote(string str, bool raw) {
 		}
 		if (current == _const_v__util__double_quote) {
 			current = 0;
-			strings__Builder_write_b(&result, _const_v__util__backslash);
-			strings__Builder_write_b(&result, _const_v__util__double_quote);
+			strings__Builder_write_byte(&result, _const_v__util__backslash);
+			strings__Builder_write_byte(&result, _const_v__util__double_quote);
 			continue;
 		}
 		if (current == _const_v__util__backslash) {
@@ -34040,24 +34047,24 @@ string v__util__smart_quote(string str, bool raw) {
 				}
 				if (Array_byte_contains(_const_v__util__invalid_escapes, next)) {
 					skip_next = true;
-					strings__Builder_write_b(&result, next);
+					strings__Builder_write_byte(&result, next);
 					continue;
 				}
 				skip_next = true;
-				strings__Builder_write_b(&result, current);
-				strings__Builder_write_b(&result, next);
+				strings__Builder_write_byte(&result, current);
+				strings__Builder_write_byte(&result, next);
 				continue;
 			}
 		}
 		if (current == _const_v__util__backslash_n) {
 			current = 0;
-			strings__Builder_write_b(&result, _const_v__util__backslash);
-			strings__Builder_write_b(&result, 'n');
+			strings__Builder_write_byte(&result, _const_v__util__backslash);
+			strings__Builder_write_byte(&result, 'n');
 			continue;
 		}
 		if (current == _const_v__util__backslash_r && next == _const_v__util__backslash_n) {
-			strings__Builder_write_b(&result, current);
-			strings__Builder_write_b(&result, next);
+			strings__Builder_write_byte(&result, current);
+			strings__Builder_write_byte(&result, next);
 			current = 0;
 			skip_next = true;
 			continue;
@@ -34065,19 +34072,19 @@ string v__util__smart_quote(string str, bool raw) {
 		if (!raw) {
 			if (current == '$') {
 				if (last == _const_v__util__backslash) {
-					strings__Builder_write_b(&result, last);
-					strings__Builder_write_b(&result, current);
+					strings__Builder_write_byte(&result, last);
+					strings__Builder_write_byte(&result, current);
 					continue;
 				}
 			}
 			if (current == _const_v__util__backslash_r && next == _const_v__util__backslash_n) {
 				skip_next = true;
-				strings__Builder_write_b(&result, _const_v__util__backslash);
-				strings__Builder_write_b(&result, 'n');
+				strings__Builder_write_byte(&result, _const_v__util__backslash);
+				strings__Builder_write_byte(&result, 'n');
 				continue;
 			}
 		}
-		strings__Builder_write_b(&result, current);
+		strings__Builder_write_byte(&result, current);
 	}
 	string _t3 = strings__Builder_str(&result);
 	return _t3;
@@ -62704,7 +62711,7 @@ VV_LOCAL_SYMBOL string v__gen__c__cescape_nonascii(string original) {
 			v__gen__c__write_octal_escape((voidptr)&/*qq*/b, c);
 			continue;
 		}
-		strings__Builder_write_b(&b, c);
+		strings__Builder_write_byte(&b, c);
 	}
 	string res = strings__Builder_str(&b);
 	string _t2 = res;
@@ -64360,11 +64367,11 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit 
 	string value_typ_str = v__gen__c__Gen_typ(g, unwrap_val_typ);
 	v__ast__TypeSymbol* value_sym = v__ast__Table_sym(g->table, unwrap_val_typ);
 	v__ast__TypeSymbol* key_sym = v__ast__Table_final_sym(g->table, unwrap_key_typ);
-	multi_return_string_string_string_string mr_124427 = v__gen__c__Gen_map_fn_ptrs(g, *key_sym);
-	string hash_fn = mr_124427.arg0;
-	string key_eq_fn = mr_124427.arg1;
-	string clone_fn = mr_124427.arg2;
-	string free_fn = mr_124427.arg3;
+	multi_return_string_string_string_string mr_124430 = v__gen__c__Gen_map_fn_ptrs(g, *key_sym);
+	string hash_fn = mr_124430.arg0;
+	string key_eq_fn = mr_124430.arg1;
+	string clone_fn = mr_124430.arg2;
+	string free_fn = mr_124430.arg3;
 	int size = node.vals.len;
 	string shared_styp = _SLIT("");
 	string styp = _SLIT("");
@@ -66016,9 +66023,9 @@ VV_LOCAL_SYMBOL void v__gen__c__Gen_write_types(v__gen__c__Gen* g, Array_v__ast_
 				for (int _t3 = 0; _t3 < (*sym->info._v__ast__Struct).fields.len; ++_t3) {
 					v__ast__StructField field = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data)[_t3];
 					if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__optional)) {
-						multi_return_string_string mr_173295 = v__gen__c__Gen_optional_type_name(g, field.typ);
-						string styp = mr_173295.arg0;
-						string base = mr_173295.arg1;
+						multi_return_string_string mr_173298 = v__gen__c__Gen_optional_type_name(g, field.typ);
+						string styp = mr_173298.arg0;
+						string base = mr_173298.arg1;
 						sync__RwMutex_lock(&g->done_optionals->mtx);
 						/*lock*/ {
 							if (!Array_string_contains(g->done_optionals->val, base)) {
@@ -66274,11 +66281,11 @@ bool v__gen__c__Gen_or_block_defer_0 = false;
 	} else if (or_block.kind == v__ast__OrKind__propagate) {
 		if (string__eq(g->file->mod.name, _SLIT("main")) && (isnil(g->fn_decl) || g->fn_decl->is_main)) {
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_181938 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_181938.arg0;
-				string pafile = mr_181938.arg1;
-				string pamod = mr_181938.arg2;
-				string pafn = mr_181938.arg3;
+				multi_return_int_string_string_string mr_181941 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_181941.arg0;
+				string pafile = mr_181941.arg1;
+				string pamod = mr_181941.arg2;
+				string pafn = mr_181941.arg3;
 				v__gen__c__Gen_writeln(g,  str_intp(6, _MOV((StrIntpData[]){{_SLIT("panic_debug("), 0xfe07, {.d_i32 = paline}}, {_SLIT(", tos3(\""), 0xfe10, {.d_s = pafile}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pamod}}, {_SLIT("\"), tos3(\""), 0xfe10, {.d_s = pafn}}, {_SLIT("\"), *"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg );"), 0, { .d_c = 0 }}})));
 			} else {
 				v__gen__c__Gen_writeln(g,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("\tpanic_optional_not_set(*"), 0xfe10, {.d_s = cvar_name}}, {_SLIT(".err.msg);"), 0, { .d_c = 0 }}})));
@@ -66383,11 +66390,11 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_type_default(v__gen__c__Gen* g, v__ast__Ty
 			{
 				v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 				v__ast__TypeSymbol* key_typ = v__ast__Table_sym(g->table, info.key_type);
-				multi_return_string_string_string_string mr_184544 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
-				string hash_fn = mr_184544.arg0;
-				string key_eq_fn = mr_184544.arg1;
-				string clone_fn = mr_184544.arg2;
-				string free_fn = mr_184544.arg3;
+				multi_return_string_string_string_string mr_184547 = v__gen__c__Gen_map_fn_ptrs(g, *key_typ);
+				string hash_fn = mr_184547.arg0;
+				string key_eq_fn = mr_184547.arg1;
+				string clone_fn = mr_184547.arg2;
+				string free_fn = mr_184547.arg3;
 				string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 				string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 				string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_SLIT("_noscan")) : (_SLIT("")));
@@ -67149,8 +67156,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = array_clone_to_depth(&method.params, 0);
 					array_set(&params, 0, &(v__ast__Param[]) { (v__ast__Param){(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).name,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_mut,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_auto_rec,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).type_pos,(*(v__ast__Param*)/*ee elem_typ */array_get(params, 0)).is_hidden,.typ = v__ast__Type_set_nr_muls(st, 1),} });
-					multi_return_Array_string_Array_string_Array_bool mr_206985 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
-					Array_string fargs = mr_206985.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_206988 = v__gen__c__Gen_fn_args(g, params, ((voidptr)(0)));
+					Array_string fargs = mr_206988.arg0;
 					string parameter_name = strings__Builder_cut_last(&g->out, g->out.len - params_start_pos);
 					if (v__ast__Type_is_ptr(st)) {
 						parameter_name = string_trim_string_left(parameter_name, _SLIT("__shared__"));
@@ -67167,8 +67174,8 @@ VV_LOCAL_SYMBOL string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 						*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t25.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=(v__ast__Fn){.is_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.no_body = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.last_line = 0,},.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = __new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = __new_array(0, 0, sizeof(string)),.attrs = __new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,},.arg1=__new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 					}
 					
- 					Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_207435 =  _t25 /*U*/;
-					Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_207435.data).arg1;
+ 					Option_multi_return_v__ast__Fn_Array_v__ast__Type mr_207438 =  _t25 /*U*/;
+					Array_v__ast__Type embed_types = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)mr_207438.data).arg1;
 					if (embed_types.len > 0 && !Array_string_contains(method_names, method.name)) {
 						v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(g->table, (*(v__ast__Type*)array_last(embed_types)));
 						string method_name =  str_intp(3, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = embed_sym->cname}}, {_SLIT("_"), 0xfe10, {.d_s = method.name}}, {_SLIT0, 0, { .d_c = 0 }}}));
@@ -84448,7 +84455,7 @@ VV_LOCAL_SYMBOL bool v__parser__is_html_open_tag(string name, string s) {
 }
 
 VV_LOCAL_SYMBOL string v__parser__insert_template_code(string fn_name, string tmpl_str_start, string line) {
-	string trailing_bs = string__plus(string__plus(_const_v__parser__tmpl_str_end,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_b(92)\n"), 0, { .d_c = 0 }}}))), tmpl_str_start);
+	string trailing_bs = string__plus(string__plus(_const_v__parser__tmpl_str_end,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("sb_"), 0xfe10, {.d_s = fn_name}}, {_SLIT(".write_byte(92)\n"), 0, { .d_c = 0 }}}))), tmpl_str_start);
 	Array_string round1 = new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_SLIT("\\"), _SLIT("\\\\"), _SLIT("'"), _SLIT("\\'"), _SLIT("@"), _SLIT("$")}));
 	Array_string round2 = new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_SLIT("$$"), _SLIT("\\@"), _SLIT(".$"), _SLIT(".@")}));
 	string rline = string_replace_each(string_replace_each(line, round1), round2);
@@ -87097,9 +87104,9 @@ void v__builder__Builder_rebuild_modules(v__builder__Builder* b) {
 		string chash = u64_hex_full(hash__sum64_string(ccontent, 7U));
 		map_set(&new_hashes, &(string[]){cpath}, &(string[]) { chash });
 		strings__Builder_write_string(&sb_new_hashes, chash);
-		strings__Builder_write_b(&sb_new_hashes, ' ');
+		strings__Builder_write_byte(&sb_new_hashes, ' ');
 		strings__Builder_write_string(&sb_new_hashes, cpath);
-		strings__Builder_write_b(&sb_new_hashes, '\n');
+		strings__Builder_write_byte(&sb_new_hashes, '\n');
 	}
 	string snew_hashes = strings__Builder_str(&sb_new_hashes);
 	Option_string _t7 = v__vcache__CacheManager_save(&cm, _SLIT(".hashes"), _SLIT("all_files"), snew_hashes);
