@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "f3683b7"
+#define V_COMMIT_HASH "f6cb772"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eb7f152"
+	#define V_COMMIT_HASH "f3683b7"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "f3683b7"
+	#define V_CURRENT_COMMIT_HASH "f6cb772"
 #endif
 
 // V comptime_definitions:
@@ -8063,7 +8063,7 @@ void v__util__verror(string kind, string s);
 string v__util__vlines_escape_path(string path, string ccompiler);
 string v__util__qualify_import(v__pref__Preferences* pref, string mod, string file_path);
 string v__util__qualify_module(v__pref__Preferences* pref, string mod, string file_path);
-Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string mod, string path);
+VV_LOCAL_SYMBOL Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string mod, string path);
 Array_byte _const_v__util__invalid_escapes; // inited later
 #define _const_v__util__backslash 92
 #define _const_v__util__backslash_r 13
@@ -31333,7 +31333,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("eb7f152");
+	string vhash = _SLIT("f3683b7");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -33908,17 +33908,20 @@ string v__util__qualify_import(v__pref__Preferences* pref, string mod, string fi
 		string _t6 = m1;
 		return _t6;
 	}
+	;
 	string _t7 = mod;
 	return _t7;
 }
 
 string v__util__qualify_module(v__pref__Preferences* pref, string mod, string file_path) {
 	if (string__eq(mod, _SLIT("main"))) {
+		;
 		string _t1 = mod;
 		return _t1;
 	}
 	string clean_file_path = string_all_before_last(file_path, _const_os__path_separator);
 	if (string__eq(string_replace(clean_file_path, string__plus(os__getwd(), _const_os__path_separator), _SLIT("")), mod)) {
+		;
 		string _t2 = mod;
 		return _t2;
 	}
@@ -33929,32 +33932,33 @@ string v__util__qualify_module(v__pref__Preferences* pref, string mod, string fi
 		string _t4 = m1;
 		return _t4;
 	}
+	;
 	string _t5 = mod;
 	return _t5;
 }
 
-Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string mod, string path) {
+VV_LOCAL_SYMBOL Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string mod, string path) {
 	Array_string vmod_folders = new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_SLIT("vlib"), _SLIT(".vmodules"), _SLIT("modules")}));
-	Array_string _t2 = __new_array(0, 0, sizeof(string));
-	Array_string _t2_orig = pref->lookup_path;
-	int _t2_len = _t2_orig.len;
-	_t2 = __new_array(0, _t2_len, sizeof(string));
+	Array_string _t1 = __new_array(0, 0, sizeof(string));
+	Array_string _t1_orig = pref->lookup_path;
+	int _t1_len = _t1_orig.len;
+	_t1 = __new_array(0, _t1_len, sizeof(string));
 
-	for (int _t3 = 0; _t3 < _t2_len; ++_t3) {
-		string it = ((string*) _t2_orig.data)[_t3];
+	for (int _t2 = 0; _t2 < _t1_len; ++_t2) {
+		string it = ((string*) _t1_orig.data)[_t2];
 		string ti = os__base(it);
-		array_push((array*)&_t2, &ti);
+		array_push((array*)&_t1, &ti);
 	}
-	Array_string _t1 =_t2;
-	for (int _t4 = 0; _t4 < _t1.len; ++_t4) {
-		string base = ((string*)_t1.data)[_t4];
+	Array_string bases =_t1;
+	for (int _t3 = 0; _t3 < bases.len; ++_t3) {
+		string base = ((string*)bases.data)[_t3];
 		if (!Array_string_contains(vmod_folders, base)) {
 			array_push((array*)&vmod_folders, _MOV((string[]){ string_clone(base) }));
 		}
 	}
 	bool in_vmod_path = false;
-	for (int _t6 = 0; _t6 < vmod_folders.len; ++_t6) {
-		string vmod_folder = ((string*)vmod_folders.data)[_t6];
+	for (int _t5 = 0; _t5 < vmod_folders.len; ++_t5) {
+		string vmod_folder = ((string*)vmod_folders.data)[_t5];
 		if (string_contains(path, string__plus(vmod_folder, _const_os__path_separator))) {
 			in_vmod_path = true;
 			break;
@@ -33970,9 +33974,9 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 					string path_part = (*(string*)/*ee elem_typ */array_get(path_parts, j));
 					if (Array_string_contains(vmod_folders, path_part)) {
 						string mod_full_name = Array_string_join(array_slice(string_split(try_path, _const_os__path_separator), j + 1, string_split(try_path, _const_os__path_separator).len), _SLIT("."));
-						Option_string _t7;
-						opt_ok(&(string[]) { mod_full_name }, (Option*)(&_t7), sizeof(string));
-						return _t7;
+						Option_string _t6;
+						opt_ok(&(string[]) { mod_full_name }, (Option*)(&_t6), sizeof(string));
+						return _t6;
 					}
 				}
 			} else {
@@ -33980,9 +33984,9 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 				int last_v_mod = -1;
 				for (int j = try_path_parts.len; j > 0; j--) {
 					string parent = Array_string_join(array_slice(try_path_parts, 0, j), _const_os__path_separator);
-					Option_Array_string _t8;
-					if (_t8 = os__ls(parent), _t8.state == 0) {
-						Array_string ls = *(Array_string*)_t8.data;
+					Option_Array_string _t7;
+					if (_t7 = os__ls(parent), _t7.state == 0) {
+						Array_string ls = *(Array_string*)_t7.data;
 						if (Array_string_contains(ls, _SLIT("v.mod")) && (try_path_parts.len > i && !string__eq((*(string*)/*ee elem_typ */array_get(try_path_parts, i)), _SLIT("v")) && !Array_string_contains(ls, _SLIT("vlib")))) {
 							last_v_mod = j;
 						}
@@ -33992,9 +33996,9 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 				}
 				if (last_v_mod > -1) {
 					string mod_full_name = Array_string_join(array_slice(try_path_parts, last_v_mod, try_path_parts.len), _SLIT("."));
-					Option_string _t9;
-					opt_ok(&(string[]) { mod_full_name }, (Option*)(&_t9), sizeof(string));
-					return _t9;
+					Option_string _t8;
+					opt_ok(&(string[]) { mod_full_name }, (Option*)(&_t8), sizeof(string));
+					return _t8;
 				}
 			}
 		}
@@ -34003,9 +34007,9 @@ Option_string v__util__mod_path_to_full_name(v__pref__Preferences* pref, string 
 		string rel_mod_path = string_replace(path, string__plus(string_all_before_last(pref->path, _const_os__path_separator), _const_os__path_separator), _SLIT(""));
 		if (!string__eq(rel_mod_path, path)) {
 			string full_mod_name = string_replace(rel_mod_path, _const_os__path_separator, _SLIT("."));
-			Option_string _t10;
-			opt_ok(&(string[]) { full_mod_name }, (Option*)(&_t10), sizeof(string));
-			return _t10;
+			Option_string _t9;
+			opt_ok(&(string[]) { full_mod_name }, (Option*)(&_t9), sizeof(string));
+			return _t9;
 		}
 	}
 	return (Option_string){ .state=2, .err=_v_error(_SLIT("module not found")), .data={EMPTY_STRUCT_INITIALIZATION} };
