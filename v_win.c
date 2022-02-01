@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "7c1b249"
+#define V_COMMIT_HASH "51513ae"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "db50e79"
+	#define V_COMMIT_HASH "7c1b249"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "7c1b249"
+	#define V_CURRENT_COMMIT_HASH "51513ae"
 #endif
 
 // V comptime_definitions:
@@ -7507,6 +7507,8 @@ VV_LOCAL_SYMBOL IError os__error_file_not_opened(void);
 VV_LOCAL_SYMBOL IError os__error_size_of_type_0(void);
 Option_void os__File_seek(os__File* f, i64 pos, os__SeekMode mode);
 Option_i64 os__File_tell(os__File* f);
+u32 os__FilePermission_bitmask(os__FilePermission p);
+u32 os__FileMode_bitmask(os__FileMode m);
 os__FileMode os__inode(string path);
 Option_void os__open_uri(string uri);
 Array_string _const_os__args; // inited later
@@ -25418,6 +25420,26 @@ Option_i64 os__File_tell(os__File* f) {
 	return _t3;
 }
 
+u32 os__FilePermission_bitmask(os__FilePermission p) {
+	u32 mask = ((u32)(0U));
+	if (p.read) {
+		mask |= 4U;
+	}
+	if (p.write) {
+		mask |= 2U;
+	}
+	if (p.execute) {
+		mask |= 1U;
+	}
+	u32 _t1 = mask;
+	return _t1;
+}
+
+u32 os__FileMode_bitmask(os__FileMode m) {
+	u32 _t1 = ((os__FilePermission_bitmask(m.owner) << 6U | os__FilePermission_bitmask(m.group) << 3U) | os__FilePermission_bitmask(m.others));
+	return _t1;
+}
+
 os__FileMode os__inode(string path) {
 	struct stat attr;
 	stat(((char*)(path.str)), &attr);
@@ -31333,7 +31355,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("db50e79");
+	string vhash = _SLIT("7c1b249");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
