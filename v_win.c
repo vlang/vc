@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "c0c07db"
+#define V_COMMIT_HASH "9344c27"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c357345"
+	#define V_COMMIT_HASH "c0c07db"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "c0c07db"
+	#define V_CURRENT_COMMIT_HASH "9344c27"
 #endif
 
 // V comptime_definitions:
@@ -15713,7 +15713,9 @@ void array_insert(array* a, int i, voidptr val) {
 		}
 	}
 	#endif
-	array_ensure_cap(a, a->len + 1);
+	if (a->len >= a->cap) {
+		array_ensure_cap(a, a->len + 1);
+	}
 	{ // Unsafe block
 		vmemmove(array_get_unsafe(/*rec*/*a, i + 1), array_get_unsafe(/*rec*/*a, i), (a->len - i) * a->element_size);
 		array_set_unsafe(a, i, val);
@@ -15985,19 +15987,20 @@ VV_LOCAL_SYMBOL void array_set(array* a, int i, voidptr val) {
 }
 
 VV_LOCAL_SYMBOL void array_push(array* a, voidptr val) {
-	array_ensure_cap(a, a->len + 1);
+	if (a->len >= a->cap) {
+		array_ensure_cap(a, a->len + 1);
+	}
 	vmemmove(((byte*)(a->data)) + a->element_size * a->len, val, a->element_size);
 	a->len++;
 }
 
 // Attr: [unsafe]
 void array_push_many(array* a3, voidptr val, int size) {
+	array_ensure_cap(a3, a3->len + size);
 	if (a3->data == val && !isnil(a3->data)) {
 		array copy = array_clone(a3);
-		array_ensure_cap(a3, a3->len + size);
 		vmemcpy(array_get_unsafe(/*rec*/*a3, a3->len), copy.data, a3->element_size * size);
 	} else {
-		array_ensure_cap(a3, a3->len + size);
 		if (!isnil(a3->data) && !isnil(val)) {
 			vmemcpy(array_get_unsafe(/*rec*/*a3, a3->len), val, a3->element_size * size);
 		}
@@ -31355,7 +31358,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("c357345");
+	string vhash = _SLIT("c0c07db");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
