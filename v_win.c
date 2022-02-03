@@ -1,11 +1,11 @@
-#define V_COMMIT_HASH "be1e40d"
+#define V_COMMIT_HASH "85d36ed"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9344c27"
+	#define V_COMMIT_HASH "be1e40d"
 #endif
 
 #ifndef V_CURRENT_COMMIT_HASH
-	#define V_CURRENT_COMMIT_HASH "be1e40d"
+	#define V_CURRENT_COMMIT_HASH "85d36ed"
 #endif
 
 // V comptime_definitions:
@@ -31358,7 +31358,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if ((p->third_party_option).len == 0) {
 		p->third_party_option = p->cflags;
 	}
-	string vhash = _SLIT("9344c27");
+	string vhash = _SLIT("be1e40d");
 	p->cache_manager = v__vcache__new_cache_manager(new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){string_clone(vhash),  str_intp(6, _MOV((StrIntpData[]){{_SLIT0, 0xfe10, {.d_s = v__pref__Backend_str(p->backend)}}, {_SLIT(" | "), 0xfe10, {.d_s = v__pref__OS_str(p->os)}}, {_SLIT(" | "), 0xfe10, {.d_s = p->ccompiler}}, {_SLIT(" | "), 0xfe10, {.d_s = p->is_prod ? _SLIT("true") : _SLIT("false")}}, {_SLIT(" | "), 0xfe10, {.d_s = p->sanitize ? _SLIT("true") : _SLIT("false")}}, {_SLIT0, 0, { .d_c = 0 }}})), string_clone(string_trim_space(p->cflags)), string_clone(string_trim_space(p->third_party_option)), string_clone(Array_string_str(p->compile_defines_all)), string_clone(Array_string_str(p->compile_defines)), string_clone(Array_string_str(p->lookup_path))})));
 	if (string__eq(os__user_os(), _SLIT("windows"))) {
 		p->use_cache = false;
@@ -46949,11 +46949,15 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 			from_type = node->expr_type;
 		}
 		if (!v__ast__Table_sumtype_has_variant(c->table, to_type, from_type, false) && !v__ast__Type_has_flag(to_type, v__ast__TypeFlag__optional)) {
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = to_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			string tt = v__ast__Table_type_to_str(c->table, to_type);
+			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to `"), 0xfe10, {.d_s = tt}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
 		}
 	} else if ((to_sym->info)._typ == 463 /* v.ast.Alias */ && !(final_to_sym->kind == v__ast__Kind__struct_ && v__ast__Type_is_ptr(to_type))) {
 		if (!v__checker__Checker_check_types(c, from_type, (*to_sym->info._v__ast__Alias).parent_type) && !(v__ast__TypeSymbol_is_int(final_to_sym) && (final_from_sym->kind == v__ast__Kind__enum_ || final_from_sym->kind == v__ast__Kind__bool || final_from_sym->kind == v__ast__Kind__i8 || final_from_sym->kind == v__ast__Kind__char))) {
-			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot convert type `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to `"), 0xfe10, {.d_s = to_sym->name}}, {_SLIT("` (alias to `"), 0xfe10, {.d_s = final_to_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			string tt = v__ast__Table_type_to_str(c->table, to_type);
+			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to `"), 0xfe10, {.d_s = tt}}, {_SLIT("` (alias to `"), 0xfe10, {.d_s = final_to_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 		}
 	} else if (to_sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(to_type) && !(/* as */ *(v__ast__Struct*)__as_cast((to_sym->info)._v__ast__Struct,(to_sym->info)._typ, 448) /*expected idx: 448, name: v.ast.Struct */ ).is_typedef) {
 		if (from_sym->kind == v__ast__Kind__struct_ && !v__ast__Type_is_ptr(from_type)) {
@@ -46964,8 +46968,8 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 				v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot convert struct `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to struct `"), 0xfe10, {.d_s = to_sym->name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
 			}
 		} else {
-			string type_name = v__ast__Table_type_to_str(c->table, from_type);
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = type_name}}, {_SLIT("` to struct"), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to struct"), 0, { .d_c = 0 }}})), node->pos);
 		}
 	} else if (to_sym->kind == v__ast__Kind__interface_) {
 		if (v__checker__Checker_type_implements(c, from_type, to_type, node->pos)) {
@@ -46993,8 +46997,9 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast struct `"), 0xfe10, {.d_s = from_type_name}}, {_SLIT("` to `"), 0xfe10, {.d_s = type_name}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
 		}
 	} else if (to_sym->kind == v__ast__Kind__byte && !v__ast__TypeSymbol_is_number(final_from_sym) && !v__ast__TypeSymbol_is_pointer(final_from_sym) && !v__ast__Type_is_ptr(from_type) && !(final_from_sym->kind == v__ast__Kind__char || final_from_sym->kind == v__ast__Kind__enum_ || final_from_sym->kind == v__ast__Kind__bool)) {
-		string type_name = v__ast__Table_type_to_str(c->table, from_type);
-		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = type_name}}, {_SLIT("` to `byte`"), 0, { .d_c = 0 }}})), node->pos);
+		string ft = v__ast__Table_type_to_str(c->table, from_type);
+		string tt = v__ast__Table_type_to_str(c->table, to_type);
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to `"), 0xfe10, {.d_s = tt}}, {_SLIT("`"), 0, { .d_c = 0 }}})), node->pos);
 	} else if (v__ast__Type_has_flag(from_type, v__ast__TypeFlag__optional) || v__ast__Type_has_flag(from_type, v__ast__TypeFlag__variadic)) {
 		string msg = (v__ast__Type_has_flag(from_type, v__ast__TypeFlag__optional) ? (_SLIT("an optional")) : (_SLIT("a variadic")));
 		v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot type cast "), 0xfe10, {.d_s = msg}}, {_SLIT0, 0, { .d_c = 0 }}})), node->pos);
@@ -47006,24 +47011,29 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 		v__checker__Checker_warn(c, _SLIT("cannot cast a fixed array (use e.g. `&arr[0]` instead)"), node->pos);
 	} else if (final_from_sym->kind == v__ast__Kind__string && v__ast__TypeSymbol_is_number(final_to_sym) && final_to_sym->kind != v__ast__Kind__rune) {
 		string snexpr = v__ast__Expr_str(node->expr);
-		v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot cast string to `"), 0xfe10, {.d_s = to_sym->name}}, {_SLIT("`, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT("."), 0xfe10, {.d_s = final_to_sym->name}}, {_SLIT("()` instead."), 0, { .d_c = 0 }}})), node->pos);
+		string tt = v__ast__Table_type_to_str(c->table, to_type);
+		v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot cast string to `"), 0xfe10, {.d_s = tt}}, {_SLIT("`, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT("."), 0xfe10, {.d_s = final_to_sym->name}}, {_SLIT("()` instead."), 0, { .d_c = 0 }}})), node->pos);
 	}
 	if (to_sym->kind == v__ast__Kind__rune && v__ast__TypeSymbol_is_string(from_sym)) {
 		string snexpr = v__ast__Expr_str(node->expr);
-		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to rune, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".runes()` instead."), 0, { .d_c = 0 }}})), node->pos);
+		string ft = v__ast__Table_type_to_str(c->table, from_type);
+		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to rune, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".runes()` instead."), 0, { .d_c = 0 }}})), node->pos);
 	}
 	if (v__ast__Type_alias_eq(to_type, _const_v__ast__string_type)) {
 		if (from_type == _const_v__ast__byte_type || from_type == _const_v__ast__bool_type) {
 			string snexpr = v__ast__Expr_str(node->expr);
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to string, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".str()` instead."), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to string, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".str()` instead."), 0, { .d_c = 0 }}})), node->pos);
 		} else if (v__ast__Type_is_real_pointer(from_type)) {
 			string snexpr = v__ast__Expr_str(node->expr);
-			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot cast pointer type `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to string, use `&byte("), 0xfe10, {.d_s = snexpr}}, {_SLIT(").vstring()` or `cstring_to_vstring("), 0xfe10, {.d_s = snexpr}}, {_SLIT(")` instead."), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			v__checker__Checker_error(c,  str_intp(4, _MOV((StrIntpData[]){{_SLIT("cannot cast pointer type `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to string, use `&byte("), 0xfe10, {.d_s = snexpr}}, {_SLIT(").vstring()` or `cstring_to_vstring("), 0xfe10, {.d_s = snexpr}}, {_SLIT(")` instead."), 0, { .d_c = 0 }}})), node->pos);
 		} else if (v__ast__Type_is_number(from_type)) {
 			string snexpr = v__ast__Expr_str(node->expr);
 			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast number to string, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".str()` instead."), 0, { .d_c = 0 }}})), node->pos);
 		} else if (from_sym->kind == v__ast__Kind__alias && !string__eq(final_from_sym->name, _SLIT("string"))) {
-			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to string, use `x.str()` instead."), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			v__checker__Checker_error(c,  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast type `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to string, use `x.str()` instead."), 0, { .d_c = 0 }}})), node->pos);
 		} else if (final_from_sym->kind == v__ast__Kind__array) {
 			string snexpr = v__ast__Expr_str(node->expr);
 			if (string__eq(final_from_sym->name, _SLIT("[]byte"))) {
@@ -47039,7 +47049,8 @@ v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast__CastE
 			v__checker__Checker_error(c, _SLIT("cannot cast map to string."), node->pos);
 		} else if (final_from_sym->kind == v__ast__Kind__sum_type) {
 			string snexpr = v__ast__Expr_str(node->expr);
-			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast sumtype `"), 0xfe10, {.d_s = from_sym->name}}, {_SLIT("` to string, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".str()` instead."), 0, { .d_c = 0 }}})), node->pos);
+			string ft = v__ast__Table_type_to_str(c->table, from_type);
+			v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("cannot cast sumtype `"), 0xfe10, {.d_s = ft}}, {_SLIT("` to string, use `"), 0xfe10, {.d_s = snexpr}}, {_SLIT(".str()` instead."), 0, { .d_c = 0 }}})), node->pos);
 		} else if (!v__ast__Type_alias_eq(to_type, _const_v__ast__string_type) && v__ast__Type_alias_eq(from_type, _const_v__ast__string_type) && (!(to_sym->kind == v__ast__Kind__alias && string__eq(final_to_sym->name, _SLIT("string"))))) {
 			string error_msg =  str_intp(2, _MOV((StrIntpData[]){{_SLIT("cannot cast a string to a type `"), 0xfe10, {.d_s = final_to_sym->name}}, {_SLIT("`, that is not an alias of string"), 0, { .d_c = 0 }}}));
 			if ((node->expr)._typ == 323 /* v.ast.StringLiteral */) {
@@ -47678,8 +47689,8 @@ v__ast__Type v__checker__Checker_postfix_expr(v__checker__Checker* c, v__ast__Po
 	if (!(v__ast__TypeSymbol_is_number(typ_sym) || (c->inside_unsafe && is_non_void_pointer))) {
 		v__checker__Checker_error(c,  str_intp(3, _MOV((StrIntpData[]){{_SLIT("invalid operation: "), 0xfe10, {.d_s = v__token__Kind_str(node->op)}}, {_SLIT(" (non-numeric type `"), 0xfe10, {.d_s = typ_sym->name}}, {_SLIT("`)"), 0, { .d_c = 0 }}})), node->pos);
 	} else {
-		multi_return_string_v__token__Pos mr_106319 = v__checker__Checker_fail_if_immutable(c, node->expr);
-		node->auto_locked = mr_106319.arg0;
+		multi_return_string_v__token__Pos mr_106596 = v__checker__Checker_fail_if_immutable(c, node->expr);
+		node->auto_locked = mr_106596.arg0;
 	}
 	v__ast__Type _t1 = typ;
 	return _t1;
