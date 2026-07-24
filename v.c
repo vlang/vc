@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "26419326e18e8152cc712223fc91906e9845521b"
+#define V_COMMIT_HASH "ba110674c55f0ab389da801482291f498aefeaf3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "c82d3f08271e9324d6fb8de3c251e9c0e1a9154b"
+	#define V_COMMIT_HASH "26419326e18e8152cc712223fc91906e9845521b"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -39487,7 +39487,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("2641932");
+	return _S("ba11067");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -53842,7 +53842,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("c82d3f08271e9324d6fb8de3c251e9c0e1a9154b");
+	string vhash = _S("26419326e18e8152cc712223fc91906e9845521b");
 	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t6 = builtin__string_trim_space(p->cflags);
@@ -193118,6 +193118,21 @@ VV_LOC v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 			p->comptime_if_cond = false;
 		}
 		_PUSH_MANY(&comments, (v__parser__Parser_eat_comments(p, ((v__parser__EatCommentsConfig){.same_line = 0,.follow_up = 0,}))), _t18, Array_v__ast__Comment);
+		if (!is_comptime && p->tok.kind != v__token__Kind__lcbr) {
+			bool _t19 = ((cond)._typ == 325);
+			if (_t19) {
+				_t19 = !(*(v__ast__IfExpr*)builtin____as_cast((cond)._v__ast__IfExpr, (cond)._typ, 325)).has_else;
+			}
+			if ( _t19) {
+				v__parser__Parser_error_with_pos(p, _S("the condition of an `if` should be a boolean expression, not another `if` statement; did you write `if` twice by mistake?"), (*cond._v__ast__IfExpr).pos);
+				v__ast__IfExpr _t20 = ((v__ast__IfExpr){.is_comptime = 0,.tok_kind = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.post_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.left = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=426},.branches = builtin____new_array(0, 0, sizeof(v__ast__IfBranch)),.is_expr = 0,.force_expr = 0,.typ = 0,.has_else = 0,});
+					{ // defer begin
+						p->inside_if_expr = was_inside_if_expr;
+						p->inside_ct_if_expr = was_inside_ct_if_expr;
+					} // defer end
+				return _t20;
+			}
+		}
 		v__token__Pos end_pos = v__token__Token_pos(&p->prev_tok);
 		v__token__Pos body_pos = v__token__Token_pos(&p->tok);
 		p->inside_if = false;
@@ -193125,12 +193140,12 @@ VV_LOC v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 		if (p->opened_scopes > p->max_opened_scopes) {
 			p->should_abort = true;
 			v__parser__Parser_error(p, builtin__string_plus_many(2, _MOV((string[2]){_S("too many nested conditionals, scopes: "), builtin__int_str(p->opened_scopes)})));
-			v__ast__IfExpr _t19 = ((v__ast__IfExpr){.is_comptime = 0,.tok_kind = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.post_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.left = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=426},.branches = builtin____new_array(0, 0, sizeof(v__ast__IfBranch)),.is_expr = 0,.force_expr = 0,.typ = 0,.has_else = 0,});
+			v__ast__IfExpr _t21 = ((v__ast__IfExpr){.is_comptime = 0,.tok_kind = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.post_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.left = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=426},.branches = builtin____new_array(0, 0, sizeof(v__ast__IfBranch)),.is_expr = 0,.force_expr = 0,.typ = 0,.has_else = 0,});
 				{ // defer begin
 					p->inside_if_expr = was_inside_if_expr;
 					p->inside_ct_if_expr = was_inside_ct_if_expr;
 				} // defer end
-			return _t19;
+			return _t21;
 		}
 		v__parser__Parser_open_scope(p);
 		if (is_comptime && comptime_skip_curr_stmts && v__parser__Parser_is_in_top_level_comptime(p, p->inside_assign_rhs) && !p->pref->is_fmt && !p->pref->output_cross_c) {
@@ -193156,12 +193171,12 @@ VV_LOC v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 		if (is_comptime) {
 			if (p->tok.kind == v__token__Kind__key_else) {
 				v__parser__Parser_error(p, _S("use `$else` instead of `else` in compile-time `if` branches"));
-				v__ast__IfExpr _t22 = ((v__ast__IfExpr){.is_comptime = 0,.tok_kind = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.post_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.left = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=426},.branches = builtin____new_array(0, 0, sizeof(v__ast__IfBranch)),.is_expr = 0,.force_expr = 0,.typ = 0,.has_else = 0,});
+				v__ast__IfExpr _t24 = ((v__ast__IfExpr){.is_comptime = 0,.tok_kind = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.post_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.left = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=426},.branches = builtin____new_array(0, 0, sizeof(v__ast__IfBranch)),.is_expr = 0,.force_expr = 0,.typ = 0,.has_else = 0,});
 					{ // defer begin
 						p->inside_if_expr = was_inside_if_expr;
 						p->inside_ct_if_expr = was_inside_ct_if_expr;
 					} // defer end
-				return _t22;
+				return _t24;
 			}
 			if (p->tok.kind != v__token__Kind__rcbr && p->peek_tok.kind == v__token__Kind__key_else) {
 				v__parser__Parser_check(p, v__token__Kind__dollar);
@@ -193175,7 +193190,7 @@ VV_LOC v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 	if (comments.len > 0) {
 		pos.last_line = (*(v__ast__Comment*)builtin__array_last(comments)).pos.last_line;
 	}
-	v__ast__IfExpr _t23 = ((v__ast__IfExpr){
+	v__ast__IfExpr _t25 = ((v__ast__IfExpr){
 		.is_comptime = is_comptime,
 		.tok_kind = 0,
 		.pos = pos,
@@ -193191,7 +193206,7 @@ VV_LOC v__ast__IfExpr v__parser__Parser_if_expr(v__parser__Parser* p, bool is_co
 			p->inside_if_expr = was_inside_if_expr;
 			p->inside_ct_if_expr = was_inside_ct_if_expr;
 		} // defer end
-	return _t23;
+	return _t25;
 }
 VV_LOC bool v__parser__Parser_is_only_array_type(v__parser__Parser* p) {
 	if (p->tok.kind == v__token__Kind__lsbr) {
@@ -193505,10 +193520,10 @@ VV_LOC v__ast__MatchExpr v__parser__Parser_match_expr(v__parser__Parser* p, bool
 			return ((v__ast__MatchExpr){.is_comptime = 0,.tok_kind = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.cond = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=426},.branches = builtin____new_array(0, 0, sizeof(v__ast__MatchBranch)),.is_expr = 0,.return_type = 0,.cond_type = 0,.expected_type = 0,.is_sum_type = 0,});
 		}
 		v__parser__OrBlockErrVarMode err_var_mode = (cond_or_mode == v__parser__MatchCondOrBlockMode__with_err_var ? (v__parser__OrBlockErrVarMode__with_err_var) : (v__parser__OrBlockErrVarMode__no_err_var));
-		multi_return_Array_v__ast__Stmt_v__token__Pos_ref_v__ast__Scope mr_15420 = v__parser__Parser_or_block(p, err_var_mode);
-		Array_v__ast__Stmt or_stmts = mr_15420.arg0;
-		v__token__Pos or_pos = mr_15420.arg1;
-		v__ast__Scope* or_scope = mr_15420.arg2;
+		multi_return_Array_v__ast__Stmt_v__token__Pos_ref_v__ast__Scope mr_16000 = v__parser__Parser_or_block(p, err_var_mode);
+		Array_v__ast__Stmt or_stmts = mr_16000.arg0;
+		v__token__Pos or_pos = mr_16000.arg1;
+		v__ast__Scope* or_scope = mr_16000.arg2;
 		v__parser__Parser_set_match_cond_or_block(p, &cond, ((v__ast__OrExpr){.kind = v__ast__OrKind__block,.pos = or_pos,.scope = or_scope,.err_used = 0,.stmts = or_stmts,}));
 		match_last_pos = v__token__Token_pos(&p->prev_tok);
 	}
