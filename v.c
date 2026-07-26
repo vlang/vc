@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "1bfdabc5e7ff80ecf748b6a27c9b6a316b960933"
+#define V_COMMIT_HASH "c669ee168065767f9a1fbb4660d01f5556c327b0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "45e92d1d95b13cc2cff50e9795bf7b1061d7e639"
+	#define V_COMMIT_HASH "1bfdabc5e7ff80ecf748b6a27c9b6a316b960933"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -490,6 +490,9 @@ typedef struct v__checker__AssertAutocast v__checker__AssertAutocast;
 typedef struct v__checker__Checker v__checker__Checker;
 typedef struct v__checker__ComptimeComparisonResult v__checker__ComptimeComparisonResult;
 typedef struct v__checker__MessageOptions v__checker__MessageOptions;
+typedef struct v__checker__RecursiveStrAliasSource v__checker__RecursiveStrAliasSource;
+typedef struct v__checker__RecursiveStrAliasState v__checker__RecursiveStrAliasState;
+typedef struct v__checker__RecursiveStrMutationFlow v__checker__RecursiveStrMutationFlow;
 typedef struct v__checker__HaveWantParams v__checker__HaveWantParams;
 typedef struct v__checker__LoHiLimit v__checker__LoHiLimit;
 typedef struct v__parser__EnumDeclFieldState v__parser__EnumDeclFieldState;
@@ -637,6 +640,8 @@ typedef struct _option_v__ast__IntegerLiteral _option_v__ast__IntegerLiteral;
 typedef struct _option_void _option_void;
 typedef struct _option_v__checker__AssertAutocast _option_v__checker__AssertAutocast;
 typedef struct _option_v__checker__ComptimeComparisonResult _option_v__checker__ComptimeComparisonResult;
+typedef struct _option_v__ast__Scope_ptr _option_v__ast__Scope_ptr;
+typedef struct _option_v__checker__RecursiveStrAliasState _option_v__checker__RecursiveStrAliasState;
 typedef struct _option_Array_v__ast__StructField _option_Array_v__ast__StructField;
 typedef struct _option_v__checker__LoHiLimit _option_v__checker__LoHiLimit;
 typedef struct _option_v__ast__LambdaExpr _option_v__ast__LambdaExpr;
@@ -13196,6 +13201,12 @@ typedef enum {
 }  v__checker__DetailKind;
 
 typedef enum {
+	v__checker__RecursiveStrMutationRequirement__root, // 
+	v__checker__RecursiveStrMutationRequirement__shared_storage, // +1
+	v__checker__RecursiveStrMutationRequirement__binding_reassignment, // +2
+}  v__checker__RecursiveStrMutationRequirement;
+
+typedef enum {
 	v__checker__SqlQueryDataContext__where_, // 
 	v__checker__SqlQueryDataContext__set_, // +1
 }  v__checker__SqlQueryDataContext;
@@ -13476,6 +13487,8 @@ typedef map Map_int_v__ast__InterfaceEmbedding;
 typedef array Array_u64;
 typedef map Map_string_v__ast__Type;
 typedef map Map_string_v__ast__ComptTimeConstValue;
+typedef array Array_v__checker__RecursiveStrAliasSource;
+typedef array Array_v__checker__RecursiveStrAliasState;
 typedef map Map_i64_bool;
 typedef array Array_v__transformer__KeyVal;
 typedef array Array_Array_v__transformer__KeyVal;
@@ -15510,6 +15523,25 @@ struct v__checker__ComptimeComparisonResult {
 
 struct v__checker__MessageOptions {
 	Array_v__errors__CallStackItem call_stack;
+};
+
+struct v__checker__RecursiveStrAliasSource {
+	v__ast__Expr source;
+	int pos;
+};
+
+struct v__checker__RecursiveStrAliasState {
+	v__ast__Expr source;
+	int pos;
+	bool invalidated;
+	bool shared_storage_mutated;
+	bool storage_rebound;
+	Array_v__checker__RecursiveStrAliasSource possible_sources;
+};
+
+struct v__checker__RecursiveStrMutationFlow {
+	bool falls_through_unmutated;
+	bool returns_unmutated;
 };
 
 struct v__transformer__KeyVal {
@@ -19312,6 +19344,18 @@ struct _option_v__checker__ComptimeComparisonResult {
 	byte data[sizeof(v__checker__ComptimeComparisonResult) > 1 ? sizeof(v__checker__ComptimeComparisonResult) : 1];
 };
 
+struct _option_v__ast__Scope_ptr {
+	byte state;
+	IError err;
+	byte data[sizeof(v__ast__Scope*) > 1 ? sizeof(v__ast__Scope*) : 1];
+};
+
+struct _option_v__checker__RecursiveStrAliasState {
+	byte state;
+	IError err;
+	byte data[sizeof(v__checker__RecursiveStrAliasState) > 1 ? sizeof(v__checker__RecursiveStrAliasState) : 1];
+};
+
 struct _option_Array_v__ast__StructField {
 	byte state;
 	IError err;
@@ -22929,6 +22973,33 @@ VV_LOC void v__checker__Checker_check_os_file_struct_io_method_call(v__checker__
 VV_LOC bool v__checker__Checker_is_optional_array_arg_compatible(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected);
 VV_LOC v__ast__Type v__checker__Checker_fixed_array_arg_as_array_type(v__checker__Checker* c, v__ast__Type got, v__ast__Type expected);
 VV_LOC v__ast__Type v__checker__Checker_lower_fixed_array_call_arg_to_array(v__checker__Checker* c, v__ast__CallArg* arg, v__ast__Type expected, v__ast__Language language);
+VV_LOC bool v__checker__Checker_recursive_str_receiver_type_matches(v__checker__Checker* c, v__ast__Type typ, v__ast__Type receiver_typ);
+VV_LOC v__ast__Expr v__checker__Checker_unwrap_recursive_str_receiver(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type receiver_typ);
+VV_LOC bool v__checker__recursive_str_scope_dominates(v__ast__Scope* parent, v__ast__Scope* child);
+VV_LOC bool v__checker__recursive_str_ident_is_var(v__ast__Ident ident, string name, int decl_pos);
+VV_LOC _option_v__ast__Scope_ptr v__checker__recursive_str_expr_var_scope(v__ast__Expr expr, string name, int decl_pos);
+VV_LOC void v__checker__record_recursive_str_alias_state(v__checker__RecursiveStrAliasState* state, int pos, v__ast__Expr source, bool invalidated, bool shared_storage_mutated, bool storage_rebound);
+VV_LOC bool v__checker__recursive_str_pos_contains(v__token__Pos pos, int target);
+VV_LOC bool v__checker__Checker_recursive_str_sources_are_equivalent(v__checker__Checker* c, v__ast__Expr a, v__ast__Expr b, v__ast__Type typ);
+VV_LOC _option_int v__checker__recursive_str_ident_var_pos(v__ast__Ident ident);
+VV_LOC bool v__checker__recursive_str_exprs_are_same_alias_path(v__ast__Expr a, v__ast__Expr b);
+VV_LOC void v__checker__Checker_merge_recursive_str_branch_states(v__checker__Checker* c, v__checker__RecursiveStrAliasState* state, Array_v__checker__RecursiveStrAliasState branch_states, v__ast__Type typ);
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_stmts_mutation_flow(v__checker__Checker* c, Array_v__ast__Stmt stmts, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_if_mutation_flow(v__checker__Checker* c, v__ast__IfExpr node, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_match_mutation_flow(v__checker__Checker* c, v__ast__MatchExpr node, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_stmt_mutation_flow(v__checker__Checker* c, v__ast__Stmt stmt, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC bool v__checker__Checker_recursive_str_expr_guarantees_root_mutation(v__checker__Checker* c, v__ast__Expr expr, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC bool v__checker__Checker_recursive_str_fn_guarantees_root_mutation_for_param(v__checker__Checker* c, v__ast__Fn func, int param_idx, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC bool v__checker__Checker_recursive_str_call_guarantees_root_mutation(v__checker__Checker* c, v__ast__CallExpr node, string root_name, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen);
+VV_LOC bool v__checker__Checker_recursive_str_type_is_direct_shared_storage(v__checker__Checker* c, v__ast__Type typ);
+VV_LOC bool v__checker__Checker_recursive_str_expr_path_has_shared_storage(v__checker__Checker* c, v__ast__Expr expr, string name, int decl_pos, v__ast__Type typ);
+VV_LOC bool v__checker__Checker_recursive_str_mutation_reaches_shared_storage(v__checker__Checker* c, v__ast__Expr expr, string name, int decl_pos, v__ast__Type typ);
+VV_LOC void v__checker__Checker_scan_recursive_str_alias_updates(v__checker__Checker* c, v__ast__Node node, string name, int decl_pos, v__ast__Type typ, v__ast__Scope* call_scope, int cutoff, v__checker__RecursiveStrAliasState* state);
+VV_LOC int v__checker__find_recursive_str_binding_reassignment(v__ast__Node node, string name, int decl_pos, int start, int cutoff, int first);
+VV_LOC _option_v__checker__RecursiveStrAliasState v__checker__Checker_recursive_str_alias_state_before(v__checker__Checker* c, string name, v__ast__Scope* resolution_scope, int cutoff);
+VV_LOC bool v__checker__Checker_recursive_str_shared_source_was_mutated(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type receiver_typ, v__ast__Scope* resolution_scope, int start, int cutoff);
+VV_LOC _option_v__ast__Expr v__checker__recursive_str_branch_result(Array_v__ast__Stmt stmts);
+VV_LOC bool v__checker__Checker_recursive_str_expr_resolves_to_receiver(v__checker__Checker* c, v__ast__Expr expr, string receiver_name, v__ast__Type receiver_typ, v__ast__Scope* resolution_scope, int cutoff, int shared_storage_cutoff, Map_string_bool* seen);
 VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__CallExpr* node, bool* continue_check);
 VV_LOC Array_v__ast__Type v__checker__Checker_generic_lambda_concrete_types(v__checker__Checker* c, v__ast__LambdaExpr* lambda, Array_string caller_generic_names, Array_v__ast__Type caller_concrete_types);
 VV_LOC Array_v__ast__Type v__checker__Checker_generic_callback_concrete_types(v__checker__Checker* c, Array_string generic_names, Array_string caller_generic_names, Array_v__ast__Type caller_concrete_types);
@@ -23149,20 +23220,22 @@ VV_LOC Array_v__ast__Type v__checker__Checker_concrete_types_for_generic_str_rec
 VV_LOC Array_v__ast__Type v__checker__Checker_alias_parent_concrete_types(v__checker__Checker* c, v__ast__Alias info);
 VV_LOC Array_v__ast__Type v__checker__Checker_infer_method_receiver_concrete_types(v__checker__Checker* c, v__ast__Fn method, v__ast__Type typ);
 VV_LOC void v__checker__Checker_markused_array_method(v__checker__Checker* c, bool check, string method_name);
-VV_LOC bool v__checker__is_visible_root_mutation(v__checker__RootMutationVisibility vis);
-VV_LOC string v__checker__Checker_visible_param_mutation_cache_key(v__checker__Checker* c, v__ast__Fn func, int param_idx);
+VV_LOC bool v__checker__is_root_mutation(v__checker__RootMutationVisibility vis, bool include_private);
+VV_LOC string v__checker__Checker_param_mutation_cache_key(v__checker__Checker* c, v__ast__Fn func, int param_idx, bool include_private);
 VV_LOC bool v__checker__is_builtin_array_reverse_in_place(v__ast__Fn func);
 VV_LOC bool v__checker__Checker_fn_has_visible_mutation_for_param(v__checker__Checker* c, v__ast__Fn func, int param_idx);
-VV_LOC bool v__checker__Checker_fn_decl_has_visible_mutation_for_param(v__checker__Checker* c, v__ast__FnDecl* fn_decl, int param_idx);
-VV_LOC bool v__checker__Checker_stmt_has_visible_mutation(v__checker__Checker* c, v__ast__Stmt stmt, string root_name, v__ast__Type root_type);
-VV_LOC bool v__checker__Checker_expr_has_visible_mutation(v__checker__Checker* c, v__ast__Expr expr, string root_name, v__ast__Type root_type);
-VV_LOC bool v__checker__Checker_node_children_have_visible_mutation(v__checker__Checker* c, v__ast__Node node, string root_name, v__ast__Type root_type);
+VV_LOC bool v__checker__Checker_fn_has_root_mutation_for_param(v__checker__Checker* c, v__ast__Fn func, int param_idx, bool include_private);
+VV_LOC bool v__checker__Checker_fn_decl_has_root_mutation_for_param(v__checker__Checker* c, v__ast__FnDecl* fn_decl, int param_idx, bool include_private);
+VV_LOC bool v__checker__Checker_stmt_has_root_mutation(v__checker__Checker* c, v__ast__Stmt stmt, string root_name, v__ast__Type root_type, bool include_private);
+VV_LOC bool v__checker__Checker_expr_has_root_mutation(v__checker__Checker* c, v__ast__Expr expr, string root_name, v__ast__Type root_type, bool include_private);
+VV_LOC bool v__checker__Checker_node_children_have_root_mutation(v__checker__Checker* c, v__ast__Node node, string root_name, v__ast__Type root_type, bool include_private);
 VV_LOC v__checker__RootMutationVisibility v__checker__Checker_expr_mutation_visibility(v__checker__Checker* c, v__ast__Expr expr, string root_name, v__ast__Type root_type);
-VV_LOC bool v__checker__Checker_call_has_visible_root_mutation(v__checker__Checker* c, v__ast__CallExpr node, string root_name, v__ast__Type root_type);
+VV_LOC bool v__checker__Checker_call_has_root_mutation(v__checker__Checker* c, v__ast__CallExpr node, string root_name, v__ast__Type root_type, bool include_private);
 VV_LOC _option_v__ast__Fn v__checker__Checker_find_called_fn(v__checker__Checker* c, v__ast__CallExpr node);
 VV_LOC int v__checker__Checker_call_arg_param_index(v__checker__Checker* c, v__ast__Fn func, int arg_idx);
-VV_LOC bool v__checker__Checker_assign_stmt_aliases_visible_state(v__checker__Checker* c, v__ast__AssignStmt node, string root_name, v__ast__Type root_type);
+VV_LOC bool v__checker__Checker_assign_stmt_aliases_mutable_state(v__checker__Checker* c, v__ast__AssignStmt node, string root_name, v__ast__Type root_type, bool include_private);
 VV_LOC bool v__checker__Checker_type_may_share_mutable_storage(v__checker__Checker* c, v__ast__Type typ);
+VV_LOC bool v__checker__Checker_type_may_share_mutable_storage_seen(v__checker__Checker* c, v__ast__Type typ, Map_int_bool* seen);
 VV_LOC v__ast__AsmStmt v__parser__Parser_asm_stmt(v__parser__Parser* p, bool is_top_level);
 VV_LOC v__ast__AsmArg v__parser__Parser_reg_or_alias(v__parser__Parser* p);
 VV_LOC v__ast__AsmAddressing v__parser__Parser_asm_addressing(v__parser__Parser* p);
@@ -23836,6 +23909,7 @@ static string Array_v__ast__Attr_str(Array_v__ast__Attr a);
 static string indent_Array_v__ast__Attr_str(Array_v__ast__Attr a, int indent_count);
 static string v__ast__StringLiteral_str(v__ast__StringLiteral it);
 static string indent_v__ast__StringLiteral_str(v__ast__StringLiteral it, int indent_count);
+static string v__checker__RecursiveStrMutationRequirement_str(v__checker__RecursiveStrMutationRequirement it);
 static string Array_Array_v__ast__Type_str(Array_Array_v__ast__Type a);
 static string indent_Array_Array_v__ast__Type_str(Array_Array_v__ast__Type a, int indent_count);
 static string v__ast__Ident_str(v__ast__Ident it);
@@ -26342,6 +26416,14 @@ static string indent_Array_v__ast__Attr_str(Array_v__ast__Attr a, int indent_cou
 	return res;
 }
 static string v__ast__StringLiteral_str(v__ast__StringLiteral it) { return indent_v__ast__StringLiteral_str(it, 0);}
+static string v__checker__RecursiveStrMutationRequirement_str(v__checker__RecursiveStrMutationRequirement it) { /* gen_str_for_enum */
+	switch(it) {
+		case v__checker__RecursiveStrMutationRequirement__root: return _S("root");
+		case v__checker__RecursiveStrMutationRequirement__shared_storage: return _S("shared_storage");
+		case v__checker__RecursiveStrMutationRequirement__binding_reassignment: return _S("binding_reassignment");
+		default: return _S("unknown enum value");
+	}
+}
 static string Array_Array_v__ast__Type_str(Array_Array_v__ast__Type a) { return indent_Array_Array_v__ast__Type_str(a, 0);}
 static string indent_Array_Array_v__ast__Type_str(Array_Array_v__ast__Type a, int indent_count) {
 	strings__Builder sb = strings__new_builder(2 + a.len * 10);
@@ -33527,17 +33609,17 @@ u32 v_typeof_interface_idx_IError(u32 sidx) {
 	if (sidx == _IError_voidptr_index) return 2;
 	if (sidx == _IError_MessageError_index) return 69;
 	if (sidx == _IError_time__TimeParseError_index) return 377;
-	if (sidx == _IError_semver__InvalidComparatorFormatError_index) return 904;
-	if (sidx == _IError_semver__EmptyInputError_index) return 906;
-	if (sidx == _IError_semver__InvalidVersionFormatError_index) return 907;
+	if (sidx == _IError_semver__InvalidComparatorFormatError_index) return 910;
+	if (sidx == _IError_semver__EmptyInputError_index) return 912;
+	if (sidx == _IError_semver__InvalidVersionFormatError_index) return 913;
 	if (sidx == _IError_os__Eof_index) return 180;
 	if (sidx == _IError_os__NotExpected_index) return 178;
 	if (sidx == _IError_os__FileNotOpenedError_index) return 181;
 	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 182;
 	if (sidx == _IError_os__ExecutableNotFoundError_index) return 201;
-	if (sidx == _IError_flag__UnknownFlagError_index) return 869;
-	if (sidx == _IError_flag__ArgsCountError_index) return 870;
-	if (sidx == _IError_v__parser__IncludeError_index) return 749;
+	if (sidx == _IError_flag__UnknownFlagError_index) return 875;
+	if (sidx == _IError_flag__ArgsCountError_index) return 876;
+	if (sidx == _IError_v__parser__IncludeError_index) return 755;
 	if (sidx == _IError_Error_index) return 68;
 	return 30;
 }
@@ -34198,12 +34280,12 @@ static char * v_typeof_interface_v__ast__walker__Visitor(u32 sidx) {
 u32 v_typeof_interface_idx_v__ast__walker__Visitor(u32 sidx) {
 	if (sidx == _v__ast__walker__Visitor_v__ast__walker__Inspector_index) return 689;
 	if (sidx == _v__ast__walker__Visitor_voidptr_index) return 2;
-	if (sidx == _v__ast__walker__Visitor_v__callgraph__Mapper_index) return 772;
+	if (sidx == _v__ast__walker__Visitor_v__callgraph__Mapper_index) return 778;
 	return 687;
 }
 char * v_typeof_sumtype_v__checker__ORMExpr(u32 sidx) {
 	switch(sidx) {
-		case 716: return "v.checker.ORMExpr";
+		case 722: return "v.checker.ORMExpr";
 		case 493: return "v.ast.SqlExpr";
 		case 517: return "v.ast.SqlStmt";
 		default: return "unknown v.checker.ORMExpr";
@@ -34212,15 +34294,15 @@ char * v_typeof_sumtype_v__checker__ORMExpr(u32 sidx) {
 
 u32 v_typeof_sumtype_idx_v__checker__ORMExpr(u32 sidx) {
 	switch(sidx) {
-		case 716: return 716;
+		case 722: return 722;
 		case 493: return 493;
 		case 517: return 517;
-		default: return 716;
+		default: return 722;
 	}
 }
 char * v_typeof_sumtype_v__comptime__StmtOrExpr(u32 sidx) {
 	switch(sidx) {
-		case 726: return "v.comptime.StmtOrExpr";
+		case 732: return "v.comptime.StmtOrExpr";
 		case 289: return "v.ast.Expr";
 		case 449: return "v.ast.NodeError";
 		case 450: return "v.ast.AnonFn";
@@ -34315,7 +34397,7 @@ char * v_typeof_sumtype_v__comptime__StmtOrExpr(u32 sidx) {
 
 u32 v_typeof_sumtype_idx_v__comptime__StmtOrExpr(u32 sidx) {
 	switch(sidx) {
-		case 726: return 726;
+		case 732: return 732;
 		case 289: return 289;
 		case 449: return 449;
 		case 450: return 450;
@@ -34404,7 +34486,7 @@ u32 v_typeof_sumtype_idx_v__comptime__StmtOrExpr(u32 sidx) {
 		case 324: return 324;
 		case 326: return 326;
 		case 325: return 325;
-		default: return 726;
+		default: return 732;
 	}
 }
 static char * v_typeof_interface_v__type_resolver__IResolverType(u32 sidx) {
@@ -34417,12 +34499,12 @@ static char * v_typeof_interface_v__type_resolver__IResolverType(u32 sidx) {
 }
 
 u32 v_typeof_interface_idx_v__type_resolver__IResolverType(u32 sidx) {
-	if (sidx == _v__type_resolver__IResolverType_v__type_resolver__DummyResolver_index) return 854;
+	if (sidx == _v__type_resolver__IResolverType_v__type_resolver__DummyResolver_index) return 860;
 	if (sidx == _v__type_resolver__IResolverType_voidptr_index) return 2;
-	if (sidx == _v__type_resolver__IResolverType_v__gen__c__Gen_index) return 778;
+	if (sidx == _v__type_resolver__IResolverType_v__gen__c__Gen_index) return 784;
 	if (sidx == _v__type_resolver__IResolverType_v__checker__Checker_index) return 276;
 	if (sidx == _v__type_resolver__IResolverType_v__generics__Generics_index) return 279;
-	return 853;
+	return 859;
 }
 // << typeof() support for sum types
 
@@ -39591,7 +39673,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("1bfdabc");
+	return _S("c669ee1");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -53985,7 +54067,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("45e92d1d95b13cc2cff50e9795bf7b1061d7e639");
+	string vhash = _S("1bfdabc5e7ff80ecf748b6a27c9b6a316b960933");
 	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t6 = builtin__string_trim_space(p->cflags);
@@ -172338,6 +172420,1104 @@ VV_LOC v__ast__Type v__checker__Checker_lower_fixed_array_call_arg_to_array(v__c
 	arg->typ = v__checker__Checker_expr(c, &arg->expr);
 	return arg->typ;
 }
+VV_LOC bool v__checker__Checker_recursive_str_receiver_type_matches(v__checker__Checker* c, v__ast__Type typ, v__ast__Type receiver_typ) {
+	v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, typ);
+	return v__ast__Type_idx(typ) == v__ast__Type_idx(receiver_typ) || (sym->kind == v__ast__Kind__interface && !v__ast__TypeSymbol_has_method_with_generic_parent(sym, _S("str")));
+}
+VV_LOC v__ast__Expr v__checker__Checker_unwrap_recursive_str_receiver(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type receiver_typ) {
+	v__ast__Expr inner = v__ast__Expr_remove_par(expr);
+	for (;;) {
+		bool _t2 = ((inner)._typ == 487);
+		if (_t2) {
+			_t2 = ((*(v__ast__PrefixExpr*)builtin____as_cast((inner)._v__ast__PrefixExpr, (inner)._typ, 487)).op == v__token__Kind__mul || (*(v__ast__PrefixExpr*)builtin____as_cast((inner)._v__ast__PrefixExpr, (inner)._typ, 487)).op == v__token__Kind__amp);
+		}
+		bool _t1 = _t2;
+		bool _t3;
+		if (!(_t1)) {
+			bool _t4 = ((inner)._typ == 458);
+			if (_t4) {
+				_t4 = v__checker__Checker_recursive_str_receiver_type_matches(c, (*(v__ast__CastExpr*)builtin____as_cast((inner)._v__ast__CastExpr, (inner)._typ, 458)).typ, receiver_typ);
+			}
+			_t3 = _t4;
+		}
+		bool _t5;
+		if (!(_t1 || _t3)) {
+			bool _t6 = ((inner)._typ == 453);
+			if (_t6) {
+				_t6 = v__checker__Checker_recursive_str_receiver_type_matches(c, (*(v__ast__AsCast*)builtin____as_cast((inner)._v__ast__AsCast, (inner)._typ, 453)).typ, receiver_typ);
+			}
+			_t5 = _t6;
+		}
+		bool _t7;
+		if (!(_t1 || _t3 || _t5)) {
+			_t7 = (inner)._typ == 500;
+		}
+		bool _t8;
+		if (!(_t1 || _t3 || _t5 || _t7)) {
+			_t8 = (inner)._typ == 466;
+		}
+										
+		if (_t1) {
+			inner = v__ast__Expr_remove_par((*inner._v__ast__PrefixExpr).right);
+		} else if (_t3) {
+			inner = v__ast__Expr_remove_par((*inner._v__ast__CastExpr).expr);
+		} else if (_t5) {
+			inner = v__ast__Expr_remove_par((*inner._v__ast__AsCast).expr);
+		} else if (_t7) {
+			inner = v__ast__Expr_remove_par((*inner._v__ast__UnsafeExpr).expr);
+		} else if (_t8) {
+			inner = v__ast__Expr_remove_par((*inner._v__ast__DumpExpr).expr);
+		} else {
+			break;
+		}
+	}
+	return inner;
+}
+VV_LOC bool v__checker__recursive_str_scope_dominates(v__ast__Scope* parent, v__ast__Scope* child) {
+	if (parent == ((void*)0) || child == ((void*)0)) {
+		return false;
+	}
+	for (v__ast__Scope* scope = child; scope != ((void*)0); scope = scope->parent) {
+		if (v__ast__Scope__eq(*&scope, *&parent)) {
+			return true;
+		}
+		if (scope->parent == ((void*)0) || scope->detached_from_parent) {
+			break;
+		}
+	}
+	return false;
+}
+VV_LOC bool v__checker__recursive_str_ident_is_var(v__ast__Ident ident, string name, int decl_pos) {
+	if (!builtin__string__eq(ident.name, name)) {
+		return false;
+	}
+	if ((ident.obj)._typ == 524) {
+		return (*ident.obj._v__ast__Var).pos.pos == decl_pos;
+	}
+	_option_v__ast__Var_ptr _t3 = {0};
+	if (_t3 = v__ast__Scope_find_var(ident.scope, name), _t3.state == 0) {
+		v__ast__Var* v = *(v__ast__Var**)_t3.data;
+		return v->pos.pos == decl_pos;
+	}
+	return false;
+}
+VV_LOC _option_v__ast__Scope_ptr v__checker__recursive_str_expr_var_scope(v__ast__Expr expr, string name, int decl_pos) {
+	if (expr._typ == 471) {
+		if (v__checker__recursive_str_ident_is_var((*expr._v__ast__Ident), name, decl_pos)) {
+			_option_v__ast__Scope_ptr _t1;
+			builtin___option_ok(&(v__ast__Scope*[]) { (*expr._v__ast__Ident).scope }, (_option*)(&_t1), sizeof(v__ast__Scope*));
+			 
+			return _t1;
+		}
+	}
+	else if (expr._typ == 450) {
+		return (_option_v__ast__Scope_ptr){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	else if (expr._typ == 477) {
+		return (_option_v__ast__Scope_ptr){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	
+	else {
+	}
+	
+	Array_v__ast__Node _t4 = v__ast__Node_children(v__ast__Expr_to_sumtype_v__ast__Node(&expr, false));
+	for (int _t5 = 0; _t5 < _t4.len; ++_t5) {
+		v__ast__Node child = ((v__ast__Node*)_t4.data)[_t5];
+		if (child._typ == 289) {
+			_option_v__ast__Scope_ptr _t6 = {0};
+			if (_t6 = v__checker__recursive_str_expr_var_scope((*child._v__ast__Expr), name, decl_pos), _t6.state == 0) {
+				v__ast__Scope* scope = *(v__ast__Scope**)_t6.data;
+				_option_v__ast__Scope_ptr _t7;
+				builtin___option_ok(&(v__ast__Scope*[]) { scope }, (_option*)(&_t7), sizeof(v__ast__Scope*));
+				 
+				return _t7;
+			}
+		}
+		else if (child._typ == 526) {
+			_option_v__ast__Scope_ptr _t8 = {0};
+			if (_t8 = v__checker__recursive_str_expr_var_scope((*child._v__ast__CallArg).expr, name, decl_pos), _t8.state == 0) {
+				v__ast__Scope* scope = *(v__ast__Scope**)_t8.data;
+				_option_v__ast__Scope_ptr _t9;
+				builtin___option_ok(&(v__ast__Scope*[]) { scope }, (_option*)(&_t9), sizeof(v__ast__Scope*));
+				 
+				return _t9;
+			}
+		}
+		
+		else {
+		}
+		
+	}
+	return (_option_v__ast__Scope_ptr){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+}
+VV_LOC void v__checker__record_recursive_str_alias_state(v__checker__RecursiveStrAliasState* state, int pos, v__ast__Expr source, bool invalidated, bool shared_storage_mutated, bool storage_rebound) {
+	if (pos <= state->pos) {
+		return;
+	}
+	bool previous_shared_mutation = state->invalidated && state->shared_storage_mutated;
+	bool previous_storage_rebound = state->storage_rebound;
+	state->pos = pos;
+	state->source = source;
+	state->invalidated = invalidated;
+	state->shared_storage_mutated = invalidated && (previous_shared_mutation || (!previous_storage_rebound && shared_storage_mutated));
+	state->storage_rebound = invalidated && !state->shared_storage_mutated && (previous_storage_rebound || storage_rebound);
+	state->possible_sources = builtin____new_array_with_default(0, 0, sizeof(v__checker__RecursiveStrAliasSource), 0);
+}
+VV_LOC bool v__checker__recursive_str_pos_contains(v__token__Pos pos, int target) {
+	return pos.pos <= target && target <= pos.pos + pos.len;
+}
+VV_LOC bool v__checker__Checker_recursive_str_sources_are_equivalent(v__checker__Checker* c, v__ast__Expr a, v__ast__Expr b, v__ast__Type typ) {
+	v__ast__Expr left = v__checker__Checker_unwrap_recursive_str_receiver(c, a, typ);
+	v__ast__Expr right = v__checker__Checker_unwrap_recursive_str_receiver(c, b, typ);
+	if ((left)._typ == 471 && (right)._typ == 471) {
+		if (((*left._v__ast__Ident).obj)._typ == 524 && ((*right._v__ast__Ident).obj)._typ == 524) {
+			return (*(*left._v__ast__Ident).obj._v__ast__Var).pos.pos == (*(*right._v__ast__Ident).obj._v__ast__Var).pos.pos;
+		}
+		return builtin__string__eq((*left._v__ast__Ident).name, (*right._v__ast__Ident).name);
+	}
+	if ((left)._typ == 467 && (right)._typ == 467) {
+		return true;
+	}
+	if ((left)._typ == 449 && (right)._typ == 449) {
+		return true;
+	}
+	v__token__Pos left_pos = v__ast__Expr_pos(left);
+	v__token__Pos right_pos = v__ast__Expr_pos(right);
+	return left_pos.pos == right_pos.pos && left_pos.len == right_pos.len;
+}
+VV_LOC _option_int v__checker__recursive_str_ident_var_pos(v__ast__Ident ident) {
+	if ((ident.obj)._typ == 524) {
+		_option_int _t1;
+		builtin___option_ok(&(int[]) { (*ident.obj._v__ast__Var).pos.pos }, (_option*)(&_t1), sizeof(int));
+		 
+		return _t1;
+	}
+	_option_v__ast__Var_ptr _t2 = {0};
+	if (_t2 = v__ast__Scope_find_var(ident.scope, ident.name), _t2.state == 0) {
+		v__ast__Var* variable = *(v__ast__Var**)_t2.data;
+		_option_int _t3;
+		builtin___option_ok(&(int[]) { variable->pos.pos }, (_option*)(&_t3), sizeof(int));
+		 
+		return _t3;
+	}
+	return (_option_int){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+}
+VV_LOC bool v__checker__recursive_str_exprs_are_same_alias_path(v__ast__Expr a, v__ast__Expr b) {
+	v__ast__Expr left = v__ast__Expr_remove_par(a);
+	v__ast__Expr right = v__ast__Expr_remove_par(b);
+	if (left._typ == 471) {
+		if ((right)._typ == 471) {
+			if (!builtin__string__eq((*left._v__ast__Ident).name, (*right._v__ast__Ident).name)) {
+				return false;
+			}
+			_option_int _t2 = v__checker__recursive_str_ident_var_pos((*left._v__ast__Ident));
+			if (_t2.state != 0) {
+				return false;
+			}
+			
+ 			int left_pos = (*(int*)_t2.data);
+			_option_int _t4 = v__checker__recursive_str_ident_var_pos((*right._v__ast__Ident));
+			if (_t4.state != 0) {
+				return false;
+			}
+			
+ 			int right_pos = (*(int*)_t4.data);
+			return left_pos == right_pos;
+		}
+		return false;
+	}
+	else if (left._typ == 490) {
+		bool _t10 = ((right)._typ == 490);
+		if (_t10) {
+			_t10 = builtin__string__eq((*left._v__ast__SelectorExpr).field_name, (*(v__ast__SelectorExpr*)builtin____as_cast((right)._v__ast__SelectorExpr, (right)._typ, 490)).field_name);
+		}
+		bool _t9 = ( _t10);
+		if (_t9) {
+			_t9 = v__checker__recursive_str_exprs_are_same_alias_path((*left._v__ast__SelectorExpr).expr, (*(v__ast__SelectorExpr*)builtin____as_cast((right)._v__ast__SelectorExpr, (right)._typ, 490)).expr);
+		}
+		return _t9;
+	}
+	
+	else {
+	}
+	
+	return false;
+}
+VV_LOC void v__checker__Checker_merge_recursive_str_branch_states(v__checker__Checker* c, v__checker__RecursiveStrAliasState* state, Array_v__checker__RecursiveStrAliasState branch_states, v__ast__Type typ) {
+	if (branch_states.len == 0) {
+		return;
+	}
+	Array_v__checker__RecursiveStrAliasSource sources = builtin____new_array_with_default(0, 0, sizeof(v__checker__RecursiveStrAliasSource), 0);
+	for (int _t1 = 0; _t1 < branch_states.len; ++_t1) {
+		v__checker__RecursiveStrAliasState branch_state = ((v__checker__RecursiveStrAliasState*)branch_states.data)[_t1];
+		if (branch_state.invalidated) {
+			continue;
+		}
+		Array_v__checker__RecursiveStrAliasSource candidate_sources = builtin__new_array_from_c_array(1, 1, sizeof(v__checker__RecursiveStrAliasSource), _MOV((v__checker__RecursiveStrAliasSource[1]){((v__checker__RecursiveStrAliasSource){.source = branch_state.source,.pos = branch_state.pos,})}));
+		_PUSH_MANY(&candidate_sources, (branch_state.possible_sources), _t2, Array_v__checker__RecursiveStrAliasSource);
+		for (int _t3 = 0; _t3 < candidate_sources.len; ++_t3) {
+			v__checker__RecursiveStrAliasSource candidate = ((v__checker__RecursiveStrAliasSource*)candidate_sources.data)[_t3];
+			bool _t4 = false;
+			Array_v__checker__RecursiveStrAliasSource _t4_orig = sources;
+			int _t4_len = _t4_orig.len;
+			for (int _t5 = 0; _t5 < _t4_len; ++_t5) {
+				v__checker__RecursiveStrAliasSource it = ((v__checker__RecursiveStrAliasSource*) _t4_orig.data)[_t5];
+				if (it.pos == candidate.pos && v__checker__Checker_recursive_str_sources_are_equivalent(c, it.source, candidate.source, typ)) {
+					_t4 = true;
+				}
+				if (_t4) {
+					break;
+				}
+			}
+			if (_t4) {
+				continue;
+			}
+			builtin__array_push((array*)&sources, _MOV((v__checker__RecursiveStrAliasSource[]){ candidate }));
+		}
+	}
+	if (sources.len == 0) {
+		int merge_pos = state->pos;
+		bool shared_storage_mutated = true;
+		bool storage_rebound = false;
+		for (int _t7 = 0; _t7 < branch_states.len; ++_t7) {
+			v__checker__RecursiveStrAliasState branch_state = ((v__checker__RecursiveStrAliasState*)branch_states.data)[_t7];
+			if (branch_state.pos > merge_pos) {
+				merge_pos = branch_state.pos;
+			}
+			shared_storage_mutated = shared_storage_mutated && branch_state.shared_storage_mutated;
+			storage_rebound = storage_rebound || branch_state.storage_rebound;
+		}
+		v__checker__record_recursive_str_alias_state(state, merge_pos, _const_v__ast__empty_expr, true, shared_storage_mutated, storage_rebound);
+		return;
+	}
+	state->source = (*(v__checker__RecursiveStrAliasSource*)builtin__array_get(sources, 0)).source;
+	state->pos = (*(v__checker__RecursiveStrAliasSource*)builtin__array_get(sources, 0)).pos;
+	state->invalidated = false;
+	state->shared_storage_mutated = false;
+	bool _t8 = false;
+	Array_v__checker__RecursiveStrAliasState _t8_orig = branch_states;
+	int _t8_len = _t8_orig.len;
+	for (int _t9 = 0; _t9 < _t8_len; ++_t9) {
+		v__checker__RecursiveStrAliasState it = ((v__checker__RecursiveStrAliasState*) _t8_orig.data)[_t9];
+		if (it.storage_rebound) {
+			_t8 = true;
+		}
+		if (_t8) {
+			break;
+		}
+	}
+	state->storage_rebound =_t8;
+	state->possible_sources = builtin__array_clone_static_to_depth(builtin__array_slice(sources, 1, 2147483647), 0);
+}
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_stmts_mutation_flow(v__checker__Checker* c, Array_v__ast__Stmt stmts, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	bool falls_through_unmutated = true;
+	bool returns_unmutated = false;
+	for (int _t1 = 0; _t1 < stmts.len; ++_t1) {
+		v__ast__Stmt stmt = ((v__ast__Stmt*)stmts.data)[_t1];
+		if (!falls_through_unmutated) {
+			break;
+		}
+		v__checker__RecursiveStrMutationFlow flow = v__checker__Checker_recursive_str_stmt_mutation_flow(c, stmt, root_name, root_decl_pos, root_type, requirement, seen);
+		falls_through_unmutated = flow.falls_through_unmutated;
+		returns_unmutated = returns_unmutated || flow.returns_unmutated;
+	}
+	return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = falls_through_unmutated,.returns_unmutated = returns_unmutated,});
+}
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_if_mutation_flow(v__checker__Checker* c, v__ast__IfExpr node, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	if (node.branches.len == 0) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = 0,});
+	}
+	if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*(v__ast__IfBranch*)builtin__array_get(node.branches, 0)).cond, root_name, root_decl_pos, root_type, requirement, seen)) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+	}
+	if (node.is_comptime) {
+		for (int _t3 = 0; _t3 < node.branches.len; ++_t3) {
+			v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[_t3];
+			if (v__checker__Checker_is_active_comptime_branch(c, branch.id)) {
+				return v__checker__Checker_recursive_str_stmts_mutation_flow(c, branch.stmts, root_name, root_decl_pos, root_type, requirement, seen);
+			}
+		}
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = 0,});
+	}
+	v__checker__RecursiveStrMutationFlow _t6 = ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = !node.has_else,.returns_unmutated = 0,});
+	v__checker__RecursiveStrMutationFlow flow = _t6;
+	for (int _t7 = 0; _t7 < node.branches.len; ++_t7) {
+		v__ast__IfBranch branch = ((v__ast__IfBranch*)node.branches.data)[_t7];
+		v__checker__RecursiveStrMutationFlow branch_flow = v__checker__Checker_recursive_str_stmts_mutation_flow(c, branch.stmts, root_name, root_decl_pos, root_type, requirement, seen);
+		flow.falls_through_unmutated = flow.falls_through_unmutated || branch_flow.falls_through_unmutated;
+		flow.returns_unmutated = flow.returns_unmutated || branch_flow.returns_unmutated;
+	}
+	return flow;
+}
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_match_mutation_flow(v__checker__Checker* c, v__ast__MatchExpr node, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, node.cond, root_name, root_decl_pos, root_type, requirement, seen)) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+	}
+	if (node.is_comptime) {
+		for (int _t2 = 0; _t2 < node.branches.len; ++_t2) {
+			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node.branches.data)[_t2];
+			if (v__checker__Checker_is_active_comptime_branch(c, branch.id)) {
+				return v__checker__Checker_recursive_str_stmts_mutation_flow(c, branch.stmts, root_name, root_decl_pos, root_type, requirement, seen);
+			}
+		}
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = 0,});
+	}
+	v__checker__RecursiveStrMutationFlow _t5 = ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+	v__checker__RecursiveStrMutationFlow flow = _t5;
+	for (int _t6 = 0; _t6 < node.branches.len; ++_t6) {
+		v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node.branches.data)[_t6];
+		v__checker__RecursiveStrMutationFlow branch_flow = v__checker__Checker_recursive_str_stmts_mutation_flow(c, branch.stmts, root_name, root_decl_pos, root_type, requirement, seen);
+		flow.falls_through_unmutated = flow.falls_through_unmutated || branch_flow.falls_through_unmutated;
+		flow.returns_unmutated = flow.returns_unmutated || branch_flow.returns_unmutated;
+	}
+	return flow;
+}
+VV_LOC v__checker__RecursiveStrMutationFlow v__checker__Checker_recursive_str_stmt_mutation_flow(v__checker__Checker* c, v__ast__Stmt stmt, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	if (stmt._typ == 297) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = 0,});
+	}
+	else if (stmt._typ == 515) {
+		for (int _t2 = 0; _t2 < (*stmt._v__ast__Return).exprs.len; ++_t2) {
+			v__ast__Expr expr = ((v__ast__Expr*)(*stmt._v__ast__Return).exprs.data)[_t2];
+			if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, expr, root_name, root_decl_pos, root_type, requirement, seen)) {
+				return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+			}
+		}
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = true,});
+	}
+	else if (stmt._typ == 311) {
+		return v__checker__Checker_recursive_str_stmts_mutation_flow(c, (*stmt._v__ast__Block).stmts, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (stmt._typ == 503) {
+		for (int _t6 = 0; _t6 < (*stmt._v__ast__AssignStmt).right.len; ++_t6) {
+			v__ast__Expr right = ((v__ast__Expr*)(*stmt._v__ast__AssignStmt).right.data)[_t6];
+			if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, right, root_name, root_decl_pos, root_type, requirement, seen)) {
+				return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+			}
+			if (requirement == v__checker__RecursiveStrMutationRequirement__shared_storage && v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, right, root_name, root_decl_pos, root_type, v__checker__RecursiveStrMutationRequirement__binding_reassignment, seen)) {
+				return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = true,});
+			}
+		}
+		for (int i = 0; i < (*stmt._v__ast__AssignStmt).left.len; ++i) {
+			v__ast__Expr left = ((v__ast__Expr*)(*stmt._v__ast__AssignStmt).left.data)[i];
+			if ((*stmt._v__ast__AssignStmt).op == v__token__Kind__assign && i < (*stmt._v__ast__AssignStmt).right.len && v__checker__recursive_str_exprs_are_same_alias_path(left, (*(v__ast__Expr*)builtin__array_get((*stmt._v__ast__AssignStmt).right, i)))) {
+				continue;
+			}
+			v__ast__Expr reduced_left = v__ast__Expr_remove_par(left);
+			bool _t9 = ((reduced_left)._typ == 471);
+			if (_t9) {
+				_t9 = v__checker__recursive_str_ident_is_var(*(v__ast__Ident*)builtin____as_cast((reduced_left)._v__ast__Ident, (reduced_left)._typ, 471), root_name, root_decl_pos);
+			}
+			if ( _t9) {
+				if (requirement == v__checker__RecursiveStrMutationRequirement__binding_reassignment) {
+					return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+				}
+				if (requirement == v__checker__RecursiveStrMutationRequirement__shared_storage) {
+					return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = true,});
+				}
+			}
+			if (v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, left, root_name, root_type), true)) {
+				if (requirement == v__checker__RecursiveStrMutationRequirement__root || (requirement == v__checker__RecursiveStrMutationRequirement__shared_storage && v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, left, root_name, root_decl_pos, root_type))) {
+					return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+				}
+			}
+		}
+	}
+	else if (stmt._typ == 327) {
+		if ((*stmt._v__ast__ExprStmt).expr._typ == 328) {
+			return v__checker__Checker_recursive_str_if_mutation_flow(c, (*(*stmt._v__ast__ExprStmt).expr._v__ast__IfExpr), root_name, root_decl_pos, root_type, requirement, seen);
+		}
+		else if ((*stmt._v__ast__ExprStmt).expr._typ == 329) {
+			return v__checker__Checker_recursive_str_match_mutation_flow(c, (*(*stmt._v__ast__ExprStmt).expr._v__ast__MatchExpr), root_name, root_decl_pos, root_type, requirement, seen);
+		}
+		else if ((*stmt._v__ast__ExprStmt).expr._typ == 479) {
+			return v__checker__Checker_recursive_str_stmts_mutation_flow(c, (*(*stmt._v__ast__ExprStmt).expr._v__ast__LockExpr).stmts, root_name, root_decl_pos, root_type, requirement, seen);
+		}
+		
+		else {
+			if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*stmt._v__ast__ExprStmt).expr, root_name, root_decl_pos, root_type, requirement, seen) || v__checker__Checker_expr_never_falls_through(c, (*stmt._v__ast__ExprStmt).expr)) {
+				return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = 0,});
+			}
+			if (requirement == v__checker__RecursiveStrMutationRequirement__shared_storage && v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*stmt._v__ast__ExprStmt).expr, root_name, root_decl_pos, root_type, v__checker__RecursiveStrMutationRequirement__binding_reassignment, seen)) {
+				return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = 0,.returns_unmutated = true,});
+			}
+		}
+		
+	}
+	else if (stmt._typ == 511) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = v__checker__uses_return_stmt(builtin__new_array_from_c_array(1, 1, sizeof(v__ast__Stmt), _MOV((v__ast__Stmt[1]){stmt}))),});
+	}
+	else if (stmt._typ == 509) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = v__checker__uses_return_stmt(builtin__new_array_from_c_array(1, 1, sizeof(v__ast__Stmt), _MOV((v__ast__Stmt[1]){stmt}))),});
+	}
+	else if (stmt._typ == 510) {
+		return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = v__checker__uses_return_stmt(builtin__new_array_from_c_array(1, 1, sizeof(v__ast__Stmt), _MOV((v__ast__Stmt[1]){stmt}))),});
+	}
+	
+	else {
+	}
+	
+	return ((v__checker__RecursiveStrMutationFlow){.falls_through_unmutated = true,.returns_unmutated = 0,});
+}
+VV_LOC bool v__checker__Checker_recursive_str_expr_guarantees_root_mutation(v__checker__Checker* c, v__ast__Expr expr, string root_name, int root_decl_pos, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	v__ast__Expr inner = expr;
+	inner = v__ast__Expr_remove_par(inner);
+	if (inner._typ == 290) {
+		for (int _t1 = 0; _t1 < (*inner._v__ast__CallExpr).args.len; ++_t1) {
+			v__ast__CallArg arg = ((v__ast__CallArg*)(*inner._v__ast__CallExpr).args.data)[_t1];
+			if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, arg.expr, root_name, root_decl_pos, root_type, requirement, seen)) {
+				return true;
+			}
+		}
+		return v__checker__Checker_recursive_str_call_guarantees_root_mutation(c, (*inner._v__ast__CallExpr), root_name, root_type, requirement, seen);
+	}
+	else if (inner._typ == 486) {
+		if (!v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*inner._v__ast__PostfixExpr).expr, root_name, root_type), true)) {
+			return false;
+		}
+		if (requirement == v__checker__RecursiveStrMutationRequirement__root) {
+			return true;
+		}
+		if (requirement == v__checker__RecursiveStrMutationRequirement__binding_reassignment) {
+			return false;
+		}
+		return v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*inner._v__ast__PostfixExpr).expr, root_name, root_decl_pos, root_type);
+	}
+	else if (inner._typ == 474) {
+		if ((*inner._v__ast__InfixExpr).op == v__token__Kind__left_shift && v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*inner._v__ast__InfixExpr).left, root_name, root_type), true)) {
+			if (requirement == v__checker__RecursiveStrMutationRequirement__root || (requirement == v__checker__RecursiveStrMutationRequirement__shared_storage && v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*inner._v__ast__InfixExpr).left, root_name, root_decl_pos, root_type))) {
+				return true;
+			}
+		}
+		if (v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__InfixExpr).left, root_name, root_decl_pos, root_type, requirement, seen)) {
+			return true;
+		}
+		if ((*inner._v__ast__InfixExpr).op == v__token__Kind__and || (*inner._v__ast__InfixExpr).op == v__token__Kind__logical_or) {
+			return false;
+		}
+		return v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__InfixExpr).right, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (inner._typ == 487) {
+		return v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__PrefixExpr).right, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (inner._typ == 458) {
+		return v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__CastExpr).expr, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (inner._typ == 453) {
+		return v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__AsCast).expr, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (inner._typ == 500) {
+		return v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__UnsafeExpr).expr, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (inner._typ == 466) {
+		return v__checker__Checker_recursive_str_expr_guarantees_root_mutation(c, (*inner._v__ast__DumpExpr).expr, root_name, root_decl_pos, root_type, requirement, seen);
+	}
+	else if (inner._typ == 328) {
+		v__checker__RecursiveStrMutationFlow flow = v__checker__Checker_recursive_str_if_mutation_flow(c, (*inner._v__ast__IfExpr), root_name, root_decl_pos, root_type, requirement, seen);
+		return !flow.falls_through_unmutated && !flow.returns_unmutated;
+	}
+	else if (inner._typ == 329) {
+		v__checker__RecursiveStrMutationFlow flow = v__checker__Checker_recursive_str_match_mutation_flow(c, (*inner._v__ast__MatchExpr), root_name, root_decl_pos, root_type, requirement, seen);
+		return !flow.falls_through_unmutated && !flow.returns_unmutated;
+	}
+	else if (inner._typ == 479) {
+		v__checker__RecursiveStrMutationFlow flow = v__checker__Checker_recursive_str_stmts_mutation_flow(c, (*inner._v__ast__LockExpr).stmts, root_name, root_decl_pos, root_type, requirement, seen);
+		return !flow.falls_through_unmutated && !flow.returns_unmutated;
+	}
+	
+	else {
+	}
+	
+	return false;
+}
+VV_LOC bool v__checker__Checker_recursive_str_fn_guarantees_root_mutation_for_param(v__checker__Checker* c, v__ast__Fn func, int param_idx, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	if (param_idx < 0 || param_idx >= func.params.len || !(*(v__ast__Param*)builtin__array_get(func.params, param_idx)).is_mut) {
+		return false;
+	}
+	if (param_idx == 0 && v__checker__is_builtin_array_reverse_in_place(func) && requirement != v__checker__RecursiveStrMutationRequirement__binding_reassignment) {
+		return true;
+	}
+	if (func.source_fn == ((void*)0) || func.no_body || func.language != v__ast__Language__v) {
+		return false;
+	}
+	v__ast__FnDecl* fn_decl = ((v__ast__FnDecl*)(func.source_fn));
+	if (fn_decl == ((void*)0) || param_idx >= fn_decl->params.len) {
+		return false;
+	}
+	string key = builtin__string_plus_many(5, _MOV((string[5]){v__ast__Fn_fkey(&func), _S("|"), builtin__int_str(param_idx), _S("|"), v__checker__RecursiveStrMutationRequirement_str(requirement)}));
+	if (_IN_MAP(ADDR(string, key), seen)) {
+		return false;
+	}
+	builtin__map_set(seen, &(string[]){key}, &(bool[]) { true });
+	v__ast__Param param = (*(v__ast__Param*)builtin__array_get(fn_decl->params, param_idx));
+	v__checker__RecursiveStrMutationFlow flow = v__checker__Checker_recursive_str_stmts_mutation_flow(c, fn_decl->stmts, param.name, param.pos.pos, param.typ, requirement, seen);
+	builtin__map_delete(seen, &(string[]){key});
+	return !flow.falls_through_unmutated && !flow.returns_unmutated;
+}
+VV_LOC bool v__checker__Checker_recursive_str_call_guarantees_root_mutation(v__checker__Checker* c, v__ast__CallExpr node, string root_name, v__ast__Type root_type, v__checker__RecursiveStrMutationRequirement requirement, Map_string_bool* seen) {
+	_option_v__ast__Fn _t1 = v__checker__Checker_find_called_fn(c, node);
+	if (_t1.state != 0) {
+		return false;
+	}
+	
+ 	v__ast__Fn called_fn = (*(v__ast__Fn*)_t1.data);
+	if (node.is_method && called_fn.params.len > 0 && (*(v__ast__Param*)builtin__array_get(called_fn.params, 0)).is_mut && v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, node.left, root_name, root_type), true) && v__checker__Checker_recursive_str_fn_guarantees_root_mutation_for_param(c, called_fn, 0, requirement, seen)) {
+		return true;
+	}
+	for (int i = 0; i < node.args.len; ++i) {
+		v__ast__CallArg arg = ((v__ast__CallArg*)node.args.data)[i];
+		if (!arg.is_mut) {
+			continue;
+		}
+		int param_idx = v__checker__Checker_call_arg_param_index(c, called_fn, i);
+		if (param_idx < 0 || param_idx >= called_fn.params.len || !(*(v__ast__Param*)builtin__array_get(called_fn.params, param_idx)).is_mut) {
+			continue;
+		}
+		if (v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, arg.expr, root_name, root_type), true) && v__checker__Checker_recursive_str_fn_guarantees_root_mutation_for_param(c, called_fn, param_idx, requirement, seen)) {
+			return true;
+		}
+	}
+	return false;
+}
+VV_LOC bool v__checker__Checker_recursive_str_type_is_direct_shared_storage(v__checker__Checker* c, v__ast__Type typ) {
+	if (typ == 0 || typ == _const_v__ast__no_type) {
+		return false;
+	}
+	v__ast__Type unwrapped = v__checker__Checker_unwrap_generic(c, typ);
+	if (v__ast__Type_is_any_kind_of_pointer(unwrapped) || v__ast__Type_has_flag(unwrapped, v__ast__TypeFlag__shared_f)) {
+		return true;
+	}
+	return (v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__array || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__map || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__chan || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__interface || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__thread || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__function);
+}
+VV_LOC bool v__checker__Checker_recursive_str_expr_path_has_shared_storage(v__checker__Checker* c, v__ast__Expr expr, string name, int decl_pos, v__ast__Type typ) {
+	v__ast__Expr current = expr;
+	current = v__ast__Expr_remove_par(current);
+	if (current._typ == 471) {
+		return v__checker__recursive_str_ident_is_var((*current._v__ast__Ident), name, decl_pos) && v__checker__Checker_recursive_str_type_is_direct_shared_storage(c, typ);
+	}
+	else if (current._typ == 490) {
+		if (v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__SelectorExpr).expr, name, decl_pos, typ)) {
+			return true;
+		}
+		return (v__checker__recursive_str_expr_var_scope(current, name, decl_pos)).state != 2 && v__checker__Checker_recursive_str_type_is_direct_shared_storage(c, (*current._v__ast__SelectorExpr).typ);
+	}
+	else if (current._typ == 473) {
+		if (v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__IndexExpr).left, name, decl_pos, typ)) {
+			return true;
+		}
+		return (v__checker__recursive_str_expr_var_scope(current, name, decl_pos)).state != 2 && (v__checker__Checker_recursive_str_type_is_direct_shared_storage(c, (*current._v__ast__IndexExpr).left_type) || v__checker__Checker_recursive_str_type_is_direct_shared_storage(c, (*current._v__ast__IndexExpr).typ));
+	}
+	else if (current._typ == 487) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__PrefixExpr).right, name, decl_pos, typ);
+	}
+	else if (current._typ == 486) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__PostfixExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 458) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__CastExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 453) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__AsCast).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 500) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__UnsafeExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 466) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__DumpExpr).expr, name, decl_pos, typ);
+	}
+	
+	else {
+	}
+	
+	return false;
+}
+VV_LOC bool v__checker__Checker_recursive_str_mutation_reaches_shared_storage(v__checker__Checker* c, v__ast__Expr expr, string name, int decl_pos, v__ast__Type typ) {
+	v__ast__Expr current = expr;
+	current = v__ast__Expr_remove_par(current);
+	if (current._typ == 490) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__SelectorExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 473) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__IndexExpr).left, name, decl_pos, typ);
+	}
+	else if (current._typ == 487) {
+		return v__checker__Checker_recursive_str_expr_path_has_shared_storage(c, (*current._v__ast__PrefixExpr).right, name, decl_pos, typ);
+	}
+	else if (current._typ == 486) {
+		return v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*current._v__ast__PostfixExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 458) {
+		return v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*current._v__ast__CastExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 453) {
+		return v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*current._v__ast__AsCast).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 500) {
+		return v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*current._v__ast__UnsafeExpr).expr, name, decl_pos, typ);
+	}
+	else if (current._typ == 466) {
+		return v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*current._v__ast__DumpExpr).expr, name, decl_pos, typ);
+	}
+	
+	else {
+	}
+	
+	return false;
+}
+VV_LOC void v__checker__Checker_scan_recursive_str_alias_updates(v__checker__Checker* c, v__ast__Node node, string name, int decl_pos, v__ast__Type typ, v__ast__Scope* call_scope, int cutoff, v__checker__RecursiveStrAliasState* state) {
+	if (node._typ == 316) {
+		if (((*node._v__ast__Stmt))._typ == 297) {
+			return;
+		}
+		if (((*node._v__ast__Stmt))._typ == 311) {
+			for (int _t1 = 0; _t1 < (*(*node._v__ast__Stmt)._v__ast__Block).stmts.len; ++_t1) {
+				v__ast__Stmt stmt = ((v__ast__Stmt*)(*(*node._v__ast__Stmt)._v__ast__Block).stmts.data)[_t1];
+				v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, (*(*node._v__ast__Stmt)._v__ast__Block).scope, cutoff, state);
+			}
+			return;
+		}
+		if (((*node._v__ast__Stmt))._typ == 503) {
+			for (int _t2 = 0; _t2 < (*(*node._v__ast__Stmt)._v__ast__AssignStmt).right.len; ++_t2) {
+				v__ast__Expr right = ((v__ast__Expr*)(*(*node._v__ast__Stmt)._v__ast__AssignStmt).right.data)[_t2];
+				v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&right, false), name, decl_pos, typ, call_scope, cutoff, state);
+			}
+			int update_pos = (*(*node._v__ast__Stmt)._v__ast__AssignStmt).pos.pos + (*(*node._v__ast__Stmt)._v__ast__AssignStmt).pos.len;
+			if (update_pos >= cutoff) {
+				return;
+			}
+			for (int i = 0; i < (*(*node._v__ast__Stmt)._v__ast__AssignStmt).left.len; ++i) {
+				v__ast__Expr left = ((v__ast__Expr*)(*(*node._v__ast__Stmt)._v__ast__AssignStmt).left.data)[i];
+				_option_v__ast__Scope_ptr _t3 = v__checker__recursive_str_expr_var_scope(left, name, decl_pos);
+				if (_t3.state != 0) {
+					continue;
+				}
+				
+ 				v__ast__Scope* scope = (*(v__ast__Scope**)_t3.data);
+				if (!v__checker__recursive_str_scope_dominates(scope, call_scope)) {
+					continue;
+				}
+				if ((*(*node._v__ast__Stmt)._v__ast__AssignStmt).op == v__token__Kind__assign && i < (*(*node._v__ast__Stmt)._v__ast__AssignStmt).right.len && v__checker__recursive_str_exprs_are_same_alias_path(left, (*(v__ast__Expr*)builtin__array_get((*(*node._v__ast__Stmt)._v__ast__AssignStmt).right, i)))) {
+					continue;
+				}
+				v__ast__Expr reduced_left = v__ast__Expr_remove_par(left);
+				bool _t5 = ((reduced_left)._typ == 471);
+				if (_t5) {
+					_t5 = v__checker__recursive_str_ident_is_var(*(v__ast__Ident*)builtin____as_cast((reduced_left)._v__ast__Ident, (reduced_left)._typ, 471), name, decl_pos);
+				}
+				bool _t4 = _t5;
+				bool _t6;
+				if (!(_t4)) {
+					_t6 = v__checker__Checker_expr_mutation_visibility(c, left, name, typ) != v__checker__RootMutationVisibility__none;
+				}
+								
+				if (_t4) {
+					if (((*(*node._v__ast__Stmt)._v__ast__AssignStmt).op == v__token__Kind__assign || (*(*node._v__ast__Stmt)._v__ast__AssignStmt).op == v__token__Kind__decl_assign) && i < (*(*node._v__ast__Stmt)._v__ast__AssignStmt).right.len) {
+						v__checker__record_recursive_str_alias_state(state, update_pos, (*(v__ast__Expr*)builtin__array_get((*(*node._v__ast__Stmt)._v__ast__AssignStmt).right, i)), false, false, false);
+					} else {
+						v__checker__record_recursive_str_alias_state(state, update_pos, _const_v__ast__empty_expr, true, false, false);
+					}
+				} else if (_t6) {
+					v__checker__record_recursive_str_alias_state(state, update_pos, _const_v__ast__empty_expr, true, v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, left, name, decl_pos, typ), false);
+				}
+			}
+			return;
+		}
+	}
+	else if (node._typ == 289) {
+		if ((*node._v__ast__Expr)._typ == 450) {
+			return;
+		}
+		else if ((*node._v__ast__Expr)._typ == 477) {
+			return;
+		}
+		else if ((*node._v__ast__Expr)._typ == 500) {
+			v__ast__Scope* _t7; /* if prepend */
+			if (((*(*node._v__ast__Expr)._v__ast__UnsafeExpr).expr)._typ == 328 || ((*(*node._v__ast__Expr)._v__ast__UnsafeExpr).expr)._typ == 329) {
+				_t7 = call_scope;
+				goto _t8;
+			};
+			{
+_option_v__ast__Scope_ptr _t9 = v__checker__recursive_str_expr_var_scope((*(*node._v__ast__Expr)._v__ast__UnsafeExpr).expr, name, decl_pos);
+				if (_t9.state != 0) {
+					*(v__ast__Scope**) _t9.data = call_scope;
+				}
+				
+ 				_t7 = (*(v__ast__Scope**)_t9.data);
+			}
+	_t8: {};
+						v__ast__Scope* unsafe_scope = _t7;
+			v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&(*(*node._v__ast__Expr)._v__ast__UnsafeExpr).expr, false), name, decl_pos, typ, unsafe_scope, cutoff, state);
+			return;
+		}
+		else if ((*node._v__ast__Expr)._typ == 328) {
+			if ((*(*node._v__ast__Expr)._v__ast__IfExpr).pos.pos >= cutoff || (*(*node._v__ast__Expr)._v__ast__IfExpr).branches.len == 0) {
+				return;
+			}
+			int call_branch_idx = -1;
+			for (int i = 0; i < (*(*node._v__ast__Expr)._v__ast__IfExpr).branches.len; ++i) {
+				v__ast__IfBranch branch = ((v__ast__IfBranch*)(*(*node._v__ast__Expr)._v__ast__IfExpr).branches.data)[i];
+				if (v__checker__recursive_str_scope_dominates(branch.scope, call_scope)) {
+					call_branch_idx = i;
+					break;
+				}
+			}
+			if (call_branch_idx >= 0) {
+				for (int i = 0; i < call_branch_idx + 1; ++i) {
+					v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&(*(v__ast__IfBranch*)builtin__array_get((*(*node._v__ast__Expr)._v__ast__IfExpr).branches, i)).cond, false), name, decl_pos, typ, call_scope, cutoff, state);
+				}
+				for (int _t10 = 0; _t10 < (*(v__ast__IfBranch*)builtin__array_get((*(*node._v__ast__Expr)._v__ast__IfExpr).branches, call_branch_idx)).stmts.len; ++_t10) {
+					v__ast__Stmt stmt = ((v__ast__Stmt*)(*(v__ast__IfBranch*)builtin__array_get((*(*node._v__ast__Expr)._v__ast__IfExpr).branches, call_branch_idx)).stmts.data)[_t10];
+					v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, call_scope, cutoff, state);
+				}
+				return;
+			}
+			if ((*(*node._v__ast__Expr)._v__ast__IfExpr).is_comptime) {
+				Array_v__checker__RecursiveStrAliasState branch_states = builtin____new_array_with_default(0, 1, sizeof(v__checker__RecursiveStrAliasState), 0);
+				for (int _t11 = 0; _t11 < (*(*node._v__ast__Expr)._v__ast__IfExpr).branches.len; ++_t11) {
+					v__ast__IfBranch branch = ((v__ast__IfBranch*)(*(*node._v__ast__Expr)._v__ast__IfExpr).branches.data)[_t11];
+					if (!v__checker__Checker_is_active_comptime_branch(c, branch.id) || v__checker__Checker_has_top_return(c, branch.stmts)) {
+						continue;
+					}
+					v__checker__RecursiveStrAliasState branch_state = *state;
+					for (int _t12 = 0; _t12 < branch.stmts.len; ++_t12) {
+						v__ast__Stmt stmt = ((v__ast__Stmt*)branch.stmts.data)[_t12];
+						v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, branch.scope, cutoff, (voidptr)&branch_state);
+					}
+					builtin__array_push((array*)&branch_states, _MOV((v__checker__RecursiveStrAliasState[]){ branch_state }));
+				}
+				v__checker__Checker_merge_recursive_str_branch_states(c, state, branch_states, typ);
+				return;
+			}
+			v__checker__RecursiveStrAliasState fallthrough_state = *state;
+			Array_v__checker__RecursiveStrAliasState branch_states = builtin____new_array_with_default(0, (*(*node._v__ast__Expr)._v__ast__IfExpr).branches.len + 1, sizeof(v__checker__RecursiveStrAliasState), 0);
+			for (int _t14 = 0; _t14 < (*(*node._v__ast__Expr)._v__ast__IfExpr).branches.len; ++_t14) {
+				v__ast__IfBranch branch = ((v__ast__IfBranch*)(*(*node._v__ast__Expr)._v__ast__IfExpr).branches.data)[_t14];
+				v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&branch.cond, false), name, decl_pos, typ, branch.scope, cutoff, (voidptr)&fallthrough_state);
+				if (v__checker__Checker_has_top_return(c, branch.stmts)) {
+					continue;
+				}
+				v__checker__RecursiveStrAliasState branch_state = fallthrough_state;
+				for (int _t15 = 0; _t15 < branch.stmts.len; ++_t15) {
+					v__ast__Stmt stmt = ((v__ast__Stmt*)branch.stmts.data)[_t15];
+					v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, branch.scope, cutoff, (voidptr)&branch_state);
+				}
+				builtin__array_push((array*)&branch_states, _MOV((v__checker__RecursiveStrAliasState[]){ branch_state }));
+			}
+			if (!(*(*node._v__ast__Expr)._v__ast__IfExpr).has_else) {
+				builtin__array_push((array*)&branch_states, _MOV((v__checker__RecursiveStrAliasState[]){ fallthrough_state }));
+			}
+			v__checker__Checker_merge_recursive_str_branch_states(c, state, branch_states, typ);
+			return;
+		}
+		else if ((*node._v__ast__Expr)._typ == 329) {
+			if ((*(*node._v__ast__Expr)._v__ast__MatchExpr).pos.pos >= cutoff || (*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.len == 0) {
+				return;
+			}
+			int call_branch_idx = -1;
+			for (int i = 0; i < (*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.len; ++i) {
+				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)(*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.data)[i];
+				if (v__checker__recursive_str_scope_dominates(branch.scope, call_scope)) {
+					call_branch_idx = i;
+					break;
+				}
+			}
+			if (call_branch_idx >= 0) {
+				v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&(*(*node._v__ast__Expr)._v__ast__MatchExpr).cond, false), name, decl_pos, typ, call_scope, cutoff, state);
+				for (int _t18 = 0; _t18 < (*(v__ast__MatchBranch*)builtin__array_get((*(*node._v__ast__Expr)._v__ast__MatchExpr).branches, call_branch_idx)).stmts.len; ++_t18) {
+					v__ast__Stmt stmt = ((v__ast__Stmt*)(*(v__ast__MatchBranch*)builtin__array_get((*(*node._v__ast__Expr)._v__ast__MatchExpr).branches, call_branch_idx)).stmts.data)[_t18];
+					v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, call_scope, cutoff, state);
+				}
+				return;
+			}
+			if ((*(*node._v__ast__Expr)._v__ast__MatchExpr).is_comptime) {
+				Array_v__checker__RecursiveStrAliasState branch_states = builtin____new_array_with_default(0, 1, sizeof(v__checker__RecursiveStrAliasState), 0);
+				for (int _t19 = 0; _t19 < (*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.len; ++_t19) {
+					v__ast__MatchBranch branch = ((v__ast__MatchBranch*)(*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.data)[_t19];
+					if (!v__checker__Checker_is_active_comptime_branch(c, branch.id) || v__checker__Checker_has_top_return(c, branch.stmts)) {
+						continue;
+					}
+					v__checker__RecursiveStrAliasState branch_state = *state;
+					for (int _t20 = 0; _t20 < branch.stmts.len; ++_t20) {
+						v__ast__Stmt stmt = ((v__ast__Stmt*)branch.stmts.data)[_t20];
+						v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, branch.scope, cutoff, (voidptr)&branch_state);
+					}
+					builtin__array_push((array*)&branch_states, _MOV((v__checker__RecursiveStrAliasState[]){ branch_state }));
+				}
+				v__checker__Checker_merge_recursive_str_branch_states(c, state, branch_states, typ);
+				return;
+			}
+			v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&(*(*node._v__ast__Expr)._v__ast__MatchExpr).cond, false), name, decl_pos, typ, call_scope, cutoff, state);
+			Array_v__checker__RecursiveStrAliasState branch_states = builtin____new_array_with_default(0, (*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.len, sizeof(v__checker__RecursiveStrAliasState), 0);
+			for (int _t22 = 0; _t22 < (*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.len; ++_t22) {
+				v__ast__MatchBranch branch = ((v__ast__MatchBranch*)(*(*node._v__ast__Expr)._v__ast__MatchExpr).branches.data)[_t22];
+				if (v__checker__Checker_has_top_return(c, branch.stmts)) {
+					continue;
+				}
+				v__checker__RecursiveStrAliasState branch_state = *state;
+				for (int _t23 = 0; _t23 < branch.stmts.len; ++_t23) {
+					v__ast__Stmt stmt = ((v__ast__Stmt*)branch.stmts.data)[_t23];
+					v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, decl_pos, typ, branch.scope, cutoff, (voidptr)&branch_state);
+				}
+				builtin__array_push((array*)&branch_states, _MOV((v__checker__RecursiveStrAliasState[]){ branch_state }));
+			}
+			v__checker__Checker_merge_recursive_str_branch_states(c, state, branch_states, typ);
+			return;
+		}
+		else if ((*node._v__ast__Expr)._typ == 486) {
+			if ((*(*node._v__ast__Expr)._v__ast__PostfixExpr).pos.pos < cutoff && v__checker__Checker_expr_mutation_visibility(c, (*(*node._v__ast__Expr)._v__ast__PostfixExpr).expr, name, typ) != v__checker__RootMutationVisibility__none) {
+				_option_v__ast__Scope_ptr _t25 = {0};
+				if (_t25 = v__checker__recursive_str_expr_var_scope((*(*node._v__ast__Expr)._v__ast__PostfixExpr).expr, name, decl_pos), _t25.state == 0) {
+					v__ast__Scope* scope = *(v__ast__Scope**)_t25.data;
+					if (v__checker__recursive_str_scope_dominates(scope, call_scope)) {
+						v__checker__record_recursive_str_alias_state(state, (*(*node._v__ast__Expr)._v__ast__PostfixExpr).pos.pos + (*(*node._v__ast__Expr)._v__ast__PostfixExpr).pos.len, _const_v__ast__empty_expr, true, v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*(*node._v__ast__Expr)._v__ast__PostfixExpr).expr, name, decl_pos, typ), false);
+					}
+				}
+			}
+		}
+		else if ((*node._v__ast__Expr)._typ == 474) {
+			if ((*(*node._v__ast__Expr)._v__ast__InfixExpr).op == v__token__Kind__and || (*(*node._v__ast__Expr)._v__ast__InfixExpr).op == v__token__Kind__logical_or) {
+				v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&(*(*node._v__ast__Expr)._v__ast__InfixExpr).left, false), name, decl_pos, typ, call_scope, cutoff, state);
+				if (v__checker__recursive_str_pos_contains(v__ast__Expr_pos((*(*node._v__ast__Expr)._v__ast__InfixExpr).right), cutoff)) {
+					v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Expr_to_sumtype_v__ast__Node(&(*(*node._v__ast__Expr)._v__ast__InfixExpr).right, false), name, decl_pos, typ, call_scope, cutoff, state);
+				}
+				return;
+			}
+			if ((*(*node._v__ast__Expr)._v__ast__InfixExpr).op == v__token__Kind__left_shift && (*(*node._v__ast__Expr)._v__ast__InfixExpr).pos.pos < cutoff && v__checker__Checker_expr_mutation_visibility(c, (*(*node._v__ast__Expr)._v__ast__InfixExpr).left, name, typ) != v__checker__RootMutationVisibility__none) {
+				_option_v__ast__Scope_ptr _t26 = {0};
+				if (_t26 = v__checker__recursive_str_expr_var_scope((*(*node._v__ast__Expr)._v__ast__InfixExpr).left, name, decl_pos), _t26.state == 0) {
+					v__ast__Scope* scope = *(v__ast__Scope**)_t26.data;
+					if (v__checker__recursive_str_scope_dominates(scope, call_scope)) {
+						v__checker__record_recursive_str_alias_state(state, (*(*node._v__ast__Expr)._v__ast__InfixExpr).pos.pos + (*(*node._v__ast__Expr)._v__ast__InfixExpr).pos.len, _const_v__ast__empty_expr, true, v__checker__Checker_recursive_str_mutation_reaches_shared_storage(c, (*(*node._v__ast__Expr)._v__ast__InfixExpr).left, name, decl_pos, typ), false);
+					}
+				}
+			}
+		}
+		else if ((*node._v__ast__Expr)._typ == 290) {
+			Map_string_bool mutation_seen = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+			;
+			if ((*(*node._v__ast__Expr)._v__ast__CallExpr).pos.pos < cutoff && v__checker__Checker_recursive_str_call_guarantees_root_mutation(c, (*(*node._v__ast__Expr)._v__ast__CallExpr), name, typ, v__checker__RecursiveStrMutationRequirement__root, (voidptr)&mutation_seen)) {
+				_option_v__ast__Scope_ptr _t27 = {0};
+				if (_t27 = v__checker__recursive_str_expr_var_scope(v__ast__CallExpr_to_sumtype_v__ast__Expr(&(*(*node._v__ast__Expr)._v__ast__CallExpr), false), name, decl_pos), _t27.state == 0) {
+					v__ast__Scope* scope = *(v__ast__Scope**)_t27.data;
+					if (v__checker__recursive_str_scope_dominates(scope, call_scope)) {
+						Map_string_bool shared_mutation_seen = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+						;
+						Map_string_bool binding_reassignment_seen = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+						;
+						v__checker__record_recursive_str_alias_state(state, (*(*node._v__ast__Expr)._v__ast__CallExpr).pos.pos + (*(*node._v__ast__Expr)._v__ast__CallExpr).pos.len, _const_v__ast__empty_expr, true, v__checker__Checker_recursive_str_call_guarantees_root_mutation(c, (*(*node._v__ast__Expr)._v__ast__CallExpr), name, typ, v__checker__RecursiveStrMutationRequirement__shared_storage, (voidptr)&shared_mutation_seen), v__checker__Checker_recursive_str_call_guarantees_root_mutation(c, (*(*node._v__ast__Expr)._v__ast__CallExpr), name, typ, v__checker__RecursiveStrMutationRequirement__binding_reassignment, (voidptr)&binding_reassignment_seen));
+					}
+				}
+			}
+		}
+		
+		else {
+		}
+		
+	}
+	
+	else {
+	}
+	
+	Array_v__ast__Node _t28 = v__ast__Node_children(node);
+	for (int _t29 = 0; _t29 < _t28.len; ++_t29) {
+		v__ast__Node child = ((v__ast__Node*)_t28.data)[_t29];
+		v__checker__Checker_scan_recursive_str_alias_updates(c, child, name, decl_pos, typ, call_scope, cutoff, state);
+	}
+}
+VV_LOC int v__checker__find_recursive_str_binding_reassignment(v__ast__Node node, string name, int decl_pos, int start, int cutoff, int first) {
+	if (node._typ == 316) {
+		if (((*node._v__ast__Stmt))._typ == 297) {
+			return first;
+		}
+		if (((*node._v__ast__Stmt))._typ == 503) {
+			int update_pos = (*(*node._v__ast__Stmt)._v__ast__AssignStmt).pos.pos + (*(*node._v__ast__Stmt)._v__ast__AssignStmt).pos.len;
+			if (update_pos <= start || update_pos >= cutoff || update_pos >= first) {
+				return first;
+			}
+			for (int _t3 = 0; _t3 < (*(*node._v__ast__Stmt)._v__ast__AssignStmt).left.len; ++_t3) {
+				v__ast__Expr left = ((v__ast__Expr*)(*(*node._v__ast__Stmt)._v__ast__AssignStmt).left.data)[_t3];
+				v__ast__Expr reduced_left = v__ast__Expr_remove_par(left);
+				bool _t4 = ((reduced_left)._typ == 471);
+				if (_t4) {
+					_t4 = v__checker__recursive_str_ident_is_var(*(v__ast__Ident*)builtin____as_cast((reduced_left)._v__ast__Ident, (reduced_left)._typ, 471), name, decl_pos);
+				}
+				if ( _t4) {
+					return update_pos;
+				}
+			}
+			return first;
+		}
+	}
+	else if (node._typ == 289) {
+		if (((*node._v__ast__Expr))._typ == 450 || ((*node._v__ast__Expr))._typ == 477) {
+			return first;
+		}
+	}
+	
+	else {
+	}
+	
+	int earliest = first;
+	Array_v__ast__Node _t8 = v__ast__Node_children(node);
+	for (int _t9 = 0; _t9 < _t8.len; ++_t9) {
+		v__ast__Node child = ((v__ast__Node*)_t8.data)[_t9];
+		earliest = v__checker__find_recursive_str_binding_reassignment(child, name, decl_pos, start, cutoff, earliest);
+	}
+	return earliest;
+}
+VV_LOC _option_v__checker__RecursiveStrAliasState v__checker__Checker_recursive_str_alias_state_before(v__checker__Checker* c, string name, v__ast__Scope* resolution_scope, int cutoff) {
+	_option_v__ast__Var_ptr _t1 = v__ast__Scope_find_var(resolution_scope, name);
+	if (_t1.state != 0) {
+		return (_option_v__checker__RecursiveStrAliasState){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	
+ 	v__ast__Var* v = (*(v__ast__Var**)_t1.data);
+	if (v->pos.pos >= cutoff) {
+		return (_option_v__checker__RecursiveStrAliasState){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	v__checker__RecursiveStrAliasState _t3 = ((v__checker__RecursiveStrAliasState){.source = v->expr,.pos = v->pos.pos,.invalidated = 0,.shared_storage_mutated = 0,.storage_rebound = 0,.possible_sources = builtin____new_array(0, 0, sizeof(v__checker__RecursiveStrAliasSource)),});
+	v__checker__RecursiveStrAliasState state = _t3;
+	for (int _t4 = 0; _t4 < c->table->cur_fn->stmts.len; ++_t4) {
+		v__ast__Stmt stmt = ((v__ast__Stmt*)c->table->cur_fn->stmts.data)[_t4];
+		v__checker__Checker_scan_recursive_str_alias_updates(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), name, v->pos.pos, v->typ, resolution_scope, cutoff, (voidptr)&state);
+	}
+	_option_v__checker__RecursiveStrAliasState _t5;
+	builtin___option_ok(&(v__checker__RecursiveStrAliasState[]) { state }, (_option*)(&_t5), sizeof(v__checker__RecursiveStrAliasState));
+	 
+	return _t5;
+}
+VV_LOC bool v__checker__Checker_recursive_str_shared_source_was_mutated(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type receiver_typ, v__ast__Scope* resolution_scope, int start, int cutoff) {
+	v__ast__Expr inner = v__checker__Checker_unwrap_recursive_str_receiver(c, expr, receiver_typ);
+	if ((inner)._typ != 471) {
+		return false;
+	}
+	v__ast__Ident ident = *(v__ast__Ident*)builtin____as_cast((inner)._v__ast__Ident, (inner)._typ, 471);
+	_option_v__ast__Var_ptr _t2 = v__ast__Scope_find_var(resolution_scope, ident.name);
+	if (_t2.state != 0) {
+		return false;
+	}
+	
+ 	v__ast__Var* v = (*(v__ast__Var**)_t2.data);
+	if (!v__checker__Checker_type_may_share_mutable_storage(c, v->typ)) {
+		return false;
+	}
+	int storage_cutoff = cutoff;
+	for (int _t5 = 0; _t5 < c->table->cur_fn->stmts.len; ++_t5) {
+		v__ast__Stmt stmt = ((v__ast__Stmt*)c->table->cur_fn->stmts.data)[_t5];
+		storage_cutoff = v__checker__find_recursive_str_binding_reassignment(v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), ident.name, v->pos.pos, start, cutoff, storage_cutoff);
+	}
+	_option_v__checker__RecursiveStrAliasState _t6 = v__checker__Checker_recursive_str_alias_state_before(c, ident.name, resolution_scope, storage_cutoff);
+	if (_t6.state != 0) {
+		return false;
+	}
+	
+ 	v__checker__RecursiveStrAliasState state = (*(v__checker__RecursiveStrAliasState*)_t6.data);
+	return state.invalidated && state.shared_storage_mutated && state.pos > start;
+}
+VV_LOC _option_v__ast__Expr v__checker__recursive_str_branch_result(Array_v__ast__Stmt stmts) {
+	if (stmts.len == 0) {
+		return (_option_v__ast__Expr){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	v__ast__Stmt last_stmt = (*(v__ast__Stmt*)builtin__array_last(stmts));
+	if ((last_stmt)._typ == 327) {
+		_option_v__ast__Expr _t2;
+		builtin___option_ok(&(v__ast__Expr[]) { (*last_stmt._v__ast__ExprStmt).expr }, (_option*)(&_t2), sizeof(v__ast__Expr));
+		 
+		return _t2;
+	}
+	return (_option_v__ast__Expr){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+}
+VV_LOC bool v__checker__Checker_recursive_str_expr_resolves_to_receiver(v__checker__Checker* c, v__ast__Expr expr, string receiver_name, v__ast__Type receiver_typ, v__ast__Scope* resolution_scope, int cutoff, int shared_storage_cutoff, Map_string_bool* seen) {
+	v__ast__Expr inner = v__checker__Checker_unwrap_recursive_str_receiver(c, expr, receiver_typ);
+	if (inner._typ == 328) {
+		for (int _t1 = 0; _t1 < (*inner._v__ast__IfExpr).branches.len; ++_t1) {
+			v__ast__IfBranch branch = ((v__ast__IfBranch*)(*inner._v__ast__IfExpr).branches.data)[_t1];
+			if ((*inner._v__ast__IfExpr).is_comptime && !v__checker__Checker_is_active_comptime_branch(c, branch.id)) {
+				continue;
+			}
+			_option_v__ast__Expr _t2 = v__checker__recursive_str_branch_result(branch.stmts);
+			if (_t2.state != 0) {
+				continue;
+			}
+			
+ 			v__ast__Expr result = (*(v__ast__Expr*)_t2.data);
+			Map_string_bool branch_seen = builtin__map_clone(seen);
+			if (v__checker__Checker_recursive_str_expr_resolves_to_receiver(c, result, receiver_name, receiver_typ, branch.scope, v__ast__Expr_pos(result).pos, shared_storage_cutoff, (voidptr)&branch_seen)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	else if (inner._typ == 329) {
+		for (int _t5 = 0; _t5 < (*inner._v__ast__MatchExpr).branches.len; ++_t5) {
+			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)(*inner._v__ast__MatchExpr).branches.data)[_t5];
+			if ((*inner._v__ast__MatchExpr).is_comptime && !v__checker__Checker_is_active_comptime_branch(c, branch.id)) {
+				continue;
+			}
+			_option_v__ast__Expr _t6 = v__checker__recursive_str_branch_result(branch.stmts);
+			if (_t6.state != 0) {
+				continue;
+			}
+			
+ 			v__ast__Expr result = (*(v__ast__Expr*)_t6.data);
+			Map_string_bool branch_seen = builtin__map_clone(seen);
+			if (v__checker__Checker_recursive_str_expr_resolves_to_receiver(c, result, receiver_name, receiver_typ, branch.scope, v__ast__Expr_pos(result).pos, shared_storage_cutoff, (voidptr)&branch_seen)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	else {
+	}
+	
+	if ((inner)._typ != 471) {
+		return false;
+	}
+	v__ast__Ident ident = *(v__ast__Ident*)builtin____as_cast((inner)._v__ast__Ident, (inner)._typ, 471);
+	string seen_key = builtin__string_plus_many(5, _MOV((string[5]){ident.name, _S(":"), builtin__int_str(cutoff), _S(":"), builtin__int_str(shared_storage_cutoff)}));
+	if (_IN_MAP(ADDR(string, seen_key), seen)) {
+		return false;
+	}
+	builtin__map_set(seen, &(string[]){seen_key}, &(bool[]) { true });
+	_option_v__checker__RecursiveStrAliasState _t11 = v__checker__Checker_recursive_str_alias_state_before(c, ident.name, resolution_scope, cutoff);
+	if (_t11.state != 0) {
+		return false;
+	}
+	
+ 	v__checker__RecursiveStrAliasState state = (*(v__checker__RecursiveStrAliasState*)_t11.data);
+	if (state.invalidated) {
+		return false;
+	}
+	_option_v__ast__Var_ptr _t14 = v__ast__Scope_find_var(resolution_scope, ident.name);
+	if (_t14.state != 0) {
+		return false;
+	}
+	
+ 	v__ast__Var* v = (*(v__ast__Var**)_t14.data);
+	if (shared_storage_cutoff > cutoff && v__checker__Checker_type_may_share_mutable_storage(c, v->typ) && v__checker__Checker_recursive_str_shared_source_was_mutated(c, inner, receiver_typ, resolution_scope, cutoff, shared_storage_cutoff)) {
+		return false;
+	}
+	Array_v__checker__RecursiveStrAliasSource sources = builtin__new_array_from_c_array(1, 1, sizeof(v__checker__RecursiveStrAliasSource), _MOV((v__checker__RecursiveStrAliasSource[1]){((v__checker__RecursiveStrAliasSource){.source = state.source,.pos = state.pos,})}));
+	_PUSH_MANY(&sources, (state.possible_sources), _t17, Array_v__checker__RecursiveStrAliasSource);
+	for (int _t18 = 0; _t18 < sources.len; ++_t18) {
+		v__checker__RecursiveStrAliasSource source = ((v__checker__RecursiveStrAliasSource*)sources.data)[_t18];
+		if ((source.source)._typ == 467 || (source.source)._typ == 449) {
+			if (builtin__string__eq(ident.name, receiver_name)) {
+				return true;
+			}
+			continue;
+		}
+		if (v__checker__Checker_type_may_share_mutable_storage(c, v->typ) && v__checker__Checker_recursive_str_shared_source_was_mutated(c, source.source, receiver_typ, resolution_scope, source.pos, shared_storage_cutoff)) {
+			continue;
+		}
+		Map_string_bool source_seen = builtin__map_clone(seen);
+		if (v__checker__Checker_recursive_str_expr_resolves_to_receiver(c, source.source, receiver_name, receiver_typ, resolution_scope, source.pos, shared_storage_cutoff, (voidptr)&source_seen)) {
+			return true;
+		}
+	}
+	return false;
+}
 VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__ast__CallExpr* node, bool* continue_check) {
 	node->concrete_types = builtin__array_clone_to_depth(&node->raw_concrete_types, 0);
 	v__ast__Expr left_expr = node->left;
@@ -172530,9 +173710,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 				*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t21.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 			}
 			
- 			multi_return_v__ast__Fn_Array_v__ast__Type mr_117074 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t21.data);
-			method = mr_117074.arg0;
-			embed_types = mr_117074.arg1;
+ 			multi_return_v__ast__Fn_Array_v__ast__Type mr_151923 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t21.data);
+			method = mr_151923.arg0;
+			embed_types = mr_151923.arg1;
 			if (embed_types.len != 0) {
 				is_method_from_embed = true;
 				node->from_embed_types = embed_types;
@@ -172719,9 +173899,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 					*arg = v__checker__Checker_implicit_mut_call_arg(c, param, *arg);
 					builtin__array_set(&node->args, i, &(v__ast__CallArg[]) { *arg });
 					if (arg->is_mut) {
-						multi_return_string_v__token__Pos mr_122220 = v__checker__Checker_fail_if_immutable(c, &arg->expr);
-						string to_lock = mr_122220.arg0;
-						v__token__Pos pos = mr_122220.arg1;
+						multi_return_string_v__token__Pos mr_157069 = v__checker__Checker_fail_if_immutable(c, &arg->expr);
+						string to_lock = mr_157069.arg0;
+						v__token__Pos pos = mr_157069.arg1;
 						if (!param.is_mut) {
 							string tok = v__ast__ShareType_str(arg->share);
 							v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("`"), node->name, _S("` parameter "), builtin__int_str(i + 1), _S(" is not `"), tok, _S("`, `"), tok, _S("` is not needed`")})), v__ast__Expr_pos(arg->expr), ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
@@ -172769,8 +173949,8 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 					return _t40;
 				}
 				
- 				multi_return_v__ast__StructField_Array_v__ast__Type mr_123515 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t39.data);
-				node->from_embed_types = mr_123515.arg1;
+ 				multi_return_v__ast__StructField_Array_v__ast__Type mr_158364 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t39.data);
+				node->from_embed_types = mr_158364.arg1;
 				v__ast__Type _t41 = info.func.return_type;
 					{ // defer begin
 						if (has_method && node->is_method) {
@@ -173100,6 +174280,17 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 	if ( _t82 &&_t83 && v__ast__Table_register_fn_concrete_types(c->table, v__ast__Fn_fkey(&method), concrete_types)) {
 		c->need_recheck_generic_fns = true;
 	}
+	if (_SLIT_EQ(method_name.str, method_name.len, "str") && c->table->cur_fn != ((void*)0) && c->table->cur_fn->is_method && builtin__fast_string_eq(c->table->cur_fn->name, _S("str"))) {
+		string receiver_name = c->table->cur_fn->receiver.name;
+		v__ast__Type receiver_typ = c->table->cur_fn->receiver.typ;
+		if (v__checker__Checker_recursive_str_receiver_type_matches(c, left_type, receiver_typ)) {
+			Map_string_bool seen = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+			;
+			if (v__checker__Checker_recursive_str_expr_resolves_to_receiver(c, left_expr, receiver_name, receiver_typ, node->scope, node->pos.pos, node->pos.pos, (voidptr)&seen)) {
+				v__checker__Checker_error(c, _S("cannot call `str()` method recursively"), node->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+			}
+		}
+	}
 	node->is_noreturn = method.is_noreturn;
 	node->is_expand_simple_interpolation = method.is_expand_simple_interpolation;
 	node->is_ctor_new = method.is_ctor_new;
@@ -173117,9 +174308,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 	}
 	bool requires_mut_receiver = (*(v__ast__Param*)builtin__array_get(method.params, 0)).is_mut && (!is_used_outside_receiver_module || v__checker__Checker_fn_has_visible_mutation_for_param(c, method, 0));
 	if (requires_mut_receiver) {
-		multi_return_string_v__token__Pos mr_131702 = v__checker__Checker_check_for_mut_receiver(c, &node->left);
-		string to_lock = mr_131702.arg0;
-		v__token__Pos pos = mr_131702.arg1;
+		multi_return_string_v__token__Pos mr_167096 = v__checker__Checker_check_for_mut_receiver(c, &node->left);
+		string to_lock = mr_167096.arg0;
+		v__token__Pos pos = mr_167096.arg1;
 		if ((to_lock).len != 0 && rec_share != v__ast__ShareType__shared_t) {
 			v__checker__Checker_error(c, builtin__string_plus_many(2, _MOV((string[2]){to_lock, _S(" is `shared` and must be `lock`ed to be passed as `mut`")})), pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 		}
@@ -173315,9 +174506,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 		*arg = v__checker__Checker_implicit_mut_call_arg(c, param, *arg);
 		builtin__array_set(&node->args, i, &(v__ast__CallArg[]) { *arg });
 		if (arg->is_mut) {
-			multi_return_string_v__token__Pos mr_137926 = v__checker__Checker_fail_if_immutable(c, &arg->expr);
-			string to_lock = mr_137926.arg0;
-			v__token__Pos pos = mr_137926.arg1;
+			multi_return_string_v__token__Pos mr_173320 = v__checker__Checker_fail_if_immutable(c, &arg->expr);
+			string to_lock = mr_173320.arg0;
+			v__token__Pos pos = mr_173320.arg1;
 			if (!param_is_mut) {
 				string tok = v__ast__ShareType_str(arg->share);
 				v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("`"), node->name, _S("` parameter `"), param.name, _S("` is not `"), tok, _S("`, `"), tok, _S("` is not needed`")})), v__ast__Expr_pos(arg->expr), ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
@@ -173338,9 +174529,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 			}
 		}
 		if (concrete_types.len > 0 && method_generic_names_len != rec_concrete_types.len) {
-			multi_return_bool_Array_v__ast__Type mr_138900 = v__type_resolver__TypeResolver_resolve_fn_generic_args(&c->type_resolver, c->table->cur_fn, (voidptr)&method, node);
-			bool need_recheck = mr_138900.arg0;
-			Array_v__ast__Type new_concrete_types = mr_138900.arg1;
+			multi_return_bool_Array_v__ast__Type mr_174294 = v__type_resolver__TypeResolver_resolve_fn_generic_args(&c->type_resolver, c->table->cur_fn, (voidptr)&method, node);
+			bool need_recheck = mr_174294.arg0;
+			Array_v__ast__Type new_concrete_types = mr_174294.arg1;
 			concrete_types = builtin__array_clone_to_depth(&new_concrete_types, 0);
 			if (need_recheck) {
 				c->need_recheck_generic_fns = true;
@@ -173401,9 +174592,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 				}
 			}
 			if (!(got_arg_typ == _const_v__ast__voidptr_type || got_arg_typ == _const_v__ast__nil_type) && !v__checker__Checker_check_multiple_ptr_match(c, got_arg_typ, param.typ, param, *arg)) {
-				multi_return_string_string mr_140876 = v__checker__Checker_get_string_names_of(c, got_arg_typ, param.typ);
-				string got_typ_str = mr_140876.arg0;
-				string expected_typ_str = mr_140876.arg1;
+				multi_return_string_string mr_176270 = v__checker__Checker_get_string_names_of(c, got_arg_typ, param.typ);
+				string got_typ_str = mr_176270.arg0;
+				string expected_typ_str = mr_176270.arg1;
 				v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("cannot use `"), got_typ_str, _S("` as `"), expected_typ_str, _S("` in argument "), builtin__int_str(i + 1), _S(" to `"), method_name, _S("`")})), arg->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 			}
 			continue;
@@ -173445,9 +174636,9 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 		}
 		v__ast__TypeSymbol* param_typ_sym = v__ast__Table_sym(c->table, exp_arg_typ);
 		if (param_typ_sym->kind == v__ast__Kind__struct && !(got_arg_typ == _const_v__ast__voidptr_type || got_arg_typ == _const_v__ast__nil_type) && !v__checker__Checker_check_multiple_ptr_match(c, got_arg_typ, param.typ, param, *arg)) {
-			multi_return_string_string mr_143551 = v__checker__Checker_get_string_names_of(c, got_arg_typ, param.typ);
-			string got_typ_str = mr_143551.arg0;
-			string expected_typ_str = mr_143551.arg1;
+			multi_return_string_string mr_178945 = v__checker__Checker_get_string_names_of(c, got_arg_typ, param.typ);
+			string got_typ_str = mr_178945.arg0;
+			string expected_typ_str = mr_178945.arg1;
 			v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("cannot use `"), got_typ_str, _S("` as `"), expected_typ_str, _S("` in argument "), builtin__int_str(i + 1), _S(" to `"), method_name, _S("`")})), arg->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 		}
 	}
@@ -173568,8 +174759,8 @@ VV_LOC v__ast__Type v__checker__Checker_method_call(v__checker__Checker* c, v__a
 	}
 	if ( _t113 &&_t114) {
 		v__ast__Table_register_fn_concrete_types(c->table, v__ast__Fn_fkey(&method), concrete_types);
-		multi_return_bool_Array_v__ast__Type mr_147662 = v__type_resolver__TypeResolver_resolve_fn_generic_args(&c->type_resolver, c->table->cur_fn, (voidptr)&method, node);
-		bool need_recheck = mr_147662.arg0;
+		multi_return_bool_Array_v__ast__Type mr_183056 = v__type_resolver__TypeResolver_resolve_fn_generic_args(&c->type_resolver, c->table->cur_fn, (voidptr)&method, node);
+		bool need_recheck = mr_183056.arg0;
 		if (need_recheck) {
 			c->need_recheck_generic_fns = true;
 		}
@@ -175021,9 +176212,9 @@ VV_LOC v__ast__Type v__checker__Checker_fixed_array_builtin_method_call(v__check
 	return node->return_type;
 }
 VV_LOC multi_return_string_v__token__Pos v__checker__Checker_check_for_mut_receiver(v__checker__Checker* c, v__ast__Expr* expr) {
-	multi_return_string_v__token__Pos mr_201272 = v__checker__Checker_fail_if_immutable(c, expr);
-	string to_lock = mr_201272.arg0;
-	v__token__Pos pos = mr_201272.arg1;
+	multi_return_string_v__token__Pos mr_236666 = v__checker__Checker_fail_if_immutable(c, expr);
+	string to_lock = mr_236666.arg0;
+	v__token__Pos pos = mr_236666.arg1;
 	if (!v__ast__Expr_is_lvalue(*expr)) {
 		v__checker__Checker_error(c, _S("cannot pass expression as `mut`"), v__ast__Expr_pos(*expr), ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 	}
@@ -185715,23 +186906,26 @@ VV_LOC void v__checker__Checker_markused_array_method(v__checker__Checker* c, bo
 	else {
 	}
 }
-inline VV_LOC bool v__checker__is_visible_root_mutation(v__checker__RootMutationVisibility vis) {
-	return (vis == v__checker__RootMutationVisibility__direct || vis == v__checker__RootMutationVisibility__public_path);
+inline VV_LOC bool v__checker__is_root_mutation(v__checker__RootMutationVisibility vis, bool include_private) {
+	return (vis == v__checker__RootMutationVisibility__direct || vis == v__checker__RootMutationVisibility__public_path) || (include_private && vis == v__checker__RootMutationVisibility__private_path);
 }
-VV_LOC string v__checker__Checker_visible_param_mutation_cache_key(v__checker__Checker* c, v__ast__Fn func, int param_idx) {
-	return builtin__string_plus_many(3, _MOV((string[3]){v__ast__Fn_fkey(&func), _S("|"), builtin__int_str(param_idx)}));
+VV_LOC string v__checker__Checker_param_mutation_cache_key(v__checker__Checker* c, v__ast__Fn func, int param_idx, bool include_private) {
+	return builtin__string_plus_many(5, _MOV((string[5]){(include_private ? (_S("all")) : (_S("visible"))), _S("|"), v__ast__Fn_fkey(&func), _S("|"), builtin__int_str(param_idx)}));
 }
 VV_LOC bool v__checker__is_builtin_array_reverse_in_place(v__ast__Fn func) {
 	return func.is_method && builtin__fast_string_eq(func.mod, _S("builtin")) && v__ast__Type_idx(func.receiver_type) == 23 && builtin__fast_string_eq(func.name, _S("reverse_in_place"));
 }
 VV_LOC bool v__checker__Checker_fn_has_visible_mutation_for_param(v__checker__Checker* c, v__ast__Fn func, int param_idx) {
+	return v__checker__Checker_fn_has_root_mutation_for_param(c, func, param_idx, false);
+}
+VV_LOC bool v__checker__Checker_fn_has_root_mutation_for_param(v__checker__Checker* c, v__ast__Fn func, int param_idx, bool include_private) {
 	if (param_idx < 0 || param_idx >= func.params.len || !(*(v__ast__Param*)builtin__array_get(func.params, param_idx)).is_mut) {
 		return false;
 	}
 	if (param_idx == 0 && v__checker__is_builtin_array_reverse_in_place(func)) {
 		return true;
 	}
-	string cache_key = v__checker__Checker_visible_param_mutation_cache_key(c, func, param_idx);
+	string cache_key = v__checker__Checker_param_mutation_cache_key(c, func, param_idx, include_private);
 	if (_IN_MAP(ADDR(string, cache_key), ADDR(map, c->visible_param_mutation_cache))) {
 		return (*(bool*)builtin__map_get(ADDR(map, c->visible_param_mutation_cache), &(string[]){cache_key}, &(bool[]){ 0 }));
 	}
@@ -185748,12 +186942,12 @@ VV_LOC bool v__checker__Checker_fn_has_visible_mutation_for_param(v__checker__Ch
 		return true;
 	}
 	builtin__map_set(&c->visible_param_mutation_in_progress, &(string[]){cache_key}, &(bool[]) { true });
-	bool res = v__checker__Checker_fn_decl_has_visible_mutation_for_param(c, fn_decl, param_idx);
+	bool res = v__checker__Checker_fn_decl_has_root_mutation_for_param(c, fn_decl, param_idx, include_private);
 	builtin__map_delete(&c->visible_param_mutation_in_progress, &(string[]){cache_key});
 	builtin__map_set(&c->visible_param_mutation_cache, &(string[]){cache_key}, &(bool[]) { res });
 	return res;
 }
-VV_LOC bool v__checker__Checker_fn_decl_has_visible_mutation_for_param(v__checker__Checker* c, v__ast__FnDecl* fn_decl, int param_idx) {
+VV_LOC bool v__checker__Checker_fn_decl_has_root_mutation_for_param(v__checker__Checker* c, v__ast__FnDecl* fn_decl, int param_idx, bool include_private) {
 	if (param_idx < 0 || param_idx >= fn_decl->params.len || !(*(v__ast__Param*)builtin__array_get(fn_decl->params, param_idx)).is_mut) {
 		return false;
 	}
@@ -185761,27 +186955,27 @@ VV_LOC bool v__checker__Checker_fn_decl_has_visible_mutation_for_param(v__checke
 	v__ast__Type root_type = (*(v__ast__Param*)builtin__array_get(fn_decl->params, param_idx)).typ;
 	for (int _t2 = 0; _t2 < fn_decl->stmts.len; ++_t2) {
 		v__ast__Stmt stmt = ((v__ast__Stmt*)fn_decl->stmts.data)[_t2];
-		if (v__checker__Checker_stmt_has_visible_mutation(c, stmt, root_name, root_type)) {
+		if (v__checker__Checker_stmt_has_root_mutation(c, stmt, root_name, root_type, include_private)) {
 			return true;
 		}
 	}
 	return false;
 }
-VV_LOC bool v__checker__Checker_stmt_has_visible_mutation(v__checker__Checker* c, v__ast__Stmt stmt, string root_name, v__ast__Type root_type) {
+VV_LOC bool v__checker__Checker_stmt_has_root_mutation(v__checker__Checker* c, v__ast__Stmt stmt, string root_name, v__ast__Type root_type, bool include_private) {
 	if (stmt._typ == 297) {
 		return false;
 	}
 	else if (stmt._typ == 327) {
-		return v__checker__Checker_expr_has_visible_mutation(c, (*stmt._v__ast__ExprStmt).expr, root_name, root_type);
+		return v__checker__Checker_expr_has_root_mutation(c, (*stmt._v__ast__ExprStmt).expr, root_name, root_type, include_private);
 	}
 	else if (stmt._typ == 503) {
 		for (int _t3 = 0; _t3 < (*stmt._v__ast__AssignStmt).left.len; ++_t3) {
 			v__ast__Expr left_expr = ((v__ast__Expr*)(*stmt._v__ast__AssignStmt).left.data)[_t3];
-			if (v__checker__is_visible_root_mutation(v__checker__Checker_expr_mutation_visibility(c, left_expr, root_name, root_type))) {
+			if (v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, left_expr, root_name, root_type), include_private)) {
 				return true;
 			}
 		}
-		if (v__checker__Checker_assign_stmt_aliases_visible_state(c, (*stmt._v__ast__AssignStmt), root_name, root_type)) {
+		if (v__checker__Checker_assign_stmt_aliases_mutable_state(c, (*stmt._v__ast__AssignStmt), root_name, root_type, include_private)) {
 			return true;
 		}
 	}
@@ -185789,9 +186983,9 @@ VV_LOC bool v__checker__Checker_stmt_has_visible_mutation(v__checker__Checker* c
 	else {
 	}
 	
-	return v__checker__Checker_node_children_have_visible_mutation(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), root_name, root_type);
+	return v__checker__Checker_node_children_have_root_mutation(c, v__ast__Stmt_to_sumtype_v__ast__Node(&stmt, false), root_name, root_type, include_private);
 }
-VV_LOC bool v__checker__Checker_expr_has_visible_mutation(v__checker__Checker* c, v__ast__Expr expr, string root_name, v__ast__Type root_type) {
+VV_LOC bool v__checker__Checker_expr_has_root_mutation(v__checker__Checker* c, v__ast__Expr expr, string root_name, v__ast__Type root_type, bool include_private) {
 	if (expr._typ == 450) {
 		return false;
 	}
@@ -185799,22 +186993,22 @@ VV_LOC bool v__checker__Checker_expr_has_visible_mutation(v__checker__Checker* c
 		return false;
 	}
 	else if (expr._typ == 290) {
-		if (v__checker__Checker_call_has_visible_root_mutation(c, (*expr._v__ast__CallExpr), root_name, root_type)) {
+		if (v__checker__Checker_call_has_root_mutation(c, (*expr._v__ast__CallExpr), root_name, root_type, include_private)) {
 			return true;
 		}
 	}
 	else if (expr._typ == 487) {
-		if ((*expr._v__ast__PrefixExpr).op == v__token__Kind__amp && v__checker__is_visible_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*expr._v__ast__PrefixExpr).right, root_name, root_type))) {
+		if ((*expr._v__ast__PrefixExpr).op == v__token__Kind__amp && v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*expr._v__ast__PrefixExpr).right, root_name, root_type), include_private)) {
 			return true;
 		}
 	}
 	else if (expr._typ == 486) {
-		if (v__checker__is_visible_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*expr._v__ast__PostfixExpr).expr, root_name, root_type))) {
+		if (v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*expr._v__ast__PostfixExpr).expr, root_name, root_type), include_private)) {
 			return true;
 		}
 	}
 	else if (expr._typ == 474) {
-		if ((*expr._v__ast__InfixExpr).op == v__token__Kind__left_shift && v__checker__is_visible_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*expr._v__ast__InfixExpr).left, root_name, root_type))) {
+		if ((*expr._v__ast__InfixExpr).op == v__token__Kind__left_shift && v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, (*expr._v__ast__InfixExpr).left, root_name, root_type), include_private)) {
 			return true;
 		}
 	}
@@ -185822,14 +187016,14 @@ VV_LOC bool v__checker__Checker_expr_has_visible_mutation(v__checker__Checker* c
 	else {
 	}
 	
-	return v__checker__Checker_node_children_have_visible_mutation(c, v__ast__Expr_to_sumtype_v__ast__Node(&expr, false), root_name, root_type);
+	return v__checker__Checker_node_children_have_root_mutation(c, v__ast__Expr_to_sumtype_v__ast__Node(&expr, false), root_name, root_type, include_private);
 }
-VV_LOC bool v__checker__Checker_node_children_have_visible_mutation(v__checker__Checker* c, v__ast__Node node, string root_name, v__ast__Type root_type) {
+VV_LOC bool v__checker__Checker_node_children_have_root_mutation(v__checker__Checker* c, v__ast__Node node, string root_name, v__ast__Type root_type, bool include_private) {
 	Array_v__ast__Node _t1 = v__ast__Node_children(node);
 	for (int _t2 = 0; _t2 < _t1.len; ++_t2) {
 		v__ast__Node child = ((v__ast__Node*)_t1.data)[_t2];
 		if (child._typ == 289) {
-			if (v__checker__Checker_expr_has_visible_mutation(c, (*child._v__ast__Expr), root_name, root_type)) {
+			if (v__checker__Checker_expr_has_root_mutation(c, (*child._v__ast__Expr), root_name, root_type, include_private)) {
 				return true;
 			}
 		}
@@ -185837,22 +187031,22 @@ VV_LOC bool v__checker__Checker_node_children_have_visible_mutation(v__checker__
 			if (((*child._v__ast__Stmt))._typ == 297) {
 				continue;
 			}
-			if (v__checker__Checker_stmt_has_visible_mutation(c, (*child._v__ast__Stmt), root_name, root_type)) {
+			if (v__checker__Checker_stmt_has_root_mutation(c, (*child._v__ast__Stmt), root_name, root_type, include_private)) {
 				return true;
 			}
 		}
 		else if (child._typ == 526) {
-			if (v__checker__Checker_expr_has_visible_mutation(c, (*child._v__ast__CallArg).expr, root_name, root_type)) {
+			if (v__checker__Checker_expr_has_root_mutation(c, (*child._v__ast__CallArg).expr, root_name, root_type, include_private)) {
 				return true;
 			}
 		}
 		else if (child._typ == 529) {
-			if (v__checker__Checker_expr_has_visible_mutation(c, (*child._v__ast__IfBranch).cond, root_name, root_type)) {
+			if (v__checker__Checker_expr_has_root_mutation(c, (*child._v__ast__IfBranch).cond, root_name, root_type, include_private)) {
 				return true;
 			}
 			for (int _t7 = 0; _t7 < (*child._v__ast__IfBranch).stmts.len; ++_t7) {
 				v__ast__Stmt stmt = ((v__ast__Stmt*)(*child._v__ast__IfBranch).stmts.data)[_t7];
-				if (v__checker__Checker_stmt_has_visible_mutation(c, stmt, root_name, root_type)) {
+				if (v__checker__Checker_stmt_has_root_mutation(c, stmt, root_name, root_type, include_private)) {
 					return true;
 				}
 			}
@@ -185860,24 +187054,24 @@ VV_LOC bool v__checker__Checker_node_children_have_visible_mutation(v__checker__
 		else if (child._typ == 530) {
 			for (int _t9 = 0; _t9 < (*child._v__ast__MatchBranch).exprs.len; ++_t9) {
 				v__ast__Expr branch_expr = ((v__ast__Expr*)(*child._v__ast__MatchBranch).exprs.data)[_t9];
-				if (v__checker__Checker_expr_has_visible_mutation(c, branch_expr, root_name, root_type)) {
+				if (v__checker__Checker_expr_has_root_mutation(c, branch_expr, root_name, root_type, include_private)) {
 					return true;
 				}
 			}
 			for (int _t11 = 0; _t11 < (*child._v__ast__MatchBranch).stmts.len; ++_t11) {
 				v__ast__Stmt stmt = ((v__ast__Stmt*)(*child._v__ast__MatchBranch).stmts.data)[_t11];
-				if (v__checker__Checker_stmt_has_visible_mutation(c, stmt, root_name, root_type)) {
+				if (v__checker__Checker_stmt_has_root_mutation(c, stmt, root_name, root_type, include_private)) {
 					return true;
 				}
 			}
 		}
 		else if (child._typ == 532) {
-			if (v__checker__Checker_stmt_has_visible_mutation(c, (*child._v__ast__SelectBranch).stmt, root_name, root_type)) {
+			if (v__checker__Checker_stmt_has_root_mutation(c, (*child._v__ast__SelectBranch).stmt, root_name, root_type, include_private)) {
 				return true;
 			}
 			for (int _t14 = 0; _t14 < (*child._v__ast__SelectBranch).stmts.len; ++_t14) {
 				v__ast__Stmt stmt = ((v__ast__Stmt*)(*child._v__ast__SelectBranch).stmts.data)[_t14];
-				if (v__checker__Checker_stmt_has_visible_mutation(c, stmt, root_name, root_type)) {
+				if (v__checker__Checker_stmt_has_root_mutation(c, stmt, root_name, root_type, include_private)) {
 					return true;
 				}
 			}
@@ -185935,7 +187129,7 @@ VV_LOC v__checker__RootMutationVisibility v__checker__Checker_expr_mutation_visi
 	}
 	return v__checker__RootMutationVisibility__none;
 }
-VV_LOC bool v__checker__Checker_call_has_visible_root_mutation(v__checker__Checker* c, v__ast__CallExpr node, string root_name, v__ast__Type root_type) {
+VV_LOC bool v__checker__Checker_call_has_root_mutation(v__checker__Checker* c, v__ast__CallExpr node, string root_name, v__ast__Type root_type, bool include_private) {
 	v__ast__Fn _t1 = ((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,});
 	v__ast__Fn called_fn = _t1;
 	bool has_called_fn = false;
@@ -185951,24 +187145,29 @@ VV_LOC bool v__checker__Checker_call_has_visible_root_mutation(v__checker__Check
 			if (called_fn.params.len > 0 && (*(v__ast__Param*)builtin__array_get(called_fn.params, 0)).is_mut) {
 
 				if (left_vis == (v__checker__RootMutationVisibility__direct)) {
-					if (v__checker__Checker_fn_has_visible_mutation_for_param(c, called_fn, 0)) {
+					if (v__checker__Checker_fn_has_root_mutation_for_param(c, called_fn, 0, include_private)) {
 						return true;
 					}
 				}
 				else if (left_vis == (v__checker__RootMutationVisibility__public_path)) {
 					return true;
 				}
+				else if (left_vis == (v__checker__RootMutationVisibility__private_path)) {
+					if (include_private) {
+						return true;
+					}
+				}
 				else {
 				}
 			}
-		} else if (v__checker__is_visible_root_mutation(left_vis)) {
+		} else if (v__checker__is_root_mutation(left_vis, include_private)) {
 			return true;
 		}
 	}
 	if (!has_called_fn) {
-		for (int _t6 = 0; _t6 < node.args.len; ++_t6) {
-			v__ast__CallArg arg = ((v__ast__CallArg*)node.args.data)[_t6];
-			if (arg.is_mut && v__checker__is_visible_root_mutation(v__checker__Checker_expr_mutation_visibility(c, arg.expr, root_name, root_type))) {
+		for (int _t7 = 0; _t7 < node.args.len; ++_t7) {
+			v__ast__CallArg arg = ((v__ast__CallArg*)node.args.data)[_t7];
+			if (arg.is_mut && v__checker__is_root_mutation(v__checker__Checker_expr_mutation_visibility(c, arg.expr, root_name, root_type), include_private)) {
 				return true;
 			}
 		}
@@ -185982,7 +187181,7 @@ VV_LOC bool v__checker__Checker_call_has_visible_root_mutation(v__checker__Check
 		int param_idx = v__checker__Checker_call_arg_param_index(c, called_fn, i);
 		v__checker__RootMutationVisibility arg_vis = v__checker__Checker_expr_mutation_visibility(c, arg.expr, root_name, root_type);
 		if (param_idx < 0 || param_idx >= called_fn.params.len) {
-			if (v__checker__is_visible_root_mutation(arg_vis)) {
+			if (v__checker__is_root_mutation(arg_vis, include_private)) {
 				return true;
 			}
 			continue;
@@ -185992,12 +187191,17 @@ VV_LOC bool v__checker__Checker_call_has_visible_root_mutation(v__checker__Check
 		}
 
 		if (arg_vis == (v__checker__RootMutationVisibility__direct)) {
-			if (v__checker__Checker_fn_has_visible_mutation_for_param(c, called_fn, param_idx)) {
+			if (v__checker__Checker_fn_has_root_mutation_for_param(c, called_fn, param_idx, include_private)) {
 				return true;
 			}
 		}
 		else if (arg_vis == (v__checker__RootMutationVisibility__public_path)) {
 			return true;
+		}
+		else if (arg_vis == (v__checker__RootMutationVisibility__private_path)) {
+			if (include_private) {
+				return true;
+			}
 		}
 		else {
 		}
@@ -186049,14 +187253,14 @@ VV_LOC int v__checker__Checker_call_arg_param_index(v__checker__Checker* c, v__a
 	}
 	return param_idx;
 }
-VV_LOC bool v__checker__Checker_assign_stmt_aliases_visible_state(v__checker__Checker* c, v__ast__AssignStmt node, string root_name, v__ast__Type root_type) {
+VV_LOC bool v__checker__Checker_assign_stmt_aliases_mutable_state(v__checker__Checker* c, v__ast__AssignStmt node, string root_name, v__ast__Type root_type, bool include_private) {
 	int pair_count = node.left.len;
 	if (node.right.len < pair_count) {
 		pair_count = node.right.len;
 	}
 	for (int i = 0; i < pair_count; ++i) {
 		v__checker__RootMutationVisibility right_vis = v__checker__Checker_expr_mutation_visibility(c, (*(v__ast__Expr*)builtin__array_get(node.right, i)), root_name, root_type);
-		if (!v__checker__is_visible_root_mutation(right_vis)) {
+		if (!v__checker__is_root_mutation(right_vis, include_private)) {
 			continue;
 		}
 		v__ast__Type right_type = (i < node.right_types.len ? ((*(v__ast__Type*)builtin__array_get(node.right_types, i))) : (_const_v__ast__no_type));
@@ -186076,6 +187280,11 @@ VV_LOC bool v__checker__Checker_assign_stmt_aliases_visible_state(v__checker__Ch
 	return false;
 }
 VV_LOC bool v__checker__Checker_type_may_share_mutable_storage(v__checker__Checker* c, v__ast__Type typ) {
+	Map_int_bool seen = builtin__new_map(sizeof(int), sizeof(bool), &builtin__map_hash_int_4, &builtin__map_eq_int_4, &builtin__map_clone_int_4, &builtin__map_free_nop)
+	;
+	return v__checker__Checker_type_may_share_mutable_storage_seen(c, typ, (voidptr)&seen);
+}
+VV_LOC bool v__checker__Checker_type_may_share_mutable_storage_seen(v__checker__Checker* c, v__ast__Type typ, Map_int_bool* seen) {
 	if (typ == 0 || typ == _const_v__ast__no_type) {
 		return false;
 	}
@@ -186083,7 +187292,61 @@ VV_LOC bool v__checker__Checker_type_may_share_mutable_storage(v__checker__Check
 	if (v__ast__Type_is_any_kind_of_pointer(unwrapped) || v__ast__Type_has_flag(unwrapped, v__ast__TypeFlag__shared_f)) {
 		return true;
 	}
-	return (v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__array || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__map || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__chan || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__interface || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__thread || v__ast__Table_final_sym(c->table, unwrapped)->kind == v__ast__Kind__function);
+	v__ast__TypeSymbol* sym = v__ast__Table_final_sym(c->table, unwrapped);
+	if (sym->kind == v__ast__Kind__array || sym->kind == v__ast__Kind__map || sym->kind == v__ast__Kind__chan || sym->kind == v__ast__Kind__interface || sym->kind == v__ast__Kind__thread || sym->kind == v__ast__Kind__function) {
+		return true;
+	}
+	if (_IN_MAP(ADDR(int, v__ast__Type_idx(unwrapped)), seen)) {
+		return false;
+	}
+	builtin__map_set(seen, &(int[]){v__ast__Type_idx(unwrapped)}, &(bool[]) { true });
+	if (sym->info._typ == 331) {
+		for (int _t5 = 0; _t5 < (*sym->info._v__ast__Struct).fields.len; ++_t5) {
+			v__ast__StructField field = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data)[_t5];
+			if (v__checker__Checker_type_may_share_mutable_storage_seen(c, field.typ, seen)) {
+				return true;
+			}
+		}
+		for (int _t7 = 0; _t7 < (*sym->info._v__ast__Struct).embeds.len; ++_t7) {
+			v__ast__Type embed = ((v__ast__Type*)(*sym->info._v__ast__Struct).embeds.data)[_t7];
+			if (v__checker__Checker_type_may_share_mutable_storage_seen(c, embed, seen)) {
+				return true;
+			}
+		}
+	}
+	else if (sym->info._typ == 657) {
+		return v__checker__Checker_type_may_share_mutable_storage_seen(c, (*sym->info._v__ast__ArrayFixed).elem_type, seen);
+	}
+	else if (sym->info._typ == 661) {
+		for (int _t10 = 0; _t10 < (*sym->info._v__ast__SumType).variants.len; ++_t10) {
+			v__ast__Type variant = ((v__ast__Type*)(*sym->info._v__ast__SumType).variants.data)[_t10];
+			if (v__checker__Checker_type_may_share_mutable_storage_seen(c, variant, seen)) {
+				return true;
+			}
+		}
+	}
+	else if (sym->info._typ == 664) {
+		for (int _t12 = 0; _t12 < (*sym->info._v__ast__Aggregate).types.len; ++_t12) {
+			v__ast__Type aggregate_type = ((v__ast__Type*)(*sym->info._v__ast__Aggregate).types.data)[_t12];
+			if (v__checker__Checker_type_may_share_mutable_storage_seen(c, aggregate_type, seen)) {
+				return true;
+			}
+		}
+	}
+	else if (sym->info._typ == 665) {
+		for (int _t14 = 0; _t14 < (*sym->info._v__ast__GenericInst).concrete_types.len; ++_t14) {
+			v__ast__Type concrete_type = ((v__ast__Type*)(*sym->info._v__ast__GenericInst).concrete_types.data)[_t14];
+			if (v__checker__Checker_type_may_share_mutable_storage_seen(c, concrete_type, seen)) {
+				return true;
+			}
+		}
+		return v__checker__Checker_type_may_share_mutable_storage_seen(c, v__ast__new_type((*sym->info._v__ast__GenericInst).parent_idx), seen);
+	}
+	
+	else {
+	}
+	
+	return false;
 }
 VV_LOC v__ast__AsmStmt v__parser__Parser_asm_stmt(v__parser__Parser* p, bool is_top_level) {
 	p->inside_asm = true;
