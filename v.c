@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "45e92d1d95b13cc2cff50e9795bf7b1061d7e639"
+#define V_COMMIT_HASH "1bfdabc5e7ff80ecf748b6a27c9b6a316b960933"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ad0a6df9f2064659f666c84f60759a5646fd9734"
+	#define V_COMMIT_HASH "45e92d1d95b13cc2cff50e9795bf7b1061d7e639"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -14668,6 +14668,7 @@ struct VMemoryBlock {
 	VMemoryBlock* previous;
 	VMemoryBlock* next;
 	VPreallocScope* scope;
+	VPreallocBlockCache* recycle_cache;
 	isize min_block_size;
 	bool is_scope;
 	bool mmap_allocated;
@@ -24702,8 +24703,6 @@ static const u32 _const_hash_mask = 16777215; // precomputed2
 static const u32 _const_probe_inc = 16777216; // precomputed2
 static const u32 _const_prealloc_default_align = 16; // precomputed2
 VMemoryBlock* g_memory_block; // global 6
-
-VPreallocBlockCache* g_prealloc_block_cache; // global 6
 
 i64 g_prealloc_allocation_count; // global 6
 
@@ -39592,7 +39591,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("45e92d1");
+	return _S("1bfdabc");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -41596,6 +41595,7 @@ VV_LOC VMemoryBlock* builtin__vmemory_block_new_sized(VMemoryBlock* prev, isize 
 	if (prev != 0) {
 		prev->next = v;
 		v->is_scope = prev->is_scope;
+		v->recycle_cache = prev->recycle_cache;
 	}
 	isize effective_min_block_size = (min_block_size > 0 ? (min_block_size) : (((isize)(_const_prealloc_block_size))));
 	v->min_block_size = effective_min_block_size;
@@ -41620,7 +41620,7 @@ VV_LOC VMemoryBlock* builtin__vmemory_block_new_sized(VMemoryBlock* prev, isize 
 				{
 					if (builtin__prealloc_recyclable_block_size(block_size)) {
 						{ // Unsafe block
-							VPreallocBlockCache* cache = g_prealloc_block_cache;
+							VPreallocBlockCache* cache = v->recycle_cache;
 							if (cache != 0) {
 								for (int ci = 0; ci < cache->count; ci++) {
 									if (cache->sizes[builtin__v_fixed_index(ci, 64)] == block_size) {
@@ -41684,6 +41684,8 @@ VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align) {
 		VMemoryBlock* mb = g_memory_block;
 		if (_unlikely_(mb == ((void*)0))) {
 			mb = builtin__vmemory_block_new(((void*)0), ((isize)(_const_prealloc_block_size)), 0);
+			mb->recycle_cache = ((VPreallocBlockCache*)(calloc(1, sizeof(VPreallocBlockCache))));
+			builtin__vmemory_abort_on_nil(mb->recycle_cache, sizeof(VPreallocBlockCache));
 			g_memory_block = mb;
 		}
 		#if defined(CUSTOM_DEFINE_prealloc_trace_malloc)
@@ -53983,7 +53985,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("ad0a6df9f2064659f666c84f60759a5646fd9734");
+	string vhash = _S("45e92d1d95b13cc2cff50e9795bf7b1061d7e639");
 	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t6 = builtin__string_trim_space(p->cflags);
@@ -115687,14 +115689,14 @@ VV_LOC void v__gen__c__Gen_global_decl(v__gen__c__Gen* g, v__ast__GlobalDecl nod
 			continue;
 		}
 		if (field.is_extern) {
-			string tls_kw = ((builtin__fast_string_eq(field.name, _S("g_memory_block")) || builtin__fast_string_eq(field.name, _S("g_prealloc_block_cache"))) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
+			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			strings__Builder_writeln(&def_builder, builtin__string_plus_many(9, _MOV((string[9]){__v_extern, tls_kw, field_visibility_kw, qualifiers, styp, _S(" "), attributes, final_c_name, _S("; // global 2")})));
 			(*(v__gen__c__GlobalConstDef*)builtin__map_get_and_set((map*)&g->global_const_defs, &(string[]){name}, &(v__gen__c__GlobalConstDef[]){ (v__gen__c__GlobalConstDef){.mod = (string){.str=(byteptr)"", .is_lit=1},.def = (string){.str=(byteptr)"", .is_lit=1},.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,} })) = ((v__gen__c__GlobalConstDef){.mod = node.mod,.def = strings__Builder_str(&def_builder),.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = -1,.is_precomputed = 0,});
 			continue;
 		}
 		bool needs_ending_semicolon = false;
 		if (field.language != v__ast__Language__c || field.has_expr) {
-			string tls_kw = ((builtin__fast_string_eq(field.name, _S("g_memory_block")) || builtin__fast_string_eq(field.name, _S("g_prealloc_block_cache"))) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
+			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			{
 				strings__Builder_write_string(&def_builder, __v_extern);
 				strings__Builder_write_string(&def_builder, tls_kw);
@@ -213487,7 +213489,6 @@ Array_fixed_u8_20 _t3;
 	_const_none__ = I_None___to_Interface_IError((HEAP(None__, ((None__){.Error = ((Error){E_STRUCT}),}))));
 	_const_min_i64 = ((i64)(-9223372036854775807LL - 1));
 	_const_max_i64 = ((i64)(9223372036854775807LL));
-	g_prealloc_block_cache = *(VPreallocBlockCache**)&((VPreallocBlockCache*[]){0}[0]); // global 5
 	g_prealloc_allocation_count = *(i64*)&((i64[]){0}[0]); // global 5
 	g_prealloc_allocated_bytes = *(i64*)&((i64[]){0}[0]); // global 5
 	_const_utf8_replacement_rune = ((rune)(0xfffd));

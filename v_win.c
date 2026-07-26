@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "45e92d1d95b13cc2cff50e9795bf7b1061d7e639"
+#define V_COMMIT_HASH "1bfdabc5e7ff80ecf748b6a27c9b6a316b960933"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "ad0a6df9f2064659f666c84f60759a5646fd9734"
+	#define V_COMMIT_HASH "45e92d1d95b13cc2cff50e9795bf7b1061d7e639"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -28903,7 +28903,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("45e92d1");
+	return _S("1bfdabc");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -40137,7 +40137,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("ad0a6df9f2064659f666c84f60759a5646fd9734");
+	string vhash = _S("45e92d1d95b13cc2cff50e9795bf7b1061d7e639");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -101086,14 +101086,14 @@ VV_LOC void v__gen__c__Gen_global_decl(v__gen__c__Gen* g, v__ast__GlobalDecl nod
 			continue;
 		}
 		if (field.is_extern) {
-			string tls_kw = ((builtin__fast_string_eq(field.name, _S("g_memory_block")) || builtin__fast_string_eq(field.name, _S("g_prealloc_block_cache"))) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
+			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			strings__Builder_writeln(&def_builder, builtin__string_plus_many(9, _MOV((string[9]){__v_extern, tls_kw, field_visibility_kw, qualifiers, styp, _S(" "), attributes, final_c_name, _S("; // global 2")})));
 			(*(v__gen__c__GlobalConstDef*)builtin__map_get_and_set((map*)&g->global_const_defs, &(string[]){name}, &(v__gen__c__GlobalConstDef[]){ (v__gen__c__GlobalConstDef){.mod = (string){.str=(byteptr)"", .is_lit=1},.def = (string){.str=(byteptr)"", .is_lit=1},.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,} })) = ((v__gen__c__GlobalConstDef){.mod = node.mod,.def = strings__Builder_str(&def_builder),.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = -1,.is_precomputed = 0,});
 			continue;
 		}
 		bool needs_ending_semicolon = false;
 		if (field.language != v__ast__Language__c || field.has_expr) {
-			string tls_kw = ((builtin__fast_string_eq(field.name, _S("g_memory_block")) || builtin__fast_string_eq(field.name, _S("g_prealloc_block_cache"))) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
+			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			{
 				strings__Builder_write_string(&def_builder, __v_extern);
 				strings__Builder_write_string(&def_builder, tls_kw);
