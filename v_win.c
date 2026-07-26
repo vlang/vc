@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ad0a6df9f2064659f666c84f60759a5646fd9734"
+#define V_COMMIT_HASH "45e92d1d95b13cc2cff50e9795bf7b1061d7e639"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "398d563053a538db4bf6559205c081cced0235e9"
+	#define V_COMMIT_HASH "ad0a6df9f2064659f666c84f60759a5646fd9734"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -12913,6 +12913,8 @@ VV_LOC bool v__gen__c__sql_query_data_items_contain_addr_of_struct_init(Array_v_
 VV_LOC bool v__gen__c__Gen_need_tmp_var_in_expr(v__gen__c__Gen* g, v__ast__Expr expr);
 VV_LOC bool v__gen__c__Gen_needs_conds_order(v__gen__c__Gen* g, v__ast__IfExpr node);
 VV_LOC void v__gen__c__Gen_if_expr(v__gen__c__Gen* g, v__ast__IfExpr node);
+VV_LOC bool v__gen__c__Gen_index_or_skips_err(v__gen__c__Gen* g, v__ast__IndexExpr node);
+VV_LOC string v__gen__c__Gen_index_or_err_init(v__gen__c__Gen* g, v__ast__IndexExpr node, string msg);
 VV_LOC v__gen__c__CWideIndexKind v__gen__c__Gen_c_wide_index_kind(v__gen__c__Gen* g, v__ast__Type index_type);
 VV_LOC void v__gen__c__Gen_write_c_range_bound(v__gen__c__Gen* g, v__ast__Expr expr);
 VV_LOC v__ast__Type v__gen__c__Gen_resolved_index_operator_receiver_type(v__gen__c__Gen* g, v__ast__Expr receiver, v__ast__Type receiver_type);
@@ -25254,7 +25256,7 @@ VV_LOC void builtin__closure__closure_lifetime_track_no_lock(voidptr exec_ptr) {
 	if (_t2) {
 		*((builtin__closure__ClosureLifetimeState**)&_t1.data) = *((builtin__closure__ClosureLifetimeState**)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -25270,7 +25272,7 @@ VV_LOC void builtin__closure__closure_lifetime_track_no_lock(voidptr exec_ptr) {
 	if (_t4) {
 		*((builtin__closure__ClosureLiveInfo*)&_t3.data) = *((builtin__closure__ClosureLiveInfo*)_t4);
 	} else {
-		_t3.state = 2; _t3.err = builtin___v_error(_S("map key does not exist"));
+		_t3.state = 2; _t3.err = _const_none__;
 	}
 	;
 	if (_t3.state != 0) {
@@ -25299,7 +25301,7 @@ VV_LOC bool builtin__closure__closure_release_no_lock(voidptr exec_ptr, u64 gene
 	if (_t3) {
 		*((builtin__closure__ClosureLiveInfo*)&_t2.data) = *((builtin__closure__ClosureLiveInfo*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -28901,7 +28903,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ad0a6df");
+	return _S("45e92d1");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -38061,7 +38063,7 @@ Array_string v__depgraph__OrderedDepMap_get(v__depgraph__OrderedDepMap* o, strin
 	if (_t2) {
 		*((Array_string*)&_t1.data) = *((Array_string*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -38663,7 +38665,7 @@ string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key
 	if (_t2) {
 		*((string*)&_t1.data) = *((string*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -40135,7 +40137,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("398d563053a538db4bf6559205c081cced0235e9");
+	string vhash = _S("ad0a6df9f2064659f666c84f60759a5646fd9734");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -41002,7 +41004,7 @@ VV_LOC multi_return_string_bool v__pref__optional_arg_value(Array_string args, i
 	if (_t2) {
 		*((string*)&_t1.data) = *((string*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("array index out of range"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -41970,7 +41972,7 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors
 		if (_t84) {
 			*((string*)&_t83.data) = *((string*)_t84);
 		} else {
-			_t83.state = 2; _t83.err = builtin___v_error(_S("array index out of range"));
+			_t83.state = 2; _t83.err = _const_none__;
 		}
 		;
 		if (_t83.state != 0) {
@@ -42014,7 +42016,7 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors
 		if (_t86) {
 			*((string*)&_t85.data) = *((string*)_t86);
 		} else {
-			_t85.state = 2; _t85.err = builtin___v_error(_S("array index out of range"));
+			_t85.state = 2; _t85.err = _const_none__;
 		}
 		;
 		if (_t85.state != 0) {
@@ -43232,7 +43234,7 @@ _result_string v__util__resolve_d_value(Map_string_string compile_values, string
 	if (_t10) {
 		*((string*)&_t9.data) = *((string*)_t10);
 	} else {
-		_t9.state = 2; _t9.err = builtin___v_error(_S("map key does not exist"));
+		_t9.state = 2; _t9.err = _const_none__;
 	}
 	;
 	if (_t9.state != 0) {
@@ -43288,7 +43290,7 @@ _result_string v__util__resolve_env_value(string str, bool check_for_presence) {
 		if (_t8) {
 			*((string*)&_t7.data) = *((string*)_t8);
 		} else {
-			_t7.state = 2; _t7.err = builtin___v_error(_S("map key does not exist"));
+			_t7.state = 2; _t7.err = _const_none__;
 		}
 		;
 		if (_t7.state != 0) {
@@ -43408,7 +43410,7 @@ Array_string v__util__source_file_context(string kind, string filepath, v__token
 		if (_t3) {
 			*((string*)&_t2.data) = *((string*)_t3);
 		} else {
-			_t2.state = 2; _t2.err = builtin___v_error(_S("array index out of range"));
+			_t2.state = 2; _t2.err = _const_none__;
 		}
 		;
 		if (_t2.state != 0) {
@@ -45235,7 +45237,7 @@ _result_void v__ast__ComptimeCall_resolve_compile_value(v__ast__ComptimeCall* cc
 	if (_t3) {
 		*((v__ast__CallArg*)&_t2.data) = *((v__ast__CallArg*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("array index out of range"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -45253,7 +45255,7 @@ _result_void v__ast__ComptimeCall_resolve_compile_value(v__ast__ComptimeCall* cc
 	if (_t7) {
 		*((string*)&_t6.data) = *((string*)_t7);
 	} else {
-		_t6.state = 2; _t6.err = builtin___v_error(_S("map key does not exist"));
+		_t6.state = 2; _t6.err = _const_none__;
 	}
 	;
 	if (_t6.state != 0) {
@@ -45283,7 +45285,7 @@ v__ast__ComptimeCall* cc = HEAP(v__ast__ComptimeCall, _v_toheap_cc);
 		if (_t2) {
 			*((v__ast__CallArg*)&_t1.data) = *((v__ast__CallArg*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = builtin___v_error(_S("array index out of range"));
+			_t1.state = 2; _t1.err = _const_none__;
 		}
 		;
 		if (_t1.state != 0) {
@@ -45302,7 +45304,7 @@ v__ast__ComptimeCall* cc = HEAP(v__ast__ComptimeCall, _v_toheap_cc);
 		if (_t5) {
 			*((v__ast__CallArg*)&_t4.data) = *((v__ast__CallArg*)_t5);
 		} else {
-			_t4.state = 2; _t4.err = builtin___v_error(_S("array index out of range"));
+			_t4.state = 2; _t4.err = _const_none__;
 		}
 		;
 		if (_t4.state != 0) {
@@ -47939,7 +47941,7 @@ bool v__ast__Scope_known_var(v__ast__Scope* s, string name) {
 			if (_t3) {
 				*((v__ast__ScopeObject*)&_t2.data) = *((v__ast__ScopeObject*)_t3);
 			} else {
-				_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+				_t2.state = 2; _t2.err = _const_none__;
 			}
 			;
 			if (_t2.state != 0) {
@@ -49717,7 +49719,7 @@ void v__ast__Table_register_structured_receiver_method(v__ast__Table* t, v__ast_
 	if (_t3) {
 		*((Array_v__ast__Fn*)&_t2.data) = *((Array_v__ast__Fn*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -51453,7 +51455,7 @@ bool v__ast__Table_register_fn_concrete_types(v__ast__Table* t, string fn_name, 
 	if (_t3) {
 		*((Array_Array_v__ast__Type*)&_t2.data) = *((Array_Array_v__ast__Type*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -57404,7 +57406,7 @@ bool v__ast__Table_structured_receiver_method_rejects_voidptr(v__ast__Table* tab
 	if (_t4) {
 		*((Array_v__ast__Fn*)&_t3.data) = *((Array_v__ast__Fn*)_t4);
 	} else {
-		_t3.state = 2; _t3.err = builtin___v_error(_S("map key does not exist"));
+		_t3.state = 2; _t3.err = _const_none__;
 	}
 	;
 	if (_t3.state != 0) {
@@ -57434,7 +57436,7 @@ _option_v__ast__StructuredReceiverMethod v__ast__Table_find_structured_receiver_
 	if (_t4) {
 		*((Array_v__ast__Fn*)&_t3.data) = *((Array_v__ast__Fn*)_t4);
 	} else {
-		_t3.state = 2; _t3.err = builtin___v_error(_S("map key does not exist"));
+		_t3.state = 2; _t3.err = _const_none__;
 	}
 	;
 	if (_t3.state != 0) {
@@ -59759,7 +59761,7 @@ VV_LOC bool v__transformer__IndexState_safe_access(v__transformer__IndexState* i
 	if (_t3) {
 		*((int*)&_t2.data) = *((int*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -59790,7 +59792,7 @@ VV_LOC int v__transformer__IndexState_safe_offset(v__transformer__IndexState* i,
 	if (_t4) {
 		*((int*)&_t3.data) = *((int*)_t4);
 	} else {
-		_t3.state = 2; _t3.err = builtin___v_error(_S("map key does not exist"));
+		_t3.state = 2; _t3.err = _const_none__;
 	}
 	;
 	if (_t3.state != 0) {
@@ -64362,7 +64364,7 @@ VV_LOC v__ast__Type v__markused__Walker_resolve_current_generic_type(v__markused
 	if (_t3) {
 		*((v__ast__FnDecl*)&_t2.data) = *((v__ast__FnDecl*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -64422,7 +64424,7 @@ VV_LOC multi_return_Array_string_Array_v__ast__Type v__markused__Walker_current_
 	if (_t5) {
 		*((v__ast__FnDecl*)&_t4.data) = *((v__ast__FnDecl*)_t5);
 	} else {
-		_t4.state = 2; _t4.err = builtin___v_error(_S("map key does not exist"));
+		_t4.state = 2; _t4.err = _const_none__;
 	}
 	;
 	if (_t4.state != 0) {
@@ -64570,7 +64572,7 @@ VV_LOC void v__markused__Walker_mark_json2_encode_field_helpers(v__markused__Wal
 		if (_t4) {
 			*((v__ast__FnDecl*)&_t3.data) = *((v__ast__FnDecl*)_t4);
 		} else {
-			_t3.state = 2; _t3.err = builtin___v_error(_S("map key does not exist"));
+			_t3.state = 2; _t3.err = _const_none__;
 		}
 		;
 		if (_t3.state != 0) {
@@ -64590,7 +64592,7 @@ VV_LOC void v__markused__Walker_mark_json2_encode_field_helpers(v__markused__Wal
 	if (_t6) {
 		*((v__ast__FnDecl*)&_t5.data) = *((v__ast__FnDecl*)_t6);
 	} else {
-		_t5.state = 2; _t5.err = builtin___v_error(_S("map key does not exist"));
+		_t5.state = 2; _t5.err = _const_none__;
 	}
 	;
 	if (_t5.state != 0) {
@@ -64603,7 +64605,7 @@ VV_LOC void v__markused__Walker_mark_json2_encode_field_helpers(v__markused__Wal
 	if (_t8) {
 		*((v__ast__FnDecl*)&_t7.data) = *((v__ast__FnDecl*)_t8);
 	} else {
-		_t7.state = 2; _t7.err = builtin___v_error(_S("map key does not exist"));
+		_t7.state = 2; _t7.err = _const_none__;
 	}
 	;
 	if (_t7.state != 0) {
@@ -64616,7 +64618,7 @@ VV_LOC void v__markused__Walker_mark_json2_encode_field_helpers(v__markused__Wal
 	if (_t10) {
 		*((v__ast__FnDecl*)&_t9.data) = *((v__ast__FnDecl*)_t10);
 	} else {
-		_t9.state = 2; _t9.err = builtin___v_error(_S("map key does not exist"));
+		_t9.state = 2; _t9.err = _const_none__;
 	}
 	;
 	if (_t9.state != 0) {
@@ -64990,7 +64992,7 @@ void v__markused__Walker_mark_const_as_used(v__markused__Walker* w, string ckey)
 	if (_t2) {
 		*((v__ast__ConstField*)&_t1.data) = *((v__ast__ConstField*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -65011,7 +65013,7 @@ void v__markused__Walker_mark_global_as_used(v__markused__Walker* w, string ckey
 	if (_t2) {
 		*((v__ast__GlobalField*)&_t1.data) = *((v__ast__GlobalField*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -67289,7 +67291,7 @@ VV_LOC v__ast__Type v__markused__Walker_resolve_current_specialized_var_type(v__
 	if (_t6) {
 		*((v__ast__FnDecl*)&_t5.data) = *((v__ast__FnDecl*)_t6);
 	} else {
-		_t5.state = 2; _t5.err = builtin___v_error(_S("map key does not exist"));
+		_t5.state = 2; _t5.err = _const_none__;
 	}
 	;
 	if (_t5.state != 0) {
@@ -68588,7 +68590,7 @@ VV_LOC void v__markused__Walker_remove_unused_fn_generic_types(v__markused__Walk
 		if (_t71) {
 			*((v__ast__FnDecl*)&_t70.data) = *((v__ast__FnDecl*)_t71);
 		} else {
-			_t70.state = 2; _t70.err = builtin___v_error(_S("map key does not exist"));
+			_t70.state = 2; _t70.err = _const_none__;
 		}
 		;
 		if (_t70.state != 0) {
@@ -68819,7 +68821,7 @@ VV_LOC void v__markused__Walker_mark_direct_non_generic_call(v__markused__Walker
 		if (_t2) {
 			*((v__ast__FnDecl*)&_t1.data) = *((v__ast__FnDecl*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+			_t1.state = 2; _t1.err = _const_none__;
 		}
 		;
 		if (_t1.state != 0) {
@@ -68844,7 +68846,7 @@ VV_LOC void v__markused__Walker_mark_direct_non_generic_call(v__markused__Walker
 	if (_t4) {
 		*((v__ast__FnDecl*)&_t3.data) = *((v__ast__FnDecl*)_t4);
 	} else {
-		_t3.state = 2; _t3.err = builtin___v_error(_S("map key does not exist"));
+		_t3.state = 2; _t3.err = _const_none__;
 	}
 	;
 	if (_t3.state != 0) {
@@ -69069,7 +69071,7 @@ VV_LOC void v__markused__Walker_mark_resource_dependencies(v__markused__Walker* 
 	if (_t19) {
 		*((Array_v__ast__Type*)&_t18.data) = *((Array_v__ast__Type*)_t19);
 	} else {
-		_t18.state = 2; _t18.err = builtin___v_error(_S("map key does not exist"));
+		_t18.state = 2; _t18.err = _const_none__;
 	}
 	;
 	if (_t18.state != 0) {
@@ -70406,7 +70408,7 @@ inline v__ast__Type v__type_resolver__TypeResolver_get_ct_type_or_default(v__typ
 	if (_t3) {
 		*((v__ast__Type*)&_t2.data) = *((v__ast__Type*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -93742,7 +93744,7 @@ VV_LOC void v__gen__c__Gen_branch_stmt(v__gen__c__Gen* g, v__ast__BranchStmt nod
 		if (_t2) {
 			*((v__ast__Stmt**)&_t1.data) = *((v__ast__Stmt**)_t2);
 		} else {
-			_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+			_t1.state = 2; _t1.err = _const_none__;
 		}
 		;
 		if (_t1.state != 0) {
@@ -101084,14 +101086,14 @@ VV_LOC void v__gen__c__Gen_global_decl(v__gen__c__Gen* g, v__ast__GlobalDecl nod
 			continue;
 		}
 		if (field.is_extern) {
-			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
+			string tls_kw = ((builtin__fast_string_eq(field.name, _S("g_memory_block")) || builtin__fast_string_eq(field.name, _S("g_prealloc_block_cache"))) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			strings__Builder_writeln(&def_builder, builtin__string_plus_many(9, _MOV((string[9]){__v_extern, tls_kw, field_visibility_kw, qualifiers, styp, _S(" "), attributes, final_c_name, _S("; // global 2")})));
 			(*(v__gen__c__GlobalConstDef*)builtin__map_get_and_set((map*)&g->global_const_defs, &(string[]){name}, &(v__gen__c__GlobalConstDef[]){ (v__gen__c__GlobalConstDef){.mod = (string){.str=(byteptr)"", .is_lit=1},.def = (string){.str=(byteptr)"", .is_lit=1},.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,} })) = ((v__gen__c__GlobalConstDef){.mod = node.mod,.def = strings__Builder_str(&def_builder),.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = -1,.is_precomputed = 0,});
 			continue;
 		}
 		bool needs_ending_semicolon = false;
 		if (field.language != v__ast__Language__c || field.has_expr) {
-			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
+			string tls_kw = ((builtin__fast_string_eq(field.name, _S("g_memory_block")) || builtin__fast_string_eq(field.name, _S("g_prealloc_block_cache"))) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			{
 				strings__Builder_write_string(&def_builder, __v_extern);
 				strings__Builder_write_string(&def_builder, tls_kw);
@@ -113621,6 +113623,43 @@ VV_LOC void v__gen__c__Gen_if_expr(v__gen__c__Gen* g, v__ast__IfExpr node) {
 		g->if_match_tmp_is_fn_ret_arr = prev_if_match_tmp_is_fn_ret_arr;
 	} // defer end
 }
+VV_LOC bool v__gen__c__Gen_index_or_skips_err(v__gen__c__Gen* g, v__ast__IndexExpr node) {
+	if (node.is_option || node.or_expr.kind != v__ast__OrKind__block) {
+		return false;
+	}
+	if (g->fn_decl != ((void*)0) && (g->fn_decl->is_main || g->fn_decl->is_test)) {
+		return false;
+	}
+	if (node.or_expr.stmts.len == 0) {
+		return true;
+	}
+	bool has_special_err = false;
+	v__ast__ScopeObject* _t5 = (v__ast__ScopeObject*)(builtin__map_get_check(ADDR(map, node.or_expr.scope->objects), &(string[]){_S("err")}));
+	_option_v__ast__ScopeObject _t4 = {0};
+	if (_t5) {
+		*((v__ast__ScopeObject*)&_t4.data) = *((v__ast__ScopeObject*)_t5);
+	} else {
+		_t4.state = 2; _t4.err = builtin___v_error(_S("map key does not exist"));
+	}
+	
+	if (_t4.state == 0) {
+		v__ast__ScopeObject err_obj = (*(v__ast__ScopeObject*)_t4.data);
+		if ((err_obj)._typ == 563) {
+			has_special_err = (*err_obj._v__ast__Var).is_special;
+		}
+	}
+		if (_t4.state == 2 && _t4.err._object != _const_none__._object) { builtin___v_free(_t4.err._object); }
+	if (!has_special_err) {
+		return true;
+	}
+	return !node.or_expr.err_used && !v__gen__c__or_block_last_stmt_is_err(node.or_expr.stmts);
+}
+VV_LOC string v__gen__c__Gen_index_or_err_init(v__gen__c__Gen* g, v__ast__IndexExpr node, string msg) {
+	if (v__gen__c__Gen_index_or_skips_err(g, node)) {
+		return _S("_const_none__");
+	}
+	return builtin__string_plus_many(3, _MOV((string[3]){_S("builtin___v_error(_S(\""), msg, _S("\"))")}));
+}
 VV_LOC v__gen__c__CWideIndexKind v__gen__c__Gen_c_wide_index_kind(v__gen__c__Gen* g, v__ast__Type index_type) {
 	if (g->pref->backend != v__pref__Backend__c || index_type == 0) {
 		return v__gen__c__CWideIndexKind__plain;
@@ -113633,10 +113672,10 @@ VV_LOC v__gen__c__CWideIndexKind v__gen__c__Gen_c_wide_index_kind(v__gen__c__Gen
 	if (internal_index_type == _const_v__ast__int_literal_type || !v__ast__Type_is_int(internal_index_type)) {
 		return v__gen__c__CWideIndexKind__plain;
 	}
-	multi_return_int_int mr_867 = v__ast__Table_type_size(g->table, _const_v__ast__int_type_idx);
-	int int_size = mr_867.arg0;
-	multi_return_int_int mr_930 = v__ast__Table_type_size(g->table, v__ast__Type_idx_type(internal_index_type));
-	int internal_index_size = mr_930.arg0;
+	multi_return_int_int mr_2278 = v__ast__Table_type_size(g->table, _const_v__ast__int_type_idx);
+	int int_size = mr_2278.arg0;
+	multi_return_int_int mr_2341 = v__ast__Table_type_size(g->table, v__ast__Type_idx_type(internal_index_type));
+	int internal_index_size = mr_2341.arg0;
 	if (v__ast__Type_is_signed(internal_index_type)) {
 		return (internal_index_size <= int_size ? (v__gen__c__CWideIndexKind__plain) : (v__gen__c__CWideIndexKind__signed_64));
 	}
@@ -114315,7 +114354,7 @@ VV_LOC void v__gen__c__Gen_index_of_array(v__gen__c__Gen* g, v__ast__IndexExpr n
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(9, _MOV((string[9]){_S("\t*(("), elem_type_str, _S("*)&"), tmp_opt, _S(".data) = *(("), elem_type_str, _S("*)"), tmp_opt_ptr, _S(");")})));
 			}
 			v__gen__c__Gen_writeln(g, _S("} else {"));
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), tmp_opt, _S(".state = 2; "), tmp_opt, _S(".err = builtin___v_error(_S(\"array index out of range\"));")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_S("\t"), tmp_opt, _S(".state = 2; "), tmp_opt, _S(".err = "), v__gen__c__Gen_index_or_err_init(g, node, _S("array index out of range")), _S(";")})));
 			v__gen__c__Gen_writeln(g, _S("}"));
 			if (!node.is_option) {
 				if (keep_option_result) {
@@ -114499,9 +114538,9 @@ VV_LOC void v__gen__c__Gen_index_of_map(v__gen__c__Gen* g, v__ast__IndexExpr nod
 	}
 	_t3: {};
 		v__ast__Map info = _t2;
-	multi_return_v__ast__Type_v__ast__Type mr_22322 = v__gen__c__Gen_resolved_map_key_value_types(g, map_left_type, info.key_type, info.value_type);
-	v__ast__Type key_type_ = mr_22322.arg0;
-	v__ast__Type val_type_ = mr_22322.arg1;
+	multi_return_v__ast__Type_v__ast__Type mr_23744 = v__gen__c__Gen_resolved_map_key_value_types(g, map_left_type, info.key_type, info.value_type);
+	v__ast__Type key_type_ = mr_23744.arg0;
+	v__ast__Type val_type_ = mr_23744.arg1;
 	v__ast__Type key_type = key_type_;
 	v__ast__Type val_type = val_type_;
 	if ((node.left)._typ == 510) {
@@ -114515,9 +114554,9 @@ VV_LOC void v__gen__c__Gen_index_of_map(v__gen__c__Gen* g, v__ast__IndexExpr nod
 		}
 	}
 	if (key_type == _const_v__ast__usize_type || val_type == _const_v__ast__usize_type) {
-		multi_return_v__ast__Type_v__ast__Type mr_22829 = v__gen__c__Gen_resolved_map_types_from_name(g, left_sym.name);
-		v__ast__Type name_key_type = mr_22829.arg0;
-		v__ast__Type name_val_type = mr_22829.arg1;
+		multi_return_v__ast__Type_v__ast__Type mr_24251 = v__gen__c__Gen_resolved_map_types_from_name(g, left_sym.name);
+		v__ast__Type name_key_type = mr_24251.arg0;
+		v__ast__Type name_val_type = mr_24251.arg1;
 		if (key_type == _const_v__ast__usize_type && name_key_type != 0) {
 			key_type = name_key_type;
 		}
@@ -114748,7 +114787,7 @@ VV_LOC void v__gen__c__Gen_index_of_map(v__gen__c__Gen* g, v__ast__IndexExpr nod
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("if ("), tmp_opt_ptr, _S(") {")})));
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), tmp_opt, _S(" = *"), tmp_opt_ptr, _S(";")})));
 				v__gen__c__Gen_writeln(g, _S("} else {"));
-				v__gen__c__Gen_writeln(g, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), tmp_opt, _S(".state = 2; "), tmp_opt, _S(".err = builtin___v_error(_S(\"map key does not exist\"));")})));
+				v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_S("\t"), tmp_opt, _S(".state = 2; "), tmp_opt, _S(".err = "), v__gen__c__Gen_index_or_err_init(g, node, _S("map key does not exist")), _S(";")})));
 				v__gen__c__Gen_writeln(g, _S("}"));
 				if (!node.is_option) {
 					v__gen__c__Gen_or_block_on_value(g, tmp_opt, node.or_expr, val_type);
@@ -114784,7 +114823,7 @@ VV_LOC void v__gen__c__Gen_index_of_map(v__gen__c__Gen* g, v__ast__IndexExpr nod
 					v__gen__c__Gen_writeln(g, builtin__string_plus_many(9, _MOV((string[9]){_S("\t*(("), val_type_str, _S("*)&"), tmp_opt, _S(".data) = *(("), val_type_str, _S("*)"), tmp_opt_ptr, _S(");")})));
 				}
 				v__gen__c__Gen_writeln(g, _S("} else {"));
-				v__gen__c__Gen_writeln(g, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), tmp_opt, _S(".state = 2; "), tmp_opt, _S(".err = builtin___v_error(_S(\"map key does not exist\"));")})));
+				v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_S("\t"), tmp_opt, _S(".state = 2; "), tmp_opt, _S(".err = "), v__gen__c__Gen_index_or_err_init(g, node, _S("map key does not exist")), _S(";")})));
 				v__gen__c__Gen_writeln(g, _S("}"));
 				if (!node.is_option) {
 					if (keep_option_result) {
@@ -116624,7 +116663,7 @@ VV_LOC void v__gen__c__Gen_gen_interface_is_op(v__gen__c__Gen* g, v__ast__InfixE
 		if (_t2) {
 			*((Array_v__ast__Type*)&_t1.data) = *((Array_v__ast__Type*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+			_t1.state = 2; _t1.err = _const_none__;
 		}
 		;
 		if (_t1.state != 0) {
@@ -122574,7 +122613,7 @@ VV_LOC void v__gen__c__Gen_write_orm_select(v__gen__c__Gen* g, v__ast__SqlExpr n
 				if (_t19) {
 					*((v__ast__SqlExpr*)&_t18.data) = *((v__ast__SqlExpr*)_t19);
 				} else {
-					_t18.state = 2; _t18.err = builtin___v_error(_S("map key does not exist"));
+					_t18.state = 2; _t18.err = _const_none__;
 				}
 				;
 				if (_t18.state != 0) {
@@ -122624,7 +122663,7 @@ VV_LOC void v__gen__c__Gen_write_orm_select(v__gen__c__Gen* g, v__ast__SqlExpr n
 				if (_t22) {
 					*((v__ast__SqlExpr*)&_t21.data) = *((v__ast__SqlExpr*)_t22);
 				} else {
-					_t21.state = 2; _t21.err = builtin___v_error(_S("map key does not exist"));
+					_t21.state = 2; _t21.err = _const_none__;
 				}
 				;
 				if (_t21.state != 0) {
@@ -123215,7 +123254,7 @@ VV_LOC int v__gen__c__Gen_reflection_string(v__gen__c__Gen* g, string str) {
 	if (_t3) {
 		*((int*)&_t2.data) = *((int*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -124222,7 +124261,7 @@ inline VV_LOC string v__gen__c__Gen_get_cur_thread_stack_size(v__gen__c__Gen* g,
 	if (_t2) {
 		*((v__ast__Fn*)&_t1.data) = *((v__ast__Fn*)_t2);
 	} else {
-		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+		_t1.state = 2; _t1.err = _const_none__;
 	}
 	;
 	if (_t1.state != 0) {
@@ -127828,7 +127867,7 @@ VV_LOC v__ast__Type v__gen__c__Gen_expected_rhs_type_for_expr(v__gen__c__Gen* g,
 	if (_t3) {
 		*((v__ast__Type*)&_t2.data) = *((v__ast__Type*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
@@ -130870,7 +130909,7 @@ VV_LOC _result_v__pkgconfig__PkgConfig_ptr v__pkgconfig__StaticResolver_load_pac
 		if (_t3) {
 			*((v__pkgconfig__PkgConfig**)&_t2.data) = *((v__pkgconfig__PkgConfig**)_t3);
 		} else {
-			_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+			_t2.state = 2; _t2.err = _const_none__;
 		}
 		;
 		if (_t2.state != 0) {
@@ -131172,7 +131211,7 @@ _result_v__pkgconfig__ResolvedFlags v__pkgconfig__resolve(Array_string pkgnames,
 		if (_t10) {
 			*((v__pkgconfig__PkgConfig**)&_t9.data) = *((v__pkgconfig__PkgConfig**)_t10);
 		} else {
-			_t9.state = 2; _t9.err = builtin___v_error(_S("map key does not exist"));
+			_t9.state = 2; _t9.err = _const_none__;
 		}
 		;
 		if (_t9.state != 0) {
@@ -131189,7 +131228,7 @@ _result_v__pkgconfig__ResolvedFlags v__pkgconfig__resolve(Array_string pkgnames,
 		if (_t14) {
 			*((v__pkgconfig__PkgConfig**)&_t13.data) = *((v__pkgconfig__PkgConfig**)_t14);
 		} else {
-			_t13.state = 2; _t13.err = builtin___v_error(_S("map key does not exist"));
+			_t13.state = 2; _t13.err = _const_none__;
 		}
 		;
 		if (_t13.state != 0) {
@@ -131206,7 +131245,7 @@ _result_v__pkgconfig__ResolvedFlags v__pkgconfig__resolve(Array_string pkgnames,
 		if (_t18) {
 			*((v__pkgconfig__PkgConfig**)&_t17.data) = *((v__pkgconfig__PkgConfig**)_t18);
 		} else {
-			_t17.state = 2; _t17.err = builtin___v_error(_S("map key does not exist"));
+			_t17.state = 2; _t17.err = _const_none__;
 		}
 		;
 		if (_t17.state != 0) {
@@ -140289,7 +140328,7 @@ VV_LOC void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDe
 							if (_t5) {
 								*((i64*)&_t4.data) = *((i64*)_t5);
 							} else {
-								_t4.state = 2; _t4.err = builtin___v_error(_S("array index out of range"));
+								_t4.state = 2; _t4.err = _const_none__;
 							}
 							;
 							if (_t4.state != 0) {
@@ -140316,7 +140355,7 @@ VV_LOC void v__checker__Checker_enum_decl(v__checker__Checker* c, v__ast__EnumDe
 							if (_t8) {
 								*((u64*)&_t7.data) = *((u64*)_t8);
 							} else {
-								_t7.state = 2; _t7.err = builtin___v_error(_S("array index out of range"));
+								_t7.state = 2; _t7.err = _const_none__;
 							}
 							;
 							if (_t7.state != 0) {
@@ -156014,7 +156053,7 @@ VV_LOC v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__
 				if (_t34) {
 					*((Array_Array_v__ast__Type*)&_t33.data) = *((Array_Array_v__ast__Type*)_t34);
 				} else {
-					_t33.state = 2; _t33.err = builtin___v_error(_S("map key does not exist"));
+					_t33.state = 2; _t33.err = _const_none__;
 				}
 				;
 				if (_t33.state != 0) {
@@ -163303,7 +163342,7 @@ VV_LOC v__ast__Type v__checker__Checker_unwrap_generic_interface(v__checker__Che
 						if (_t16) {
 							*((v__ast__Param*)&_t15.data) = *((v__ast__Param*)_t16);
 						} else {
-							_t15.state = 2; _t15.err = builtin___v_error(_S("array index out of range"));
+							_t15.state = 2; _t15.err = _const_none__;
 						}
 						;
 						if (_t15.state != 0) {
@@ -174152,7 +174191,7 @@ VV_LOC v__ast__EnumVal v__parser__Parser_enum_val_expr(v__parser__Parser* p, str
 		if (_t2) {
 			*((string*)&_t1.data) = *((string*)_t2);
 		} else {
-			_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+			_t1.state = 2; _t1.err = _const_none__;
 		}
 		;
 		if (_t1.state != 0) {
@@ -188480,7 +188519,7 @@ VV_LOC Array_string v__builder__Builder_with_same_module_subdir_files(v__builder
 	if (_t6) {
 		*((Array_string*)&_t5.data) = *((Array_string*)_t6);
 	} else {
-		_t5.state = 2; _t5.err = builtin___v_error(_S("map key does not exist"));
+		_t5.state = 2; _t5.err = _const_none__;
 	}
 	;
 	if (_t5.state != 0) {
@@ -194153,7 +194192,7 @@ VV_LOC i64 v__builder__Builder_thirdparty_deps_mtime(v__builder__Builder* v, str
 	if (_t3) {
 		*((i64*)&_t2.data) = *((i64*)_t3);
 	} else {
-		_t2.state = 2; _t2.err = builtin___v_error(_S("map key does not exist"));
+		_t2.state = 2; _t2.err = _const_none__;
 	}
 	;
 	if (_t2.state != 0) {
