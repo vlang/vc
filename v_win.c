@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "bdaf88cb21087f66bbeb5ceed74896cc1fa04f20"
+#define V_COMMIT_HASH "d8abccbd6929c8bc69d3aa5e82291011b52c4aeb"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "2373b3abfbd99ba3bbc377965319118750104a52"
+	#define V_COMMIT_HASH "bdaf88cb21087f66bbeb5ceed74896cc1fa04f20"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -29003,7 +29003,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("bdaf88c");
+	return _S("d8abccb");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -40237,7 +40237,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("2373b3abfbd99ba3bbc377965319118750104a52");
+	string vhash = _S("bdaf88cb21087f66bbeb5ceed74896cc1fa04f20");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -126619,7 +126619,7 @@ VV_LOC void v__gen__c__Gen_struct_init(v__gen__c__Gen* g, v__ast__StructInit nod
 		g->indent--;
 	}
 	if (!initialized && !is_generic_default) {
-		if (nr_fields > 0) {
+		if (nr_fields > 0 && !v__ast__TypeSymbol_is_empty_struct_array(sym)) {
 			v__gen__c__Gen_write(g, _S("0"));
 		} else {
 			v__gen__c__Gen_write(g, _S("E_STRUCT"));
@@ -126806,8 +126806,8 @@ VV_LOC string v__gen__c__Gen_get_embed_field_name(v__gen__c__Gen* g, v__ast__Typ
 		*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t1.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=((v__ast__StructField){.anon_struct_decl = ((v__ast__StructDecl){.generic_types = builtin____new_array(0, 0, sizeof(v__ast__Type)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.end_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.embeds = builtin____new_array(0, 0, sizeof(v__ast__Embed)),.implements_types = builtin____new_array(0, 0, sizeof(v__ast__TypeNode)),.fields = builtin____new_array(0, 0, sizeof(v__ast__StructField)),.name = (string){.str=(byteptr)"", .is_lit=1},.scoped_name = (string){.str=(byteptr)"", .is_lit=1},.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.mut_pos = -1,.pub_pos = -1,.pub_mut_pos = -1,.global_pos = -1,.module_pos = -1,.idx = 0,.language = 0,.is_pub = 0,.is_union = 0,.is_option = 0,.is_aligned = 0,.is_implements = 0,}),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.next_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.default_val = (string){.str=(byteptr)"", .is_lit=1},.default_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=489},.name = (string){.str=(byteptr)"", .is_lit=1},.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.option_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.i = 0,.container_typ = 0,.default_expr_typ = 0,.typ = 0,.unaliased_typ = 0,.has_default_expr = 0,.has_prev_newline = 0,.has_break_line = 0,.is_pub = 0,.is_mut = 0,.is_global = 0,.is_volatile = 0,.is_deprecated = 0,.is_embed = 0,.is_recursive = 0,.is_part_of_union = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 	}
 	
- 	multi_return_v__ast__StructField_Array_v__ast__Type mr_21165 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t1.data);
-	Array_v__ast__Type embeds = mr_21165.arg1;
+ 	multi_return_v__ast__StructField_Array_v__ast__Type mr_21197 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t1.data);
+	Array_v__ast__Type embeds = mr_21197.arg1;
 	string s = _S("");
 	for (int _t2 = 0; _t2 < embeds.len; ++_t2) {
 		v__ast__Type embed = ((v__ast__Type*)embeds.data)[_t2];
@@ -127145,9 +127145,9 @@ VV_LOC void v__gen__c__Gen_struct_decl(v__gen__c__Gen* g, v__ast__Struct s, stri
 		for (int _t3 = 0; _t3 < s.fields.len; ++_t3) {
 			v__ast__StructField field = ((v__ast__StructField*)s.fields.data)[_t3];
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__option)) {
-				multi_return_string_string mr_29368 = v__gen__c__Gen_option_type_name(g, field.typ);
-				string styp = mr_29368.arg0;
-				string base = mr_29368.arg1;
+				multi_return_string_string mr_29400 = v__gen__c__Gen_option_type_name(g, field.typ);
+				string styp = mr_29400.arg0;
+				string base = mr_29400.arg1;
 				sync__RwMutex_lock(&g->done_options->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_options->val, base))) {
@@ -127162,9 +127162,9 @@ VV_LOC void v__gen__c__Gen_struct_decl(v__gen__c__Gen* g, v__ast__Struct s, stri
 				sync__RwMutex_unlock(&g->done_options->mtx);;
 			}
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__result)) {
-				multi_return_string_string mr_29940 = v__gen__c__Gen_result_type_name(g, field.typ);
-				string styp = mr_29940.arg0;
-				string base = mr_29940.arg1;
+				multi_return_string_string mr_29972 = v__gen__c__Gen_result_type_name(g, field.typ);
+				string styp = mr_29972.arg0;
+				string base = mr_29972.arg1;
 				sync__RwMutex_lock(&g->done_results->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_results->val, base))) {
@@ -170298,6 +170298,8 @@ VV_LOC v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__a
 							v__checker__Checker_mark_as_referenced(c, ADDR(v__ast__Expr, *&init_field->expr), true);
 						}
 					}
+				} else if (v__ast__Table_final_sym(c->table, exp_type)->kind == v__ast__Kind__array_fixed && v__ast__Type_is_ptr(got_type) && !v__ast__Type_is_any_kind_of_pointer(exp_type) && !v__ast__Expr_is_auto_deref_var(init_field->expr)) {
+					v__checker__Checker_error(c, builtin__string_plus_many(4, _MOV((string[4]){_S("cannot assign to field `"), field_info.name, _S("`: "), v__checker__Checker_expected_msg(c, got_type, exp_type)})), init_field->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 				} else if (got_type != _const_v__ast__void_type && got_type_sym->kind != v__ast__Kind__placeholder && !v__ast__Type_has_flag(exp_type, v__ast__TypeFlag__generic)) {
 					bool needs_sum_type_cast = false;
 					if (exp_type_sym->kind == v__ast__Kind__placeholder) {
