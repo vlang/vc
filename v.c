@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ac174e8b4612645788523f53739a8b9e71cdf65c"
+#define V_COMMIT_HASH "977f381ae8ea7f4d700af021f566885e22ba2daa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8e27930fd17610bac57702bb9965b143732a293e"
+	#define V_COMMIT_HASH "ac174e8b4612645788523f53739a8b9e71cdf65c"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -20281,6 +20281,7 @@ VV_LOC i64 builtin__vmemory_block_used(VMemoryBlock* mb);
 VV_LOC i64 builtin__vmemory_block_size(VMemoryBlock* mb);
 VV_LOC VMemoryBlock* builtin__vmemory_block_new(VMemoryBlock* prev, isize at_least, isize align);
 VV_LOC VMemoryBlock* builtin__vmemory_block_new_sized(VMemoryBlock* prev, isize at_least, isize align, isize min_block_size);
+VV_LOC VMemoryBlock* builtin__vmemory_block_current_or_new(void);
 VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align);
 VV_LOC u8* builtin__prealloc_malloc(isize n);
 VV_LOC u8* builtin__prealloc_realloc(u8* old_data, isize old_size, isize new_size);
@@ -39891,7 +39892,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ac174e8");
+	return _S("977f381");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -41979,7 +41980,7 @@ VV_LOC VMemoryBlock* builtin__vmemory_block_new_sized(VMemoryBlock* prev, isize 
 	#endif
 	return v;
 }
-VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align) {
+inline VV_LOC VMemoryBlock* builtin__vmemory_block_current_or_new(void) {
 	{ // Unsafe block
 		VMemoryBlock* mb = g_memory_block;
 		if (_unlikely_(mb == ((void*)0))) {
@@ -41988,6 +41989,13 @@ VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align) {
 			builtin__vmemory_abort_on_nil(mb->recycle_cache, sizeof(VPreallocBlockCache));
 			g_memory_block = mb;
 		}
+		return mb;
+	}
+	return 0;
+}
+VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align) {
+	{ // Unsafe block
+		VMemoryBlock* mb = builtin__vmemory_block_current_or_new();
 		#if defined(CUSTOM_DEFINE_prealloc_trace_malloc)
 		{
 			fprintf(stderr, "vmemory_block_malloc g_memory_block.id: %d, n: %lld align: %d\n", mb->id, n, align);
@@ -55090,7 +55098,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("8e27930fd17610bac57702bb9965b143732a293e");
+	string vhash = _S("ac174e8b4612645788523f53739a8b9e71cdf65c");
 	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t6 = builtin__string_trim_space(p->cflags);
@@ -140026,6 +140034,9 @@ VV_LOC void v__gen__c__Gen_spawn_and_go_expr(v__gen__c__Gen* g, v__ast__SpawnExp
 			} else {
 				strings__Builder_writeln(&g->gowrappers, _S("\tbuiltin___v_free(arg);"));
 			}
+		}
+		if (is_spawn && g->pref->prealloc && wrapper_return_type == _const_v__ast__void_type) {
+			strings__Builder_writeln(&g->gowrappers, _S("\tbuiltin__prealloc_thread_cleanup();"));
 		}
 		if (g->pref->os != v__pref__OS__windows && wrapper_return_type != _const_v__ast__void_type) {
 			strings__Builder_writeln(&g->gowrappers, _S("\treturn ret_ptr;"));
