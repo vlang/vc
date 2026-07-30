@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "877219c8dfb20663faef45699b59d5d50645fbea"
+#define V_COMMIT_HASH "8eb7f317b507bb1d0caa507b4ec233a68d73de7d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0d38e8ad083e4e16058bfa5e2255d387e55ef2f0"
+	#define V_COMMIT_HASH "877219c8dfb20663faef45699b59d5d50645fbea"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -1056,12 +1056,14 @@ typedef int (*qsort_callback_func)(const void*, const void*);
 #if defined(_MSC_VER) && !defined(__clang__)
 	#define V_CRT_LINKAGE __declspec(dllimport)
 	#define V_CRT_CALL VCALLCONV(cdecl)
-#elif defined(__MINGW32__) || defined(__MINGW64__)
-	#define V_CRT_LINKAGE __declspec(dllimport)
-	#define V_CRT_CALL
 #else
 	#define V_CRT_LINKAGE
 	#define V_CRT_CALL
+#endif
+#if (defined(__MINGW32__) || defined(__MINGW64__)) && defined(__V_GCC__)
+	#define V_CRT_STDIO_LINKAGE __attribute__((dllimport))
+#else
+	#define V_CRT_STDIO_LINKAGE V_CRT_LINKAGE
 #endif
 #if (defined(_MSC_VER) && !defined(__clang__)) || defined(__cplusplus)
 // Under C++ (g++/clang++), let libc declare FILE/stdio/string/stdlib to keep
@@ -1297,9 +1299,9 @@ V_CRT_LINKAGE int V_CRT_CALL fclose(FILE *stream);
 #if defined(__vinix__)
 V_CRT_LINKAGE FILE * V_CRT_CALL popen(char *command, char *mode);
 #else
-V_CRT_LINKAGE FILE * V_CRT_CALL popen(const char *command, const char *mode);
+V_CRT_STDIO_LINKAGE FILE * V_CRT_CALL popen(const char *command, const char *mode);
 #endif
-V_CRT_LINKAGE int V_CRT_CALL pclose(FILE *stream);
+V_CRT_STDIO_LINKAGE int V_CRT_CALL pclose(FILE *stream);
 V_CRT_LINKAGE void * V_CRT_CALL malloc(size_t size);
 V_CRT_LINKAGE void * V_CRT_CALL calloc(size_t nitems, size_t size);
 V_CRT_LINKAGE void * V_CRT_CALL realloc(void *ptr, size_t size);
@@ -1353,15 +1355,15 @@ V_CRT_LINKAGE char * V_CRT_CALL strstr(const char *haystack, const char *needle)
 V_CRT_LINKAGE int V_CRT_CALL fseek(FILE *stream, long offset, int whence);
 V_CRT_LINKAGE isize V_CRT_CALL getline(char **lineptr, size_t *n, FILE *stream);
 #if defined(_WIN32) || defined(_WIN64)
-V_CRT_LINKAGE int V_CRT_CALL _fseeki64(FILE *stream, i64 offset, int whence);
+V_CRT_STDIO_LINKAGE int V_CRT_CALL _fseeki64(FILE *stream, i64 offset, int whence);
 V_CRT_LINKAGE int V_CRT_CALL fgetpos(FILE *stream, i64 *pos);
-V_CRT_LINKAGE int V_CRT_CALL _fileno(FILE *stream);
-V_CRT_LINKAGE FILE * V_CRT_CALL _wfopen(const unsigned short *filename, const unsigned short *mode);
-V_CRT_LINKAGE int V_CRT_CALL freopen_s(FILE **new_stream, const char *filename, const char *mode, FILE *stream);
-V_CRT_LINKAGE FILE * V_CRT_CALL _wfreopen(const unsigned short *filename, const unsigned short *mode, FILE *stream);
-V_CRT_LINKAGE FILE * V_CRT_CALL _wpopen(const unsigned short *command, const unsigned short *mode);
-V_CRT_LINKAGE int V_CRT_CALL _pclose(FILE *stream);
-V_CRT_LINKAGE int V_CRT_CALL _wremove(const unsigned short *path);
+V_CRT_STDIO_LINKAGE int V_CRT_CALL _fileno(FILE *stream);
+V_CRT_STDIO_LINKAGE FILE * V_CRT_CALL _wfopen(const unsigned short *filename, const unsigned short *mode);
+V_CRT_STDIO_LINKAGE int V_CRT_CALL freopen_s(FILE **new_stream, const char *filename, const char *mode, FILE *stream);
+V_CRT_STDIO_LINKAGE FILE * V_CRT_CALL _wfreopen(const unsigned short *filename, const unsigned short *mode, FILE *stream);
+V_CRT_STDIO_LINKAGE FILE * V_CRT_CALL _wpopen(const unsigned short *command, const unsigned short *mode);
+V_CRT_STDIO_LINKAGE int V_CRT_CALL _pclose(FILE *stream);
+V_CRT_STDIO_LINKAGE int V_CRT_CALL _wremove(const unsigned short *path);
 V_CRT_LINKAGE void * V_CRT_CALL _aligned_malloc(size_t size, size_t alignment);
 V_CRT_LINKAGE void * V_CRT_CALL _aligned_realloc(void *memory, size_t size, size_t alignment);
 V_CRT_LINKAGE void V_CRT_CALL _aligned_free(void *memory);
@@ -1406,6 +1408,7 @@ enum {
 	#endif
 };
 #endif
+#undef V_CRT_STDIO_LINKAGE
 #undef V_CRT_LINKAGE
 #undef V_CRT_CALL
 static void v_stable_sort(void *base, size_t items, size_t item_size, qsort_callback_func cb) {
@@ -2447,7 +2450,8 @@ static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile
                                                  unsigned long long desired)
 {
 	unsigned long long old = *expected;
-    *expected = InterlockedCompareExchange64(object, desired, old);
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
     return *expected == old;
 }
 
@@ -2561,7 +2565,8 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
                                                  unsigned short desired)
 {
 	unsigned short old = *expected;
-    *expected = InterlockedCompareExchange16(object, desired, old);
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
     return *expected == old;
 }
 
@@ -2620,6 +2625,16 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
 #define InterlockedAnd8 _InterlockedAnd8
 
 #else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
 
 #define InterlockedExchange8 ManualInterlockedExchange8
 #define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
@@ -3687,8 +3702,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #endif
 
+#endif
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:17:
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
 
 #ifdef __TINYC__
 #include <stdatomic.h>
@@ -3707,7 +3741,7 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #if defined(__linux__)
 
-// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
 /* TCC's Linux runtime exports __atomic_thread_fence, while its standard
  * header maps that symbol in the opposite direction. */
 #undef atomic_thread_fence
@@ -3715,6 +3749,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 #define atomic_thread_fence(order) __atomic_thread_fence(order)
 
 #endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
 #endif
 #endif
 
@@ -4000,7 +4055,8 @@ static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile
                                                  unsigned long long desired)
 {
 	unsigned long long old = *expected;
-    *expected = InterlockedCompareExchange64(object, desired, old);
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
     return *expected == old;
 }
 
@@ -4114,7 +4170,8 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
                                                  unsigned short desired)
 {
 	unsigned short old = *expected;
-    *expected = InterlockedCompareExchange16(object, desired, old);
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
     return *expected == old;
 }
 
@@ -4173,6 +4230,16 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
 #define InterlockedAnd8 _InterlockedAnd8
 
 #else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
 
 #define InterlockedExchange8 ManualInterlockedExchange8
 #define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
@@ -5240,8 +5307,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #endif
 
+#endif
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:17:
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
 
 #ifdef __TINYC__
 #include <stdatomic.h>
@@ -5260,7 +5346,7 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #if defined(__linux__)
 
-// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
 /* TCC's Linux runtime exports __atomic_thread_fence, while its standard
  * header maps that symbol in the opposite direction. */
 #undef atomic_thread_fence
@@ -5268,6 +5354,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 #define atomic_thread_fence(order) __atomic_thread_fence(order)
 
 #endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
 #endif
 #endif
 
@@ -5553,7 +5660,8 @@ static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile
                                                  unsigned long long desired)
 {
 	unsigned long long old = *expected;
-    *expected = InterlockedCompareExchange64(object, desired, old);
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
     return *expected == old;
 }
 
@@ -5667,7 +5775,8 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
                                                  unsigned short desired)
 {
 	unsigned short old = *expected;
-    *expected = InterlockedCompareExchange16(object, desired, old);
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
     return *expected == old;
 }
 
@@ -5726,6 +5835,16 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
 #define InterlockedAnd8 _InterlockedAnd8
 
 #else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
 
 #define InterlockedExchange8 ManualInterlockedExchange8
 #define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
@@ -6793,8 +6912,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #endif
 
+#endif
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:17:
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
 
 #ifdef __TINYC__
 #include <stdatomic.h>
@@ -6813,7 +6951,7 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #if defined(__linux__)
 
-// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
 /* TCC's Linux runtime exports __atomic_thread_fence, while its standard
  * header maps that symbol in the opposite direction. */
 #undef atomic_thread_fence
@@ -6821,6 +6959,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 #define atomic_thread_fence(order) __atomic_thread_fence(order)
 
 #endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
 #endif
 #endif
 
@@ -7106,7 +7265,8 @@ static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile
                                                  unsigned long long desired)
 {
 	unsigned long long old = *expected;
-    *expected = InterlockedCompareExchange64(object, desired, old);
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
     return *expected == old;
 }
 
@@ -7220,7 +7380,8 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
                                                  unsigned short desired)
 {
 	unsigned short old = *expected;
-    *expected = InterlockedCompareExchange16(object, desired, old);
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
     return *expected == old;
 }
 
@@ -7279,6 +7440,16 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
 #define InterlockedAnd8 _InterlockedAnd8
 
 #else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
 
 #define InterlockedExchange8 ManualInterlockedExchange8
 #define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
@@ -8346,8 +8517,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #endif
 
+#endif
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:17:
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
 
 #ifdef __TINYC__
 #include <stdatomic.h>
@@ -8366,7 +8556,7 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #if defined(__linux__)
 
-// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
 /* TCC's Linux runtime exports __atomic_thread_fence, while its standard
  * header maps that symbol in the opposite direction. */
 #undef atomic_thread_fence
@@ -8374,6 +8564,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 #define atomic_thread_fence(order) __atomic_thread_fence(order)
 
 #endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
 #endif
 #endif
 
@@ -8659,7 +8870,8 @@ static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile
                                                  unsigned long long desired)
 {
 	unsigned long long old = *expected;
-    *expected = InterlockedCompareExchange64(object, desired, old);
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
     return *expected == old;
 }
 
@@ -8773,7 +8985,8 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
                                                  unsigned short desired)
 {
 	unsigned short old = *expected;
-    *expected = InterlockedCompareExchange16(object, desired, old);
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
     return *expected == old;
 }
 
@@ -8832,6 +9045,16 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
 #define InterlockedAnd8 _InterlockedAnd8
 
 #else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
 
 #define InterlockedExchange8 ManualInterlockedExchange8
 #define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
@@ -9899,8 +10122,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #endif
 
+#endif
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:17:
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
 
 #ifdef __TINYC__
 #include <stdatomic.h>
@@ -9919,7 +10161,7 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #if defined(__linux__)
 
-// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
 /* TCC's Linux runtime exports __atomic_thread_fence, while its standard
  * header maps that symbol in the opposite direction. */
 #undef atomic_thread_fence
@@ -9927,6 +10169,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 #define atomic_thread_fence(order) __atomic_thread_fence(order)
 
 #endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
 #endif
 #endif
 
@@ -10212,7 +10475,8 @@ static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile
                                                  unsigned long long desired)
 {
 	unsigned long long old = *expected;
-    *expected = InterlockedCompareExchange64(object, desired, old);
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
     return *expected == old;
 }
 
@@ -10326,7 +10590,8 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
                                                  unsigned short desired)
 {
 	unsigned short old = *expected;
-    *expected = InterlockedCompareExchange16(object, desired, old);
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
     return *expected == old;
 }
 
@@ -10385,6 +10650,16 @@ static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * o
 #define InterlockedAnd8 _InterlockedAnd8
 
 #else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
 
 #define InterlockedExchange8 ManualInterlockedExchange8
 #define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
@@ -11452,8 +11727,27 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #endif
 
+#endif
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:17:
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
 
 #ifdef __TINYC__
 #include <stdatomic.h>
@@ -11472,7 +11766,7 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 
 #if defined(__linux__)
 
-// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
 /* TCC's Linux runtime exports __atomic_thread_fence, while its standard
  * header maps that symbol in the opposite direction. */
 #undef atomic_thread_fence
@@ -11480,12 +11774,3243 @@ static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned cha
 #define atomic_thread_fence(order) __atomic_thread_fence(order)
 
 #endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
+#endif
+#endif
+
+#if defined(_WIN32)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:8:
+/*
+     * This file is part of FFmpeg.
+     *
+     * FFmpeg is free software; you can redistribute it and/or
+     * modify it under the terms of the GNU Lesser General Public
+     * License as published by the Free Software Foundation; either
+     * version 2.1 of the License, or (at your option) any later version.
+     *
+     * FFmpeg is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     * Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public
+     * License along with FFmpeg; if not, write to the Free Software
+     * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+     */
+
+#ifndef COMPAT_ATOMICS_WIN32_STDATOMIC_H
+#define COMPAT_ATOMICS_WIN32_STDATOMIC_H
+
+#define WIN32_LEAN_AND_MEAN
+#include <stddef.h>
+#include <stdint.h>
+#include <windows.h>
+
+#ifdef _MSC_VER
+#define cpu_relax() _mm_pause()
+#else
+#define cpu_relax() __asm__ __volatile__ ("pause")
+#endif
+
+#define ATOMIC_FLAG_INIT 0
+
+#define ATOMIC_VAR_INIT(value) (value)
+
+#define atomic_init(obj, value) \
+    do                          \
+    {                           \
+        *(obj) = (value);       \
+    } while (0)
+
+#define kill_dependency(y) ((void)0)
+
+// memory order policies - we use "sequentially consistent" by default
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+#ifdef _MSC_VER
+#define atomic_thread_fence(order) \
+    do { \
+        switch (order) { \
+            case memory_order_release: \
+                _WriteBarrier(); \
+                _ReadWriteBarrier(); \
+                break; \
+            case memory_order_acquire: \
+                _ReadBarrier(); \
+                _ReadWriteBarrier(); \
+                break; \
+            case memory_order_acq_rel: \
+                _ReadBarrier(); \
+                _WriteBarrier(); \
+                _ReadWriteBarrier(); \
+                break; \
+            case memory_order_seq_cst: \
+                MemoryBarrier(); \
+                break; \
+            default: /* relaxed, consume */ \
+                break; \
+        } \
+    } while (0)
+#else
+#define atomic_thread_fence(order) do { \
+    switch (order) { \
+        case memory_order_relaxed: \
+            break; \
+        case memory_order_acquire: \
+        case memory_order_consume: \
+        case memory_order_release: \
+        case memory_order_acq_rel: \
+            __asm__ __volatile__ ("" : : : "memory"); \
+            break; \
+        case memory_order_seq_cst: \
+            __asm__ __volatile__ ("mfence" : : : "memory"); \
+            break; \
+        default: \
+            __asm__ __volatile__ ("mfence" : : : "memory"); \
+            break; \
+    } \
+} while (0)
+#endif
+
+#define atomic_signal_fence(order) \
+    ((void)0)
+
+#define atomic_is_lock_free(obj) 0
+
+typedef intptr_t atomic_flag;
+typedef _Atomic bool                    atomic_bool;
+typedef _Atomic char                    atomic_char;
+typedef _Atomic signed char             atomic_schar;
+typedef _Atomic unsigned char           atomic_uchar;
+typedef _Atomic short                   atomic_short;
+typedef _Atomic unsigned short          atomic_ushort;
+typedef _Atomic int                     atomic_int;
+typedef _Atomic unsigned int            atomic_uint;
+typedef _Atomic long                    atomic_long;
+typedef _Atomic unsigned long           atomic_ulong;
+typedef _Atomic long long               atomic_llong;
+typedef _Atomic unsigned long long      atomic_ullong;
+typedef intptr_t atomic_wchar_t;
+typedef intptr_t atomic_int_least8_t;
+typedef intptr_t atomic_uint_least8_t;
+typedef intptr_t atomic_int_least16_t;
+typedef intptr_t atomic_uint_least16_t;
+typedef intptr_t atomic_int_least32_t;
+typedef intptr_t atomic_uint_least32_t;
+typedef intptr_t atomic_int_least64_t;
+typedef intptr_t atomic_uint_least64_t;
+typedef intptr_t atomic_int_fast8_t;
+typedef intptr_t atomic_uint_fast8_t;
+typedef intptr_t atomic_int_fast16_t;
+typedef intptr_t atomic_uint_fast16_t;
+typedef intptr_t atomic_int_fast32_t;
+typedef intptr_t atomic_uint_fast32_t;
+typedef intptr_t atomic_int_fast64_t;
+typedef intptr_t atomic_uint_fast64_t;
+typedef _Atomic intptr_t                atomic_intptr_t;
+typedef _Atomic uintptr_t               atomic_uintptr_t;
+typedef _Atomic size_t                  atomic_size_t;
+typedef intptr_t atomic_ptrdiff_t;
+typedef intptr_t atomic_intmax_t;
+typedef intptr_t atomic_uintmax_t;
+
+#ifdef __TINYC__
+/*
+    For TCC it is missing the x64 version of _InterlockedExchangeAdd64 so we
+    fake it (works the same) with InterlockedCompareExchange64 until it
+    succeeds
+*/
+
+__CRT_INLINE LONGLONG _InterlockedExchangeAdd64(LONGLONG volatile *Addend, LONGLONG Value)
+{
+    LONGLONG Old;
+    do
+    {
+        Old = *Addend;
+    } while (InterlockedCompareExchange64(Addend, Old + Value, Old) != Old);
+    return Old;
+}
+
+__CRT_INLINE LONG _InterlockedExchangeAdd(LONG volatile *Addend, LONG Value)
+{
+    LONG Old;
+    do
+    {
+        Old = *Addend;
+    } while (InterlockedCompareExchange(Addend, Old + Value, Old) != Old);
+    return Old;
+}
+
+#ifndef InterlockedIncrement64
+#define InterlockedIncrement64 _InterlockedExchangeAdd64
+#endif
+
+#endif
+
+#define atomic_store(object, desired) \
+    do                                \
+    {                                 \
+        MemoryBarrier();              \
+        *(object) = (desired);        \
+        MemoryBarrier();              \
+    } while (0)
+
+#define atomic_store_explicit(object, desired, order) \
+    atomic_store(object, desired)
+
+#define atomic_load(object) \
+    (MemoryBarrier(), *(object))
+
+#define atomic_load_explicit(object, order) \
+    atomic_load(object)
+
+#define atomic_exchange(object, desired) \
+    InterlockedExchangePointer(object, desired)
+
+#define atomic_exchange_explicit(object, desired, order) \
+    atomic_exchange(object, desired)
+
+static inline int atomic_compare_exchange_strong(intptr_t volatile *object, intptr_t volatile *expected,
+                                                 intptr_t desired)
+{
+    intptr_t old = *expected;
+    *expected = (intptr_t)InterlockedCompareExchangePointer(
+        (PVOID *)object, (PVOID)desired, (PVOID)old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_strong_explicit(object, expected, desired, success, failure) \
+    atomic_compare_exchange_strong(object, expected, desired)
+
+#define atomic_compare_exchange_weak(object, expected, desired) \
+    atomic_compare_exchange_strong(object, expected, desired)
+
+#define atomic_compare_exchange_weak_explicit(object, expected, desired, success, failure) \
+    atomic_compare_exchange_weak(object, expected, desired)
+
+#ifdef _WIN64
+
+#define atomic_fetch_add(object, operand) \
+    InterlockedExchangeAdd64(object, operand)
+
+#define atomic_fetch_sub(object, operand) \
+    InterlockedExchangeAdd64(object, -(operand))
+
+#define atomic_fetch_or(object, operand) \
+    InterlockedOr64(object, operand)
+
+#define atomic_fetch_xor(object, operand) \
+    InterlockedXor64(object, operand)
+
+#define atomic_fetch_and(object, operand) \
+    InterlockedAnd64(object, operand)
+#else
+#define atomic_fetch_add(object, operand) \
+    InterlockedExchangeAdd(object, operand)
+
+#define atomic_fetch_sub(object, operand) \
+    InterlockedExchangeAdd(object, -(operand))
+
+#define atomic_fetch_or(object, operand) \
+    InterlockedOr(object, operand)
+
+#define atomic_fetch_xor(object, operand) \
+    InterlockedXor(object, operand)
+
+#define atomic_fetch_and(object, operand) \
+    InterlockedAnd(object, operand)
+#endif /* _WIN64 */
+
+/* specialized versions with explicit object size */
+
+#define atomic_load_ptr atomic_load
+#define atomic_store_ptr atomic_store
+#define atomic_compare_exchange_weak_ptr atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong_ptr atomic_compare_exchange_strong
+#define atomic_exchange_ptr atomic_exchange
+#define atomic_fetch_add_ptr atomic_fetch_add
+#define atomic_fetch_sub_ptr atomic_fetch_sub
+#define atomic_fetch_and_ptr atomic_fetch_and
+#define atomic_fetch_or_ptr atomic_fetch_or
+#define atomic_fetch_xor_ptr atomic_fetch_xor
+
+static inline void atomic_store_u64(unsigned long long volatile * object, unsigned long long desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned long long atomic_load_u64(unsigned long long volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_u64(object, desired) \
+    InterlockedExchange64(object, desired)
+
+static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile * object, unsigned long long volatile * expected,
+                                                 unsigned long long desired)
+{
+	unsigned long long old = *expected;
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_u64(object, expected, desired) \
+    atomic_compare_exchange_strong_u64(object, expected, desired)
+
+#define atomic_fetch_add_u64(object, operand) \
+    InterlockedExchangeAdd64(object, operand)
+
+#define atomic_fetch_sub_u64(object, operand) \
+    InterlockedExchangeAdd64(object, -(operand))
+
+#define atomic_fetch_or_u64(object, operand) \
+    InterlockedOr64(object, operand)
+
+#define atomic_fetch_xor_u64(object, operand) \
+    InterlockedXor64(object, operand)
+
+#define atomic_fetch_and_u64(object, operand) \
+    InterlockedAnd64(object, operand)
+
+
+
+static inline void atomic_store_u32(unsigned volatile * object, unsigned desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned atomic_load_u32(unsigned volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_u32(object, desired) \
+    InterlockedExchange(object, desired)
+
+static inline int atomic_compare_exchange_strong_u32(unsigned volatile * object, unsigned volatile * expected,
+                                                 unsigned desired)
+{
+	unsigned old = *expected;
+    *expected = InterlockedCompareExchange((void *)object, desired, old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_u32(object, expected, desired) \
+    atomic_compare_exchange_strong_u32(object, expected, desired)
+
+#define atomic_fetch_add_u32(object, operand) \
+    InterlockedExchangeAdd(object, operand)
+
+#define atomic_fetch_sub_u32(object, operand) \
+    InterlockedExchangeAdd(object, -(operand))
+
+#define atomic_fetch_or_u32(object, operand) \
+    InterlockedOr(object, operand)
+
+#define atomic_fetch_xor_u32(object, operand) \
+    InterlockedXor(object, operand)
+
+#define atomic_fetch_and_u32(object, operand) \
+    InterlockedAnd(object, operand)
+
+#ifdef _MSC_VER
+
+#define InterlockedExchangeAdd16 _InterlockedExchangeAdd16
+
+#else
+
+#define InterlockedExchange16 ManualInterlockedExchange16
+#define InterlockedExchangeAdd16 ManualInterlockedExchangeAdd16
+
+static inline uint16_t ManualInterlockedExchange16(volatile uint16_t* object, uint16_t desired) {
+    __asm__ __volatile__ (
+        "xchgw %0, %1"
+        : "+r" (desired),
+          "+m" (*object)
+        :
+        : "memory"
+    );
+    return desired;
+}
+
+static inline unsigned short ManualInterlockedExchangeAdd16(unsigned short volatile* Addend, unsigned short Value) {
+    __asm__ __volatile__ (
+        "lock xaddw %w[value], %[mem]"
+        : [mem] "+m" (*Addend), [value] "+r" (Value)
+        : : "memory"
+    );
+    return Value;
+}
+#endif
+
+static inline void atomic_store_u16(unsigned short volatile * object, unsigned short desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned short atomic_load_u16(unsigned short volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_u16(object, desired) \
+    InterlockedExchange16(object, desired)
+
+static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * object, unsigned short volatile * expected,
+                                                 unsigned short desired)
+{
+	unsigned short old = *expected;
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_u16(object, expected, desired) \
+    atomic_compare_exchange_strong_u16((void*)object, expected, desired)
+
+#define atomic_fetch_add_u16(object, operand) \
+    InterlockedExchangeAdd16(object, operand)
+
+#define atomic_fetch_sub_u16(object, operand) \
+    InterlockedExchangeAdd16(object, -(operand))
+
+#define atomic_fetch_or_u16(object, operand) \
+    InterlockedOr16(object, operand)
+
+#define atomic_fetch_xor_u16(object, operand) \
+    InterlockedXor16(object, operand)
+
+#define atomic_fetch_and_u16(object, operand) \
+    InterlockedAnd16(object, operand)
+
+
+#define atomic_fetch_add_explicit(object, operand, order) \
+    atomic_fetch_add(object, operand)
+
+#define atomic_fetch_sub_explicit(object, operand, order) \
+    atomic_fetch_sub(object, operand)
+
+#define atomic_fetch_or_explicit(object, operand, order) \
+    atomic_fetch_or(object, operand)
+
+#define atomic_fetch_xor_explicit(object, operand, order) \
+    atomic_fetch_xor(object, operand)
+
+#define atomic_fetch_and_explicit(object, operand, order) \
+    atomic_fetch_and(object, operand)
+
+#define atomic_flag_test_and_set(object) \
+    atomic_exchange(object, 1)
+
+#define atomic_flag_test_and_set_explicit(object, order) \
+    atomic_flag_test_and_set(object)
+
+#define atomic_flag_clear(object) \
+    atomic_store(object, 0)
+
+#define atomic_flag_clear_explicit(object, order) \
+    atomic_flag_clear(object)
+
+#ifdef _MSC_VER
+
+#define InterlockedCompareExchange8 _InterlockedCompareExchange8
+#define InterlockedExchangeAdd8 _InterlockedExchangeAdd8
+#define InterlockedOr8 _InterlockedOr8
+#define InterlockedXor8 _InterlockedXor8
+#define InterlockedAnd8 _InterlockedAnd8
+
+#else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
+
+#define InterlockedExchange8 ManualInterlockedExchange8
+#define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
+#define InterlockedExchangeAdd8 ManualInterlockedExchangeAdd8
+#define InterlockedOr8 ManualInterlockedOr8
+#define InterlockedXor8 ManualInterlockedXor8
+#define InterlockedAnd8 ManualInterlockedAnd8
+
+static inline char ManualInterlockedExchange8(char volatile* object, char desired) {
+    __asm__ __volatile__ (
+        "xchgb %0, %1"
+        : "+q" (desired), "+m" (*object)
+        :
+        : "memory"
+    );
+    return desired;
+}
+
+static inline unsigned char ManualInterlockedCompareExchange8(unsigned char volatile * dest, unsigned char exchange, unsigned char comparand) {
+   unsigned char result;
+
+    __asm__ volatile (
+      "lock cmpxchgb %[exchange], %[dest]"
+      : "=a" (result), [dest] "+m" (*dest)
+      : [exchange] "q" (exchange), "a" (comparand)
+      : "memory"
+    );
+
+    return result;
+}
+
+static inline unsigned char ManualInterlockedExchangeAdd8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    unsigned char newValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue + value, oldValue) != oldValue);
+    return oldValue;
+}
+
+static inline unsigned char ManualInterlockedOr8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue | value, oldValue) != oldValue);
+    return oldValue;
+}
+
+static inline unsigned char ManualInterlockedXor8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue ^ value, oldValue) != oldValue);
+    return oldValue;
+}
+
+static inline unsigned char ManualInterlockedAnd8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue & value, oldValue) != oldValue);
+    return oldValue;
+}
+#endif
+
+static inline void atomic_store_byte(unsigned char volatile * object, unsigned char desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned char atomic_load_byte(unsigned char volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_byte(object, desired) \
+    InterlockedExchange8(object, desired)
+
+static inline int atomic_compare_exchange_strong_byte(unsigned char volatile * object, unsigned char volatile * expected,
+                                                 unsigned char desired)
+{
+	unsigned char old = *expected;
+    *expected = InterlockedCompareExchange8(object, desired, old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_byte(object, expected, desired) \
+    atomic_compare_exchange_strong_byte(object, expected, desired)
+
+#define atomic_fetch_add_byte(object, operand) \
+    InterlockedExchangeAdd8(object, operand)
+
+#define atomic_fetch_sub_byte(object, operand) \
+    InterlockedExchangeAdd8(object, -(operand))
+
+#define atomic_fetch_or_byte(object, operand) \
+    InterlockedOr8(object, operand)
+
+#define atomic_fetch_xor_byte(object, operand) \
+    InterlockedXor8(object, operand)
+
+#define atomic_fetch_and_byte(object, operand) \
+    InterlockedAnd8(object, operand)
+
+#endif /* COMPAT_ATOMICS_WIN32_STDATOMIC_H */
+
+#else
+
+#if defined(__TINYC__)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:12:
+#ifndef V_TCC_STDATOMIC_COMPAT_CLEANED
+/* Keep compatibility helpers distinct from the standard API restored later. */
+#define __atomic_thread_fence v_tcc_compat_internal_atomic_thread_fence
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#define atomic_load v_tcc_compat_atomic_load
+#define atomic_store v_tcc_compat_atomic_store
+#define atomic_compare_exchange_weak v_tcc_compat_atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong v_tcc_compat_atomic_compare_exchange_strong
+#define atomic_exchange v_tcc_compat_atomic_exchange
+#define atomic_fetch_add v_tcc_compat_atomic_fetch_add
+#define atomic_fetch_sub v_tcc_compat_atomic_fetch_sub
+#define atomic_fetch_and v_tcc_compat_atomic_fetch_and
+#define atomic_fetch_or v_tcc_compat_atomic_fetch_or
+#define atomic_fetch_xor v_tcc_compat_atomic_fetch_xor
+#endif
+
+#endif
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:14:
+/*
+    Compatibility header for stdatomic.h that works for all compilers supported by V.
+    For TCC, we use libatomic from the OS.
+*/
+#ifndef __ATOMIC_H
+#define __ATOMIC_H
+
+#ifndef __cplusplus
+// If C just use stdatomic.h
+#ifndef __TINYC__
+#include <stdatomic.h>
+#endif
+#else
+// CPP wrapper for atomic operations that are compatible with C
+#include "atomic_cpp.h"
+#endif
+
+#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
+    /* x86 architecture: uses PAUSE instruction for efficient spinning */
+    #define cpu_relax() __asm__ __volatile__ ("pause")
+#elif defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+    #ifdef __TINYC__
+        /* TCC compiler limitation: assembly not supported on ARM */
+        #define cpu_relax()
+    #else
+        /* ARM architecture: uses YIELD instruction for power-efficient spinning */
+        #define cpu_relax() __asm__ __volatile__ ("yield" ::: "memory")
+    #endif
+#elif defined(__riscv) && __riscv_xlen == 64
+    /* RISC-V 64-bit: no dedicated pause instruction, using alternative sequence */
+    #define cpu_relax() __asm__ __volatile__ ( \
+        "fence rw, rw\n\t"   /* Full memory barrier (read-write ordering) */ \
+        "andi a0, a0, 0\n\t" /* Dummy arithmetic instruction (always sets a0 = 0) */ \
+        ::: "memory", "a0")  /* Clobbers memory and a0 register to prevent optimizations */
+#elif defined(__powerpc64__) || defined(__ppc64__)
+    /* PowerPC 64-bit: use OR instruction for synchronization */
+    #define cpu_relax() __asm__ __volatile__ ("or 1,1,1\n\t" ::: "memory")
+#elif defined(__mips64)
+    /* MIPS 64-bit: use series of super-scalar NOPs */
+    #define cpu_relax() __asm__ __volatile__ ("ssnop\n\tssnop\n\tssnop\n\t" ::: "memory")
+#else
+    /* Fallback implementation for unsupported architectures */
+    #define cpu_relax() __asm__ __volatile__ ( \
+        "nop\n\t" "nop\n\t" "nop\n\t" "nop\n\t" /* Series of no-operation instructions */ \
+        ::: "memory") /* Memory clobber to prevent instruction reordering */
+#endif
+
+#ifdef __TINYC__
+
+typedef volatile long long atomic_llong;
+typedef volatile unsigned long long atomic_ullong;
+typedef volatile uintptr_t atomic_uintptr_t;
+
+extern void atomic_thread_fence (int memory_order);
+extern void __atomic_thread_fence (int memory_order);
+
+// TinyCC relies on its runtime atomics support for thread fences.
+#if !defined(__APPLE__)
+    #define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+// use functions for 64, 32 and 8 bit from libatomic directly
+// since tcc is not capible to use "generic" C functions
+// there is no header file for libatomic so we provide function declarations here
+
+extern unsigned long long __atomic_load_8(unsigned long long* x, int mo);
+extern void __atomic_store_8(unsigned long long* x, unsigned long long y, int mo);
+extern _Bool __atomic_compare_exchange_8(unsigned long long* x, unsigned long long* expected, unsigned long long y, int mo, int mo2);
+extern unsigned long long __atomic_exchange_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_add_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_sub_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_and_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_or_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_xor_8(unsigned long long* x, unsigned long long y, int mo);
+
+extern unsigned int __atomic_load_4(unsigned int* x, int mo);
+extern void __atomic_store_4(unsigned int* x, unsigned int y, int mo);
+extern _Bool __atomic_compare_exchange_4(unsigned int* x, unsigned int* expected, unsigned int y, int mo, int mo2);
+extern unsigned int __atomic_exchange_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_add_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_sub_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_and_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_or_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_xor_4(unsigned int* x, unsigned int y, int mo);
+
+extern unsigned short __atomic_load_2(unsigned short* x, int mo);
+extern void __atomic_store_2(unsigned short* x, unsigned short y, int mo);
+extern _Bool __atomic_compare_exchange_2(unsigned short* x, unsigned short* expected, unsigned short y, int mo, int mo2);
+extern unsigned short __atomic_exchange_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_add_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_sub_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_and_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_or_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_xor_2(unsigned short* x, unsigned short y, int mo);
+
+extern unsigned char __atomic_load_1(unsigned char* x, int mo);
+extern void __atomic_store_1(unsigned char* x, unsigned char y, int mo);
+extern _Bool __atomic_compare_exchange_1(unsigned char* x, unsigned char* expected, unsigned char y, int mo, int mo2);
+extern unsigned char __atomic_exchange_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_add_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_sub_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_and_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_or_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_xor_1(unsigned char* x, unsigned char y, int mo);
+
+// The default functions should work with pointers so we have to decide based on pointer size
+#if UINTPTR_MAX == 0xFFFFFFFF
+
+#define atomic_load_explicit __atomic_load_4
+#define atomic_store_explicit __atomic_store_4
+#define atomic_compare_exchange_weak_explicit __atomic_compare_exchange_4
+#define atomic_compare_exchange_strong_explicit __atomic_compare_exchange_4
+#define atomic_exchange_explicit __atomic_exchange_4
+#define atomic_fetch_add_explicit __atomic_fetch_add_4
+#define atomic_fetch_sub_explicit __atomic_sub_fetch_4
+
+
+#else
+
+#define atomic_load_explicit __atomic_load_8
+#define atomic_store_explicit __atomic_store_8
+#define atomic_compare_exchange_weak_explicit __atomic_compare_exchange_8
+#define atomic_compare_exchange_strong_explicit __atomic_compare_exchange_8
+#define atomic_exchange_explicit __atomic_exchange_8
+#define atomic_fetch_add_explicit __atomic_fetch_add_8
+#define atomic_fetch_sub_explicit __atomic_sub_fetch_8
+
+#endif
+
+// memory order policies - we use "sequentially consistent" by default
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+static inline void** atomic_load(void** x) {
+	return (void**)atomic_load_explicit((unsigned long long*)x, memory_order_seq_cst);
+}
+static inline void atomic_store(void** x, void* y) {
+	atomic_store_explicit((unsigned long long*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak(void** x, void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_weak_explicit((unsigned long long*)x, (unsigned long long*)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong(void** x,  void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_strong_explicit((unsigned long long*)x, (unsigned long long*)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_exchange(void** x, void* y) {
+	return atomic_exchange_explicit((unsigned long long*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_add(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_add_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_sub(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_sub_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_and(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_and_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_or(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_or_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_xor(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_xor_explicit(x, y, memory_order_seq_cst);
+}
+
+#define atomic_load_ptr atomic_load
+#define atomic_store_ptr atomic_store
+#define atomic_compare_exchange_weak_ptr atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong_ptr atomic_compare_exchange_strong
+#define atomic_exchange_ptr atomic_exchange
+#define atomic_fetch_add_ptr atomic_fetch_add
+#define atomic_fetch_sub_ptr atomic_fetch_sub
+#define atomic_fetch_and_ptr atomic_fetch_and
+#define atomic_fetch_or_ptr atomic_fetch_or
+#define atomic_fetch_xor_ptr atomic_fetch_xor
+
+// specialized versions for 64 bit
+
+static inline unsigned long long atomic_load_u64(unsigned long long* x) {
+	return __atomic_load_8(x, memory_order_seq_cst);
+}
+static inline void atomic_store_u64(unsigned long long* x, unsigned long long y) {
+	__atomic_store_8(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u64(unsigned long long* x, unsigned long long* expected, unsigned long long y) {
+	return (int)__atomic_compare_exchange_8(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u64(unsigned long long* x, unsigned long long* expected, unsigned long long y) {
+	return (int)__atomic_compare_exchange_8(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_exchange_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_exchange_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_add_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_add_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_sub_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_sub_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_and_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_and_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_or_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_or_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_xor_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_xor_8(x, y, memory_order_seq_cst);
+}
+
+static inline unsigned atomic_load_u32(unsigned* x) {
+	return __atomic_load_4(x, memory_order_seq_cst);
+}
+static inline void atomic_store_u32(unsigned* x, unsigned y) {
+	__atomic_store_4(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)__atomic_compare_exchange_4(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)__atomic_compare_exchange_4(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned atomic_exchange_u32(unsigned* x, unsigned y) {
+	return __atomic_exchange_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_add_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_add_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_sub_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_sub_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_and_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_and_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_or_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_or_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_xor_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_xor_4(x, y, memory_order_seq_cst);
+}
+
+static inline unsigned short atomic_load_u16(unsigned short* x) {
+	return __atomic_load_2(x, memory_order_seq_cst);
+}
+static inline void atomic_store_u16(void* x, unsigned short y) {
+	__atomic_store_2(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u16(void* x, unsigned short* expected, unsigned short y) {
+	return (int)__atomic_compare_exchange_2(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u16(unsigned short* x, unsigned short* expected, unsigned short y) {
+	return (int)__atomic_compare_exchange_2(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned short atomic_exchange_u16(unsigned short* x, unsigned short y) {
+	return __atomic_exchange_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_add_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_add_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_sub_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_sub_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_and_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_and_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_or_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_or_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_xor_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_xor_2(x, y, memory_order_seq_cst);
+}
+
+static inline unsigned char atomic_load_byte(unsigned char* x) {
+	return __atomic_load_1(x, memory_order_seq_cst);
+}
+static inline void atomic_store_byte(unsigned char* x, unsigned char y) {
+	__atomic_store_1(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return __atomic_compare_exchange_1(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return __atomic_compare_exchange_1(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned char atomic_exchange_byte(unsigned char* x, unsigned char y) {
+	return __atomic_exchange_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_add_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_add_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_sub_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_sub_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_and_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_and_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_or_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_or_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_xor_1(x, y, memory_order_seq_cst);
+}
+
+#ifdef __aarch64__
+// must has an `extern` to link with libatomic.a
+
+// acq_rel version
+extern inline _Bool __aarch64_cas1_acq_rel(unsigned char*ptr, unsigned char*expected, unsigned char desired) {
+    return __atomic_compare_exchange_1(
+        ptr,
+        expected,
+        desired,
+		memory_order_acq_rel,
+		memory_order_acquire
+    );
+}
+
+extern inline _Bool __aarch64_cas2_acq_rel(unsigned short*ptr, unsigned short*expected, unsigned short desired) {
+    return __atomic_compare_exchange_2(
+        ptr,
+        expected,
+        desired,
+		memory_order_acq_rel,
+		memory_order_acquire
+    );
+}
+
+extern inline _Bool __aarch64_cas4_acq_rel(unsigned int*ptr, unsigned int*expected, unsigned int desired) {
+    return __atomic_compare_exchange_4(
+        ptr,
+        expected,
+        desired,
+        memory_order_acq_rel,
+        memory_order_acquire
+    );
+}
+
+extern inline _Bool __aarch64_cas8_acq_rel(unsigned long long*ptr, unsigned long long*expected, unsigned long long desired) {
+    return __atomic_compare_exchange_8(
+        ptr,
+        expected,
+        desired,
+        memory_order_acq_rel,
+        memory_order_acquire
+    );
+}
+
+extern inline char __aarch64_ldadd1_acq_rel(char*ptr, char value) {
+    return __atomic_fetch_add_1(
+        (unsigned char*)ptr,
+        (unsigned char)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline short __aarch64_ldadd2_acq_rel(short*ptr, short value) {
+    return __atomic_fetch_add_2(
+        (unsigned short*)ptr,
+        (unsigned short)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline int __aarch64_ldadd4_acq_rel(int*ptr, int value) {
+    return __atomic_fetch_add_4(
+        (unsigned int*)ptr,
+        (unsigned int)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline long long __aarch64_ldadd8_acq_rel(long long*ptr, long long value) {
+    return __atomic_fetch_add_8(
+        (unsigned long long*)ptr,
+        (unsigned long long)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_swp1_acq_rel(unsigned char*ptr, unsigned char newval) {
+    return __atomic_exchange_1(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_swp2_acq_rel(unsigned short*ptr, unsigned short newval) {
+    return __atomic_exchange_2(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_swp4_acq_rel(unsigned int*ptr, unsigned int newval) {
+    return __atomic_exchange_4(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_swp8_acq_rel(unsigned long long*ptr, unsigned long long newval) {
+    return __atomic_exchange_8(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_ldclr1_acq_rel(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_and_1(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_ldclr2_acq_rel(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_and_2(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_ldclr4_acq_rel(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_and_4(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_ldclr8_acq_rel(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_and_8(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_ldset1_acq_rel(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_or_1(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_ldset2_acq_rel(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_or_2(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_ldset4_acq_rel(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_or_4(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_ldset8_acq_rel(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_or_8(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_ldeor1_acq_rel(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_xor_1(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_ldeor2_acq_rel(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_xor_2(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_ldeor4_acq_rel(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_xor_4(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_ldeor8_acq_rel(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_xor_8(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+// relax version
+extern inline _Bool __aarch64_cas1_relax(unsigned char*ptr, unsigned char*expected, unsigned char desired) {
+    return __atomic_compare_exchange_1(
+        ptr,
+        expected,
+        desired,
+		memory_order_relaxed,
+		memory_order_relaxed
+    );
+}
+
+extern inline _Bool __aarch64_cas2_relax(unsigned short*ptr, unsigned short*expected, unsigned short desired) {
+    return __atomic_compare_exchange_2(
+        ptr,
+        expected,
+        desired,
+		memory_order_relaxed,
+		memory_order_relaxed
+    );
+}
+
+extern inline _Bool __aarch64_cas4_relax(unsigned int*ptr, unsigned int*expected, unsigned int desired) {
+    return __atomic_compare_exchange_4(
+        ptr,
+        expected,
+        desired,
+        memory_order_relaxed,
+        memory_order_relaxed
+    );
+}
+
+extern inline _Bool __aarch64_cas8_relax(unsigned long long*ptr, unsigned long long*expected, unsigned long long desired) {
+    return __atomic_compare_exchange_8(
+        ptr,
+        expected,
+        desired,
+        memory_order_relaxed,
+        memory_order_relaxed
+    );
+}
+
+extern inline char __aarch64_ldadd1_relax(char*ptr, char value) {
+    return __atomic_fetch_add_1(
+        (unsigned char*)ptr,
+        (unsigned char)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline short __aarch64_ldadd2_relax(short*ptr, short value) {
+    return __atomic_fetch_add_2(
+        (unsigned short*)ptr,
+        (unsigned short)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline int __aarch64_ldadd4_relax(int*ptr, int value) {
+    return __atomic_fetch_add_4(
+        (unsigned int*)ptr,
+        (unsigned int)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline long long __aarch64_ldadd8_relax(long long*ptr, long long value) {
+    return __atomic_fetch_add_8(
+        (unsigned long long*)ptr,
+        (unsigned long long)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_swp1_relax(unsigned char*ptr, unsigned char newval) {
+    return __atomic_exchange_1(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_swp2_relax(unsigned short*ptr, unsigned short newval) {
+    return __atomic_exchange_2(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_swp4_relax(unsigned int*ptr, unsigned int newval) {
+    return __atomic_exchange_4(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_swp8_relax(unsigned long long*ptr, unsigned long long newval) {
+    return __atomic_exchange_8(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_ldclr1_relax(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_and_1(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_ldclr2_relax(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_and_2(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_ldclr4_relax(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_and_4(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_ldclr8_relax(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_and_8(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_ldset1_relax(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_or_1(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_ldset2_relax(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_or_2(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_ldset4_relax(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_or_4(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_ldset8_relax(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_or_8(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_ldeor1_relax(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_xor_1(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_ldeor2_relax(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_xor_2(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_ldeor4_relax(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_xor_4(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_ldeor8_relax(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_xor_8(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+#endif // __aarch64__
+
+#else
+
+// Since V might be confused with "generic" C functions either we provide special versions
+// for gcc/clang, too
+static inline unsigned long long atomic_load_u64(uint64_t* x) {
+	return atomic_load_explicit((_Atomic (uint64_t)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_u64(uint64_t* x, uint64_t y) {
+	atomic_store_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u64(uint64_t* x, uint64_t* expected, uint64_t y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(uint64_t)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u64(uint64_t* x, uint64_t* expected, uint64_t y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(uint64_t)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_exchange_u64(uint64_t* x, uint64_t y) {
+	return atomic_exchange_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_add_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_add_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_sub_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_sub_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_and_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_and_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_or_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_or_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_xor_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_xor_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+
+
+static inline void* atomic_load_ptr(void** x) {
+	return (void*)atomic_load_explicit((_Atomic(uintptr_t)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_ptr(void** x, void* y) {
+	atomic_store_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_ptr(void** x, void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(uintptr_t)*)x, (unsigned long *)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_ptr(void** x, void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(uintptr_t)*)x, (unsigned long *)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline void* atomic_exchange_ptr(void** x, void* y) {
+	return (void*)atomic_exchange_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_add_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_add_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_sub_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_sub_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_and_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_and_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_or_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_or_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_xor_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_xor_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+
+
+static inline unsigned atomic_load_u32(unsigned* x) {
+	return atomic_load_explicit((_Atomic(unsigned)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_u32(unsigned* x, unsigned y) {
+	atomic_store_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(unsigned)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(unsigned)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned atomic_exchange_u32(unsigned* x, unsigned y) {
+	return atomic_exchange_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_add_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_add_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_sub_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_sub_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_and_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_and_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_or_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_or_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_xor_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_xor_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+
+static inline unsigned short atomic_load_u16(unsigned short* x) {
+	return atomic_load_explicit((_Atomic(unsigned short)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_u16(void* x, unsigned short y) {
+	atomic_store_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u16(void* x, unsigned short* expected, unsigned short y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(unsigned short)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u16(unsigned short* x, unsigned short* expected, unsigned short y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(unsigned short)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned short atomic_exchange_u16(unsigned short* x, unsigned short y) {
+	return atomic_exchange_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_add_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_add_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_sub_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_sub_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_and_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_and_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_or_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_or_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_xor_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_xor_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+
+static inline unsigned char atomic_load_byte(unsigned char* x) {
+	return atomic_load_explicit((_Atomic(unsigned char)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_byte(unsigned char* x, unsigned char y) {
+	atomic_store_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(unsigned char)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(unsigned char)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned char atomic_exchange_byte(unsigned char* x, unsigned char y) {
+	return atomic_exchange_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_add_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_add_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_sub_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_sub_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_and_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_and_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_or_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_or_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_xor_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+
+#endif
+#endif
+
+
+#if defined(__TINYC__)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:16:
+#ifndef V_TCC_STDATOMIC_COMPAT_CLEANED
+#define V_TCC_STDATOMIC_COMPAT_CLEANED
+
+#undef _Atomic
+#undef atomic_thread_fence
+#undef __atomic_thread_fence
+#undef atomic_load
+#undef atomic_store
+#undef atomic_compare_exchange_weak
+#undef atomic_compare_exchange_strong
+#undef atomic_exchange
+#undef atomic_fetch_add
+#undef atomic_fetch_sub
+#undef atomic_fetch_and
+#undef atomic_fetch_or
+#undef atomic_fetch_xor
+#undef atomic_load_explicit
+#undef atomic_store_explicit
+#undef atomic_compare_exchange_weak_explicit
+#undef atomic_compare_exchange_strong_explicit
+#undef atomic_exchange_explicit
+#undef atomic_fetch_add_explicit
+#undef atomic_fetch_sub_explicit
+#undef memory_order_relaxed
+#undef memory_order_consume
+#undef memory_order_acquire
+#undef memory_order_release
+#undef memory_order_acq_rel
+#undef memory_order_seq_cst
+
+#undef atomic_load_ptr
+#undef atomic_store_ptr
+#undef atomic_compare_exchange_weak_ptr
+#undef atomic_compare_exchange_strong_ptr
+#undef atomic_exchange_ptr
+#undef atomic_fetch_add_ptr
+#undef atomic_fetch_sub_ptr
+#undef atomic_fetch_and_ptr
+#undef atomic_fetch_or_ptr
+#undef atomic_fetch_xor_ptr
+
+#define atomic_load_ptr v_tcc_compat_atomic_load
+#define atomic_store_ptr v_tcc_compat_atomic_store
+#define atomic_compare_exchange_weak_ptr v_tcc_compat_atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong_ptr v_tcc_compat_atomic_compare_exchange_strong
+#define atomic_exchange_ptr v_tcc_compat_atomic_exchange
+#define atomic_fetch_add_ptr v_tcc_compat_atomic_fetch_add
+#define atomic_fetch_sub_ptr v_tcc_compat_atomic_fetch_sub
+#define atomic_fetch_and_ptr v_tcc_compat_atomic_fetch_and
+#define atomic_fetch_or_ptr v_tcc_compat_atomic_fetch_or
+#define atomic_fetch_xor_ptr v_tcc_compat_atomic_fetch_xor
+
+#endif
+
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+
+#ifdef __TINYC__
+#include <stdatomic.h>
+#else
+#if defined(__has_include)
+#if __has_include(<stdatomic.h>)
+#include <stdatomic.h>
+#else
+#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#endif
+#else
+#include <stdatomic.h>
+#endif
+#endif
+
+
+#if defined(__linux__)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
+/* TCC's Linux runtime exports __atomic_thread_fence, while its standard
+ * header maps that symbol in the opposite direction. */
+#undef atomic_thread_fence
+#undef __atomic_thread_fence
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+
+#endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
+#endif
+#endif
+
+#if defined(_WIN32)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:8:
+/*
+     * This file is part of FFmpeg.
+     *
+     * FFmpeg is free software; you can redistribute it and/or
+     * modify it under the terms of the GNU Lesser General Public
+     * License as published by the Free Software Foundation; either
+     * version 2.1 of the License, or (at your option) any later version.
+     *
+     * FFmpeg is distributed in the hope that it will be useful,
+     * but WITHOUT ANY WARRANTY; without even the implied warranty of
+     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     * Lesser General Public License for more details.
+     *
+     * You should have received a copy of the GNU Lesser General Public
+     * License along with FFmpeg; if not, write to the Free Software
+     * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+     */
+
+#ifndef COMPAT_ATOMICS_WIN32_STDATOMIC_H
+#define COMPAT_ATOMICS_WIN32_STDATOMIC_H
+
+#define WIN32_LEAN_AND_MEAN
+#include <stddef.h>
+#include <stdint.h>
+#include <windows.h>
+
+#ifdef _MSC_VER
+#define cpu_relax() _mm_pause()
+#else
+#define cpu_relax() __asm__ __volatile__ ("pause")
+#endif
+
+#define ATOMIC_FLAG_INIT 0
+
+#define ATOMIC_VAR_INIT(value) (value)
+
+#define atomic_init(obj, value) \
+    do                          \
+    {                           \
+        *(obj) = (value);       \
+    } while (0)
+
+#define kill_dependency(y) ((void)0)
+
+// memory order policies - we use "sequentially consistent" by default
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+#ifdef _MSC_VER
+#define atomic_thread_fence(order) \
+    do { \
+        switch (order) { \
+            case memory_order_release: \
+                _WriteBarrier(); \
+                _ReadWriteBarrier(); \
+                break; \
+            case memory_order_acquire: \
+                _ReadBarrier(); \
+                _ReadWriteBarrier(); \
+                break; \
+            case memory_order_acq_rel: \
+                _ReadBarrier(); \
+                _WriteBarrier(); \
+                _ReadWriteBarrier(); \
+                break; \
+            case memory_order_seq_cst: \
+                MemoryBarrier(); \
+                break; \
+            default: /* relaxed, consume */ \
+                break; \
+        } \
+    } while (0)
+#else
+#define atomic_thread_fence(order) do { \
+    switch (order) { \
+        case memory_order_relaxed: \
+            break; \
+        case memory_order_acquire: \
+        case memory_order_consume: \
+        case memory_order_release: \
+        case memory_order_acq_rel: \
+            __asm__ __volatile__ ("" : : : "memory"); \
+            break; \
+        case memory_order_seq_cst: \
+            __asm__ __volatile__ ("mfence" : : : "memory"); \
+            break; \
+        default: \
+            __asm__ __volatile__ ("mfence" : : : "memory"); \
+            break; \
+    } \
+} while (0)
+#endif
+
+#define atomic_signal_fence(order) \
+    ((void)0)
+
+#define atomic_is_lock_free(obj) 0
+
+typedef intptr_t atomic_flag;
+typedef _Atomic bool                    atomic_bool;
+typedef _Atomic char                    atomic_char;
+typedef _Atomic signed char             atomic_schar;
+typedef _Atomic unsigned char           atomic_uchar;
+typedef _Atomic short                   atomic_short;
+typedef _Atomic unsigned short          atomic_ushort;
+typedef _Atomic int                     atomic_int;
+typedef _Atomic unsigned int            atomic_uint;
+typedef _Atomic long                    atomic_long;
+typedef _Atomic unsigned long           atomic_ulong;
+typedef _Atomic long long               atomic_llong;
+typedef _Atomic unsigned long long      atomic_ullong;
+typedef intptr_t atomic_wchar_t;
+typedef intptr_t atomic_int_least8_t;
+typedef intptr_t atomic_uint_least8_t;
+typedef intptr_t atomic_int_least16_t;
+typedef intptr_t atomic_uint_least16_t;
+typedef intptr_t atomic_int_least32_t;
+typedef intptr_t atomic_uint_least32_t;
+typedef intptr_t atomic_int_least64_t;
+typedef intptr_t atomic_uint_least64_t;
+typedef intptr_t atomic_int_fast8_t;
+typedef intptr_t atomic_uint_fast8_t;
+typedef intptr_t atomic_int_fast16_t;
+typedef intptr_t atomic_uint_fast16_t;
+typedef intptr_t atomic_int_fast32_t;
+typedef intptr_t atomic_uint_fast32_t;
+typedef intptr_t atomic_int_fast64_t;
+typedef intptr_t atomic_uint_fast64_t;
+typedef _Atomic intptr_t                atomic_intptr_t;
+typedef _Atomic uintptr_t               atomic_uintptr_t;
+typedef _Atomic size_t                  atomic_size_t;
+typedef intptr_t atomic_ptrdiff_t;
+typedef intptr_t atomic_intmax_t;
+typedef intptr_t atomic_uintmax_t;
+
+#ifdef __TINYC__
+/*
+    For TCC it is missing the x64 version of _InterlockedExchangeAdd64 so we
+    fake it (works the same) with InterlockedCompareExchange64 until it
+    succeeds
+*/
+
+__CRT_INLINE LONGLONG _InterlockedExchangeAdd64(LONGLONG volatile *Addend, LONGLONG Value)
+{
+    LONGLONG Old;
+    do
+    {
+        Old = *Addend;
+    } while (InterlockedCompareExchange64(Addend, Old + Value, Old) != Old);
+    return Old;
+}
+
+__CRT_INLINE LONG _InterlockedExchangeAdd(LONG volatile *Addend, LONG Value)
+{
+    LONG Old;
+    do
+    {
+        Old = *Addend;
+    } while (InterlockedCompareExchange(Addend, Old + Value, Old) != Old);
+    return Old;
+}
+
+#ifndef InterlockedIncrement64
+#define InterlockedIncrement64 _InterlockedExchangeAdd64
+#endif
+
+#endif
+
+#define atomic_store(object, desired) \
+    do                                \
+    {                                 \
+        MemoryBarrier();              \
+        *(object) = (desired);        \
+        MemoryBarrier();              \
+    } while (0)
+
+#define atomic_store_explicit(object, desired, order) \
+    atomic_store(object, desired)
+
+#define atomic_load(object) \
+    (MemoryBarrier(), *(object))
+
+#define atomic_load_explicit(object, order) \
+    atomic_load(object)
+
+#define atomic_exchange(object, desired) \
+    InterlockedExchangePointer(object, desired)
+
+#define atomic_exchange_explicit(object, desired, order) \
+    atomic_exchange(object, desired)
+
+static inline int atomic_compare_exchange_strong(intptr_t volatile *object, intptr_t volatile *expected,
+                                                 intptr_t desired)
+{
+    intptr_t old = *expected;
+    *expected = (intptr_t)InterlockedCompareExchangePointer(
+        (PVOID *)object, (PVOID)desired, (PVOID)old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_strong_explicit(object, expected, desired, success, failure) \
+    atomic_compare_exchange_strong(object, expected, desired)
+
+#define atomic_compare_exchange_weak(object, expected, desired) \
+    atomic_compare_exchange_strong(object, expected, desired)
+
+#define atomic_compare_exchange_weak_explicit(object, expected, desired, success, failure) \
+    atomic_compare_exchange_weak(object, expected, desired)
+
+#ifdef _WIN64
+
+#define atomic_fetch_add(object, operand) \
+    InterlockedExchangeAdd64(object, operand)
+
+#define atomic_fetch_sub(object, operand) \
+    InterlockedExchangeAdd64(object, -(operand))
+
+#define atomic_fetch_or(object, operand) \
+    InterlockedOr64(object, operand)
+
+#define atomic_fetch_xor(object, operand) \
+    InterlockedXor64(object, operand)
+
+#define atomic_fetch_and(object, operand) \
+    InterlockedAnd64(object, operand)
+#else
+#define atomic_fetch_add(object, operand) \
+    InterlockedExchangeAdd(object, operand)
+
+#define atomic_fetch_sub(object, operand) \
+    InterlockedExchangeAdd(object, -(operand))
+
+#define atomic_fetch_or(object, operand) \
+    InterlockedOr(object, operand)
+
+#define atomic_fetch_xor(object, operand) \
+    InterlockedXor(object, operand)
+
+#define atomic_fetch_and(object, operand) \
+    InterlockedAnd(object, operand)
+#endif /* _WIN64 */
+
+/* specialized versions with explicit object size */
+
+#define atomic_load_ptr atomic_load
+#define atomic_store_ptr atomic_store
+#define atomic_compare_exchange_weak_ptr atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong_ptr atomic_compare_exchange_strong
+#define atomic_exchange_ptr atomic_exchange
+#define atomic_fetch_add_ptr atomic_fetch_add
+#define atomic_fetch_sub_ptr atomic_fetch_sub
+#define atomic_fetch_and_ptr atomic_fetch_and
+#define atomic_fetch_or_ptr atomic_fetch_or
+#define atomic_fetch_xor_ptr atomic_fetch_xor
+
+static inline void atomic_store_u64(unsigned long long volatile * object, unsigned long long desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned long long atomic_load_u64(unsigned long long volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_u64(object, desired) \
+    InterlockedExchange64(object, desired)
+
+static inline int atomic_compare_exchange_strong_u64(unsigned long long volatile * object, unsigned long long volatile * expected,
+                                                 unsigned long long desired)
+{
+	unsigned long long old = *expected;
+    *expected = (unsigned long long) InterlockedCompareExchange64((volatile long long *) object,
+        (long long) desired, (long long) old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_u64(object, expected, desired) \
+    atomic_compare_exchange_strong_u64(object, expected, desired)
+
+#define atomic_fetch_add_u64(object, operand) \
+    InterlockedExchangeAdd64(object, operand)
+
+#define atomic_fetch_sub_u64(object, operand) \
+    InterlockedExchangeAdd64(object, -(operand))
+
+#define atomic_fetch_or_u64(object, operand) \
+    InterlockedOr64(object, operand)
+
+#define atomic_fetch_xor_u64(object, operand) \
+    InterlockedXor64(object, operand)
+
+#define atomic_fetch_and_u64(object, operand) \
+    InterlockedAnd64(object, operand)
+
+
+
+static inline void atomic_store_u32(unsigned volatile * object, unsigned desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned atomic_load_u32(unsigned volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_u32(object, desired) \
+    InterlockedExchange(object, desired)
+
+static inline int atomic_compare_exchange_strong_u32(unsigned volatile * object, unsigned volatile * expected,
+                                                 unsigned desired)
+{
+	unsigned old = *expected;
+    *expected = InterlockedCompareExchange((void *)object, desired, old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_u32(object, expected, desired) \
+    atomic_compare_exchange_strong_u32(object, expected, desired)
+
+#define atomic_fetch_add_u32(object, operand) \
+    InterlockedExchangeAdd(object, operand)
+
+#define atomic_fetch_sub_u32(object, operand) \
+    InterlockedExchangeAdd(object, -(operand))
+
+#define atomic_fetch_or_u32(object, operand) \
+    InterlockedOr(object, operand)
+
+#define atomic_fetch_xor_u32(object, operand) \
+    InterlockedXor(object, operand)
+
+#define atomic_fetch_and_u32(object, operand) \
+    InterlockedAnd(object, operand)
+
+#ifdef _MSC_VER
+
+#define InterlockedExchangeAdd16 _InterlockedExchangeAdd16
+
+#else
+
+#define InterlockedExchange16 ManualInterlockedExchange16
+#define InterlockedExchangeAdd16 ManualInterlockedExchangeAdd16
+
+static inline uint16_t ManualInterlockedExchange16(volatile uint16_t* object, uint16_t desired) {
+    __asm__ __volatile__ (
+        "xchgw %0, %1"
+        : "+r" (desired),
+          "+m" (*object)
+        :
+        : "memory"
+    );
+    return desired;
+}
+
+static inline unsigned short ManualInterlockedExchangeAdd16(unsigned short volatile* Addend, unsigned short Value) {
+    __asm__ __volatile__ (
+        "lock xaddw %w[value], %[mem]"
+        : [mem] "+m" (*Addend), [value] "+r" (Value)
+        : : "memory"
+    );
+    return Value;
+}
+#endif
+
+static inline void atomic_store_u16(unsigned short volatile * object, unsigned short desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned short atomic_load_u16(unsigned short volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_u16(object, desired) \
+    InterlockedExchange16(object, desired)
+
+static inline int atomic_compare_exchange_strong_u16(unsigned short volatile * object, unsigned short volatile * expected,
+                                                 unsigned short desired)
+{
+	unsigned short old = *expected;
+    *expected = (unsigned short) InterlockedCompareExchange16((volatile short *) object,
+        (short) desired, (short) old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_u16(object, expected, desired) \
+    atomic_compare_exchange_strong_u16((void*)object, expected, desired)
+
+#define atomic_fetch_add_u16(object, operand) \
+    InterlockedExchangeAdd16(object, operand)
+
+#define atomic_fetch_sub_u16(object, operand) \
+    InterlockedExchangeAdd16(object, -(operand))
+
+#define atomic_fetch_or_u16(object, operand) \
+    InterlockedOr16(object, operand)
+
+#define atomic_fetch_xor_u16(object, operand) \
+    InterlockedXor16(object, operand)
+
+#define atomic_fetch_and_u16(object, operand) \
+    InterlockedAnd16(object, operand)
+
+
+#define atomic_fetch_add_explicit(object, operand, order) \
+    atomic_fetch_add(object, operand)
+
+#define atomic_fetch_sub_explicit(object, operand, order) \
+    atomic_fetch_sub(object, operand)
+
+#define atomic_fetch_or_explicit(object, operand, order) \
+    atomic_fetch_or(object, operand)
+
+#define atomic_fetch_xor_explicit(object, operand, order) \
+    atomic_fetch_xor(object, operand)
+
+#define atomic_fetch_and_explicit(object, operand, order) \
+    atomic_fetch_and(object, operand)
+
+#define atomic_flag_test_and_set(object) \
+    atomic_exchange(object, 1)
+
+#define atomic_flag_test_and_set_explicit(object, order) \
+    atomic_flag_test_and_set(object)
+
+#define atomic_flag_clear(object) \
+    atomic_store(object, 0)
+
+#define atomic_flag_clear_explicit(object, order) \
+    atomic_flag_clear(object)
+
+#ifdef _MSC_VER
+
+#define InterlockedCompareExchange8 _InterlockedCompareExchange8
+#define InterlockedExchangeAdd8 _InterlockedExchangeAdd8
+#define InterlockedOr8 _InterlockedOr8
+#define InterlockedXor8 _InterlockedXor8
+#define InterlockedAnd8 _InterlockedAnd8
+
+#else
+
+#ifdef InterlockedOr8
+#undef InterlockedOr8
+#endif
+#ifdef InterlockedXor8
+#undef InterlockedXor8
+#endif
+#ifdef InterlockedAnd8
+#undef InterlockedAnd8
+#endif
+
+#define InterlockedExchange8 ManualInterlockedExchange8
+#define InterlockedCompareExchange8 ManualInterlockedCompareExchange8
+#define InterlockedExchangeAdd8 ManualInterlockedExchangeAdd8
+#define InterlockedOr8 ManualInterlockedOr8
+#define InterlockedXor8 ManualInterlockedXor8
+#define InterlockedAnd8 ManualInterlockedAnd8
+
+static inline char ManualInterlockedExchange8(char volatile* object, char desired) {
+    __asm__ __volatile__ (
+        "xchgb %0, %1"
+        : "+q" (desired), "+m" (*object)
+        :
+        : "memory"
+    );
+    return desired;
+}
+
+static inline unsigned char ManualInterlockedCompareExchange8(unsigned char volatile * dest, unsigned char exchange, unsigned char comparand) {
+   unsigned char result;
+
+    __asm__ volatile (
+      "lock cmpxchgb %[exchange], %[dest]"
+      : "=a" (result), [dest] "+m" (*dest)
+      : [exchange] "q" (exchange), "a" (comparand)
+      : "memory"
+    );
+
+    return result;
+}
+
+static inline unsigned char ManualInterlockedExchangeAdd8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    unsigned char newValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue + value, oldValue) != oldValue);
+    return oldValue;
+}
+
+static inline unsigned char ManualInterlockedOr8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue | value, oldValue) != oldValue);
+    return oldValue;
+}
+
+static inline unsigned char ManualInterlockedXor8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue ^ value, oldValue) != oldValue);
+    return oldValue;
+}
+
+static inline unsigned char ManualInterlockedAnd8(unsigned char volatile * dest, unsigned char value) {
+    unsigned char oldValue;
+    do {
+        oldValue = *dest;
+    } while (ManualInterlockedCompareExchange8(dest, oldValue & value, oldValue) != oldValue);
+    return oldValue;
+}
+#endif
+
+static inline void atomic_store_byte(unsigned char volatile * object, unsigned char desired) {
+    do {
+        MemoryBarrier();
+        *(object) = (desired);
+        MemoryBarrier();
+    } while (0);
+}
+
+static inline unsigned char atomic_load_byte(unsigned char volatile * object) {
+    return (MemoryBarrier(), *(object));
+}
+
+#define atomic_exchange_byte(object, desired) \
+    InterlockedExchange8(object, desired)
+
+static inline int atomic_compare_exchange_strong_byte(unsigned char volatile * object, unsigned char volatile * expected,
+                                                 unsigned char desired)
+{
+	unsigned char old = *expected;
+    *expected = InterlockedCompareExchange8(object, desired, old);
+    return *expected == old;
+}
+
+#define atomic_compare_exchange_weak_byte(object, expected, desired) \
+    atomic_compare_exchange_strong_byte(object, expected, desired)
+
+#define atomic_fetch_add_byte(object, operand) \
+    InterlockedExchangeAdd8(object, operand)
+
+#define atomic_fetch_sub_byte(object, operand) \
+    InterlockedExchangeAdd8(object, -(operand))
+
+#define atomic_fetch_or_byte(object, operand) \
+    InterlockedOr8(object, operand)
+
+#define atomic_fetch_xor_byte(object, operand) \
+    InterlockedXor8(object, operand)
+
+#define atomic_fetch_and_byte(object, operand) \
+    InterlockedAnd8(object, operand)
+
+#endif /* COMPAT_ATOMICS_WIN32_STDATOMIC_H */
+
+#else
+
+#if defined(__TINYC__)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:12:
+#ifndef V_TCC_STDATOMIC_COMPAT_CLEANED
+/* Keep compatibility helpers distinct from the standard API restored later. */
+#define __atomic_thread_fence v_tcc_compat_internal_atomic_thread_fence
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#define atomic_load v_tcc_compat_atomic_load
+#define atomic_store v_tcc_compat_atomic_store
+#define atomic_compare_exchange_weak v_tcc_compat_atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong v_tcc_compat_atomic_compare_exchange_strong
+#define atomic_exchange v_tcc_compat_atomic_exchange
+#define atomic_fetch_add v_tcc_compat_atomic_fetch_add
+#define atomic_fetch_sub v_tcc_compat_atomic_fetch_sub
+#define atomic_fetch_and v_tcc_compat_atomic_fetch_and
+#define atomic_fetch_or v_tcc_compat_atomic_fetch_or
+#define atomic_fetch_xor v_tcc_compat_atomic_fetch_xor
+#endif
+
+#endif
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:14:
+/*
+    Compatibility header for stdatomic.h that works for all compilers supported by V.
+    For TCC, we use libatomic from the OS.
+*/
+#ifndef __ATOMIC_H
+#define __ATOMIC_H
+
+#ifndef __cplusplus
+// If C just use stdatomic.h
+#ifndef __TINYC__
+#include <stdatomic.h>
+#endif
+#else
+// CPP wrapper for atomic operations that are compatible with C
+#include "atomic_cpp.h"
+#endif
+
+#if defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || defined(_M_IX86)
+    /* x86 architecture: uses PAUSE instruction for efficient spinning */
+    #define cpu_relax() __asm__ __volatile__ ("pause")
+#elif defined(__aarch64__) || defined(_M_ARM64) || defined(__arm__) || defined(_M_ARM)
+    #ifdef __TINYC__
+        /* TCC compiler limitation: assembly not supported on ARM */
+        #define cpu_relax()
+    #else
+        /* ARM architecture: uses YIELD instruction for power-efficient spinning */
+        #define cpu_relax() __asm__ __volatile__ ("yield" ::: "memory")
+    #endif
+#elif defined(__riscv) && __riscv_xlen == 64
+    /* RISC-V 64-bit: no dedicated pause instruction, using alternative sequence */
+    #define cpu_relax() __asm__ __volatile__ ( \
+        "fence rw, rw\n\t"   /* Full memory barrier (read-write ordering) */ \
+        "andi a0, a0, 0\n\t" /* Dummy arithmetic instruction (always sets a0 = 0) */ \
+        ::: "memory", "a0")  /* Clobbers memory and a0 register to prevent optimizations */
+#elif defined(__powerpc64__) || defined(__ppc64__)
+    /* PowerPC 64-bit: use OR instruction for synchronization */
+    #define cpu_relax() __asm__ __volatile__ ("or 1,1,1\n\t" ::: "memory")
+#elif defined(__mips64)
+    /* MIPS 64-bit: use series of super-scalar NOPs */
+    #define cpu_relax() __asm__ __volatile__ ("ssnop\n\tssnop\n\tssnop\n\t" ::: "memory")
+#else
+    /* Fallback implementation for unsupported architectures */
+    #define cpu_relax() __asm__ __volatile__ ( \
+        "nop\n\t" "nop\n\t" "nop\n\t" "nop\n\t" /* Series of no-operation instructions */ \
+        ::: "memory") /* Memory clobber to prevent instruction reordering */
+#endif
+
+#ifdef __TINYC__
+
+typedef volatile long long atomic_llong;
+typedef volatile unsigned long long atomic_ullong;
+typedef volatile uintptr_t atomic_uintptr_t;
+
+extern void atomic_thread_fence (int memory_order);
+extern void __atomic_thread_fence (int memory_order);
+
+// TinyCC relies on its runtime atomics support for thread fences.
+#if !defined(__APPLE__)
+    #define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+// use functions for 64, 32 and 8 bit from libatomic directly
+// since tcc is not capible to use "generic" C functions
+// there is no header file for libatomic so we provide function declarations here
+
+extern unsigned long long __atomic_load_8(unsigned long long* x, int mo);
+extern void __atomic_store_8(unsigned long long* x, unsigned long long y, int mo);
+extern _Bool __atomic_compare_exchange_8(unsigned long long* x, unsigned long long* expected, unsigned long long y, int mo, int mo2);
+extern unsigned long long __atomic_exchange_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_add_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_sub_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_and_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_or_8(unsigned long long* x, unsigned long long y, int mo);
+extern unsigned long long __atomic_fetch_xor_8(unsigned long long* x, unsigned long long y, int mo);
+
+extern unsigned int __atomic_load_4(unsigned int* x, int mo);
+extern void __atomic_store_4(unsigned int* x, unsigned int y, int mo);
+extern _Bool __atomic_compare_exchange_4(unsigned int* x, unsigned int* expected, unsigned int y, int mo, int mo2);
+extern unsigned int __atomic_exchange_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_add_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_sub_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_and_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_or_4(unsigned int* x, unsigned int y, int mo);
+extern unsigned int __atomic_fetch_xor_4(unsigned int* x, unsigned int y, int mo);
+
+extern unsigned short __atomic_load_2(unsigned short* x, int mo);
+extern void __atomic_store_2(unsigned short* x, unsigned short y, int mo);
+extern _Bool __atomic_compare_exchange_2(unsigned short* x, unsigned short* expected, unsigned short y, int mo, int mo2);
+extern unsigned short __atomic_exchange_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_add_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_sub_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_and_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_or_2(unsigned short* x, unsigned short y, int mo);
+extern unsigned short __atomic_fetch_xor_2(unsigned short* x, unsigned short y, int mo);
+
+extern unsigned char __atomic_load_1(unsigned char* x, int mo);
+extern void __atomic_store_1(unsigned char* x, unsigned char y, int mo);
+extern _Bool __atomic_compare_exchange_1(unsigned char* x, unsigned char* expected, unsigned char y, int mo, int mo2);
+extern unsigned char __atomic_exchange_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_add_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_sub_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_and_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_or_1(unsigned char* x, unsigned char y, int mo);
+extern unsigned char __atomic_fetch_xor_1(unsigned char* x, unsigned char y, int mo);
+
+// The default functions should work with pointers so we have to decide based on pointer size
+#if UINTPTR_MAX == 0xFFFFFFFF
+
+#define atomic_load_explicit __atomic_load_4
+#define atomic_store_explicit __atomic_store_4
+#define atomic_compare_exchange_weak_explicit __atomic_compare_exchange_4
+#define atomic_compare_exchange_strong_explicit __atomic_compare_exchange_4
+#define atomic_exchange_explicit __atomic_exchange_4
+#define atomic_fetch_add_explicit __atomic_fetch_add_4
+#define atomic_fetch_sub_explicit __atomic_sub_fetch_4
+
+
+#else
+
+#define atomic_load_explicit __atomic_load_8
+#define atomic_store_explicit __atomic_store_8
+#define atomic_compare_exchange_weak_explicit __atomic_compare_exchange_8
+#define atomic_compare_exchange_strong_explicit __atomic_compare_exchange_8
+#define atomic_exchange_explicit __atomic_exchange_8
+#define atomic_fetch_add_explicit __atomic_fetch_add_8
+#define atomic_fetch_sub_explicit __atomic_sub_fetch_8
+
+#endif
+
+// memory order policies - we use "sequentially consistent" by default
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+static inline void** atomic_load(void** x) {
+	return (void**)atomic_load_explicit((unsigned long long*)x, memory_order_seq_cst);
+}
+static inline void atomic_store(void** x, void* y) {
+	atomic_store_explicit((unsigned long long*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak(void** x, void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_weak_explicit((unsigned long long*)x, (unsigned long long*)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong(void** x,  void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_strong_explicit((unsigned long long*)x, (unsigned long long*)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_exchange(void** x, void* y) {
+	return atomic_exchange_explicit((unsigned long long*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_add(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_add_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_sub(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_sub_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_and(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_and_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_or(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_or_explicit(x, y, memory_order_seq_cst);
+}
+static inline uintptr_t atomic_fetch_xor(uintptr_t* x, uintptr_t y) {
+	return atomic_fetch_xor_explicit(x, y, memory_order_seq_cst);
+}
+
+#define atomic_load_ptr atomic_load
+#define atomic_store_ptr atomic_store
+#define atomic_compare_exchange_weak_ptr atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong_ptr atomic_compare_exchange_strong
+#define atomic_exchange_ptr atomic_exchange
+#define atomic_fetch_add_ptr atomic_fetch_add
+#define atomic_fetch_sub_ptr atomic_fetch_sub
+#define atomic_fetch_and_ptr atomic_fetch_and
+#define atomic_fetch_or_ptr atomic_fetch_or
+#define atomic_fetch_xor_ptr atomic_fetch_xor
+
+// specialized versions for 64 bit
+
+static inline unsigned long long atomic_load_u64(unsigned long long* x) {
+	return __atomic_load_8(x, memory_order_seq_cst);
+}
+static inline void atomic_store_u64(unsigned long long* x, unsigned long long y) {
+	__atomic_store_8(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u64(unsigned long long* x, unsigned long long* expected, unsigned long long y) {
+	return (int)__atomic_compare_exchange_8(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u64(unsigned long long* x, unsigned long long* expected, unsigned long long y) {
+	return (int)__atomic_compare_exchange_8(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_exchange_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_exchange_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_add_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_add_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_sub_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_sub_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_and_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_and_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_or_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_or_8(x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_xor_u64(unsigned long long* x, unsigned long long y) {
+	return __atomic_fetch_xor_8(x, y, memory_order_seq_cst);
+}
+
+static inline unsigned atomic_load_u32(unsigned* x) {
+	return __atomic_load_4(x, memory_order_seq_cst);
+}
+static inline void atomic_store_u32(unsigned* x, unsigned y) {
+	__atomic_store_4(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)__atomic_compare_exchange_4(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)__atomic_compare_exchange_4(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned atomic_exchange_u32(unsigned* x, unsigned y) {
+	return __atomic_exchange_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_add_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_add_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_sub_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_sub_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_and_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_and_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_or_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_or_4(x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_xor_u32(unsigned* x, unsigned y) {
+	return __atomic_fetch_xor_4(x, y, memory_order_seq_cst);
+}
+
+static inline unsigned short atomic_load_u16(unsigned short* x) {
+	return __atomic_load_2(x, memory_order_seq_cst);
+}
+static inline void atomic_store_u16(void* x, unsigned short y) {
+	__atomic_store_2(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u16(void* x, unsigned short* expected, unsigned short y) {
+	return (int)__atomic_compare_exchange_2(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u16(unsigned short* x, unsigned short* expected, unsigned short y) {
+	return (int)__atomic_compare_exchange_2(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned short atomic_exchange_u16(unsigned short* x, unsigned short y) {
+	return __atomic_exchange_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_add_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_add_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_sub_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_sub_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_and_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_and_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_or_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_or_2(x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_xor_u16(unsigned short* x, unsigned short y) {
+	return __atomic_fetch_xor_2(x, y, memory_order_seq_cst);
+}
+
+static inline unsigned char atomic_load_byte(unsigned char* x) {
+	return __atomic_load_1(x, memory_order_seq_cst);
+}
+static inline void atomic_store_byte(unsigned char* x, unsigned char y) {
+	__atomic_store_1(x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return __atomic_compare_exchange_1(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return __atomic_compare_exchange_1(x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned char atomic_exchange_byte(unsigned char* x, unsigned char y) {
+	return __atomic_exchange_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_add_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_add_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_sub_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_sub_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_and_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_and_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_or_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_or_1(x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned char y) {
+	return __atomic_fetch_xor_1(x, y, memory_order_seq_cst);
+}
+
+#ifdef __aarch64__
+// must has an `extern` to link with libatomic.a
+
+// acq_rel version
+extern inline _Bool __aarch64_cas1_acq_rel(unsigned char*ptr, unsigned char*expected, unsigned char desired) {
+    return __atomic_compare_exchange_1(
+        ptr,
+        expected,
+        desired,
+		memory_order_acq_rel,
+		memory_order_acquire
+    );
+}
+
+extern inline _Bool __aarch64_cas2_acq_rel(unsigned short*ptr, unsigned short*expected, unsigned short desired) {
+    return __atomic_compare_exchange_2(
+        ptr,
+        expected,
+        desired,
+		memory_order_acq_rel,
+		memory_order_acquire
+    );
+}
+
+extern inline _Bool __aarch64_cas4_acq_rel(unsigned int*ptr, unsigned int*expected, unsigned int desired) {
+    return __atomic_compare_exchange_4(
+        ptr,
+        expected,
+        desired,
+        memory_order_acq_rel,
+        memory_order_acquire
+    );
+}
+
+extern inline _Bool __aarch64_cas8_acq_rel(unsigned long long*ptr, unsigned long long*expected, unsigned long long desired) {
+    return __atomic_compare_exchange_8(
+        ptr,
+        expected,
+        desired,
+        memory_order_acq_rel,
+        memory_order_acquire
+    );
+}
+
+extern inline char __aarch64_ldadd1_acq_rel(char*ptr, char value) {
+    return __atomic_fetch_add_1(
+        (unsigned char*)ptr,
+        (unsigned char)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline short __aarch64_ldadd2_acq_rel(short*ptr, short value) {
+    return __atomic_fetch_add_2(
+        (unsigned short*)ptr,
+        (unsigned short)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline int __aarch64_ldadd4_acq_rel(int*ptr, int value) {
+    return __atomic_fetch_add_4(
+        (unsigned int*)ptr,
+        (unsigned int)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline long long __aarch64_ldadd8_acq_rel(long long*ptr, long long value) {
+    return __atomic_fetch_add_8(
+        (unsigned long long*)ptr,
+        (unsigned long long)value,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_swp1_acq_rel(unsigned char*ptr, unsigned char newval) {
+    return __atomic_exchange_1(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_swp2_acq_rel(unsigned short*ptr, unsigned short newval) {
+    return __atomic_exchange_2(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_swp4_acq_rel(unsigned int*ptr, unsigned int newval) {
+    return __atomic_exchange_4(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_swp8_acq_rel(unsigned long long*ptr, unsigned long long newval) {
+    return __atomic_exchange_8(
+        ptr,
+        newval,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_ldclr1_acq_rel(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_and_1(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_ldclr2_acq_rel(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_and_2(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_ldclr4_acq_rel(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_and_4(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_ldclr8_acq_rel(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_and_8(
+        ptr,
+        ~mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_ldset1_acq_rel(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_or_1(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_ldset2_acq_rel(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_or_2(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_ldset4_acq_rel(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_or_4(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_ldset8_acq_rel(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_or_8(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned char __aarch64_ldeor1_acq_rel(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_xor_1(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned short __aarch64_ldeor2_acq_rel(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_xor_2(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned int __aarch64_ldeor4_acq_rel(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_xor_4(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+extern inline unsigned long long __aarch64_ldeor8_acq_rel(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_xor_8(
+        ptr,
+        mask,
+        memory_order_acq_rel
+    );
+}
+
+// relax version
+extern inline _Bool __aarch64_cas1_relax(unsigned char*ptr, unsigned char*expected, unsigned char desired) {
+    return __atomic_compare_exchange_1(
+        ptr,
+        expected,
+        desired,
+		memory_order_relaxed,
+		memory_order_relaxed
+    );
+}
+
+extern inline _Bool __aarch64_cas2_relax(unsigned short*ptr, unsigned short*expected, unsigned short desired) {
+    return __atomic_compare_exchange_2(
+        ptr,
+        expected,
+        desired,
+		memory_order_relaxed,
+		memory_order_relaxed
+    );
+}
+
+extern inline _Bool __aarch64_cas4_relax(unsigned int*ptr, unsigned int*expected, unsigned int desired) {
+    return __atomic_compare_exchange_4(
+        ptr,
+        expected,
+        desired,
+        memory_order_relaxed,
+        memory_order_relaxed
+    );
+}
+
+extern inline _Bool __aarch64_cas8_relax(unsigned long long*ptr, unsigned long long*expected, unsigned long long desired) {
+    return __atomic_compare_exchange_8(
+        ptr,
+        expected,
+        desired,
+        memory_order_relaxed,
+        memory_order_relaxed
+    );
+}
+
+extern inline char __aarch64_ldadd1_relax(char*ptr, char value) {
+    return __atomic_fetch_add_1(
+        (unsigned char*)ptr,
+        (unsigned char)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline short __aarch64_ldadd2_relax(short*ptr, short value) {
+    return __atomic_fetch_add_2(
+        (unsigned short*)ptr,
+        (unsigned short)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline int __aarch64_ldadd4_relax(int*ptr, int value) {
+    return __atomic_fetch_add_4(
+        (unsigned int*)ptr,
+        (unsigned int)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline long long __aarch64_ldadd8_relax(long long*ptr, long long value) {
+    return __atomic_fetch_add_8(
+        (unsigned long long*)ptr,
+        (unsigned long long)value,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_swp1_relax(unsigned char*ptr, unsigned char newval) {
+    return __atomic_exchange_1(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_swp2_relax(unsigned short*ptr, unsigned short newval) {
+    return __atomic_exchange_2(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_swp4_relax(unsigned int*ptr, unsigned int newval) {
+    return __atomic_exchange_4(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_swp8_relax(unsigned long long*ptr, unsigned long long newval) {
+    return __atomic_exchange_8(
+        ptr,
+        newval,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_ldclr1_relax(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_and_1(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_ldclr2_relax(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_and_2(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_ldclr4_relax(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_and_4(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_ldclr8_relax(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_and_8(
+        ptr,
+        ~mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_ldset1_relax(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_or_1(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_ldset2_relax(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_or_2(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_ldset4_relax(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_or_4(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_ldset8_relax(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_or_8(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned char __aarch64_ldeor1_relax(unsigned char*ptr, unsigned char mask) {
+    return __atomic_fetch_xor_1(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned short __aarch64_ldeor2_relax(unsigned short*ptr, unsigned short mask) {
+    return __atomic_fetch_xor_2(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned int __aarch64_ldeor4_relax(unsigned int*ptr, unsigned int mask) {
+    return __atomic_fetch_xor_4(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+extern inline unsigned long long __aarch64_ldeor8_relax(unsigned long long*ptr, unsigned long long mask) {
+    return __atomic_fetch_xor_8(
+        ptr,
+        mask,
+        memory_order_relaxed
+    );
+}
+
+#endif // __aarch64__
+
+#else
+
+// Since V might be confused with "generic" C functions either we provide special versions
+// for gcc/clang, too
+static inline unsigned long long atomic_load_u64(uint64_t* x) {
+	return atomic_load_explicit((_Atomic (uint64_t)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_u64(uint64_t* x, uint64_t y) {
+	atomic_store_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u64(uint64_t* x, uint64_t* expected, uint64_t y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(uint64_t)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u64(uint64_t* x, uint64_t* expected, uint64_t y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(uint64_t)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_exchange_u64(uint64_t* x, uint64_t y) {
+	return atomic_exchange_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_add_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_add_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_sub_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_sub_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_and_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_and_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_or_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_or_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned long long atomic_fetch_xor_u64(uint64_t* x, uint64_t y) {
+	return atomic_fetch_xor_explicit((_Atomic(uint64_t)*)x, y, memory_order_seq_cst);
+}
+
+
+static inline void* atomic_load_ptr(void** x) {
+	return (void*)atomic_load_explicit((_Atomic(uintptr_t)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_ptr(void** x, void* y) {
+	atomic_store_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_ptr(void** x, void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(uintptr_t)*)x, (unsigned long *)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_ptr(void** x, void** expected, intptr_t y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(uintptr_t)*)x, (unsigned long *)expected, (uintptr_t)y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline void* atomic_exchange_ptr(void** x, void* y) {
+	return (void*)atomic_exchange_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_add_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_add_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_sub_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_sub_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_and_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_and_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_or_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_or_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+static inline void* atomic_fetch_xor_ptr(void** x, void* y) {
+	return (void*)atomic_fetch_xor_explicit((_Atomic(uintptr_t)*)x, (uintptr_t)y, memory_order_seq_cst);
+}
+
+
+static inline unsigned atomic_load_u32(unsigned* x) {
+	return atomic_load_explicit((_Atomic(unsigned)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_u32(unsigned* x, unsigned y) {
+	atomic_store_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(unsigned)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u32(unsigned* x, unsigned* expected, unsigned y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(unsigned)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned atomic_exchange_u32(unsigned* x, unsigned y) {
+	return atomic_exchange_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_add_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_add_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_sub_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_sub_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_and_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_and_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_or_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_or_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned atomic_fetch_xor_u32(unsigned* x, unsigned y) {
+	return atomic_fetch_xor_explicit((_Atomic(unsigned)*)x, y, memory_order_seq_cst);
+}
+
+static inline unsigned short atomic_load_u16(unsigned short* x) {
+	return atomic_load_explicit((_Atomic(unsigned short)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_u16(void* x, unsigned short y) {
+	atomic_store_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_u16(void* x, unsigned short* expected, unsigned short y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(unsigned short)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_u16(unsigned short* x, unsigned short* expected, unsigned short y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(unsigned short)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned short atomic_exchange_u16(unsigned short* x, unsigned short y) {
+	return atomic_exchange_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_add_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_add_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_sub_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_sub_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_and_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_and_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_or_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_or_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned short atomic_fetch_xor_u16(unsigned short* x, unsigned short y) {
+	return atomic_fetch_xor_explicit((_Atomic(unsigned short)*)x, y, memory_order_seq_cst);
+}
+
+static inline unsigned char atomic_load_byte(unsigned char* x) {
+	return atomic_load_explicit((_Atomic(unsigned char)*)x, memory_order_seq_cst);
+}
+static inline void atomic_store_byte(unsigned char* x, unsigned char y) {
+	atomic_store_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_weak_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return (int)atomic_compare_exchange_weak_explicit((_Atomic(unsigned char)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline int atomic_compare_exchange_strong_byte(unsigned char* x, unsigned char* expected, unsigned char y) {
+	return (int)atomic_compare_exchange_strong_explicit((_Atomic(unsigned char)*)x, expected, y, memory_order_seq_cst, memory_order_seq_cst);
+}
+static inline unsigned char atomic_exchange_byte(unsigned char* x, unsigned char y) {
+	return atomic_exchange_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_add_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_add_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_sub_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_sub_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_and_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_and_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_or_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_or_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+static inline unsigned char atomic_fetch_xor_byte(unsigned char* x, unsigned char y) {
+	return atomic_fetch_xor_explicit((_Atomic(unsigned char)*)x, y, memory_order_seq_cst);
+}
+
+#endif
+#endif
+
+
+#if defined(__TINYC__)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:16:
+#ifndef V_TCC_STDATOMIC_COMPAT_CLEANED
+#define V_TCC_STDATOMIC_COMPAT_CLEANED
+
+#undef _Atomic
+#undef atomic_thread_fence
+#undef __atomic_thread_fence
+#undef atomic_load
+#undef atomic_store
+#undef atomic_compare_exchange_weak
+#undef atomic_compare_exchange_strong
+#undef atomic_exchange
+#undef atomic_fetch_add
+#undef atomic_fetch_sub
+#undef atomic_fetch_and
+#undef atomic_fetch_or
+#undef atomic_fetch_xor
+#undef atomic_load_explicit
+#undef atomic_store_explicit
+#undef atomic_compare_exchange_weak_explicit
+#undef atomic_compare_exchange_strong_explicit
+#undef atomic_exchange_explicit
+#undef atomic_fetch_add_explicit
+#undef atomic_fetch_sub_explicit
+#undef memory_order_relaxed
+#undef memory_order_consume
+#undef memory_order_acquire
+#undef memory_order_release
+#undef memory_order_acq_rel
+#undef memory_order_seq_cst
+
+#undef atomic_load_ptr
+#undef atomic_store_ptr
+#undef atomic_compare_exchange_weak_ptr
+#undef atomic_compare_exchange_strong_ptr
+#undef atomic_exchange_ptr
+#undef atomic_fetch_add_ptr
+#undef atomic_fetch_sub_ptr
+#undef atomic_fetch_and_ptr
+#undef atomic_fetch_or_ptr
+#undef atomic_fetch_xor_ptr
+
+#define atomic_load_ptr v_tcc_compat_atomic_load
+#define atomic_store_ptr v_tcc_compat_atomic_store
+#define atomic_compare_exchange_weak_ptr v_tcc_compat_atomic_compare_exchange_weak
+#define atomic_compare_exchange_strong_ptr v_tcc_compat_atomic_compare_exchange_strong
+#define atomic_exchange_ptr v_tcc_compat_atomic_exchange
+#define atomic_fetch_add_ptr v_tcc_compat_atomic_fetch_add
+#define atomic_fetch_sub_ptr v_tcc_compat_atomic_fetch_sub
+#define atomic_fetch_and_ptr v_tcc_compat_atomic_fetch_and
+#define atomic_fetch_or_ptr v_tcc_compat_atomic_fetch_or
+#define atomic_fetch_xor_ptr v_tcc_compat_atomic_fetch_xor
+
+#endif
+
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:19:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE_PRE
+
+/*
+ * FreeBSD's stdatomic.h calls this runtime helper. Keep the declaration
+ * unprototyped until memory_order is available from that header.
+ */
+void __atomic_thread_fence();
+
+#endif
+
+#endif
+
+#if defined(__TINYC__)
+
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+
+#ifdef __TINYC__
+#include <stdatomic.h>
+#else
+#if defined(__has_include)
+#if __has_include(<stdatomic.h>)
+#include <stdatomic.h>
+#else
+#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#endif
+#else
+#include <stdatomic.h>
+#endif
+#endif
+
+
+#if defined(__linux__)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:24:
+/* TCC's Linux runtime exports __atomic_thread_fence, while its standard
+ * header maps that symbol in the opposite direction. */
+#undef atomic_thread_fence
+#undef __atomic_thread_fence
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+
+#endif
+#endif
+
+#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:28:
+#ifndef V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+#define V_TCC_STDATOMIC_FREEBSD_AMD64_FENCE
+
+/*
+ * New TCC runtimes export atomic_thread_fence, while older ones export
+ * __atomic_thread_fence. The older strong definition overrides this fallback.
+ */
+#undef __atomic_thread_fence
+__attribute__((weak)) void __atomic_thread_fence(memory_order order)
+{
+	(void)order;
+	__asm__ __volatile__("lock orq $0,(%%rsp)" ::: "memory");
+}
+
+#endif
+
 #endif
 #endif
 
 #if defined(CUSTOM_DEFINE_valgrind)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:135:
+// added by module `sync.stdatomic`, file: 1.declarations.c.v:143:
 
 #ifdef __TINYC__
 #include <valgrind/helgrind.h>
@@ -18347,6 +21872,8 @@ struct v__gen__c__Gen {
 	v__ast__FnDecl* fn_decl;
 	string last_fn_c_name;
 	int tmp_count;
+	Map_string_int user_goto_label_ids;
+	int user_goto_label_count;
 	int tmp_count_af;
 	int tmp_count_declarations;
 	int global_tmp_count;
@@ -20498,7 +24025,7 @@ bool v__token__Kind_is_infix(v__token__Kind kind);
 string v__token__kind_to_string(v__token__Kind k);
 v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op);
 void v__dotgraph__start_digraph(void);
-VV_LOC void anon_fn_40181cb3d9c4559e_273__81(void);
+VV_LOC void anon_fn_40181cb3d9c4559e_274__81(void);
 v__dotgraph__DotGraph* v__dotgraph__new(string name, string label, string color);
 void v__dotgraph__DotGraph_writeln(v__dotgraph__DotGraph* d, string line);
 void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d);
@@ -22158,11 +25685,11 @@ VV_LOC bool v__gen__c__Gen_type_needs_deep_scope_gc_pin(v__gen__c__Gen* g, v__as
 VV_LOC bool v__gen__c__Gen_scope_var_needs_deep_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC bool v__gen__c__Gen_scope_gc_pin_var_available(v__gen__c__Gen* g, v__ast__Var obj, int node_pos);
 VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c__Gen* g, int node_pos);
-VV_LOC int anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_309391(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_f69424a11d878682_283_ref_ast__Var_ref_ast__Var__int_309539(v__ast__Var* a, v__ast__Var* b);
 VV_LOC void v__gen__c__Gen_scope_gc_pin_postgen(v__gen__c__Gen* g, Array_v__gen__c__ScopeGcPin pins);
 VV_LOC bool v__gen__c__Gen_scope_var_needs_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos pos);
-VV_LOC int anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_314279(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_f69424a11d878682_283_ref_ast__Var_ref_ast__Var__int_314427(v__ast__Var* a, v__ast__Var* b);
 VV_LOC bool v__gen__c__gc_pin_has_named_storage(string name);
 VV_LOC bool v__gen__c__Gen_has_veb_context(v__gen__c__Gen* g, v__ast__Type typ);
 VV_LOC _option_v__ast__Param v__gen__c__Gen_implicit_veb_ctx_alias_target(v__gen__c__Gen* g, v__ast__Var obj);
@@ -22200,8 +25727,6 @@ VV_LOC void v__gen__c__Gen_hash_stmt(v__gen__c__Gen* g, v__ast__HashStmt _v_tohe
 VV_LOC bool v__gen__c__is_objc_hash_target(string kind, string raw_target);
 VV_LOC void v__gen__c__Gen_gen_hash_stmts(v__gen__c__Gen* g, strings__Builder* sb, v__ast__HashStmtNode* node, string section);
 VV_LOC void v__gen__c__Gen_gen_hash_stmts_in_top(v__gen__c__Gen* g);
-VV_LOC string v__gen__c__labeled_continue_flag_name(string label);
-VV_LOC string v__gen__c__labeled_continue_entry_label_name(string label);
 VV_LOC void v__gen__c__Gen_branch_stmt(v__gen__c__Gen* g, v__ast__BranchStmt node);
 VV_LOC void v__gen__c__Gen_return_stmt(v__gen__c__Gen* g, v__ast__Return node);
 VV_LOC v__ast__Expr v__gen__c__unwrap_paren_call_expr(v__ast__Expr expr);
@@ -22230,6 +25755,8 @@ VV_LOC void v__gen__c__Gen_write_main_error_propagation_panic_tail(v__gen__c__Ge
 VV_LOC v__ast__Type v__gen__c__Gen_or_type_with_auto_deref(v__gen__c__Gen* g, v__ast__Ident node, v__ast__Type typ);
 VV_LOC void v__gen__c__Gen_or_block(v__gen__c__Gen* g, string var_name, v__ast__OrExpr or_block, v__ast__Type return_type);
 VV_LOC string v__gen__c__c_name(string name_);
+VV_LOC string v__gen__c__Gen_user_goto_label_name(v__gen__c__Gen* g, string name);
+VV_LOC string v__gen__c__Gen_user_goto_label_control_name(v__gen__c__Gen* g, string name, string suffix);
 VV_LOC string v__gen__c__c_fn_name(string name_);
 VV_LOC string v__gen__c__Gen_type_default_sumtype(v__gen__c__Gen* g, v__ast__Type typ_, v__ast__TypeSymbol sym);
 VV_LOC string v__gen__c__Gen_type_default_no_sumtype(v__gen__c__Gen* g, v__ast__Type typ_);
@@ -22683,6 +26210,8 @@ VV_LOC string v__gen__c__Gen_get_cur_thread_stack_size(v__gen__c__Gen* g, string
 VV_LOC string v__gen__c__Gen_gen_gohandle_name(v__gen__c__Gen* g, v__ast__Type typ);
 VV_LOC void v__gen__c__Gen_create_waiter_handler(v__gen__c__Gen* g, v__ast__Type call_ret_type, string s_ret_typ, string gohandle_name);
 VV_LOC void v__gen__c__Gen_string_literal(v__gen__c__Gen* g, v__ast__StringLiteral node);
+VV_LOC _option_Array_string v__gen__c__c_string_literal_payload_units(string value);
+VV_LOC bool v__gen__c__Gen_write_c_string_literal_exact_array_initializer(v__gen__c__Gen* g, string value, int size, string elem_styp);
 VV_LOC void v__gen__c__Gen_string_inter_literal_sb_optimized(v__gen__c__Gen* g, v__ast__CallExpr call_expr);
 VV_LOC v__ast__Type v__gen__c__Gen_option_mut_param_surface_type(v__gen__c__Gen* g, v__ast__Expr expr);
 VV_LOC v__ast__Type v__gen__c__Gen_option_mut_param_surface_type_from_var(v__gen__c__Gen* g, string name, v__ast__Var var);
@@ -22702,6 +26231,9 @@ VV_LOC bool v__gen__c__Gen_should_materialize_windows_liveshared_string(v__gen__
 VV_LOC bool v__gen__c__Gen_gen_windows_liveshared_string_tmp(v__gen__c__Gen* g, v__ast__Expr expr, v__ast__Type typ);
 VV_LOC void v__gen__c__Gen_struct_init(v__gen__c__Gen* g, v__ast__StructInit node);
 VV_LOC bool v__gen__c__Gen_can_use_direct_heap_struct_init(v__gen__c__Gen* g, v__ast__StructInit node, v__ast__TypeSymbol sym, int aligned, bool const_msvc_init);
+VV_LOC bool v__gen__c__Gen_is_translated_c_string_fixed_char_array_field(v__gen__c__Gen* g, v__ast__StructInitField field);
+VV_LOC _option_v__ast__Type v__gen__c__Gen_translated_c_string_fixed_char_array_pointer_type(v__gen__c__Gen* g, v__ast__StructInitField field);
+VV_LOC bool v__gen__c__Gen_write_translated_c_string_exact_fixed_char_array_field(v__gen__c__Gen* g, v__ast__StructInitField field);
 VV_LOC void v__gen__c__Gen_direct_heap_struct_init(v__gen__c__Gen* g, v__ast__StructInit node, string styp, v__ast__Struct info, v__ast__Language language);
 VV_LOC string v__gen__c__Gen_get_embed_field_name(v__gen__c__Gen* g, v__ast__Type field_type, string field_name);
 VV_LOC void v__gen__c__Gen_init_shared_field(v__gen__c__Gen* g, v__ast__StructField field);
@@ -23376,6 +26908,9 @@ VV_LOC v__ast__Type v__checker__Checker_struct_init_selector_type_expr(v__checke
 VV_LOC v__ast__Type v__checker__Checker_struct_init_type_expr(v__checker__Checker* c, v__ast__Expr* expr);
 VV_LOC bool v__checker__Checker_struct_init_uses_comptime_type_accessor(v__checker__Checker* c, v__ast__Expr expr);
 VV_LOC v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__ast__StructInit* node, bool is_field_zero_struct_init, Array_string* inited_fields);
+VV_LOC bool v__checker__Checker_is_translated_c_string_fixed_char_array(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type expected);
+VV_LOC bool v__checker__Checker_is_translated_c_string_fixed_char_array_pointer(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type expected);
+VV_LOC _option_int v__checker__c_string_literal_payload_len(string value);
 VV_LOC bool v__checker__Checker_has_direct_numeric_alias_struct_init_mismatch(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type got, v__ast__Type expected);
 VV_LOC void v__checker__Checker_check_uninitialized_struct_fields_and_embeds(v__checker__Checker* c, v__ast__StructInit node, v__ast__TypeSymbol type_sym, v__ast__Struct* info, Array_string* inited_fields);
 VV_LOC void v__checker__Checker_check_ref_fields_initialized(v__checker__Checker* c, v__ast__TypeSymbol* struct_sym, Array_v__ast__Type* checked_types, string linked_name, v__token__Pos* pos);
@@ -24056,9 +27591,11 @@ VV_LOC _result_void v__builder__cbuilder__parallel_cc(v__builder__Builder* b, v_
 VV_LOC voidptr v__builder__cbuilder__build_parallel_o_cb(sync__pool__PoolProcessor* p, int idx, int _wid);
 VV_LOC void v__builder__cbuilder__eprint_result_time(time__StopWatch sw, string label, string cmd, os__Result res);
 VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label);
+VV_LOC bool main__macos_v3_driver_is_available(void);
+VV_LOC void main__macos_v3_driver_run(Array_string _d1);
 VV_LOC v__util__Timers* main__timers_pointer(v__util__Timers* p);
 VV_LOC void main__main(void);
-VV_LOC void anon_fn_6a0ddf9f315b536f_46__1976(void);
+VV_LOC void anon_fn_6a0ddf9f315b536f_47__1976(void);
 VV_LOC void main__invoke_help_and_exit(Array_string remaining);
 VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs);
 VV_LOC bool main__is_ownership_relevant_command(string command, v__pref__Preferences* prefs);
@@ -33747,11 +37284,11 @@ string _v_dump_expr_string(string fpath, int line, string sexpr, string dump_arg
 
 
 // V anon functions:
-VV_LOC void anon_fn_40181cb3d9c4559e_273__81(void) {
+VV_LOC void anon_fn_40181cb3d9c4559e_274__81(void) {
 	builtin__println(_S("}"));
 }
 
-VV_LOC int anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_309391(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_f69424a11d878682_283_ref_ast__Var_ref_ast__Var__int_309539(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -33767,7 +37304,7 @@ VV_LOC int anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_309391(v_
 	return 0;
 }
 
-VV_LOC int anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_314279(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_f69424a11d878682_283_ref_ast__Var_ref_ast__Var__int_314427(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -33783,7 +37320,7 @@ VV_LOC int anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_314279(v_
 	return 0;
 }
 
-VV_LOC void anon_fn_6a0ddf9f315b536f_46__1976(void) {
+VV_LOC void anon_fn_6a0ddf9f315b536f_47__1976(void) {
 	v__util__Timers* timers = main__timers_pointer(((void*)0));
 	v__util__Timers_show(timers, _S("TOTAL"));
 }
@@ -39888,7 +43425,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("877219c");
+	return _S("8eb7f31");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -46240,7 +49777,7 @@ v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op) {
 }
 void v__dotgraph__start_digraph(void) {
 	builtin__println(_S("digraph G {"));
-	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_40181cb3d9c4559e_273__81);
+	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_40181cb3d9c4559e_274__81);
 	(void)_t1;
  ;
 }
@@ -46298,8 +49835,14 @@ inline u64 hash__fnv1a__sum64_string(string data) {
 	#if defined(__TINYC__)
 	#endif
 	#if defined(__TINYC__)
+	#endif
+	#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
+	#endif
+	#if defined(__TINYC__)
 		#if defined(__linux__)
 		#endif
+	#endif
+	#if defined(__TINYC__) && defined(__FreeBSD__) && defined(__V_amd64)
 	#endif
 #endif
 #if defined(__linux__)
@@ -53920,11 +57463,11 @@ VV_LOC multi_return_bool_string_int_Array_string v__cflag__find_first_existing_p
 }
 _option_string v__cflag__CFlag_eval(v__cflag__CFlag* cf) {
 	strings__Builder value_builder = strings__new_builder(10 * cf->value.len);
-	cflag_eval_outer_loop:
+	__v_user_goto_0:
 	for (int i = 0; i < cf->value.len; i++) {
-	bool v__labeled_continue_cflag_eval_outer_loop = false;
-	cflag_eval_outer_loop__continue_entry: {}
-	if (v__labeled_continue_cflag_eval_outer_loop) goto cflag_eval_outer_loop__continue;
+	bool __v_user_goto_0__continue_flag = false;
+	__v_user_goto_0__continue_entry: {}
+	if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 	{
 		u8 x = builtin__string_at(cf->value, i);
 		if (x == '$') {
@@ -53958,9 +57501,9 @@ _option_string v__cflag__CFlag_eval(v__cflag__CFlag* cf) {
 		}
 		strings__Builder_write_string(&value_builder, builtin__u8_ascii_str(x));
 	}
-	cflag_eval_outer_loop__continue: {}
+	__v_user_goto_0__continue: {}
 	}
-	cflag_eval_outer_loop__break: {}
+	__v_user_goto_0__break: {}
 	_option_string _t2;
 	builtin___option_ok(&(string[]) { strings__Builder_str(&value_builder) }, (_option*)(&_t2), sizeof(string));
 	 
@@ -55161,7 +58704,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("0d38e8ad083e4e16058bfa5e2255d387e55ef2f0");
+	string vhash = _S("877219c8dfb20663faef45699b59d5d50645fbea");
 	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t6 = builtin__string_trim_space(p->cflags);
@@ -57428,12 +60971,12 @@ Array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Prefere
 	if (files.len > 0) { v_stable_sort(files.data, files.len, files.element_size, compare_9744773119162614055_string_qsort_adapter); }
 	;
 	Array_string all_v_files = builtin____new_array_with_default(0, 0, sizeof(string), 0);
-		files_loop: {}
+		__v_user_goto_0: {}
 	for (int _t1 = 0; _t1 < files.len; ++_t1) {
 		string file = ((string*)files.data)[_t1];
-		bool v__labeled_continue_files_loop = false;
-		files_loop__continue_entry: {}
-		if (v__labeled_continue_files_loop) goto files_loop__continue;
+		bool __v_user_goto_0__continue_flag = false;
+		__v_user_goto_0__continue_entry: {}
+		if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 		{
 		if (!builtin__string_ends_with(file, _S(".v")) && !builtin__string_ends_with(file, _S(".vh"))) {
 			continue;
@@ -57513,16 +61056,16 @@ Array_string v__pref__Preferences_should_compile_filtered_files(v__pref__Prefere
 			for (int _t6 = 0; _t6 < prefs->exclude.len; ++_t6) {
 				string epattern = ((string*)prefs->exclude.data)[_t6];
 				if (builtin__string_match_glob(full_file_path, epattern)) {
-					v__labeled_continue_files_loop = true;
-					goto files_loop__continue_entry;
+					__v_user_goto_0__continue_flag = true;
+					goto __v_user_goto_0__continue_entry;
 				}
 			}
 		}
 		builtin__array_push((array*)&all_v_files, _MOV((string[]){ os__join_path(dir, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){file}))) }));
 		}
-		files_loop__continue: {}
+		__v_user_goto_0__continue: {}
 	}
-		files_loop__break: {}
+		__v_user_goto_0__break: {}
 	Array_string defaults = builtin____new_array_with_default(0, 0, sizeof(string), 0);
 	Map_string_Array_string fnames_no_postfixes = builtin__new_map(sizeof(string), sizeof(Array_string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
 	;
@@ -59214,7 +62757,7 @@ VNORETURN void v__util__launch_tool(bool is_verbose, string tool_name, Array_str
 			;
 		} else {
 			;
-			if (os__filelock__FileLock_wait_acquire(&l, 60 * _const_time__second)) {
+			if (os__filelock__FileLock_wait_acquire(&l, 5 * _const_time__minute)) {
 				;
 				os__filelock__FileLock_release(&l);
 			} else {
@@ -59333,9 +62876,9 @@ string v__util__path_of_executable(string path) {
 }
 _result_string v__util__cached_read_source_file(string path) {
 	static v__util__SourceCache* cache;
-	static bool _vstatic_init_16081;
-	if (!_vstatic_init_16081) {
-		_vstatic_init_16081 = true;
+	static bool _vstatic_init_16115;
+	if (!_vstatic_init_16115) {
+		_vstatic_init_16115 = true;
 		cache = ((v__util__SourceCache*)(((void*)0)));
 	}
 	if (cache == ((void*)0)) {
@@ -79238,7 +82781,10 @@ void v__markused__mark_used(v__ast__Table* table, v__pref__Preferences* pref_, A
 VV_LOC void v__markused__all_global_decl_in_stmts(Array_v__ast__Stmt stmts, Map_string_v__ast__FnDecl* all_fns, Map_string_v__ast__ConstField* all_consts, Map_string_v__ast__GlobalField* all_globals, Map_string_v__ast__TypeDecl* all_decltypes, Map_string_v__ast__StructDecl* all_structs) {
 	for (int _t1 = 0; _t1 < stmts.len; ++_t1) {
 		v__ast__Stmt node = ((v__ast__Stmt*)stmts.data)[_t1];
-		if (node._typ == 300) {
+		if (node._typ == 314) {
+			v__markused__all_global_decl_in_stmts((*node._v__ast__Block).stmts, all_fns, all_consts, all_globals, all_decltypes, all_structs);
+		}
+		else if (node._typ == 300) {
 			string fkey = v__ast__FnDecl_fkey(&(*node._v__ast__FnDecl));
 			if (!_IN_MAP(ADDR(string, fkey), all_fns) || !(*node._v__ast__FnDecl).no_body) {
 (*(v__ast__FnDecl*)builtin__map_get_and_set((map*)all_fns, &(string[]){fkey}, &(v__ast__FnDecl[]){ (v__ast__FnDecl){.name = (string){.str=(byteptr)"", .is_lit=1},.short_name = (string){.str=(byteptr)"", .is_lit=1},.mod = (string){.str=(byteptr)"", .is_lit=1},.kind = 0,.is_deprecated = 0,.is_pub = 0,.is_c_variadic = 0,.is_c_extern = 0,.is_variadic = 0,.is_anon = 0,.is_weak = 0,.is_noreturn = 0,.is_manualfree = 0,.is_main = 0,.is_test = 0,.is_conditional = 0,.is_exported = 0,.is_keep_alive = 0,.is_unsafe = 0,.is_must_use = 0,.is_markused = 0,.is_ignore_overflow = 0,.is_file_translated = 0,.is_closure = 0,.receiver = (v__ast__StructField){.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.type_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.option_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.i = 0,.has_default_expr = 0,.has_prev_newline = 0,.has_break_line = 0,.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.is_deprecated = 0,.is_embed = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.next_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.is_recursive = 0,.is_part_of_union = 0,.container_typ = 0,.default_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,.unaliased_typ = 0,.anon_struct_decl = (v__ast__StructDecl){.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.name = (string){.str=(byteptr)"", .is_lit=1},.scoped_name = (string){.str=(byteptr)"", .is_lit=1},.generic_types = builtin____new_array(0, 0, sizeof(v__ast__Type)),.is_pub = 0,.mut_pos = -1,.pub_pos = -1,.pub_mut_pos = -1,.global_pos = -1,.module_pos = -1,.is_union = 0,.is_option = 0,.is_aligned = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.end_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.embeds = builtin____new_array(0, 0, sizeof(v__ast__Embed)),.is_implements = 0,.implements_types = builtin____new_array(0, 0, sizeof(v__ast__TypeNode)),.language = 0,.fields = builtin____new_array(0, 0, sizeof(v__ast__StructField)),.idx = 0,},},.receiver_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.is_method = 0,.is_static_type_method = 0,.static_type_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.method_type_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.method_idx = 0,.rec_mut = 0,.has_prev_newline = 0,.has_break_line = 0,.rec_share = 0,.language = 0,.file_mode = 0,.no_body = 0,.is_builtin = 0,.name_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.body_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.file = (string){.str=(byteptr)"", .is_lit=1},.generic_names = builtin____new_array(0, 0, sizeof(string)),.is_direct_arr = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.ctdefine_idx = -1,.idx = 0,.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.stmts = builtin____new_array(0, 0, sizeof(v__ast__Stmt)),.defer_stmts = builtin____new_array(0, 0, sizeof(v__ast__DeferStmt)),.trace_fns = builtin__new_map(sizeof(string), sizeof(v__ast__FnTrace), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),.return_type = 0,.return_type_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.has_return = 0,.should_be_skipped = 0,.ninstances = 0,.has_await = 0,.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.end_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.next_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.source_file = ((void*)0),.scope = ((void*)0),.label_names = builtin____new_array(0, 0, sizeof(string)),.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.end_pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},.is_expand_simple_interpolation = 0,} })) = (*node._v__ast__FnDecl);
@@ -96890,6 +100436,8 @@ v__gen__c__GenOutput v__gen__c__gen(Array_v__ast__File_ptr files, v__ast__Table*
 		.fn_decl = ((void*)0),
 		.last_fn_c_name = (string){.str=(byteptr)"", .is_lit=1},
 		.tmp_count = 0,
+		.user_goto_label_ids = builtin__new_map(sizeof(string), sizeof(int), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),
+		.user_goto_label_count = 0,
 		.tmp_count_af = 0,
 		.tmp_count_declarations = 0,
 		.global_tmp_count = 0,
@@ -97960,6 +101508,8 @@ VV_LOC voidptr v__gen__c__cgen_process_one_file_cb(sync__pool__PoolProcessor* p,
 		.fn_decl = ((void*)0),
 		.last_fn_c_name = (string){.str=(byteptr)"", .is_lit=1},
 		.tmp_count = 0,
+		.user_goto_label_ids = builtin__new_map(sizeof(string), sizeof(int), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),
+		.user_goto_label_count = 0,
 		.tmp_count_af = 0,
 		.tmp_count_declarations = 0,
 		.global_tmp_count = 0,
@@ -98252,7 +101802,7 @@ void v__gen__c__Gen_free_builders(v__gen__c__Gen* g) {
 void v__gen__c__Gen_gen_file(v__gen__c__Gen* g) {
 	#if defined(CUSTOM_DEFINE_trace_cgen)
 	{
-		builtin__eprintln(builtin__str_intp(6, _MOV((StrIntpData[]){{_S("> "), 0xfe10, {.d_s = _S("/home/runner/work/v/v/vlib/v/gen/c/cgen.v")}, 0, 0, 0}, {_S(":"), 0xfe10, {.d_s = _S("1172")}, 0, 0, 0}, {_S(" | g.file.path: "), 0xfe10, {.d_s = g->file->path}, 0, 0, 0}, {_S(" | g.tid: "), 0xfe10, {.d_s = g->tid}, 0, 0, 0}, {_S(" | g.fid: "), 0x6fe27, {.d_i32 = g->fid}, 0, 0, 0}, {_SLIT0, 0, { .d_c = 0 }, 0, 0, 0}})));
+		builtin__eprintln(builtin__str_intp(6, _MOV((StrIntpData[]){{_S("> "), 0xfe10, {.d_s = _S("/home/runner/work/v/v/vlib/v/gen/c/cgen.v")}, 0, 0, 0}, {_S(":"), 0xfe10, {.d_s = _S("1174")}, 0, 0, 0}, {_S(" | g.file.path: "), 0xfe10, {.d_s = g->file->path}, 0, 0, 0}, {_S(" | g.tid: "), 0xfe10, {.d_s = g->tid}, 0, 0, 0}, {_S(" | g.fid: "), 0x6fe27, {.d_i32 = g->fid}, 0, 0, 0}, {_SLIT0, 0, { .d_c = 0 }, 0, 0, 0}})));
 	}
 	#endif
 	v__util__Timers_start(g->timers, builtin__string_plus_many(2, _MOV((string[2]){_S("cgen_file "), g->file->path})));
@@ -99146,9 +102696,9 @@ VV_LOC string v__gen__c__Gen_result_type_text(v__gen__c__Gen* g, string styp, st
 }
 VV_LOC string v__gen__c__Gen_register_option(v__gen__c__Gen* g, v__ast__Type t) {
 	v__ast__Type resolved_t = v__gen__c__Gen_unwrap_generic(g, t);
-	multi_return_string_string mr_83137 = v__gen__c__Gen_option_type_name(g, resolved_t);
-	string styp = mr_83137.arg0;
-	string base = mr_83137.arg1;
+	multi_return_string_string mr_83231 = v__gen__c__Gen_option_type_name(g, resolved_t);
+	string styp = mr_83231.arg0;
+	string base = mr_83231.arg1;
 	bool is_unresolved_generic = (g->cur_fn != ((void*)0) && (Array_string_contains(g->cur_fn->generic_names, base))) || v__gen__c__Gen_type_has_unresolved_generic_parts(g, resolved_t);
 	if (!is_unresolved_generic) {
 		builtin__map_set(&g->options, &(string[]){base}, &(string[]) { styp });
@@ -99157,9 +102707,9 @@ VV_LOC string v__gen__c__Gen_register_option(v__gen__c__Gen* g, v__ast__Type t) 
 }
 VV_LOC string v__gen__c__Gen_register_result(v__gen__c__Gen* g, v__ast__Type t) {
 	v__ast__Type resolved_t = v__gen__c__Gen_unwrap_generic(g, t);
-	multi_return_string_string mr_83702 = v__gen__c__Gen_result_type_name(g, resolved_t);
-	string styp = mr_83702.arg0;
-	string base = mr_83702.arg1;
+	multi_return_string_string mr_83796 = v__gen__c__Gen_result_type_name(g, resolved_t);
+	string styp = mr_83796.arg0;
+	string base = mr_83796.arg1;
 	bool is_unresolved_generic = (g->cur_fn != ((void*)0) && (Array_string_contains(g->cur_fn->generic_names, base))) || v__gen__c__Gen_type_has_unresolved_generic_parts(g, resolved_t);
 	if (!is_unresolved_generic) {
 		builtin__map_set(&g->results, &(string[]){base}, &(string[]) { styp });
@@ -100055,9 +103605,9 @@ void v__gen__c__Gen_write_typedef_types(v__gen__c__Gen* g) {
 					} else if (!info.is_fn_ret) {
 						string base = v__gen__c__Gen_styp(g, v__ast__Type_clear_option_and_result(info.elem_type));
 						if (v__ast__Type_has_flag(info.elem_type, v__ast__TypeFlag__option) && !(Array_string_contains(g->options_forward, base))) {
-							multi_return_string_string mr_112901 = v__gen__c__Gen_option_type_name(g, info.elem_type);
-							string styp_elem = mr_112901.arg0;
-							string elem_base = mr_112901.arg1;
+							multi_return_string_string mr_112995 = v__gen__c__Gen_option_type_name(g, info.elem_type);
+							string styp_elem = mr_112995.arg0;
+							string elem_base = mr_112995.arg1;
 							sync__RwMutex_lock(&g->done_options->mtx);
 							/*lock*/ {
 								if (!(Array_string_contains(g->done_options->val, base))) {
@@ -100556,9 +104106,9 @@ void v__gen__c__Gen_write_multi_return_types(v__gen__c__Gen* g) {
 			v__ast__Type mr_typ = ((v__ast__Type*)info.types.data)[i];
 			string type_name = v__gen__c__Gen_styp(g, mr_typ);
 			if (v__ast__Type_has_flag(mr_typ, v__ast__TypeFlag__option)) {
-				multi_return_string_string mr_128287 = v__gen__c__Gen_option_type_name(g, mr_typ);
-				string styp = mr_128287.arg0;
-				string base = mr_128287.arg1;
+				multi_return_string_string mr_128381 = v__gen__c__Gen_option_type_name(g, mr_typ);
+				string styp = mr_128381.arg0;
+				string base = mr_128381.arg1;
 				sync__RwMutex_lock(&g->done_options->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_options->val, base))) {
@@ -100573,9 +104123,9 @@ void v__gen__c__Gen_write_multi_return_types(v__gen__c__Gen* g) {
 				sync__RwMutex_unlock(&g->done_options->mtx);;
 			}
 			if (v__ast__Type_has_flag(mr_typ, v__ast__TypeFlag__result)) {
-				multi_return_string_string mr_128883 = v__gen__c__Gen_result_type_name(g, mr_typ);
-				string styp = mr_128883.arg0;
-				string base = mr_128883.arg1;
+				multi_return_string_string mr_128977 = v__gen__c__Gen_result_type_name(g, mr_typ);
+				string styp = mr_128977.arg0;
+				string base = mr_128977.arg1;
 				sync__RwMutex_lock(&g->done_results->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_results->val, base))) {
@@ -101137,9 +104687,9 @@ VV_LOC void v__gen__c__Gen_cleanup_local_closure_vars_on_return(v__gen__c__Gen* 
 	g->closure_cleanup_ignore_keep = true;
 	v__gen__c__Gen_cleanup_local_closure_vars(g, node.pos.pos - 1, node.pos.line_nr, true, -1, g->fn_decl->stmts);
 	g->closure_cleanup_ignore_keep = old_closure_cleanup_ignore_keep;
-	multi_return_Map_string_bool_Map_string_bool mr_144349 = v__gen__c__Gen_returned_var_names_from_return(g, node);
-	Map_string_bool returned_names = mr_144349.arg0;
-	Map_string_bool selector_owner_names = mr_144349.arg1;
+	multi_return_Map_string_bool_Map_string_bool mr_144443 = v__gen__c__Gen_returned_var_names_from_return(g, node);
+	Map_string_bool returned_names = mr_144443.arg0;
+	Map_string_bool selector_owner_names = mr_144443.arg1;
 	v__gen__c__Gen_cleanup_for_c_init_autofree_vars_on_return(g, returned_names, selector_owner_names);
 }
 VV_LOC void v__gen__c__Gen_cleanup_local_closure_vars_before_synthetic_return(v__gen__c__Gen* g, v__ast__Scope* scope, v__token__Pos pos) {
@@ -101797,7 +105347,7 @@ VV_LOC void v__gen__c__Gen_expr_with_tmp_var(v__gen__c__Gen* g, v__ast__Expr exp
 				}
 				bool _t12;
 				if (!(_t8 || _t9)) {
-					_t12 = final_expr_sym->kind == v__ast__Kind__array_fixed;
+					_t12 = final_expr_sym->kind == v__ast__Kind__array_fixed && !v__ast__Type_is_ptr(expr_typ);
 				}
 												
 				if (_t8) {
@@ -102214,11 +105764,11 @@ VV_LOC void v__gen__c__Gen_stmt(v__gen__c__Gen* g, v__ast__Stmt node) {
 		}
 	}
 	else if (node._typ == 520) {
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__c_name((*node._v__ast__GotoLabel).name), _S(": {}")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_name(g, (*node._v__ast__GotoLabel).name), _S(": {}")})));
 	}
 	else if (node._typ == 521) {
 		v__gen__c__Gen_write_v_source_line_info_stmt(g, node);
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("goto "), v__gen__c__c_name((*node._v__ast__GotoStmt).name), _S(";")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("goto "), v__gen__c__Gen_user_goto_label_name(g, (*node._v__ast__GotoStmt).name), _S(";")})));
 	}
 	else if (node._typ == 509) {
 		if (g->is_cc_msvc && !g->pref->output_cross_c) {
@@ -102395,8 +105945,8 @@ VV_LOC void v__gen__c__Gen_write_sumtype_casting_fn(v__gen__c__Gen* g, v__gen__c
 			*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t7.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=((v__ast__StructField){.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.option_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.i = 0,.has_default_expr = 0,.has_prev_newline = 0,.has_break_line = 0,.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.is_deprecated = 0,.is_embed = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.next_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.is_recursive = 0,.is_part_of_union = 0,.container_typ = 0,.default_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,.unaliased_typ = 0,.anon_struct_decl = ((v__ast__StructDecl){.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name = (string){.str=(byteptr)"", .is_lit=1},.scoped_name = (string){.str=(byteptr)"", .is_lit=1},.generic_types = builtin____new_array(0, 0, sizeof(v__ast__Type)),.is_pub = 0,.mut_pos = -1,.pub_pos = -1,.pub_mut_pos = -1,.global_pos = -1,.module_pos = -1,.is_union = 0,.is_option = 0,.is_aligned = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.end_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.embeds = builtin____new_array(0, 0, sizeof(v__ast__Embed)),.is_implements = 0,.implements_types = builtin____new_array(0, 0, sizeof(v__ast__TypeNode)),.language = 0,.fields = builtin____new_array(0, 0, sizeof(v__ast__StructField)),.idx = 0,}),}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 		}
 		
- 		multi_return_v__ast__StructField_Array_v__ast__Type mr_182684 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t7.data);
-		Array_v__ast__Type embed_types = mr_182684.arg1;
+ 		multi_return_v__ast__StructField_Array_v__ast__Type mr_182832 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t7.data);
+		Array_v__ast__Type embed_types = mr_182832.arg1;
 		if (embed_types.len > 0) {
 			v__ast__TypeSymbol* embed_sym = v__ast__Table_sym(g->table, (*(v__ast__Type*)builtin__array_last(embed_types)));
 			ptr = builtin__string_plus_many(2, _MOV((string[2]){v__ast__TypeSymbol_embed_name(embed_sym), _S("_ptr")}));
@@ -106659,7 +110209,7 @@ VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c_
 			builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 		}
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_309391)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_283_ref_ast__Var_ref_ast__Var__int_309539)));
 	Array_v__gen__c__ScopeGcPin pins = builtin____new_array_with_default(0, 0, sizeof(v__gen__c__ScopeGcPin), 0);
 	bool opened_scope = false;
 	for (int _t12 = 0; _t12 < vars.len; ++_t12) {
@@ -106759,7 +110309,7 @@ VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos 
 		builtin__map_set(&seen, &(string[]){var_obj.name}, &(bool[]) { true });
 		builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_282_ref_ast__Var_ref_ast__Var__int_314279)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_283_ref_ast__Var_ref_ast__Var__int_314427)));
 	for (int _t4 = 0; _t4 < vars.len; ++_t4) {
 		v__ast__Var obj = ((v__ast__Var*)vars.data)[_t4];
 		_option_string _t5 = {0};
@@ -106897,11 +110447,11 @@ inline VV_LOC string v__gen__c__Gen_debugger_var_cname(v__gen__c__Gen* g, v__ast
 	return v__gen__c__Gen_var_cname(g, obj);
 }
 VV_LOC void v__gen__c__Gen_debugger_stmt(v__gen__c__Gen* g, v__ast__DebuggerStmt node) {
-	multi_return_int_string_string_string mr_317661 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-	int paline = mr_317661.arg0;
-	string pafile = mr_317661.arg1;
-	string pamod = mr_317661.arg2;
-	string pafn = mr_317661.arg3;
+	multi_return_int_string_string_string mr_317809 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+	int paline = mr_317809.arg0;
+	string pafile = mr_317809.arg1;
+	string pamod = mr_317809.arg2;
+	string pafn = mr_317809.arg3;
 	bool is_anon = g->cur_fn != ((void*)0) && g->cur_fn->is_anon;
 	bool is_generic = g->cur_fn != ((void*)0) && g->cur_fn->generic_names.len > 0;
 	bool is_method = g->cur_fn != ((void*)0) && g->cur_fn->is_method;
@@ -106911,12 +110461,12 @@ VV_LOC void v__gen__c__Gen_debugger_stmt(v__gen__c__Gen* g, v__ast__DebuggerStmt
 	strings__Builder keys = strings__new_builder(100);
 	strings__Builder values = strings__new_builder(100);
 	int count = 1;
-		outer: {}
+		__v_user_goto_0: {}
 	for (int _t1 = 0; _t1 < scope_vars.len; ++_t1) {
 		v__ast__ScopeObject obj = ((v__ast__ScopeObject*)scope_vars.data)[_t1];
-		bool v__labeled_continue_outer = false;
-		outer__continue_entry: {}
-		if (v__labeled_continue_outer) goto outer__continue;
+		bool __v_user_goto_0__continue_flag = false;
+		__v_user_goto_0__continue_entry: {}
+		if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 		{
 		if (!(Array_string_contains(vars, (*(obj.name))))) {
 			if ((Array_string_contains(g->curr_var_name, (*(obj.name))))) {
@@ -107052,8 +110602,8 @@ VV_LOC void v__gen__c__Gen_debugger_stmt(v__gen__c__Gen* g, v__ast__DebuggerStmt
 							strings__Builder_write_string(&values, _S(".data)}"));
 						}
 					} else {
-						multi_return_bool_bool_int mr_321621 = v__ast__TypeSymbol_str_method_info(&cast_sym);
-						bool str_method_expects_ptr = mr_321621.arg1;
+						multi_return_bool_bool_int mr_321769 = v__ast__TypeSymbol_str_method_info(&cast_sym);
+						bool str_method_expects_ptr = mr_321769.arg1;
 						string deref = (var_typ_is_option ? (_S("")) : str_method_expects_ptr && !v__ast__Type_is_ptr((*obj._v__ast__Var).typ) ? (_S("&")) : !str_method_expects_ptr && v__ast__Type_is_ptr((*obj._v__ast__Var).typ) ? (builtin__string_repeat(_S("*"), v__ast__Type_nr_muls((*obj._v__ast__Var).typ))) : !str_method_expects_ptr && (v__ast__TypeSymbol_is_heap(obj_sym) || (*obj._v__ast__Var).is_auto_heap) ? (_S("*")) : (*obj._v__ast__Var).is_auto_heap && v__ast__Type_is_ptr(var_typ) && str_method_expects_ptr ? (_S("*")) : !(*obj._v__ast__Var).is_auto_heap && v__ast__Type_is_ptr(var_typ) && str_method_expects_ptr ? (_S("")) : (*obj._v__ast__Var).is_auto_heap && v__ast__Type_is_ptr(var_typ) ? (_S("*")) : v__ast__Type_is_ptr((*obj._v__ast__Var).typ) && !(*obj._v__ast__Var).is_auto_deref ? (_S("&")) : v__ast__Type_is_ptr((*obj._v__ast__Var).typ) && (*obj._v__ast__Var).is_auto_deref ? (_S("*")) : (_S("")));
 						{
 							strings__Builder_write_string(&values, func);
@@ -107073,9 +110623,9 @@ VV_LOC void v__gen__c__Gen_debugger_stmt(v__gen__c__Gen* g, v__ast__DebuggerStmt
 		}
 		count += 1;
 		}
-		outer__continue: {}
+		__v_user_goto_0__continue: {}
 	}
-		outer__break: {}
+		__v_user_goto_0__break: {}
 	v__gen__c__Gen_writeln(g, _S("{"));
 	v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\tMap_string_string _scope = builtin__new_map_init(&builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string, "), builtin__int_str(vars.len), _S(", sizeof(string), sizeof(v__debug__DebugContextVar),")})));
 	v__gen__c__Gen_write2(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t\t_MOV((string["), builtin__int_str(vars.len), _S("]){")})), strings__Builder_str(&keys));
@@ -107348,19 +110898,19 @@ VV_LOC void v__gen__c__Gen_lock_expr_mtx(v__gen__c__Gen* g, v__ast__Expr expr) {
 	v__gen__c__Gen_write(g, _S("->mtx"));
 }
 VV_LOC void v__gen__c__Gen_map_init(v__gen__c__Gen* g, v__ast__MapInit node) {
-	multi_return_v__ast__Type_v__ast__Type mr_331730 = v__gen__c__Gen_resolved_map_key_value_types(g, node.typ, node.key_type, node.value_type);
-	v__ast__Type unwrap_key_typ = mr_331730.arg0;
-	v__ast__Type unwrap_val_typ_ = mr_331730.arg1;
+	multi_return_v__ast__Type_v__ast__Type mr_331878 = v__gen__c__Gen_resolved_map_key_value_types(g, node.typ, node.key_type, node.value_type);
+	v__ast__Type unwrap_key_typ = mr_331878.arg0;
+	v__ast__Type unwrap_val_typ_ = mr_331878.arg1;
 	v__ast__Type unwrap_val_typ = v__ast__Type_clear_flag(unwrap_val_typ_, v__ast__TypeFlag__result);
 	string key_typ_str = v__gen__c__Gen_styp(g, unwrap_key_typ);
 	string value_typ_str = v__gen__c__Gen_styp(g, unwrap_val_typ);
 	v__ast__TypeSymbol* value_sym = v__ast__Table_sym(g->table, unwrap_val_typ);
 	v__ast__TypeSymbol* key_sym = v__ast__Table_final_sym(g->table, unwrap_key_typ);
-	multi_return_string_string_string_string mr_332070 = v__gen__c__Gen_map_fn_ptrs(g, *key_sym);
-	string hash_fn = mr_332070.arg0;
-	string key_eq_fn = mr_332070.arg1;
-	string clone_fn = mr_332070.arg2;
-	string free_fn = mr_332070.arg3;
+	multi_return_string_string_string_string mr_332218 = v__gen__c__Gen_map_fn_ptrs(g, *key_sym);
+	string hash_fn = mr_332218.arg0;
+	string key_eq_fn = mr_332218.arg1;
+	string clone_fn = mr_332218.arg2;
+	string free_fn = mr_332218.arg3;
 	int size = node.vals.len;
 	string shared_styp = _S("");
 	string styp = _S("");
@@ -108088,8 +111638,8 @@ VV_LOC void v__gen__c__Gen_ident(v__gen__c__Gen* g, v__ast__Ident node) {
 							v__ast__Type ctyp = (is_option && resolved_var.is_unwrapped ? (resolved_var.typ) : is_option && v__ast__Type_has_flag(typ, v__ast__TypeFlag__option) ? (typ) : (v__gen__c__Gen_unwrap_generic(g, v__type_resolver__TypeResolver_get_type(&g->type_resolver, v__ast__Ident_to_sumtype_v__ast__Expr(&node, false)))));
 							string _t13; /* if prepend */
 							if (v__ast__Type_has_flag(ctyp, v__ast__TypeFlag__option)) {
-								multi_return_string_string mr_360925 = v__gen__c__Gen_option_type_name(g, ctyp);
-								string opt_styp = mr_360925.arg0;
+								multi_return_string_string mr_361073 = v__gen__c__Gen_option_type_name(g, ctyp);
+								string opt_styp = mr_361073.arg0;
 								_t13 = opt_styp;
 								goto _t14;
 							};
@@ -108113,8 +111663,8 @@ VV_LOC void v__gen__c__Gen_ident(v__gen__c__Gen* g, v__ast__Ident node) {
 									v__ast__Type cast_typ = (is_option && resolved_var.ct_type_var == v__ast__ComptimeVarKind__smartcast && resolved_var.is_unwrapped && !v__ast__Type_has_flag(typ, v__ast__TypeFlag__option) ? (resolved_var.typ) : (typ));
 									string _t15; /* if prepend */
 									if (v__ast__Type_has_flag(cast_typ, v__ast__TypeFlag__option)) {
-										multi_return_string_string mr_361517 = v__gen__c__Gen_option_type_name(g, cast_typ);
-										string opt_styp = mr_361517.arg0;
+										multi_return_string_string mr_361665 = v__gen__c__Gen_option_type_name(g, cast_typ);
+										string opt_styp = mr_361665.arg0;
 										_t15 = opt_styp;
 										goto _t16;
 									};
@@ -109109,12 +112659,6 @@ VV_LOC void v__gen__c__Gen_gen_hash_stmts_in_top(v__gen__c__Gen* g) {
 	builtin__array_clear(&g->definition_nodes);
 	builtin__array_clear(&g->postinclude_nodes);
 }
-VV_LOC string v__gen__c__labeled_continue_flag_name(string label) {
-	return builtin__string_plus_many(2, _MOV((string[2]){_S("v__labeled_continue_"), label}));
-}
-VV_LOC string v__gen__c__labeled_continue_entry_label_name(string label) {
-	return builtin__string_plus_many(2, _MOV((string[2]){label, _S("__continue_entry")}));
-}
 VV_LOC void v__gen__c__Gen_branch_stmt(v__gen__c__Gen* g, v__ast__BranchStmt node) {
 	if ((node.label).len != 0) {
 		v__ast__Stmt** _t2 = (v__ast__Stmt**)(builtin__map_get_check(ADDR(map, g->labeled_loops), &(string[]){node.label}));
@@ -109170,10 +112714,10 @@ VV_LOC void v__gen__c__Gen_branch_stmt(v__gen__c__Gen* g, v__ast__BranchStmt nod
 			}
 		}
 		if (node.kind == v__token__Kind__key_break) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("goto "), node.label, _S("__break;")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("goto "), v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(";")})));
 		} else {
-			string continue_flag = v__gen__c__labeled_continue_flag_name(node.label);
-			string continue_entry_label = v__gen__c__labeled_continue_entry_label_name(node.label);
+			string continue_flag = v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("continue_flag"));
+			string continue_entry_label = v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("continue_entry"));
 			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){continue_flag, _S(" = true;")})));
 			v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("goto "), continue_entry_label, _S(";")})));
 		}
@@ -109301,7 +112845,7 @@ VV_LOC void v__gen__c__Gen_return_stmt(v__gen__c__Gen* g, v__ast__Return node) {
 				v__gen__c__Gen_cleanup_local_closure_vars_on_return(g, node);
 			}
 			if ((*expr0._v__ast__ComptimeCall).kind == v__ast__ComptimeCallKind__html) {
-				v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("return ("), ret_typ, _S("){0};")})));
+				v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("return ("), ret_typ, _S("){E_STRUCT};")})));
 			} else if (v__ast__Type_has_option_or_result(fn_ret_type)) {
 				string tmp = v__gen__c__Gen_new_tmp_var(g);
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(4, _MOV((string[4]){ret_typ, _S(" "), tmp, _S(" = {0};")})));
@@ -110409,9 +113953,9 @@ VV_LOC bool v__gen__c__Gen_ensure_fixed_array_option_definition(v__gen__c__Gen* 
 	if (v__ast__TypeSymbol_is_builtin(elem_sym)) {
 		return false;
 	}
-	multi_return_string_string mr_427719 = v__gen__c__Gen_option_type_name(g, elem_type);
-	string styp = mr_427719.arg0;
-	string base = mr_427719.arg1;
+	multi_return_string_string mr_427751 = v__gen__c__Gen_option_type_name(g, elem_type);
+	string styp = mr_427751.arg0;
+	string base = mr_427751.arg1;
 	v__gen__c__Gen_ensure_array_typedef(g, base);
 	sync__RwMutex_lock(&g->done_options->mtx);
 	/*lock*/ {
@@ -110819,12 +114363,12 @@ VV_LOC void v__gen__c__Gen_write_sorted_fn_typesymbol_declaration(v__gen__c__Gen
 	}
 	Array_v__ast__TypeSymbol_ptr pending = builtin____new_array_with_default(0, 0, sizeof(v__ast__TypeSymbol*), 0);
 	for (;;) {
-			next: {}
+			__v_user_goto_0: {}
 		for (int _t3 = 0; _t3 < syms.len; ++_t3) {
 			v__ast__TypeSymbol* sym = ((v__ast__TypeSymbol**)syms.data)[_t3];
-			bool v__labeled_continue_next = false;
-			next__continue_entry: {}
-			if (v__labeled_continue_next) goto next__continue;
+			bool __v_user_goto_0__continue_flag = false;
+			__v_user_goto_0__continue_entry: {}
+			if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 			{
 			v__ast__FnType info = *(v__ast__FnType*)builtin____as_cast((sym->info)._v__ast__FnType, (sym->info)._typ, 665);
 			v__ast__Fn func = info.func;
@@ -110838,15 +114382,15 @@ VV_LOC void v__gen__c__Gen_write_sorted_fn_typesymbol_declaration(v__gen__c__Gen
 				v__ast__TypeSymbol* param_sym = v__ast__Table_sym(g->table, param.typ);
 				if ((Array_v__ast__TypeSymbol_ptr_contains(syms, param_sym))) {
 					builtin__array_push((array*)&pending, _MOV((v__ast__TypeSymbol*[]){ sym }));
-					v__labeled_continue_next = true;
-					goto next__continue_entry;
+					__v_user_goto_0__continue_flag = true;
+					goto __v_user_goto_0__continue_entry;
 				}
 			}
 			v__gen__c__Gen_write_fn_typesymbol_declaration(g, *sym);
 			}
-			next__continue: {}
+			__v_user_goto_0__continue: {}
 		}
-			next__break: {}
+			__v_user_goto_0__break: {}
 		if (pending.len == 0) {
 			break;
 		}
@@ -110860,9 +114404,9 @@ VV_LOC void v__gen__c__Gen_write_sorted_fn_typesymbol_declaration(v__gen__c__Gen
 			VUNREACHABLE();
 		}
 		{ // Unsafe block
-			Array_v__ast__TypeSymbol_ptr _var_441349 = builtin__array_clone(&syms);
-			Array_v__ast__TypeSymbol_ptr _var_441355 = builtin__array_clone(&pending);
-			syms = _var_441355;
+			Array_v__ast__TypeSymbol_ptr _var_441381 = builtin__array_clone(&syms);
+			Array_v__ast__TypeSymbol_ptr _var_441387 = builtin__array_clone(&pending);
+			syms = _var_441387;
 			pending = builtin__array_slice(syms, 0, 0);
 		}
 	}
@@ -111449,11 +114993,11 @@ VV_LOC void v__gen__c__Gen_or_block(v__gen__c__Gen* g, string var_name, v__ast__
 			v__gen__c__Gen_write_defer_stmts(g, or_block.scope, true, or_block.pos);
 			string err_msg = builtin__string_plus_many(7, _MOV((string[7]){_S("IError_name_table["), cvar_name, tmp_op, _S("err._typ]._method_msg("), cvar_name, tmp_op, _S("err._object)")}));
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_459946 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_459946.arg0;
-				string pafile = mr_459946.arg1;
-				string pamod = mr_459946.arg2;
-				string pafn = mr_459946.arg3;
+				multi_return_int_string_string_string mr_459978 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_459978.arg0;
+				string pafile = mr_459978.arg1;
+				string pamod = mr_459978.arg2;
+				string pafn = mr_459978.arg3;
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(11, _MOV((string[11]){_S("builtin__panic_debug("), builtin__int_str(paline), _S(", builtin__tos3(\""), pafile, _S("\"), builtin__tos3(\""), pamod, _S("\"), builtin__tos3(\""), pafn, _S("\"), "), err_msg, _S(");")})));
 			} else {
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\tbuiltin__panic_result_not_set("), err_msg, _S(");")})));
@@ -111493,11 +115037,11 @@ VV_LOC void v__gen__c__Gen_or_block(v__gen__c__Gen* g, string var_name, v__ast__
 			v__gen__c__Gen_write_defer_stmts(g, or_block.scope, true, or_block.pos);
 			string err_msg = builtin__string_plus_many(7, _MOV((string[7]){_S("IError_name_table["), cvar_name, tmp_op, _S("err._typ]._method_msg("), cvar_name, tmp_op, _S("err._object)")}));
 			if (g->pref->is_debug) {
-				multi_return_int_string_string_string mr_462180 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
-				int paline = mr_462180.arg0;
-				string pafile = mr_462180.arg1;
-				string pamod = mr_462180.arg2;
-				string pafn = mr_462180.arg3;
+				multi_return_int_string_string_string mr_462212 = v__gen__c__Gen_panic_debug_info(g, or_block.pos);
+				int paline = mr_462212.arg0;
+				string pafile = mr_462212.arg1;
+				string pamod = mr_462212.arg2;
+				string pafn = mr_462212.arg3;
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(13, _MOV((string[13]){_S("builtin__panic_debug("), builtin__int_str(paline), _S(", builtin__tos3(\""), pafile, _S("\"), builtin__tos3(\""), pamod, _S("\"), builtin__tos3(\""), pafn, _S("\"), "), err_msg, _S(".len == 0 ? _S(\"option not set ()\") : "), err_msg, _S(");")})));
 			} else {
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\tbuiltin__panic_option_not_set( "), err_msg, _S(" );")})));
@@ -111536,6 +115080,28 @@ inline VV_LOC string v__gen__c__c_name(string name_) {
 		return builtin__string_plus_many(2, _MOV((string[2]){_S("__v_"), name}));
 	}
 	return name;
+}
+VV_LOC string v__gen__c__Gen_user_goto_label_name(v__gen__c__Gen* g, string name) {
+	int* _t2 = (int*)(builtin__map_get_check(ADDR(map, g->user_goto_label_ids), &(string[]){name}));
+	_option_int _t1 = {0};
+	if (_t2) {
+		*((int*)&_t1.data) = *((int*)_t2);
+	} else {
+		_t1.state = 2; _t1.err = builtin___v_error(_S("map key does not exist"));
+	}
+	
+	if (_t1.state == 0) {
+		int id = (*(int*)_t1.data);
+		return builtin__string_plus_many(2, _MOV((string[2]){_S("__v_user_goto_"), builtin__int_str(id)}));
+	}
+		if (_t1.state == 2 && _t1.err._object != _const_none__._object) { builtin___v_free(_t1.err._object); }
+	int id = g->user_goto_label_count;
+	builtin__map_set(&g->user_goto_label_ids, &(string[]){name}, &(int[]) { id });
+	g->user_goto_label_count++;
+	return builtin__string_plus_many(2, _MOV((string[2]){_S("__v_user_goto_"), builtin__int_str(id)}));
+}
+VV_LOC string v__gen__c__Gen_user_goto_label_control_name(v__gen__c__Gen* g, string name, string suffix) {
+	return builtin__string_plus_many(3, _MOV((string[3]){v__gen__c__Gen_user_goto_label_name(g, name), _S("__"), suffix}));
 }
 inline VV_LOC string v__gen__c__c_fn_name(string name_) {
 	string name = v__util__no_dots(name_);
@@ -111632,7 +115198,7 @@ VV_LOC string v__gen__c__Gen_type_default_impl(v__gen__c__Gen* g, v__ast__Type t
 		builtin__eprintln(builtin__string_plus_many(6, _MOV((string[6]){_S(">>> Gen.type_default_impl g.type_default_impl_level: "), builtin__int_str(g->type_default_impl_level), _S(" | typ_: "), v__ast__Type_str(typ_), _S(" | decode_sumtype: "), (decode_sumtype ? _S("true") : _S("false"))})));
 	}
 	if (g->type_default_impl_level > 40) {
-		v__gen__c__verror(builtin__string_plus_many(2, _MOV((string[2]){_S("reached maximum levels of nesting for "), _S("/home/runner/work/v/v/vlib/v/gen/c/cgen.v:13569, &c.Gen{}.type_default_impl")})));
+		v__gen__c__verror(builtin__string_plus_many(2, _MOV((string[2]){_S("reached maximum levels of nesting for "), _S("/home/runner/work/v/v/vlib/v/gen/c/cgen.v:13580, &c.Gen{}.type_default_impl")})));
 		VUNREACHABLE();
 	}
 	v__ast__Type typ = v__gen__c__Gen_unwrap_generic(g, typ_);
@@ -111746,11 +115312,11 @@ VV_LOC string v__gen__c__Gen_type_default_impl(v__gen__c__Gen* g, v__ast__Type t
 		case v__ast__Kind__map: {
 			v__ast__Map info = v__ast__TypeSymbol_map_info(sym);
 			v__ast__TypeSymbol* key_sym = v__ast__Table_sym(g->table, info.key_type);
-			multi_return_string_string_string_string mr_468479 = v__gen__c__Gen_map_fn_ptrs(g, *key_sym);
-			string hash_fn = mr_468479.arg0;
-			string key_eq_fn = mr_468479.arg1;
-			string clone_fn = mr_468479.arg2;
-			string free_fn = mr_468479.arg3;
+			multi_return_string_string_string_string mr_469130 = v__gen__c__Gen_map_fn_ptrs(g, *key_sym);
+			string hash_fn = mr_469130.arg0;
+			string key_eq_fn = mr_469130.arg1;
+			string clone_fn = mr_469130.arg2;
+			string free_fn = mr_469130.arg3;
 			string noscan_key = v__gen__c__Gen_check_noscan(g, info.key_type);
 			string noscan_value = v__gen__c__Gen_check_noscan(g, info.value_type);
 			string noscan = (noscan_key.len != 0 || noscan_value.len != 0 ? (_S("_noscan")) : (_S("")));
@@ -112976,8 +116542,8 @@ VV_LOC string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t60.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				multi_return_v__ast__Fn_Array_v__ast__Type mr_503219 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t60.data);
-				Array_v__ast__Type embed_types = mr_503219.arg1;
+ 				multi_return_v__ast__Fn_Array_v__ast__Type mr_503870 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t60.data);
+				Array_v__ast__Type embed_types = mr_503870.arg1;
 				bool needs_embed_wrapper = embed_types.len > 0 && !(Array_string_contains(method_names, method.name));
 				if (builtin__string__eq(cctype, cctype2) && (!v__ast__Type_is_ptr((*(v__ast__Param*)builtin__array_get(method.params, 0)).typ) || needs_embed_wrapper)) {
 					if (!(Array_string_contains(aliased_method_names, method.name))) {
@@ -113002,8 +116568,8 @@ VV_LOC string v__gen__c__Gen_interface_table(v__gen__c__Gen* g) {
 					int params_start_pos = g->out.len;
 					Array_v__ast__Param params = builtin__array_clone_to_depth(&method.params, 0);
 					builtin__array_set(&params, 0, &(v__ast__Param[]) { ((v__ast__Param){.pos = ((*(v__ast__Param*)builtin__array_get(params, 0))).pos,.name = ((*(v__ast__Param*)builtin__array_get(params, 0))).name,.is_mut = ((*(v__ast__Param*)builtin__array_get(params, 0))).is_mut,.is_shared = ((*(v__ast__Param*)builtin__array_get(params, 0))).is_shared,.is_atomic = ((*(v__ast__Param*)builtin__array_get(params, 0))).is_atomic,.type_pos = ((*(v__ast__Param*)builtin__array_get(params, 0))).type_pos,.is_hidden = ((*(v__ast__Param*)builtin__array_get(params, 0))).is_hidden,.on_newline = ((*(v__ast__Param*)builtin__array_get(params, 0))).on_newline,.typ = v__ast__Type_set_nr_muls(v__ast__mktyp(st), 1),.orig_typ = ((*(v__ast__Param*)builtin__array_get(params, 0))).orig_typ,}) });
-					multi_return_Array_string_Array_string_Array_bool mr_504373 = v__gen__c__Gen_fn_decl_params(g, params, ((void*)0), false, false);
-					Array_string fargs = mr_504373.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_505024 = v__gen__c__Gen_fn_decl_params(g, params, ((void*)0), false, false);
+					Array_string fargs = mr_505024.arg0;
 					string parameter_name = strings__Builder_cut_last(&g->out, g->out.len - params_start_pos);
 					if (v__ast__Type_is_ptr(st)) {
 						parameter_name = builtin__string_trim_string_left(parameter_name, _S("__shared__"));
@@ -113459,8 +117025,8 @@ VV_LOC string v__gen__c__Gen_check_noscan(v__gen__c__Gen* g, v__ast__Type elem_t
 }
 VV_LOC void v__gen__c__Gen_write_heap_alloc(v__gen__c__Gen* g, string styp, v__ast__Type typ) {
 	if (g->pref->gc_mode == v__pref__GarbageCollectionMode__vgc) {
-		multi_return_string_string mr_519517 = v__gen__c__Gen_vgc_ptrmap(g, typ);
-		string ptrmap = mr_519517.arg0;
+		multi_return_string_string mr_520168 = v__gen__c__Gen_vgc_ptrmap(g, typ);
+		string ptrmap = mr_520168.arg0;
 		if (ptrmap.len > 0) {
 			{
 				v__gen__c__Gen_write(g, _S("HEAP_vgc("));
@@ -113478,9 +117044,9 @@ VV_LOC void v__gen__c__Gen_write_heap_alloc(v__gen__c__Gen* g, string styp, v__a
 }
 VV_LOC void v__gen__c__Gen_write_heap_alloc_close(v__gen__c__Gen* g, v__ast__Type typ) {
 	if (g->pref->gc_mode == v__pref__GarbageCollectionMode__vgc) {
-		multi_return_string_string mr_519819 = v__gen__c__Gen_vgc_ptrmap(g, typ);
-		string ptrmap = mr_519819.arg0;
-		string nptrs = mr_519819.arg1;
+		multi_return_string_string mr_520470 = v__gen__c__Gen_vgc_ptrmap(g, typ);
+		string ptrmap = mr_520470.arg0;
+		string nptrs = mr_520470.arg1;
 		if (ptrmap.len > 0) {
 			{
 				v__gen__c__Gen_write(g, _S("), "));
@@ -119016,7 +122582,7 @@ VV_LOC void v__gen__c__Gen_post_process_generic_fns_for_files(v__gen__c__Gen* g,
 	g->fid = old_fid;
 }
 VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, bool skip) {
-	bool v__gen__c__Gen_gen_fn_decl_defer_1 = false;
+	bool v__gen__c__Gen_gen_fn_decl_defer_2 = false;
 	Array_string tmp_defer_vars = builtin____new_array(0, 0, sizeof(string));
 	#if defined(CUSTOM_DEFINE_trace_cgen_gen_fn_decl)
 	{
@@ -119030,6 +122596,11 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 	if (node->language == v__ast__Language__c && (_SLIT_EQ(c_sym_name.str, c_sym_name.len, "va_start") || _SLIT_EQ(c_sym_name.str, c_sym_name.len, "va_arg") || _SLIT_EQ(c_sym_name.str, c_sym_name.len, "va_end") || _SLIT_EQ(c_sym_name.str, c_sym_name.len, "va_copy"))) {
 		return;
 	}
+	Map_string_int previous_user_goto_label_ids = builtin__map_move(&g->user_goto_label_ids);
+	int previous_user_goto_label_count = g->user_goto_label_count;
+	g->user_goto_label_ids = builtin__new_map(sizeof(string), sizeof(int), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
+	g->user_goto_label_count = 0;
 	bool old_is_vlines_enabled = g->is_vlines_enabled;
 	g->is_vlines_enabled = true;
 	Array_v__ast__DeferStmt function_defer_stmts = v__gen__c__collect_function_defer_stmts(node);
@@ -119039,7 +122610,7 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 	} else {
 		if (function_defer_stmts.len > 0) {
 			g->defer_vars = builtin____new_array_with_default(0, 0, sizeof(string), 0);
-			v__gen__c__Gen_gen_fn_decl_defer_1 = true;
+			v__gen__c__Gen_gen_fn_decl_defer_2 = true;
 		}
 	}
 	builtin__map_clear(&g->returned_var_names);
@@ -119052,11 +122623,15 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 			{ // defer begin
 				g->is_autofree = old_g_autofree;
 			} // defer end
-			if (v__gen__c__Gen_gen_fn_decl_defer_1) { // defer begin
+			if (v__gen__c__Gen_gen_fn_decl_defer_2) { // defer begin
 				g->defer_vars = tmp_defer_vars;
 			} // defer end
 			{ // defer begin
 				g->is_vlines_enabled = old_is_vlines_enabled;
+			} // defer end
+			{ // defer begin
+				g->user_goto_label_ids = builtin__map_move(&previous_user_goto_label_ids);
+				g->user_goto_label_count = previous_user_goto_label_count;
 			} // defer end
 		return;
 	}
@@ -119064,11 +122639,15 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 			{ // defer begin
 				g->is_autofree = old_g_autofree;
 			} // defer end
-			if (v__gen__c__Gen_gen_fn_decl_defer_1) { // defer begin
+			if (v__gen__c__Gen_gen_fn_decl_defer_2) { // defer begin
 				g->defer_vars = tmp_defer_vars;
 			} // defer end
 			{ // defer begin
 				g->is_vlines_enabled = old_is_vlines_enabled;
+			} // defer end
+			{ // defer begin
+				g->user_goto_label_ids = builtin__map_move(&previous_user_goto_label_ids);
+				g->user_goto_label_count = previous_user_goto_label_count;
 			} // defer end
 		return;
 	}
@@ -119079,9 +122658,9 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 		effective_cur_fn = ((v__ast__FnDecl){.name = (effective_cur_fn).name,.short_name = (effective_cur_fn).short_name,.mod = (effective_cur_fn).mod,.kind = (effective_cur_fn).kind,.is_deprecated = (effective_cur_fn).is_deprecated,.is_pub = (effective_cur_fn).is_pub,.is_c_variadic = (effective_cur_fn).is_c_variadic,.is_c_extern = (effective_cur_fn).is_c_extern,.is_variadic = (effective_cur_fn).is_variadic,.is_anon = (effective_cur_fn).is_anon,.is_weak = (effective_cur_fn).is_weak,.is_noreturn = (effective_cur_fn).is_noreturn,.is_manualfree = (effective_cur_fn).is_manualfree,.is_main = (effective_cur_fn).is_main,.is_test = (effective_cur_fn).is_test,.is_conditional = (effective_cur_fn).is_conditional,.is_exported = (effective_cur_fn).is_exported,.is_keep_alive = (effective_cur_fn).is_keep_alive,.is_unsafe = (effective_cur_fn).is_unsafe,.is_must_use = (effective_cur_fn).is_must_use,.is_markused = (effective_cur_fn).is_markused,.is_ignore_overflow = (effective_cur_fn).is_ignore_overflow,.is_file_translated = (effective_cur_fn).is_file_translated,.is_closure = (effective_cur_fn).is_closure,.receiver = (effective_cur_fn).receiver,.receiver_pos = (effective_cur_fn).receiver_pos,.is_method = (effective_cur_fn).is_method,.is_static_type_method = (effective_cur_fn).is_static_type_method,.static_type_pos = (effective_cur_fn).static_type_pos,.method_type_pos = (effective_cur_fn).method_type_pos,.method_idx = (effective_cur_fn).method_idx,.rec_mut = (effective_cur_fn).rec_mut,.has_prev_newline = (effective_cur_fn).has_prev_newline,.has_break_line = (effective_cur_fn).has_break_line,.rec_share = (effective_cur_fn).rec_share,.language = (effective_cur_fn).language,.file_mode = (effective_cur_fn).file_mode,.no_body = (effective_cur_fn).no_body,.is_builtin = (effective_cur_fn).is_builtin,.name_pos = (effective_cur_fn).name_pos,.body_pos = (effective_cur_fn).body_pos,.file = (effective_cur_fn).file,.generic_names = builtin__array_clone_to_depth(&effective_generic_names, 1),.is_direct_arr = (effective_cur_fn).is_direct_arr,.attrs = (effective_cur_fn).attrs,.ctdefine_idx = (effective_cur_fn).ctdefine_idx,.idx = (effective_cur_fn).idx,.params = (effective_cur_fn).params,.stmts = (effective_cur_fn).stmts,.defer_stmts = (effective_cur_fn).defer_stmts,.trace_fns = (effective_cur_fn).trace_fns,.return_type = (effective_cur_fn).return_type,.return_type_pos = (effective_cur_fn).return_type_pos,.has_return = (effective_cur_fn).has_return,.should_be_skipped = (effective_cur_fn).should_be_skipped,.ninstances = (effective_cur_fn).ninstances,.has_await = (effective_cur_fn).has_await,.comments = (effective_cur_fn).comments,.end_comments = (effective_cur_fn).end_comments,.next_comments = (effective_cur_fn).next_comments,.source_file = (effective_cur_fn).source_file,.scope = (effective_cur_fn).scope,.label_names = (effective_cur_fn).label_names,.pos = (effective_cur_fn).pos,.end_pos = (effective_cur_fn).end_pos,.is_expand_simple_interpolation = (effective_cur_fn).is_expand_simple_interpolation,});
 	}
 	if (node->generic_names.len == 0 && g->cur_concrete_types.len == 0 && (!node->is_method || v__ast__Type_has_flag(node->receiver.typ, v__ast__TypeFlag__generic) || builtin__string_contains(node->name, _S("_T_")))) {
-		multi_return_Array_string_Array_v__ast__Type mr_40327 = v__gen__c__Gen_recover_specialized_generic_context_for(g, node->name);
-		Array_string recovered_generic_names = mr_40327.arg0;
-		Array_v__ast__Type recovered_concrete_types = mr_40327.arg1;
+		multi_return_Array_string_Array_v__ast__Type mr_40656 = v__gen__c__Gen_recover_specialized_generic_context_for(g, node->name);
+		Array_string recovered_generic_names = mr_40656.arg0;
+		Array_v__ast__Type recovered_concrete_types = mr_40656.arg1;
 		if (recovered_generic_names.len > 0 && recovered_generic_names.len == recovered_concrete_types.len) {
 			effective_cur_fn = ((v__ast__FnDecl){.name = (*node).name,.short_name = (*node).short_name,.mod = (*node).mod,.kind = (*node).kind,.is_deprecated = (*node).is_deprecated,.is_pub = (*node).is_pub,.is_c_variadic = (*node).is_c_variadic,.is_c_extern = (*node).is_c_extern,.is_variadic = (*node).is_variadic,.is_anon = (*node).is_anon,.is_weak = (*node).is_weak,.is_noreturn = (*node).is_noreturn,.is_manualfree = (*node).is_manualfree,.is_main = (*node).is_main,.is_test = (*node).is_test,.is_conditional = (*node).is_conditional,.is_exported = (*node).is_exported,.is_keep_alive = (*node).is_keep_alive,.is_unsafe = (*node).is_unsafe,.is_must_use = (*node).is_must_use,.is_markused = (*node).is_markused,.is_ignore_overflow = (*node).is_ignore_overflow,.is_file_translated = (*node).is_file_translated,.is_closure = (*node).is_closure,.receiver = (*node).receiver,.receiver_pos = (*node).receiver_pos,.is_method = (*node).is_method,.is_static_type_method = (*node).is_static_type_method,.static_type_pos = (*node).static_type_pos,.method_type_pos = (*node).method_type_pos,.method_idx = (*node).method_idx,.rec_mut = (*node).rec_mut,.has_prev_newline = (*node).has_prev_newline,.has_break_line = (*node).has_break_line,.rec_share = (*node).rec_share,.language = (*node).language,.file_mode = (*node).file_mode,.no_body = (*node).no_body,.is_builtin = (*node).is_builtin,.name_pos = (*node).name_pos,.body_pos = (*node).body_pos,.file = (*node).file,.generic_names = builtin__array_clone_to_depth(&recovered_generic_names, 1),.is_direct_arr = (*node).is_direct_arr,.attrs = (*node).attrs,.ctdefine_idx = (*node).ctdefine_idx,.idx = (*node).idx,.params = (*node).params,.stmts = (*node).stmts,.defer_stmts = (*node).defer_stmts,.trace_fns = (*node).trace_fns,.return_type = (*node).return_type,.return_type_pos = (*node).return_type_pos,.has_return = (*node).has_return,.should_be_skipped = (*node).should_be_skipped,.ninstances = (*node).ninstances,.has_await = (*node).has_await,.comments = (*node).comments,.end_comments = (*node).end_comments,.next_comments = (*node).next_comments,.source_file = (*node).source_file,.scope = (*node).scope,.label_names = (*node).label_names,.pos = (*node).pos,.end_pos = (*node).end_pos,.is_expand_simple_interpolation = (*node).is_expand_simple_interpolation,});
 			g->cur_concrete_types = builtin__array_clone_to_depth(&recovered_concrete_types, 0);
@@ -119174,12 +122753,12 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 				if (call_fn.func->params.len > 0) {
 					v__gen__c__Gen_write(g, _S(", "));
 					strings__Builder_write_string(&g->definitions, _S(", "));
-					multi_return_Array_string_Array_string_Array_bool mr_43061 = v__gen__c__Gen_fn_decl_params(g, call_fn.func->params, ((void*)0), call_fn.func->is_variadic, call_fn.func->is_c_variadic);
-					trace_call_args = mr_43061.arg0;
+					multi_return_Array_string_Array_string_Array_bool mr_43390 = v__gen__c__Gen_fn_decl_params(g, call_fn.func->params, ((void*)0), call_fn.func->is_variadic, call_fn.func->is_c_variadic);
+					trace_call_args = mr_43390.arg0;
 				}
 			} else {
-				multi_return_Array_string_Array_string_Array_bool mr_43221 = v__gen__c__Gen_fn_decl_params(g, call_fn.func->params, ((void*)0), call_fn.func->is_variadic, call_fn.func->is_c_variadic);
-				trace_call_args = mr_43221.arg0;
+				multi_return_Array_string_Array_string_Array_bool mr_43550 = v__gen__c__Gen_fn_decl_params(g, call_fn.func->params, ((void*)0), call_fn.func->is_variadic, call_fn.func->is_c_variadic);
+				trace_call_args = mr_43550.arg0;
 			}
 			v__gen__c__Gen_writeln(g, _S(") {"));
 			strings__Builder_write_string(&g->definitions, _S(");\n"));
@@ -119302,10 +122881,10 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 	}
 	int arg_start_pos = g->out.len;
 	bool is_c_variadic = node->is_c_variadic || (node->language == v__ast__Language__c && node->is_variadic);
-	multi_return_Array_string_Array_string_Array_bool mr_47883 = v__gen__c__Gen_fn_decl_params(g, node->params, node->scope, node->is_variadic, is_c_variadic);
-	Array_string fargs = mr_47883.arg0;
-	Array_string fargtypes = mr_47883.arg1;
-	Array_bool heap_promoted = mr_47883.arg2;
+	multi_return_Array_string_Array_string_Array_bool mr_48212 = v__gen__c__Gen_fn_decl_params(g, node->params, node->scope, node->is_variadic, is_c_variadic);
+	Array_string fargs = mr_48212.arg0;
+	Array_string fargtypes = mr_48212.arg1;
+	Array_bool heap_promoted = mr_48212.arg2;
 	if (is_closure) {
 		g->nr_closures++;
 		if (g->pref->no_closures) {
@@ -119332,11 +122911,15 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 			{ // defer begin
 				g->is_autofree = old_g_autofree;
 			} // defer end
-			if (v__gen__c__Gen_gen_fn_decl_defer_1) { // defer begin
+			if (v__gen__c__Gen_gen_fn_decl_defer_2) { // defer begin
 				g->defer_vars = tmp_defer_vars;
 			} // defer end
 			{ // defer begin
 				g->is_vlines_enabled = old_is_vlines_enabled;
+			} // defer end
+			{ // defer begin
+				g->user_goto_label_ids = builtin__map_move(&previous_user_goto_label_ids);
+				g->user_goto_label_count = previous_user_goto_label_count;
 			} // defer end
 		return;
 	}
@@ -119502,11 +123085,15 @@ VV_LOC void v__gen__c__Gen_gen_fn_decl(v__gen__c__Gen* g, v__ast__FnDecl* node, 
 	{ // defer begin
 		g->is_autofree = old_g_autofree;
 	} // defer end
-	if (v__gen__c__Gen_gen_fn_decl_defer_1) { // defer begin
+	if (v__gen__c__Gen_gen_fn_decl_defer_2) { // defer begin
 		g->defer_vars = tmp_defer_vars;
 	} // defer end
 	{ // defer begin
 		g->is_vlines_enabled = old_is_vlines_enabled;
+	} // defer end
+	{ // defer begin
+		g->user_goto_label_ids = builtin__map_move(&previous_user_goto_label_ids);
+		g->user_goto_label_count = previous_user_goto_label_count;
 	} // defer end
 }
 VV_LOC string v__gen__c__Gen_c_fn_name(v__gen__c__Gen* g, v__ast__FnDecl* node) {
@@ -121311,9 +124898,9 @@ VV_LOC v__ast__Type v__gen__c__Gen_resolve_return_type(v__gen__c__Gen* g, v__ast
 		if (func.return_type != 0 && !v__ast__Type_has_flag(func.return_type, v__ast__TypeFlag__generic) && !v__gen__c__Gen_type_has_unresolved_generic_parts(g, func.return_type)) {
 			return (node.or_block.kind == v__ast__OrKind__absent ? (func.return_type) : (v__ast__Type_clear_option_and_result(func.return_type)));
 		}
-		multi_return_Array_v__ast__Type_v__ast__Fn mr_103123 = v__gen__c__Gen_receiver_generic_call_context(g, left_type, node.name);
-		Array_v__ast__Type receiver_concrete_types = mr_103123.arg0;
-		v__ast__Fn parent_method = mr_103123.arg1;
+		multi_return_Array_v__ast__Type_v__ast__Fn mr_103452 = v__gen__c__Gen_receiver_generic_call_context(g, left_type, node.name);
+		Array_v__ast__Type receiver_concrete_types = mr_103452.arg0;
+		v__ast__Fn parent_method = mr_103452.arg1;
 		if (func.generic_names.len > 0) {
 			Array_v__ast__Type _t12; /* if prepend */
 			bool _t14 = (node.concrete_types.len == func.generic_names.len);
@@ -122488,8 +126075,8 @@ VV_LOC multi_return_Array_v__ast__Param_Array_string v__gen__c__Gen_current_fn_g
 	return (multi_return_Array_v__ast__Param_Array_string){.arg0=g->cur_fn->params, .arg1=g->cur_fn->generic_names};
 }
 VV_LOC Array_string v__gen__c__Gen_current_fn_generic_names(v__gen__c__Gen* g) {
-	multi_return_Array_v__ast__Param_Array_string mr_139069 = v__gen__c__Gen_current_fn_generic_params(g);
-	Array_string generic_names = mr_139069.arg1;
+	multi_return_Array_v__ast__Param_Array_string mr_139398 = v__gen__c__Gen_current_fn_generic_params(g);
+	Array_string generic_names = mr_139398.arg1;
 	return generic_names;
 }
 VV_LOC bool v__gen__c__Gen_has_active_call_generic_context(v__gen__c__Gen* g) {
@@ -122766,9 +126353,9 @@ VV_LOC v__ast__Type v__gen__c__Gen_resolve_current_fn_generic_param_type(v__gen_
 	return v__gen__c__Gen_resolve_generic_param_type_from_params(g, name, g->cur_fn->params, g->cur_fn->generic_names);
 }
 VV_LOC v__ast__Type v__gen__c__Gen_resolve_current_fn_generic_param_value_type(v__gen__c__Gen* g, string name) {
-	multi_return_Array_v__ast__Param_Array_string mr_147152 = v__gen__c__Gen_current_fn_generic_params(g);
-	Array_v__ast__Param params = mr_147152.arg0;
-	Array_string generic_names = mr_147152.arg1;
+	multi_return_Array_v__ast__Param_Array_string mr_147481 = v__gen__c__Gen_current_fn_generic_params(g);
+	Array_v__ast__Param params = mr_147481.arg0;
+	Array_string generic_names = mr_147481.arg1;
 	if (params.len == 0 || generic_names.len == 0) {
 		return 0;
 	}
@@ -122804,9 +126391,9 @@ VV_LOC v__ast__Type v__gen__c__Gen_resolve_current_fn_generic_param_value_type(v
 	return 0;
 }
 VV_LOC v__ast__Type v__gen__c__Gen_resolve_current_fn_generic_param_key_type(v__gen__c__Gen* g, string name) {
-	multi_return_Array_v__ast__Param_Array_string mr_148000 = v__gen__c__Gen_current_fn_generic_params(g);
-	Array_v__ast__Param params = mr_148000.arg0;
-	Array_string generic_names = mr_148000.arg1;
+	multi_return_Array_v__ast__Param_Array_string mr_148329 = v__gen__c__Gen_current_fn_generic_params(g);
+	Array_v__ast__Param params = mr_148329.arg0;
+	Array_string generic_names = mr_148329.arg1;
 	if (params.len == 0 || generic_names.len == 0) {
 		return 0;
 	}
@@ -123024,8 +126611,8 @@ VV_LOC multi_return_v__ast__Type_ref_v__ast__TypeSymbol v__gen__c__Gen_unwrap_re
 				*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t13.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 			}
 			
- 			multi_return_v__ast__Fn_Array_v__ast__Type mr_154080 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t13.data);
-			Array_v__ast__Type embed_types = mr_154080.arg1;
+ 			multi_return_v__ast__Fn_Array_v__ast__Type mr_154409 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t13.data);
+			Array_v__ast__Type embed_types = mr_154409.arg1;
 			if (embed_types.len > 0) {
 				unwrapped_rec_type = (*(v__ast__Type*)builtin__array_last(embed_types));
 				typ_sym = v__ast__Table_sym(g->table, unwrapped_rec_type);
@@ -123162,8 +126749,8 @@ VV_LOC void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallExpr node)
 			}
 		}
 	}
-	multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_159968 = v__gen__c__Gen_unwrap_receiver_type(g, node);
-	v__ast__Type unwrapped_rec_type = mr_159968.arg0;
+	multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_160297 = v__gen__c__Gen_unwrap_receiver_type(g, node);
+	v__ast__Type unwrapped_rec_type = mr_160297.arg0;
 	if (left_type != 0 && (left_type != v__gen__c__Gen_unwrap_generic(g, node.receiver_type) || left_type != unwrapped_rec_type)) {
 		v__ast__TypeSymbol* resolved_left_sym = v__ast__Table_sym(g->table, left_type);
 		if (resolved_left_sym->kind != v__ast__Kind__aggregate && (v__ast__TypeSymbol_has_method(resolved_left_sym, method_name) || v__ast__TypeSymbol_has_method_with_generic_parent(resolved_left_sym, method_name))) {
@@ -123297,8 +126884,8 @@ VV_LOC void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallExpr node)
 				*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t12.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 			}
 			
- 			multi_return_v__ast__Fn_Array_v__ast__Type mr_164659 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t12.data);
-			Array_v__ast__Type embed_types = mr_164659.arg1;
+ 			multi_return_v__ast__Fn_Array_v__ast__Type mr_164988 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t12.data);
+			Array_v__ast__Type embed_types = mr_164988.arg1;
 			if (embed_types.len > 0) {
 				effective_embed_types = builtin__array_clone_to_depth(&embed_types, 0);
 			}
@@ -123390,13 +126977,13 @@ VV_LOC void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallExpr node)
 			}
 		}
 	}
-	multi_return_Array_v__ast__Type_v__ast__Fn mr_167921 = v__gen__c__Gen_receiver_generic_call_context(g, left_type, method_name);
-	Array_v__ast__Type receiver_concrete_types = mr_167921.arg0;
-	v__ast__Fn parent_generic_method = mr_167921.arg1;
+	multi_return_Array_v__ast__Type_v__ast__Fn mr_168250 = v__gen__c__Gen_receiver_generic_call_context(g, left_type, method_name);
+	Array_v__ast__Type receiver_concrete_types = mr_168250.arg0;
+	v__ast__Fn parent_generic_method = mr_168250.arg1;
 	if (receiver_concrete_types.len == 0 && receiver_type != 0 && v__gen__c__Gen_unwrap_generic(g, receiver_type) != left_type) {
-		multi_return_Array_v__ast__Type_v__ast__Fn mr_168142 = v__gen__c__Gen_receiver_generic_call_context(g, v__gen__c__Gen_unwrap_generic(g, receiver_type), method_name);
-		receiver_concrete_types = mr_168142.arg0;
-		parent_generic_method = mr_168142.arg1;
+		multi_return_Array_v__ast__Type_v__ast__Fn mr_168471 = v__gen__c__Gen_receiver_generic_call_context(g, v__gen__c__Gen_unwrap_generic(g, receiver_type), method_name);
+		receiver_concrete_types = mr_168471.arg0;
+		parent_generic_method = mr_168471.arg1;
 	}
 	int parent_method_generic_names_len = parent_generic_method.generic_names.len;
 	#if defined(CUSTOM_DEFINE_trace_method_generics)
@@ -124249,8 +127836,8 @@ VV_LOC void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallExpr node)
 					*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t94.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				multi_return_v__ast__Fn_Array_v__ast__Type mr_197313 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t94.data);
-				Array_v__ast__Type embed_types = mr_197313.arg1;
+ 				multi_return_v__ast__Fn_Array_v__ast__Type mr_197642 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t94.data);
+				Array_v__ast__Type embed_types = mr_197642.arg1;
 				if (embed_types.len > 0) {
 					node_embed_types = builtin__array_clone_to_depth(&embed_types, 0);
 				}
@@ -124348,8 +127935,8 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 	string name = node.name;
 	if (node.is_static_method) {
 		if (g->cur_fn != ((void*)0)) {
-			multi_return_v__ast__Type_string mr_200320 = v__ast__Table_convert_generic_static_type_name(g->table, node.name, g->cur_fn->generic_names, g->cur_concrete_types);
-			name = mr_200320.arg1;
+			multi_return_v__ast__Type_string mr_200649 = v__ast__Table_convert_generic_static_type_name(g->table, node.name, g->cur_fn->generic_names, g->cur_concrete_types);
+			name = mr_200649.arg1;
 			if (node.concrete_types.len > 0) {
 				node_name = name;
 			}
@@ -124714,11 +128301,11 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 			v__gen__c__Gen_fn_call_defer_1 = true;
 		}
 		if (g->pref->is_debug && is_builtin_print && node.kind == v__ast__CallKind__panic) {
-			multi_return_int_string_string_string mr_211345 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_211345.arg0;
-			string pafile = mr_211345.arg1;
-			string pamod = mr_211345.arg2;
-			string pafn = mr_211345.arg3;
+			multi_return_int_string_string_string mr_211674 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_211674.arg0;
+			string pafile = mr_211674.arg1;
+			string pamod = mr_211674.arg2;
+			string pafn = mr_211674.arg3;
 			{
 				v__gen__c__Gen_write(g, _S("builtin__panic_debug("));
 				v__gen__c__Gen_write_decimal(g, paline);
@@ -124733,9 +128320,9 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _S(")"));
 		} else if (builtin__string_ends_with(node.name, _S("__static__from_string")) && !v__ast__Table_known_fn(g->table, node.name)) {
-			multi_return_string_int mr_211656 = v__gen__c__Gen_get_enum_type_idx_from_fn_name(g, node.name);
-			string mod_enum_name = mr_211656.arg0;
-			int idx = mr_211656.arg1;
+			multi_return_string_int mr_211985 = v__gen__c__Gen_get_enum_type_idx_from_fn_name(g, node.name);
+			string mod_enum_name = mr_211985.arg0;
+			int idx = mr_211985.arg1;
 			string fn_mod = builtin__string_all_before_last(mod_enum_name, _S("."));
 			string full_fn_name = builtin__string_plus_many(3, _MOV((string[3]){fn_mod, _S("."), node.name}));
 			string fn_name = v__util__no_dots(full_fn_name);
@@ -124942,8 +128529,8 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 	} // defer end
 }
 VV_LOC void v__gen__c__Gen_gen_trace_call(v__gen__c__Gen* g, v__ast__CallExpr node, string name) {
-	multi_return_string_string mr_217749 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
-	string hash_fn = mr_217749.arg0;
+	multi_return_string_string mr_218078 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
+	string hash_fn = mr_218078.arg0;
 	v__ast__FnTrace* _t2 = (v__ast__FnTrace*)(builtin__map_get_check(ADDR(map, g->cur_fn->trace_fns), &(string[]){hash_fn}));
 	_option_v__ast__FnTrace _t1 = {0};
 	if (_t2) {
@@ -124968,8 +128555,8 @@ VV_LOC void v__gen__c__Gen_gen_trace_call(v__gen__c__Gen* g, v__ast__CallExpr no
 	}
 }
 VV_LOC void v__gen__c__Gen_gen_trace_fn_var_call(v__gen__c__Gen* g, v__ast__CallExpr node, string name, Array_string call_generic_names, Array_v__ast__Type call_concrete_types) {
-	multi_return_string_string mr_218191 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
-	string hash_fn = mr_218191.arg0;
+	multi_return_string_string mr_218520 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
+	string hash_fn = mr_218520.arg0;
 	v__ast__FnTrace* _t2 = (v__ast__FnTrace*)(builtin__map_get_check(ADDR(map, g->cur_fn->trace_fns), &(string[]){hash_fn}));
 	_option_v__ast__FnTrace _t1 = {0};
 	if (_t2) {
@@ -126881,11 +130468,12 @@ VV_LOC void v__gen__c__Gen_write_labeled_continue_gate(v__gen__c__Gen* g, string
 	if (label.len == 0) {
 		return;
 	}
-	string continue_flag = v__gen__c__labeled_continue_flag_name(label);
-	string continue_entry_label = v__gen__c__labeled_continue_entry_label_name(label);
+	string continue_flag = v__gen__c__Gen_user_goto_label_control_name(g, label, _S("continue_flag"));
+	string continue_entry_label = v__gen__c__Gen_user_goto_label_control_name(g, label, _S("continue_entry"));
+	string continue_label = v__gen__c__Gen_user_goto_label_control_name(g, label, _S("continue"));
 	v__gen__c__Gen_writeln(g, builtin__string_plus_many(4, _MOV((string[4]){prefix, _S("bool "), continue_flag, _S(" = false;")})));
 	v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){prefix, continue_entry_label, _S(": {}")})));
-	v__gen__c__Gen_writeln(g, builtin__string_plus_many(6, _MOV((string[6]){prefix, _S("if ("), continue_flag, _S(") goto "), label, _S("__continue;")})));
+	v__gen__c__Gen_writeln(g, builtin__string_plus_many(6, _MOV((string[6]){prefix, _S("if ("), continue_flag, _S(") goto "), continue_label, _S(";")})));
 }
 VV_LOC string v__gen__c__for_c_ident_name(v__ast__Expr expr) {
 	return ((expr._typ == 479)? ((*expr._v__ast__Ident).name) : (expr._typ == 493)? (v__gen__c__for_c_ident_name((*expr._v__ast__ParExpr).expr)) : (_S("")));
@@ -127089,7 +130677,7 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 		g->is_vlines_enabled = false;
 		g->inside_for_c_stmt = true;
 		if (node.label.len > 0) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S(":")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_name(g, node.label), _S(":")})));
 		}
 		v__gen__c__Gen_writeln(g, _S("{"));
 		g->indent++;
@@ -127131,7 +130719,7 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 			v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 			v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
 			v__gen__c__Gen_writeln(g, _S("}"));
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__continue: {}")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("continue")), _S(": {}")})));
 		} else {
 			v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 			v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
@@ -127140,14 +130728,14 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 		v__gen__c__Gen_pop_for_c_init_autofree_keep_vars(g, autofree_keep_start);
 		v__gen__c__Gen_writeln(g, _S("}"));
 		if (has_init_outer_cleanup && node.label.len > 0) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__break: {}")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(": {}")})));
 		}
 		v__gen__c__Gen_cleanup_for_c_init_local_closure_vars(g, node, init_closure_vars);
 		v__gen__c__Gen_cleanup_for_c_init_autofree_vars(g, init_autofree_vars);
 		g->indent--;
 		v__gen__c__Gen_writeln(g, _S("}"));
 		if (!has_init_outer_cleanup && node.label.len > 0) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__break: {}")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(": {}")})));
 		}
 	} else {
 		_option_v__gen__c__ForCOverflowGuard _t1 = v__gen__c__Gen_for_c_unsigned_overflow_guard(g, node);
@@ -127174,7 +130762,7 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 			v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("bool "), overflow_guard_flag, _S(" = false;")})));
 		}
 		if (node.label.len > 0) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S(":")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_name(g, node.label), _S(":")})));
 		}
 		v__gen__c__Gen_set_current_pos_as_last_stmt_pos(g);
 		g->skip_stmt_pos = true;
@@ -127240,7 +130828,7 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 			v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 			v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
 			v__gen__c__Gen_writeln(g, _S("}"));
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__continue: {}")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("continue")), _S(": {}")})));
 		} else {
 			v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 			v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
@@ -127249,7 +130837,7 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 		v__gen__c__Gen_pop_for_c_init_autofree_keep_vars(g, autofree_keep_start);
 		v__gen__c__Gen_writeln(g, _S("}"));
 		if (has_init_outer_cleanup && node.label.len > 0) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__break: {}")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(": {}")})));
 		}
 		v__gen__c__Gen_cleanup_for_c_init_local_closure_vars(g, node, init_closure_vars);
 		v__gen__c__Gen_cleanup_for_c_init_autofree_vars(g, init_autofree_vars);
@@ -127258,7 +130846,7 @@ VV_LOC void v__gen__c__Gen_for_c_stmt(v__gen__c__Gen* g, v__ast__ForCStmt node) 
 			v__gen__c__Gen_writeln(g, _S("}"));
 		}
 		if (!has_init_outer_cleanup && node.label.len > 0) {
-			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__break: {}")})));
+			v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(": {}")})));
 		}
 	}
 	g->loop_depth--;
@@ -127267,7 +130855,7 @@ VV_LOC void v__gen__c__Gen_for_stmt(v__gen__c__Gen* g, v__ast__ForStmt node) {
 	g->loop_depth++;
 	g->is_vlines_enabled = false;
 	if (node.label.len > 0) {
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S(":")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_name(g, node.label), _S(":")})));
 	}
 	v__gen__c__Gen_writeln(g, _S("for (;;) {"));
 	if (!node.is_inf) {
@@ -127290,14 +130878,14 @@ VV_LOC void v__gen__c__Gen_for_stmt(v__gen__c__Gen* g, v__ast__ForStmt node) {
 		v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 		v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
 		v__gen__c__Gen_writeln(g, _S("\t}"));
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), node.label, _S("__continue: {}")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("continue")), _S(": {}")})));
 	} else {
 		v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 		v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
 	}
 	v__gen__c__Gen_writeln(g, _S("}"));
 	if (node.label.len > 0) {
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){node.label, _S("__break: {}")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(2, _MOV((string[2]){v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(": {}")})));
 	}
 	g->loop_depth--;
 }
@@ -127475,7 +131063,7 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 	g->loop_depth++;
 	bool array_debug_value_scope_opened = false;
 	if (node.label.len > 0) {
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), node.label, _S(": {}")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), v__gen__c__Gen_user_goto_label_name(g, node.label), _S(": {}")})));
 	}
 	if (node.is_range) {
 		string i = (builtin__fast_string_eq(node.val_var, _S("_")) ? (v__gen__c__Gen_new_tmp_var(g)) : (v__gen__c__c_name(node.val_var)));
@@ -128123,7 +131711,7 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 		v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
 		v__gen__c__Gen_writeln(g, _S("\t}"));
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), node.label, _S("__continue: {}")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("continue")), _S(": {}")})));
 	} else {
 		v__gen__c__Gen_write_defer_stmts(g, node.scope, false, node.pos);
 		v__gen__c__Gen_write_loop_scope_cleanup_after_defer(g, node.scope, node.pos, node.stmts, ends_with_branch);
@@ -128134,7 +131722,7 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		v__gen__c__Gen_writeln(g, _S("}"));
 	}
 	if (node.label.len > 0) {
-		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), node.label, _S("__break: {}")})));
+		v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), v__gen__c__Gen_user_goto_label_control_name(g, node.label, _S("break")), _S(": {}")})));
 	}
 	g->loop_depth--;
 	if (v__gen__c__Gen_for_in_stmt_defer_1) { // defer begin
@@ -135052,12 +138640,12 @@ VV_LOC void v__gen__c__Gen_match_expr(v__gen__c__Gen* g, v__ast__MatchExpr node)
 		}
 		bool enum_is_multi_allowed = _t8;
 		bool can_be_a_switch = true;
-			all_branches: {}
+			__v_user_goto_0: {}
 		for (int _t9 = 0; _t9 < node.branches.len; ++_t9) {
 			v__ast__MatchBranch branch = ((v__ast__MatchBranch*)node.branches.data)[_t9];
-			bool v__labeled_continue_all_branches = false;
-			all_branches__continue_entry: {}
-			if (v__labeled_continue_all_branches) goto all_branches__continue;
+			bool __v_user_goto_0__continue_flag = false;
+			__v_user_goto_0__continue_entry: {}
+			if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 			{
 			for (int _t10 = 0; _t10 < branch.exprs.len; ++_t10) {
 				v__ast__Expr expr = ((v__ast__Expr*)branch.exprs.data)[_t10];
@@ -135076,14 +138664,14 @@ VV_LOC void v__gen__c__Gen_match_expr(v__gen__c__Gen* g, v__ast__MatchExpr node)
 				
 				else {
 					can_be_a_switch = false;
-					goto all_branches__break;
+					goto __v_user_goto_0__break;
 				}
 				
 			}
 			}
-			all_branches__continue: {}
+			__v_user_goto_0__continue: {}
 		}
-			all_branches__break: {}
+			__v_user_goto_0__break: {}
 		if (can_be_a_switch && !is_expr && g->loop_depth == 0 && g->fn_decl != ((void*)0) && v__ast__TypeSymbol_is_int(cond_fsym) && !enum_is_multi_allowed) {
 			v__gen__c__Gen_match_expr_switch(g, node, is_expr, cond_var, tmp_var, *cond_fsym, resolved_return_type);
 		} else if (cond_fsym->kind == v__ast__Kind__enum && g->loop_depth == 0 && node.branches.len > 5 && g->fn_decl != ((void*)0) && !enum_is_multi_allowed) {
@@ -140242,6 +143830,88 @@ VV_LOC void v__gen__c__Gen_string_literal(v__gen__c__Gen* g, v__ast__StringLiter
 		}
 	}
 }
+VV_LOC _option_Array_string v__gen__c__c_string_literal_payload_units(string value) {
+	Array_string units = builtin____new_array_with_default(0, value.len, sizeof(string), 0);
+	int i = 0;
+	for (;;) {
+		if (!(i < value.len)) break;
+		int start = i;
+		if (builtin__string_at(value, i) != '\\') {
+			i++;
+			builtin__array_push((array*)&units, _MOV((string[]){ builtin__string_substr(value, start, i) }));
+			continue;
+		}
+		if (i + 1 >= value.len) {
+			return (_option_Array_string){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+		}
+		u8 escape = builtin__string_at(value, i + 1);
+
+		if (escape == ('\'') || escape == ('"') || escape == ('?') || escape == ('\\') || escape == ('a') || escape == ('b') || escape == ('e') || escape == ('f') || escape == ('n') || escape == ('r') || escape == ('t') || escape == ('v')) {
+			i += 2;
+		}
+		else if ((escape >= '0' && escape <= '7')) {
+			i += 2;
+			int digits = 1;
+			for (;;) {
+				if (!(digits < 3 && i < value.len && builtin__u8_is_oct_digit(builtin__string_at(value, i)))) break;
+				i++;
+				digits++;
+			}
+		}
+		else if (escape == ('x')) {
+			i += 2;
+			int digits_start = i;
+			for (;;) {
+				if (!(i < value.len && builtin__u8_is_hex_digit(builtin__string_at(value, i)))) break;
+				i++;
+			}
+			if (i == digits_start) {
+				return (_option_Array_string){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+			}
+		}
+		else {
+			return (_option_Array_string){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+		}
+		builtin__array_push((array*)&units, _MOV((string[]){ builtin__string_substr(value, start, i) }));
+	}
+	_option_Array_string _t6;
+	builtin___option_ok(&(Array_string[]) { units }, (_option*)(&_t6), sizeof(Array_string));
+	 
+	return _t6;
+}
+VV_LOC bool v__gen__c__Gen_write_c_string_literal_exact_array_initializer(v__gen__c__Gen* g, string value, int size, string elem_styp) {
+	_option_Array_string _t1 = v__gen__c__c_string_literal_payload_units(value);
+	if (_t1.state != 0) {
+		return false;
+	}
+	
+ 	Array_string units = (*(Array_string*)_t1.data);
+	if (units.len != size) {
+		return false;
+	}
+	v__gen__c__Gen_write(g, _S("{"));
+	for (int i = 0; i < units.len; ++i) {
+		string unit = ((string*)units.data)[i];
+		if (i > 0) {
+			v__gen__c__Gen_write(g, _S(", "));
+		}
+		string escaped_unit = v__gen__c__cescape_nonascii(unit);
+		if (_SLIT_EQ(unit.str, unit.len, "'")) {
+			escaped_unit = _S("\\'");
+		} else if (_SLIT_EQ(unit.str, unit.len, "\\")) {
+			escaped_unit = _S("\\\\");
+		}
+		{
+			v__gen__c__Gen_write(g, _S("("));
+			v__gen__c__Gen_write(g, elem_styp);
+			v__gen__c__Gen_write(g, _S(")'"));
+			v__gen__c__Gen_write(g, escaped_unit);
+			v__gen__c__Gen_write(g, _S("'"));
+		}
+	}
+	v__gen__c__Gen_write(g, _S("}"));
+	return true;
+}
 VV_LOC void v__gen__c__Gen_string_inter_literal_sb_optimized(v__gen__c__Gen* g, v__ast__CallExpr call_expr) {
 	v__ast__StringInterLiteral node = *(v__ast__StringInterLiteral*)builtin____as_cast(((*(v__ast__CallArg*)builtin__array_get(call_expr.args, 0)).expr)._v__ast__StringInterLiteral, ((*(v__ast__CallArg*)builtin__array_get(call_expr.args, 0)).expr)._typ, 503);
 	v__gen__c__Gen_writeln(g, _S("// sb inter opt"));
@@ -140479,9 +144149,9 @@ VV_LOC void v__gen__c__Gen_gen_expr_to_string(v__gen__c__Gen* g, v__ast__Expr ex
 			} // defer end
 		return;
 	}
-	multi_return_bool_bool_int mr_6617 = v__ast__TypeSymbol_str_method_info(sym);
-	bool sym_has_str_method = mr_6617.arg0;
-	bool str_method_expects_ptr = mr_6617.arg1;
+	multi_return_bool_bool_int mr_7909 = v__ast__TypeSymbol_str_method_info(sym);
+	bool sym_has_str_method = mr_7909.arg0;
+	bool str_method_expects_ptr = mr_7909.arg1;
 	bool _t11 = (!is_ptr && (expr)._typ == 479);
 	if (_t11) {
 		_t11 = ((*(v__ast__Ident*)builtin____as_cast((expr)._v__ast__Ident, (expr)._typ, 479)).obj)._typ == 532;
@@ -142507,7 +146177,7 @@ VV_LOC bool v__gen__c__Gen_can_use_direct_heap_struct_init(v__gen__c__Gen* g, v_
 	}
 	for (int _t4 = 0; _t4 < node.init_fields.len; ++_t4) {
 		v__ast__StructInitField init_field = ((v__ast__StructInitField*)node.init_fields.data)[_t4];
-		if (v__gen__c__Gen_need_tmp_var_in_expr(g, init_field.expr)) {
+		if (v__gen__c__Gen_need_tmp_var_in_expr(g, init_field.expr) || v__gen__c__Gen_is_translated_c_string_fixed_char_array_field(g, init_field)) {
 			return false;
 		}
 	}
@@ -142538,6 +146208,93 @@ VV_LOC bool v__gen__c__Gen_can_use_direct_heap_struct_init(v__gen__c__Gen* g, v_
 		}
 	}
 	return _t11;
+}
+VV_LOC bool v__gen__c__Gen_is_translated_c_string_fixed_char_array_field(v__gen__c__Gen* g, v__ast__StructInitField field) {
+	if (!(g->file->is_translated || g->pref->translated)) {
+		return false;
+	}
+v__ast__StringLiteral _t2 = (v__ast__StringLiteral){.val = (string){.str=(byteptr)"", .is_lit=1},.is_raw = 0,.language = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},};
+	if (field.expr._typ == 504) {
+		_t2 = (*field.expr._v__ast__StringLiteral);
+	}
+	
+	else {
+		return false;
+	}
+	v__ast__StringLiteral literal = _t2;
+	if (literal.language != v__ast__Language__c || field.expected_type == 0) {
+		return false;
+	}
+	v__ast__Type resolved_expected = v__ast__Table_fully_unaliased_type(g->table, v__gen__c__Gen_unwrap_generic(g, field.expected_type));
+	if (resolved_expected != v__ast__Type_clear_flags(resolved_expected, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) || v__ast__Type_is_any_kind_of_pointer(resolved_expected)) {
+		return false;
+	}
+	v__ast__TypeSymbol* expected_sym = v__ast__Table_final_sym(g->table, resolved_expected);
+v__ast__ArrayFixed _t6 = (v__ast__ArrayFixed){.size = 0,.size_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.elem_type = 0,.is_fn_ret = 0,};
+	if (expected_sym->info._typ == 666) {
+		_t6 = (*expected_sym->info._v__ast__ArrayFixed);
+	}
+	
+	else {
+		return false;
+	}
+	v__ast__ArrayFixed array_info = _t6;
+	v__ast__Type resolved_elem_type = v__ast__Table_fully_unaliased_type(g->table, v__gen__c__Gen_unwrap_generic(g, array_info.elem_type));
+	return resolved_elem_type == v__ast__Type_clear_flags(resolved_elem_type, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) && !v__ast__Type_is_any_kind_of_pointer(resolved_elem_type) && (Array_int_contains(builtin__new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_v__ast__i8_type_idx, _const_v__ast__u8_type_idx, _const_v__ast__char_type_idx})), v__ast__Type_idx(resolved_elem_type)));
+}
+VV_LOC _option_v__ast__Type v__gen__c__Gen_translated_c_string_fixed_char_array_pointer_type(v__gen__c__Gen* g, v__ast__StructInitField field) {
+	if (!(g->file->is_translated || g->pref->translated)) {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+v__ast__StringLiteral _t2 = (v__ast__StringLiteral){.val = (string){.str=(byteptr)"", .is_lit=1},.is_raw = 0,.language = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},};
+	if (field.expr._typ == 504) {
+		_t2 = (*field.expr._v__ast__StringLiteral);
+	}
+	
+	else {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	v__ast__StringLiteral literal = _t2;
+	if (literal.language != v__ast__Language__c || field.expected_type == 0) {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	v__ast__Type surface_expected = v__gen__c__Gen_unwrap_generic(g, field.expected_type);
+	v__ast__Type resolved_expected = v__ast__Table_fully_unaliased_type(g->table, surface_expected);
+	v__ast__Type resolved_pointer = v__ast__Type_clear_flag(resolved_expected, v__ast__TypeFlag__option);
+	if (resolved_pointer != v__ast__Type_clear_flags(resolved_expected, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) || v__ast__Type_nr_muls(resolved_pointer) != 1) {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	if (v__ast__Type_has_flag(resolved_expected, v__ast__TypeFlag__option) && (!v__ast__Type_has_flag(surface_expected, v__ast__TypeFlag__option) || v__ast__Type_nr_muls(surface_expected) != 1)) {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	v__ast__TypeSymbol* pointee_sym = v__ast__Table_final_sym(g->table, v__ast__Type_set_nr_muls(resolved_pointer, 0));
+v__ast__ArrayFixed _t7 = (v__ast__ArrayFixed){.size = 0,.size_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.elem_type = 0,.is_fn_ret = 0,};
+	if (pointee_sym->info._typ == 666) {
+		_t7 = (*pointee_sym->info._v__ast__ArrayFixed);
+	}
+	
+	else {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	v__ast__ArrayFixed array_info = _t7;
+	v__ast__Type resolved_elem_type = v__ast__Table_fully_unaliased_type(g->table, v__gen__c__Gen_unwrap_generic(g, array_info.elem_type));
+	if (resolved_elem_type != v__ast__Type_clear_flags(resolved_elem_type, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) || v__ast__Type_is_any_kind_of_pointer(resolved_elem_type) || !(Array_int_contains(builtin__new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_v__ast__i8_type_idx, _const_v__ast__u8_type_idx, _const_v__ast__char_type_idx})), v__ast__Type_idx(resolved_elem_type)))) {
+		return (_option_v__ast__Type){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	_option_v__ast__Type _t10;
+	builtin___option_ok(&(v__ast__Type[]) { resolved_pointer }, (_option*)(&_t10), sizeof(v__ast__Type));
+	 
+	return _t10;
+}
+VV_LOC bool v__gen__c__Gen_write_translated_c_string_exact_fixed_char_array_field(v__gen__c__Gen* g, v__ast__StructInitField field) {
+	if (!v__gen__c__Gen_is_translated_c_string_fixed_char_array_field(g, field)) {
+		return false;
+	}
+	v__ast__StringLiteral literal = *(v__ast__StringLiteral*)builtin____as_cast((field.expr)._v__ast__StringLiteral, (field.expr)._typ, 504);
+	v__ast__TypeSymbol* expected_sym = v__ast__Table_final_sym(g->table, v__gen__c__Gen_unwrap_generic(g, field.expected_type));
+	v__ast__ArrayFixed array_info = *(v__ast__ArrayFixed*)builtin____as_cast((expected_sym->info)._v__ast__ArrayFixed, (expected_sym->info)._typ, 666);
+	string elem_styp = v__gen__c__Gen_styp(g, v__gen__c__Gen_unwrap_generic(g, array_info.elem_type));
+	return v__gen__c__Gen_write_c_string_literal_exact_array_initializer(g, literal.val, array_info.size, elem_styp);
 }
 VV_LOC void v__gen__c__Gen_direct_heap_struct_init(v__gen__c__Gen* g, v__ast__StructInit node, string styp, v__ast__Struct info, v__ast__Language language) {
 	int stmt_pos_idx = g->stmt_path_pos.len - (1 + g->inside_ternary);
@@ -142599,8 +146356,8 @@ VV_LOC string v__gen__c__Gen_get_embed_field_name(v__gen__c__Gen* g, v__ast__Typ
 		*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t1.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=((v__ast__StructField){.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.option_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.i = 0,.has_default_expr = 0,.has_prev_newline = 0,.has_break_line = 0,.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.is_deprecated = 0,.is_embed = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.next_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.is_recursive = 0,.is_part_of_union = 0,.container_typ = 0,.default_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,.unaliased_typ = 0,.anon_struct_decl = ((v__ast__StructDecl){.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name = (string){.str=(byteptr)"", .is_lit=1},.scoped_name = (string){.str=(byteptr)"", .is_lit=1},.generic_types = builtin____new_array(0, 0, sizeof(v__ast__Type)),.is_pub = 0,.mut_pos = -1,.pub_pos = -1,.pub_mut_pos = -1,.global_pos = -1,.module_pos = -1,.is_union = 0,.is_option = 0,.is_aligned = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.end_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.embeds = builtin____new_array(0, 0, sizeof(v__ast__Embed)),.is_implements = 0,.implements_types = builtin____new_array(0, 0, sizeof(v__ast__TypeNode)),.language = 0,.fields = builtin____new_array(0, 0, sizeof(v__ast__StructField)),.idx = 0,}),}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 	}
 	
- 	multi_return_v__ast__StructField_Array_v__ast__Type mr_21197 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t1.data);
-	Array_v__ast__Type embeds = mr_21197.arg1;
+ 	multi_return_v__ast__StructField_Array_v__ast__Type mr_24226 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t1.data);
+	Array_v__ast__Type embeds = mr_24226.arg1;
 	string s = _S("");
 	for (int _t2 = 0; _t2 < embeds.len; ++_t2) {
 		v__ast__Type embed = ((v__ast__Type*)embeds.data)[_t2];
@@ -142939,9 +146696,9 @@ VV_LOC void v__gen__c__Gen_struct_decl(v__gen__c__Gen* g, v__ast__Struct s, stri
 		for (int _t3 = 0; _t3 < s.fields.len; ++_t3) {
 			v__ast__StructField field = ((v__ast__StructField*)s.fields.data)[_t3];
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__option)) {
-				multi_return_string_string mr_29509 = v__gen__c__Gen_option_type_name(g, field.typ);
-				string styp = mr_29509.arg0;
-				string base = mr_29509.arg1;
+				multi_return_string_string mr_32538 = v__gen__c__Gen_option_type_name(g, field.typ);
+				string styp = mr_32538.arg0;
+				string base = mr_32538.arg1;
 				sync__RwMutex_lock(&g->done_options->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_options->val, base))) {
@@ -142956,9 +146713,9 @@ VV_LOC void v__gen__c__Gen_struct_decl(v__gen__c__Gen* g, v__ast__Struct s, stri
 				sync__RwMutex_unlock(&g->done_options->mtx);;
 			}
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__result)) {
-				multi_return_string_string mr_30081 = v__gen__c__Gen_result_type_name(g, field.typ);
-				string styp = mr_30081.arg0;
-				string base = mr_30081.arg1;
+				multi_return_string_string mr_33110 = v__gen__c__Gen_result_type_name(g, field.typ);
+				string styp = mr_33110.arg0;
+				string base = mr_33110.arg1;
 				sync__RwMutex_lock(&g->done_results->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_results->val, base))) {
@@ -143130,40 +146887,54 @@ VV_LOC void v__gen__c__Gen_struct_init_field_value(v__gen__c__Gen* g, v__ast__St
 		v__ast__Type expected_unwrap_typ = v__gen__c__Gen_unwrap_generic(g, sfield.expected_type);
 		v__ast__TypeSymbol* expected_unwrap_sym = v__ast__Table_final_sym(g->table, expected_unwrap_typ);
 		bool is_auto_deref_var = v__ast__Expr_is_auto_deref_var(sfield.expr);
-		bool _t3 = expected_unwrap_sym->kind == v__ast__Kind__map && (sfield.expr)._typ == 488 && !v__ast__Type_has_option_or_result(sfield.expected_type) && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__shared_f) && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__atomic_f) && !v__ast__Type_is_ptr(sfield.expected_type);
-		bool _t4;
-		if (!(_t3)) {
-			bool _t8 = ((expected_unwrap_sym->info)._typ == 666 && (sfield.expr)._typ == 460);
+		bool _t4 = v__gen__c__Gen_write_translated_c_string_exact_fixed_char_array_field(g, sfield);
+		bool _t6;
+		if (!(_t4)) {
+			_t6 = expected_unwrap_sym->kind == v__ast__Kind__map && (sfield.expr)._typ == 488 && !v__ast__Type_has_option_or_result(sfield.expected_type) && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__shared_f) && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__atomic_f) && !v__ast__Type_is_ptr(sfield.expected_type);
+		}
+		bool _t7;
+		if (!(_t4 || _t6)) {
+			bool _t11 = ((expected_unwrap_sym->info)._typ == 666 && (sfield.expr)._typ == 460);
+			if (_t11) {
+				_t11 = !(*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).is_fixed;
+			}
+			bool _t10 = ( _t11);
+			if (_t10) {
+				_t10 = !(*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).has_len;
+			}
+			bool _t9 = ( _t10);
+			if (_t9) {
+				_t9 = !(*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).has_init;
+			}
+			bool _t8 = ( _t9);
 			if (_t8) {
-				_t8 = !(*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).is_fixed;
+				_t8 = (*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).exprs.len > 0;
 			}
-			bool _t7 = ( _t8);
-			if (_t7) {
-				_t7 = !(*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).has_len;
-			}
-			bool _t6 = ( _t7);
-			if (_t6) {
-				_t6 = !(*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).has_init;
-			}
-			bool _t5 = ( _t6);
-			if (_t5) {
-				_t5 = (*(v__ast__ArrayInit*)builtin____as_cast((sfield.expr)._v__ast__ArrayInit, (sfield.expr)._typ, 460)).exprs.len > 0;
-			}
-			_t4 = _t5 && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__option);
+			_t7 = _t8 && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__option);
 		}
-		bool _t10;
-		if (!(_t3 || _t4)) {
-			_t10 = (field_unwrap_sym->info)._typ == 666 && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__option);
+		bool _t13;
+		if (!(_t4 || _t6 || _t7)) {
+			_t13 = (field_unwrap_sym->info)._typ == 666 && !v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__option);
 		}
-						
-		if (_t3) {
+								_option_v__ast__Type _t3 = {0};
+		if (_t4) {
+		} else if (_t3 = v__gen__c__Gen_translated_c_string_fixed_char_array_pointer_type(g, sfield), _t3.state == 0) {
+			v__ast__Type pointer_type = *(v__ast__Type*)_t3.data;
+			v__ast__CastExpr _t5 = ((v__ast__CastExpr){.arg = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.typ = pointer_type,.expr = sfield.expr,.typname = v__ast__Table_type_to_str(g->table, pointer_type),.expr_type = field_unwrap_typ,.has_arg = 0,.pos = sfield.pos,});
+			v__ast__CastExpr cast_expr = _t5;
+			if (v__ast__Type_has_flag(sfield.expected_type, v__ast__TypeFlag__option)) {
+				v__gen__c__Gen_expr_with_opt(g, v__ast__CastExpr_to_sumtype_v__ast__Expr(&cast_expr, false), pointer_type, sfield.expected_type);
+			} else {
+				v__gen__c__Gen_expr(g, v__ast__CastExpr_to_sumtype_v__ast__Expr(&cast_expr, false));
+			}
+		} else if (_t6) {
 			v__ast__Map expected_map_info = v__ast__TypeSymbol_map_info(expected_unwrap_sym);
 			v__gen__c__Gen_map_init(g, ((v__ast__MapInit){.pos = ((*sfield.expr._v__ast__MapInit)).pos,.comments = ((*sfield.expr._v__ast__MapInit)).comments,.pre_cmnts = ((*sfield.expr._v__ast__MapInit)).pre_cmnts,.keys = ((*sfield.expr._v__ast__MapInit)).keys,.vals = ((*sfield.expr._v__ast__MapInit)).vals,.val_types = ((*sfield.expr._v__ast__MapInit)).val_types,.typ = expected_unwrap_typ,.key_type = expected_map_info.key_type,.value_type = expected_map_info.value_type,.has_update_expr = ((*sfield.expr._v__ast__MapInit)).has_update_expr,.update_expr = ((*sfield.expr._v__ast__MapInit)).update_expr,.update_expr_pos = ((*sfield.expr._v__ast__MapInit)).update_expr_pos,.update_expr_comments = ((*sfield.expr._v__ast__MapInit)).update_expr_comments,}));
-		} else if (_t4) {
-			v__ast__ArrayInit _t9 = ((v__ast__ArrayInit){.pos = ((*sfield.expr._v__ast__ArrayInit)).pos,.elem_type_pos = ((*sfield.expr._v__ast__ArrayInit)).elem_type_pos,.ecmnts = ((*sfield.expr._v__ast__ArrayInit)).ecmnts,.pre_cmnts = ((*sfield.expr._v__ast__ArrayInit)).pre_cmnts,.is_fixed = true,.is_option = ((*sfield.expr._v__ast__ArrayInit)).is_option,.has_val = true,.from_to_fixed_size = ((*sfield.expr._v__ast__ArrayInit)).from_to_fixed_size,.mod = ((*sfield.expr._v__ast__ArrayInit)).mod,.has_len = ((*sfield.expr._v__ast__ArrayInit)).has_len,.has_cap = ((*sfield.expr._v__ast__ArrayInit)).has_cap,.has_init = ((*sfield.expr._v__ast__ArrayInit)).has_init,.has_index = ((*sfield.expr._v__ast__ArrayInit)).has_index,.exprs = ((*sfield.expr._v__ast__ArrayInit)).exprs,.len_expr = ((*sfield.expr._v__ast__ArrayInit)).len_expr,.cap_expr = ((*sfield.expr._v__ast__ArrayInit)).cap_expr,.init_expr = ((*sfield.expr._v__ast__ArrayInit)).init_expr,.elem_type_expr = ((*sfield.expr._v__ast__ArrayInit)).elem_type_expr,.expr_types = ((*sfield.expr._v__ast__ArrayInit)).expr_types,.elem_type = (*expected_unwrap_sym->info._v__ast__ArrayFixed).elem_type,.generic_elem_type = ((*sfield.expr._v__ast__ArrayInit)).generic_elem_type,.init_type = ((*sfield.expr._v__ast__ArrayInit)).init_type,.typ = expected_unwrap_typ,.literal_typ = ((*sfield.expr._v__ast__ArrayInit)).literal_typ,.generic_typ = ((*sfield.expr._v__ast__ArrayInit)).generic_typ,.alias_type = ((*sfield.expr._v__ast__ArrayInit)).alias_type,.has_callexpr = ((*sfield.expr._v__ast__ArrayInit)).has_callexpr,.has_update_expr = ((*sfield.expr._v__ast__ArrayInit)).has_update_expr,.update_expr = ((*sfield.expr._v__ast__ArrayInit)).update_expr,.update_expr_pos = ((*sfield.expr._v__ast__ArrayInit)).update_expr_pos,.update_expr_comments = ((*sfield.expr._v__ast__ArrayInit)).update_expr_comments,});
-			v__ast__ArrayInit fixed_array_expr = _t9;
+		} else if (_t7) {
+			v__ast__ArrayInit _t12 = ((v__ast__ArrayInit){.pos = ((*sfield.expr._v__ast__ArrayInit)).pos,.elem_type_pos = ((*sfield.expr._v__ast__ArrayInit)).elem_type_pos,.ecmnts = ((*sfield.expr._v__ast__ArrayInit)).ecmnts,.pre_cmnts = ((*sfield.expr._v__ast__ArrayInit)).pre_cmnts,.is_fixed = true,.is_option = ((*sfield.expr._v__ast__ArrayInit)).is_option,.has_val = true,.from_to_fixed_size = ((*sfield.expr._v__ast__ArrayInit)).from_to_fixed_size,.mod = ((*sfield.expr._v__ast__ArrayInit)).mod,.has_len = ((*sfield.expr._v__ast__ArrayInit)).has_len,.has_cap = ((*sfield.expr._v__ast__ArrayInit)).has_cap,.has_init = ((*sfield.expr._v__ast__ArrayInit)).has_init,.has_index = ((*sfield.expr._v__ast__ArrayInit)).has_index,.exprs = ((*sfield.expr._v__ast__ArrayInit)).exprs,.len_expr = ((*sfield.expr._v__ast__ArrayInit)).len_expr,.cap_expr = ((*sfield.expr._v__ast__ArrayInit)).cap_expr,.init_expr = ((*sfield.expr._v__ast__ArrayInit)).init_expr,.elem_type_expr = ((*sfield.expr._v__ast__ArrayInit)).elem_type_expr,.expr_types = ((*sfield.expr._v__ast__ArrayInit)).expr_types,.elem_type = (*expected_unwrap_sym->info._v__ast__ArrayFixed).elem_type,.generic_elem_type = ((*sfield.expr._v__ast__ArrayInit)).generic_elem_type,.init_type = ((*sfield.expr._v__ast__ArrayInit)).init_type,.typ = expected_unwrap_typ,.literal_typ = ((*sfield.expr._v__ast__ArrayInit)).literal_typ,.generic_typ = ((*sfield.expr._v__ast__ArrayInit)).generic_typ,.alias_type = ((*sfield.expr._v__ast__ArrayInit)).alias_type,.has_callexpr = ((*sfield.expr._v__ast__ArrayInit)).has_callexpr,.has_update_expr = ((*sfield.expr._v__ast__ArrayInit)).has_update_expr,.update_expr = ((*sfield.expr._v__ast__ArrayInit)).update_expr,.update_expr_pos = ((*sfield.expr._v__ast__ArrayInit)).update_expr_pos,.update_expr_comments = ((*sfield.expr._v__ast__ArrayInit)).update_expr_comments,});
+			v__ast__ArrayInit fixed_array_expr = _t12;
 			v__gen__c__Gen_fixed_array_init(g, fixed_array_expr, v__gen__c__Gen_unwrap(g, expected_unwrap_typ), _S(""), false);
-		} else if (_t10) {
+		} else if (_t13) {
 			if (sfield.expr._typ == 479) {
 				v__gen__c__Gen_fixed_array_var_init(g, v__gen__c__Gen_expr_string(g, sfield.expr), is_auto_deref_var, (*field_unwrap_sym->info._v__ast__ArrayFixed).elem_type, (*field_unwrap_sym->info._v__ast__ArrayFixed).size);
 			}
@@ -151163,12 +154934,12 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 			builtin__array_push((array*)&_t1, &_t2);
 		}
 		Array_string generic_names =_t1;
-			gname: {}
+			__v_user_goto_0: {}
 		for (int _t4 = 0; _t4 < generic_names.len; ++_t4) {
 			string gt_name = ((string*)generic_names.data)[_t4];
-			bool v__labeled_continue_gname = false;
-			gname__continue_entry: {}
-			if (v__labeled_continue_gname) goto gname__continue;
+			bool __v_user_goto_0__continue_flag = false;
+			__v_user_goto_0__continue_entry: {}
+			if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 			{
 			for (int _t5 = 0; _t5 < (*sym->info._v__ast__Struct).fields.len; ++_t5) {
 				v__ast__StructField ft = ((v__ast__StructField*)(*sym->info._v__ast__Struct).fields.data)[_t5];
@@ -151189,8 +154960,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 								inferred_typ = (inferred_muls >= field_muls ? (v__ast__Type_set_nr_muls(inferred_typ, inferred_muls - field_muls)) : (v__ast__Type_set_nr_muls(inferred_typ, 0)));
 							}
 							builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ inferred_typ }));
-							v__labeled_continue_gname = true;
-							goto gname__continue_entry;
+							__v_user_goto_0__continue_flag = true;
+							goto __v_user_goto_0__continue_entry;
 						}
 					}
 				}
@@ -151217,8 +154988,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 												elem_typ = v__ast__Type_set_nr_muls(elem_typ, 0);
 											}
 											builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(elem_typ) }));
-											v__labeled_continue_gname = true;
-											goto gname__continue_entry;
+											__v_user_goto_0__continue_flag = true;
+											goto __v_user_goto_0__continue_entry;
 										}
 										break;
 									}
@@ -151249,8 +155020,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 												elem_typ = v__ast__Type_set_nr_muls(elem_typ, 0);
 											}
 											builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(elem_typ) }));
-											v__labeled_continue_gname = true;
-											goto gname__continue_entry;
+											__v_user_goto_0__continue_flag = true;
+											goto __v_user_goto_0__continue_entry;
 										}
 										break;
 									}
@@ -151270,8 +155041,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 										key_typ = v__ast__Type_set_nr_muls(key_typ, 0);
 									}
 									builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(key_typ) }));
-									v__labeled_continue_gname = true;
-									goto gname__continue_entry;
+									__v_user_goto_0__continue_flag = true;
+									goto __v_user_goto_0__continue_entry;
 								}
 								if (v__ast__Type_has_flag((*field_sym->info._v__ast__Map).value_type, v__ast__TypeFlag__generic) && builtin__string__eq(v__ast__Table_sym(c->table, (*field_sym->info._v__ast__Map).value_type)->name, gt_name)) {
 									v__ast__Type val_typ = (*init_sym->info._v__ast__Map).value_type;
@@ -151279,8 +155050,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 										val_typ = v__ast__Type_set_nr_muls(val_typ, 0);
 									}
 									builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(val_typ) }));
-									v__labeled_continue_gname = true;
-									goto gname__continue_entry;
+									__v_user_goto_0__continue_flag = true;
+									goto __v_user_goto_0__continue_entry;
 								}
 							}
 						}
@@ -151300,8 +155071,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 												arg_typ = v__ast__Type_set_nr_muls(arg_typ, 0);
 											}
 											builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(arg_typ) }));
-											v__labeled_continue_gname = true;
-											goto gname__continue_entry;
+											__v_user_goto_0__continue_flag = true;
+											goto __v_user_goto_0__continue_entry;
 										}
 									}
 									if (v__ast__Type_has_flag((*field_sym->info._v__ast__FnType).func.return_type, v__ast__TypeFlag__generic) && builtin__string__eq(v__ast__Table_sym(c->table, (*field_sym->info._v__ast__FnType).func.return_type)->name, gt_name)) {
@@ -151310,8 +155081,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 											ret_typ = v__ast__Type_set_nr_muls(ret_typ, 0);
 										}
 										builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(ret_typ) }));
-										v__labeled_continue_gname = true;
-										goto gname__continue_entry;
+										__v_user_goto_0__continue_flag = true;
+										goto __v_user_goto_0__continue_entry;
 									}
 								}
 							}
@@ -151324,8 +155095,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 							v__ast__Type inferred_typ = v__checker__Checker_infer_composite_generic_type(c, gt_name, ft.typ, t.typ);
 							if (inferred_typ != _const_v__ast__void_type) {
 								builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(inferred_typ) }));
-								v__labeled_continue_gname = true;
-								goto gname__continue_entry;
+								__v_user_goto_0__continue_flag = true;
+								goto __v_user_goto_0__continue_entry;
 							}
 						}
 					}
@@ -151351,8 +155122,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 											}
 											if ( _t24) {
 												builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp((*(v__ast__Type*)builtin__array_get((*init_sym->info._v__ast__Struct).concrete_types, 0))) }));
-												v__labeled_continue_gname = true;
-												goto gname__continue_entry;
+												__v_user_goto_0__continue_flag = true;
+												goto __v_user_goto_0__continue_entry;
 											}
 										} else {
 											for (int _t26 = 0; _t26 < node.init_fields.len; ++_t26) {
@@ -151373,8 +155144,8 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 													if (field.len > 0) {
 														if (builtin__string__eq(v__ast__Table_sym(c->table, (*(v__ast__StructField*)builtin__array_get(field, 0)).typ)->name, gt_name)) {
 															builtin__array_push((array*)&concrete_types, _MOV((v__ast__Type[]){ v__ast__mktyp(init_field.typ) }));
-															v__labeled_continue_gname = true;
-															goto gname__continue_entry;
+															__v_user_goto_0__continue_flag = true;
+															goto __v_user_goto_0__continue_entry;
 														}
 													}
 												}
@@ -151390,9 +155161,9 @@ VV_LOC Array_v__ast__Type v__checker__Checker_infer_struct_generic_types(v__chec
 			v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){_S("could not infer generic type `"), gt_name, _S("` in generic struct `"), sym->name, _S("["), Array_string_join(generic_names, _S(", ")), _S("]`")})), node.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 			return concrete_types;
 			}
-			gname__continue: {}
+			__v_user_goto_0__continue: {}
 		}
-			gname__break: {}
+			__v_user_goto_0__break: {}
 	}
 	return concrete_types;
 }
@@ -152997,12 +156768,12 @@ void v__checker__Checker_check_files(v__checker__Checker* c, Array_v__ast__File_
 		last_file = (*(v__ast__File**)builtin__array_get(ast_files, 0));
 	}
 	int post_process_generic_fns_iterations = 0;
-	post_process_iterations_loop:
+	__v_user_goto_0:
 	for (;;) {
 		if (!(post_process_generic_fns_iterations <= 1000000)) break;
-		bool v__labeled_continue_post_process_iterations_loop = false;
-		post_process_iterations_loop__continue_entry: {}
-		if (v__labeled_continue_post_process_iterations_loop) goto post_process_iterations_loop__continue;
+		bool __v_user_goto_0__continue_flag = false;
+		__v_user_goto_0__continue_entry: {}
+		if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 		{
 		#if defined(CUSTOM_DEFINE_trace_post_process_generic_fns_loop)
 		{
@@ -153030,7 +156801,7 @@ void v__checker__Checker_check_files(v__checker__Checker* c, Array_v__ast__File_
 				v__checker__Checker_change_current_file(c, file);
 				_result_void _t10 = v__checker__Checker_post_process_generic_fns(c);
 				if (_t10.is_error) {
-					goto post_process_iterations_loop__break;
+					goto __v_user_goto_0__break;
 				}
 				
  ;
@@ -153074,9 +156845,9 @@ void v__checker__Checker_check_files(v__checker__Checker* c, Array_v__ast__File_
 		c->need_recheck_generic_fns = false;
 		post_process_generic_fns_iterations++;
 		}
-		post_process_iterations_loop__continue: {}
+		__v_user_goto_0__continue: {}
 	}
-	post_process_iterations_loop__break: {}
+	__v_user_goto_0__break: {}
 	#if defined(CUSTOM_DEFINE_trace_post_process_generic_fns_loop)
 	{
 		builtin__eprintln(builtin__string_plus_many(2, _MOV((string[2]){_S(">>>>>>>>> recheck_generic_fns loop done, iteration: "), builtin__int_str(post_process_generic_fns_iterations)})));
@@ -172859,11 +176630,11 @@ _option_v__ast__Type _t82 = v__ast__Table_convert_generic_param_type(c->table, p
 							} // defer end
 						return _t89;
 					}
-						out: {}
+						__v_user_goto_0: {}
 					for (int n = 0; n < (*arg_typ_sym->info._v__ast__MultiReturn).types.len; ++n) {
-						bool v__labeled_continue_out = false;
-						out__continue_entry: {}
-						if (v__labeled_continue_out) goto out__continue;
+						bool __v_user_goto_0__continue_flag = false;
+						__v_user_goto_0__continue_entry: {}
+						if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 						{
 						v__ast__Type curr_arg = (*(v__ast__Type*)builtin__array_get(arg_typs, n));
 						v__ast__Param multi_param = v__checker__call_arg_param_for_fn((voidptr)&func, (int)(n + param_i), false);
@@ -172872,15 +176643,15 @@ _option_v__ast__Type _t82 = v__ast__Table_convert_generic_param_type(c->table, p
 							IError _t91 = _t90.err;
 							IError err = _t91;
 							v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){((struct _IError_interface_methods*)(err._methods))->_method_msg(err._object), _S(" in argument "), builtin__int_str((int)(param_i + n) + 1), _S(" to `"), fn_name, _S("` from "), v__ast__Table_type_to_str(c->table, arg_typ)})), call_arg->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
-							v__labeled_continue_out = true;
-							goto out__continue_entry;
+							__v_user_goto_0__continue_flag = true;
+							goto __v_user_goto_0__continue_entry;
 						}
 						
  ;
 						}
-						out__continue: {}
+						__v_user_goto_0__continue: {}
 					}
-						out__break: {}
+						__v_user_goto_0__break: {}
 					nr_multi_values += (*arg_typ_sym->info._v__ast__MultiReturn).types.len - 1;
 					continue;
 				} else if (_t92) {
@@ -178072,7 +181843,7 @@ VV_LOC v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__
 							node->typ = v__checker__Checker_unwrap_generic(c, c->expected_type);
 						}
 						{ // Unsafe block
-							goto end_if;
+							goto __v_user_goto_0;
 						}
 					}
 					if (c->expected_expr_type != _const_v__ast__void_type) {
@@ -178088,7 +181859,7 @@ VV_LOC v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__
 					if ((*stmt._v__ast__ExprStmt).typ == _const_v__ast__void_type && !v__checker__is_noreturn_callexpr((*stmt._v__ast__ExprStmt).expr) && !c->skip_flags) {
 						v__checker__Checker_error(c, _S("the final expression in `if` or `match`, must have a value of a non-void type"), (*stmt._v__ast__ExprStmt).pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 						{ // Unsafe block
-							goto end_if;
+							goto __v_user_goto_0;
 						}
 					}
 					if (!v__checker__Checker_check_types(c, (*stmt._v__ast__ExprStmt).typ, node->typ) && !v__checker__Checker_check_types(c, v__checker__Checker_unwrap_generic(c, (*stmt._v__ast__ExprStmt).typ), v__checker__Checker_unwrap_generic(c, node->typ))) {
@@ -178101,21 +181872,21 @@ VV_LOC v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__
 							}
 							c->expected_expr_type = node->typ;
 							{ // Unsafe block
-								goto end_if;
+								goto __v_user_goto_0;
 							}
 						} else if (node->typ == _const_v__ast__float_literal_type || node->typ == _const_v__ast__int_literal_type) {
 							if (node->typ == _const_v__ast__int_literal_type) {
 								if (v__ast__Type_is_int((*stmt._v__ast__ExprStmt).typ) || v__ast__Type_is_float((*stmt._v__ast__ExprStmt).typ)) {
 									node->typ = (*stmt._v__ast__ExprStmt).typ;
 									{ // Unsafe block
-										goto end_if;
+										goto __v_user_goto_0;
 									}
 								}
 							} else {
 								if (v__ast__Type_is_float((*stmt._v__ast__ExprStmt).typ)) {
 									node->typ = (*stmt._v__ast__ExprStmt).typ;
 									{ // Unsafe block
-										goto end_if;
+										goto __v_user_goto_0;
 									}
 								}
 							}
@@ -178124,13 +181895,13 @@ VV_LOC v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__
 							if ((*stmt._v__ast__ExprStmt).typ == _const_v__ast__int_literal_type) {
 								if (v__ast__Type_is_int(node->typ) || v__ast__Type_is_float(node->typ)) {
 									{ // Unsafe block
-										goto end_if;
+										goto __v_user_goto_0;
 									}
 								}
 							} else {
 								if (v__ast__Type_is_float(node->typ)) {
 									{ // Unsafe block
-										goto end_if;
+										goto __v_user_goto_0;
 									}
 								}
 							}
@@ -178139,31 +181910,31 @@ VV_LOC v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__
 							node->is_expr = true;
 							node->typ = v__ast__Type_clear_option_and_result(former_expected_type);
 							{ // Unsafe block
-								goto end_if;
+								goto __v_user_goto_0;
 							}
 						}
 						if (node->is_expr && v__ast__Table_sym(c->table, former_expected_type)->kind == v__ast__Kind__sum_type) {
 							node->typ = former_expected_type;
 							{ // Unsafe block
-								goto end_if;
+								goto __v_user_goto_0;
 							}
 						}
 						if (v__checker__is_noreturn_callexpr((*stmt._v__ast__ExprStmt).expr)) {
 							{ // Unsafe block
-								goto end_if;
+								goto __v_user_goto_0;
 							}
 						}
 						if ((v__ast__Type_has_option_or_result(node->typ)) && v__ast__Table_sym(c->table, (*stmt._v__ast__ExprStmt).typ)->kind == v__ast__Kind__struct && v__checker__Checker_type_implements(c, (*stmt._v__ast__ExprStmt).typ, _const_v__ast__error_type, node->pos)) {
 							(*stmt._v__ast__ExprStmt).expr = v__ast__CastExpr_to_sumtype_v__ast__Expr(ADDR(v__ast__CastExpr, (((v__ast__CastExpr){.arg = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.typ = _const_v__ast__error_type,.expr = (*stmt._v__ast__ExprStmt).expr,.typname = _S("IError"),.expr_type = (*stmt._v__ast__ExprStmt).typ,.has_arg = 0,.pos = node->pos,}))), false);
 							(*stmt._v__ast__ExprStmt).typ = _const_v__ast__error_type;
 							{ // Unsafe block
-								goto end_if;
+								goto __v_user_goto_0;
 							}
 						}
 						if ((node->typ == _const_v__ast__none_type && (*stmt._v__ast__ExprStmt).typ != _const_v__ast__none_type) || ((*stmt._v__ast__ExprStmt).typ == _const_v__ast__none_type && node->typ != _const_v__ast__none_type)) {
 							node->typ = ((*stmt._v__ast__ExprStmt).typ != _const_v__ast__none_type ? (v__ast__Type_set_flag((*stmt._v__ast__ExprStmt).typ, v__ast__TypeFlag__option)) : (v__ast__Type_set_flag(node->typ, v__ast__TypeFlag__option)));
 							{ // Unsafe block
-								goto end_if;
+								goto __v_user_goto_0;
 							}
 						}
 						v__checker__Checker_error(c, builtin__string_plus_many(5, _MOV((string[5]){_S("mismatched types `"), v__ast__Table_type_to_str(c->table, node->typ), _S("` and `"), v__ast__Table_type_to_str(c->table, (*stmt._v__ast__ExprStmt).typ), _S("`")})), node->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
@@ -178194,7 +181965,7 @@ VV_LOC v__ast__Type v__checker__Checker_if_expr(v__checker__Checker* c, v__ast__
 				v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("`"), if_kind, _S("` expression requires an expression as the last statement of every branch")})), branch->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 			}
 		}
-		end_if: {}
+		__v_user_goto_0: {}
 		_option_bool _t14 = {0};
 		if (_t14 = v__checker__Checker_has_return(c, branch->stmts), _t14.state == 0) {
 			bool has_return = *(bool*)_t14.data;
@@ -186364,17 +190135,17 @@ VV_LOC v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__a
 						v__checker__Checker_error(c, _S("cannot assign a const array to mut struct field, call `clone` method (or use `unsafe`)"), v__ast__Expr_pos(init_field->expr), ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 					}
 				}
+				bool is_translated_c_string_fixed_char_array = v__checker__Checker_is_translated_c_string_fixed_char_array(c, init_field->expr, exp_type);
+				bool is_translated_c_string_fixed_char_array_pointer = v__checker__Checker_is_translated_c_string_fixed_char_array_pointer(c, init_field->expr, exp_type);
 				if (exp_final_sym->kind == v__ast__Kind__interface) {
 					if (v__checker__Checker_type_implements(c, got_type, exp_type, init_field->pos)) {
 						if (!c->inside_unsafe && got_type_sym->kind != v__ast__Kind__interface && !v__ast__Type_is_any_kind_of_pointer(got_type)) {
 							v__checker__Checker_mark_as_referenced(c, ADDR(v__ast__Expr, *&init_field->expr), true);
 						}
 					}
-				} else if (v__ast__Table_final_sym(c->table, exp_type)->kind == v__ast__Kind__array_fixed && v__ast__Type_is_ptr(got_type) && !v__ast__Type_is_any_kind_of_pointer(exp_type) && !v__ast__Expr_is_auto_deref_var(init_field->expr)) {
-					if (!c->pref->translated && !c->file->is_translated) {
-						v__checker__Checker_error(c, builtin__string_plus_many(4, _MOV((string[4]){_S("cannot assign to field `"), field_info.name, _S("`: "), v__checker__Checker_expected_msg(c, got_type, exp_type)})), init_field->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
-					}
-				} else if (got_type != _const_v__ast__void_type && got_type_sym->kind != v__ast__Kind__placeholder && !v__ast__Type_has_flag(exp_type, v__ast__TypeFlag__generic)) {
+				} else if (v__ast__Table_final_sym(c->table, exp_type)->kind == v__ast__Kind__array_fixed && v__ast__Type_is_ptr(got_type) && !v__ast__Type_is_any_kind_of_pointer(exp_type) && !v__ast__Expr_is_auto_deref_var(init_field->expr) && !is_translated_c_string_fixed_char_array && !is_translated_c_string_fixed_char_array_pointer) {
+					v__checker__Checker_error(c, builtin__string_plus_many(4, _MOV((string[4]){_S("cannot assign to field `"), field_info.name, _S("`: "), v__checker__Checker_expected_msg(c, got_type, exp_type)})), init_field->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+				} else if (!is_translated_c_string_fixed_char_array && !is_translated_c_string_fixed_char_array_pointer && got_type != _const_v__ast__void_type && got_type_sym->kind != v__ast__Kind__placeholder && !v__ast__Type_has_flag(exp_type, v__ast__TypeFlag__generic)) {
 					bool needs_sum_type_cast = false;
 					if (exp_type_sym->kind == v__ast__Kind__placeholder) {
 						v__ast__Type base_type = v__ast__Table_find_type(c->table, exp_type_sym->ngname);
@@ -186677,6 +190448,136 @@ VV_LOC v__ast__Type v__checker__Checker_struct_init(v__checker__Checker* c, v__a
 			v__util__timing_measure_cumulative(_S("Checker.struct_init"));
 		} // defer end
 	return _t75;
+}
+VV_LOC bool v__checker__Checker_is_translated_c_string_fixed_char_array(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type expected) {
+	if (!(c->file->is_translated || c->pref->translated)) {
+		return false;
+	}
+	v__ast__Type resolved_expected = v__ast__Table_fully_unaliased_type(c->table, v__checker__Checker_unwrap_generic(c, expected));
+	if (resolved_expected != v__ast__Type_clear_flags(resolved_expected, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) || v__ast__Type_is_any_kind_of_pointer(resolved_expected)) {
+		return false;
+	}
+v__ast__StringLiteral _t3 = (v__ast__StringLiteral){.val = (string){.str=(byteptr)"", .is_lit=1},.is_raw = 0,.language = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},};
+	if (expr._typ == 504) {
+		_t3 = (*expr._v__ast__StringLiteral);
+	}
+	
+	else {
+		return false;
+	}
+	v__ast__StringLiteral literal = _t3;
+	if (literal.language != v__ast__Language__c) {
+		return false;
+	}
+	v__ast__TypeSymbol* expected_sym = v__ast__Table_final_sym(c->table, resolved_expected);
+v__ast__ArrayFixed _t6 = (v__ast__ArrayFixed){.size = 0,.size_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.elem_type = 0,.is_fn_ret = 0,};
+	if (expected_sym->info._typ == 666) {
+		_t6 = (*expected_sym->info._v__ast__ArrayFixed);
+	}
+	
+	else {
+		return false;
+	}
+	v__ast__ArrayFixed array_info = _t6;
+	v__ast__Type resolved_elem_type = v__ast__Table_fully_unaliased_type(c->table, v__checker__Checker_unwrap_generic(c, array_info.elem_type));
+	if (resolved_elem_type != v__ast__Type_clear_flags(resolved_elem_type, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) || v__ast__Type_is_any_kind_of_pointer(resolved_elem_type) || !(Array_int_contains(builtin__new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_v__ast__i8_type_idx, _const_v__ast__u8_type_idx, _const_v__ast__char_type_idx})), v__ast__Type_idx(resolved_elem_type)))) {
+		return false;
+	}
+	_option_int _t9 = v__checker__c_string_literal_payload_len(literal.val);
+	if (_t9.state != 0) {
+		return false;
+	}
+	
+ 	int payload_len = (*(int*)_t9.data);
+	return payload_len <= array_info.size;
+}
+VV_LOC bool v__checker__Checker_is_translated_c_string_fixed_char_array_pointer(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type expected) {
+	if (!(c->file->is_translated || c->pref->translated)) {
+		return false;
+	}
+v__ast__StringLiteral _t2 = (v__ast__StringLiteral){.val = (string){.str=(byteptr)"", .is_lit=1},.is_raw = 0,.language = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},};
+	if (expr._typ == 504) {
+		_t2 = (*expr._v__ast__StringLiteral);
+	}
+	
+	else {
+		return false;
+	}
+	v__ast__StringLiteral literal = _t2;
+	if (literal.language != v__ast__Language__c) {
+		return false;
+	}
+	v__ast__Type surface_expected = v__checker__Checker_unwrap_generic(c, expected);
+	v__ast__Type resolved_expected = v__ast__Table_fully_unaliased_type(c->table, surface_expected);
+	v__ast__Type resolved_pointer = v__ast__Type_clear_flag(resolved_expected, v__ast__TypeFlag__option);
+	if (resolved_pointer != v__ast__Type_clear_flags(resolved_expected, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) || v__ast__Type_nr_muls(resolved_pointer) != 1) {
+		return false;
+	}
+	if (v__ast__Type_has_flag(resolved_expected, v__ast__TypeFlag__option) && !v__ast__Type_has_flag(surface_expected, v__ast__TypeFlag__option)) {
+		return false;
+	}
+	v__ast__TypeSymbol* pointee_sym = v__ast__Table_final_sym(c->table, v__ast__Type_set_nr_muls(resolved_pointer, 0));
+v__ast__ArrayFixed _t7 = (v__ast__ArrayFixed){.size = 0,.size_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=457},.elem_type = 0,.is_fn_ret = 0,};
+	if (pointee_sym->info._typ == 666) {
+		_t7 = (*pointee_sym->info._v__ast__ArrayFixed);
+	}
+	
+	else {
+		return false;
+	}
+	v__ast__ArrayFixed array_info = _t7;
+	v__ast__Type resolved_elem_type = v__ast__Table_fully_unaliased_type(c->table, v__checker__Checker_unwrap_generic(c, array_info.elem_type));
+	return resolved_elem_type == v__ast__Type_clear_flags(resolved_elem_type, builtin____new_array(0, 0, sizeof(v__ast__TypeFlag))) && !v__ast__Type_is_any_kind_of_pointer(resolved_elem_type) && (Array_int_contains(builtin__new_array_from_c_array(3, 3, sizeof(int), _MOV((int[3]){_const_v__ast__i8_type_idx, _const_v__ast__u8_type_idx, _const_v__ast__char_type_idx})), v__ast__Type_idx(resolved_elem_type)));
+}
+VV_LOC _option_int v__checker__c_string_literal_payload_len(string value) {
+	int payload_len = 0;
+	int i = 0;
+	for (;;) {
+		if (!(i < value.len)) break;
+		if (builtin__string_at(value, i) != '\\') {
+			payload_len++;
+			i++;
+			continue;
+		}
+		if (i + 1 >= value.len) {
+			return (_option_int){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+		}
+		u8 escape = builtin__string_at(value, i + 1);
+
+		if (escape == ('\'') || escape == ('"') || escape == ('?') || escape == ('\\') || escape == ('a') || escape == ('b') || escape == ('e') || escape == ('f') || escape == ('n') || escape == ('r') || escape == ('t') || escape == ('v')) {
+			i += 2;
+			payload_len++;
+		}
+		else if ((escape >= '0' && escape <= '7')) {
+			i += 2;
+			int digits = 1;
+			for (;;) {
+				if (!(digits < 3 && i < value.len && builtin__u8_is_oct_digit(builtin__string_at(value, i)))) break;
+				i++;
+				digits++;
+			}
+			payload_len++;
+		}
+		else if (escape == ('x')) {
+			i += 2;
+			int start = i;
+			for (;;) {
+				if (!(i < value.len && builtin__u8_is_hex_digit(builtin__string_at(value, i)))) break;
+				i++;
+			}
+			if (i == start) {
+				return (_option_int){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+			}
+			payload_len++;
+		}
+		else {
+			return (_option_int){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+		}
+	}
+	_option_int _t4;
+	builtin___option_ok(&(int[]) { payload_len }, (_option*)(&_t4), sizeof(int));
+	 
+	return _t4;
 }
 VV_LOC bool v__checker__Checker_has_direct_numeric_alias_struct_init_mismatch(v__checker__Checker* c, v__ast__Expr expr, v__ast__Type got, v__ast__Type expected) {
 	if ((v__ast__Expr_remove_par(expr))._typ != 479 && (v__ast__Expr_remove_par(expr))._typ != 498) {
@@ -188345,11 +192246,11 @@ VV_LOC v__ast__AsmStmt v__parser__Parser_asm_stmt(v__parser__Parser* p, bool is_
 		bool is_label = false;
 		Array_v__ast__AsmArg args = builtin____new_array_with_default(0, 0, sizeof(v__ast__AsmArg), 0);
 		if (p->tok.line_nr == p->prev_tok.line_nr) {
-			args_loop:
+			__v_user_goto_0:
 			for (;;) {
-				bool v__labeled_continue_args_loop = false;
-				args_loop__continue_entry: {}
-				if (v__labeled_continue_args_loop) goto args_loop__continue;
+				bool __v_user_goto_0__continue_flag = false;
+				__v_user_goto_0__continue_entry: {}
+				if (__v_user_goto_0__continue_flag) goto __v_user_goto_0__continue;
 				{
 				if (v__token__Token_pos(&p->prev_tok).line_nr < v__token__Token_pos(&p->tok).line_nr) {
 					break;
@@ -188419,9 +192320,9 @@ VV_LOC v__ast__AsmStmt v__parser__Parser_asm_stmt(v__parser__Parser* p, bool is_
 					break;
 				}
 				}
-				args_loop__continue: {}
+				__v_user_goto_0__continue: {}
 			}
-			args_loop__break: {}
+			__v_user_goto_0__break: {}
 		}
 		for (;;) {
 			if (!(p->tok.kind == v__token__Kind__comment)) break;
@@ -203989,7 +207890,7 @@ VV_LOC v__ast__StructInit v__parser__Parser_struct_init_from_parts(v__parser__Pa
 			if (p->is_vls) {
 				if (p->tok.kind != v__token__Kind__colon) {
 					{ // Unsafe block
-						goto end;
+						goto __v_user_goto_0;
 					}
 				}
 			}
@@ -204039,7 +207940,7 @@ VV_LOC v__ast__StructInit v__parser__Parser_struct_init_from_parts(v__parser__Pa
 		v__parser__Parser_check(p, v__token__Kind__rcbr);
 	}
 	p->is_amp = saved_is_amp;
-	end: {}
+	__v_user_goto_0: {}
 	return ((v__ast__StructInit){
 		.pos = v__token__Pos_extend(first_pos, (kind == v__ast__StructInitKind__short_syntax ? (v__token__Token_pos(&p->tok)) : (v__token__Token_pos(&p->prev_tok)))),
 		.name_pos = first_pos,
@@ -215020,6 +218921,11 @@ VV_LOC void v__builder__cbuilder__eprint_result_time(time__StopWatch sw, string 
 VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label) {
 	builtin__eprintln(builtin__str_intp(3, _MOV((StrIntpData[]){{_S("> "), 0xafe29, {.d_i64 = time__Duration_milliseconds(time__StopWatch_elapsed(sw))}, 0, 0, 0}, {_S(" ms, "), 0xfe10, {.d_s = label}, 0, 0, 0}, {_SLIT0, 0, { .d_c = 0 }, 0, 0, 0}})));
 }
+VV_LOC bool main__macos_v3_driver_is_available(void) {
+	return false;
+}
+VV_LOC void main__macos_v3_driver_run(Array_string _d1) {
+}
 VV_LOC v__util__Timers* main__timers_pointer(v__util__Timers* p) {
 	static v__util__Timers* ptimers;
 	static bool _vstatic_init_1348;
@@ -215047,7 +218953,7 @@ VV_LOC void main__main(void) {
 	v__util__Timers_start(timers, _S("v start"));
 	v__util__Timers_show(timers, _S("v start"));
 	v__util__Timers_start(timers, _S("TOTAL"));
-	_result_void _t2 = builtin__at_exit((FnExitCb)	anon_fn_6a0ddf9f315b536f_46__1976);
+	_result_void _t2 = builtin__at_exit((FnExitCb)	anon_fn_6a0ddf9f315b536f_47__1976);
 	if (_t2.is_error) {
 		builtin__panic_result_not_set(IError_name_table[_t2.err._typ]._method_msg(_t2.err._object));
 		VUNREACHABLE();
@@ -216343,7 +220249,7 @@ Array_fixed_u8_20 _t3;
 	_const_v__gen__c__c_common_unreachable_attr = _S("\n#if !defined(VUNREACHABLE)\n\011#if defined(__GNUC__) && !defined(__clang__)\n\011\011#define V_GCC_VERSION  (__GNUC__ * 10000L + __GNUC_MINOR__ * 100L + __GNUC_PATCHLEVEL__)\n\011\011#if (V_GCC_VERSION >= 40500L) && !defined(__TINYC__)\n\011\011\011#define VUNREACHABLE()  do { __builtin_unreachable(); } while (0)\n\011\011#endif\n\011#endif\n\011#if defined(__clang__) && defined(__has_builtin) && !defined(__TINYC__)\n\011\011#if __has_builtin(__builtin_unreachable)\n\011\011\011#define VUNREACHABLE()  do { __builtin_unreachable(); } while (0)\n\011\011#endif\n\011#endif\n\011#ifndef VUNREACHABLE\n\011\011#define VUNREACHABLE() do { } while (0)\n\011#endif\n#endif\n");
 	_const_v__gen__c__c_unsigned_comparison_functions = _S("\n// unsigned/signed comparisons\nstatic inline bool _us32_gt(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a > b; }\nstatic inline bool _us32_ge(uint32_t a, int32_t b) { return a >= INT32_MAX || (int32_t)a >= b; }\nstatic inline bool _us32_eq(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a == b; }\nstatic inline bool _us32_ne(uint32_t a, int32_t b) { return a > INT32_MAX || (int32_t)a != b; }\nstatic inline bool _us32_le(uint32_t a, int32_t b) { return a <= INT32_MAX && (int32_t)a <= b; }\nstatic inline bool _us32_lt(uint32_t a, int32_t b) { return a < INT32_MAX && (int32_t)a < b; }\nstatic inline bool _us64_gt(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a > b; }\nstatic inline bool _us64_ge(uint64_t a, int64_t b) { return a >= INT64_MAX || (int64_t)a >= b; }\nstatic inline bool _us64_eq(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a == b; }\nstatic inline bool _us64_ne(uint64_t a, int64_t b) { return a > INT64_MAX || (int64_t)a != b; }\nstatic inline bool _us64_le(uint64_t a, int64_t b) { return a <= INT64_MAX && (int64_t)a <= b; }\nstatic inline bool _us64_lt(uint64_t a, int64_t b) { return a < INT64_MAX && (int64_t)a < b; }\n");
 	_const_v__gen__c__c_float_to_unsigned_conversion_functions = _S("\n// deterministic float -> u64 conversions for explicit V casts\n// direct C casts are undefined for out-of-range values\nstatic inline uint64_t _v_f64_to_u64(double x) {\n\011if (!(x >= 0.0)) {\n\011\011return 0;\n\011}\n\011if (x >= 18446744073709551616.0) {\n\011\011return UINT64_MAX;\n\011}\n\011return (uint64_t)x;\n}\n");
-	_const_v__gen__c__c_headers = _S("//============================== HELPER C MACROS =============================*/\n// _SLIT0 is used as NULL string for literal arguments\n// `\"\" s` is used to enforce a string literal argument\n#define _SLIT0 (string){.str=(byteptr)(\"\"), .len=0, .is_lit=1}\n#define _S(s) ((string){.str=(byteptr)(\"\" s), .len=(sizeof(s)-1), .is_lit=1})\n#define _SLEN(s, n) ((string){.str=(byteptr)(\"\" s), .len=n, .is_lit=1})\n// optimized way to compare literal strings\n#define _SLIT_EQ(sptr, slen, lit) (slen == sizeof(\"\" lit)-1 && !builtin__vmemcmp(sptr, \"\" lit, slen))\n#define _SLIT_NE(sptr, slen, lit) (slen != sizeof(\"\" lit)-1 || builtin__vmemcmp(sptr, \"\" lit, slen))\n// take the address of an rvalue\n#define ADDR(type, expr) (&((type[]){expr}[0]))\n// copy something to the heap\n#define HEAP(type, expr) ((type*)builtin__memdup((void*)&((type[]){expr}[0]), sizeof(type)))\n#define HEAP_noscan(type, expr) ((type*)builtin__memdup_noscan((void*)&((type[]){expr}[0]), sizeof(type)))\n#define HEAP_align(type, expr, align) ((type*)builtin__memdup_align((void*)&((type[]){expr}[0]), sizeof(type), align))\n#define HEAP_vgc(type, expr, ptrmap, nptrs) ((type*)builtin__vgc_memdup_typed((void*)&((type[]){expr}[0]), sizeof(type), (ptrmap), (nptrs)))\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); builtin__array_push_many(arr, tmp.data, tmp.len);}\n#define _PUSH_MANY_noscan(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); builtin__array_push_many_noscan(arr, tmp.data, tmp.len);}\n\n#define E_STRUCT_DECL\n#define E_STRUCT\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n#define __V_architecture 0\n#if defined(__x86_64__) || defined(_M_AMD64)\n\011#define __V_amd64  1\n\011#undef __V_architecture\n\011#define __V_architecture 1\n#endif\n#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)\n\011#define __V_arm64  1\n\011#undef __V_architecture\n\011#define __V_architecture 2\n#endif\n#if defined(__arm__) || defined(_M_ARM)\n\011#define __V_arm32  1\n\011#undef __V_architecture\n\011#define __V_architecture 3\n#endif\n#if defined(__riscv) && __riscv_xlen == 64\n\011#define __V_rv64  1\n\011#undef __V_architecture\n\011#define __V_architecture 4\n#endif\n#if defined(__riscv) && __riscv_xlen == 32\n\011#define __V_rv32  1\n\011#undef __V_architecture\n\011#define __V_architecture 5\n#endif\n#if defined(__i386__) || defined(_M_IX86)\n\011#define __V_x86    1\n\011#undef __V_architecture\n\011#define __V_architecture 6\n#endif\n#if defined(__s390x__)\n\011#define __V_s390x  1\n\011#undef __V_architecture\n\011#define __V_architecture 7\n#endif\n#if defined(__powerpc64__) && defined(__LITTLE_ENDIAN__)\n\011#define __V_ppc64le  1\n\011#undef __V_architecture\n\011#define __V_architecture 8\n#endif\n#if defined(__loongarch64)\n\011#define __V_loongarch64  1\n\011#undef __V_architecture\n\011#define __V_architecture 9\n#endif\n#if defined(__sparc__)\n\011#define __V_sparc64  1\n\011#undef __V_architecture\n\011#define __V_architecture 10\n#endif\n#if defined(__powerpc64__) && defined(__BIG_ENDIAN__)\n\011#define __V_ppc64  1\n\011#undef __V_architecture\n\011#define __V_architecture 11\n#endif\n#if (defined(__powerpc__) || defined(__powerpc) || defined(__POWERPC__) || defined(__ppc__) || defined(__ppc) || defined(__PPC__)) && !defined(__powerpc64__) && !defined(__ppc64__) && !defined(__PPC64__)\n\011#define __V_ppc  1\n\011#undef __V_architecture\n\011#define __V_architecture 12\n#endif\n// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:\n#ifdef __GNUC__\n\011#define __V_GCC__\n#endif\n#ifdef __TINYC__\n\011#undef __V_GCC__\n#endif\n#ifdef __cplusplus\n\011#undef __V_GCC__\n#endif\n#ifdef __clang__\n\011#undef __V_GCC__\n#endif\n#ifdef _MSC_VER\n\011#undef __V_GCC__\n\011#undef E_STRUCT_DECL\n\011#undef E_STRUCT\n\011#define E_STRUCT_DECL unsigned char _dummy_pad\n\011#define E_STRUCT 0\n#endif\n#if defined(__has_include) && !defined(__TINYC__)\n\011#if __has_include(<execinfo.h>) && !defined(_WIN32)\n\011\011#define __V_HAVE_EXECINFO_H 1\n\011\011#include <execinfo.h>\n\011#else\n\011\011// On linux: int backtrace(void **__array, int __size);\n\011\011// On BSD: size_t backtrace(void **, size_t);\n\011#endif\n#elif (defined(__linux__) && (defined(__GLIBC__) || defined(__GNU_LIBRARY__))) || defined(__APPLE__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)\n\011#define __V_HAVE_EXECINFO_H 1\n\011#include <execinfo.h>\n#else\n\011// On linux: int backtrace(void **__array, int __size);\n\011// On BSD: size_t backtrace(void **, size_t);\n#endif\n#ifndef __V_HAVE_EXECINFO_H\n\011#ifdef __cplusplus\n\011extern \"C\" {\n\011#endif\n\011int backtrace(void **__array, int __size);\n\011char **backtrace_symbols(void *const *__array, int __size);\n\011void backtrace_symbols_fd(void *const *__array, int __size, int __fd);\n\011#ifdef __cplusplus\n\011}\n\011#endif\n#endif\n#ifdef __TINYC__\n\011#define _Atomic volatile\n\011#undef E_STRUCT_DECL\n\011#undef E_STRUCT\n\011#define E_STRUCT_DECL unsigned char _dummy_pad\n\011#define E_STRUCT 0\n\011#undef __NOINLINE\n\011#undef __IRQHANDLER\n\011// tcc does not support inlining at all\n\011#define __NOINLINE\n\011#define __IRQHANDLER\n\011// #include <byteswap.h>\n\011int tcc_backtrace(const char *fmt, ...);\n#endif\n// Use __offsetof_ptr instead of __offset_of, when you *do* have a valid pointer, to avoid UB:\n#ifndef __offsetof_ptr\n\011#define __offsetof_ptr(ptr,PTYPE,FIELDNAME) ((size_t)((byte *)&((PTYPE *)ptr)->FIELDNAME - (byte *)ptr))\n#endif\n// for __offset_of\n#ifndef __offsetof\n#if defined(__TINYC__) || defined(_MSC_VER)\n\011#define __offsetof(PTYPE,FIELDNAME) ((size_t)(&((PTYPE *)0)->FIELDNAME))\n#else\n\011#define __offsetof(st, m) __builtin_offsetof(st, m)\n#endif\n#endif\n#if defined(_WIN32) || defined(__CYGWIN__)\n\011#define VV_EXP extern __declspec(dllexport)\n\011#ifdef _VPARALLELCC\n\011\011#define VV_LOC\n\011#else\n\011\011#define VV_LOC static\n\011#endif\n#else\n\011// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n\011// and does not support __has_attribute(visibility) ...\n\011#ifndef __has_attribute\n\011\011#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n\011#endif\n\011#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n\011\011#ifdef ARM\n\011\011\011#define VV_EXP  extern __attribute__((externally_visible,visibility(\"default\")))\n\011\011#else\n\011\011\011#define VV_EXP  extern __attribute__((visibility(\"default\")))\n\011\011#endif\n\011\011#if defined(_VOBJECTFILE) || (defined(__clang__) && (defined(_VUSECACHE) || defined(_VBUILDMODULE)))\n\011\011\011#define VV_LOC static\n\011\011#else\n\011\011\011#define VV_LOC  __attribute__ ((visibility (\"hidden\")))\n\011\011#endif\n\011#else\n\011\011#define VV_EXP extern\n\011\011#ifdef _VPARALLELCC\n\011\011\011#define VV_LOC\n\011\011#else\n\011\011\011#define VV_LOC static\n\011\011#endif\n\011#endif\n#endif\n#ifdef __cplusplus\n\011#include <utility>\n\011#define _MOV std::move\n#else\n\011#define _MOV\n#endif\n#if defined(__TINYC__) && defined(__has_include) // tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n//likely and unlikely macros\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n\011#define _likely_(x)  __builtin_expect(x,1)\n\011#define _unlikely_(x)  __builtin_expect(x,0)\n#else\n\011#define _likely_(x) (x)\n\011#define _unlikely_(x) (x)\n#endif\n\n#if !defined(VCALLCONV)\n\011#ifdef _MSC_VER\n\011\011#define VCALLCONV(name) __##name\n\011#else\n\011\011#define VCALLCONV(name) __attribute__((name))\n\011#endif\n#endif\n\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#if defined(_MSC_VER) && !defined(__clang__)\n\011#define V_CRT_LINKAGE __declspec(dllimport)\n\011#define V_CRT_CALL VCALLCONV(cdecl)\n#elif defined(__MINGW32__) || defined(__MINGW64__)\n\011#define V_CRT_LINKAGE __declspec(dllimport)\n\011#define V_CRT_CALL\n#else\n\011#define V_CRT_LINKAGE\n\011#define V_CRT_CALL\n#endif\n#if (defined(_MSC_VER) && !defined(__clang__)) || defined(__cplusplus)\n// Under C++ (g++/clang++), let libc declare FILE/stdio/string/stdlib to keep\n// noexcept specifiers consistent \342\200\224 the manual extern \"C\" prototypes below\n// would otherwise conflict with system headers under -std=c++NN.\n#include <stdarg.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#ifndef va_copy\n\011#define va_copy(dest, src) ((dest) = (src))\n#endif\n#ifndef _TRUNCATE\n\011#define _TRUNCATE ((size_t)-1)\n#endif\n#elif defined(__NetBSD__)\n// NetBSD exposes stdin/stdout/stderr as macros into a single `__sF[3]`\n// array whose element size (sizeof(FILE)) depends on the platform and libc\n// version, so we cannot forward-declare them. The FreeBSD-style\n// `__stdinp/__stdoutp/__stderrp` symbols also do not exist on NetBSD (see\n// vlang/v#27190). Defer to the system headers for FILE, the stdio streams,\n// and the libc prototypes that would otherwise clash with the\n// `__restrict`-qualified declarations in NetBSD libc.\n#include <stdarg.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#elif defined(__TINYC__) && (defined(__FreeBSD__) || defined(__OpenBSD__))\n// TinyCC reports a hard redefinition error if system OpenSSL pulls in\n// <stdarg.h> after V has provided its own va_start macro. Include it first,\n// but keep V manual FILE declarations on these BSD libc variants.\n#include <stdarg.h>\n#if defined(__FreeBSD__)\ntypedef struct __sFILE FILE;\nextern FILE* __stdinp;\nextern FILE* __stdoutp;\nextern FILE* __stderrp;\n#define stdin __stdinp\n#define stdout __stdoutp\n#define stderr __stderrp\n#else\ntypedef struct __sFILE FILE;\n#ifndef _STDFILES_DECLARED\n\011#define _STDFILES_DECLARED\nstruct __sFstub { long _stub; };\nextern struct __sFstub __stdin[];\nextern struct __sFstub __stdout[];\nextern struct __sFstub __stderr[];\n#endif\n#define stdin ((struct __sFILE *)__stdin)\n#define stdout ((struct __sFILE *)__stdout)\n#define stderr ((struct __sFILE *)__stderr)\n#endif\n#elif (defined(__MINGW32__) || defined(__MINGW64__)) && defined(__V_GCC__)\n// mingw-w64 stdio.h provides fprintf/vfprintf as static inline overrides\n// when __USE_MINGW_ANSI_STDIO is enabled, so use the system declarations\n// instead of the manual formatted-stdio prototypes below.\n#include <stdarg.h>\n#include <stdio.h>\n#elif defined(__MINGW32__) || defined(__MINGW64__) || (defined(__clang__) && (defined(_WIN32) || defined(_WIN64)))\ntypedef struct _iobuf FILE;\nFILE* __cdecl __acrt_iob_func(unsigned index);\n#define stdin  (__acrt_iob_func(0))\n#define stdout (__acrt_iob_func(1))\n#define stderr (__acrt_iob_func(2))\n#elif defined(__TINYC__) && (defined(_WIN32) || defined(_WIN64))\n#ifndef _FILE_DEFINED\nstruct _iobuf {\n\011char *_ptr;\n\011int _cnt;\n\011char *_base;\n\011int _flag;\n\011int _file;\n\011int _charbuf;\n\011int _bufsiz;\n\011char *_tmpfname;\n};\ntypedef struct _iobuf FILE;\n#define _FILE_DEFINED\n#endif\n\011#if defined(_WIN64)\nFILE* __cdecl __iob_func(void);\n\011#else\n\011\011#ifdef _MSVCRT_\nextern FILE _iob[];\n\011\011\011#define __iob_func() (_iob)\n\011\011#else\nextern FILE (*_imp___iob)[];\n\011\011\011#define __iob_func() (*_imp___iob)\n\011\011\011#define _iob __iob_func()\n\011\011#endif\n\011#endif\n#define stdin (&__iob_func()[0])\n#define stdout (&__iob_func()[1])\n#define stderr (&__iob_func()[2])\n#elif defined(__vinix__)\ntypedef struct __file FILE;\nextern FILE* stdin;\nextern FILE* stdout;\nextern FILE* stderr;\nstruct __thread_data;\nstruct __threadattr;\n// pthread_t handling for vinix builds:\n//  - Vinix kernel (freestanding, __STDC_HOSTED__=0): no libc, define\n//    pthread_t ourselves so V code that references it compiles.\n//  - util-vinix cross-compiled on a libc-providing host (hosted, e.g.\n// " "   glibc on Linux or macOS with -D__vinix__): pull pthread_t from\n//    libc to avoid colliding with the libc typedef.\n#if defined(__STDC_HOSTED__) && __STDC_HOSTED__ && defined(__has_include) && __has_include(<pthread.h>)\n#include <pthread.h>\n#else\ntypedef struct __thread_data *pthread_t;\n#endif\ntypedef __builtin_va_list va_list;\n#ifndef va_start\n\011#define va_start(ap, v) __builtin_va_start(ap, v)\n#endif\n#ifndef va_arg\n\011#define va_arg(ap, t) __builtin_va_arg(ap, t)\n#endif\n#ifndef va_end\n\011#define va_end(ap) __builtin_va_end(ap)\n#endif\n#ifndef va_copy\n\011#define va_copy(dest, src) __builtin_va_copy(dest, src)\n#endif\n#else\n\011#if defined(__APPLE__) || defined(__FreeBSD__)\ntypedef struct __sFILE FILE;\nextern FILE* __stdinp;\nextern FILE* __stdoutp;\nextern FILE* __stderrp;\n#define stdin __stdinp\n#define stdout __stdoutp\n#define stderr __stderrp\n\011#elif defined(__DragonFly__)\ntypedef struct __sFILE FILE;\nextern FILE* __stdinp;\nextern FILE* __stdoutp;\nextern FILE* __stderrp;\n#define stdin __stdinp\n#define stdout __stdoutp\n#define stderr __stderrp\n\011#elif defined(__OpenBSD__)\ntypedef struct __sFILE FILE;\n#ifndef _STDFILES_DECLARED\n\011#define _STDFILES_DECLARED\nstruct __sFstub { long _stub; };\nextern struct __sFstub __stdin[];\nextern struct __sFstub __stdout[];\nextern struct __sFstub __stderr[];\n#endif\n#define stdin ((struct __sFILE *)__stdin)\n#define stdout ((struct __sFILE *)__stdout)\n#define stderr ((struct __sFILE *)__stderr)\n\011#elif defined(__BIONIC__)\nstruct __sFILE;\ntypedef struct __sFILE FILE;\nextern FILE* stdin;\nextern FILE* stdout;\nextern FILE* stderr;\n\011#elif defined(__linux__) && !defined(__GLIBC__) && !defined(__GNU_LIBRARY__) && !defined(__BIONIC__) && !defined(__UCLIBC__)\ntypedef struct _IO_FILE FILE;\n// musl exposes the stdio streams as `FILE *const`, so match that to stay\n// compatible with later <stdio.h> includes from headers like miniz.h.\nextern FILE* const stdin;\nextern FILE* const stdout;\nextern FILE* const stderr;\n\011#else\ntypedef struct _IO_FILE FILE;\nextern FILE* stdin;\nextern FILE* stdout;\nextern FILE* stderr;\n\011#endif\ntypedef __builtin_va_list va_list;\n#ifndef va_start\n\011#define va_start(ap, v) __builtin_va_start(ap, v)\n#endif\n#ifndef va_arg\n\011#define va_arg(ap, t) __builtin_va_arg(ap, t)\n#endif\n#ifndef va_end\n\011#define va_end(ap) __builtin_va_end(ap)\n#endif\n#ifndef va_copy\n\011#define va_copy(dest, src) __builtin_va_copy(dest, src)\n#endif\n#endif\n#if (!defined(_MSC_VER) || defined(__clang__)) && !defined(__cplusplus) && !defined(__NetBSD__)\n// mingw-w64 stdio.h declares these as static __mingw_ovr inline overrides\n// when __USE_MINGW_ANSI_STDIO is on. Skip them under gcc+mingw to avoid\n// static-after-extern conflicts; clang+mingw needs them because it builds\n// with -Werror=implicit-function-declaration and does not hit the conflict.\n// NetBSD pulls these prototypes from <stdio.h>/<stdlib.h>/<string.h> via\n// the include block above to avoid `__restrict` qualifier conflicts.\n#if !((defined(__MINGW32__) || defined(__MINGW64__)) && !defined(__clang__))\nV_CRT_LINKAGE int V_CRT_CALL vfprintf(FILE *stream, const char *format, va_list ap);\nV_CRT_LINKAGE int V_CRT_CALL vsnprintf(char *str, size_t size, const char *format, va_list ap);\nV_CRT_LINKAGE int V_CRT_CALL fprintf(FILE *stream, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL printf(const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL snprintf(char *str, size_t size, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL sprintf(char *str, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL sscanf(const char *str, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL scanf(const char *format, ...);\n#endif\nV_CRT_LINKAGE int V_CRT_CALL puts(const char *str);\nV_CRT_LINKAGE void V_CRT_CALL perror(const char *str);\nV_CRT_LINKAGE int V_CRT_CALL fputs(const char *str, FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL getchar(void);\nV_CRT_LINKAGE int V_CRT_CALL putchar(int ch);\nV_CRT_LINKAGE int V_CRT_CALL getc(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL fgetc(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL ungetc(int ch, FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL fflush(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL feof(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL ferror(FILE *stream);\nV_CRT_LINKAGE void V_CRT_CALL clearerr(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL setvbuf(FILE *stream, char *buf, int mode, size_t size);\nV_CRT_LINKAGE long V_CRT_CALL ftell(FILE *stream);\nV_CRT_LINKAGE void V_CRT_CALL rewind(FILE *stream);\nV_CRT_LINKAGE FILE * V_CRT_CALL fopen(const char *filename, const char *mode);\nV_CRT_LINKAGE FILE * V_CRT_CALL fdopen(int fd, const char *mode);\nV_CRT_LINKAGE FILE * V_CRT_CALL freopen(const char *filename, const char *mode, FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL fileno(FILE *stream);\nV_CRT_LINKAGE size_t V_CRT_CALL fread(void *ptr, size_t size, size_t items, FILE *stream);\nV_CRT_LINKAGE size_t V_CRT_CALL fwrite(const void *ptr, size_t size, size_t items, FILE *stream);\n#if defined(__vinix__)\nV_CRT_LINKAGE char * V_CRT_CALL fgets(char *str, size_t size, FILE *stream);\n#else\nV_CRT_LINKAGE char * V_CRT_CALL fgets(char *str, int size, FILE *stream);\n#endif\nV_CRT_LINKAGE int V_CRT_CALL fclose(FILE *stream);\n#if defined(__vinix__)\nV_CRT_LINKAGE FILE * V_CRT_CALL popen(char *command, char *mode);\n#else\nV_CRT_LINKAGE FILE * V_CRT_CALL popen(const char *command, const char *mode);\n#endif\nV_CRT_LINKAGE int V_CRT_CALL pclose(FILE *stream);\nV_CRT_LINKAGE void * V_CRT_CALL malloc(size_t size);\nV_CRT_LINKAGE void * V_CRT_CALL calloc(size_t nitems, size_t size);\nV_CRT_LINKAGE void * V_CRT_CALL realloc(void *ptr, size_t size);\nV_CRT_LINKAGE void * V_CRT_CALL aligned_alloc(size_t alignment, size_t size);\nV_CRT_LINKAGE int V_CRT_CALL posix_memalign(void **memptr, size_t alignment, size_t size);\nV_CRT_LINKAGE void V_CRT_CALL free(void *ptr);\nV_CRT_LINKAGE int V_CRT_CALL rand(void);\nV_CRT_LINKAGE void V_CRT_CALL srand(unsigned int seed);\nV_CRT_LINKAGE int V_CRT_CALL atexit(void (*cb)(void));\nV_CRT_LINKAGE void V_CRT_CALL exit(int status);\nV_CRT_LINKAGE int V_CRT_CALL abs(int n);\nV_CRT_LINKAGE int V_CRT_CALL atoi(const char *str);\nV_CRT_LINKAGE double V_CRT_CALL atof(const char *str);\nV_CRT_LINKAGE char * V_CRT_CALL getenv(const char *name);\nV_CRT_LINKAGE int V_CRT_CALL setenv(const char *name, const char *value, int overwrite);\nV_CRT_LINKAGE int V_CRT_CALL unsetenv(const char *name);\nV_CRT_LINKAGE int V_CRT_CALL system(const char *command);\nV_CRT_LINKAGE int V_CRT_CALL remove(const char *path);\nV_CRT_LINKAGE int V_CRT_CALL rename(const char *old_path, const char *new_path);\nV_CRT_LINKAGE char * V_CRT_CALL realpath(const char *path, char *resolved_path);\nV_CRT_LINKAGE int V_CRT_CALL mkstemp(char *stemplate);\nV_CRT_LINKAGE void V_CRT_CALL qsort(void *base, size_t items, size_t item_size, qsort_callback_func cb);\n#if defined(__vinix__)\nV_CRT_LINKAGE int V_CRT_CALL strcmp(char *left, char *right);\nV_CRT_LINKAGE int V_CRT_CALL strncmp(char *left, char *right, size_t n);\n#else\nV_CRT_LINKAGE int V_CRT_CALL strcmp(const char *left, const char *right);\nV_CRT_LINKAGE int V_CRT_CALL strncmp(const char *left, const char *right, size_t n);\n#endif\n#if !defined(_WIN32) && !defined(_WIN64) && !defined(__BIONIC__)\nV_CRT_LINKAGE char * V_CRT_CALL strdup(const char *str);\n#endif\n#if !defined(_WIN32) && !defined(_WIN64)\nV_CRT_LINKAGE int V_CRT_CALL strcasecmp(const char *left, const char *right);\nV_CRT_LINKAGE int V_CRT_CALL strncasecmp(const char *left, const char *right, size_t n);\n#endif\n#if defined(__vinix__)\nV_CRT_LINKAGE size_t V_CRT_CALL strlen(char *str);\n#else\nV_CRT_LINKAGE size_t V_CRT_CALL strlen(const char *str);\n#endif\nV_CRT_LINKAGE char * V_CRT_CALL strerror(int errnum);\nV_CRT_LINKAGE void * V_CRT_CALL memcpy(void *dest, const void *src, size_t n);\nV_CRT_LINKAGE void * V_CRT_CALL memmove(void *dest, const void *src, size_t n);\nV_CRT_LINKAGE void * V_CRT_CALL memset(void *dest, int ch, size_t n);\nV_CRT_LINKAGE int V_CRT_CALL memcmp(const void *left, const void *right, size_t n);\nV_CRT_LINKAGE void * V_CRT_CALL memchr(const void *str, int c, size_t n);\nV_CRT_LINKAGE char * V_CRT_CALL strchr(const char *str, int c);\nV_CRT_LINKAGE char * V_CRT_CALL strrchr(const char *str, int c);\nV_CRT_LINKAGE char * V_CRT_CALL strstr(const char *haystack, const char *needle);\nV_CRT_LINKAGE int V_CRT_CALL fseek(FILE *stream, long offset, int whence);\nV_CRT_LINKAGE isize V_CRT_CALL getline(char **lineptr, size_t *n, FILE *stream);\n#if defined(_WIN32) || defined(_WIN64)\nV_CRT_LINKAGE int V_CRT_CALL _fseeki64(FILE *stream, i64 offset, int whence);\nV_CRT_LINKAGE int V_CRT_CALL fgetpos(FILE *stream, i64 *pos);\nV_CRT_LINKAGE int V_CRT_CALL _fileno(FILE *stream);\nV_CRT_LINKAGE FILE * V_CRT_CALL _wfopen(const unsigned short *filename, const unsigned short *mode);\nV_CRT_LINKAGE int V_CRT_CALL freopen_s(FILE **new_stream, const char *filename, const char *mode, FILE *stream);\nV_CRT_LINKAGE FILE * V_CRT_CALL _wfreopen(const unsigned short *filename, const unsigned short *mode, FILE *stream);\nV_CRT_LINKAGE FILE * V_CRT_CALL _wpopen(const unsigned short *command, const unsigned short *mode);\nV_CRT_LINKAGE int V_CRT_CALL _pclose(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL _wremove(const unsigned short *path);\nV_CRT_LINKAGE void * V_CRT_CALL _aligned_malloc(size_t size, size_t alignment);\nV_CRT_LINKAGE void * V_CRT_CALL _aligned_realloc(void *memory, size_t size, size_t alignment);\nV_CRT_LINKAGE void V_CRT_CALL _aligned_free(void *memory);\nV_CRT_LINKAGE unsigned short * V_CRT_CALL _wgetenv(const unsigned short *varname);\nV_CRT_LINKAGE int V_CRT_CALL _wputenv(const unsigned short *envstring);\n#endif\n#if defined(_MSC_VER) && !defined(__clang__)\n#ifndef _TRUNCATE\n\011#define _TRUNCATE ((size_t)-1)\n#endif\nV_CRT_LINKAGE int V_CRT_CALL _vscprintf(const char *format, va_list ap);\nV_CRT_LINKAGE int V_CRT_CALL _vsnprintf_s(char *buffer, size_t size, size_t count, const char *format, va_list ap);\n#endif\n#endif\n#ifndef _IOFBF\n\011#define _IOFBF 0\n#endif\n#ifndef _IOLBF\n\011#define _IOLBF 1\n#endif\n#ifndef _IONBF\n\011#define _IONBF 2\n#endif\n#ifndef EOF\n\011#define EOF (-1)\n#endif\n#ifndef SEEK_SET\n\011#define SEEK_SET 0\n#endif\n#ifndef SEEK_CUR\n\011#define SEEK_CUR 1\n#endif\n#ifndef SEEK_END\n\011#define SEEK_END 2\n#endif\n#ifndef RAND_MAX\nenum {\n\011#if defined(_MSC_VER)\n\011\011RAND_MAX = 0x7fff\n\011#else\n\011\011RAND_MAX = 2147483647\n\011#endif\n};\n#endif\n#undef V_CRT_LINKAGE\n#undef V_CRT_CALL\nstatic void v_stable_sort(void *base, size_t items, size_t item_size, qsort_callback_func cb) {\n\011if (items < 2 || item_size == 0) {\n\011\011return;\n\011}\n\011if (items > ((size_t)-1) / item_size) {\n\011\011qsort(base, items, item_size, cb);\n\011\011return;\n\011}\n\011const size_t bytes = items * item_size;\n\011char *base_bytes = (char*)base;\n\011char *tmp = (char*)malloc(bytes);\n\011if (tmp == 0) {\n\011\011qsort(base, items, item_size, cb);\n\011\011return;\n\011}\n\011char *src = base_bytes;\n\011char *dst = tmp;\n\011for (size_t width = 1; width < items;) {\n\011\011for (size_t left = 0; left < items;) {\n\011\011\011size_t mid = left;\n\011\011\011mid += width;\n\011\011\011if (mid > items) {\n\011\011\011\011mid = items;\n\011\011\011}\n\011\011\011size_t right = mid;\n\011\011\011right += width;\n\011\011\011if (right > items || right < mid) {\n\011\011\011\011right = items;\n\011\011\011}\n\011\011\011size_t i = left;\n\011\011\011size_t j = mid;\n\011\011\011size_t k = left;\n\011\011\011while (i < mid && j < right) {\n\011\011\011\011char *leftp = src;\n\011\011\011\011leftp += i * item_size;\n\011\011\011\011char *rightp = src;\n\011\011\011\011rightp += j * item_size;\n\011\011\011\011char *dstp = dst;\n\011\011\011\011dstp += k * item_size;\n\011\011\011\011if (cb(leftp, rightp) <= " "0) {\n\011\011\011\011\011memcpy(dstp, leftp, item_size);\n\011\011\011\011\011i++;\n\011\011\011\011} else {\n\011\011\011\011\011memcpy(dstp, rightp, item_size);\n\011\011\011\011\011j++;\n\011\011\011\011}\n\011\011\011\011k++;\n\011\011\011}\n\011\011\011while (i < mid) {\n\011\011\011\011char *dstp = dst;\n\011\011\011\011dstp += k * item_size;\n\011\011\011\011char *srcp = src;\n\011\011\011\011srcp += i * item_size;\n\011\011\011\011memcpy(dstp, srcp, item_size);\n\011\011\011\011i++;\n\011\011\011\011k++;\n\011\011\011}\n\011\011\011while (j < right) {\n\011\011\011\011char *dstp = dst;\n\011\011\011\011dstp += k * item_size;\n\011\011\011\011char *srcp = src;\n\011\011\011\011srcp += j * item_size;\n\011\011\011\011memcpy(dstp, srcp, item_size);\n\011\011\011\011j++;\n\011\011\011\011k++;\n\011\011\011}\n\011\011\011left = right;\n\011\011}\n\011\011char *next_src = dst;\n\011\011dst = src;\n\011\011src = next_src;\n\011\011if (width > items / 2) {\n\011\011\011width = items;\n\011\011} else {\n\011\011\011width *= 2;\n\011\011}\n\011}\n\011if (src != base_bytes) {\n\011\011memcpy(base_bytes, src, bytes);\n\011}\n\011free(tmp);\n}\n#if defined(__TINYC__)\n// https://lists.nongnu.org/archive/html/tinycc-devel/2025-10/msg00007.html\n// gnu headers use to #define __attribute__ to empty for non-gcc compilers\n#undef __attribute__\n#endif\n#if defined(_MSC_VER) && !defined(__clang__)\n// Ensure C99-like return semantics and NUL-termination for MSVC snprintf/vsnprintf.\nstatic int v__vsnprintf(char *s, size_t n, const char *fmt, va_list ap) {\n\011va_list ap_copy;\n\011va_copy(ap_copy, ap);\n\011const int needed = _vscprintf(fmt, ap_copy);\n\011va_end(ap_copy);\n\011if (n > 0) {\n\011\011const int written = _vsnprintf_s(s, n, _TRUNCATE, fmt, ap);\n\011\011if (written < 0) {\n\011\011\011s[n -\n\0111] = 0;\n\011\011}\n\011}\n\011return needed;\n}\nstatic int v__snprintf(char *s, size_t n, const char *fmt, ...) {\n\011va_list ap;\n\011va_start(ap, fmt);\n\011const int needed = v__vsnprintf(s, n, fmt, ap);\n\011va_end(ap);\n\011return needed;\n}\n#define vsnprintf v__vsnprintf\n#define snprintf v__snprintf\n#endif\n//================================== GLOBALS =================================*/\n#ifdef _VOBJECTFILE\nstatic void _vinit(int ___argc, voidptr ___argv);\nstatic void _vcleanup(void);\n#else\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup(void);\n#endif\n#ifdef _WIN32\n\011// Export helpers so the autogenerated DllMain, or a user-defined one,\n\011// can reuse the default V shared-library init/cleanup path.\n\011#ifdef _VOBJECTFILE\n\011\011static void _vinit_caller();\n\011\011static void _vcleanup_caller();\n\011#else\n\011\011VV_EXP void _vinit_caller();\n\011\011VV_EXP void _vcleanup_caller();\n\011#endif\n#endif\n#if !defined(_WIN32)\n#define sigaction_size sizeof(sigaction);\n#endif\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n#if INTPTR_MAX == INT32_MAX\n\011#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n\011#define TARGET_IS_64BIT 1\n#else\n\011#error \"The environment is not 32 or 64-bit.\"\n#endif\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n\011#define TARGET_ORDER_IS_BIG 1\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_ARM64) || defined(_M_X64) || defined(_M_IX86)\n\011#define TARGET_ORDER_IS_LITTLE 1\n#else\n\011#error \"Unknown architecture endianness\"\n#endif\n#if !defined(_WIN32) && !defined(__vinix__)\n\011#include <ctype.h>\n\011#include <locale.h> // tolower\n\011#include <sys/time.h>\n\011#include <unistd.h> // sleep\n\011extern char **environ;\n\011#include <pthread.h>\n\011#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n\011\011// musl does not have that\n\011\011#define pthread_rwlockattr_setkind_np(a, b)\n\011#endif\n#endif\n#if (defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__DragonFly__) || defined(__serenity__) || defined(__sun) || defined(__plan9__) || defined(__OpenBSD__)) && !defined(__vinix__)\n\011#include <sys/types.h>\n\011#include <sys/wait.h> // for os__wait\n#endif\n#ifdef __OpenBSD__\n\011#include <sys/resource.h>\n#endif\n#ifdef __FreeBSD__\n\011#include <signal.h>\n\011#include <execinfo.h>\n#endif\n#ifdef __NetBSD__\n\011#include <sys/wait.h> // for os__wait\n#endif\n#ifdef __TERMUX__\n#if !defined(__BIONIC_AVAILABILITY_GUARD)\n\011#define __BIONIC_AVAILABILITY_GUARD(api_level) 0\n#endif\n#if __BIONIC_AVAILABILITY_GUARD(28)\n#else\nvoid * aligned_alloc(size_t alignment, size_t size) { return malloc(size); }\n#endif\n#endif\n#ifdef __APPLE__\n\011// macOS only exports aligned_alloc starting with 10.15.\n\011#if !defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) || __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 101500\nstatic void *v__aligned_alloc_fallback(size_t alignment, size_t size) {\n\011void *res = 0;\n\011if (alignment < sizeof(void *)) {\n\011\011alignment = sizeof(void *);\n\011}\n\011if (posix_memalign(&res, alignment, size) != 0) {\n\011\011return 0;\n\011}\n\011return res;\n}\n\011\011#define aligned_alloc v__aligned_alloc_fallback\n\011#endif\n#endif\n#ifdef _WIN32\n\011#ifdef WINVER\n\011\011#undef WINVER\n\011#endif\n\011#define WINVER 0x0600\n\011#ifdef _WIN32_WINNT\n\011\011#undef _WIN32_WINNT\n\011#endif\n\011#define _WIN32_WINNT 0x0600\n\011#ifndef WIN32_FULL\n\011#define WIN32_LEAN_AND_MEAN\n\011#endif\n\011#ifndef _UNICODE\n\011#define _UNICODE\n\011#endif\n\011#ifndef UNICODE\n\011#define UNICODE\n\011#endif\n\011#include <windows.h>\n\011#include <io.h> // _waccess\n\011#include <direct.h> // _wgetcwd\n\011#ifdef V_USE_SIGNAL_H\n\011#include <signal.h> // signal and SIGSEGV for segmentation fault handler\n\011#endif\n\011#ifdef _MSC_VER\n\011\011// On MSVC these are the same (as long as /volatile:ms is passed)\n\011\011#define _Atomic volatile\n\011\011// MSVC cannot parse some things properly\n\011\011#undef __NOINLINE\n\011\011#undef __IRQHANDLER\n\011\011#define __NOINLINE __declspec(noinline)\n\011\011#define __IRQHANDLER __declspec(naked)\n\011\011#include <dbghelp.h>\n\011\011#pragma comment(lib, \"Dbghelp\")\n\011#endif\n#endif\n#if defined(__CYGWIN__) && !defined(_WIN32)\n\011#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__)) || defined(_MSC_VER)\n\011#undef PRId64\n\011#undef PRIi64\n\011#undef PRIo64\n\011#undef PRIu64\n\011#undef PRIx64\n\011#undef PRIX64\n\011#define PRId64 \"lld\"\n\011#define PRIi64 \"lli\"\n\011#define PRIo64 \"llo\"\n\011#define PRIu64 \"llu\"\n\011#define PRIx64 \"llx\"\n\011#define PRIX64 \"llX\"\n#endif\n#ifdef _VFREESTANDING\n#undef _VFREESTANDING\n#endif\n");
+	_const_v__gen__c__c_headers = _S("//============================== HELPER C MACROS =============================*/\n// _SLIT0 is used as NULL string for literal arguments\n// `\"\" s` is used to enforce a string literal argument\n#define _SLIT0 (string){.str=(byteptr)(\"\"), .len=0, .is_lit=1}\n#define _S(s) ((string){.str=(byteptr)(\"\" s), .len=(sizeof(s)-1), .is_lit=1})\n#define _SLEN(s, n) ((string){.str=(byteptr)(\"\" s), .len=n, .is_lit=1})\n// optimized way to compare literal strings\n#define _SLIT_EQ(sptr, slen, lit) (slen == sizeof(\"\" lit)-1 && !builtin__vmemcmp(sptr, \"\" lit, slen))\n#define _SLIT_NE(sptr, slen, lit) (slen != sizeof(\"\" lit)-1 || builtin__vmemcmp(sptr, \"\" lit, slen))\n// take the address of an rvalue\n#define ADDR(type, expr) (&((type[]){expr}[0]))\n// copy something to the heap\n#define HEAP(type, expr) ((type*)builtin__memdup((void*)&((type[]){expr}[0]), sizeof(type)))\n#define HEAP_noscan(type, expr) ((type*)builtin__memdup_noscan((void*)&((type[]){expr}[0]), sizeof(type)))\n#define HEAP_align(type, expr, align) ((type*)builtin__memdup_align((void*)&((type[]){expr}[0]), sizeof(type), align))\n#define HEAP_vgc(type, expr, ptrmap, nptrs) ((type*)builtin__vgc_memdup_typed((void*)&((type[]){expr}[0]), sizeof(type), (ptrmap), (nptrs)))\n#define _PUSH_MANY(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); builtin__array_push_many(arr, tmp.data, tmp.len);}\n#define _PUSH_MANY_noscan(arr, val, tmp, tmp_typ) {tmp_typ tmp = (val); builtin__array_push_many_noscan(arr, tmp.data, tmp.len);}\n\n#define E_STRUCT_DECL\n#define E_STRUCT\n#define __NOINLINE __attribute__((noinline))\n#define __IRQHANDLER __attribute__((interrupt))\n#define __V_architecture 0\n#if defined(__x86_64__) || defined(_M_AMD64)\n\011#define __V_amd64  1\n\011#undef __V_architecture\n\011#define __V_architecture 1\n#endif\n#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)\n\011#define __V_arm64  1\n\011#undef __V_architecture\n\011#define __V_architecture 2\n#endif\n#if defined(__arm__) || defined(_M_ARM)\n\011#define __V_arm32  1\n\011#undef __V_architecture\n\011#define __V_architecture 3\n#endif\n#if defined(__riscv) && __riscv_xlen == 64\n\011#define __V_rv64  1\n\011#undef __V_architecture\n\011#define __V_architecture 4\n#endif\n#if defined(__riscv) && __riscv_xlen == 32\n\011#define __V_rv32  1\n\011#undef __V_architecture\n\011#define __V_architecture 5\n#endif\n#if defined(__i386__) || defined(_M_IX86)\n\011#define __V_x86    1\n\011#undef __V_architecture\n\011#define __V_architecture 6\n#endif\n#if defined(__s390x__)\n\011#define __V_s390x  1\n\011#undef __V_architecture\n\011#define __V_architecture 7\n#endif\n#if defined(__powerpc64__) && defined(__LITTLE_ENDIAN__)\n\011#define __V_ppc64le  1\n\011#undef __V_architecture\n\011#define __V_architecture 8\n#endif\n#if defined(__loongarch64)\n\011#define __V_loongarch64  1\n\011#undef __V_architecture\n\011#define __V_architecture 9\n#endif\n#if defined(__sparc__)\n\011#define __V_sparc64  1\n\011#undef __V_architecture\n\011#define __V_architecture 10\n#endif\n#if defined(__powerpc64__) && defined(__BIG_ENDIAN__)\n\011#define __V_ppc64  1\n\011#undef __V_architecture\n\011#define __V_architecture 11\n#endif\n#if (defined(__powerpc__) || defined(__powerpc) || defined(__POWERPC__) || defined(__ppc__) || defined(__ppc) || defined(__PPC__)) && !defined(__powerpc64__) && !defined(__ppc64__) && !defined(__PPC64__)\n\011#define __V_ppc  1\n\011#undef __V_architecture\n\011#define __V_architecture 12\n#endif\n// Using just __GNUC__ for detecting gcc, is not reliable because other compilers define it too:\n#ifdef __GNUC__\n\011#define __V_GCC__\n#endif\n#ifdef __TINYC__\n\011#undef __V_GCC__\n#endif\n#ifdef __cplusplus\n\011#undef __V_GCC__\n#endif\n#ifdef __clang__\n\011#undef __V_GCC__\n#endif\n#ifdef _MSC_VER\n\011#undef __V_GCC__\n\011#undef E_STRUCT_DECL\n\011#undef E_STRUCT\n\011#define E_STRUCT_DECL unsigned char _dummy_pad\n\011#define E_STRUCT 0\n#endif\n#if defined(__has_include) && !defined(__TINYC__)\n\011#if __has_include(<execinfo.h>) && !defined(_WIN32)\n\011\011#define __V_HAVE_EXECINFO_H 1\n\011\011#include <execinfo.h>\n\011#else\n\011\011// On linux: int backtrace(void **__array, int __size);\n\011\011// On BSD: size_t backtrace(void **, size_t);\n\011#endif\n#elif (defined(__linux__) && (defined(__GLIBC__) || defined(__GNU_LIBRARY__))) || defined(__APPLE__) || defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)\n\011#define __V_HAVE_EXECINFO_H 1\n\011#include <execinfo.h>\n#else\n\011// On linux: int backtrace(void **__array, int __size);\n\011// On BSD: size_t backtrace(void **, size_t);\n#endif\n#ifndef __V_HAVE_EXECINFO_H\n\011#ifdef __cplusplus\n\011extern \"C\" {\n\011#endif\n\011int backtrace(void **__array, int __size);\n\011char **backtrace_symbols(void *const *__array, int __size);\n\011void backtrace_symbols_fd(void *const *__array, int __size, int __fd);\n\011#ifdef __cplusplus\n\011}\n\011#endif\n#endif\n#ifdef __TINYC__\n\011#define _Atomic volatile\n\011#undef E_STRUCT_DECL\n\011#undef E_STRUCT\n\011#define E_STRUCT_DECL unsigned char _dummy_pad\n\011#define E_STRUCT 0\n\011#undef __NOINLINE\n\011#undef __IRQHANDLER\n\011// tcc does not support inlining at all\n\011#define __NOINLINE\n\011#define __IRQHANDLER\n\011// #include <byteswap.h>\n\011int tcc_backtrace(const char *fmt, ...);\n#endif\n// Use __offsetof_ptr instead of __offset_of, when you *do* have a valid pointer, to avoid UB:\n#ifndef __offsetof_ptr\n\011#define __offsetof_ptr(ptr,PTYPE,FIELDNAME) ((size_t)((byte *)&((PTYPE *)ptr)->FIELDNAME - (byte *)ptr))\n#endif\n// for __offset_of\n#ifndef __offsetof\n#if defined(__TINYC__) || defined(_MSC_VER)\n\011#define __offsetof(PTYPE,FIELDNAME) ((size_t)(&((PTYPE *)0)->FIELDNAME))\n#else\n\011#define __offsetof(st, m) __builtin_offsetof(st, m)\n#endif\n#endif\n#if defined(_WIN32) || defined(__CYGWIN__)\n\011#define VV_EXP extern __declspec(dllexport)\n\011#ifdef _VPARALLELCC\n\011\011#define VV_LOC\n\011#else\n\011\011#define VV_LOC static\n\011#endif\n#else\n\011// 4 < gcc < 5 is used by some older Ubuntu LTS and Centos versions,\n\011// and does not support __has_attribute(visibility) ...\n\011#ifndef __has_attribute\n\011\011#define __has_attribute(x) 0  // Compatibility with non-clang compilers.\n\011#endif\n\011#if (defined(__GNUC__) && (__GNUC__ >= 4)) || (defined(__clang__) && __has_attribute(visibility))\n\011\011#ifdef ARM\n\011\011\011#define VV_EXP  extern __attribute__((externally_visible,visibility(\"default\")))\n\011\011#else\n\011\011\011#define VV_EXP  extern __attribute__((visibility(\"default\")))\n\011\011#endif\n\011\011#if defined(_VOBJECTFILE) || (defined(__clang__) && (defined(_VUSECACHE) || defined(_VBUILDMODULE)))\n\011\011\011#define VV_LOC static\n\011\011#else\n\011\011\011#define VV_LOC  __attribute__ ((visibility (\"hidden\")))\n\011\011#endif\n\011#else\n\011\011#define VV_EXP extern\n\011\011#ifdef _VPARALLELCC\n\011\011\011#define VV_LOC\n\011\011#else\n\011\011\011#define VV_LOC static\n\011\011#endif\n\011#endif\n#endif\n#ifdef __cplusplus\n\011#include <utility>\n\011#define _MOV std::move\n#else\n\011#define _MOV\n#endif\n#if defined(__TINYC__) && defined(__has_include) // tcc does not support has_include properly yet, turn it off completely\n#undef __has_include\n#endif\n//likely and unlikely macros\n#if defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__clang__)\n\011#define _likely_(x)  __builtin_expect(x,1)\n\011#define _unlikely_(x)  __builtin_expect(x,0)\n#else\n\011#define _likely_(x) (x)\n\011#define _unlikely_(x) (x)\n#endif\n\n#if !defined(VCALLCONV)\n\011#ifdef _MSC_VER\n\011\011#define VCALLCONV(name) __##name\n\011#else\n\011\011#define VCALLCONV(name) __attribute__((name))\n\011#endif\n#endif\n\n// c_headers\ntypedef int (*qsort_callback_func)(const void*, const void*);\n#if defined(_MSC_VER) && !defined(__clang__)\n\011#define V_CRT_LINKAGE __declspec(dllimport)\n\011#define V_CRT_CALL VCALLCONV(cdecl)\n#else\n\011#define V_CRT_LINKAGE\n\011#define V_CRT_CALL\n#endif\n#if (defined(__MINGW32__) || defined(__MINGW64__)) && defined(__V_GCC__)\n\011#define V_CRT_STDIO_LINKAGE __attribute__((dllimport))\n#else\n\011#define V_CRT_STDIO_LINKAGE V_CRT_LINKAGE\n#endif\n#if (defined(_MSC_VER) && !defined(__clang__)) || defined(__cplusplus)\n// Under C++ (g++/clang++), let libc declare FILE/stdio/string/stdlib to keep\n// noexcept specifiers consistent \342\200\224 the manual extern \"C\" prototypes below\n// would otherwise conflict with system headers under -std=c++NN.\n#include <stdarg.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#ifndef va_copy\n\011#define va_copy(dest, src) ((dest) = (src))\n#endif\n#ifndef _TRUNCATE\n\011#define _TRUNCATE ((size_t)-1)\n#endif\n#elif defined(__NetBSD__)\n// NetBSD exposes stdin/stdout/stderr as macros into a single `__sF[3]`\n// array whose element size (sizeof(FILE)) depends on the platform and libc\n// version, so we cannot forward-declare them. The FreeBSD-style\n// `__stdinp/__stdoutp/__stderrp` symbols also do not exist on NetBSD (see\n// vlang/v#27190). Defer to the system headers for FILE, the stdio streams,\n// and the libc prototypes that would otherwise clash with the\n// `__restrict`-qualified declarations in NetBSD libc.\n#include <stdarg.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#elif defined(__TINYC__) && (defined(__FreeBSD__) || defined(__OpenBSD__))\n// TinyCC reports a hard redefinition error if system OpenSSL pulls in\n// <stdarg.h> after V has provided its own va_start macro. Include it first,\n// but keep V manual FILE declarations on these BSD libc variants.\n#include <stdarg.h>\n#if defined(__FreeBSD__)\ntypedef struct __sFILE FILE;\nextern FILE* __stdinp;\nextern FILE* __stdoutp;\nextern FILE* __stderrp;\n#define stdin __stdinp\n#define stdout __stdoutp\n#define stderr __stderrp\n#else\ntypedef struct __sFILE FILE;\n#ifndef _STDFILES_DECLARED\n\011#define _STDFILES_DECLARED\nstruct __sFstub { long _stub; };\nextern struct __sFstub __stdin[];\nextern struct __sFstub __stdout[];\nextern struct __sFstub __stderr[];\n#endif\n#define stdin ((struct __sFILE *)__stdin)\n#define stdout ((struct __sFILE *)__stdout)\n#define stderr ((struct __sFILE *)__stderr)\n#endif\n#elif (defined(__MINGW32__) || defined(__MINGW64__)) && defined(__V_GCC__)\n// mingw-w64 stdio.h provides fprintf/vfprintf as static inline overrides\n// when __USE_MINGW_ANSI_STDIO is enabled, so use the system declarations\n// instead of the manual formatted-stdio prototypes below.\n#include <stdarg.h>\n#include <stdio.h>\n#elif defined(__MINGW32__) || defined(__MINGW64__) || (defined(__clang__) && (defined(_WIN32) || defined(_WIN64)))\ntypedef struct _iobuf FILE;\nFILE* __cdecl __acrt_iob_func(unsigned index);\n#define stdin  (__acrt_iob_func(0))\n#define stdout (__acrt_iob_func(1))\n#define stderr (__acrt_iob_func(2))\n#elif defined(__TINYC__) && (defined(_WIN32) || defined(_WIN64))\n#ifndef _FILE_DEFINED\nstruct _iobuf {\n\011char *_ptr;\n\011int _cnt;\n\011char *_base;\n\011int _flag;\n\011int _file;\n\011int _charbuf;\n\011int _bufsiz;\n\011char *_tmpfname;\n};\ntypedef struct _iobuf FILE;\n#define _FILE_DEFINED\n#endif\n\011#if defined(_WIN64)\nFILE* __cdecl __iob_func(void);\n\011#else\n\011\011#ifdef _MSVCRT_\nextern FILE _iob[];\n\011\011\011#define __iob_func() (_iob)\n\011\011#else\nextern FILE (*_imp___iob)[];\n\011\011\011#define __iob_func() (*_imp___iob)\n\011\011\011#define _iob __iob_func()\n\011\011#endif\n\011#endif\n#define stdin (&__iob_func()[0])\n#define stdout (&__iob_func()[1])\n#define stderr (&__iob_func()[2])\n#elif defined(__vinix__)\ntypedef struct __file FILE;\nextern FILE* stdin;\nextern FILE* stdout;\nextern FILE* stderr;\nstruct __thread_data;\nstruct __threadattr;\n// pthread_t handling for vinix builds:\n//  - Vinix kernel (freestanding, __STDC_HOSTED__=0): no libc, define\n//    pthread_t ourselves so V code that references it compiles.\n//  " "- util-vinix cross-compiled on a libc-providing host (hosted, e.g.\n//    glibc on Linux or macOS with -D__vinix__): pull pthread_t from\n//    libc to avoid colliding with the libc typedef.\n#if defined(__STDC_HOSTED__) && __STDC_HOSTED__ && defined(__has_include) && __has_include(<pthread.h>)\n#include <pthread.h>\n#else\ntypedef struct __thread_data *pthread_t;\n#endif\ntypedef __builtin_va_list va_list;\n#ifndef va_start\n\011#define va_start(ap, v) __builtin_va_start(ap, v)\n#endif\n#ifndef va_arg\n\011#define va_arg(ap, t) __builtin_va_arg(ap, t)\n#endif\n#ifndef va_end\n\011#define va_end(ap) __builtin_va_end(ap)\n#endif\n#ifndef va_copy\n\011#define va_copy(dest, src) __builtin_va_copy(dest, src)\n#endif\n#else\n\011#if defined(__APPLE__) || defined(__FreeBSD__)\ntypedef struct __sFILE FILE;\nextern FILE* __stdinp;\nextern FILE* __stdoutp;\nextern FILE* __stderrp;\n#define stdin __stdinp\n#define stdout __stdoutp\n#define stderr __stderrp\n\011#elif defined(__DragonFly__)\ntypedef struct __sFILE FILE;\nextern FILE* __stdinp;\nextern FILE* __stdoutp;\nextern FILE* __stderrp;\n#define stdin __stdinp\n#define stdout __stdoutp\n#define stderr __stderrp\n\011#elif defined(__OpenBSD__)\ntypedef struct __sFILE FILE;\n#ifndef _STDFILES_DECLARED\n\011#define _STDFILES_DECLARED\nstruct __sFstub { long _stub; };\nextern struct __sFstub __stdin[];\nextern struct __sFstub __stdout[];\nextern struct __sFstub __stderr[];\n#endif\n#define stdin ((struct __sFILE *)__stdin)\n#define stdout ((struct __sFILE *)__stdout)\n#define stderr ((struct __sFILE *)__stderr)\n\011#elif defined(__BIONIC__)\nstruct __sFILE;\ntypedef struct __sFILE FILE;\nextern FILE* stdin;\nextern FILE* stdout;\nextern FILE* stderr;\n\011#elif defined(__linux__) && !defined(__GLIBC__) && !defined(__GNU_LIBRARY__) && !defined(__BIONIC__) && !defined(__UCLIBC__)\ntypedef struct _IO_FILE FILE;\n// musl exposes the stdio streams as `FILE *const`, so match that to stay\n// compatible with later <stdio.h> includes from headers like miniz.h.\nextern FILE* const stdin;\nextern FILE* const stdout;\nextern FILE* const stderr;\n\011#else\ntypedef struct _IO_FILE FILE;\nextern FILE* stdin;\nextern FILE* stdout;\nextern FILE* stderr;\n\011#endif\ntypedef __builtin_va_list va_list;\n#ifndef va_start\n\011#define va_start(ap, v) __builtin_va_start(ap, v)\n#endif\n#ifndef va_arg\n\011#define va_arg(ap, t) __builtin_va_arg(ap, t)\n#endif\n#ifndef va_end\n\011#define va_end(ap) __builtin_va_end(ap)\n#endif\n#ifndef va_copy\n\011#define va_copy(dest, src) __builtin_va_copy(dest, src)\n#endif\n#endif\n#if (!defined(_MSC_VER) || defined(__clang__)) && !defined(__cplusplus) && !defined(__NetBSD__)\n// mingw-w64 stdio.h declares these as static __mingw_ovr inline overrides\n// when __USE_MINGW_ANSI_STDIO is on. Skip them under gcc+mingw to avoid\n// static-after-extern conflicts; clang+mingw needs them because it builds\n// with -Werror=implicit-function-declaration and does not hit the conflict.\n// NetBSD pulls these prototypes from <stdio.h>/<stdlib.h>/<string.h> via\n// the include block above to avoid `__restrict` qualifier conflicts.\n#if !((defined(__MINGW32__) || defined(__MINGW64__)) && !defined(__clang__))\nV_CRT_LINKAGE int V_CRT_CALL vfprintf(FILE *stream, const char *format, va_list ap);\nV_CRT_LINKAGE int V_CRT_CALL vsnprintf(char *str, size_t size, const char *format, va_list ap);\nV_CRT_LINKAGE int V_CRT_CALL fprintf(FILE *stream, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL printf(const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL snprintf(char *str, size_t size, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL sprintf(char *str, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL sscanf(const char *str, const char *format, ...);\nV_CRT_LINKAGE int V_CRT_CALL scanf(const char *format, ...);\n#endif\nV_CRT_LINKAGE int V_CRT_CALL puts(const char *str);\nV_CRT_LINKAGE void V_CRT_CALL perror(const char *str);\nV_CRT_LINKAGE int V_CRT_CALL fputs(const char *str, FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL getchar(void);\nV_CRT_LINKAGE int V_CRT_CALL putchar(int ch);\nV_CRT_LINKAGE int V_CRT_CALL getc(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL fgetc(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL ungetc(int ch, FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL fflush(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL feof(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL ferror(FILE *stream);\nV_CRT_LINKAGE void V_CRT_CALL clearerr(FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL setvbuf(FILE *stream, char *buf, int mode, size_t size);\nV_CRT_LINKAGE long V_CRT_CALL ftell(FILE *stream);\nV_CRT_LINKAGE void V_CRT_CALL rewind(FILE *stream);\nV_CRT_LINKAGE FILE * V_CRT_CALL fopen(const char *filename, const char *mode);\nV_CRT_LINKAGE FILE * V_CRT_CALL fdopen(int fd, const char *mode);\nV_CRT_LINKAGE FILE * V_CRT_CALL freopen(const char *filename, const char *mode, FILE *stream);\nV_CRT_LINKAGE int V_CRT_CALL fileno(FILE *stream);\nV_CRT_LINKAGE size_t V_CRT_CALL fread(void *ptr, size_t size, size_t items, FILE *stream);\nV_CRT_LINKAGE size_t V_CRT_CALL fwrite(const void *ptr, size_t size, size_t items, FILE *stream);\n#if defined(__vinix__)\nV_CRT_LINKAGE char * V_CRT_CALL fgets(char *str, size_t size, FILE *stream);\n#else\nV_CRT_LINKAGE char * V_CRT_CALL fgets(char *str, int size, FILE *stream);\n#endif\nV_CRT_LINKAGE int V_CRT_CALL fclose(FILE *stream);\n#if defined(__vinix__)\nV_CRT_LINKAGE FILE * V_CRT_CALL popen(char *command, char *mode);\n#else\nV_CRT_STDIO_LINKAGE FILE * V_CRT_CALL popen(const char *command, const char *mode);\n#endif\nV_CRT_STDIO_LINKAGE int V_CRT_CALL pclose(FILE *stream);\nV_CRT_LINKAGE void * V_CRT_CALL malloc(size_t size);\nV_CRT_LINKAGE void * V_CRT_CALL calloc(size_t nitems, size_t size);\nV_CRT_LINKAGE void * V_CRT_CALL realloc(void *ptr, size_t size);\nV_CRT_LINKAGE void * V_CRT_CALL aligned_alloc(size_t alignment, size_t size);\nV_CRT_LINKAGE int V_CRT_CALL posix_memalign(void **memptr, size_t alignment, size_t size);\nV_CRT_LINKAGE void V_CRT_CALL free(void *ptr);\nV_CRT_LINKAGE int V_CRT_CALL rand(void);\nV_CRT_LINKAGE void V_CRT_CALL srand(unsigned int seed);\nV_CRT_LINKAGE int V_CRT_CALL atexit(void (*cb)(void));\nV_CRT_LINKAGE void V_CRT_CALL exit(int status);\nV_CRT_LINKAGE int V_CRT_CALL abs(int n);\nV_CRT_LINKAGE int V_CRT_CALL atoi(const char *str);\nV_CRT_LINKAGE double V_CRT_CALL atof(const char *str);\nV_CRT_LINKAGE char * V_CRT_CALL getenv(const char *name);\nV_CRT_LINKAGE int V_CRT_CALL setenv(const char *name, const char *value, int overwrite);\nV_CRT_LINKAGE int V_CRT_CALL unsetenv(const char *name);\nV_CRT_LINKAGE int V_CRT_CALL system(const char *command);\nV_CRT_LINKAGE int V_CRT_CALL remove(const char *path);\nV_CRT_LINKAGE int V_CRT_CALL rename(const char *old_path, const char *new_path);\nV_CRT_LINKAGE char * V_CRT_CALL realpath(const char *path, char *resolved_path);\nV_CRT_LINKAGE int V_CRT_CALL mkstemp(char *stemplate);\nV_CRT_LINKAGE void V_CRT_CALL qsort(void *base, size_t items, size_t item_size, qsort_callback_func cb);\n#if defined(__vinix__)\nV_CRT_LINKAGE int V_CRT_CALL strcmp(char *left, char *right);\nV_CRT_LINKAGE int V_CRT_CALL strncmp(char *left, char *right, size_t n);\n#else\nV_CRT_LINKAGE int V_CRT_CALL strcmp(const char *left, const char *right);\nV_CRT_LINKAGE int V_CRT_CALL strncmp(const char *left, const char *right, size_t n);\n#endif\n#if !defined(_WIN32) && !defined(_WIN64) && !defined(__BIONIC__)\nV_CRT_LINKAGE char * V_CRT_CALL strdup(const char *str);\n#endif\n#if !defined(_WIN32) && !defined(_WIN64)\nV_CRT_LINKAGE int V_CRT_CALL strcasecmp(const char *left, const char *right);\nV_CRT_LINKAGE int V_CRT_CALL strncasecmp(const char *left, const char *right, size_t n);\n#endif\n#if defined(__vinix__)\nV_CRT_LINKAGE size_t V_CRT_CALL strlen(char *str);\n#else\nV_CRT_LINKAGE size_t V_CRT_CALL strlen(const char *str);\n#endif\nV_CRT_LINKAGE char * V_CRT_CALL strerror(int errnum);\nV_CRT_LINKAGE void * V_CRT_CALL memcpy(void *dest, const void *src, size_t n);\nV_CRT_LINKAGE void * V_CRT_CALL memmove(void *dest, const void *src, size_t n);\nV_CRT_LINKAGE void * V_CRT_CALL memset(void *dest, int ch, size_t n);\nV_CRT_LINKAGE int V_CRT_CALL memcmp(const void *left, const void *right, size_t n);\nV_CRT_LINKAGE void * V_CRT_CALL memchr(const void *str, int c, size_t n);\nV_CRT_LINKAGE char * V_CRT_CALL strchr(const char *str, int c);\nV_CRT_LINKAGE char * V_CRT_CALL strrchr(const char *str, int c);\nV_CRT_LINKAGE char * V_CRT_CALL strstr(const char *haystack, const char *needle);\nV_CRT_LINKAGE int V_CRT_CALL fseek(FILE *stream, long offset, int whence);\nV_CRT_LINKAGE isize V_CRT_CALL getline(char **lineptr, size_t *n, FILE *stream);\n#if defined(_WIN32) || defined(_WIN64)\nV_CRT_STDIO_LINKAGE int V_CRT_CALL _fseeki64(FILE *stream, i64 offset, int whence);\nV_CRT_LINKAGE int V_CRT_CALL fgetpos(FILE *stream, i64 *pos);\nV_CRT_STDIO_LINKAGE int V_CRT_CALL _fileno(FILE *stream);\nV_CRT_STDIO_LINKAGE FILE * V_CRT_CALL _wfopen(const unsigned short *filename, const unsigned short *mode);\nV_CRT_STDIO_LINKAGE int V_CRT_CALL freopen_s(FILE **new_stream, const char *filename, const char *mode, FILE *stream);\nV_CRT_STDIO_LINKAGE FILE * V_CRT_CALL _wfreopen(const unsigned short *filename, const unsigned short *mode, FILE *stream);\nV_CRT_STDIO_LINKAGE FILE * V_CRT_CALL _wpopen(const unsigned short *command, const unsigned short *mode);\nV_CRT_STDIO_LINKAGE int V_CRT_CALL _pclose(FILE *stream);\nV_CRT_STDIO_LINKAGE int V_CRT_CALL _wremove(const unsigned short *path);\nV_CRT_LINKAGE void * V_CRT_CALL _aligned_malloc(size_t size, size_t alignment);\nV_CRT_LINKAGE void * V_CRT_CALL _aligned_realloc(void *memory, size_t size, size_t alignment);\nV_CRT_LINKAGE void V_CRT_CALL _aligned_free(void *memory);\nV_CRT_LINKAGE unsigned short * V_CRT_CALL _wgetenv(const unsigned short *varname);\nV_CRT_LINKAGE int V_CRT_CALL _wputenv(const unsigned short *envstring);\n#endif\n#if defined(_MSC_VER) && !defined(__clang__)\n#ifndef _TRUNCATE\n\011#define _TRUNCATE ((size_t)-1)\n#endif\nV_CRT_LINKAGE int V_CRT_CALL _vscprintf(const char *format, va_list ap);\nV_CRT_LINKAGE int V_CRT_CALL _vsnprintf_s(char *buffer, size_t size, size_t count, const char *format, va_list ap);\n#endif\n#endif\n#ifndef _IOFBF\n\011#define _IOFBF 0\n#endif\n#ifndef _IOLBF\n\011#define _IOLBF 1\n#endif\n#ifndef _IONBF\n\011#define _IONBF 2\n#endif\n#ifndef EOF\n\011#define EOF (-1)\n#endif\n#ifndef SEEK_SET\n\011#define SEEK_SET 0\n#endif\n#ifndef SEEK_CUR\n\011#define SEEK_CUR 1\n#endif\n#ifndef SEEK_END\n\011#define SEEK_END 2\n#endif\n#ifndef RAND_MAX\nenum {\n\011#if defined(_MSC_VER)\n\011\011RAND_MAX = 0x7fff\n\011#else\n\011\011RAND_MAX = 2147483647\n\011#endif\n};\n#endif\n#undef V_CRT_STDIO_LINKAGE\n#undef V_CRT_LINKAGE\n#undef V_CRT_CALL\nstatic void v_stable_sort(void *base, size_t items, size_t item_size, qsort_callback_func cb) {\n\011if (items < 2 || item_size == 0) {\n\011\011return;\n\011}\n\011if (items > ((size_t)-1) / item_size) {\n\011\011qsort(base, items, item_size, cb);\n\011\011return;\n\011}\n\011const size_t bytes = items * item_size;\n\011char *base_bytes = (char*)base;\n\011char *tmp = (char*)malloc(bytes);\n\011if (tmp == 0) {\n\011\011qsort(base, items, item_size, cb);\n\011\011return;\n\011}\n\011char *src = base_bytes;\n\011char *dst = tmp;\n\011for (size_t width = 1; width < items;) {\n\011\011for (size_t left = 0; left < items;) {\n\011\011\011size_t mid = left;\n\011\011\011mid += width;\n\011\011\011if (mid > items) {\n\011\011\011\011mid = items;\n\011\011\011}\n\011\011\011size_t right = mid;\n\011\011\011right += width;\n\011\011\011if (right > items || right < mid) {\n\011\011\011\011right = items;\n\011\011\011}\n\011\011\011size_t i = left;\n\011\011\011size_t j = mid;\n\011\011\011size_t k = left;\n\011\011\011while (i < mid && j < right) {\n\011\011\011\011char *leftp = src;\n\011\011\011\011leftp += i * item_size;\n\011\011\011\011char *rightp = src;" "\n\011\011\011\011rightp += j * item_size;\n\011\011\011\011char *dstp = dst;\n\011\011\011\011dstp += k * item_size;\n\011\011\011\011if (cb(leftp, rightp) <= 0) {\n\011\011\011\011\011memcpy(dstp, leftp, item_size);\n\011\011\011\011\011i++;\n\011\011\011\011} else {\n\011\011\011\011\011memcpy(dstp, rightp, item_size);\n\011\011\011\011\011j++;\n\011\011\011\011}\n\011\011\011\011k++;\n\011\011\011}\n\011\011\011while (i < mid) {\n\011\011\011\011char *dstp = dst;\n\011\011\011\011dstp += k * item_size;\n\011\011\011\011char *srcp = src;\n\011\011\011\011srcp += i * item_size;\n\011\011\011\011memcpy(dstp, srcp, item_size);\n\011\011\011\011i++;\n\011\011\011\011k++;\n\011\011\011}\n\011\011\011while (j < right) {\n\011\011\011\011char *dstp = dst;\n\011\011\011\011dstp += k * item_size;\n\011\011\011\011char *srcp = src;\n\011\011\011\011srcp += j * item_size;\n\011\011\011\011memcpy(dstp, srcp, item_size);\n\011\011\011\011j++;\n\011\011\011\011k++;\n\011\011\011}\n\011\011\011left = right;\n\011\011}\n\011\011char *next_src = dst;\n\011\011dst = src;\n\011\011src = next_src;\n\011\011if (width > items / 2) {\n\011\011\011width = items;\n\011\011} else {\n\011\011\011width *= 2;\n\011\011}\n\011}\n\011if (src != base_bytes) {\n\011\011memcpy(base_bytes, src, bytes);\n\011}\n\011free(tmp);\n}\n#if defined(__TINYC__)\n// https://lists.nongnu.org/archive/html/tinycc-devel/2025-10/msg00007.html\n// gnu headers use to #define __attribute__ to empty for non-gcc compilers\n#undef __attribute__\n#endif\n#if defined(_MSC_VER) && !defined(__clang__)\n// Ensure C99-like return semantics and NUL-termination for MSVC snprintf/vsnprintf.\nstatic int v__vsnprintf(char *s, size_t n, const char *fmt, va_list ap) {\n\011va_list ap_copy;\n\011va_copy(ap_copy, ap);\n\011const int needed = _vscprintf(fmt, ap_copy);\n\011va_end(ap_copy);\n\011if (n > 0) {\n\011\011const int written = _vsnprintf_s(s, n, _TRUNCATE, fmt, ap);\n\011\011if (written < 0) {\n\011\011\011s[n -\n\0111] = 0;\n\011\011}\n\011}\n\011return needed;\n}\nstatic int v__snprintf(char *s, size_t n, const char *fmt, ...) {\n\011va_list ap;\n\011va_start(ap, fmt);\n\011const int needed = v__vsnprintf(s, n, fmt, ap);\n\011va_end(ap);\n\011return needed;\n}\n#define vsnprintf v__vsnprintf\n#define snprintf v__snprintf\n#endif\n//================================== GLOBALS =================================*/\n#ifdef _VOBJECTFILE\nstatic void _vinit(int ___argc, voidptr ___argv);\nstatic void _vcleanup(void);\n#else\nvoid _vinit(int ___argc, voidptr ___argv);\nvoid _vcleanup(void);\n#endif\n#ifdef _WIN32\n\011// Export helpers so the autogenerated DllMain, or a user-defined one,\n\011// can reuse the default V shared-library init/cleanup path.\n\011#ifdef _VOBJECTFILE\n\011\011static void _vinit_caller();\n\011\011static void _vcleanup_caller();\n\011#else\n\011\011VV_EXP void _vinit_caller();\n\011\011VV_EXP void _vcleanup_caller();\n\011#endif\n#endif\n#if !defined(_WIN32)\n#define sigaction_size sizeof(sigaction);\n#endif\n#define _ARR_LEN(a) ( (sizeof(a)) / (sizeof(a[0])) )\n#if INTPTR_MAX == INT32_MAX\n\011#define TARGET_IS_32BIT 1\n#elif INTPTR_MAX == INT64_MAX\n\011#define TARGET_IS_64BIT 1\n#else\n\011#error \"The environment is not 32 or 64-bit.\"\n#endif\n#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(__BIG_ENDIAN__) || defined(__ARMEB__) || defined(__THUMBEB__) || defined(__AARCH64EB__) || defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)\n\011#define TARGET_ORDER_IS_BIG 1\n#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ || defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || defined(__LITTLE_ENDIAN__) || defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__) || defined(_M_AMD64) || defined(_M_ARM64) || defined(_M_X64) || defined(_M_IX86)\n\011#define TARGET_ORDER_IS_LITTLE 1\n#else\n\011#error \"Unknown architecture endianness\"\n#endif\n#if !defined(_WIN32) && !defined(__vinix__)\n\011#include <ctype.h>\n\011#include <locale.h> // tolower\n\011#include <sys/time.h>\n\011#include <unistd.h> // sleep\n\011extern char **environ;\n\011#include <pthread.h>\n\011#ifndef PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP\n\011\011// musl does not have that\n\011\011#define pthread_rwlockattr_setkind_np(a, b)\n\011#endif\n#endif\n#if (defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__DragonFly__) || defined(__serenity__) || defined(__sun) || defined(__plan9__) || defined(__OpenBSD__)) && !defined(__vinix__)\n\011#include <sys/types.h>\n\011#include <sys/wait.h> // for os__wait\n#endif\n#ifdef __OpenBSD__\n\011#include <sys/resource.h>\n#endif\n#ifdef __FreeBSD__\n\011#include <signal.h>\n\011#include <execinfo.h>\n#endif\n#ifdef __NetBSD__\n\011#include <sys/wait.h> // for os__wait\n#endif\n#ifdef __TERMUX__\n#if !defined(__BIONIC_AVAILABILITY_GUARD)\n\011#define __BIONIC_AVAILABILITY_GUARD(api_level) 0\n#endif\n#if __BIONIC_AVAILABILITY_GUARD(28)\n#else\nvoid * aligned_alloc(size_t alignment, size_t size) { return malloc(size); }\n#endif\n#endif\n#ifdef __APPLE__\n\011// macOS only exports aligned_alloc starting with 10.15.\n\011#if !defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) || __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 101500\nstatic void *v__aligned_alloc_fallback(size_t alignment, size_t size) {\n\011void *res = 0;\n\011if (alignment < sizeof(void *)) {\n\011\011alignment = sizeof(void *);\n\011}\n\011if (posix_memalign(&res, alignment, size) != 0) {\n\011\011return 0;\n\011}\n\011return res;\n}\n\011\011#define aligned_alloc v__aligned_alloc_fallback\n\011#endif\n#endif\n#ifdef _WIN32\n\011#ifdef WINVER\n\011\011#undef WINVER\n\011#endif\n\011#define WINVER 0x0600\n\011#ifdef _WIN32_WINNT\n\011\011#undef _WIN32_WINNT\n\011#endif\n\011#define _WIN32_WINNT 0x0600\n\011#ifndef WIN32_FULL\n\011#define WIN32_LEAN_AND_MEAN\n\011#endif\n\011#ifndef _UNICODE\n\011#define _UNICODE\n\011#endif\n\011#ifndef UNICODE\n\011#define UNICODE\n\011#endif\n\011#include <windows.h>\n\011#include <io.h> // _waccess\n\011#include <direct.h> // _wgetcwd\n\011#ifdef V_USE_SIGNAL_H\n\011#include <signal.h> // signal and SIGSEGV for segmentation fault handler\n\011#endif\n\011#ifdef _MSC_VER\n\011\011// On MSVC these are the same (as long as /volatile:ms is passed)\n\011\011#define _Atomic volatile\n\011\011// MSVC cannot parse some things properly\n\011\011#undef __NOINLINE\n\011\011#undef __IRQHANDLER\n\011\011#define __NOINLINE __declspec(noinline)\n\011\011#define __IRQHANDLER __declspec(naked)\n\011\011#include <dbghelp.h>\n\011\011#pragma comment(lib, \"Dbghelp\")\n\011#endif\n#endif\n#if defined(__CYGWIN__) && !defined(_WIN32)\n\011#error Cygwin is not supported, please use MinGW or Visual Studio.\n#endif\n#if defined(__MINGW32__) || defined(__MINGW64__) || (defined(_WIN32) && defined(__TINYC__)) || defined(_MSC_VER)\n\011#undef PRId64\n\011#undef PRIi64\n\011#undef PRIo64\n\011#undef PRIu64\n\011#undef PRIx64\n\011#undef PRIX64\n\011#define PRId64 \"lld\"\n\011#define PRIi64 \"lli\"\n\011#define PRIo64 \"llo\"\n\011#define PRIu64 \"llu\"\n\011#define PRIx64 \"llx\"\n\011#define PRIX64 \"llX\"\n#endif\n#ifdef _VFREESTANDING\n#undef _VFREESTANDING\n#endif\n");
 	_const_v__gen__c__c_builtin_types = _S("\n//================================== builtin types ================================*/\n#if defined(__x86_64__) || defined(_M_AMD64) || defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64) || (defined(__riscv_xlen) && __riscv_xlen == 64) || defined(__s390x__) || (defined(__powerpc64__) && defined(__LITTLE_ENDIAN__)) || defined(__loongarch64) || defined(__sparc__) || (defined(__powerpc64__) && defined(__BIG_ENDIAN__))\ntypedef int64_t vint_t;\n#else\ntypedef int32_t vint_t;\n#endif\ntypedef int64_t i64;\ntypedef int16_t i16;\ntypedef int8_t i8;\ntypedef uint64_t u64;\ntypedef uint32_t u32;\ntypedef uint8_t u8;\ntypedef uint16_t u16;\ntypedef u8 byte;\ntypedef int32_t i32;\ntypedef uint32_t rune;\ntypedef size_t usize;\ntypedef ptrdiff_t isize;\n#ifndef VNOFLOAT\ntypedef float f32;\ntypedef double f64;\n#else\ntypedef int32_t f32;\ntypedef int64_t f64;\n#endif\ntypedef int64_t int_literal;\n#ifndef VNOFLOAT\ntypedef double float_literal;\n#else\ntypedef int64_t float_literal;\n#endif\ntypedef unsigned char* byteptr;\ntypedef void* voidptr;\ntypedef char* charptr;\ntypedef u8 array_fixed_byte_300 [300];\ntypedef struct sync__Channel* chan;\n#ifndef CUSTOM_DEFINE_no_bool\n\011#ifndef __cplusplus\n\011\011#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L\n\011\011#ifndef bool\n\011\011\011#ifdef CUSTOM_DEFINE_4bytebool\n\011\011\011\011typedef int bool;\n\011\011\011#else\n\011\011\011\011typedef u8 bool;\n\011\011\011#endif\n\011\011\011#define true 1\n\011\011\011#define false 0\n\011\011#endif\n\011\011#endif\n\011#endif\n#endif\n");
 	_const_v__gen__c__c_shift_helpers = _S("\n#define V_SAFE_SHIFT_BITS(type) ((u64)(sizeof(type) * 8))\n#define V_SAFE_LSHIFT_UNSIGNED(name, type) static inline type name(type x, u64 y) { return y >= V_SAFE_SHIFT_BITS(type) ? (type)0 : (type)(x << y); }\n#define V_SAFE_LSHIFT_SIGNED(name, type, unsigned_type) static inline type name(type x, u64 y) { return y >= V_SAFE_SHIFT_BITS(type) ? (type)0 : (type)(((unsigned_type)x) << y); }\n#define V_SAFE_RSHIFT_UNSIGNED(name, type) static inline type name(type x, u64 y) { return y >= V_SAFE_SHIFT_BITS(type) ? (type)0 : (type)(x >> y); }\n#define V_SAFE_RSHIFT_SIGNED(name, type) static inline type name(type x, u64 y) { return y >= V_SAFE_SHIFT_BITS(type) ? (type)(x < 0 ? -1 : 0) : (type)(x >> y); }\nV_SAFE_LSHIFT_SIGNED(v__lshift_char, char, u8)\nV_SAFE_RSHIFT_SIGNED(v__rshift_char, char)\nV_SAFE_LSHIFT_SIGNED(v__lshift_i8, i8, u8)\nV_SAFE_RSHIFT_SIGNED(v__rshift_i8, i8)\nV_SAFE_LSHIFT_SIGNED(v__lshift_i16, i16, u16)\nV_SAFE_RSHIFT_SIGNED(v__rshift_i16, i16)\nV_SAFE_LSHIFT_SIGNED(v__lshift_i32, i32, u32)\nV_SAFE_RSHIFT_SIGNED(v__rshift_i32, i32)\nV_SAFE_LSHIFT_SIGNED(v__lshift_int, int, unsigned int)\nV_SAFE_RSHIFT_SIGNED(v__rshift_int, int)\nV_SAFE_LSHIFT_SIGNED(v__lshift_vint_t, vint_t, u64)\nV_SAFE_RSHIFT_SIGNED(v__rshift_vint_t, vint_t)\nV_SAFE_LSHIFT_SIGNED(v__lshift_i64, i64, u64)\nV_SAFE_RSHIFT_SIGNED(v__rshift_i64, i64)\nV_SAFE_LSHIFT_SIGNED(v__lshift_isize, isize, usize)\nV_SAFE_RSHIFT_SIGNED(v__rshift_isize, isize)\nV_SAFE_LSHIFT_UNSIGNED(v__lshift_u8, u8)\nV_SAFE_RSHIFT_UNSIGNED(v__rshift_u8, u8)\nV_SAFE_LSHIFT_UNSIGNED(v__lshift_u16, u16)\nV_SAFE_RSHIFT_UNSIGNED(v__rshift_u16, u16)\nV_SAFE_LSHIFT_UNSIGNED(v__lshift_u32, u32)\nV_SAFE_RSHIFT_UNSIGNED(v__rshift_u32, u32)\nV_SAFE_LSHIFT_UNSIGNED(v__lshift_u64, u64)\nV_SAFE_RSHIFT_UNSIGNED(v__rshift_u64, u64)\nV_SAFE_LSHIFT_UNSIGNED(v__lshift_usize, usize)\nV_SAFE_RSHIFT_UNSIGNED(v__rshift_usize, usize)\nV_SAFE_LSHIFT_UNSIGNED(v__lshift_rune, rune)\nV_SAFE_RSHIFT_UNSIGNED(v__rshift_rune, rune)\nV_SAFE_LSHIFT_SIGNED(v__lshift_int_literal, int_literal, u64)\nV_SAFE_RSHIFT_SIGNED(v__rshift_int_literal, int_literal)\n#undef V_SAFE_RSHIFT_SIGNED\n#undef V_SAFE_RSHIFT_UNSIGNED\n#undef V_SAFE_LSHIFT_SIGNED\n#undef V_SAFE_LSHIFT_UNSIGNED\n#undef V_SAFE_SHIFT_BITS\n");
 	_const_v__gen__c__c_mapfn_callback_types = _S("\ntypedef u64 (*MapHashFn)(voidptr);\ntypedef bool (*MapEqFn)(voidptr, voidptr);\ntypedef void (*MapCloneFn)(voidptr, voidptr);\ntypedef void (*MapFreeFn)(voidptr);\n");
