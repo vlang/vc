@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "432da693ab45996608f6444149783e941838ae39"
+#define V_COMMIT_HASH "f20fe195bc4ce4f20a7c3ec18d05994ee02a2619"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b629b5ecf880135478f976f8a85c9467fad55a53"
+	#define V_COMMIT_HASH "432da693ab45996608f6444149783e941838ae39"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -11845,7 +11845,7 @@ VV_LOC bool v__ast__Table_c_fn_declarations_are_compatible_at_depth(v__ast__Tabl
 VV_LOC bool v__ast__Table_c_fn_type_components_are_compatible(v__ast__Table* t, v__ast__Type left_type, v__ast__Type right_type, int depth);
 VV_LOC bool v__ast__Table_fn_type_components_are_compatible(v__ast__Table* t, v__ast__Type left_type, v__ast__Type right_type, int depth);
 VV_LOC bool v__ast__Table_method_types_are_equal(v__ast__Table* t, v__ast__Type left, v__ast__Type right);
-VV_LOC bool v__ast__Table_method_fn_return_types_are_compatible(v__ast__Table* t, v__ast__Type left, v__ast__Type right);
+VV_LOC bool v__ast__Table_method_return_types_are_compatible(v__ast__Table* t, v__ast__Type left, v__ast__Type right);
 string v__ast__Table_is_same_method(v__ast__Table* t, v__ast__Fn* f, v__ast__Fn* func);
 VV_LOC string v__ast__Table_param_type_with_specifier(v__ast__Table* t, v__ast__Param p, bool is_receiver);
 bool v__ast__Table_is_compatible_auto_str_method(v__ast__Table* t, v__ast__Fn* method);
@@ -29179,7 +29179,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("432da69");
+	return _S("f20fe19");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -41200,7 +41200,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("b629b5ecf880135478f976f8a85c9467fad55a53");
+	string vhash = _S("432da693ab45996608f6444149783e941838ae39");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -50160,7 +50160,10 @@ VV_LOC bool v__ast__Table_method_types_are_equal(v__ast__Table* t, v__ast__Type 
 	}
 	return unaliased_left == unaliased_right;
 }
-VV_LOC bool v__ast__Table_method_fn_return_types_are_compatible(v__ast__Table* t, v__ast__Type left, v__ast__Type right) {
+VV_LOC bool v__ast__Table_method_return_types_are_compatible(v__ast__Table* t, v__ast__Type left, v__ast__Type right) {
+	if (v__ast__Table_method_types_are_equal(t, left, right)) {
+		return true;
+	}
 	v__ast__Type unaliased_left = v__ast__Table_fully_unaliased_type(t, left);
 	v__ast__Type unaliased_right = v__ast__Table_fully_unaliased_type(t, right);
 	if (v__ast__Type_nr_muls(unaliased_left) != v__ast__Type_nr_muls(unaliased_right)) {
@@ -50178,14 +50181,22 @@ VV_LOC bool v__ast__Table_method_fn_return_types_are_compatible(v__ast__Table* t
 		}
 		return v__ast__Table_fn_types_are_compatible(t, (voidptr)&(*left_sym->info._v__ast__FnType).func, (voidptr)&(*right_sym->info._v__ast__FnType).func, 0);
 	}
+	if ((left_sym->info)._typ == 708 && (right_sym->info)._typ == 708) {
+		if ((*left_sym->info._v__ast__MultiReturn).types.len != (*right_sym->info._v__ast__MultiReturn).types.len) {
+			return false;
+		}
+		for (int i = 0; i < (*left_sym->info._v__ast__MultiReturn).types.len; ++i) {
+			v__ast__Type typ = ((v__ast__Type*)(*left_sym->info._v__ast__MultiReturn).types.data)[i];
+			if (!v__ast__Table_method_return_types_are_compatible(t, typ, (*(v__ast__Type*)builtin__array_get((*right_sym->info._v__ast__MultiReturn).types, i)))) {
+				return false;
+			}
+		}
+		return true;
+	}
 	return false;
 }
 string v__ast__Table_is_same_method(v__ast__Table* t, v__ast__Fn* f, v__ast__Fn* func) {
-	bool same_return_type = v__ast__Table_method_types_are_equal(t, f->return_type, func->return_type);
-	if (!same_return_type) {
-		same_return_type = v__ast__Table_method_fn_return_types_are_compatible(t, f->return_type, func->return_type);
-	}
-	if (!same_return_type) {
+	if (!v__ast__Table_method_return_types_are_compatible(t, f->return_type, func->return_type)) {
 		string s = v__ast__Table_type_to_str(t, f->return_type);
 		return builtin__string_plus_many(3, _MOV((string[3]){_S("expected return type `"), s, _S("`")}));
 	}
@@ -50580,9 +50591,9 @@ _result_multi_return_v__ast__Fn_Array_v__ast__Type v__ast__Table_find_method_fro
 					continue;
 				}
 				
- 				multi_return_v__ast__Fn_Array_v__ast__Type mr_27985 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t5.data);
-				v__ast__Fn method = mr_27985.arg0;
-				Array_v__ast__Type types = mr_27985.arg1;
+ 				multi_return_v__ast__Fn_Array_v__ast__Type mr_28196 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t5.data);
+				v__ast__Fn method = mr_28196.arg0;
+				Array_v__ast__Type types = mr_28196.arg1;
 				builtin__array_push((array*)&found_methods, _MOV((v__ast__Fn[]){ method }));
 				builtin__array_push((array*)&embed_of_found_methods, _MOV((v__ast__Type[]){ embed }));
 				_PUSH_MANY(&embed_of_found_methods, (types), _t8, Array_v__ast__Type);
@@ -50612,9 +50623,9 @@ _result_multi_return_v__ast__Fn_Array_v__ast__Type v__ast__Table_find_method_fro
 					continue;
 				}
 				
- 				multi_return_v__ast__Fn_Array_v__ast__Type mr_28662 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t15.data);
-				v__ast__Fn method = mr_28662.arg0;
-				Array_v__ast__Type types = mr_28662.arg1;
+ 				multi_return_v__ast__Fn_Array_v__ast__Type mr_28873 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t15.data);
+				v__ast__Fn method = mr_28873.arg0;
+				Array_v__ast__Type types = mr_28873.arg1;
 				builtin__array_push((array*)&found_methods, _MOV((v__ast__Fn[]){ method }));
 				builtin__array_push((array*)&embed_of_found_methods, _MOV((v__ast__Type[]){ embed }));
 				_PUSH_MANY(&embed_of_found_methods, (types), _t18, Array_v__ast__Type);
@@ -50636,9 +50647,9 @@ _result_multi_return_v__ast__Fn_Array_v__ast__Type v__ast__Table_find_method_fro
 				continue;
 			}
 			
- 			multi_return_v__ast__Fn_Array_v__ast__Type mr_29127 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t22.data);
-			v__ast__Fn method = mr_29127.arg0;
-			Array_v__ast__Type embed_types = mr_29127.arg1;
+ 			multi_return_v__ast__Fn_Array_v__ast__Type mr_29338 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t22.data);
+			v__ast__Fn method = mr_29338.arg0;
+			Array_v__ast__Type embed_types = mr_29338.arg1;
 			if (embed_types.len != 0) {
 				_result_multi_return_v__ast__Fn_Array_v__ast__Type _t23;
 				builtin___result_ok(&(multi_return_v__ast__Fn_Array_v__ast__Type[]) { (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=method, .arg1=embed_types} }, (_result*)(&_t23), sizeof(multi_return_v__ast__Fn_Array_v__ast__Type));
@@ -50664,8 +50675,8 @@ _result_v__ast__Fn v__ast__Table_find_method_with_embeds(v__ast__Table* t, v__as
 			return (_result_v__ast__Fn){ .is_error=true, .err=err, .data={E_STRUCT} };
 		}
 		
- 		multi_return_v__ast__Fn_Array_v__ast__Type mr_29574 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t3.data);
-		v__ast__Fn func = mr_29574.arg0;
+ 		multi_return_v__ast__Fn_Array_v__ast__Type mr_29785 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t3.data);
+		v__ast__Fn func = mr_29785.arg0;
 		_result_v__ast__Fn _t6;
 		builtin___result_ok(&(v__ast__Fn[]) { func }, (_result*)(&_t6), sizeof(v__ast__Fn));
 		 
@@ -50980,9 +50991,9 @@ _result_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_f
 					continue;
 				}
 				
- 				multi_return_v__ast__StructField_Array_v__ast__Type mr_35368 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t5.data);
-				v__ast__StructField field = mr_35368.arg0;
-				Array_v__ast__Type types = mr_35368.arg1;
+ 				multi_return_v__ast__StructField_Array_v__ast__Type mr_35579 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t5.data);
+				v__ast__StructField field = mr_35579.arg0;
+				Array_v__ast__Type types = mr_35579.arg1;
 				builtin__array_push((array*)&found_fields, _MOV((v__ast__StructField[]){ field }));
 				builtin__array_push((array*)&embeds_of_found_fields, _MOV((v__ast__Type[]){ embed }));
 				_PUSH_MANY(&embeds_of_found_fields, (types), _t8, Array_v__ast__Type);
@@ -51016,9 +51027,9 @@ _result_multi_return_v__ast__StructField_Array_v__ast__Type v__ast__Table_find_f
 					return (_result_multi_return_v__ast__StructField_Array_v__ast__Type){ .is_error=true, .err=builtin___v_error(builtin__string_plus_many(5, _MOV((string[5]){_S("type `"), v__ast__Table_type_to_str(t, typ), _S("` has no field or method `"), field_name, _S("`")}))), .data={E_STRUCT} };
 				}
 				
- 				multi_return_v__ast__StructField_Array_v__ast__Type mr_36071 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t15.data);
-				field = mr_36071.arg0;
-				embed_types = mr_36071.arg1;
+ 				multi_return_v__ast__StructField_Array_v__ast__Type mr_36282 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t15.data);
+				field = mr_36282.arg0;
+				embed_types = mr_36282.arg1;
 				if (found_embed_types.len == 0) {
 					found_embed_types = builtin__array_clone_to_depth(&embed_types, 0);
 				}
@@ -51058,8 +51069,8 @@ _result_v__ast__StructField v__ast__Table_find_field_with_embeds(v__ast__Table* 
 			return (_result_v__ast__StructField){ .is_error=true, .err=first_err, .data={E_STRUCT} };
 		}
 		
- 		multi_return_v__ast__StructField_Array_v__ast__Type mr_37180 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t3.data);
-		v__ast__StructField field = mr_37180.arg0;
+ 		multi_return_v__ast__StructField_Array_v__ast__Type mr_37391 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t3.data);
+		v__ast__StructField field = mr_37391.arg0;
 		_result_v__ast__StructField _t5;
 		builtin___result_ok(&(v__ast__StructField[]) { field }, (_result*)(&_t5), sizeof(v__ast__StructField));
 		 
@@ -51156,9 +51167,9 @@ _result_multi_return_v__ast__Type_v__ast__StructField_Array_v__ast__Type v__ast_
 				continue;
 			}
 			
- 			multi_return_v__ast__StructField_Array_v__ast__Type mr_39107 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t6.data);
-			field = mr_39107.arg0;
-			embed_types = mr_39107.arg1;
+ 			multi_return_v__ast__StructField_Array_v__ast__Type mr_39318 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t6.data);
+			field = mr_39318.arg0;
+			embed_types = mr_39318.arg1;
 		}
 		if (found_variant != 0) {
 			return (_result_multi_return_v__ast__Type_v__ast__StructField_Array_v__ast__Type){ .is_error=true, .err=builtin___v_error(_S("")), .data={E_STRUCT} };
@@ -51939,9 +51950,9 @@ int v__ast__Table_find_or_register_multi_return(v__ast__Table* t, Array_v__ast__
 	for (int i = 0; i < mr_typs.len; ++i) {
 		v__ast__Type mr_typ = ((v__ast__Type*)mr_typs.data)[i];
 		v__ast__TypeSymbol* mr_type_sym = v__ast__Table_sym(t, v__ast__mktyp(mr_typ));
-		multi_return_string_string mr_65883 = (v__ast__Type_is_ptr(mr_typ) ? ((multi_return_string_string){.arg0=_S("&"),.arg1=_S("ref_")}) : ((multi_return_string_string){.arg0=_S(""),.arg1=_S("")}));
-		string ref = mr_65883.arg0;
-		string cref = mr_65883.arg1;
+		multi_return_string_string mr_66094 = (v__ast__Type_is_ptr(mr_typ) ? ((multi_return_string_string){.arg0=_S("&"),.arg1=_S("ref_")}) : ((multi_return_string_string){.arg0=_S(""),.arg1=_S("")}));
+		string ref = mr_66094.arg0;
+		string cref = mr_66094.arg1;
 		name = builtin__string__plus(name, (v__ast__Type_has_flag(mr_typ, v__ast__TypeFlag__option) ? (_S("?")) : (_S(""))));
 		name = builtin__string__plus(name, (v__ast__Type_has_flag(mr_typ, v__ast__TypeFlag__result) ? (_S("!")) : (_S(""))));
 		name = builtin__string__plus(name, builtin__string_plus_many(2, _MOV((string[2]){ref, mr_type_sym->name})));
@@ -52832,9 +52843,9 @@ _option_v__ast__Type v__ast__Table_convert_generic_type(v__ast__Table* t, v__ast
 		return _t5;
 	}
 	if (sym->info._typ == 677) {
-		multi_return_int_v__ast__Type mr_90180 = v__ast__Table_get_array_dims(t, (*sym->info._v__ast__Array));
-		int dims = mr_90180.arg0;
-		v__ast__Type elem_type = mr_90180.arg1;
+		multi_return_int_v__ast__Type mr_90391 = v__ast__Table_get_array_dims(t, (*sym->info._v__ast__Array));
+		int dims = mr_90391.arg0;
+		v__ast__Type elem_type = mr_90391.arg1;
 		_option_v__ast__Type _t6 = {0};
 		if (_t6 = v__ast__Table_convert_generic_type(t, elem_type, generic_names, to_types), _t6.state == 0) {
 			v__ast__Type typ = *(v__ast__Type*)_t6.data;
@@ -53992,8 +54003,8 @@ Array_string v__ast__Table_generic_type_names(v__ast__Table* t, v__ast__Type gen
 		return names;
 	}
 	if (sym->info._typ == 677) {
-		multi_return_int_v__ast__Type mr_119181 = v__ast__Table_get_array_dims(t, (*sym->info._v__ast__Array));
-		v__ast__Type elem_type = mr_119181.arg1;
+		multi_return_int_v__ast__Type mr_119392 = v__ast__Table_get_array_dims(t, (*sym->info._v__ast__Array));
+		v__ast__Type elem_type = mr_119392.arg1;
 		_PUSH_MANY(&names, (v__ast__Table_generic_type_names(t, elem_type)), _t4, Array_string);
 	}
 	else if (sym->info._typ == 705) {
@@ -54135,9 +54146,9 @@ VV_LOC v__ast__Type v__ast__Table_unwrap_generic_type_ex_with_depth(v__ast__Tabl
 	}
 	v__ast__TypeSymbol* ts = (*(v__ast__TypeSymbol**)builtin__array_get(t->type_symbols, type_idx));
 	if (ts->info._typ == 677) {
-		multi_return_int_v__ast__Type mr_122031 = v__ast__Table_get_array_dims(t, (*ts->info._v__ast__Array));
-		int dims = mr_122031.arg0;
-		v__ast__Type elem_type = mr_122031.arg1;
+		multi_return_int_v__ast__Type mr_122242 = v__ast__Table_get_array_dims(t, (*ts->info._v__ast__Array));
+		int dims = mr_122242.arg0;
+		v__ast__Type elem_type = mr_122242.arg1;
 		v__ast__Type unwrap_typ = v__ast__Table_unwrap_generic_type_ex_with_depth(t, elem_type, generic_names, concrete_types, recheck_concrete_types, depth_guard);
 		int idx = v__ast__Table_find_or_register_array_with_dims(t, unwrap_typ, dims);
 		if (idx <= 0) {
@@ -55259,9 +55270,9 @@ VV_LOC v__ast__Type v__ast__Table_specialize_generic_fn_method_type(v__ast__Tabl
 	}
 	v__ast__TypeSymbol* sym = v__ast__Table_sym(t, typ);
 	if (sym->info._typ == 677) {
-		multi_return_int_v__ast__Type mr_145529 = v__ast__Table_get_array_dims(t, (*sym->info._v__ast__Array));
-		int dims = mr_145529.arg0;
-		v__ast__Type elem_type = mr_145529.arg1;
+		multi_return_int_v__ast__Type mr_145740 = v__ast__Table_get_array_dims(t, (*sym->info._v__ast__Array));
+		int dims = mr_145740.arg0;
+		v__ast__Type elem_type = mr_145740.arg1;
 		v__ast__Type elem_typ = v__ast__Table_specialize_generic_fn_method_type(t, elem_type, parent_type, concrete_type, generic_names, concrete_types);
 		if (elem_typ != elem_type) {
 			int idx = v__ast__Table_find_or_register_array_with_dims(t, elem_typ, dims);
