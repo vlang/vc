@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "0d38e8ad083e4e16058bfa5e2255d387e55ef2f0"
+#define V_COMMIT_HASH "877219c8dfb20663faef45699b59d5d50645fbea"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "f20fe195bc4ce4f20a7c3ec18d05994ee02a2619"
+	#define V_COMMIT_HASH "0d38e8ad083e4e16058bfa5e2255d387e55ef2f0"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -39888,7 +39888,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("0d38e8a");
+	return _S("877219c");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -55161,7 +55161,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("f20fe195bc4ce4f20a7c3ec18d05994ee02a2619");
+	string vhash = _S("0d38e8ad083e4e16058bfa5e2255d387e55ef2f0");
 	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t6 = builtin__string_trim_space(p->cflags);
@@ -116966,6 +116966,8 @@ VV_LOC void v__gen__c__Gen_write_defer_stmts(v__gen__c__Gen* g, v__ast__Scope* s
 	}
 	bool prev_inside_defer_generation = g->inside_defer_generation;
 	g->inside_defer_generation = true;
+	bool prev_skip_stmt_pos = g->skip_stmt_pos;
+	g->skip_stmt_pos = false;
 	g->indent++;
 	for (int i = g->defer_stmts.len - 1; i >= 0; i--) {
 		v__ast__DeferStmt defer_stmt = (*(v__ast__DeferStmt*)builtin__array_get(g->defer_stmts, i));
@@ -116996,6 +116998,7 @@ VV_LOC void v__gen__c__Gen_write_defer_stmts(v__gen__c__Gen* g, v__ast__Scope* s
 	g->indent--;
 	{ // defer begin
 		g->inside_defer_generation = prev_inside_defer_generation;
+		g->skip_stmt_pos = prev_skip_stmt_pos;
 	} // defer end
 }
 VV_LOC void v__gen__c__Gen_write_defer_stmts_when_needed(v__gen__c__Gen* g, v__ast__Scope* scope, bool lookup, v__token__Pos pos) {
@@ -129340,8 +129343,11 @@ VV_LOC void v__gen__c__Gen_if_expr(v__gen__c__Gen* g, v__ast__IfExpr node) {
 			if (node.is_expr && (v__ast__Table_sym(g->table, resolved_node_typ)->kind == v__ast__Kind__sum_type || v__ast__Type_has_flag(resolved_node_typ, v__ast__TypeFlag__shared_f))) {
 				g->expected_cast_type = resolved_node_typ;
 			}
+			bool prev_skip_stmt_pos = g->skip_stmt_pos;
+			g->skip_stmt_pos = false;
 			v__gen__c__Gen_stmts_with_tmp_var(g, branch.stmts, tmp);
 			v__gen__c__Gen_write_defer_stmts(g, branch.scope, false, node.pos);
+			g->skip_stmt_pos = prev_skip_stmt_pos;
 			g->expected_cast_type = prev_expected_cast_type;
 			if (!is_else && (branch.stmts.len > 0 && !(((*(v__ast__Stmt*)builtin__array_last(branch.stmts)))._typ == 523 || ((*(v__ast__Stmt*)builtin__array_last(branch.stmts)))._typ == 512))) {
 				v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S("\tgoto "), exit_label, _S(";")})));
@@ -142747,10 +142753,11 @@ VV_LOC bool v__gen__c__Gen_zero_struct_field(v__gen__c__Gen* g, v__ast__StructFi
 	}
 	if (field.has_default_expr) {
 		if (sym->kind == v__ast__Kind__sum_type || sym->kind == v__ast__Kind__interface) {
+			v__ast__Type default_expr_typ = ((field.default_expr)._typ == 490 ? (_const_v__ast__none_type) : (field.default_expr_typ));
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__option)) {
-				v__gen__c__Gen_expr_with_opt(g, field.default_expr, field.default_expr_typ, field.typ);
+				v__gen__c__Gen_expr_with_opt(g, field.default_expr, default_expr_typ, field.typ);
 			} else {
-				v__gen__c__Gen_expr_with_cast(g, field.default_expr, field.default_expr_typ, field.typ);
+				v__gen__c__Gen_expr_with_cast(g, field.default_expr, default_expr_typ, field.typ);
 			}
 			bool _t9 = true;
 				{ // defer begin
@@ -142932,9 +142939,9 @@ VV_LOC void v__gen__c__Gen_struct_decl(v__gen__c__Gen* g, v__ast__Struct s, stri
 		for (int _t3 = 0; _t3 < s.fields.len; ++_t3) {
 			v__ast__StructField field = ((v__ast__StructField*)s.fields.data)[_t3];
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__option)) {
-				multi_return_string_string mr_29400 = v__gen__c__Gen_option_type_name(g, field.typ);
-				string styp = mr_29400.arg0;
-				string base = mr_29400.arg1;
+				multi_return_string_string mr_29509 = v__gen__c__Gen_option_type_name(g, field.typ);
+				string styp = mr_29509.arg0;
+				string base = mr_29509.arg1;
 				sync__RwMutex_lock(&g->done_options->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_options->val, base))) {
@@ -142949,9 +142956,9 @@ VV_LOC void v__gen__c__Gen_struct_decl(v__gen__c__Gen* g, v__ast__Struct s, stri
 				sync__RwMutex_unlock(&g->done_options->mtx);;
 			}
 			if (v__ast__Type_has_flag(field.typ, v__ast__TypeFlag__result)) {
-				multi_return_string_string mr_29972 = v__gen__c__Gen_result_type_name(g, field.typ);
-				string styp = mr_29972.arg0;
-				string base = mr_29972.arg1;
+				multi_return_string_string mr_30081 = v__gen__c__Gen_result_type_name(g, field.typ);
+				string styp = mr_30081.arg0;
+				string base = mr_30081.arg1;
 				sync__RwMutex_lock(&g->done_results->mtx);
 				/*lock*/ {
 					if (!(Array_string_contains(g->done_results->val, base))) {
