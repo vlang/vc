@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "7abd7d133451c256b2f0d0f8804d7d222b5c47a5"
+#define V_COMMIT_HASH "4fbecda1c67643a484c996fb44abab11d8776e90"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0c08e48cae0fea04ef2a4878d7906484f050b8a0"
+	#define V_COMMIT_HASH "7abd7d133451c256b2f0d0f8804d7d222b5c47a5"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -29206,7 +29206,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("7abd7d1");
+	return _S("4fbecda");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -41227,7 +41227,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("0c08e48cae0fea04ef2a4878d7906484f050b8a0");
+	string vhash = _S("7abd7d133451c256b2f0d0f8804d7d222b5c47a5");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -179482,7 +179482,11 @@ VV_LOC v__ast__FnDecl v__parser__Parser_fn_decl(v__parser__Parser* p) {
 			if (has_existing && !builtin__string__eq(existing.mod, new_fn.mod) && !builtin__fast_string_eq(existing.mod, _S("builtin")) && !builtin__fast_string_eq(new_fn.mod, _S("builtin"))) {
 				should_register = false;
 				if (!v__ast__Table_c_fn_declarations_are_compatible(p->table, &existing, &new_fn)) {
-					v__parser__Parser_error_with_pos_no_advance(p, builtin__string_plus_many(3, _MOV((string[3]){_S("C function `"), name, _S("` was already declared with a different signature")})), name_pos);
+					string existing_path = v__util__path_styled_for_error_messages(existing.file);
+					int existing_line = existing.name_pos.line_nr + 1;
+					u16 existing_col = (u16)(existing.name_pos.col + 1);
+					string existing_pos = builtin__string_plus_many(5, _MOV((string[5]){existing_path, _S(":"), builtin__int_str(existing_line), _S(":"), builtin__u16_str(existing_col)}));
+					v__parser__Parser_error_with_pos_no_advance(p, builtin__string_plus_many(6, _MOV((string[6]){_S("C function `"), name, _S("` was already declared with a different signature in module `"), existing.mod, _S("` at "), existing_pos})), name_pos);
 				}
 			}
 		}
@@ -179705,11 +179709,11 @@ VV_LOC v__ast__AnonFn v__parser__Parser_anon_fn(v__parser__Parser* p) {
 		builtin__array_push((array*)&_t2, &_t3);
 	}
 	Array_string inherited_vars_name =_t2;
-	multi_return_Array_v__ast__Type_Array_string mr_36610 = v__parser__Parser_parse_generic_types(p);
-	Array_string generic_names = mr_36610.arg1;
-	multi_return_Array_v__ast__Param_bool_bool_bool mr_36664 = v__parser__Parser_fn_params(p);
-	Array_v__ast__Param params = mr_36664.arg0;
-	bool is_variadic = mr_36664.arg2;
+	multi_return_Array_v__ast__Type_Array_string mr_36902 = v__parser__Parser_parse_generic_types(p);
+	Array_string generic_names = mr_36902.arg1;
+	multi_return_Array_v__ast__Param_bool_bool_bool mr_36956 = v__parser__Parser_fn_params(p);
+	Array_v__ast__Param params = mr_36956.arg0;
+	bool is_variadic = mr_36956.arg2;
 	for (int _t5 = 0; _t5 < params.len; ++_t5) {
 		v__ast__Param param = ((v__ast__Param*)params.data)[_t5];
 		if ((param.name).len == 0 && v__ast__Table_sym(p->table, param.typ)->kind != v__ast__Kind__placeholder) {
