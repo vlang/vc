@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "76f77e39ed0451ae813e24d8e85d52b569b073c6"
+#define V_COMMIT_HASH "488e130dfa374586ec91d262aa13e2e01fcac993"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "fe3a7042b470058c12caaa6b5342b153b907e3ad"
+	#define V_COMMIT_HASH "76f77e39ed0451ae813e24d8e85d52b569b073c6"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -120,19 +120,19 @@ typedef struct multi_return_strconv__ParserState_strconv__PrepNumber multi_retur
 typedef struct multi_return_u64_int multi_return_u64_int;
 typedef struct multi_return_strconv__Dec32_bool multi_return_strconv__Dec32_bool;
 typedef struct multi_return_strconv__Dec64_bool multi_return_strconv__Dec64_bool;
-typedef struct multi_return_string_int multi_return_string_int;
-typedef struct multi_return_int_bool multi_return_int_bool;
 typedef struct multi_return_Array_string_Array_string multi_return_Array_string_Array_string;
 typedef struct multi_return_ref_v__pref__Preferences_string multi_return_ref_v__pref__Preferences_string;
 typedef struct multi_return_string_bool multi_return_string_bool;
+typedef struct multi_return_string_int multi_return_string_int;
+typedef struct multi_return_int_bool multi_return_int_bool;
 typedef struct multi_return_v__pref__CompilerType_bool multi_return_v__pref__CompilerType_bool;
 typedef struct multi_return_Array_v__cflag__CFlag_Array_string_bool multi_return_Array_v__cflag__CFlag_Array_string_bool;
 typedef struct multi_return_bool_string multi_return_bool_string;
 typedef struct multi_return_os__Stat_bool multi_return_os__Stat_bool;
 typedef struct multi_return_u64_u64 multi_return_u64_u64;
+typedef struct multi_return_f64_f64 multi_return_f64_f64;
 typedef struct multi_return_int_int_int multi_return_int_int_int;
 typedef struct multi_return_int_int_int_int_int_i64_bool multi_return_int_int_int_int_int_i64_bool;
-typedef struct multi_return_f64_f64 multi_return_f64_f64;
 typedef struct multi_return_Array_string_int multi_return_Array_string_int;
 typedef struct multi_return_Array_string_v__vmod__ModFileAndFolder multi_return_Array_string_v__vmod__ModFileAndFolder;
 typedef struct multi_return_v__ast__Fn_Array_v__ast__Type multi_return_v__ast__Fn_Array_v__ast__Type;
@@ -277,11 +277,11 @@ typedef struct encoding__binary__DecodeState encoding__binary__DecodeState;
 typedef union encoding__binary__U32 encoding__binary__U32;
 typedef union encoding__binary__U64 encoding__binary__U64;
 typedef struct v__help__ExitOptions v__help__ExitOptions;
+typedef struct v__vcache__CacheManager v__vcache__CacheManager;
 typedef struct time__TimeParseError time__TimeParseError;
 typedef struct time__StopWatchOptions time__StopWatchOptions;
 typedef struct time__StopWatch time__StopWatch;
 typedef struct time__Time time__Time;
-typedef struct v__vcache__CacheManager v__vcache__CacheManager;
 typedef struct v__vmod__Manifest v__vmod__Manifest;
 typedef struct v__vmod__Scanner v__vmod__Scanner;
 typedef struct v__vmod__Parser v__vmod__Parser;
@@ -3755,20 +3755,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -5360,20 +5397,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -6965,20 +7039,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -8570,20 +8681,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -10175,20 +10323,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -11780,20 +11965,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -13385,20 +13607,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -14990,20 +15249,57 @@ void __atomic_thread_fence();
 
 #if defined(__TINYC__)
 
-// added by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+// inserted by module `sync.stdatomic`, file: 1.declarations.c.v:22:
+#ifndef V_TCC_STDATOMIC_COMPAT_RESTORED
+#define V_TCC_STDATOMIC_COMPAT_RESTORED
 
-#ifdef __TINYC__
-#include <stdatomic.h>
-#else
+/*
+ * The cleanup header above hides V's compatibility helpers again, so the
+ * standard API has to come back for user and third party headers.
+ *
+ * TCC ships its own self contained <stdatomic.h> since 0.9.28, so prefer that
+ * one when it is there. Older TCCs have no such header and would silently pick
+ * up GCC's, which is written against __ATOMIC_* builtins that TCC does not
+ * provide - either the include is not found at all, or it fails later with
+ * '__ATOMIC_RELAXED' undeclared. In that case restore the few names V itself
+ * relies on from the bundled compat header instead.
+ */
 #if defined(__has_include)
 #if __has_include(<stdatomic.h>)
-#include <stdatomic.h>
-#else
-#error VERROR_MESSAGE Header file <stdatomic.h>, needed for module `sync.stdatomic` was not found. Please install the corresponding development headers.
+#define V_TCC_STDATOMIC_SYSTEM_HEADER 1
 #endif
-#else
-#include <stdatomic.h>
 #endif
+
+#ifdef V_TCC_STDATOMIC_SYSTEM_HEADER
+
+#include <stdatomic.h>
+
+#else
+
+#define _Atomic volatile
+
+typedef int memory_order;
+
+#define memory_order_relaxed 0
+#define memory_order_consume 1
+#define memory_order_acquire 2
+#define memory_order_release 3
+#define memory_order_acq_rel 4
+#define memory_order_seq_cst 5
+
+/* The alias pass renamed the fence declarations of the compat header, so the
+ * plain names have to be reintroduced. TinyCC relies on its runtime atomics
+ * support here, same as the compat header does. */
+extern void __atomic_thread_fence(memory_order order);
+
+#if defined(__APPLE__)
+extern void atomic_thread_fence(memory_order order);
+#else
+#define atomic_thread_fence(order) __atomic_thread_fence(order)
+#endif
+
+#endif
+
 #endif
 
 
@@ -17084,12 +17380,12 @@ typedef map Map_voidptr_builtin__closure__ClosureLiveInfo;
 typedef map Map_u64_builtin__closure__ClosureLifetimeState_ptr;
 typedef u8 Array_fixed_u8_128 [128];
 typedef map Map_string_string;
+typedef map Map_string_Array_string;
+typedef map Map_string_v__pref__BsdSpecificFiles;
 typedef array Array_char_ptr;
 typedef int Array_fixed_int_3 [3];
 typedef char Array_fixed_char_256 [256];
 typedef int Array_fixed_int_10 [10];
-typedef map Map_string_Array_string;
-typedef map Map_string_v__pref__BsdSpecificFiles;
 typedef array Array_v__util__JsonError;
 typedef array Array_v__util__Possibility;
 typedef map Map_string_time__StopWatch;
@@ -18597,6 +18893,26 @@ struct builtin__closure__ClosureLifetimeState {
 	builtin__closure__ClosureLifetimeState* next_free;
 };
 
+struct v__pref__LineInfo {
+	v__pref__Method method;
+	string path;
+	int line_nr;
+	int col;
+	Map_string_bool vars_printed;
+};
+
+struct v__vcache__CacheManager {
+	string basepath;
+	string original_vopts;
+	string vopts;
+	Map_string_string k2cpath;
+};
+
+struct v__pref__BsdSpecificFiles {
+	bool has_bsd;
+	bool has_exact;
+};
+
 struct os__NotExpected {
 	string cause;
 	int code;
@@ -18655,26 +18971,6 @@ struct os__Pipe {
 
 struct v__help__ExitOptions {
 	int exit_code;
-};
-
-struct v__pref__LineInfo {
-	v__pref__Method method;
-	string path;
-	int line_nr;
-	int col;
-	Map_string_bool vars_printed;
-};
-
-struct v__vcache__CacheManager {
-	string basepath;
-	string original_vopts;
-	string vopts;
-	Map_string_string k2cpath;
-};
-
-struct v__pref__BsdSpecificFiles {
-	bool has_bsd;
-	bool has_exact;
 };
 
 struct v__util__EManager {
@@ -18956,6 +19252,20 @@ struct v__builder__TccMacosLibgcPublicationResult {
 	bool won;
 };
 
+struct rand__config__PRNGConfigStruct {
+	Array_u32 seed_;
+};
+
+struct rand__config__NormalConfigStruct {
+	f64 mu;
+	f64 sigma;
+};
+
+struct rand__config__ShuffleConfigStruct {
+	int start;
+	int end;
+};
+
 struct strings__textscanner__TextScanner {
 	string input;
 	int ilen;
@@ -18970,20 +19280,6 @@ struct time__TimeParseError {
 
 struct time__StopWatchOptions {
 	bool auto_start;
-};
-
-struct rand__config__PRNGConfigStruct {
-	Array_u32 seed_;
-};
-
-struct rand__config__NormalConfigStruct {
-	f64 mu;
-	f64 sigma;
-};
-
-struct rand__config__ShuffleConfigStruct {
-	int start;
-	int end;
 };
 
 struct v__token__TrieNode {
@@ -22507,16 +22803,6 @@ struct multi_return_strconv__Dec64_bool {
 	bool arg1;
 };
 
-struct multi_return_string_int {
-	string arg0;
-	int arg1;
-};
-
-struct multi_return_int_bool {
-	int arg0;
-	bool arg1;
-};
-
 struct multi_return_Array_string_Array_string {
 	Array_string arg0;
 	Array_string arg1;
@@ -22529,6 +22815,16 @@ struct multi_return_ref_v__pref__Preferences_string {
 
 struct multi_return_string_bool {
 	string arg0;
+	bool arg1;
+};
+
+struct multi_return_string_int {
+	string arg0;
+	int arg1;
+};
+
+struct multi_return_int_bool {
+	int arg0;
 	bool arg1;
 };
 
@@ -22558,6 +22854,11 @@ struct multi_return_u64_u64 {
 	u64 arg1;
 };
 
+struct multi_return_f64_f64 {
+	f64 arg0;
+	f64 arg1;
+};
+
 struct multi_return_int_int_int {
 	int arg0;
 	int arg1;
@@ -22572,11 +22873,6 @@ struct multi_return_int_int_int_int_int_i64_bool {
 	int arg4;
 	i64 arg5;
 	bool arg6;
-};
-
-struct multi_return_f64_f64 {
-	f64 arg0;
-	f64 arg1;
 };
 
 struct multi_return_Array_string_int {
@@ -24227,6 +24523,9 @@ void builtin__ArrayFlags_clear(ArrayFlags* e, ArrayFlags flag_);
 u64 hash__wyhash_c(u8* key, u64 len, u64 seed);
 u64 hash__sum64_string(string key, u64 seed);
 u64 hash__sum64(Array_u8 key, u64 seed);
+string os__cmdline__option(Array_string args, string param, string def);
+Array_string os__cmdline__options_before(Array_string args, Array_string what);
+Array_string os__cmdline__options_after(Array_string args, Array_string what);
 strings__textscanner__TextScanner strings__textscanner__new(string input);
 void strings__textscanner__TextScanner_free(strings__textscanner__TextScanner* ss);
 int strings__textscanner__TextScanner_next(strings__textscanner__TextScanner* ss);
@@ -24235,9 +24534,6 @@ int strings__textscanner__TextScanner_peek(strings__textscanner__TextScanner* ss
 int strings__textscanner__TextScanner_peek_back(strings__textscanner__TextScanner* ss);
 int strings__textscanner__TextScanner_peek_back_n(strings__textscanner__TextScanner* ss, int n);
 int strings__textscanner__TextScanner_current(strings__textscanner__TextScanner* ss);
-string os__cmdline__option(Array_string args, string param, string def);
-Array_string os__cmdline__options_before(Array_string args, Array_string what);
-Array_string os__cmdline__options_after(Array_string args, Array_string what);
 string v__token__KeywordsMatcherTrie_str(v__token__KeywordsMatcherTrie* km);
 string v__token__TrieNode_str(v__token__TrieNode* node);
 int v__token__KeywordsMatcherTrie_find(v__token__KeywordsMatcherTrie* km, string word);
@@ -24273,7 +24569,7 @@ bool v__token__Kind_is_infix(v__token__Kind kind);
 string v__token__kind_to_string(v__token__Kind k);
 v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op);
 void v__dotgraph__start_digraph(void);
-VV_LOC void anon_fn_40181cb3d9c4559e_275__81(void);
+VV_LOC void anon_fn_40181cb3d9c4559e_276__81(void);
 v__dotgraph__DotGraph* v__dotgraph__new(string name, string label, string color);
 void v__dotgraph__DotGraph_writeln(v__dotgraph__DotGraph* d, string line);
 void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d);
@@ -24560,6 +24856,18 @@ string v__util__version__vhash(void);
 string v__util__version__full_hash(void);
 string v__util__version__full_v_version(bool is_verbose);
 _result_string v__util__version__githash(string path);
+VV_LOC void v__vcache__remove_old_cache_folder(void);
+v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts);
+void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts);
+string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key);
+string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key);
+VV_LOC string v__vcache__normalise_mod(string mod);
+string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key);
+_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key);
+_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key);
+_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content);
+_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content);
+_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key);
 int time__days_from_unix_epoch(int year, int month, int day);
 int time__Time_days_from_unix_epoch(time__Time t);
 i64 time__Duration_nanoseconds(time__Duration d);
@@ -24619,18 +24927,6 @@ void time__sleep(time__Duration duration);
 time__Time time__unix_nanosecond(i64 abs_unix_timestamp, int nanosecond);
 VV_LOC multi_return_int_int_int time__calculate_date_from_day_offset(i64 day_offset_);
 VV_LOC multi_return_int_int_int time__calculate_time_from_second_offset(i64 second_offset_);
-VV_LOC void v__vcache__remove_old_cache_folder(void);
-v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts);
-void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts);
-string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key);
-string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key);
-VV_LOC string v__vcache__normalise_mod(string mod);
-string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key);
-_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key);
-_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key);
-_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content);
-_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content);
-_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key);
 _result_v__vmod__Manifest v__vmod__from_file(string vmod_path);
 _result_v__vmod__Manifest v__vmod__decode(string contents);
 VV_LOC void v__vmod__Scanner_tokenize(v__vmod__Scanner* s, v__vmod__TokenKind t_type, string val);
@@ -25980,11 +26276,11 @@ VV_LOC bool v__gen__c__Gen_type_needs_deep_scope_gc_pin(v__gen__c__Gen* g, v__as
 VV_LOC bool v__gen__c__Gen_scope_var_needs_deep_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC bool v__gen__c__Gen_scope_gc_pin_var_available(v__gen__c__Gen* g, v__ast__Var obj, int node_pos);
 VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c__Gen* g, int node_pos);
-VV_LOC int anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_309539(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_f69424a11d878682_285_ref_ast__Var_ref_ast__Var__int_309539(v__ast__Var* a, v__ast__Var* b);
 VV_LOC void v__gen__c__Gen_scope_gc_pin_postgen(v__gen__c__Gen* g, Array_v__gen__c__ScopeGcPin pins);
 VV_LOC bool v__gen__c__Gen_scope_var_needs_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos pos);
-VV_LOC int anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_314427(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_f69424a11d878682_285_ref_ast__Var_ref_ast__Var__int_314427(v__ast__Var* a, v__ast__Var* b);
 VV_LOC bool v__gen__c__gc_pin_has_named_storage(string name);
 VV_LOC bool v__gen__c__Gen_has_veb_context(v__gen__c__Gen* g, v__ast__Type typ);
 VV_LOC _option_v__ast__Param v__gen__c__Gen_implicit_veb_ctx_alias_target(v__gen__c__Gen* g, v__ast__Var obj);
@@ -27918,13 +28214,21 @@ VV_LOC _result_void v__builder__cbuilder__parallel_cc(v__builder__Builder* b, v_
 VV_LOC voidptr v__builder__cbuilder__build_parallel_o_cb(sync__pool__PoolProcessor* p, int idx, int _wid);
 VV_LOC void v__builder__cbuilder__eprint_result_time(time__StopWatch sw, string label, string cmd, os__Result res);
 VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label);
+VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command);
+VV_LOC bool main__macos_v3_leading_option_consumes_value(string option);
+VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, Array_string raw_args);
 VV_LOC bool main__macos_v3_driver_is_available(void);
 VV_LOC void main__macos_v3_driver_run(Array_string _d1);
 VV_LOC v__util__Timers* main__timers_pointer(v__util__Timers* p);
 VV_LOC void main__main(void);
-VV_LOC void anon_fn_6a0ddf9f315b536f_47__1976(void);
+VV_LOC void anon_fn_6a0ddf9f315b536f_48__1976(void);
 VV_LOC void main__invoke_help_and_exit(Array_string remaining);
-VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs);
+VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs, Array_string merged_args);
+VV_LOC bool main__autofree_args_require_standard_compiler(Array_string args, string command);
+VV_LOC Array_string main__v3_ownership_forwarded_args(v__pref__Preferences* prefs, Array_string merged_args);
+VV_LOC bool main__autofree_requires_standard_compiler(v__pref__Preferences* prefs);
+VV_LOC bool main__v3_has_v1_only_preferences(v__pref__Preferences* prefs);
+VV_LOC bool main__ownership_delegation_is_requested(bool is_ownership, bool is_autofree, bool old_compiler, string host_os);
 VV_LOC bool main__is_ownership_relevant_command(string command, v__pref__Preferences* prefs);
 VV_LOC void main__launch_v3_ownership_compiler(bool is_verbose, Array_string args);
 VV_LOC string main__cached_v3_ownership_executable_path(string vroot);
@@ -28668,6 +28972,8 @@ static string _const_v__builder__c_compilation_error_title; // a string literal,
 static string _const_v__builder__tcc_macos_libgc_store_name; // a string literal, inited later
 static string _const_v__builder__tcc_macos_libgc_name; // a string literal, inited later
 static string _const_v__builder__tcc_macos_libgc_data_root_remediation; // a string literal, inited later
+static string _const_main__macos_v3_compat_c99_flag; // a string literal, inited later
+static string _const_main__macos_v3_internal_quiet_flag; // a string literal, inited later
 static string _const_main__vvmrc_file_name; // a string literal, inited later
 static string _const_main__vvmrc_skip_env; // a string literal, inited later
 builtin__closure__Closure g_closure; // global 6
@@ -38056,11 +38362,11 @@ string _v_dump_expr_string(string fpath, int line, string sexpr, string dump_arg
 
 
 // V anon functions:
-VV_LOC void anon_fn_40181cb3d9c4559e_275__81(void) {
+VV_LOC void anon_fn_40181cb3d9c4559e_276__81(void) {
 	builtin__println(_S("}"));
 }
 
-VV_LOC int anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_309539(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_f69424a11d878682_285_ref_ast__Var_ref_ast__Var__int_309539(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -38076,7 +38382,7 @@ VV_LOC int anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_309539(v_
 	return 0;
 }
 
-VV_LOC int anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_314427(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_f69424a11d878682_285_ref_ast__Var_ref_ast__Var__int_314427(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -38092,7 +38398,7 @@ VV_LOC int anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_314427(v_
 	return 0;
 }
 
-VV_LOC void anon_fn_6a0ddf9f315b536f_47__1976(void) {
+VV_LOC void anon_fn_6a0ddf9f315b536f_48__1976(void) {
 	v__util__Timers* timers = main__timers_pointer(((void*)0));
 	v__util__Timers_show(timers, _S("TOTAL"));
 }
@@ -38130,12 +38436,12 @@ u32 v_typeof_interface_idx_IError(u32 sidx) {
 	if (sidx == _IError_semver__InvalidVersionFormatError_index) return 954;
 	if (sidx == _IError_io__NotExpected_index) return 958;
 	if (sidx == _IError_io__Eof_index) return 959;
-	if (sidx == _IError_os__Eof_index) return 183;
-	if (sidx == _IError_os__NotExpected_index) return 181;
-	if (sidx == _IError_os__FileNotOpenedError_index) return 184;
-	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 185;
-	if (sidx == _IError_os__ExecutableNotFoundError_index) return 204;
-	if (sidx == _IError_time__TimeParseError_index) return 388;
+	if (sidx == _IError_os__Eof_index) return 203;
+	if (sidx == _IError_os__NotExpected_index) return 201;
+	if (sidx == _IError_os__FileNotOpenedError_index) return 204;
+	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 205;
+	if (sidx == _IError_os__ExecutableNotFoundError_index) return 224;
+	if (sidx == _IError_time__TimeParseError_index) return 396;
 	if (sidx == _IError_flag__UnknownFlagError_index) return 916;
 	if (sidx == _IError_flag__ArgsCountError_index) return 917;
 	if (sidx == _IError_v__parser__IncludeError_index) return 771;
@@ -38596,9 +38902,9 @@ static char * v_typeof_interface_rand__PRNG(u32 sidx) {
 }
 
 u32 v_typeof_interface_idx_rand__PRNG(u32 sidx) {
-	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 403;
+	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 377;
 	if (sidx == _rand__PRNG_voidptr_index) return 2;
-	return 400;
+	return 374;
 }
 char * v_typeof_sumtype_v__ast__HashStmtNode(u32 sidx) {
 	switch(sidx) {
@@ -39035,9 +39341,9 @@ static char * v_typeof_interface_io__Reader(u32 sidx) {
 }
 
 u32 v_typeof_interface_idx_io__Reader(u32 sidx) {
-	if (sidx == _io__Reader_os__File_index) return 182;
+	if (sidx == _io__Reader_os__File_index) return 202;
 	if (sidx == _io__Reader_voidptr_index) return 2;
-	if (sidx == _io__Reader_os__Pipe_index) return 215;
+	if (sidx == _io__Reader_os__Pipe_index) return 235;
 	if (sidx == _io__Reader_io__BufferedReader_index) return 955;
 	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 968;
 	return 913;
@@ -39056,8 +39362,8 @@ static char * v_typeof_interface_io__Writer(u32 sidx) {
 u32 v_typeof_interface_idx_io__Writer(u32 sidx) {
 	if (sidx == _io__Writer_io__MultiWriter_index) return 964;
 	if (sidx == _io__Writer_voidptr_index) return 2;
-	if (sidx == _io__Writer_os__File_index) return 182;
-	if (sidx == _io__Writer_os__Pipe_index) return 215;
+	if (sidx == _io__Writer_os__File_index) return 202;
+	if (sidx == _io__Writer_os__Pipe_index) return 235;
 	if (sidx == _io__Writer_crypto__sha256__Digest_index) return 854;
 	if (sidx == _io__Writer_io__BufferedWriter_index) return 960;
 	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 968;
@@ -44256,7 +44562,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("76f77e3");
+	return _S("488e130");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -49454,6 +49760,44 @@ inline u64 hash__sum64_string(string key, u64 seed) {
 inline u64 hash__sum64(Array_u8 key, u64 seed) {
 	return hash__wyhash_c(key.data, ((u64)(key.len)), seed);
 }
+string os__cmdline__option(Array_string args, string param, string def) {
+	bool found = false;
+	for (int _t1 = 0; _t1 < args.len; ++_t1) {
+		string arg = ((string*)args.data)[_t1];
+		if (found) {
+			return arg;
+		} else if (builtin__string__eq(param, arg)) {
+			found = true;
+		}
+	}
+	return def;
+}
+Array_string os__cmdline__options_before(Array_string args, Array_string what) {
+	Array_string args_before = builtin____new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < args.len; ++_t1) {
+		string a = ((string*)args.data)[_t1];
+		if ((Array_string_contains(what, a))) {
+			break;
+		}
+		builtin__array_push((array*)&args_before, _MOV((string[]){ builtin__string_clone(a) }));
+	}
+	return args_before;
+}
+Array_string os__cmdline__options_after(Array_string args, Array_string what) {
+	bool found = false;
+	Array_string args_after = builtin____new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < args.len; ++_t1) {
+		string a = ((string*)args.data)[_t1];
+		if ((Array_string_contains(what, a))) {
+			found = true;
+			continue;
+		}
+		if (found) {
+			builtin__array_push((array*)&args_after, _MOV((string[]){ builtin__string_clone(a) }));
+		}
+	}
+	return args_after;
+}
 strings__textscanner__TextScanner strings__textscanner__new(string input) {
 	return ((strings__textscanner__TextScanner){.input = input,.ilen = input.len,.pos = 0,});
 }
@@ -49495,44 +49839,6 @@ inline int strings__textscanner__TextScanner_current(strings__textscanner__TextS
 		return ss->input.str[ ss->pos - 1];
 	}
 	return -1;
-}
-string os__cmdline__option(Array_string args, string param, string def) {
-	bool found = false;
-	for (int _t1 = 0; _t1 < args.len; ++_t1) {
-		string arg = ((string*)args.data)[_t1];
-		if (found) {
-			return arg;
-		} else if (builtin__string__eq(param, arg)) {
-			found = true;
-		}
-	}
-	return def;
-}
-Array_string os__cmdline__options_before(Array_string args, Array_string what) {
-	Array_string args_before = builtin____new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t1 = 0; _t1 < args.len; ++_t1) {
-		string a = ((string*)args.data)[_t1];
-		if ((Array_string_contains(what, a))) {
-			break;
-		}
-		builtin__array_push((array*)&args_before, _MOV((string[]){ builtin__string_clone(a) }));
-	}
-	return args_before;
-}
-Array_string os__cmdline__options_after(Array_string args, Array_string what) {
-	bool found = false;
-	Array_string args_after = builtin____new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t1 = 0; _t1 < args.len; ++_t1) {
-		string a = ((string*)args.data)[_t1];
-		if ((Array_string_contains(what, a))) {
-			found = true;
-			continue;
-		}
-		if (found) {
-			builtin__array_push((array*)&args_after, _MOV((string[]){ builtin__string_clone(a) }));
-		}
-	}
-	return args_after;
 }
 string v__token__KeywordsMatcherTrie_str(v__token__KeywordsMatcherTrie* km) {
 	return builtin__string_plus_many(7, _MOV((string[7]){_S("KeywordsMatcherTrie{ /* nodes.len: "), builtin__int_str(km->nodes.len), _S(" */ min_len: "), builtin__int_str(km->min_len), _S(", max_len: "), builtin__int_str(km->max_len), _S(" }")}));
@@ -50622,7 +50928,7 @@ v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op) {
 }
 void v__dotgraph__start_digraph(void) {
 	builtin__println(_S("digraph G {"));
-	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_40181cb3d9c4559e_275__81);
+	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_40181cb3d9c4559e_276__81);
 	(void)_t1;
  ;
 }
@@ -57480,6 +57786,222 @@ _result_string _t7 = os__read_file(rev_file);
 	 
 	return _t9;
 }
+VV_LOC void v__vcache__remove_old_cache_folder(void) {
+	string old_cache_folder = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("cache")})));
+	if (os__exists(old_cache_folder)) {
+		string old_readme_file = os__join_path(old_cache_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
+		if (os__file_size(old_readme_file) == 254) {
+			_result_void _t1 = os__rmdir_all(old_cache_folder);
+			(void)_t1;
+ ;
+			;
+		}
+	}
+}
+v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
+	_option_string _t1 = os__getenv_opt(_S("VCACHE"));
+	if (_t1.state != 0) {
+		*(string*) _t1.data = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S(".cache")})));
+	}
+	
+ 	string vcache_basepath = (*(string*)_t1.data);
+	;
+	;
+	if (!os__is_dir(vcache_basepath)) {
+		v__vcache__remove_old_cache_folder();
+		_result_void _t2 = os__mkdir_all(vcache_basepath, ((os__MkdirParams){.mode = 0700,}));
+		if (_t2.is_error) {
+			IError _t3 = _t2.err;
+			IError err = _t3;
+			builtin___v_panic(builtin__IError_str(err));
+			VUNREACHABLE();
+		;
+		}
+		
+ ;
+		;
+	}
+	string readme_file = os__join_path(vcache_basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
+	if (!os__is_file(readme_file)) {
+		string readme_content = builtin__string_strip_margin(_S("This folder contains cached build artifacts from the V build system.\n\011\011|You can safely delete it, if it is getting too large.\n\011\011|It will be recreated the next time you compile something with V.\n\011\011|You can change its location with the VCACHE environment variable.\n\011\011"));
+		_result_void _t4 = os__write_file(readme_file, readme_content);
+		if (_t4.is_error) {
+			IError _t5 = _t4.err;
+			IError err = _t5;
+			builtin___v_panic(builtin__IError_str(err));
+			VUNREACHABLE();
+		;
+		}
+		
+ ;
+		;
+	}
+	Map_string_bool deduped_opts = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
+	for (int _t6 = 0; _t6 < opts.len; ++_t6) {
+		string o = ((string*)opts.data)[_t6];
+		builtin__map_set(&deduped_opts, &(string[]){o}, &(bool[]) { true });
+	}
+	Array_string _t7 = {0};
+	Array_string _t7_orig = builtin__map_keys(&deduped_opts);
+	int _t7_len = _t7_orig.len;
+	_t7 = builtin____new_array(0, _t7_len, sizeof(string));
+
+	for (int _t8 = 0; _t8 < _t7_len; ++_t8) {
+		string it = ((string*) _t7_orig.data)[_t8];
+		if ((it).len != 0 && !builtin__string_starts_with(it, _S("['gcboehm', "))) {
+			builtin__array_push((array*)&_t7, &it);
+		}
+	}
+	Array_string deduped_opts_keys =_t7;
+	string original_vopts = Array_string_join(deduped_opts_keys, _S("|"));
+	return ((v__vcache__CacheManager){.basepath = vcache_basepath,.original_vopts = original_vopts,.vopts = original_vopts,.k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),});
+}
+void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts) {
+	cm->vopts = builtin__string_plus_many(3, _MOV((string[3]){cm->original_vopts, _S("#"), Array_string_join(new_opts, _S("|"))}));
+	cm->k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
+	;
+}
+string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key) {
+	string* _t2 = (string*)(builtin__map_get_check(ADDR(map, cm->k2cpath), &(string[]){key}));
+	_option_string _t1 = {0};
+	if (_t2) {
+		*((string*)&_t1.data) = *((string*)_t2);
+	} else {
+		_t1.state = 2; _t1.err = _const_none__;
+	}
+	;
+	if (_t1.state != 0) {
+		*(string*) _t1.data = _S("");
+	}
+	
+	string cpath = (*(string*)_t1.data);
+	if ((cpath).len == 0) {
+		string hk = builtin__string__plus(cm->vopts, key);
+		string a = builtin__u64_hex_full(hash__sum64_string(hk, 5));
+		string b = builtin__u64_hex_full(hash__sum64_string(hk, 7));
+		string khash = builtin__string__plus(a, b);
+		string prefix = builtin__string_substr(khash, 0, 2);
+		string cprefix_folder = os__join_path(cm->basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){prefix})));
+		cpath = os__join_path(cprefix_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){khash})));
+		if (!os__is_dir(cprefix_folder)) {
+			_result_void _t3 = os__mkdir_all(cprefix_folder, ((os__MkdirParams){.mode = 0777,}));
+			if (_t3.is_error) {
+				IError _t4 = _t3.err;
+				IError err = _t4;
+				if (!os__is_dir(cprefix_folder)) {
+					builtin___v_panic(builtin__IError_str(err));
+					VUNREACHABLE();
+				}
+			;
+			}
+			
+ ;
+		}
+		;
+		;
+		;
+		;
+		builtin__map_set(&cm->k2cpath, &(string[]){key}, &(string[]) { cpath });
+	}
+	;
+	return cpath;
+}
+string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key) {
+	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
+	string res = builtin__string__plus(prefix, postfix);
+	return res;
+}
+VV_LOC string v__vcache__normalise_mod(string mod) {
+	return builtin__string_trim(builtin__string_replace(builtin__string_replace(builtin__string_replace(mod, _S("/"), _S(".")), _S("\\"), _S(".")), _S("vlib."), _S("")), _S("."));
+}
+string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
+	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
+	string res = builtin__string_plus_many(4, _MOV((string[4]){prefix, _S(".module."), v__vcache__normalise_mod(mod), postfix}));
+	return res;
+}
+_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key) {
+	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
+	;
+	if (!os__exists(fpath)) {
+		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
+	}
+	_result_string _t2;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
+	 
+	return _t2;
+}
+_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
+	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
+	;
+	if (!os__exists(fpath)) {
+		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
+	}
+	_result_string _t2;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
+	 
+	return _t2;
+}
+_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content) {
+	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
+	_result_void _t1 = os__write_file(fpath, content);
+	if (_t1.is_error) {
+		_result_string _t2 = {0};
+		_t2.is_error = true;
+		_t2.err = _t1.err;
+		return _t2;
+	}
+	
+ ;
+	;
+	_result_string _t3;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
+	 
+	return _t3;
+}
+_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content) {
+	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
+	_result_void _t1 = os__write_file(fpath, content);
+	if (_t1.is_error) {
+		_result_string _t2 = {0};
+		_t2.is_error = true;
+		_t2.err = _t1.err;
+		return _t2;
+	}
+	
+ ;
+	;
+	_result_string _t3;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
+	 
+	return _t3;
+}
+_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key) {
+	_result_string _t1 = v__vcache__CacheManager_exists(cm, postfix, key);
+	if (_t1.is_error) {
+		_result_string _t2 = {0};
+		_t2.is_error = true;
+		_t2.err = _t1.err;
+		return _t2;
+	}
+	
+ 	string fpath = (*(string*)_t1.data);
+	_result_string _t3 = os__read_file(fpath);
+	if (_t3.is_error) {
+		_result_string _t4 = {0};
+		_t4.is_error = true;
+		_t4.err = _t3.err;
+		return _t4;
+	}
+	
+ 	string content = (*(string*)_t3.data);
+	;
+	_result_string _t5;
+	builtin___result_ok(&(string[]) { content }, (_result*)(&_t5), sizeof(string));
+	 
+	return _t5;
+}
 int time__days_from_unix_epoch(int year, int month, int day) {
 	int y = (month <= 2 ? (year - 1) : (year));
 	int era = VSAFE_DIV_int(y , 400);
@@ -58226,222 +58748,6 @@ VV_LOC multi_return_int_int_int time__calculate_time_from_second_offset(i64 seco
 	i64 minute_ = VSAFE_DIV_i64(second_offset , 60);
 	second_offset = VSAFE_MOD_i64(second_offset,_const_time__seconds_per_minute);
 	return (multi_return_int_int_int){.arg0=((int)(hour_)), .arg1=((int)(minute_)), .arg2=((int)(second_offset))};
-}
-VV_LOC void v__vcache__remove_old_cache_folder(void) {
-	string old_cache_folder = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("cache")})));
-	if (os__exists(old_cache_folder)) {
-		string old_readme_file = os__join_path(old_cache_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
-		if (os__file_size(old_readme_file) == 254) {
-			_result_void _t1 = os__rmdir_all(old_cache_folder);
-			(void)_t1;
- ;
-			;
-		}
-	}
-}
-v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
-	_option_string _t1 = os__getenv_opt(_S("VCACHE"));
-	if (_t1.state != 0) {
-		*(string*) _t1.data = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S(".cache")})));
-	}
-	
- 	string vcache_basepath = (*(string*)_t1.data);
-	;
-	;
-	if (!os__is_dir(vcache_basepath)) {
-		v__vcache__remove_old_cache_folder();
-		_result_void _t2 = os__mkdir_all(vcache_basepath, ((os__MkdirParams){.mode = 0700,}));
-		if (_t2.is_error) {
-			IError _t3 = _t2.err;
-			IError err = _t3;
-			builtin___v_panic(builtin__IError_str(err));
-			VUNREACHABLE();
-		;
-		}
-		
- ;
-		;
-	}
-	string readme_file = os__join_path(vcache_basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
-	if (!os__is_file(readme_file)) {
-		string readme_content = builtin__string_strip_margin(_S("This folder contains cached build artifacts from the V build system.\n\011\011|You can safely delete it, if it is getting too large.\n\011\011|It will be recreated the next time you compile something with V.\n\011\011|You can change its location with the VCACHE environment variable.\n\011\011"));
-		_result_void _t4 = os__write_file(readme_file, readme_content);
-		if (_t4.is_error) {
-			IError _t5 = _t4.err;
-			IError err = _t5;
-			builtin___v_panic(builtin__IError_str(err));
-			VUNREACHABLE();
-		;
-		}
-		
- ;
-		;
-	}
-	Map_string_bool deduped_opts = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
-	;
-	for (int _t6 = 0; _t6 < opts.len; ++_t6) {
-		string o = ((string*)opts.data)[_t6];
-		builtin__map_set(&deduped_opts, &(string[]){o}, &(bool[]) { true });
-	}
-	Array_string _t7 = {0};
-	Array_string _t7_orig = builtin__map_keys(&deduped_opts);
-	int _t7_len = _t7_orig.len;
-	_t7 = builtin____new_array(0, _t7_len, sizeof(string));
-
-	for (int _t8 = 0; _t8 < _t7_len; ++_t8) {
-		string it = ((string*) _t7_orig.data)[_t8];
-		if ((it).len != 0 && !builtin__string_starts_with(it, _S("['gcboehm', "))) {
-			builtin__array_push((array*)&_t7, &it);
-		}
-	}
-	Array_string deduped_opts_keys =_t7;
-	string original_vopts = Array_string_join(deduped_opts_keys, _S("|"));
-	return ((v__vcache__CacheManager){.basepath = vcache_basepath,.original_vopts = original_vopts,.vopts = original_vopts,.k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),});
-}
-void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts) {
-	cm->vopts = builtin__string_plus_many(3, _MOV((string[3]){cm->original_vopts, _S("#"), Array_string_join(new_opts, _S("|"))}));
-	cm->k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
-	;
-	;
-}
-string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key) {
-	string* _t2 = (string*)(builtin__map_get_check(ADDR(map, cm->k2cpath), &(string[]){key}));
-	_option_string _t1 = {0};
-	if (_t2) {
-		*((string*)&_t1.data) = *((string*)_t2);
-	} else {
-		_t1.state = 2; _t1.err = _const_none__;
-	}
-	;
-	if (_t1.state != 0) {
-		*(string*) _t1.data = _S("");
-	}
-	
-	string cpath = (*(string*)_t1.data);
-	if ((cpath).len == 0) {
-		string hk = builtin__string__plus(cm->vopts, key);
-		string a = builtin__u64_hex_full(hash__sum64_string(hk, 5));
-		string b = builtin__u64_hex_full(hash__sum64_string(hk, 7));
-		string khash = builtin__string__plus(a, b);
-		string prefix = builtin__string_substr(khash, 0, 2);
-		string cprefix_folder = os__join_path(cm->basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){prefix})));
-		cpath = os__join_path(cprefix_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){khash})));
-		if (!os__is_dir(cprefix_folder)) {
-			_result_void _t3 = os__mkdir_all(cprefix_folder, ((os__MkdirParams){.mode = 0777,}));
-			if (_t3.is_error) {
-				IError _t4 = _t3.err;
-				IError err = _t4;
-				if (!os__is_dir(cprefix_folder)) {
-					builtin___v_panic(builtin__IError_str(err));
-					VUNREACHABLE();
-				}
-			;
-			}
-			
- ;
-		}
-		;
-		;
-		;
-		;
-		builtin__map_set(&cm->k2cpath, &(string[]){key}, &(string[]) { cpath });
-	}
-	;
-	return cpath;
-}
-string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key) {
-	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
-	string res = builtin__string__plus(prefix, postfix);
-	return res;
-}
-VV_LOC string v__vcache__normalise_mod(string mod) {
-	return builtin__string_trim(builtin__string_replace(builtin__string_replace(builtin__string_replace(mod, _S("/"), _S(".")), _S("\\"), _S(".")), _S("vlib."), _S("")), _S("."));
-}
-string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
-	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
-	string res = builtin__string_plus_many(4, _MOV((string[4]){prefix, _S(".module."), v__vcache__normalise_mod(mod), postfix}));
-	return res;
-}
-_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key) {
-	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
-	;
-	if (!os__exists(fpath)) {
-		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
-	}
-	_result_string _t2;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
-	 
-	return _t2;
-}
-_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
-	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
-	;
-	if (!os__exists(fpath)) {
-		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
-	}
-	_result_string _t2;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
-	 
-	return _t2;
-}
-_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content) {
-	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
-	_result_void _t1 = os__write_file(fpath, content);
-	if (_t1.is_error) {
-		_result_string _t2 = {0};
-		_t2.is_error = true;
-		_t2.err = _t1.err;
-		return _t2;
-	}
-	
- ;
-	;
-	_result_string _t3;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
-	 
-	return _t3;
-}
-_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content) {
-	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
-	_result_void _t1 = os__write_file(fpath, content);
-	if (_t1.is_error) {
-		_result_string _t2 = {0};
-		_t2.is_error = true;
-		_t2.err = _t1.err;
-		return _t2;
-	}
-	
- ;
-	;
-	_result_string _t3;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
-	 
-	return _t3;
-}
-_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key) {
-	_result_string _t1 = v__vcache__CacheManager_exists(cm, postfix, key);
-	if (_t1.is_error) {
-		_result_string _t2 = {0};
-		_t2.is_error = true;
-		_t2.err = _t1.err;
-		return _t2;
-	}
-	
- 	string fpath = (*(string*)_t1.data);
-	_result_string _t3 = os__read_file(fpath);
-	if (_t3.is_error) {
-		_result_string _t4 = {0};
-		_t4.is_error = true;
-		_t4.err = _t3.err;
-		return _t4;
-	}
-	
- 	string content = (*(string*)_t3.data);
-	;
-	_result_string _t5;
-	builtin___result_ok(&(string[]) { content }, (_result*)(&_t5), sizeof(string));
-	 
-	return _t5;
 }
 _result_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
 	if (!os__exists(vmod_path)) {
@@ -60325,6 +60631,14 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	}
 	string npath = builtin__string_replace(rpath, _S("\\"), _S("/"));
 	p->building_v = !p->is_repl && v__pref__is_v_compiler_target(npath);
+	#if defined(__APPLE__)
+	{
+		if (p->building_v && p->os == v__pref__OS__macos && !p->prealloc && (!p->gc_set_by_flag || p->gc_mode == v__pref__GarbageCollectionMode__no_gc)) {
+			p->prealloc = true;
+			builtin__array_push((array*)&p->build_options, _MOV((string[]){ _S("-prealloc") }));
+		}
+	}
+	#endif
 	if (p->os == v__pref__OS__linux) {
 		#if !defined(__linux__)
 		{
@@ -60342,7 +60656,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (p->gc_mode == v__pref__GarbageCollectionMode__unknown) {
 		if (p->backend != v__pref__Backend__c || p->building_v || p->is_bare) {
 			p->gc_mode = v__pref__GarbageCollectionMode__no_gc;
-			_PUSH_MANY(&p->build_options, (builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("-gc"), _S("none")}))), _t2, Array_string);
+			_PUSH_MANY(&p->build_options, (builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("-gc"), _S("none")}))), _t4, Array_string);
 		} else {
 			p->gc_mode = v__pref__GarbageCollectionMode__boehm_full_opt;
 			v__pref__Preferences_parse_define(p, _S("gcboehm"));
@@ -60387,14 +60701,14 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("fe3a7042b470058c12caaa6b5342b153b907e3ad");
-	string _t4 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
-	string _t5 = v__pref__Preferences_defines_map_unique_keys(p);
-	string _t6 = builtin__string_trim_space(p->cflags);
-	string _t7 = builtin__string_plus_many(2, _MOV((string[2]){_S("pkgconfig_mode="), v__pref__PkgConfigMode_str(p->pkgconfig_mode)}));
-	string _t8 = builtin__string_trim_space(p->third_party_option);
-	string _t9 = Array_string_str(p->lookup_path);
-	p->cache_manager = v__vcache__new_cache_manager(builtin__new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){builtin__string_clone(vhash), _t4, _t5, _t6, _t7, _t8, _t9})));
+	string vhash = _S("76f77e39ed0451ae813e24d8e85d52b569b073c6");
+	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
+	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
+	string _t8 = builtin__string_trim_space(p->cflags);
+	string _t9 = builtin__string_plus_many(2, _MOV((string[2]){_S("pkgconfig_mode="), v__pref__PkgConfigMode_str(p->pkgconfig_mode)}));
+	string _t10 = builtin__string_trim_space(p->third_party_option);
+	string _t11 = Array_string_str(p->lookup_path);
+	p->cache_manager = v__vcache__new_cache_manager(builtin__new_array_from_c_array(7, 7, sizeof(string), _MOV((string[7]){builtin__string_clone(vhash), _t6, _t7, _t8, _t9, _t10, _t11})));
 	if (builtin__string__eq(os__user_os(), _S("windows"))) {
 		p->use_cache = false;
 	}
@@ -61562,6 +61876,8 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors
 		else if (_SLIT_EQ(arg.str, arg.len, "-old-compiler")) {
 			res->old_compiler = true;
 		}
+		else if (_SLIT_EQ(arg.str, arg.len, "-checker-fixture") || _SLIT_EQ(arg.str, arg.len, "-macos-v3-compat-c99")) {
+		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-no-memory-limit") || _SLIT_EQ(arg.str, arg.len, "--no-memory-limit")) {
 		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-progress")) {
@@ -61844,9 +62160,9 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_and_show_errors
 			res->relaxed_gcc14 = false;
 		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-prof") || _SLIT_EQ(arg.str, arg.len, "-profile")) {
-			multi_return_string_bool mr_33358 = v__pref__optional_arg_value(args, i, command, known_external_commands, _S("-"));
-			string profile_file = mr_33358.arg0;
-			bool profile_file_consumed = mr_33358.arg1;
+			multi_return_string_bool mr_33479 = v__pref__optional_arg_value(args, i, command, known_external_commands, _S("-"));
+			string profile_file = mr_33479.arg0;
+			bool profile_file_consumed = mr_33479.arg1;
 			res->profile_file = profile_file;
 			res->is_prof = true;
 			builtin__array_push((array*)&res->build_options, _MOV((string[]){ builtin__string_plus_many(3, _MOV((string[3]){arg, _S(" "), res->profile_file})) }));
@@ -111892,7 +112208,7 @@ VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c_
 			builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 		}
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_309539)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_285_ref_ast__Var_ref_ast__Var__int_309539)));
 	Array_v__gen__c__ScopeGcPin pins = builtin____new_array_with_default(0, 0, sizeof(v__gen__c__ScopeGcPin), 0);
 	bool opened_scope = false;
 	for (int _t12 = 0; _t12 < vars.len; ++_t12) {
@@ -111992,7 +112308,7 @@ VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos 
 		builtin__map_set(&seen, &(string[]){var_obj.name}, &(bool[]) { true });
 		builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_284_ref_ast__Var_ref_ast__Var__int_314427)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_285_ref_ast__Var_ref_ast__Var__int_314427)));
 	for (int _t4 = 0; _t4 < vars.len; ++_t4) {
 		v__ast__Var obj = ((v__ast__Var*)vars.data)[_t4];
 		_option_string _t5 = {0};
@@ -221742,6 +222058,62 @@ VV_LOC void v__builder__cbuilder__eprint_result_time(time__StopWatch sw, string 
 VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label) {
 	builtin__eprintln(builtin__str_intp(3, _MOV((StrIntpData[]){{_S("> "), 0xafe29, {.d_i64 = time__Duration_milliseconds(time__StopWatch_elapsed(sw))}, 0, 0, 0}, {_S(" ms, "), 0xfe10, {.d_s = label}, 0, 0, 0}, {_SLIT0, 0, { .d_c = 0 }, 0, 0, 0}})));
 }
+VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command) {
+	int i = 0;
+	for (;;) {
+		if (!(i < args.len)) break;
+		string arg = (*(string*)builtin__array_get(args, i));
+		if (_SLIT_EQ(arg.str, arg.len, "--")) {
+			return false;
+		}
+		if (_SLIT_EQ(arg.str, arg.len, "-message-limit") || _SLIT_EQ(arg.str, arg.len, "-debug") || _SLIT_EQ(arg.str, arg.len, "-debug-tcc") || _SLIT_EQ(arg.str, arg.len, "-wasm-validate") || _SLIT_EQ(arg.str, arg.len, "-wasm-stack-top") || _SLIT_EQ(arg.str, arg.len, "-use-coroutines") || _SLIT_EQ(arg.str, arg.len, "-checker-match-exhaustive-cutoff-limit") || _SLIT_EQ(arg.str, arg.len, "-raw-vsh-tmp-prefix") || _SLIT_EQ(arg.str, arg.len, "-c++") || _SLIT_EQ(arg.str, arg.len, "-check-unused-fn-args") || _SLIT_EQ(arg.str, arg.len, "-subsystem") || _SLIT_EQ(arg.str, arg.len, "-translated-go") || _SLIT_EQ(arg.str, arg.len, "-musl") || _SLIT_EQ(arg.str, arg.len, "-glibc")) {
+			return true;
+		}
+		if (main__macos_v3_leading_option_consumes_value(arg)) {
+			i += 2;
+			continue;
+		}
+		if (command.len > 0 && builtin__string__eq(arg, command)) {
+			return false;
+		}
+		i++;
+	}
+	return false;
+}
+VV_LOC bool main__macos_v3_leading_option_consumes_value(string option) {
+	return (_SLIT_EQ(option.str, option.len, "-wasm-stack-top") || _SLIT_EQ(option.str, option.len, "-arch") || _SLIT_EQ(option.str, option.len, "-assert") || _SLIT_EQ(option.str, option.len, "-e") || _SLIT_EQ(option.str, option.len, "-subsystem") || _SLIT_EQ(option.str, option.len, "-icon") || _SLIT_EQ(option.str, option.len, "--icon") || _SLIT_EQ(option.str, option.len, "-seticon") || _SLIT_EQ(option.str, option.len, "--seticon") || _SLIT_EQ(option.str, option.len, "-gc") || _SLIT_EQ(option.str, option.len, "-print_autofree_vars_in_fn") || _SLIT_EQ(option.str, option.len, "-trace-fns") || _SLIT_EQ(option.str, option.len, "-cov") || _SLIT_EQ(option.str, option.len, "-coverage") || _SLIT_EQ(option.str, option.len, "-profile-fns") || _SLIT_EQ(option.str, option.len, "-bug-report-url") || _SLIT_EQ(option.str, option.len, "-run-only") || _SLIT_EQ(option.str, option.len, "-exclude") || _SLIT_EQ(option.str, option.len, "-file-list") || _SLIT_EQ(option.str, option.len, "-test-runner") || _SLIT_EQ(option.str, option.len, "-dump-c-flags") || _SLIT_EQ(option.str, option.len, "-dump-modules") || _SLIT_EQ(option.str, option.len, "-dump-files") || _SLIT_EQ(option.str, option.len, "-dump-defines") || _SLIT_EQ(option.str, option.len, "-generate-c-project") || _SLIT_EQ(option.str, option.len, "-macosx-version-min") || _SLIT_EQ(option.str, option.len, "-os") || _SLIT_EQ(option.str, option.len, "-printfn") || _SLIT_EQ(option.str, option.len, "-cflags") || _SLIT_EQ(option.str, option.len, "-ldflags") || _SLIT_EQ(option.str, option.len, "-d") || _SLIT_EQ(option.str, option.len, "-define") || _SLIT_EQ(option.str, option.len, "-message-limit") || _SLIT_EQ(option.str, option.len, "-thread-stack-size") || _SLIT_EQ(option.str, option.len, "-cc") || _SLIT_EQ(option.str, option.len, "-c++") || _SLIT_EQ(option.str, option.len, "-checker-match-exhaustive-cutoff-limit") || _SLIT_EQ(option.str, option.len, "-o") || _SLIT_EQ(option.str, option.len, "-output") || _SLIT_EQ(option.str, option.len, "-b") || _SLIT_EQ(option.str, option.len, "-backend") || _SLIT_EQ(option.str, option.len, "-compile-backend") || _SLIT_EQ(option.str, option.len, "--compile-backend") || _SLIT_EQ(option.str, option.len, "-path") || _SLIT_EQ(option.str, option.len, "-bare-builtin-dir") || _SLIT_EQ(option.str, option.len, "-custom-prelude") || _SLIT_EQ(option.str, option.len, "-raw-vsh-tmp-prefix") || _SLIT_EQ(option.str, option.len, "-cmain") || _SLIT_EQ(option.str, option.len, "-line-info"));
+}
+VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, Array_string raw_args) {
+	Array_string forwarded_args = builtin__array_clone_to_depth(&raw_args, 1);
+	if (prefs->enable_globals) {
+		for (int i = 0; i < forwarded_args.len; ++i) {
+			string arg = ((string*)forwarded_args.data)[i];
+			if (_SLIT_EQ(arg.str, arg.len, "--enable-globals")) {
+				builtin__array_set(&forwarded_args, i, &(string[]) { _S("-enable-globals") });
+			}
+		}
+	}
+	if (prefs->arch == v__pref__Arch__amd64 && (Array_string_contains(prefs->build_options, _S("-arch x86")))) {
+		for (int i = 0; i < forwarded_args.len; ++i) {
+			if (i + 1 < forwarded_args.len && builtin__string__eq((*(string*)builtin__array_get(forwarded_args, i)), _S("-arch")) && builtin__string__eq((*(string*)builtin__array_get(forwarded_args, i + 1)), _S("x86"))) {
+				builtin__array_set(&forwarded_args, i + 1, &(string[]) { _S("amd64") });
+			}
+		}
+	}
+	if (!(Array_string_contains(forwarded_args, _S("-macos-v3-compat-c99")))) {
+		builtin__array_insert(&forwarded_args, 0, &(string[]){builtin__string_clone(_const_main__macos_v3_compat_c99_flag)});
+	}
+	if (prefs->skip_running && !(Array_string_contains(forwarded_args, _S("-skip-running")))) {
+		builtin__array_insert(&forwarded_args, 0, &(string[]){_S("-skip-running")});
+	}
+	if (!prefs->is_verbose && !prefs->is_stats && !prefs->show_timings && !(Array_string_contains(forwarded_args, _S("-silent"))) && !(Array_string_contains(forwarded_args, _S("-macos-v3-internal-quiet")))) {
+		builtin__array_insert(&forwarded_args, 0, &(string[]){builtin__string_clone(_const_main__macos_v3_internal_quiet_flag)});
+	}
+	if (!(Array_string_contains(forwarded_args, _S("-no-memory-limit"))) && !(Array_string_contains(forwarded_args, _S("--no-memory-limit")))) {
+		builtin__array_insert(&forwarded_args, 0, &(string[]){_S("-no-memory-limit")});
+	}
+	return forwarded_args;
+}
 VV_LOC bool main__macos_v3_driver_is_available(void) {
 	return false;
 }
@@ -221774,7 +222146,7 @@ VV_LOC void main__main(void) {
 	v__util__Timers_start(timers, _S("v start"));
 	v__util__Timers_show(timers, _S("v start"));
 	v__util__Timers_start(timers, _S("TOTAL"));
-	_result_void _t2 = builtin__at_exit((FnExitCb)	anon_fn_6a0ddf9f315b536f_47__1976);
+	_result_void _t2 = builtin__at_exit((FnExitCb)	anon_fn_6a0ddf9f315b536f_48__1976);
 	if (_t2.is_error) {
 		builtin__panic_result_not_set(IError_name_table[_t2.err._typ]._method_msg(_t2.err._object));
 		VUNREACHABLE();
@@ -221800,7 +222172,7 @@ VV_LOC void main__main(void) {
 	v__pref__Preferences* prefs = mr_2587.arg0;
 	string command = mr_2587.arg1;
 	main__maybe_delegate_to_vvmrc(command, prefs);
-	main__maybe_delegate_to_ownership(command, prefs);
+	main__maybe_delegate_to_ownership(command, prefs, args_and_flags);
 	_option_main__MacosV3CErrorReport macos_v3_c_error_report = main__maybe_delegate_to_macos_v3(command, prefs);
 	if (prefs->use_cache && builtin__string__eq(os__user_os(), _S("windows"))) {
 		builtin__eprintln(_S("-usecache is currently disabled on windows"));
@@ -221901,18 +222273,39 @@ VV_LOC void main__invoke_help_and_exit(Array_string remaining) {
 	builtin___v_exit(1);
 	VUNREACHABLE();
 }
-VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs) {
-	bool is_ownership = (Array_string_contains(_const_os__args, _S("-ownership")));
-	if (!is_ownership) {
+VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs, Array_string merged_args) {
+	bool is_ownership = (Array_string_contains(merged_args, _S("-ownership")));
+	bool is_autofree = prefs->autofree;
+	if (!main__ownership_delegation_is_requested(is_ownership, is_autofree, prefs->old_compiler, os__user_os())) {
+		return;
+	}
+	if (is_autofree && !is_ownership && (main__autofree_requires_standard_compiler(prefs) || main__autofree_args_require_standard_compiler(merged_args, command))) {
 		return;
 	}
 	if (!main__is_ownership_relevant_command(command, prefs)) {
-		builtin__eprintln(_S("v: `-ownership` currently supports direct compilation only. Use `v -ownership module_dir`."));
+		if (is_autofree && !is_ownership) {
+			return;
+		}
+		string mode = (is_autofree ? (_S("-autofree")) : (_S("-ownership")));
+		builtin__eprintln(builtin__string_plus_many(5, _MOV((string[5]){_S("v: `"), mode, _S("` currently supports direct compilation only. Use `v "), mode, _S(" module_dir`.")})));
 		builtin___v_exit(1);
 		VUNREACHABLE();
 	}
+	Array_string ownership_args = main__v3_ownership_forwarded_args(prefs, merged_args);
+	main__launch_v3_ownership_compiler(prefs->is_verbose, ownership_args);
+	VUNREACHABLE();
+}
+VV_LOC bool main__autofree_args_require_standard_compiler(Array_string args, string command) {
+	#if defined(__APPLE__)
+	{
+		return main__macos_v3_has_v1_only_leading_option(args, command);
+	}
+	#endif
+	return false;
+}
+VV_LOC Array_string main__v3_ownership_forwarded_args(v__pref__Preferences* prefs, Array_string merged_args) {
 	Array_string _t1 = {0};
-	Array_string _t1_orig = builtin__array_slice(_const_os__args, 1, 2147483647);
+	Array_string _t1_orig = merged_args;
 	int _t1_len = _t1_orig.len;
 	_t1 = builtin____new_array(0, _t1_len, sizeof(string));
 
@@ -221922,8 +222315,76 @@ VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferenc
 			builtin__array_push((array*)&_t1, &it);
 		}
 	}
-	main__launch_v3_ownership_compiler(prefs->is_verbose,_t1);
-	VUNREACHABLE();
+	Array_string ownership_args =_t1;
+	#if defined(__APPLE__)
+	{
+		return main__macos_v3_forwarded_args(prefs, ownership_args);
+	}
+	#endif
+	return ownership_args;
+}
+VV_LOC bool main__autofree_requires_standard_compiler(v__pref__Preferences* prefs) {
+	return main__v3_has_v1_only_preferences(prefs) || (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc);
+}
+VV_LOC bool main__v3_has_v1_only_preferences(v__pref__Preferences* prefs) {
+	bool _t2 = (prefs->cmain.len > 0 || prefs->custom_prelude.len > 0 || prefs->is_check_return || prefs->div_by_zero_is_zero || prefs->obfuscate_removed || prefs->no_std || prefs->is_vls || prefs->new_transform || prefs->show_asserts || prefs->show_callgraph || prefs->show_depgraph || prefs->hide_auto_str || prefs->no_rsp || prefs->message_limit != 200 || prefs->warn_about_allocs || prefs->c_error_bug_report_url.len > 0 || prefs->wasm_validate || prefs->wasm_stack_top != 17408 || prefs->line_info.len > 0 || prefs->use_coroutines || prefs->checker_match_exhaustive_cutoff_limit != 12 || (prefs->backend == v__pref__Backend__c && !(prefs->os == v__pref__OS___auto || prefs->os == v__pref__OS__macos)));
+	bool _t3 = false;
+	if (!_t2) {
+		Array_string _t3_orig = prefs->build_options;
+		int _t3_len = _t3_orig.len;
+		for (int _t4 = 0; _t4 < _t3_len; ++_t4) {
+			string it = ((string*) _t3_orig.data)[_t4];
+			if (builtin__string_starts_with(it, _S("-debug-tcc"))) {
+				_t3 = true;
+			}
+			if (_t3) {
+				break;
+			}
+		}
+	}
+	bool _t1 = ( _t2 ||_t3 || prefs->is_musl);
+	bool _t5 = false;
+	if (!_t1) {
+		Array_string _t5_orig = prefs->build_options;
+		int _t5_len = _t5_orig.len;
+		for (int _t6 = 0; _t6 < _t5_len; ++_t6) {
+			string it = ((string*) _t5_orig.data)[_t6];
+			if ((_SLIT_EQ(it.str, it.len, "-musl") || _SLIT_EQ(it.str, it.len, "-glibc"))) {
+				_t5 = true;
+			}
+			if (_t5) {
+				break;
+			}
+		}
+	}
+	if ( _t1 ||_t5 || !prefs->relaxed_gcc14) {
+		return true;
+	}
+	bool _t9 = (prefs->sanitize || prefs->is_livemain || prefs->is_liveshared || prefs->is_prof || prefs->profile_fns.len > 0 || prefs->output_cross_c || prefs->experimental || prefs->use_os_system_to_run || prefs->is_apk || prefs->json_errors || prefs->no_preludes || prefs->is_quiet || prefs->skip_warnings || prefs->skip_notes || prefs->fatal_errors || prefs->print_watched_files || prefs->dump_modules.len > 0 || prefs->dump_files.len > 0 || prefs->dump_defines.len > 0 || prefs->print_autofree_vars || prefs->is_vlines || prefs->warn_impure_v || prefs->trace_calls || prefs->trace_fns.len > 0 || prefs->test_runner.len > 0 || prefs->exclude.len > 0 || prefs->ldflags.len > 0 || prefs->nofloat || prefs->fast_math || prefs->compress || prefs->is_bare || prefs->no_closures || prefs->disable_explicit_mutability || prefs->assert_failure_mode != v__pref__AssertFailureMode__default || !builtin__fast_string_eq(prefs->macosx_version_min, _S("0")));
+	bool _t10 = false;
+	if (!_t9) {
+		Array_string _t10_orig = prefs->build_options;
+		int _t10_len = _t10_orig.len;
+		for (int _t11 = 0; _t11 < _t10_len; ++_t11) {
+			string it = ((string*) _t10_orig.data)[_t11];
+			if ((_SLIT_EQ(it.str, it.len, "-m32") || _SLIT_EQ(it.str, it.len, "-m64"))) {
+				_t10 = true;
+			}
+			if (_t10) {
+				break;
+			}
+		}
+	}
+	return _t9 || _t10 || v__pref__Backend_is_js(prefs->backend) || (prefs->backend == v__pref__Backend__wasm && prefs->is_run) || builtin__string_ends_with(prefs->path, _S(".vv"));
+}
+VV_LOC bool main__ownership_delegation_is_requested(bool is_ownership, bool is_autofree, bool old_compiler, string host_os) {
+	if (old_compiler) {
+		return false;
+	}
+	if (is_ownership) {
+		return true;
+	}
+	return is_autofree && _SLIT_EQ(host_os.str, host_os.len, "macos");
 }
 VV_LOC bool main__is_ownership_relevant_command(string command, v__pref__Preferences* prefs) {
 	if ((prefs->path).len == 0 || prefs->is_run || prefs->is_crun) {
@@ -221952,11 +222413,15 @@ VNORETURN VV_LOC void main__launch_v3_ownership_compiler(bool is_verbose, Array_
 	
  ;
 	if (v__util__should_recompile_tool(vexe, v3_src_dir, tool_name, v3_exe)) {
-		string compilation_command = builtin__string_plus_many(5, _MOV((string[5]){os__quoted_path(vexe), _S(" -gc none -d ownership -o "), os__quoted_path(v3_exe), _S(" "), os__quoted_path(v3_main_source)}));
+		string compilation_command = builtin__string_plus_many(5, _MOV((string[5]){os__quoted_path(vexe), _S(" -nocache -gc none -d ownership -o "), os__quoted_path(v3_exe), _S(" "), os__quoted_path(v3_main_source)}));
 		if (is_verbose) {
 			builtin__println(builtin__string_plus_many(5, _MOV((string[5]){_S("Compiling "), tool_name, _S(" with: \""), compilation_command, _S("\"")})));
 		}
 		string current_work_dir = os__getwd();
+		string caller_vflags = os__getenv(_S("VFLAGS"));
+		string caller_vosargs = os__getenv(_S("VOSARGS"));
+		os__unsetenv(_S("VFLAGS"));
+		os__unsetenv(_S("VOSARGS"));
 		_result_void _t3 = os__chdir(vroot);
 		(void)_t3;
  ;
@@ -221964,6 +222429,8 @@ VNORETURN VV_LOC void main__launch_v3_ownership_compiler(bool is_verbose, Array_
 		_result_void _t4 = os__chdir(current_work_dir);
 		(void)_t4;
  ;
+		os__setenv(_S("VFLAGS"), caller_vflags, true);
+		os__setenv(_S("VOSARGS"), caller_vosargs, true);
 		if (tool_compilation.exit_code != 0) {
 			builtin__eprintln(builtin__string_plus_many(6, _MOV((string[6]){_S("cannot compile `"), v3_main_source, _S("`: "), builtin__int_str(tool_compilation.exit_code), _S("\n"), tool_compilation.output})));
 			builtin___v_exit(1);
@@ -221971,21 +222438,28 @@ VNORETURN VV_LOC void main__launch_v3_ownership_compiler(bool is_verbose, Array_
 		}
 	}
 	Array_string forwarded_args = builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("-ownership")}));
-	for (int _t5 = 0; _t5 < args.len; ++_t5) {
-		string arg = ((string*)args.data)[_t5];
+	#if defined(__APPLE__)
+	{
+		if (!(Array_string_contains(args, _S("-no-memory-limit"))) && !(Array_string_contains(args, _S("--no-memory-limit")))) {
+			builtin__array_push((array*)&forwarded_args, _MOV((string[]){ _S("-no-memory-limit") }));
+		}
+	}
+	#endif
+	for (int _t7 = 0; _t7 < args.len; ++_t7) {
+		string arg = ((string*)args.data)[_t7];
 		builtin__array_push((array*)&forwarded_args, _MOV((string[]){ builtin__string_clone(arg) }));
 	}
-	Array_string _t7 = {0};
-	Array_string _t7_orig = forwarded_args;
-	int _t7_len = _t7_orig.len;
-	_t7 = builtin____new_array(0, _t7_len, sizeof(string));
+	Array_string _t9 = {0};
+	Array_string _t9_orig = forwarded_args;
+	int _t9_len = _t9_orig.len;
+	_t9 = builtin____new_array(0, _t9_len, sizeof(string));
 
-	for (int _t9 = 0; _t9 < _t7_len; ++_t9) {
-		string it = ((string*) _t7_orig.data)[_t9];
-		string _t8 = os__quoted_path(it);
-		builtin__array_push((array*)&_t7, &_t8);
+	for (int _t11 = 0; _t11 < _t9_len; ++_t11) {
+		string it = ((string*) _t9_orig.data)[_t11];
+		string _t10 = os__quoted_path(it);
+		builtin__array_push((array*)&_t9, &_t10);
 	}
-	string quoted_args = Array_string_join(_t7, _S(" "));
+	string quoted_args = Array_string_join(_t9, _S(" "));
 	if (is_verbose) {
 		builtin__println(builtin__string_plus_many(6, _MOV((string[6]){_S("Launching "), tool_name, _S(": "), os__quoted_path(v3_exe), _S(" "), quoted_args})));
 	}
@@ -223292,6 +223766,8 @@ if (_t4.state != 0) {
 }
 }
 	// Initializations of consts for module main
+	_const_main__macos_v3_compat_c99_flag = _S("-macos-v3-compat-c99");
+	_const_main__macos_v3_internal_quiet_flag = _S("-macos-v3-internal-quiet");
 	_const_main__vvmrc_file_name = _S(".vvmrc");
 	_const_main__vvmrc_skip_env = _S("V_SKIP_VVMRC");
 {
