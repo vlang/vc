@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "0685e15f444ab4bb00616b89c02c213b09ee7e2b"
+#define V_COMMIT_HASH "7c96d73d41ebd756680fe0e6609ca071e9adeb70"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "488e130dfa374586ec91d262aa13e2e01fcac993"
+	#define V_COMMIT_HASH "0685e15f444ab4bb00616b89c02c213b09ee7e2b"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44562,7 +44562,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("0685e15");
+	return _S("7c96d73");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -51647,6 +51647,8 @@ __NOINLINE _result_os__File os__open_file(string path, string mode, Array_int op
 	string p = os__fix_windows_path(path);
 	i32 _t3;
 	#if defined(_WIN32)
+		_t3 = _wopen(builtin__string_to_wide(p, ((ToWideConfig){.from_ansi = 0,})), flags, permission);
+		;
 	#else
 		_t3 = open(((char*)(p.str)), flags, permission);
 		;
@@ -52036,6 +52038,8 @@ VV_LOC string os__clean_path(string path) {
 string os__to_slash(string path) {
 	string _t2;
 	#if defined(_WIN32)
+		_t2 = builtin__string_replace(path, _const_os__path_separator, _S("/"));
+		;
 	#else
 		_t2 = path;
 		;
@@ -53755,6 +53759,8 @@ string os__executable(void) {
 _result_void os__chdir(string path) {
 	i32 _t1;
 	#if defined(_WIN32)
+		_t1 = _wchdir(builtin__string_to_wide(path, ((ToWideConfig){.from_ansi = 0,})));
+		;
 	#else
 		_t1 = chdir(((char*)(path.str)));
 		;
@@ -54604,6 +54610,8 @@ VV_LOC string os__executable_fallback(void) {
 	if (!os__is_abs_path(exepath)) {
 		string _t3;
 		#if defined(_WIN32)
+			_t3 = _S("/");
+			;
 		#else
 			_t3 = _S("\\");
 			;
@@ -55352,6 +55360,8 @@ _result_void os__mkdir_all(string opath, os__MkdirParams params) {
 	}
 	string _t2;
 	#if defined(_WIN32)
+		_t2 = _S("/");
+		;
 	#else
 		_t2 = _S("\\");
 		;
@@ -60701,7 +60711,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("488e130dfa374586ec91d262aa13e2e01fcac993");
+	string vhash = _S("0685e15f444ab4bb00616b89c02c213b09ee7e2b");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -61607,6 +61617,8 @@ _result_void v__pref__ensure_coroutines_runtime(void) {
 	{
 		string _t2;
 		#if defined(__V_arm64)
+			_t2 = _S("arm64");
+			;
 		#else
 			_t2 = _S("amd64");
 			;
@@ -76180,6 +76192,8 @@ v__ast__Type v__ast__Type_flip_signedness(v__ast__Type typ) {
 	else if (typ == (_const_v__ast__int_type)) {
 		v__ast__Type _t3;
 		#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+			_t3 = _const_v__ast__u64_type;
+			;
 		#else
 			_t3 = _const_v__ast__u32_type;
 			;
@@ -76799,6 +76813,8 @@ multi_return_int_int v__ast__Table_type_size(v__ast__Table* t, v__ast__Type typ)
 			if (t->pointer_size == 8) {
 				int _t16;
 				#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+					_t16 = 144;
+					;
 				#else
 					_t16 = 120;
 					;
@@ -76819,6 +76835,8 @@ multi_return_int_int v__ast__Table_type_size(v__ast__Table* t, v__ast__Type typ)
 			if (t->pointer_size == 8) {
 				int _t19;
 				#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+					_t19 = 48;
+					;
 				#else
 					_t19 = 32;
 					;
@@ -119144,6 +119162,8 @@ VV_LOC v__ast__Type v__gen__c__get_overflow_fn_type(v__ast__Type typ) {
 	if (typ == (_const_v__ast__int_type)) {
 		v__ast__Type _t3;
 		#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+			_t3 = _const_v__ast__i64_type;
+			;
 		#else
 			_t3 = _const_v__ast__i32_type;
 			;
@@ -119162,6 +119182,8 @@ VV_LOC v__ast__Type v__gen__c__get_overflow_fn_type(v__ast__Type typ) {
 			_t4 = _const_v__ast__i64_type;
 			;
 		#else
+			_t4 = _const_v__ast__i32_type;
+			;
 		#endif
 				_t2 = _t4;
 	}
@@ -119171,6 +119193,8 @@ VV_LOC v__ast__Type v__gen__c__get_overflow_fn_type(v__ast__Type typ) {
 			_t5 = _const_v__ast__u64_type;
 			;
 		#else
+			_t5 = _const_v__ast__u32_type;
+			;
 		#endif
 				_t2 = _t5;
 	}
@@ -120474,8 +120498,9 @@ VV_LOC void v__gen__c__Gen_comptime_if(v__gen__c__Gen* g, v__ast__IfExpr node) {
 	}
 	bool is_opt_or_result = v__ast__Type_has_option_or_result(inferred_typ);
 	bool is_array_fixed = v__ast__Table_final_sym(g->table, inferred_typ)->kind == v__ast__Kind__array_fixed;
+	bool gen_as_expr = node.is_expr && inferred_typ != _const_v__ast__void_type;
 	string _t2; /* if prepend */
-	if (node.is_expr && inferred_typ != _const_v__ast__void_type) {
+	if (gen_as_expr) {
 		string stmt_str = v__gen__c__Gen_go_before_last_stmt(g);
 		v__gen__c__Gen_write(g, v__util__tabs(g->indent));
 		string styp = v__gen__c__Gen_styp(g, inferred_typ);
@@ -120541,8 +120566,16 @@ VV_LOC void v__gen__c__Gen_comptime_if(v__gen__c__Gen* g, v__ast__IfExpr node) {
 			}
 			g->defer_ifdef = builtin__string__plus(g->defer_ifdef, expr_str);
 		}
-		if (node.is_expr) {
-			if (is_true.val) {
+		bool branch_produces_value = false;
+		if (gen_as_expr && branch.stmts.len > 0) {
+			v__ast__Stmt branch_last = (*(v__ast__Stmt*)builtin__array_last(branch.stmts));
+			if ((branch_last)._typ == 330) {
+				v__ast__Type branch_typ = v__type_resolver__TypeResolver_get_type_or_default(&g->type_resolver, (*branch_last._v__ast__ExprStmt).expr, (*branch_last._v__ast__ExprStmt).typ);
+				branch_produces_value = branch_typ != _const_v__ast__void_type && !v__ast__Type_has_flag(branch_typ, v__ast__TypeFlag__generic);
+			}
+		}
+		if (branch_produces_value) {
+			if (is_true.val || g->pref->output_cross_c) {
 				v__gen__c__Gen_bind_comptime_if_generic_types(g, branch.cond);
 				int len = branch.stmts.len;
 				if (len > 0) {
@@ -120645,7 +120678,7 @@ VV_LOC void v__gen__c__Gen_comptime_if(v__gen__c__Gen* g, v__ast__IfExpr node) {
 	}
 	g->defer_ifdef = _S("");
 	v__gen__c__Gen_writeln(g, _S("#endif"));
-	if (node.is_expr) {
+	if (gen_as_expr) {
 		{
 			v__gen__c__Gen_write(g, line);
 			v__gen__c__Gen_write(g, tmp_var);
@@ -133070,6 +133103,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		if (g->do_int_overflow_checks) {
 			string _t13;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+				_t13 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
+				;
 			#else
 				_t13 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -133191,6 +133226,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		if (g->do_int_overflow_checks) {
 			string _t30;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+				_t30 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
+				;
 			#else
 				_t30 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -133275,6 +133312,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		if (g->do_int_overflow_checks) {
 			string _t33;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+				_t33 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i64("), idx, _S(",1)")}));
+				;
 			#else
 				_t33 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i32("), idx, _S(",1)")}));
 				;
@@ -133368,6 +133407,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		if (g->do_int_overflow_checks) {
 			string _t40;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+				_t40 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i64("), idx, _S(",1)")}));
+				;
 			#else
 				_t40 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i32("), idx, _S(",1)")}));
 				;
@@ -133478,6 +133519,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		if (g->do_int_overflow_checks) {
 			string _t43;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+				_t43 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
+				;
 			#else
 				_t43 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -133578,6 +133621,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		if (g->do_int_overflow_checks) {
 			string _t51;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+				_t51 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
+				;
 			#else
 				_t51 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -152992,6 +153037,8 @@ VV_LOC void v__pkgconfig__PkgConfig_add_path(v__pkgconfig__PkgConfig* pc, string
 VV_LOC void v__pkgconfig__PkgConfig_load_paths(v__pkgconfig__PkgConfig* pc) {
 	string _t1;
 	#if defined(_WIN32)
+		_t1 = _S(";");
+		;
 	#else
 		_t1 = _S(":");
 		;
@@ -156481,6 +156528,8 @@ VV_LOC v__ast__Type v__checker__Checker_check_shift(v__checker__Checker* c, v__a
 				else if (left_type_final == (_const_v__ast__int_type)) {
 					int _t11;
 					#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+						_t11 = 63;
+						;
 					#else
 						_t11 = 31;
 						;
@@ -165211,6 +165260,8 @@ VV_LOC v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast
 			else if (_t44 == (_const_v__ast__int_type_idx)) {
 				u64 _t46;
 				#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
+					_t46 = ((u64)(0xffffffffffffffffULL));
+					;
 				#else
 					_t46 = ((u64)(0xffffffffU));
 					;
@@ -165226,6 +165277,8 @@ VV_LOC v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast
 					_t47 = ((u64)(0xffffffffffffffffULL));
 					;
 				#else
+					_t47 = ((u64)(0xffffffffU));
+					;
 				#endif
 								_t45 = _t47;
 			}
@@ -218383,6 +218436,8 @@ VV_LOC void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Bui
 	if (v__pref__Backend_is_js(b->pref->backend)) {
 		string _t3;
 		#if defined(_WIN32)
+			_t3 = _S("node.exe");
+			;
 		#else
 			_t3 = _S("node");
 			;
@@ -218406,6 +218461,8 @@ _result_string _t4 = os__find_abs_path_of_executable(node_basename);
 			string runtime = ((string*)actual_run.data)[_t5];
 			string _t6;
 			#if defined(_WIN32)
+				_t6 = builtin__string__plus(runtime, _S(".exe"));
+				;
 			#else
 				_t6 = runtime;
 				;
@@ -222864,48 +222921,148 @@ void _vinit(int ___argc, voidptr ___argv) {
 {
 Array_fixed_u8_40 _t1;
 #if defined(__V_ppc64le)
-#elif !defined(__V_ppc64le) && !defined(__V_amd64) && !defined(__V_x86) && !defined(__V_arm64) && !defined(__V_arm32) && !defined(__V_rv64) && !defined(__V_rv32) && !defined(__V_s390x) && !defined(__V_loongarch64)
-#elif defined(__V_amd64)
-	{ Array_fixed_u8_40 _t2 = {((u8)(0xF3)), 0x44, 0x0F, 0x7E, 0x3D, 0xF7, 0xBF, 0xFF, 0xFF, 0xFF, 0x25, 0xF9, 0xBF, 0xFF, 0xFF}	;
+	{ Array_fixed_u8_40 _t2 = {((u8)(0xa6)), 0x02, 0x08, 0x7c, 0x05, 0x00, 0x00, 0x48, 0xa6, 0x02, 0xc8, 0x7d, 0xf8, 0xbf, 0xce, 0x39, 
+	0x00, 0x00, 0xce, 0xc9, 0x08, 0x00, 0xce, 0xe9, 0x78, 0x73, 0xcc, 0x7d, 0xa6, 0x03, 0x08, 0x7c, 0xa6, 0x03, 0xc9, 0x7d, 0x20, 0x04, 0x80, 0x4e}	;
 	memcpy(&_t1, &_t2, sizeof(Array_fixed_u8_40));
 	}
 	;
+#elif !defined(__V_ppc64le) && !defined(__V_amd64) && !defined(__V_x86) && !defined(__V_arm64) && !defined(__V_arm32) && !defined(__V_rv64) && !defined(__V_rv32) && !defined(__V_s390x) && !defined(__V_loongarch64)
+	{ Array_fixed_u8_40 _t3 = {((u8)(0x7c)), 0x08, 0x02, 0xa6, 0x48, 0x00, 0x00, 0x05, 0x7d, 0x88, 0x02, 0xa6, 0x39, 0x8c, 0xbf, 0xf8, 
+	0xc9, 0xcc, 0x00, 0x00, 0x81, 0x8c, 0x00, 0x04, 0x7c, 0x08, 0x03, 0xa6, 0x7d, 0x89, 0x03, 0xa6, 0x4e, 0x80, 0x04, 0x20}	;
+	memcpy(&_t1, &_t3, sizeof(Array_fixed_u8_40));
+	}
+	;
+#elif defined(__V_amd64)
+	{ Array_fixed_u8_40 _t4 = {((u8)(0xF3)), 0x44, 0x0F, 0x7E, 0x3D, 0xF7, 0xBF, 0xFF, 0xFF, 0xFF, 0x25, 0xF9, 0xBF, 0xFF, 0xFF}	;
+	memcpy(&_t1, &_t4, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_x86)
+	{ Array_fixed_u8_40 _t5 = {((u8)(0xe8)), 0x00, 0x00, 0x00, 0x00, 0x59, 0x66, 0x0F, 0x6E, 0xF9, 0xff, 0xA1, 0xff, 0xbf, 0xff, 0xff}	;
+	memcpy(&_t1, &_t5, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_arm64)
+	{ Array_fixed_u8_40 _t6 = {((u8)(0x11)), 0x00, 0xFE, 0x5C, 0x30, 0x00, 0xFE, 0x58, 0x00, 0x02, 0x1F, 0xD6}	;
+	memcpy(&_t1, &_t6, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_arm32)
+	{ Array_fixed_u8_40 _t7 = {((u8)(0x04)), 0xC0, 0x4F, 0xE2, 0x01, 0xC9, 0x4C, 0xE2, 0x90, 0xCA, 0x07, 0xEE, 0x00, 0xC0, 0x9C, 0xE5, 0x1C, 0xFF, 0x2F, 0xE1}	;
+	memcpy(&_t1, &_t7, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_rv64)
+	{ Array_fixed_u8_40 _t8 = {((u8)(0x97)), 0xCF, 0xFF, 0xFF, 0x03, 0xBF, 0x8F, 0x00, 0x07, 0xB3, 0x0F, 0x00, 0x67, 0x00, 0x0F, 0x00}	;
+	memcpy(&_t1, &_t8, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_rv32)
+	{ Array_fixed_u8_40 _t9 = {((u8)(0x97)), 0xCF, 0xFF, 0xFF, 0x03, 0xAF, 0x4F, 0x00, 0x07, 0xAB, 0x0F, 0x00, 0x67, 0x00, 0x0F, 0x00}	;
+	memcpy(&_t1, &_t9, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_s390x)
+	{ Array_fixed_u8_40 _t10 = {((u8)(0xC0)), 0x10, 0xFF, 0xFF, 0xE0, 0x00, 0x68, 0xF0, 0x10, 0x00, 0xE3, 0x10, 0x10, 0x08, 0x00, 0x04, 0x07, 0xF1}	;
+	memcpy(&_t1, &_t10, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_loongarch64)
+	{ Array_fixed_u8_40 _t11 = {((u8)(0x92)), 0xFF, 0xFF, 0x1D, 0x48, 0x02, 0x80, 0x2B, 0x51, 0x22, 0xC0, 0x28, 0x20, 0x02, 0x00, 0x4C}	;
+	memcpy(&_t1, &_t11, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(__V_sparc64)
+	{ Array_fixed_u8_40 _t12 = {((u8)(0x83)), 0x41, 0x40, 0x00, 0x05, 0x00, 0x00, 0x10, 0x84, 0x10, 0xa0, 0x00, 0x82, 0x20, 0x40, 0x02, 
+	0xff, 0x18, 0x60, 0x00, 0xc2, 0x58, 0x60, 0x08, 0x81, 0xc0, 0x40, 0x00, 0x01, 0x00, 0x00, 0x00}	;
+	memcpy(&_t1, &_t12, sizeof(Array_fixed_u8_40));
+	}
+	;
 #elif defined(TARGET_ORDER_IS_BIG)
+	{ Array_fixed_u8_40 _t13 = {((u8)(0x7C)), 0x08, 0x02, 0xA6, 0x48, 0x00, 0x00, 0x05, 0x7D, 0xC8, 0x02, 0xA6, 0x39, 0xCE, 0xC0, 0x08, 
+	0xC9, 0xCE, 0x00, 0x00, 0xE9, 0xCE, 0x00, 0x08, 0xE9, 0x8E, 0x00, 0x00, 0xE8, 0x4E, 0x00, 0x08, 0x7C, 0x08, 0x03, 0xA6, 0x7D, 0x89, 0x03, 0xA6, 0x4E, 0x80, 0x04, 0x20}	;
+	memcpy(&_t1, &_t13, sizeof(Array_fixed_u8_40));
+	}
+	;
 #else
+	{ Array_fixed_u8_40 _t14 = {((u8)(0))}	;
+	memcpy(&_t1, &_t14, sizeof(Array_fixed_u8_40));
+	}
+	;
 #endif
 	memcpy(&_const_builtin__closure__closure_thunk, &_t1, sizeof(Array_fixed_u8_40));
 }
 }
 {
 {
-Array_fixed_u8_20 _t3;
+Array_fixed_u8_20 _t15;
 #if !defined(__V_ppc64le) && !defined(__V_amd64) && !defined(__V_x86) && !defined(__V_arm64) && !defined(__V_arm32) && !defined(__V_rv64) && !defined(__V_rv32) && !defined(__V_s390x) && !defined(__V_loongarch64)
+	{ Array_fixed_u8_20 _t16 = {((u8)(0x94)), 0x21, 0xff, 0xf0, 0xd9, 0xc1, 0x00, 0x08, 0x80, 0x61, 0x00, 0x08, 0x38, 0x21, 0x00, 0x10, 0x4e, 0x80, 0x00, 0x20}	;
+	memcpy(&_t15, &_t16, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_arm32)
+	{ Array_fixed_u8_20 _t17 = {((u8)(0x90)), 0x0A, 0x17, 0xEE, 0x04, 0x00, 0x10, 0xE5, 0x1E, 0xFF, 0x2F, 0xE1}	;
+	memcpy(&_t15, &_t17, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_amd64)
-	{ Array_fixed_u8_20 _t4 = {((u8)(0x66)), 0x4C, 0x0F, 0x7E, 0xF8, 0xC3}	;
-	memcpy(&_t3, &_t4, sizeof(Array_fixed_u8_20));
+	{ Array_fixed_u8_20 _t18 = {((u8)(0x66)), 0x4C, 0x0F, 0x7E, 0xF8, 0xC3}	;
+	memcpy(&_t15, &_t18, sizeof(Array_fixed_u8_20));
 	}
 	;
 #elif defined(__V_x86)
+	{ Array_fixed_u8_20 _t19 = {((u8)(0x66)), 0x0F, 0x7E, 0xF8, 0x8B, 0x80, 0xFB, 0xBF, 0xFF, 0xFF, 0xc3}	;
+	memcpy(&_t15, &_t19, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_arm64)
+	{ Array_fixed_u8_20 _t20 = {((u8)(0x20)), 0x02, 0x66, 0x9E, 0xC0, 0x03, 0x5F, 0xD6}	;
+	memcpy(&_t15, &_t20, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_rv64)
+	{ Array_fixed_u8_20 _t21 = {((u8)(0x53)), 0x05, 0x03, 0xE2, 0x67, 0x80, 0x00, 0x00}	;
+	memcpy(&_t15, &_t21, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_rv32)
+	{ Array_fixed_u8_20 _t22 = {((u8)(0x53)), 0x05, 0x0B, 0xE0, 0x67, 0x80, 0x00, 0x00}	;
+	memcpy(&_t15, &_t22, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_s390x)
+	{ Array_fixed_u8_20 _t23 = {((u8)(0xB3)), 0xCD, 0x00, 0x2F, 0x07, 0xFE}	;
+	memcpy(&_t15, &_t23, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_ppc64le)
+	{ Array_fixed_u8_20 _t24 = {((u8)(0x66)), 0x00, 0xc3, 0x7d, 0x20, 0x00, 0x80, 0x4e}	;
+	memcpy(&_t15, &_t24, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_loongarch64)
+	{ Array_fixed_u8_20 _t25 = {((u8)(0x04)), 0xB9, 0x14, 0x01, 0x20, 0x00, 0x00, 0x4C}	;
+	memcpy(&_t15, &_t25, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(__V_sparc64)
+	{ Array_fixed_u8_20 _t26 = {((u8)(0x91)), 0xb0, 0x22, 0x1f, 0x81, 0xc3, 0xe0, 0x08, 0x01, 0x00, 0x00, 0x00}	;
+	memcpy(&_t15, &_t26, sizeof(Array_fixed_u8_20));
+	}
+	;
 #elif defined(TARGET_ORDER_IS_BIG)
+	{ Array_fixed_u8_20 _t27 = {((u8)(0x7d)), 0xc3, 0x00, 0x66, 0x4e, 0x80, 0x00, 0x20}	;
+	memcpy(&_t15, &_t27, sizeof(Array_fixed_u8_20));
+	}
+	;
 #else
+	{ Array_fixed_u8_20 _t28 = {((u8)(0))}	;
+	memcpy(&_t15, &_t28, sizeof(Array_fixed_u8_20));
+	}
+	;
 #endif
-	memcpy(&_const_builtin__closure__closure_get_data_bytes, &_t3, sizeof(Array_fixed_u8_20));
+	memcpy(&_const_builtin__closure__closure_get_data_bytes, &_t15, sizeof(Array_fixed_u8_20));
 }
 }
 {

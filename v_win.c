@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "0685e15f444ab4bb00616b89c02c213b09ee7e2b"
+#define V_COMMIT_HASH "7c96d73d41ebd756680fe0e6609ca071e9adeb70"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "488e130dfa374586ec91d262aa13e2e01fcac993"
+	#define V_COMMIT_HASH "0685e15f444ab4bb00616b89c02c213b09ee7e2b"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -30073,7 +30073,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("0685e15");
+	return _S("7c96d73");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -36085,6 +36085,8 @@ __NOINLINE _result_os__File os__open_file(string path, string mode, Array_int op
 		_t2 = _wopen(builtin__string_to_wide(p, ((ToWideConfig){.from_ansi = 0,})), flags, permission);
 		;
 	#else
+	{
+	}
 	#endif
 		i32 fd = _t2;
 	if (fd == -1) {
@@ -36464,6 +36466,8 @@ string os__to_slash(string path) {
 		_t2 = builtin__string_replace(path, _const_os__path_separator, _S("/"));
 		;
 	#else
+	{
+	}
 	#endif
 		return _t2;
 }
@@ -37029,6 +37033,8 @@ _result_void os__chdir(string path) {
 		_t1 = _wchdir(builtin__string_to_wide(path, ((ToWideConfig){.from_ansi = 0,})));
 		;
 	#else
+	{
+	}
 	#endif
 		i32 ret = _t1;
 	if (ret == -1) {
@@ -37247,6 +37253,8 @@ VV_LOC string os__executable_fallback(void) {
 			_t2 = _S("/");
 			;
 		#else
+		{
+		}
 		#endif
 				string other_separator = _t2;
 		string rexepath = builtin__string_replace(exepath, other_separator, _const_os__path_separator);
@@ -37834,6 +37842,8 @@ _result_void os__mkdir_all(string opath, os__MkdirParams params) {
 		_t2 = _S("/");
 		;
 	#else
+	{
+	}
 	#endif
 		string other_separator = _t2;
 	string path = builtin__string_replace(opath, other_separator, _const_os__path_separator);
@@ -43004,7 +43014,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("488e130dfa374586ec91d262aa13e2e01fcac993");
+	string vhash = _S("0685e15f444ab4bb00616b89c02c213b09ee7e2b");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -58153,6 +58163,8 @@ v__ast__Type v__ast__Type_flip_signedness(v__ast__Type typ) {
 	else if (typ == (_const_v__ast__int_type)) {
 		v__ast__Type _t3;
 		#if 0
+		{
+		}
 		#else
 			_t3 = _const_v__ast__u32_type;
 			;
@@ -58770,6 +58782,8 @@ multi_return_int_int v__ast__Table_type_size(v__ast__Table* t, v__ast__Type typ)
 			if (t->pointer_size == 8) {
 				int _t16;
 				#if 0
+				{
+				}
 				#else
 					_t16 = 120;
 					;
@@ -58790,6 +58804,8 @@ multi_return_int_int v__ast__Table_type_size(v__ast__Table* t, v__ast__Type typ)
 			if (t->pointer_size == 8) {
 				int _t19;
 				#if 0
+				{
+				}
 				#else
 					_t19 = 32;
 					;
@@ -100795,6 +100811,8 @@ VV_LOC v__ast__Type v__gen__c__get_overflow_fn_type(v__ast__Type typ) {
 	if (typ == (_const_v__ast__int_type)) {
 		v__ast__Type _t3;
 		#if 0
+		{
+		}
 		#else
 			_t3 = _const_v__ast__i32_type;
 			;
@@ -100813,6 +100831,8 @@ VV_LOC v__ast__Type v__gen__c__get_overflow_fn_type(v__ast__Type typ) {
 			_t4 = _const_v__ast__i64_type;
 			;
 		#else
+		{
+		}
 		#endif
 				_t2 = _t4;
 	}
@@ -100822,6 +100842,8 @@ VV_LOC v__ast__Type v__gen__c__get_overflow_fn_type(v__ast__Type typ) {
 			_t5 = _const_v__ast__u64_type;
 			;
 		#else
+		{
+		}
 		#endif
 				_t2 = _t5;
 	}
@@ -102115,8 +102137,9 @@ VV_LOC void v__gen__c__Gen_comptime_if(v__gen__c__Gen* g, v__ast__IfExpr node) {
 	}
 	bool is_opt_or_result = v__ast__Type_has_option_or_result(inferred_typ);
 	bool is_array_fixed = v__ast__Table_final_sym(g->table, inferred_typ)->kind == v__ast__Kind__array_fixed;
+	bool gen_as_expr = node.is_expr && inferred_typ != _const_v__ast__void_type;
 	string _t2; /* if prepend */
-	if (node.is_expr && inferred_typ != _const_v__ast__void_type) {
+	if (gen_as_expr) {
 		string stmt_str = v__gen__c__Gen_go_before_last_stmt(g);
 		v__gen__c__Gen_write(g, v__util__tabs(g->indent));
 		string styp = v__gen__c__Gen_styp(g, inferred_typ);
@@ -102177,8 +102200,16 @@ VV_LOC void v__gen__c__Gen_comptime_if(v__gen__c__Gen* g, v__ast__IfExpr node) {
 			}
 			g->defer_ifdef = builtin__string__plus(g->defer_ifdef, expr_str);
 		}
-		if (node.is_expr) {
-			if (is_true.val) {
+		bool branch_produces_value = false;
+		if (gen_as_expr && branch.stmts.len > 0) {
+			v__ast__Stmt branch_last = (*(v__ast__Stmt*)builtin__array_last(branch.stmts));
+			if ((branch_last)._typ == 369) {
+				v__ast__Type branch_typ = v__type_resolver__TypeResolver_get_type_or_default(&g->type_resolver, (*branch_last._v__ast__ExprStmt).expr, (*branch_last._v__ast__ExprStmt).typ);
+				branch_produces_value = branch_typ != _const_v__ast__void_type && !v__ast__Type_has_flag(branch_typ, v__ast__TypeFlag__generic);
+			}
+		}
+		if (branch_produces_value) {
+			if (is_true.val || g->pref->output_cross_c) {
 				v__gen__c__Gen_bind_comptime_if_generic_types(g, branch.cond);
 				int len = branch.stmts.len;
 				if (len > 0) {
@@ -102281,7 +102312,7 @@ VV_LOC void v__gen__c__Gen_comptime_if(v__gen__c__Gen* g, v__ast__IfExpr node) {
 	}
 	g->defer_ifdef = _S("");
 	v__gen__c__Gen_writeln(g, _S("#endif"));
-	if (node.is_expr) {
+	if (gen_as_expr) {
 		{
 			v__gen__c__Gen_write(g, line);
 			v__gen__c__Gen_write(g, tmp_var);
@@ -114428,6 +114459,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.comments = builtin____new_array(0,
 		if (g->do_int_overflow_checks) {
 			string _t13;
 			#if 0
+			{
+			}
 			#else
 				_t13 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -114522,6 +114555,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.comments = builtin____new_array(0,
 		if (g->do_int_overflow_checks) {
 			string _t24;
 			#if 0
+			{
+			}
 			#else
 				_t24 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -114606,6 +114641,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.comments = builtin____new_array(0,
 		if (g->do_int_overflow_checks) {
 			string _t27;
 			#if 0
+			{
+			}
 			#else
 				_t27 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i32("), idx, _S(",1)")}));
 				;
@@ -114699,6 +114736,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.comments = builtin____new_array(0,
 		if (g->do_int_overflow_checks) {
 			string _t34;
 			#if 0
+			{
+			}
 			#else
 				_t34 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i32("), idx, _S(",1)")}));
 				;
@@ -114809,6 +114848,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.comments = builtin____new_array(0,
 		if (g->do_int_overflow_checks) {
 			string _t37;
 			#if 0
+			{
+			}
 			#else
 				_t37 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -114909,6 +114950,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.comments = builtin____new_array(0,
 		if (g->do_int_overflow_checks) {
 			string _t45;
 			#if 0
+			{
+			}
 			#else
 				_t45 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
@@ -134192,6 +134235,8 @@ VV_LOC void v__pkgconfig__PkgConfig_load_paths(v__pkgconfig__PkgConfig* pc) {
 		_t1 = _S(";");
 		;
 	#else
+	{
+	}
 	#endif
 		string split_c = _t1;
 	string config_path_override = os__getenv(_S("PKG_CONFIG_PATH_DEFAULTS"));
@@ -137678,6 +137723,8 @@ VV_LOC v__ast__Type v__checker__Checker_check_shift(v__checker__Checker* c, v__a
 				else if (left_type_final == (_const_v__ast__int_type)) {
 					int _t11;
 					#if 0
+					{
+					}
 					#else
 						_t11 = 31;
 						;
@@ -146332,6 +146379,8 @@ VV_LOC v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast
 			else if (_t44 == (_const_v__ast__int_type_idx)) {
 				u64 _t46;
 				#if 0
+				{
+				}
 				#else
 					_t46 = ((u64)(0xffffffffU));
 					;
@@ -146347,6 +146396,8 @@ VV_LOC v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast
 					_t47 = ((u64)(0xffffffffffffffffULL));
 					;
 				#else
+				{
+				}
 				#endif
 								_t45 = _t47;
 			}
@@ -199076,6 +199127,8 @@ VV_LOC void v__builder__Builder_run_compiled_executable_and_exit(v__builder__Bui
 			_t3 = _S("node.exe");
 			;
 		#else
+		{
+		}
 		#endif
 				string node_basename = _t3;
 _result_string _t4 = os__find_abs_path_of_executable(node_basename);
@@ -199099,6 +199152,8 @@ _result_string _t4 = os__find_abs_path_of_executable(node_basename);
 				_t6 = builtin__string__plus(runtime, _S(".exe"));
 				;
 			#else
+			{
+			}
 			#endif
 						string basename = _t6;
 			_result_string _t7 = {0};
