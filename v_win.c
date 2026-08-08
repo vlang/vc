@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ee277e53123f2487ca39dc2a859b4898ab062b72"
+#define V_COMMIT_HASH "76a22eb82314763857cf901e6a98949c0bc822de"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7c96d73d41ebd756680fe0e6609ca071e9adeb70"
+	#define V_COMMIT_HASH "ee277e53123f2487ca39dc2a859b4898ab062b72"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -109,19 +109,19 @@ typedef struct multi_return_strconv__ParserState_strconv__PrepNumber multi_retur
 typedef struct multi_return_u64_int multi_return_u64_int;
 typedef struct multi_return_strconv__Dec32_bool multi_return_strconv__Dec32_bool;
 typedef struct multi_return_strconv__Dec64_bool multi_return_strconv__Dec64_bool;
+typedef struct multi_return_string_int multi_return_string_int;
+typedef struct multi_return_int_bool multi_return_int_bool;
 typedef struct multi_return_Array_string_Array_string multi_return_Array_string_Array_string;
 typedef struct multi_return_ref_v__pref__Preferences_string multi_return_ref_v__pref__Preferences_string;
 typedef struct multi_return_string_bool multi_return_string_bool;
-typedef struct multi_return_string_int multi_return_string_int;
-typedef struct multi_return_int_bool multi_return_int_bool;
 typedef struct multi_return_v__pref__CompilerType_bool multi_return_v__pref__CompilerType_bool;
 typedef struct multi_return_Array_v__cflag__CFlag_Array_string_bool multi_return_Array_v__cflag__CFlag_Array_string_bool;
 typedef struct multi_return_bool_string multi_return_bool_string;
 typedef struct multi_return_os__Stat_bool multi_return_os__Stat_bool;
 typedef struct multi_return_u64_u64 multi_return_u64_u64;
-typedef struct multi_return_f64_f64 multi_return_f64_f64;
 typedef struct multi_return_int_int_int multi_return_int_int_int;
 typedef struct multi_return_int_int_int_int_int_i64_bool multi_return_int_int_int_int_int_i64_bool;
+typedef struct multi_return_f64_f64 multi_return_f64_f64;
 typedef struct multi_return_Array_string_int multi_return_Array_string_int;
 typedef struct multi_return_Array_string_v__vmod__ModFileAndFolder multi_return_Array_string_v__vmod__ModFileAndFolder;
 typedef struct multi_return_v__ast__Fn_Array_v__ast__Type multi_return_v__ast__Fn_Array_v__ast__Type;
@@ -269,13 +269,13 @@ typedef struct encoding__binary__DecodeState encoding__binary__DecodeState;
 typedef union encoding__binary__U32 encoding__binary__U32;
 typedef union encoding__binary__U64 encoding__binary__U64;
 typedef struct v__help__ExitOptions v__help__ExitOptions;
-typedef struct v__vcache__CacheManager v__vcache__CacheManager;
 typedef struct time__TimeParseError time__TimeParseError;
 typedef struct time__StopWatchOptions time__StopWatchOptions;
 typedef struct time__StopWatch time__StopWatch;
 typedef struct time__Time time__Time;
 typedef struct time__SystemTime time__SystemTime;
 typedef struct time__WinTimeCoefficients time__WinTimeCoefficients;
+typedef struct v__vcache__CacheManager v__vcache__CacheManager;
 typedef struct v__vmod__Manifest v__vmod__Manifest;
 typedef struct v__vmod__Scanner v__vmod__Scanner;
 typedef struct v__vmod__Parser v__vmod__Parser;
@@ -4249,14 +4249,14 @@ typedef array Array_builtin__closure__ClosureLifetimeFrame;
 typedef map Map_voidptr_builtin__closure__ClosureLiveInfo;
 typedef map Map_u64_builtin__closure__ClosureLifetimeState_ptr;
 typedef map Map_string_string;
-typedef map Map_string_Array_string;
-typedef map Map_string_v__pref__BsdSpecificFiles;
 typedef u16 Array_fixed_u16_260 [260];
 typedef u16 Array_fixed_u16_14 [14];
 typedef array Array_u16;
 typedef int Array_fixed_int_3 [3];
 typedef u8 Array_fixed_u8_65536 [65536];
 typedef u8 Array_fixed_u8_20 [20];
+typedef map Map_string_Array_string;
+typedef map Map_string_v__pref__BsdSpecificFiles;
 typedef array Array_v__util__JsonError;
 typedef array Array_v__util__Possibility;
 typedef map Map_string_time__StopWatch;
@@ -5739,26 +5739,6 @@ struct builtin__closure__ClosureMutex {
 	SRWLOCK closure_mtx;
 };
 
-struct v__pref__LineInfo {
-	v__pref__Method method;
-	string path;
-	int line_nr;
-	int col;
-	Map_string_bool vars_printed;
-};
-
-struct v__vcache__CacheManager {
-	string basepath;
-	string original_vopts;
-	string vopts;
-	Map_string_string k2cpath;
-};
-
-struct v__pref__BsdSpecificFiles {
-	bool has_bsd;
-	bool has_exact;
-};
-
 struct os__NotExpected {
 	string cause;
 	int code;
@@ -5856,6 +5836,26 @@ struct os__Pipe {
 
 struct v__help__ExitOptions {
 	int exit_code;
+};
+
+struct v__pref__LineInfo {
+	v__pref__Method method;
+	string path;
+	int line_nr;
+	int col;
+	Map_string_bool vars_printed;
+};
+
+struct v__vcache__CacheManager {
+	string basepath;
+	string original_vopts;
+	string vopts;
+	Map_string_string k2cpath;
+};
+
+struct v__pref__BsdSpecificFiles {
+	bool has_bsd;
+	bool has_exact;
 };
 
 struct v__util__EManager {
@@ -6147,20 +6147,6 @@ struct v__builder__TccMacosLibgcPublicationResult {
 	bool won;
 };
 
-struct rand__config__PRNGConfigStruct {
-	Array_u32 seed_;
-};
-
-struct rand__config__NormalConfigStruct {
-	f64 mu;
-	f64 sigma;
-};
-
-struct rand__config__ShuffleConfigStruct {
-	int start;
-	int end;
-};
-
 struct strings__textscanner__TextScanner {
 	string input;
 	int ilen;
@@ -6191,6 +6177,20 @@ struct time__SystemTime {
 struct time__WinTimeCoefficients {
 	u64 numer;
 	u64 denom;
+};
+
+struct rand__config__PRNGConfigStruct {
+	Array_u32 seed_;
+};
+
+struct rand__config__NormalConfigStruct {
+	f64 mu;
+	f64 sigma;
+};
+
+struct rand__config__ShuffleConfigStruct {
+	int start;
+	int end;
 };
 
 struct v__token__TrieNode {
@@ -9700,6 +9700,16 @@ struct multi_return_strconv__Dec64_bool {
 	bool arg1;
 };
 
+struct multi_return_string_int {
+	string arg0;
+	int arg1;
+};
+
+struct multi_return_int_bool {
+	int arg0;
+	bool arg1;
+};
+
 struct multi_return_Array_string_Array_string {
 	Array_string arg0;
 	Array_string arg1;
@@ -9712,16 +9722,6 @@ struct multi_return_ref_v__pref__Preferences_string {
 
 struct multi_return_string_bool {
 	string arg0;
-	bool arg1;
-};
-
-struct multi_return_string_int {
-	string arg0;
-	int arg1;
-};
-
-struct multi_return_int_bool {
-	int arg0;
 	bool arg1;
 };
 
@@ -9751,11 +9751,6 @@ struct multi_return_u64_u64 {
 	u64 arg1;
 };
 
-struct multi_return_f64_f64 {
-	f64 arg0;
-	f64 arg1;
-};
-
 struct multi_return_int_int_int {
 	int arg0;
 	int arg1;
@@ -9770,6 +9765,11 @@ struct multi_return_int_int_int_int_int_i64_bool {
 	int arg4;
 	i64 arg5;
 	bool arg6;
+};
+
+struct multi_return_f64_f64 {
+	f64 arg0;
+	f64 arg1;
 };
 
 struct multi_return_Array_string_int {
@@ -11396,9 +11396,6 @@ void builtin__ArrayFlags_clear(ArrayFlags* e, ArrayFlags flag_);
 u64 hash__wyhash_c(u8* key, u64 len, u64 seed);
 u64 hash__sum64_string(string key, u64 seed);
 u64 hash__sum64(Array_u8 key, u64 seed);
-string os__cmdline__option(Array_string args, string param, string def);
-Array_string os__cmdline__options_before(Array_string args, Array_string what);
-Array_string os__cmdline__options_after(Array_string args, Array_string what);
 strings__textscanner__TextScanner strings__textscanner__new(string input);
 void strings__textscanner__TextScanner_free(strings__textscanner__TextScanner* ss);
 int strings__textscanner__TextScanner_next(strings__textscanner__TextScanner* ss);
@@ -11409,6 +11406,9 @@ int strings__textscanner__TextScanner_peek_back_n(strings__textscanner__TextScan
 int strings__textscanner__TextScanner_current(strings__textscanner__TextScanner* ss);
 bool encoding__utf8__validate__utf8_string(string s);
 bool encoding__utf8__validate__utf8_data(u8* data, int len);
+string os__cmdline__option(Array_string args, string param, string def);
+Array_string os__cmdline__options_before(Array_string args, Array_string what);
+Array_string os__cmdline__options_after(Array_string args, Array_string what);
 string v__token__KeywordsMatcherTrie_str(v__token__KeywordsMatcherTrie* km);
 string v__token__TrieNode_str(v__token__TrieNode* node);
 int v__token__KeywordsMatcherTrie_find(v__token__KeywordsMatcherTrie* km, string word);
@@ -11717,18 +11717,6 @@ string v__util__version__vhash(void);
 string v__util__version__full_hash(void);
 string v__util__version__full_v_version(bool is_verbose);
 _result_string v__util__version__githash(string path);
-VV_LOC void v__vcache__remove_old_cache_folder(void);
-v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts);
-void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts);
-string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key);
-string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key);
-VV_LOC string v__vcache__normalise_mod(string mod);
-string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key);
-_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key);
-_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key);
-_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content);
-_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content);
-_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key);
 i64 time__portable_timegm(struct tm* t);
 int time__days_from_unix_epoch(int year, int month, int day);
 int time__Time_days_from_unix_epoch(time__Time t);
@@ -11787,6 +11775,18 @@ void time__sleep(time__Duration duration);
 time__Time time__unix_nanosecond(i64 abs_unix_timestamp, int nanosecond);
 VV_LOC multi_return_int_int_int time__calculate_date_from_day_offset(i64 day_offset_);
 VV_LOC multi_return_int_int_int time__calculate_time_from_second_offset(i64 second_offset_);
+VV_LOC void v__vcache__remove_old_cache_folder(void);
+v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts);
+void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts);
+string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key);
+string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key);
+VV_LOC string v__vcache__normalise_mod(string mod);
+string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key);
+_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key);
+_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key);
+_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content);
+_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content);
+_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key);
 _result_v__vmod__Manifest v__vmod__from_file(string vmod_path);
 _result_v__vmod__Manifest v__vmod__decode(string contents);
 VV_LOC void v__vmod__Scanner_tokenize(v__vmod__Scanner* s, v__vmod__TokenKind t_type, string val);
@@ -25049,12 +25049,12 @@ u32 v_typeof_interface_idx_IError(u32 sidx) {
 	if (sidx == _IError_semver__InvalidVersionFormatError_index) return 993;
 	if (sidx == _IError_io__NotExpected_index) return 997;
 	if (sidx == _IError_io__Eof_index) return 998;
-	if (sidx == _IError_os__Eof_index) return 221;
-	if (sidx == _IError_os__NotExpected_index) return 219;
-	if (sidx == _IError_os__FileNotOpenedError_index) return 222;
-	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 223;
-	if (sidx == _IError_os__ExecutableNotFoundError_index) return 243;
-	if (sidx == _IError_time__TimeParseError_index) return 432;
+	if (sidx == _IError_os__Eof_index) return 201;
+	if (sidx == _IError_os__NotExpected_index) return 199;
+	if (sidx == _IError_os__FileNotOpenedError_index) return 202;
+	if (sidx == _IError_os__SizeOfTypeIs0Error_index) return 203;
+	if (sidx == _IError_os__ExecutableNotFoundError_index) return 223;
+	if (sidx == _IError_time__TimeParseError_index) return 424;
 	if (sidx == _IError_flag__UnknownFlagError_index) return 956;
 	if (sidx == _IError_flag__ArgsCountError_index) return 957;
 	if (sidx == _IError_v__parser__IncludeError_index) return 811;
@@ -25515,9 +25515,9 @@ static char * v_typeof_interface_rand__PRNG(u32 sidx) {
 }
 
 u32 v_typeof_interface_idx_rand__PRNG(u32 sidx) {
-	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 416;
+	if (sidx == _rand__PRNG_rand__wyrand__WyRandRNG_index) return 443;
 	if (sidx == _rand__PRNG_voidptr_index) return 2;
-	return 413;
+	return 440;
 }
 char * v_typeof_sumtype_v__ast__HashStmtNode(u32 sidx) {
 	switch(sidx) {
@@ -25954,9 +25954,9 @@ static char * v_typeof_interface_io__Reader(u32 sidx) {
 }
 
 u32 v_typeof_interface_idx_io__Reader(u32 sidx) {
-	if (sidx == _io__Reader_os__File_index) return 220;
+	if (sidx == _io__Reader_os__File_index) return 200;
 	if (sidx == _io__Reader_voidptr_index) return 2;
-	if (sidx == _io__Reader_os__Pipe_index) return 266;
+	if (sidx == _io__Reader_os__Pipe_index) return 246;
 	if (sidx == _io__Reader_io__BufferedReader_index) return 994;
 	if (sidx == _io__Reader_io__ReaderWriterImpl_index) return 1007;
 	return 953;
@@ -25975,8 +25975,8 @@ static char * v_typeof_interface_io__Writer(u32 sidx) {
 u32 v_typeof_interface_idx_io__Writer(u32 sidx) {
 	if (sidx == _io__Writer_io__MultiWriter_index) return 1003;
 	if (sidx == _io__Writer_voidptr_index) return 2;
-	if (sidx == _io__Writer_os__File_index) return 220;
-	if (sidx == _io__Writer_os__Pipe_index) return 266;
+	if (sidx == _io__Writer_os__File_index) return 200;
+	if (sidx == _io__Writer_os__Pipe_index) return 246;
 	if (sidx == _io__Writer_crypto__sha256__Digest_index) return 894;
 	if (sidx == _io__Writer_io__BufferedWriter_index) return 999;
 	if (sidx == _io__Writer_io__ReaderWriterImpl_index) return 1007;
@@ -30073,7 +30073,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ee277e5");
+	return _S("76a22eb");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -34847,44 +34847,6 @@ inline u64 hash__sum64_string(string key, u64 seed) {
 inline u64 hash__sum64(Array_u8 key, u64 seed) {
 	return hash__wyhash_c(key.data, ((u64)(key.len)), seed);
 }
-string os__cmdline__option(Array_string args, string param, string def) {
-	bool found = false;
-	for (int _t1 = 0; _t1 < args.len; ++_t1) {
-		string arg = ((string*)args.data)[_t1];
-		if (found) {
-			return arg;
-		} else if (builtin__string__eq(param, arg)) {
-			found = true;
-		}
-	}
-	return def;
-}
-Array_string os__cmdline__options_before(Array_string args, Array_string what) {
-	Array_string args_before = builtin____new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t1 = 0; _t1 < args.len; ++_t1) {
-		string a = ((string*)args.data)[_t1];
-		if ((Array_string_contains(what, a))) {
-			break;
-		}
-		builtin__array_push((array*)&args_before, _MOV((string[]){ builtin__string_clone(a) }));
-	}
-	return args_before;
-}
-Array_string os__cmdline__options_after(Array_string args, Array_string what) {
-	bool found = false;
-	Array_string args_after = builtin____new_array_with_default(0, 0, sizeof(string), 0);
-	for (int _t1 = 0; _t1 < args.len; ++_t1) {
-		string a = ((string*)args.data)[_t1];
-		if ((Array_string_contains(what, a))) {
-			found = true;
-			continue;
-		}
-		if (found) {
-			builtin__array_push((array*)&args_after, _MOV((string[]){ builtin__string_clone(a) }));
-		}
-	}
-	return args_after;
-}
 strings__textscanner__TextScanner strings__textscanner__new(string input) {
 	return ((strings__textscanner__TextScanner){.input = input,.ilen = input.len,.pos = 0,});
 }
@@ -34940,6 +34902,44 @@ bool encoding__utf8__validate__utf8_data(u8* data, int len) {
 		}
 	}
 	return state == 0;
+}
+string os__cmdline__option(Array_string args, string param, string def) {
+	bool found = false;
+	for (int _t1 = 0; _t1 < args.len; ++_t1) {
+		string arg = ((string*)args.data)[_t1];
+		if (found) {
+			return arg;
+		} else if (builtin__string__eq(param, arg)) {
+			found = true;
+		}
+	}
+	return def;
+}
+Array_string os__cmdline__options_before(Array_string args, Array_string what) {
+	Array_string args_before = builtin____new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < args.len; ++_t1) {
+		string a = ((string*)args.data)[_t1];
+		if ((Array_string_contains(what, a))) {
+			break;
+		}
+		builtin__array_push((array*)&args_before, _MOV((string[]){ builtin__string_clone(a) }));
+	}
+	return args_before;
+}
+Array_string os__cmdline__options_after(Array_string args, Array_string what) {
+	bool found = false;
+	Array_string args_after = builtin____new_array_with_default(0, 0, sizeof(string), 0);
+	for (int _t1 = 0; _t1 < args.len; ++_t1) {
+		string a = ((string*)args.data)[_t1];
+		if ((Array_string_contains(what, a))) {
+			found = true;
+			continue;
+		}
+		if (found) {
+			builtin__array_push((array*)&args_after, _MOV((string[]){ builtin__string_clone(a) }));
+		}
+	}
+	return args_after;
 }
 string v__token__KeywordsMatcherTrie_str(v__token__KeywordsMatcherTrie* km) {
 	return builtin__string_plus_many(7, _MOV((string[7]){_S("KeywordsMatcherTrie{ /* nodes.len: "), builtin__int_str(km->nodes.len), _S(" */ min_len: "), builtin__int_str(km->min_len), _S(", max_len: "), builtin__int_str(km->max_len), _S(" }")}));
@@ -40179,222 +40179,6 @@ _result_string _t7 = os__read_file(rev_file);
 	 
 	return _t9;
 }
-VV_LOC void v__vcache__remove_old_cache_folder(void) {
-	string old_cache_folder = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("cache")})));
-	if (os__exists(old_cache_folder)) {
-		string old_readme_file = os__join_path(old_cache_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
-		if (os__file_size(old_readme_file) == 254) {
-			_result_void _t1 = os__rmdir_all(old_cache_folder);
-			(void)_t1;
- ;
-			;
-		}
-	}
-}
-v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
-	_option_string _t1 = os__getenv_opt(_S("VCACHE"));
-	if (_t1.state != 0) {
-		*(string*) _t1.data = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S(".cache")})));
-	}
-	
- 	string vcache_basepath = (*(string*)_t1.data);
-	;
-	;
-	if (!os__is_dir(vcache_basepath)) {
-		v__vcache__remove_old_cache_folder();
-		_result_void _t2 = os__mkdir_all(vcache_basepath, ((os__MkdirParams){.mode = 0700,}));
-		if (_t2.is_error) {
-			IError _t3 = _t2.err;
-			IError err = _t3;
-			builtin___v_panic(builtin__IError_str(err));
-			VUNREACHABLE();
-		;
-		}
-		
- ;
-		;
-	}
-	string readme_file = os__join_path(vcache_basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
-	if (!os__is_file(readme_file)) {
-		string readme_content = builtin__string_strip_margin(_S("This folder contains cached build artifacts from the V build system.\n\011\011|You can safely delete it, if it is getting too large.\n\011\011|It will be recreated the next time you compile something with V.\n\011\011|You can change its location with the VCACHE environment variable.\n\011\011"));
-		_result_void _t4 = os__write_file(readme_file, readme_content);
-		if (_t4.is_error) {
-			IError _t5 = _t4.err;
-			IError err = _t5;
-			builtin___v_panic(builtin__IError_str(err));
-			VUNREACHABLE();
-		;
-		}
-		
- ;
-		;
-	}
-	Map_string_bool deduped_opts = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
-	;
-	for (int _t6 = 0; _t6 < opts.len; ++_t6) {
-		string o = ((string*)opts.data)[_t6];
-		builtin__map_set(&deduped_opts, &(string[]){o}, &(bool[]) { true });
-	}
-	Array_string _t7 = {0};
-	Array_string _t7_orig = builtin__map_keys(&deduped_opts);
-	int _t7_len = _t7_orig.len;
-	_t7 = builtin____new_array(0, _t7_len, sizeof(string));
-
-	for (int _t8 = 0; _t8 < _t7_len; ++_t8) {
-		string it = ((string*) _t7_orig.data)[_t8];
-		if ((it).len != 0 && !builtin__string_starts_with(it, _S("['gcboehm', "))) {
-			builtin__array_push((array*)&_t7, &it);
-		}
-	}
-	Array_string deduped_opts_keys =_t7;
-	string original_vopts = Array_string_join(deduped_opts_keys, _S("|"));
-	return ((v__vcache__CacheManager){.basepath = vcache_basepath,.original_vopts = original_vopts,.vopts = original_vopts,.k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),});
-}
-void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts) {
-	cm->vopts = builtin__string_plus_many(3, _MOV((string[3]){cm->original_vopts, _S("#"), Array_string_join(new_opts, _S("|"))}));
-	cm->k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
-	;
-	;
-}
-string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key) {
-	string* _t2 = (string*)(builtin__map_get_check(ADDR(map, cm->k2cpath), &(string[]){key}));
-	_option_string _t1 = {0};
-	if (_t2) {
-		*((string*)&_t1.data) = *((string*)_t2);
-	} else {
-		_t1.state = 2; _t1.err = _const_none__;
-	}
-	;
-	if (_t1.state != 0) {
-		*(string*) _t1.data = _S("");
-	}
-	
-	string cpath = (*(string*)_t1.data);
-	if ((cpath).len == 0) {
-		string hk = builtin__string__plus(cm->vopts, key);
-		string a = builtin__u64_hex_full(hash__sum64_string(hk, 5));
-		string b = builtin__u64_hex_full(hash__sum64_string(hk, 7));
-		string khash = builtin__string__plus(a, b);
-		string prefix = builtin__string_substr(khash, 0, 2);
-		string cprefix_folder = os__join_path(cm->basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){prefix})));
-		cpath = os__join_path(cprefix_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){khash})));
-		if (!os__is_dir(cprefix_folder)) {
-			_result_void _t3 = os__mkdir_all(cprefix_folder, ((os__MkdirParams){.mode = 0777,}));
-			if (_t3.is_error) {
-				IError _t4 = _t3.err;
-				IError err = _t4;
-				if (!os__is_dir(cprefix_folder)) {
-					builtin___v_panic(builtin__IError_str(err));
-					VUNREACHABLE();
-				}
-			;
-			}
-			
- ;
-		}
-		;
-		;
-		;
-		;
-		builtin__map_set(&cm->k2cpath, &(string[]){key}, &(string[]) { cpath });
-	}
-	;
-	return cpath;
-}
-string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key) {
-	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
-	string res = builtin__string__plus(prefix, postfix);
-	return res;
-}
-VV_LOC string v__vcache__normalise_mod(string mod) {
-	return builtin__string_trim(builtin__string_replace(builtin__string_replace(builtin__string_replace(mod, _S("/"), _S(".")), _S("\\"), _S(".")), _S("vlib."), _S("")), _S("."));
-}
-string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
-	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
-	string res = builtin__string_plus_many(4, _MOV((string[4]){prefix, _S(".module."), v__vcache__normalise_mod(mod), postfix}));
-	return res;
-}
-_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key) {
-	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
-	;
-	if (!os__exists(fpath)) {
-		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
-	}
-	_result_string _t2;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
-	 
-	return _t2;
-}
-_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
-	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
-	;
-	if (!os__exists(fpath)) {
-		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
-	}
-	_result_string _t2;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
-	 
-	return _t2;
-}
-_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content) {
-	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
-	_result_void _t1 = os__write_file(fpath, content);
-	if (_t1.is_error) {
-		_result_string _t2 = {0};
-		_t2.is_error = true;
-		_t2.err = _t1.err;
-		return _t2;
-	}
-	
- ;
-	;
-	_result_string _t3;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
-	 
-	return _t3;
-}
-_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content) {
-	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
-	_result_void _t1 = os__write_file(fpath, content);
-	if (_t1.is_error) {
-		_result_string _t2 = {0};
-		_t2.is_error = true;
-		_t2.err = _t1.err;
-		return _t2;
-	}
-	
- ;
-	;
-	_result_string _t3;
-	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
-	 
-	return _t3;
-}
-_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key) {
-	_result_string _t1 = v__vcache__CacheManager_exists(cm, postfix, key);
-	if (_t1.is_error) {
-		_result_string _t2 = {0};
-		_t2.is_error = true;
-		_t2.err = _t1.err;
-		return _t2;
-	}
-	
- 	string fpath = (*(string*)_t1.data);
-	_result_string _t3 = os__read_file(fpath);
-	if (_t3.is_error) {
-		_result_string _t4 = {0};
-		_t4.is_error = true;
-		_t4.err = _t3.err;
-		return _t4;
-	}
-	
- 	string content = (*(string*)_t3.data);
-	;
-	_result_string _t5;
-	builtin___result_ok(&(string[]) { content }, (_result*)(&_t5), sizeof(string));
-	 
-	return _t5;
-}
 i64 time__portable_timegm(struct tm* t) {
 	int year = t->tm_year + 1900;
 	int month = t->tm_mon;
@@ -41100,6 +40884,222 @@ VV_LOC multi_return_int_int_int time__calculate_time_from_second_offset(i64 seco
 	i64 minute_ = VSAFE_DIV_i64(second_offset , 60);
 	second_offset = VSAFE_MOD_i64(second_offset,_const_time__seconds_per_minute);
 	return (multi_return_int_int_int){.arg0=((int)(hour_)), .arg1=((int)(minute_)), .arg2=((int)(second_offset))};
+}
+VV_LOC void v__vcache__remove_old_cache_folder(void) {
+	string old_cache_folder = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("cache")})));
+	if (os__exists(old_cache_folder)) {
+		string old_readme_file = os__join_path(old_cache_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
+		if (os__file_size(old_readme_file) == 254) {
+			_result_void _t1 = os__rmdir_all(old_cache_folder);
+			(void)_t1;
+ ;
+			;
+		}
+	}
+}
+v__vcache__CacheManager v__vcache__new_cache_manager(Array_string opts) {
+	_option_string _t1 = os__getenv_opt(_S("VCACHE"));
+	if (_t1.state != 0) {
+		*(string*) _t1.data = os__join_path(os__vmodules_dir(), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S(".cache")})));
+	}
+	
+ 	string vcache_basepath = (*(string*)_t1.data);
+	;
+	;
+	if (!os__is_dir(vcache_basepath)) {
+		v__vcache__remove_old_cache_folder();
+		_result_void _t2 = os__mkdir_all(vcache_basepath, ((os__MkdirParams){.mode = 0700,}));
+		if (_t2.is_error) {
+			IError _t3 = _t2.err;
+			IError err = _t3;
+			builtin___v_panic(builtin__IError_str(err));
+			VUNREACHABLE();
+		;
+		}
+		
+ ;
+		;
+	}
+	string readme_file = os__join_path(vcache_basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("README.md")})));
+	if (!os__is_file(readme_file)) {
+		string readme_content = builtin__string_strip_margin(_S("This folder contains cached build artifacts from the V build system.\n\011\011|You can safely delete it, if it is getting too large.\n\011\011|It will be recreated the next time you compile something with V.\n\011\011|You can change its location with the VCACHE environment variable.\n\011\011"));
+		_result_void _t4 = os__write_file(readme_file, readme_content);
+		if (_t4.is_error) {
+			IError _t5 = _t4.err;
+			IError err = _t5;
+			builtin___v_panic(builtin__IError_str(err));
+			VUNREACHABLE();
+		;
+		}
+		
+ ;
+		;
+	}
+	Map_string_bool deduped_opts = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
+	for (int _t6 = 0; _t6 < opts.len; ++_t6) {
+		string o = ((string*)opts.data)[_t6];
+		builtin__map_set(&deduped_opts, &(string[]){o}, &(bool[]) { true });
+	}
+	Array_string _t7 = {0};
+	Array_string _t7_orig = builtin__map_keys(&deduped_opts);
+	int _t7_len = _t7_orig.len;
+	_t7 = builtin____new_array(0, _t7_len, sizeof(string));
+
+	for (int _t8 = 0; _t8 < _t7_len; ++_t8) {
+		string it = ((string*) _t7_orig.data)[_t8];
+		if ((it).len != 0 && !builtin__string_starts_with(it, _S("['gcboehm', "))) {
+			builtin__array_push((array*)&_t7, &it);
+		}
+	}
+	Array_string deduped_opts_keys =_t7;
+	string original_vopts = Array_string_join(deduped_opts_keys, _S("|"));
+	return ((v__vcache__CacheManager){.basepath = vcache_basepath,.original_vopts = original_vopts,.vopts = original_vopts,.k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),});
+}
+void v__vcache__CacheManager_set_temporary_options(v__vcache__CacheManager* cm, Array_string new_opts) {
+	cm->vopts = builtin__string_plus_many(3, _MOV((string[3]){cm->original_vopts, _S("#"), Array_string_join(new_opts, _S("|"))}));
+	cm->k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
+	;
+}
+string v__vcache__CacheManager_key2cpath(v__vcache__CacheManager* cm, string key) {
+	string* _t2 = (string*)(builtin__map_get_check(ADDR(map, cm->k2cpath), &(string[]){key}));
+	_option_string _t1 = {0};
+	if (_t2) {
+		*((string*)&_t1.data) = *((string*)_t2);
+	} else {
+		_t1.state = 2; _t1.err = _const_none__;
+	}
+	;
+	if (_t1.state != 0) {
+		*(string*) _t1.data = _S("");
+	}
+	
+	string cpath = (*(string*)_t1.data);
+	if ((cpath).len == 0) {
+		string hk = builtin__string__plus(cm->vopts, key);
+		string a = builtin__u64_hex_full(hash__sum64_string(hk, 5));
+		string b = builtin__u64_hex_full(hash__sum64_string(hk, 7));
+		string khash = builtin__string__plus(a, b);
+		string prefix = builtin__string_substr(khash, 0, 2);
+		string cprefix_folder = os__join_path(cm->basepath, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){prefix})));
+		cpath = os__join_path(cprefix_folder, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){khash})));
+		if (!os__is_dir(cprefix_folder)) {
+			_result_void _t3 = os__mkdir_all(cprefix_folder, ((os__MkdirParams){.mode = 0777,}));
+			if (_t3.is_error) {
+				IError _t4 = _t3.err;
+				IError err = _t4;
+				if (!os__is_dir(cprefix_folder)) {
+					builtin___v_panic(builtin__IError_str(err));
+					VUNREACHABLE();
+				}
+			;
+			}
+			
+ ;
+		}
+		;
+		;
+		;
+		;
+		builtin__map_set(&cm->k2cpath, &(string[]){key}, &(string[]) { cpath });
+	}
+	;
+	return cpath;
+}
+string v__vcache__CacheManager_postfix_with_key2cpath(v__vcache__CacheManager* cm, string postfix, string key) {
+	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
+	string res = builtin__string__plus(prefix, postfix);
+	return res;
+}
+VV_LOC string v__vcache__normalise_mod(string mod) {
+	return builtin__string_trim(builtin__string_replace(builtin__string_replace(builtin__string_replace(mod, _S("/"), _S(".")), _S("\\"), _S(".")), _S("vlib."), _S("")), _S("."));
+}
+string v__vcache__CacheManager_mod_postfix_with_key2cpath(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
+	string prefix = v__vcache__CacheManager_key2cpath(cm, key);
+	string res = builtin__string_plus_many(4, _MOV((string[4]){prefix, _S(".module."), v__vcache__normalise_mod(mod), postfix}));
+	return res;
+}
+_result_string v__vcache__CacheManager_exists(v__vcache__CacheManager* cm, string postfix, string key) {
+	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
+	;
+	if (!os__exists(fpath)) {
+		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
+	}
+	_result_string _t2;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
+	 
+	return _t2;
+}
+_result_string v__vcache__CacheManager_mod_exists(v__vcache__CacheManager* cm, string mod, string postfix, string key) {
+	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
+	;
+	if (!os__exists(fpath)) {
+		return (_result_string){ .is_error=true, .err=builtin___v_error(_S("does not exist yet")), .data={E_STRUCT} };
+	}
+	_result_string _t2;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t2), sizeof(string));
+	 
+	return _t2;
+}
+_result_string v__vcache__CacheManager_save(v__vcache__CacheManager* cm, string postfix, string key, string content) {
+	string fpath = v__vcache__CacheManager_postfix_with_key2cpath(cm, postfix, key);
+	_result_void _t1 = os__write_file(fpath, content);
+	if (_t1.is_error) {
+		_result_string _t2 = {0};
+		_t2.is_error = true;
+		_t2.err = _t1.err;
+		return _t2;
+	}
+	
+ ;
+	;
+	_result_string _t3;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
+	 
+	return _t3;
+}
+_result_string v__vcache__CacheManager_mod_save(v__vcache__CacheManager* cm, string mod, string postfix, string key, string content) {
+	string fpath = v__vcache__CacheManager_mod_postfix_with_key2cpath(cm, mod, postfix, key);
+	_result_void _t1 = os__write_file(fpath, content);
+	if (_t1.is_error) {
+		_result_string _t2 = {0};
+		_t2.is_error = true;
+		_t2.err = _t1.err;
+		return _t2;
+	}
+	
+ ;
+	;
+	_result_string _t3;
+	builtin___result_ok(&(string[]) { fpath }, (_result*)(&_t3), sizeof(string));
+	 
+	return _t3;
+}
+_result_string v__vcache__CacheManager_load(v__vcache__CacheManager* cm, string postfix, string key) {
+	_result_string _t1 = v__vcache__CacheManager_exists(cm, postfix, key);
+	if (_t1.is_error) {
+		_result_string _t2 = {0};
+		_t2.is_error = true;
+		_t2.err = _t1.err;
+		return _t2;
+	}
+	
+ 	string fpath = (*(string*)_t1.data);
+	_result_string _t3 = os__read_file(fpath);
+	if (_t3.is_error) {
+		_result_string _t4 = {0};
+		_t4.is_error = true;
+		_t4.err = _t3.err;
+		return _t4;
+	}
+	
+ 	string content = (*(string*)_t3.data);
+	;
+	_result_string _t5;
+	builtin___result_ok(&(string[]) { content }, (_result*)(&_t5), sizeof(string));
+	 
+	return _t5;
 }
 _result_v__vmod__Manifest v__vmod__from_file(string vmod_path) {
 	if (!os__exists(vmod_path)) {
@@ -43014,7 +43014,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("7c96d73d41ebd756680fe0e6609ca071e9adeb70");
+	string vhash = _S("ee277e53123f2487ca39dc2a859b4898ab062b72");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);

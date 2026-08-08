@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ee277e53123f2487ca39dc2a859b4898ab062b72"
+#define V_COMMIT_HASH "76a22eb82314763857cf901e6a98949c0bc822de"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "7c96d73d41ebd756680fe0e6609ca071e9adeb70"
+	#define V_COMMIT_HASH "ee277e53123f2487ca39dc2a859b4898ab062b72"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44562,7 +44562,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ee277e5");
+	return _S("76a22eb");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60711,7 +60711,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("7c96d73d41ebd756680fe0e6609ca071e9adeb70");
+	string vhash = _S("ee277e53123f2487ca39dc2a859b4898ab062b72");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -222115,6 +222115,7 @@ VV_LOC void v__builder__cbuilder__eprint_result_time(time__StopWatch sw, string 
 VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label) {
 	builtin__eprintln(builtin__str_intp(3, _MOV((StrIntpData[]){{_S("> "), 0xafe29, {.d_i64 = time__Duration_milliseconds(time__StopWatch_elapsed(sw))}, 0, 0, 0}, {_S(" ms, "), 0xfe10, {.d_s = label}, 0, 0, 0}, {_SLIT0, 0, { .d_c = 0 }, 0, 0, 0}})));
 }
+#if defined(__APPLE__)
 VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command) {
 	int i = 0;
 	for (;;) {
@@ -222137,10 +222138,10 @@ VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string 
 	}
 	return false;
 }
-VV_LOC bool main__macos_v3_leading_option_consumes_value(string option) {
+	VV_LOC bool main__macos_v3_leading_option_consumes_value(string option) {
 	return (_SLIT_EQ(option.str, option.len, "-wasm-stack-top") || _SLIT_EQ(option.str, option.len, "-arch") || _SLIT_EQ(option.str, option.len, "-assert") || _SLIT_EQ(option.str, option.len, "-e") || _SLIT_EQ(option.str, option.len, "-subsystem") || _SLIT_EQ(option.str, option.len, "-icon") || _SLIT_EQ(option.str, option.len, "--icon") || _SLIT_EQ(option.str, option.len, "-seticon") || _SLIT_EQ(option.str, option.len, "--seticon") || _SLIT_EQ(option.str, option.len, "-gc") || _SLIT_EQ(option.str, option.len, "-print_autofree_vars_in_fn") || _SLIT_EQ(option.str, option.len, "-trace-fns") || _SLIT_EQ(option.str, option.len, "-cov") || _SLIT_EQ(option.str, option.len, "-coverage") || _SLIT_EQ(option.str, option.len, "-profile-fns") || _SLIT_EQ(option.str, option.len, "-bug-report-url") || _SLIT_EQ(option.str, option.len, "-run-only") || _SLIT_EQ(option.str, option.len, "-exclude") || _SLIT_EQ(option.str, option.len, "-file-list") || _SLIT_EQ(option.str, option.len, "-test-runner") || _SLIT_EQ(option.str, option.len, "-dump-c-flags") || _SLIT_EQ(option.str, option.len, "-dump-modules") || _SLIT_EQ(option.str, option.len, "-dump-files") || _SLIT_EQ(option.str, option.len, "-dump-defines") || _SLIT_EQ(option.str, option.len, "-generate-c-project") || _SLIT_EQ(option.str, option.len, "-macosx-version-min") || _SLIT_EQ(option.str, option.len, "-os") || _SLIT_EQ(option.str, option.len, "-printfn") || _SLIT_EQ(option.str, option.len, "-cflags") || _SLIT_EQ(option.str, option.len, "-ldflags") || _SLIT_EQ(option.str, option.len, "-d") || _SLIT_EQ(option.str, option.len, "-define") || _SLIT_EQ(option.str, option.len, "-message-limit") || _SLIT_EQ(option.str, option.len, "-thread-stack-size") || _SLIT_EQ(option.str, option.len, "-cc") || _SLIT_EQ(option.str, option.len, "-c++") || _SLIT_EQ(option.str, option.len, "-checker-match-exhaustive-cutoff-limit") || _SLIT_EQ(option.str, option.len, "-o") || _SLIT_EQ(option.str, option.len, "-output") || _SLIT_EQ(option.str, option.len, "-b") || _SLIT_EQ(option.str, option.len, "-backend") || _SLIT_EQ(option.str, option.len, "-compile-backend") || _SLIT_EQ(option.str, option.len, "--compile-backend") || _SLIT_EQ(option.str, option.len, "-path") || _SLIT_EQ(option.str, option.len, "-bare-builtin-dir") || _SLIT_EQ(option.str, option.len, "-custom-prelude") || _SLIT_EQ(option.str, option.len, "-raw-vsh-tmp-prefix") || _SLIT_EQ(option.str, option.len, "-cmain") || _SLIT_EQ(option.str, option.len, "-line-info"));
 }
-VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, Array_string raw_args) {
+	VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, Array_string raw_args) {
 	Array_string forwarded_args = builtin__array_clone_to_depth(&raw_args, 1);
 	if (prefs->enable_globals) {
 		for (int i = 0; i < forwarded_args.len; ++i) {
@@ -222171,6 +222172,7 @@ VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, A
 	}
 	return forwarded_args;
 }
+#endif
 VV_LOC bool main__macos_v3_driver_is_available(void) {
 	return false;
 }
