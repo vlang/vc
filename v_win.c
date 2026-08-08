@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "e65ec29e8738bfc1875d722161b9babae372eb86"
+#define V_COMMIT_HASH "8b30d173eea9fad48973018fe3c58ddce8d912bd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "76a22eb82314763857cf901e6a98949c0bc822de"
+	#define V_COMMIT_HASH "e65ec29e8738bfc1875d722161b9babae372eb86"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -13305,6 +13305,7 @@ VV_LOC void v__gen__c__Gen_const_decl_init_later(v__gen__c__Gen* g, string mod, 
 VV_LOC void v__gen__c__Gen_const_decl_init_later_msvc_string_fixed_array(v__gen__c__Gen* g, string mod, string name, string cname, v__ast__ArrayInit expr, v__ast__Type typ);
 VV_LOC bool v__gen__c__Gen_global_const_expr_is_c_const(v__gen__c__Gen* g, v__ast__Expr expr);
 VV_LOC void v__gen__c__Gen_global_decl(v__gen__c__Gen* g, v__ast__GlobalDecl node);
+VV_LOC void v__gen__c__Gen_write_prealloc_tls_global(v__gen__c__Gen* g, strings__Builder* def_builder, string linkage, string styp, string cname);
 VV_LOC void v__gen__c__Gen_sort_globals_consts(v__gen__c__Gen* g);
 VV_LOC void v__gen__c__Gen_write_coverage_point(v__gen__c__Gen* g, v__token__Pos pos);
 VV_LOC void v__gen__c__Gen_write_coverage_stats(v__gen__c__Gen* g);
@@ -30073,7 +30074,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("e65ec29");
+	return _S("8b30d17");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -43014,7 +43015,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("76a22eb82314763857cf901e6a98949c0bc822de");
+	string vhash = _S("e65ec29e8738bfc1875d722161b9babae372eb86");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -103740,18 +103741,21 @@ VV_LOC void v__gen__c__Gen_global_decl(v__gen__c__Gen* g, v__ast__GlobalDecl nod
 			(*(v__gen__c__GlobalConstDef*)builtin__map_get_and_set((map*)&g->global_const_defs, &(string[]){v__util__no_dots(fn_type_name)}, &(v__gen__c__GlobalConstDef[]){ (v__gen__c__GlobalConstDef){.mod = (string){.str=(byteptr)"", .is_lit=1},.def = (string){.str=(byteptr)"", .is_lit=1},.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,} })) = ((v__gen__c__GlobalConstDef){.mod = node.mod,.def = builtin__string_plus_many(4, _MOV((string[4]){fn_type_name, _S(" = "), v__ast__Table_sym(g->table, field.typ)->name, _S("; // global 1")})),.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = -1,.is_precomputed = 0,});
 			continue;
 		}
+		if (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc) {
+			string linkage = builtin__string_plus_many(2, _MOV((string[2]){__v_extern, field_visibility_kw}));
+			v__gen__c__Gen_write_prealloc_tls_global(g, (voidptr)&def_builder, linkage, styp, final_c_name);
+			(*(v__gen__c__GlobalConstDef*)builtin__map_get_and_set((map*)&g->global_const_defs, &(string[]){name}, &(v__gen__c__GlobalConstDef[]){ (v__gen__c__GlobalConstDef){.mod = (string){.str=(byteptr)"", .is_lit=1},.def = (string){.str=(byteptr)"", .is_lit=1},.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,} })) = ((v__gen__c__GlobalConstDef){.mod = node.mod,.def = strings__Builder_str(&def_builder),.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,});
+			continue;
+		}
 		if (field.is_extern) {
-			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
-			strings__Builder_writeln(&def_builder, builtin__string_plus_many(9, _MOV((string[9]){__v_extern, tls_kw, field_visibility_kw, qualifiers, styp, _S(" "), attributes, final_c_name, _S("; // global 2")})));
+			strings__Builder_writeln(&def_builder, builtin__string_plus_many(8, _MOV((string[8]){__v_extern, field_visibility_kw, qualifiers, styp, _S(" "), attributes, final_c_name, _S("; // global 2")})));
 			(*(v__gen__c__GlobalConstDef*)builtin__map_get_and_set((map*)&g->global_const_defs, &(string[]){name}, &(v__gen__c__GlobalConstDef[]){ (v__gen__c__GlobalConstDef){.mod = (string){.str=(byteptr)"", .is_lit=1},.def = (string){.str=(byteptr)"", .is_lit=1},.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = 0,.is_precomputed = 0,} })) = ((v__gen__c__GlobalConstDef){.mod = node.mod,.def = strings__Builder_str(&def_builder),.init = (string){.str=(byteptr)"", .is_lit=1},.dep_names = builtin____new_array(0, 0, sizeof(string)),.order = -1,.is_precomputed = 0,});
 			continue;
 		}
 		bool needs_ending_semicolon = false;
 		if (field.language != v__ast__Language__c || field.has_expr) {
-			string tls_kw = (builtin__fast_string_eq(field.name, _S("g_memory_block")) && g->pref->prealloc ? (_S("_Thread_local ")) : (_S("")));
 			{
 				strings__Builder_write_string(&def_builder, __v_extern);
-				strings__Builder_write_string(&def_builder, tls_kw);
 				strings__Builder_write_string(&def_builder, field_visibility_kw);
 				strings__Builder_write_string(&def_builder, qualifiers);
 				strings__Builder_write_string(&def_builder, styp);
@@ -103835,6 +103839,27 @@ VV_LOC void v__gen__c__Gen_global_decl(v__gen__c__Gen* g, v__ast__GlobalDecl nod
 		g->inside_cinit = false;
 		g->inside_global_decl = false;
 	} // defer end
+}
+VV_LOC void v__gen__c__Gen_write_prealloc_tls_global(v__gen__c__Gen* g, strings__Builder* def_builder, string linkage, string styp, string cname) {
+	strings__Builder_writeln(def_builder, _S("#if defined(__TINYC__) && defined(__APPLE__)"));
+	strings__Builder_writeln(def_builder, _S("#include <pthread.h>"));
+	strings__Builder_writeln(def_builder, _S("static pthread_key_t v_prealloc_tls_key;"));
+	strings__Builder_writeln(def_builder, _S("static pthread_once_t v_prealloc_tls_once = PTHREAD_ONCE_INIT;"));
+	strings__Builder_writeln(def_builder, _S("static void v_prealloc_tls_slot_free(void *slot) { free(slot); }"));
+	strings__Builder_writeln(def_builder, _S("static void v_prealloc_tls_key_init(void) { pthread_key_create(&v_prealloc_tls_key, v_prealloc_tls_slot_free); }"));
+	strings__Builder_writeln(def_builder, _S("static inline void **v_prealloc_tls_slot(void) {"));
+	strings__Builder_writeln(def_builder, _S("\tpthread_once(&v_prealloc_tls_once, v_prealloc_tls_key_init);"));
+	strings__Builder_writeln(def_builder, _S("\tvoid **slot = (void **)pthread_getspecific(v_prealloc_tls_key);"));
+	strings__Builder_writeln(def_builder, _S("\tif (slot == ((void *)0)) {"));
+	strings__Builder_writeln(def_builder, _S("\t\tslot = (void **)calloc(1, sizeof(void *));"));
+	strings__Builder_writeln(def_builder, _S("\t\tpthread_setspecific(v_prealloc_tls_key, slot);"));
+	strings__Builder_writeln(def_builder, _S("\t}"));
+	strings__Builder_writeln(def_builder, _S("\treturn slot;"));
+	strings__Builder_writeln(def_builder, _S("}"));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("#define "), cname, _S(" (*("), styp, _S(" *)v_prealloc_tls_slot())")})));
+	strings__Builder_writeln(def_builder, _S("#else"));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(6, _MOV((string[6]){linkage, _S("_Thread_local "), styp, _S(" "), cname, _S("; // global 6")})));
+	strings__Builder_writeln(def_builder, _S("#endif"));
 }
 VV_LOC void v__gen__c__Gen_sort_globals_consts(v__gen__c__Gen* g) {
 	v__util__timing_start(_S("Gen.sort_globals_consts"));
