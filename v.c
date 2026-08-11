@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "417cf74f3b17b1ee4ba6e1045558c7e761556f4e"
+#define V_COMMIT_HASH "8dc873bef6594753c3e89698965631bfef9dbde5"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bda68f59292278776af111f72dc562eb5a7b23b3"
+	#define V_COMMIT_HASH "417cf74f3b17b1ee4ba6e1045558c7e761556f4e"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -28270,7 +28270,6 @@ VV_LOC Array_string main__versioned_v_executable_names(string version_name);
 VV_LOC Array_string main__versioned_v_executable_paths(string version_name);
 VV_LOC Array_string main__unique_strings(Array_string items);
 VV_LOC _option_main__MacosV3CErrorReport main__maybe_delegate_to_macos_v3(string command, v__pref__Preferences* prefs);
-void sync__pool__PoolProcessor_work_on_items_T_string(sync__pool__PoolProcessor* pool, Array_string items);
 string sync__pool__PoolProcessor_get_item_T_string(sync__pool__PoolProcessor* pool, int idx);
 string _v_dump_expr_string(string fpath, int line, string sexpr, string dump_arg);
 
@@ -44589,7 +44588,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("417cf74");
+	return _S("8dc873b");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60738,7 +60737,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("bda68f59292278776af111f72dc562eb5a7b23b3");
+	string vhash = _S("417cf74f3b17b1ee4ba6e1045558c7e761556f4e");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -222158,7 +222157,7 @@ v__gen__c__GenOutput* result = HEAP(v__gen__c__GenOutput, _v_toheap_result);
 	time__StopWatch sw = time__new_stopwatch(((time__StopWatchOptions){.auto_start = true,}));
 	sync__pool__PoolProcessor* pp = sync__pool__new_pool_processor(((sync__pool__PoolProcessorConfig){.maxjobs = 0,.callback = (sync__pool__ThreadCB)v__builder__cbuilder__build_parallel_o_cb,}));
 	sync__pool__PoolProcessor_set_max_jobs(pp, _const_v__util__nr_jobs);
-	sync__pool__PoolProcessor_work_on_items_T_string(pp, cmds);
+	sync__pool__PoolProcessor_work_on_pointers(pp, builtin__array_pointers(cmds));
 	Array_voidptr _t29 = sync__pool__PoolProcessor_get_result_pointers(pp);
 	for (int _t30 = 0; _t30 < _t29.len; ++_t30) {
 		voidptr result_ptr = ((voidptr*)_t29.data)[_t30];
@@ -222880,9 +222879,6 @@ VV_LOC _option_main__MacosV3CErrorReport main__maybe_delegate_to_macos_v3(string
 	{void* _ = prefs;}
 	;
 	return (_option_main__MacosV3CErrorReport){ .state=2, .err=_const_none__, .data={E_STRUCT} };
-}
-void sync__pool__PoolProcessor_work_on_items_T_string(sync__pool__PoolProcessor* pool, Array_string items) {
-	sync__pool__PoolProcessor_work_on_pointers(pool, builtin__array_pointers(items));
 }
 string sync__pool__PoolProcessor_get_item_T_string(sync__pool__PoolProcessor* pool, int idx) {
 	return *(((string*)((*(voidptr*)builtin__array_get(pool->items, idx)))));
