@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "866902d9f8fda429846df74731f0d6547d55ba93"
+#define V_COMMIT_HASH "cf7a81ebc3cc74612b151edbfa2781e2b29b65d6"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a4feff36f9697e279b0734c9790dacaaa261385b"
+	#define V_COMMIT_HASH "866902d9f8fda429846df74731f0d6547d55ba93"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44588,7 +44588,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("866902d");
+	return _S("cf7a81e");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60737,7 +60737,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("a4feff36f9697e279b0734c9790dacaaa261385b");
+	string vhash = _S("866902d9f8fda429846df74731f0d6547d55ba93");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
