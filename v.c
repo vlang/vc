@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "cf7a81ebc3cc74612b151edbfa2781e2b29b65d6"
+#define V_COMMIT_HASH "d139499c2e0a2ef16ea93cce1da1ff446ad9131f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "866902d9f8fda429846df74731f0d6547d55ba93"
+	#define V_COMMIT_HASH "cf7a81ebc3cc74612b151edbfa2781e2b29b65d6"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44588,7 +44588,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("cf7a81e");
+	return _S("d139499");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60737,7 +60737,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("866902d9f8fda429846df74731f0d6547d55ba93");
+	string vhash = _S("cf7a81ebc3cc74612b151edbfa2781e2b29b65d6");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -63982,10 +63982,13 @@ VV_LOC _result_string v__util__mod_path_to_full_name_with_options(v__pref__Prefe
 		string abs_pref_path = (os__is_abs_path(pref_->path) ? (pref_->path) : (os__join_path_single(os__getwd(), pref_->path)));
 		string rel_mod_path = builtin__string_replace(path, builtin__string__plus(builtin__string_all_before_last(abs_pref_path, _const_os__path_separator), _S("/")), _S(""));
 		if (!builtin__string__eq(rel_mod_path, path)) {
-			_result_string _t13;
-			builtin___result_ok(&(string[]) { v__util__normalize_base_url_mod_name(builtin__string_replace(rel_mod_path, _const_os__path_separator, _S(".")), path) }, (_result*)(&_t13), sizeof(string));
-			 
-			return _t13;
+			string mod_full_name = v__util__normalize_base_url_mod_name(builtin__string_replace(rel_mod_path, _const_os__path_separator, _S(".")), path);
+			if (!v__util__module_name_has_empty_part(mod_full_name)) {
+				_result_string _t13;
+				builtin___result_ok(&(string[]) { mod_full_name }, (_result*)(&_t13), sizeof(string));
+				 
+				return _t13;
+			}
 		}
 	}
 	return (_result_string){ .is_error=true, .err=builtin___v_error(_S("module not found")), .data={E_STRUCT} };
@@ -68545,9 +68548,10 @@ VV_LOC void v__ast__Table_stringify_fn_after_name(v__ast__Table* t, v__ast__FnDe
 		} else {
 			string s = v__ast__Table_type_to_str(t, v__ast__Type_clear_flag(param_typ, v__ast__TypeFlag__shared_f));
 			if (param.is_mut) {
-				if (builtin__string_starts_with(s, _S("&")) && ((!v__ast__TypeSymbol_is_number(param_sym) && param_sym->kind != v__ast__Kind__bool) || node->language != v__ast__Language__v || (v__ast__Type_is_ptr(param_typ) && param_sym->kind == v__ast__Kind__struct))) {
+				bool parser_added_ref = param.orig_typ == 0 || v__ast__Type_nr_muls(param_typ) > v__ast__Type_nr_muls(param.orig_typ);
+				if (builtin__string_starts_with(s, _S("&")) && parser_added_ref && ((!v__ast__TypeSymbol_is_number(param_sym) && param_sym->kind != v__ast__Kind__bool) || node->language != v__ast__Language__v || (v__ast__Type_is_ptr(param_typ) && param_sym->kind == v__ast__Kind__struct))) {
 					s = builtin__string_substr(s, 1, 2147483647);
-				} else if (v__ast__Type_is_ptr(param_typ) && param_sym->kind == v__ast__Kind__struct && !builtin__string_contains(s, _S("["))) {
+				} else if (parser_added_ref && v__ast__Type_is_ptr(param_typ) && param_sym->kind == v__ast__Kind__struct && !builtin__string_contains(s, _S("["))) {
 					s = v__ast__Table_type_to_str(t, v__ast__Type_deref(v__ast__Type_clear_flag(param_typ, v__ast__TypeFlag__shared_f)));
 				}
 			}
@@ -68737,7 +68741,7 @@ string v__ast__Expr_str(v__ast__Expr x) {
 	if (str_calls > 300) {
 		#if defined(CUSTOM_DEFINE_panic_on_deeply_nested_expr_str_calls)
 		{
-			builtin__eprintln(builtin__string_plus_many(5, _MOV((string[5]){_S("/home/runner/work/v/v/vlib/v/ast/str.v:451, ast.Expr{}.str"), _S(": too many nested Expr.str() calls: "), builtin__i64_str(str_calls), _S(", expr type: "), builtin__tos3(v_typeof_sumtype_v__ast__Expr( (x)._typ ))})));
+			builtin__eprintln(builtin__string_plus_many(5, _MOV((string[5]){_S("/home/runner/work/v/v/vlib/v/ast/str.v:460, ast.Expr{}.str"), _S(": too many nested Expr.str() calls: "), builtin__i64_str(str_calls), _S(", expr type: "), builtin__tos3(v_typeof_sumtype_v__ast__Expr( (x)._typ ))})));
 			builtin___v_exit(1);
 			VUNREACHABLE();
 		}
@@ -145324,7 +145328,9 @@ VV_LOC void v__gen__c__Gen_spawn_and_go_expr(v__gen__c__Gen* g, v__ast__SpawnExp
 		v__ast__CallArg arg = ((v__ast__CallArg*)expr.args.data)[i];
 		string arg_field = builtin__string_plus_many(4, _MOV((string[4]){arg_tmp_var, dot, _S("arg"), builtin__int_str(i + 1)}));
 		v__ast__Type arg_type = v__gen__c__Gen_unwrap_generic(g, v__gen__c__Gen_recheck_concrete_type(g, arg.typ));
-		if (!v__ast__Type_is_ptr(arg_type) && !v__ast__Type_has_option_or_result(arg_type) && v__ast__Table_final_sym(g->table, arg_type)->kind == v__ast__Kind__array_fixed) {
+		v__ast__Type expected_type = (i < expr.expected_arg_types.len ? (v__gen__c__Gen_unwrap_generic(g, (*(v__ast__Type*)builtin__array_get(expr.expected_arg_types, i)))) : (arg_type));
+		bool coerce_to_option = v__ast__Type_has_flag(expected_type, v__ast__TypeFlag__option) && !v__ast__Type_has_flag(arg_type, v__ast__TypeFlag__option);
+		if (!coerce_to_option && !v__ast__Type_is_ptr(arg_type) && !v__ast__Type_has_option_or_result(arg_type) && v__ast__Table_final_sym(g->table, arg_type)->kind == v__ast__Kind__array_fixed) {
 			{
 				v__gen__c__Gen_write(g, _S("memcpy("));
 				v__gen__c__Gen_write(g, arg_field);
@@ -145337,7 +145343,9 @@ VV_LOC void v__gen__c__Gen_spawn_and_go_expr(v__gen__c__Gen* g, v__ast__SpawnExp
 				v__gen__c__Gen_write(g, arg_field);
 				v__gen__c__Gen_write(g, _S(" = "));
 			}
-			if (v__ast__Type_has_option_or_result(arg_type)) {
+			if (coerce_to_option) {
+				v__gen__c__Gen_expr_with_opt(g, arg.expr, arg_type, expected_type);
+			} else if (v__ast__Type_has_option_or_result(arg_type)) {
 				bool old_inside_opt_or_res = g->inside_opt_or_res;
 				g->inside_opt_or_res = true;
 				v__gen__c__Gen_expr(g, arg.expr);
@@ -145662,8 +145670,15 @@ VV_LOC void v__gen__c__Gen_spawn_and_go_expr(v__gen__c__Gen* g, v__ast__SpawnExp
 				string sig = v__gen__c__Gen_fn_var_signature(g, arg_typ, (*arg_sym->info._v__ast__FnType).func.return_type,_t52, builtin__string_plus_many(2, _MOV((string[2]){_S("arg"), builtin__int_str(i + 1)})));
 				strings__Builder_writeln(&g->type_definitions, builtin__string_plus_many(3, _MOV((string[3]){_S("\t"), sig, _S(";")})));
 			} else {
-				v__gen__c__Gen_mark_spawn_arg_option_or_result_type(g, arg_typ);
-				string styp = v__gen__c__Gen_styp(g, arg_typ);
+				v__ast__Type field_typ = arg_typ;
+				if (i < expr.expected_arg_types.len) {
+					v__ast__Type expected_typ = v__gen__c__Gen_unwrap_generic(g, (*(v__ast__Type*)builtin__array_get(expr.expected_arg_types, i)));
+					if (v__ast__Type_has_flag(expected_typ, v__ast__TypeFlag__option) && !v__ast__Type_has_flag(arg_typ, v__ast__TypeFlag__option)) {
+						field_typ = expected_typ;
+					}
+				}
+				v__gen__c__Gen_mark_spawn_arg_option_or_result_type(g, field_typ);
+				string styp = v__gen__c__Gen_styp(g, field_typ);
 				strings__Builder_writeln(&g->type_definitions, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), styp, _S(" arg"), builtin__int_str(i + 1), _S(";")})));
 			}
 		}
