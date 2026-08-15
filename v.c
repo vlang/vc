@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "d139499c2e0a2ef16ea93cce1da1ff446ad9131f"
+#define V_COMMIT_HASH "1d0d86dd855d639539602f604e3d8f534a057707"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "cf7a81ebc3cc74612b151edbfa2781e2b29b65d6"
+	#define V_COMMIT_HASH "d139499c2e0a2ef16ea93cce1da1ff446ad9131f"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44588,7 +44588,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("d139499");
+	return _S("1d0d86d");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60737,7 +60737,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("cf7a81ebc3cc74612b151edbfa2781e2b29b65d6");
+	string vhash = _S("d139499c2e0a2ef16ea93cce1da1ff446ad9131f");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -64706,7 +64706,7 @@ VNORETURN void v__util__launch_tool(bool is_verbose, string tool_name, Array_str
 		}
 		string compilation_command = builtin__string_plus_many(2, _MOV((string[2]){os__quoted_path(vexe), _S(" ")}));
 		if (_SLIT_EQ(tool_name.str, tool_name.len, "vself") || _SLIT_EQ(tool_name.str, tool_name.len, "vup") || _SLIT_EQ(tool_name.str, tool_name.len, "vdoctor") || _SLIT_EQ(tool_name.str, tool_name.len, "vsymlink")) {
-			compilation_command = builtin__string__plus(compilation_command, _S(" -g "));
+			compilation_command = builtin__string__plus(compilation_command, _S(" -g -gc none "));
 		}
 		if (_SLIT_EQ(tool_name.str, tool_name.len, "vfmt")) {
 			compilation_command = builtin__string__plus(compilation_command, _S(" -d vfmt "));
@@ -64916,9 +64916,9 @@ string v__util__path_of_executable(string path) {
 }
 _result_string v__util__cached_read_source_file(string path) {
 	static v__util__SourceCache* cache;
-	static bool _vstatic_init_16115;
-	if (!_vstatic_init_16115) {
-		_vstatic_init_16115 = true;
+	static bool _vstatic_init_16411;
+	if (!_vstatic_init_16411) {
+		_vstatic_init_16411 = true;
 		cache = ((v__util__SourceCache*)(((void*)0)));
 	}
 	if (cache == ((void*)0)) {
