@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "41972ab6b907b1b28dc872387244269320e9e371"
+#define V_COMMIT_HASH "701eab35c19ee14aa5526da682cd4b28e8c9dd75"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e5f364c5746c9dba11167a80c0bda3e899406941"
+	#define V_COMMIT_HASH "41972ab6b907b1b28dc872387244269320e9e371"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -43544,6 +43544,9 @@ void builtin__array_free(array* a) {
 		return;
 	}
 	#endif
+	if (builtin__ArrayFlags_has(&a->flags, ArrayFlags__is_slice)) {
+		return;
+	}
 	if (builtin__ArrayFlags_has(&a->flags, ArrayFlags__nofree)) {
 		return;
 	}
@@ -44590,7 +44593,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("41972ab");
+	return _S("701eab3");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60739,7 +60742,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("e5f364c5746c9dba11167a80c0bda3e899406941");
+	string vhash = _S("41972ab6b907b1b28dc872387244269320e9e371");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -222538,7 +222541,7 @@ VV_LOC bool main__v3_has_v1_only_preferences(v__pref__Preferences* prefs) {
 	if ( _t1 ||_t5 || !prefs->relaxed_gcc14) {
 		return true;
 	}
-	bool _t9 = (prefs->sanitize || prefs->is_livemain || prefs->is_liveshared || prefs->is_prof || prefs->profile_fns.len > 0 || prefs->output_cross_c || prefs->experimental || prefs->use_os_system_to_run || prefs->is_apk || prefs->json_errors || prefs->no_preludes || prefs->is_quiet || prefs->skip_warnings || prefs->skip_notes || prefs->fatal_errors || prefs->print_watched_files || prefs->dump_modules.len > 0 || prefs->dump_files.len > 0 || prefs->dump_defines.len > 0 || prefs->print_autofree_vars || prefs->is_vlines || prefs->warn_impure_v || prefs->trace_calls || prefs->trace_fns.len > 0 || prefs->test_runner.len > 0 || prefs->exclude.len > 0 || prefs->ldflags.len > 0 || prefs->nofloat || prefs->fast_math || prefs->compress || prefs->is_bare || prefs->no_closures || prefs->disable_explicit_mutability || prefs->assert_failure_mode != v__pref__AssertFailureMode__default || !builtin__fast_string_eq(prefs->macosx_version_min, _S("0")));
+	bool _t9 = (prefs->sanitize || prefs->is_livemain || prefs->is_liveshared || prefs->output_cross_c || prefs->experimental || prefs->use_os_system_to_run || prefs->is_apk || prefs->json_errors || prefs->no_preludes || prefs->is_quiet || prefs->skip_warnings || prefs->skip_notes || prefs->fatal_errors || prefs->print_watched_files || prefs->dump_modules.len > 0 || prefs->dump_files.len > 0 || prefs->dump_defines.len > 0 || prefs->print_autofree_vars || prefs->is_vlines || prefs->warn_impure_v || prefs->trace_calls || prefs->trace_fns.len > 0 || prefs->test_runner.len > 0 || prefs->exclude.len > 0 || prefs->ldflags.len > 0 || prefs->nofloat || prefs->fast_math || prefs->compress || prefs->is_bare || prefs->no_closures || prefs->disable_explicit_mutability || prefs->assert_failure_mode != v__pref__AssertFailureMode__default || !builtin__fast_string_eq(prefs->macosx_version_min, _S("0")));
 	bool _t10 = false;
 	if (!_t9) {
 		Array_string _t10_orig = prefs->build_options;
