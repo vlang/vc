@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "a0815790abe7f2cc3d0eedfde521b9587bfd9ce1"
+#define V_COMMIT_HASH "5ad2d1fc334ae419d1fb86883d5762637b27a420"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "702dbc6023cfa3a2b65da7515039d07477794282"
+	#define V_COMMIT_HASH "a0815790abe7f2cc3d0eedfde521b9587bfd9ce1"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -15087,6 +15087,7 @@ VV_LOC void main__invoke_help_and_exit(Array_string remaining);
 VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs, Array_string merged_args);
 VV_LOC bool main__autofree_args_require_standard_compiler(Array_string args, string command);
 VV_LOC Array_string main__v3_ownership_forwarded_args(v__pref__Preferences* prefs, Array_string merged_args);
+VV_LOC bool main__v3_args_have_ownership_define(Array_string args);
 VV_LOC bool main__autofree_requires_standard_compiler(v__pref__Preferences* prefs);
 VV_LOC bool main__v3_has_v1_only_preferences(v__pref__Preferences* prefs);
 VV_LOC bool main__ownership_delegation_is_requested(bool is_ownership, bool is_autofree, bool old_compiler, string host_os);
@@ -30087,7 +30088,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("a081579");
+	return _S("5ad2d1f");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -43028,7 +43029,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("702dbc6023cfa3a2b65da7515039d07477794282");
+	string vhash = _S("a0815790abe7f2cc3d0eedfde521b9587bfd9ce1");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -203072,7 +203073,23 @@ VV_LOC Array_string main__v3_ownership_forwarded_args(v__pref__Preferences* pref
 		}
 	}
 	Array_string ownership_args =_t1;
+	if (!main__v3_args_have_ownership_define(ownership_args)) {
+		builtin__array_prepend(&ownership_args, &(string[]){_S("ownership")});
+		builtin__array_prepend(&ownership_args, &(string[]){_S("-d")});
+	}
 	return ownership_args;
+}
+VV_LOC bool main__v3_args_have_ownership_define(Array_string args) {
+	for (int i = 0; i < args.len; ++i) {
+		string arg = ((string*)args.data)[i];
+		if (_SLIT_EQ(arg.str, arg.len, "-downership")) {
+			return true;
+		}
+		if (_SLIT_EQ(arg.str, arg.len, "-d") && i + 1 < args.len && builtin__string__eq((*(string*)builtin__array_get(args, i + 1)), _S("ownership"))) {
+			return true;
+		}
+	}
+	return false;
 }
 VV_LOC bool main__autofree_requires_standard_compiler(v__pref__Preferences* prefs) {
 	return main__v3_has_v1_only_preferences(prefs) || (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc);
