@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ceae374f1fac72ea58b635e17434bb37c4c8a590"
+#define V_COMMIT_HASH "9efaf9c9fc33f6a7b0e139a4ed723f2fcc86b1fd"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eaeabf540673346bc3dda402424a781f006dd736"
+	#define V_COMMIT_HASH "ceae374f1fac72ea58b635e17434bb37c4c8a590"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44611,7 +44611,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ceae374");
+	return _S("9efaf9c");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60760,7 +60760,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("eaeabf540673346bc3dda402424a781f006dd736");
+	string vhash = _S("ceae374f1fac72ea58b635e17434bb37c4c8a590");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -152111,27 +152111,47 @@ VV_LOC string v__pkgconfig__filter(Array_string libs, string prefix, string pref
 VV_LOC multi_return_ref_v__pkgconfig__MainOptions_bool v__pkgconfig__parse_options(flag__FlagParser* fp) {
 	v__pkgconfig__MainActionState _t1 = ((v__pkgconfig__MainActionState){.has_actions = 0,});
 	v__pkgconfig__MainActionState state = _t1;
+	bool description = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("description"), 'd', _S("show pkg module description"));
+	bool modversion = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("modversion"), 'V', _S("show version of module"));
+	bool help = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("help"), 'h', _S("show this help message"));
+	bool debug = flag__FlagParser_bool(fp, _S("debug"), 'D', false, _S("show debug information"), ((flag__FlagConfig){.val_desc = (string){.str=(byteptr)"", .is_lit=1},}));
+	bool listall = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("list-all"), 'p', _S("list all pkgmodules"));
+	bool exists = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("exists"), 'e', _S("return 0 if pkg exists"));
+	bool variables = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("print-variables"), 'P', _S("display variable names"));
+	bool __v_requires = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("print-requires"), 'r', _S("display requires of the module"));
+	string atleastver = v__pkgconfig__parse_action_string(fp, (voidptr)&state, _S("atleast-version"), 'a', _S("return 0 if pkg version is at least the given one"));
+	string atleastpc = v__pkgconfig__parse_action_string(fp, (voidptr)&state, _S("atleast-pkgconfig-version"), 'A', _S("return 0 if pkgconfig version is at least the given one"));
+	string exactversion = v__pkgconfig__parse_action_string(fp, (voidptr)&state, _S("exact-version"), ' ', _S("return 0 if pkg version is at least the given one"));
+	bool version_ = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("version"), 'v', _S("show version of this tool"));
+	bool cflags = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("cflags"), 'c', _S("output all pre-processor and compiler flags"));
+	bool cflags_only_path = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("cflags-only-I"), 'I', _S("show only -I flags from CFLAGS"));
+	bool cflags_only_other = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("cflags-only-other"), ' ', _S("show cflags without -I"));
+	bool stat1c = flag__FlagParser_bool(fp, _S("static"), 's', false, _S("show --libs for static linking"), ((flag__FlagConfig){.val_desc = (string){.str=(byteptr)"", .is_lit=1},}));
+	bool libs = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs"), 'l', _S("output all linker flags"));
+	bool libs_only_link = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs-only-l"), ' ', _S("show only -l from ldflags"));
+	bool libs_only_path = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs-only-L"), 'L', _S("show only -L from ldflags"));
+	bool libs_only_other = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs-only-other"), ' ', _S("show flags not containing -l or -L"));
 	v__pkgconfig__MainOptions* _t2 = (v__pkgconfig__MainOptions*)builtin___v_malloc(sizeof(v__pkgconfig__MainOptions) == 0 ? 1 : sizeof(v__pkgconfig__MainOptions));
-	_t2->description = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("description"), 'd', _S("show pkg module description"));
-	_t2->modversion = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("modversion"), 'V', _S("show version of module"));
-	_t2->help = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("help"), 'h', _S("show this help message"));
-	_t2->debug = flag__FlagParser_bool(fp, _S("debug"), 'D', false, _S("show debug information"), ((flag__FlagConfig){.val_desc = (string){.str=(byteptr)"", .is_lit=1},}));
-	_t2->listall = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("list-all"), 'p', _S("list all pkgmodules"));
-	_t2->exists = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("exists"), 'e', _S("return 0 if pkg exists"));
-	_t2->variables = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("print-variables"), 'P', _S("display variable names"));
-	_t2->__v_requires = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("print-requires"), 'r', _S("display requires of the module"));
-	_t2->atleast = v__pkgconfig__parse_action_string(fp, (voidptr)&state, _S("atleast-version"), 'a', _S("return 0 if pkg version is at least the given one"));
-	_t2->atleastpc = v__pkgconfig__parse_action_string(fp, (voidptr)&state, _S("atleast-pkgconfig-version"), 'A', _S("return 0 if pkgconfig version is at least the given one"));
-	_t2->exactversion = v__pkgconfig__parse_action_string(fp, (voidptr)&state, _S("exact-version"), ' ', _S("return 0 if pkg version is at least the given one"));
-	_t2->version = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("version"), 'v', _S("show version of this tool"));
-	_t2->cflags = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("cflags"), 'c', _S("output all pre-processor and compiler flags"));
-	_t2->cflags_only_path = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("cflags-only-I"), 'I', _S("show only -I flags from CFLAGS"));
-	_t2->cflags_only_other = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("cflags-only-other"), ' ', _S("show cflags without -I"));
-	_t2->stat1c = flag__FlagParser_bool(fp, _S("static"), 's', false, _S("show --libs for static linking"), ((flag__FlagConfig){.val_desc = (string){.str=(byteptr)"", .is_lit=1},}));
-	_t2->libs = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs"), 'l', _S("output all linker flags"));
-	_t2->libs_only_link = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs-only-l"), ' ', _S("show only -l from ldflags"));
-	_t2->libs_only_path = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs-only-L"), 'L', _S("show only -L from ldflags"));
-	_t2->libs_only_other = v__pkgconfig__parse_action_bool(fp, (voidptr)&state, _S("libs-only-other"), ' ', _S("show flags not containing -l or -L"));
+	_t2->description = description;
+	_t2->modversion = modversion;
+	_t2->help = help;
+	_t2->debug = debug;
+	_t2->listall = listall;
+	_t2->exists = exists;
+	_t2->variables = variables;
+	_t2->__v_requires = __v_requires;
+	_t2->atleast = atleastver;
+	_t2->atleastpc = atleastpc;
+	_t2->exactversion = exactversion;
+	_t2->version = version_;
+	_t2->cflags = cflags;
+	_t2->cflags_only_path = cflags_only_path;
+	_t2->cflags_only_other = cflags_only_other;
+	_t2->stat1c = stat1c;
+	_t2->libs = libs;
+	_t2->libs_only_link = libs_only_link;
+	_t2->libs_only_path = libs_only_path;
+	_t2->libs_only_other = libs_only_other;
 	_t2->args = fp->args;
 	v__pkgconfig__MainOptions* options = _t2;
 	return (multi_return_ref_v__pkgconfig__MainOptions_bool){.arg0=options, .arg1=state.has_actions};
