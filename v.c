@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "4420bbbd46aca97295a2a0acdb3cbd95b8a86777"
+#define V_COMMIT_HASH "4fbc55a5c42da57cf4404f9ed9f046901e361aea"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "14e5ba3c47ebb1c4c1e3bd477bda7ce504a58a3f"
+	#define V_COMMIT_HASH "4420bbbd46aca97295a2a0acdb3cbd95b8a86777"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -28257,6 +28257,7 @@ VV_LOC voidptr v__builder__cbuilder__build_parallel_o_cb(sync__pool__PoolProcess
 VV_LOC void v__builder__cbuilder__eprint_result_time(time__StopWatch sw, string label, string cmd, os__Result res);
 VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label);
 VV_LOC bool main__macos_v3_non_compilation_command(string command);
+VV_LOC bool main__is_macos_v3_compiler_bootstrap(string normalized_path);
 VV_LOC bool main__macos_v3_force_requested(string command, v__pref__Preferences* prefs);
 VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command);
 VV_LOC bool main__macos_v3_leading_option_consumes_value(string option);
@@ -44613,7 +44614,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("4420bbb");
+	return _S("4fbc55a");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60762,7 +60763,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("14e5ba3c47ebb1c4c1e3bd477bda7ce504a58a3f");
+	string vhash = _S("4420bbbd46aca97295a2a0acdb3cbd95b8a86777");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -222354,6 +222355,16 @@ VV_LOC void v__builder__cbuilder__eprint_time(time__StopWatch sw, string label) 
 VV_LOC bool main__macos_v3_non_compilation_command(string command) {
 	return (_SLIT_EQ(command.str, command.len, "build-module") || _SLIT_EQ(command.str, command.len, "crun") || _SLIT_EQ(command.str, command.len, "help") || _SLIT_EQ(command.str, command.len, "version") || _SLIT_EQ(command.str, command.len, "new") || _SLIT_EQ(command.str, command.len, "init") || _SLIT_EQ(command.str, command.len, "install") || _SLIT_EQ(command.str, command.len, "link") || _SLIT_EQ(command.str, command.len, "list") || _SLIT_EQ(command.str, command.len, "outdated") || _SLIT_EQ(command.str, command.len, "remove") || _SLIT_EQ(command.str, command.len, "search") || _SLIT_EQ(command.str, command.len, "show") || _SLIT_EQ(command.str, command.len, "unlink") || _SLIT_EQ(command.str, command.len, "update") || _SLIT_EQ(command.str, command.len, "upgrade") || _SLIT_EQ(command.str, command.len, "vlib-docs") || _SLIT_EQ(command.str, command.len, "interpret") || _SLIT_EQ(command.str, command.len, "get") || _SLIT_EQ(command.str, command.len, "translate"));
 }
+VV_LOC bool main__is_macos_v3_compiler_bootstrap(string normalized_path) {
+	if (_SLIT_EQ(normalized_path.str, normalized_path.len, "vlib/v3/v3.v") || builtin__string_ends_with(normalized_path, _S("/vlib/v3/v3.v"))) {
+		return true;
+	}
+	if (!builtin__string__eq(os__base(normalized_path), _S("v3.v"))) {
+		return false;
+	}
+	string real_path = builtin__string_trim_right(builtin__string_replace(os__real_path(normalized_path), _S("\\"), _S("/")), _S("/"));
+	return _SLIT_EQ(real_path.str, real_path.len, "vlib/v3/v3.v") || builtin__string_ends_with(real_path, _S("/vlib/v3/v3.v"));
+}
 VV_LOC bool main__macos_v3_force_requested(string command, v__pref__Preferences* prefs) {
 	if (!prefs->new_compiler || prefs->old_compiler) {
 		return false;
@@ -222368,7 +222379,7 @@ VV_LOC bool main__macos_v3_force_requested(string command, v__pref__Preferences*
 		return false;
 	}
 	string normalized_path = builtin__string_trim_right(builtin__string_replace(prefs->path, _S("\\"), _S("/")), _S("/"));
-	if (_SLIT_EQ(normalized_path.str, normalized_path.len, "cmd/v") || builtin__string_starts_with(normalized_path, _S("cmd/v/")) || builtin__string_contains(normalized_path, _S("/cmd/v/")) || builtin__string_ends_with(normalized_path, _S("/cmd/v")) || _SLIT_EQ(normalized_path.str, normalized_path.len, "vlib/v3/v3.v") || builtin__string_ends_with(normalized_path, _S("/vlib/v3/v3.v"))) {
+	if (_SLIT_EQ(normalized_path.str, normalized_path.len, "cmd/v") || builtin__string_starts_with(normalized_path, _S("cmd/v/")) || builtin__string_contains(normalized_path, _S("/cmd/v/")) || builtin__string_ends_with(normalized_path, _S("/cmd/v")) || main__is_macos_v3_compiler_bootstrap(normalized_path)) {
 		return false;
 	}
 	return (_SLIT_EQ(command.str, command.len, "run") || _SLIT_EQ(command.str, command.len, "build")) || prefs->is_script || os__is_dir(prefs->path) || builtin__string_ends_with(normalized_path, _S(".v")) || builtin__string_ends_with(normalized_path, _S(".vsh"));
