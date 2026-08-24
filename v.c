@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "587731bc7ff5f8a191ef3cb380e236ae59f89c97"
+#define V_COMMIT_HASH "accc667774d9572540d72dac79d554b85d234605"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "9a66e202f0e1b164620a2702c790d812e6abbe6f"
+	#define V_COMMIT_HASH "587731bc7ff5f8a191ef3cb380e236ae59f89c97"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44614,7 +44614,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("587731b");
+	return _S("accc667");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -60763,7 +60763,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("9a66e202f0e1b164620a2702c790d812e6abbe6f");
+	string vhash = _S("587731bc7ff5f8a191ef3cb380e236ae59f89c97");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -222763,7 +222763,7 @@ VNORETURN VV_LOC void main__launch_v3_ownership_compiler(bool is_verbose, Array_
 	
  ;
 	if (v__util__should_recompile_tool(vexe, v3_src_dir, tool_name, v3_exe)) {
-		string compilation_command = builtin__string_plus_many(5, _MOV((string[5]){os__quoted_path(vexe), _S(" -nocache -gc none -d ownership -o "), os__quoted_path(v3_exe), _S(" "), os__quoted_path(v3_main_source)}));
+		string compilation_command = builtin__string_plus_many(5, _MOV((string[5]){os__quoted_path(vexe), _S(" -no-parallel -nocache -gc none -d ownership -o "), os__quoted_path(v3_exe), _S(" "), os__quoted_path(v3_main_source)}));
 		if (is_verbose) {
 			builtin__println(builtin__string_plus_many(5, _MOV((string[5]){_S("Compiling "), tool_name, _S(" with: \""), compilation_command, _S("\"")})));
 		}
