@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482"
+#define V_COMMIT_HASH "80d11b0f84e1b0006522c2e58ad60f33abd49dea"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "974944705303c7eaadab83f31aff54b0612bf1d5"
+	#define V_COMMIT_HASH "eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44809,7 +44809,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("eb0b9f3");
+	return _S("80d11b0");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61147,7 +61147,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("974944705303c7eaadab83f31aff54b0612bf1d5");
+	string vhash = _S("eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -97943,7 +97943,7 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 				bool left_is_map_index = _t98;
 				g->is_assign_lhs = left_is_map_index;
 				string left_expr = v__gen__c__Gen_expr_string(g, *left);
-				if (!is_fixed_array_init && v__gen__c__assign_expr_unwraps_option_or_result(val)) {
+				if (!is_fixed_array_init) {
 					{
 						v__gen__c__Gen_write(g, _S("memcpy("));
 						v__gen__c__Gen_write(g, left_expr);
@@ -97952,24 +97952,18 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 					v__gen__c__Gen_expr(g, val);
 					v__gen__c__Gen_writeln(g, builtin__string_plus_many(3, _MOV((string[3]){_S(", sizeof("), arr_typ, _S("));")})));
 				} else {
-					string fixed_right_expr = _S("");
-					if (is_fixed_array_init) {
-						v__ast__ArrayInit right = *(v__ast__ArrayInit*)builtin____as_cast((val)._v__ast__ArrayInit, (val)._typ, 499);
-						string right_var = v__gen__c__Gen_new_tmp_var(g);
-						{
-							v__gen__c__Gen_write(g, arr_typ);
-							v__gen__c__Gen_write(g, _S(" "));
-							v__gen__c__Gen_write(g, right_var);
-							v__gen__c__Gen_write(g, _S(" = "));
-						}
-						v__gen__c__Gen_expr(g, v__ast__ArrayInit_to_sumtype_v__ast__Expr(&right, false));
-						v__gen__c__Gen_writeln(g, _S(";"));
-						fixed_right_expr = right_var;
-					} else {
-						fixed_right_expr = v__gen__c__Gen_expr_string(g, val);
+					v__ast__ArrayInit right = *(v__ast__ArrayInit*)builtin____as_cast((val)._v__ast__ArrayInit, (val)._typ, 499);
+					string right_var = v__gen__c__Gen_new_tmp_var(g);
+					{
+						v__gen__c__Gen_write(g, arr_typ);
+						v__gen__c__Gen_write(g, _S(" "));
+						v__gen__c__Gen_write(g, right_var);
+						v__gen__c__Gen_write(g, _S(" = "));
 					}
+					v__gen__c__Gen_expr(g, v__ast__ArrayInit_to_sumtype_v__ast__Expr(&right, false));
+					v__gen__c__Gen_writeln(g, _S(";"));
 					v__gen__c__Gen_writeln(g, _S(""));
-					v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_S("memcpy("), left_expr, _S(", "), fixed_right_expr, _S(", sizeof("), arr_typ, _S("));")})));
+					v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_S("memcpy("), left_expr, _S(", "), right_var, _S(", sizeof("), arr_typ, _S("));")})));
 				}
 				g->is_assign_lhs = old_is_assign_lhs;
 				g->is_assign_lhs = false;
@@ -98655,8 +98649,8 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 									v__gen__c__Gen_write(g, _S(", ("));
 								}
 							} else {
-								multi_return_string_string mr_75584 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
-								string ptrmap_o = mr_75584.arg0;
+								multi_return_string_string mr_75332 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
+								string ptrmap_o = mr_75332.arg0;
 								if (ptrmap_o.len > 0) {
 									{
 										v__gen__c__Gen_write(g, _S("HEAP_vgc("));
@@ -98870,9 +98864,9 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 									v__gen__c__Gen_write(g, _S(")"));
 								}
 							} else {
-								multi_return_string_string mr_80621 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
-								string ptrmap = mr_80621.arg0;
-								string nptrs = mr_80621.arg1;
+								multi_return_string_string mr_80369 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
+								string ptrmap = mr_80369.arg0;
+								string nptrs = mr_80369.arg1;
 								if (ptrmap.len > 0) {
 									{
 										v__gen__c__Gen_write(g, _S("), "));
@@ -99511,9 +99505,9 @@ VV_LOC void v__gen__c__Gen_gen_cross_tmp_variable(v__gen__c__Gen* g, Array_v__as
 	}
 	else if (val._typ == 284) {
 		if ((*val._v__ast__CallExpr).is_method) {
-			multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_97891 = v__gen__c__Gen_unwrap_receiver_type(g, (*val._v__ast__CallExpr));
-			v__ast__Type unwrapped_rec_type = mr_97891.arg0;
-			v__ast__TypeSymbol* typ_sym = mr_97891.arg1;
+			multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_97639 = v__gen__c__Gen_unwrap_receiver_type(g, (*val._v__ast__CallExpr));
+			v__ast__Type unwrapped_rec_type = mr_97639.arg0;
+			v__ast__TypeSymbol* typ_sym = mr_97639.arg1;
 			v__ast__Type left_type = v__gen__c__Gen_unwrap_generic(g, (*val._v__ast__CallExpr).left_type);
 			v__ast__TypeSymbol* left_sym = v__ast__Table_sym(g->table, left_type);
 			v__ast__TypeSymbol* final_left_sym = v__ast__Table_final_sym(g->table, left_type);
@@ -224176,8 +224170,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("974944705303c7eaadab83f31aff54b0612bf1d5") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("eb0b9f3") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("80d11b0") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
