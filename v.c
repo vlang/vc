@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "974944705303c7eaadab83f31aff54b0612bf1d5"
+#define V_COMMIT_HASH "eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "4db6ed3f664a284b38c3b65c46181e25be4a50fa"
+	#define V_COMMIT_HASH "974944705303c7eaadab83f31aff54b0612bf1d5"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -20059,6 +20059,7 @@ struct v__pref__Preferences {
 	v__pref__OS os;
 	v__pref__Backend backend;
 	bool backend_set_by_flag;
+	bool is_fastc;
 	v__pref__BuildMode build_mode;
 	v__pref__Arch arch;
 	v__pref__OutputMode output_mode;
@@ -28384,6 +28385,9 @@ VV_LOC bool main__macos_v3_force_requested(string command, v__pref__Preferences*
 VV_LOC bool main__macos_v3_explicit_compilation_requested(string command, v__pref__Preferences* prefs);
 VV_LOC bool main__macos_v3_explicit_autofree_is_unsupported(v__pref__Preferences* prefs);
 VV_LOC bool main__macos_v3_explicit_v1_preferences_are_unsupported(v__pref__Preferences* prefs);
+VV_LOC bool main__macos_v3_fastc_requested(v__pref__Preferences* prefs);
+VV_LOC _option_string main__macos_v3_fastc_incompatibility(v__pref__Preferences* prefs);
+VV_LOC bool main__macos_v3_test_ownership_uses_v1(v__pref__Preferences* prefs, Array_string args);
 VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command);
 VV_LOC bool main__macos_v3_leading_option_consumes_value(string option);
 VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, Array_string raw_args);
@@ -44805,7 +44809,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("9749447");
+	return _S("eb0b9f3");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61143,7 +61147,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("4db6ed3f664a284b38c3b65c46181e25be4a50fa");
+	string vhash = _S("974944705303c7eaadab83f31aff54b0612bf1d5");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -62202,7 +62206,7 @@ multi_return_ref_v__pref__Preferences_string v__pref__parse_args_for_launcher(Ar
 	return v__pref__parse_args_impl(known_external_commands, args, show_output, true);
 }
 VV_LOC multi_return_ref_v__pref__Preferences_string v__pref__parse_args_impl(Array_string known_external_commands, Array_string args, bool show_output, bool pass_external_command_args) {
-	v__pref__Preferences* res = (HEAP(v__pref__Preferences, ((v__pref__Preferences){.os = 0,.backend = 0,.backend_set_by_flag = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_glibc = 0,.is_musl = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.raw_vsh_tmp_prefix = (string){.str=(byteptr)"", .is_lit=1},.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.is_prod = 0,.no_prod_options = 0,.is_repl = 0,.is_eval_argument = 0,.is_run = 0,.is_crun = 0,.is_debug = 0,.is_vlines = 0,.is_stats = 0,.show_asserts = 0,.show_timings = 0,.is_fmt = 0,.is_vdoc = 0,.is_vet = 0,.is_template = 0,.is_ios_simulator = 0,.is_apk = 0,.is_help = 0,.is_quiet = 0,.is_cstrict = 0,.is_callstack = 0,.is_trace = 0,.is_coverage = 0,.is_check_return = 0,.is_check_overflow = 0,.eval_argument = (string){.str=(byteptr)"", .is_lit=1},.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.coverage_dir = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.profile_fns = builtin____new_array(0, 0, sizeof(string)),.translated = 0,.translated_go = true,.obfuscate_removed = 0,.hide_auto_str = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.show_unused_params = true,.old_compiler = 0,.new_compiler = 0,.capture_source_digests = 0,.c_error_bug_report_url = (string){.str=(byteptr)"", .is_lit=1},.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.dump_modules = (string){.str=(byteptr)"", .is_lit=1},.dump_files = (string){.str=(byteptr)"", .is_lit=1},.dump_defines = (string){.str=(byteptr)"", .is_lit=1},.generate_c_project = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.use_os_system_to_run = 0,.macosx_version_min = _S("0"),.cflags = (string){.str=(byteptr)"", .is_lit=1},.ldflags = (string){.str=(byteptr)"", .is_lit=1},.pkgconfig_mode = 0,.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_set_by_flag = 0,.ccompiler_type = 0,.cppcompiler = (string){.str=(byteptr)"", .is_lit=1},.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.no_bounds_checking = 0,.force_bounds_checking = 0,.autofree = 0,.print_autofree_vars = 0,.print_autofree_vars_in_fn = (string){.str=(byteptr)"", .is_lit=1},.trace_calls = 0,.trace_fns = builtin____new_array(0, 0, sizeof(string)),.compress = 0,.no_builtin = 0,.enable_globals = 0,.disable_explicit_mutability = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.no_closures = 0,.cmain = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = builtin____new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.vlib = (string){.str=(byteptr)"", .is_lit=1},.vmodules_paths = builtin____new_array(0, 0, sizeof(string)),.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.out_name_is_dir = 0,.path = (string){.str=(byteptr)"", .is_lit=1},.line_info = (string){.str=(byteptr)"", .is_lit=1},.linfo = ((v__pref__LineInfo){.method = 0,.path = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.vars_printed = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),}),.run_only = builtin____new_array(0, 0, sizeof(string)),.exclude = builtin____new_array(0, 0, sizeof(string)),.file_list = builtin____new_array(0, 0, sizeof(string)),.compile_defines = builtin____new_array(0, 0, sizeof(string)),.compile_defines_all = builtin____new_array(0, 0, sizeof(string)),.compile_values = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),.run_args = builtin____new_array(0, 0, sizeof(string)),.printfn_list = builtin____new_array(0, 0, sizeof(string)),.print_v_files = 0,.print_watched_files = 0,.skip_running = 0,.skip_warnings = 0,.skip_notes = 0,.warn_impure_v = 0,.warns_are_errors = 0,.notes_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.no_parallel = 0,.parallel_cc = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.use_color = 0,.cleanup_files = builtin____new_array(0, 0, sizeof(string)),.build_options = builtin____new_array(0, 0, sizeof(string)),.cache_manager = ((v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),}),.gc_mode = v__pref__GarbageCollectionMode__unknown,.gc_set_by_flag = 0,.assert_failure_mode = 0,.message_limit = 200,.nofloat = 0,.use_coroutines = 0,.fast_math = 0,.checker_match_exhaustive_cutoff_limit = 12,.thread_stack_size = 8388608,.thread_stack_size_set_by_flag = 0,.wasm_stack_top = 1024 + 16384,.wasm_validate = 0,.warn_about_allocs = 0,.div_by_zero_is_zero = 0,.relaxed_gcc14 = true,.subsystem = 0,.icon_path = (string){.str=(byteptr)"", .is_lit=1},.is_vls = 0,.json_errors = 0,.new_transform = 0,.new_generic_solver = 0,})));
+	v__pref__Preferences* res = (HEAP(v__pref__Preferences, ((v__pref__Preferences){.os = 0,.backend = 0,.backend_set_by_flag = 0,.is_fastc = 0,.build_mode = 0,.arch = 0,.output_mode = v__pref__OutputMode__stdout,.is_verbose = 0,.is_glibc = 0,.is_musl = 0,.is_test = 0,.is_script = 0,.is_vsh = 0,.raw_vsh_tmp_prefix = (string){.str=(byteptr)"", .is_lit=1},.is_livemain = 0,.is_liveshared = 0,.is_shared = 0,.is_o = 0,.is_prof = 0,.is_prod = 0,.no_prod_options = 0,.is_repl = 0,.is_eval_argument = 0,.is_run = 0,.is_crun = 0,.is_debug = 0,.is_vlines = 0,.is_stats = 0,.show_asserts = 0,.show_timings = 0,.is_fmt = 0,.is_vdoc = 0,.is_vet = 0,.is_template = 0,.is_ios_simulator = 0,.is_apk = 0,.is_help = 0,.is_quiet = 0,.is_cstrict = 0,.is_callstack = 0,.is_trace = 0,.is_coverage = 0,.is_check_return = 0,.is_check_overflow = 0,.eval_argument = (string){.str=(byteptr)"", .is_lit=1},.test_runner = (string){.str=(byteptr)"", .is_lit=1},.profile_file = (string){.str=(byteptr)"", .is_lit=1},.coverage_dir = (string){.str=(byteptr)"", .is_lit=1},.profile_no_inline = 0,.profile_fns = builtin____new_array(0, 0, sizeof(string)),.translated = 0,.translated_go = true,.obfuscate_removed = 0,.hide_auto_str = 0,.sanitize = 0,.sourcemap = 0,.sourcemap_inline = true,.sourcemap_src_included = 0,.show_cc = 0,.show_c_output = 0,.show_callgraph = 0,.show_depgraph = 0,.show_unused_params = true,.old_compiler = 0,.new_compiler = 0,.capture_source_digests = 0,.c_error_bug_report_url = (string){.str=(byteptr)"", .is_lit=1},.dump_c_flags = (string){.str=(byteptr)"", .is_lit=1},.dump_modules = (string){.str=(byteptr)"", .is_lit=1},.dump_files = (string){.str=(byteptr)"", .is_lit=1},.dump_defines = (string){.str=(byteptr)"", .is_lit=1},.generate_c_project = (string){.str=(byteptr)"", .is_lit=1},.use_cache = 0,.retry_compilation = true,.use_os_system_to_run = 0,.macosx_version_min = _S("0"),.cflags = (string){.str=(byteptr)"", .is_lit=1},.ldflags = (string){.str=(byteptr)"", .is_lit=1},.pkgconfig_mode = 0,.m64 = 0,.ccompiler = (string){.str=(byteptr)"", .is_lit=1},.ccompiler_set_by_flag = 0,.ccompiler_type = 0,.cppcompiler = (string){.str=(byteptr)"", .is_lit=1},.third_party_option = (string){.str=(byteptr)"", .is_lit=1},.building_v = 0,.no_bounds_checking = 0,.force_bounds_checking = 0,.autofree = 0,.print_autofree_vars = 0,.print_autofree_vars_in_fn = (string){.str=(byteptr)"", .is_lit=1},.trace_calls = 0,.trace_fns = builtin____new_array(0, 0, sizeof(string)),.compress = 0,.no_builtin = 0,.enable_globals = 0,.disable_explicit_mutability = 0,.is_bare = 0,.bare_builtin_dir = (string){.str=(byteptr)"", .is_lit=1},.no_preludes = 0,.custom_prelude = (string){.str=(byteptr)"", .is_lit=1},.no_closures = 0,.cmain = (string){.str=(byteptr)"", .is_lit=1},.lookup_path = builtin____new_array(0, 0, sizeof(string)),.output_cross_c = 0,.output_es5 = 0,.prealloc = 0,.vroot = (string){.str=(byteptr)"", .is_lit=1},.vlib = (string){.str=(byteptr)"", .is_lit=1},.vmodules_paths = builtin____new_array(0, 0, sizeof(string)),.out_name_c = (string){.str=(byteptr)"", .is_lit=1},.out_name = (string){.str=(byteptr)"", .is_lit=1},.out_name_is_dir = 0,.path = (string){.str=(byteptr)"", .is_lit=1},.line_info = (string){.str=(byteptr)"", .is_lit=1},.linfo = ((v__pref__LineInfo){.method = 0,.path = (string){.str=(byteptr)"", .is_lit=1},.line_nr = 0,.col = 0,.vars_printed = builtin__new_map(sizeof(string), sizeof(bool), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),}),.run_only = builtin____new_array(0, 0, sizeof(string)),.exclude = builtin____new_array(0, 0, sizeof(string)),.file_list = builtin____new_array(0, 0, sizeof(string)),.compile_defines = builtin____new_array(0, 0, sizeof(string)),.compile_defines_all = builtin____new_array(0, 0, sizeof(string)),.compile_values = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),.run_args = builtin____new_array(0, 0, sizeof(string)),.printfn_list = builtin____new_array(0, 0, sizeof(string)),.print_v_files = 0,.print_watched_files = 0,.skip_running = 0,.skip_warnings = 0,.skip_notes = 0,.warn_impure_v = 0,.warns_are_errors = 0,.notes_are_errors = 0,.fatal_errors = 0,.reuse_tmpc = 0,.no_rsp = 0,.no_std = 0,.no_parallel = 0,.parallel_cc = 0,.only_check_syntax = 0,.check_only = 0,.experimental = 0,.skip_unused = 0,.use_color = 0,.cleanup_files = builtin____new_array(0, 0, sizeof(string)),.build_options = builtin____new_array(0, 0, sizeof(string)),.cache_manager = ((v__vcache__CacheManager){.basepath = (string){.str=(byteptr)"", .is_lit=1},.original_vopts = (string){.str=(byteptr)"", .is_lit=1},.vopts = (string){.str=(byteptr)"", .is_lit=1},.k2cpath = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string),}),.gc_mode = v__pref__GarbageCollectionMode__unknown,.gc_set_by_flag = 0,.assert_failure_mode = 0,.message_limit = 200,.nofloat = 0,.use_coroutines = 0,.fast_math = 0,.checker_match_exhaustive_cutoff_limit = 12,.thread_stack_size = 8388608,.thread_stack_size_set_by_flag = 0,.wasm_stack_top = 1024 + 16384,.wasm_validate = 0,.warn_about_allocs = 0,.div_by_zero_is_zero = 0,.relaxed_gcc14 = true,.subsystem = 0,.icon_path = (string){.str=(byteptr)"", .is_lit=1},.is_vls = 0,.json_errors = 0,.new_transform = 0,.new_generic_solver = 0,})));
 	v__pref__detect_musl(res);
 	#if defined(TARGET_IS_64BIT)
 	{
@@ -62224,6 +62228,7 @@ VV_LOC multi_return_ref_v__pref__Preferences_string v__pref__parse_args_impl(Arr
 	string command = _S("");
 	int command_idx = 0;
 	bool build_vsh_source = false;
+	bool new_compiler_set_by_flag = false;
 	for (int i = 0; i < args.len; i++) {
 		string arg = (*(string*)builtin__array_get(args, i));
 		if (pass_external_command_args && command_idx < i && (Array_string_contains(known_external_commands, command))) {
@@ -62328,6 +62333,7 @@ VV_LOC multi_return_ref_v__pref__Preferences_string v__pref__parse_args_impl(Arr
 		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-new-compiler")) {
 			res->new_compiler = true;
+			new_compiler_set_by_flag = true;
 		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-checker-fixture") || _SLIT_EQ(arg.str, arg.len, "-macos-v3-compat-c99")) {
 		}
@@ -62613,9 +62619,9 @@ VV_LOC multi_return_ref_v__pref__Preferences_string v__pref__parse_args_impl(Arr
 			res->relaxed_gcc14 = false;
 		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-prof") || _SLIT_EQ(arg.str, arg.len, "-profile")) {
-			multi_return_string_bool mr_35222 = v__pref__optional_arg_value(args, i, command, known_external_commands, _S("-"));
-			string profile_file = mr_35222.arg0;
-			bool profile_file_consumed = mr_35222.arg1;
+			multi_return_string_bool mr_35383 = v__pref__optional_arg_value(args, i, command, known_external_commands, _S("-"));
+			string profile_file = mr_35383.arg0;
+			bool profile_file_consumed = mr_35383.arg1;
 			res->profile_file = profile_file;
 			res->is_prof = true;
 			builtin__array_push((array*)&res->build_options, _MOV((string[]){ builtin__string_plus_many(3, _MOV((string[3]){arg, _S(" "), res->profile_file})) }));
@@ -62940,10 +62946,11 @@ VV_LOC multi_return_ref_v__pref__Preferences_string v__pref__parse_args_impl(Arr
 		}
 		else if (_SLIT_EQ(arg.str, arg.len, "-b") || _SLIT_EQ(arg.str, arg.len, "-backend")) {
 			string sbackend = os__cmdline__option(builtin__array_slice(args, i, 2147483647), arg, _S("c"));
+			res->is_fastc = _SLIT_EQ(sbackend.str, sbackend.len, "fastc");
 			builtin__array_push((array*)&res->build_options, _MOV((string[]){ builtin__string_plus_many(3, _MOV((string[3]){arg, _S(" "), sbackend})) }));
 			_result_v__pref__Backend _t65 = v__pref__backend_from_string(sbackend);
 			if (_t65.is_error) {
-				v__pref__eprintln_exit(builtin__string_plus_many(3, _MOV((string[3]){_S("Unknown V backend: "), sbackend, _S("\nValid -backend choices are: c, js, js_node, js_browser, js_freestanding, wasm")})));
+				v__pref__eprintln_exit(builtin__string_plus_many(3, _MOV((string[3]){_S("Unknown V backend: "), sbackend, _S("\nValid -backend choices are: c, fastc, js, js_node, js_browser, js_freestanding, wasm")})));
 				VUNREACHABLE();
 			;
 			}
@@ -63256,6 +63263,7 @@ VV_LOC multi_return_ref_v__pref__Preferences_string v__pref__parse_args_impl(Arr
 		builtin__map_set(&m, &(string[]){x}, &(string[]) { _S("") });
 	}
 	res->build_options = builtin__map_keys(&m);
+	res->new_compiler = new_compiler_set_by_flag || res->is_fastc;
 	v__pref__Preferences_fill_with_defaults(res);
 	if ((res->generate_c_project).len != 0) {
 		res->use_cache = false;
@@ -63300,7 +63308,7 @@ inline VV_LOC bool v__pref__is_source_file(string path) {
 _result_v__pref__Backend v__pref__backend_from_string(string s) {
 	_result_v__pref__Backend _t2 = {0};
 	
-	if (_SLIT_EQ(s.str, s.len, "c")) {
+	if (_SLIT_EQ(s.str, s.len, "c") || _SLIT_EQ(s.str, s.len, "fastc")) {
 		builtin___result_ok(&(v__pref__Backend[]) { v__pref__Backend__c }, (_result*)(&_t2), sizeof(v__pref__Backend));
 	}
 	else if (_SLIT_EQ(s.str, s.len, "eval") || _SLIT_EQ(s.str, s.len, "interpret")) {
@@ -170632,7 +170640,7 @@ VV_LOC v__ast__Type v__checker__Checker_comptime_call(v__checker__Checker* c, v_
 	if (node->is_template) {
 		v__ast__FnDecl* save_cur_fn = c->table->cur_fn;
 		v__pref__Preferences *pref_ = HEAP(v__pref__Preferences, (*c->pref));
-		v__pref__Preferences* pref2 = (HEAP(v__pref__Preferences, ((v__pref__Preferences){.os = ((*(pref_))).os,.backend = ((*(pref_))).backend,.backend_set_by_flag = ((*(pref_))).backend_set_by_flag,.build_mode = ((*(pref_))).build_mode,.arch = ((*(pref_))).arch,.output_mode = ((*(pref_))).output_mode,.is_verbose = ((*(pref_))).is_verbose,.is_glibc = ((*(pref_))).is_glibc,.is_musl = ((*(pref_))).is_musl,.is_test = ((*(pref_))).is_test,.is_script = ((*(pref_))).is_script,.is_vsh = ((*(pref_))).is_vsh,.raw_vsh_tmp_prefix = ((*(pref_))).raw_vsh_tmp_prefix,.is_livemain = ((*(pref_))).is_livemain,.is_liveshared = ((*(pref_))).is_liveshared,.is_shared = ((*(pref_))).is_shared,.is_o = ((*(pref_))).is_o,.is_prof = ((*(pref_))).is_prof,.is_prod = ((*(pref_))).is_prod,.no_prod_options = ((*(pref_))).no_prod_options,.is_repl = ((*(pref_))).is_repl,.is_eval_argument = ((*(pref_))).is_eval_argument,.is_run = ((*(pref_))).is_run,.is_crun = ((*(pref_))).is_crun,.is_debug = ((*(pref_))).is_debug,.is_vlines = ((*(pref_))).is_vlines,.is_stats = ((*(pref_))).is_stats,.show_asserts = ((*(pref_))).show_asserts,.show_timings = ((*(pref_))).show_timings,.is_fmt = ((*(pref_))).is_fmt,.is_vdoc = ((*(pref_))).is_vdoc,.is_vet = ((*(pref_))).is_vet,.is_template = true,.is_ios_simulator = ((*(pref_))).is_ios_simulator,.is_apk = ((*(pref_))).is_apk,.is_help = ((*(pref_))).is_help,.is_quiet = ((*(pref_))).is_quiet,.is_cstrict = ((*(pref_))).is_cstrict,.is_callstack = ((*(pref_))).is_callstack,.is_trace = ((*(pref_))).is_trace,.is_coverage = ((*(pref_))).is_coverage,.is_check_return = ((*(pref_))).is_check_return,.is_check_overflow = ((*(pref_))).is_check_overflow,.eval_argument = ((*(pref_))).eval_argument,.test_runner = ((*(pref_))).test_runner,.profile_file = ((*(pref_))).profile_file,.coverage_dir = ((*(pref_))).coverage_dir,.profile_no_inline = ((*(pref_))).profile_no_inline,.profile_fns = ((*(pref_))).profile_fns,.translated = ((*(pref_))).translated,.translated_go = ((*(pref_))).translated_go,.obfuscate_removed = ((*(pref_))).obfuscate_removed,.hide_auto_str = ((*(pref_))).hide_auto_str,.sanitize = ((*(pref_))).sanitize,.sourcemap = ((*(pref_))).sourcemap,.sourcemap_inline = ((*(pref_))).sourcemap_inline,.sourcemap_src_included = ((*(pref_))).sourcemap_src_included,.show_cc = ((*(pref_))).show_cc,.show_c_output = ((*(pref_))).show_c_output,.show_callgraph = ((*(pref_))).show_callgraph,.show_depgraph = ((*(pref_))).show_depgraph,.show_unused_params = ((*(pref_))).show_unused_params,.old_compiler = ((*(pref_))).old_compiler,.new_compiler = ((*(pref_))).new_compiler,.capture_source_digests = ((*(pref_))).capture_source_digests,.c_error_bug_report_url = ((*(pref_))).c_error_bug_report_url,.dump_c_flags = ((*(pref_))).dump_c_flags,.dump_modules = ((*(pref_))).dump_modules,.dump_files = ((*(pref_))).dump_files,.dump_defines = ((*(pref_))).dump_defines,.generate_c_project = ((*(pref_))).generate_c_project,.use_cache = ((*(pref_))).use_cache,.retry_compilation = ((*(pref_))).retry_compilation,.use_os_system_to_run = ((*(pref_))).use_os_system_to_run,.macosx_version_min = ((*(pref_))).macosx_version_min,.cflags = ((*(pref_))).cflags,.ldflags = ((*(pref_))).ldflags,.pkgconfig_mode = ((*(pref_))).pkgconfig_mode,.m64 = ((*(pref_))).m64,.ccompiler = ((*(pref_))).ccompiler,.ccompiler_set_by_flag = ((*(pref_))).ccompiler_set_by_flag,.ccompiler_type = ((*(pref_))).ccompiler_type,.cppcompiler = ((*(pref_))).cppcompiler,.third_party_option = ((*(pref_))).third_party_option,.building_v = ((*(pref_))).building_v,.no_bounds_checking = ((*(pref_))).no_bounds_checking,.force_bounds_checking = ((*(pref_))).force_bounds_checking,.autofree = ((*(pref_))).autofree,.print_autofree_vars = ((*(pref_))).print_autofree_vars,.print_autofree_vars_in_fn = ((*(pref_))).print_autofree_vars_in_fn,.trace_calls = ((*(pref_))).trace_calls,.trace_fns = ((*(pref_))).trace_fns,.compress = ((*(pref_))).compress,.no_builtin = ((*(pref_))).no_builtin,.enable_globals = ((*(pref_))).enable_globals,.disable_explicit_mutability = ((*(pref_))).disable_explicit_mutability,.is_bare = ((*(pref_))).is_bare,.bare_builtin_dir = ((*(pref_))).bare_builtin_dir,.no_preludes = ((*(pref_))).no_preludes,.custom_prelude = ((*(pref_))).custom_prelude,.no_closures = ((*(pref_))).no_closures,.cmain = ((*(pref_))).cmain,.lookup_path = ((*(pref_))).lookup_path,.output_cross_c = ((*(pref_))).output_cross_c,.output_es5 = ((*(pref_))).output_es5,.prealloc = ((*(pref_))).prealloc,.vroot = ((*(pref_))).vroot,.vlib = ((*(pref_))).vlib,.vmodules_paths = ((*(pref_))).vmodules_paths,.out_name_c = ((*(pref_))).out_name_c,.out_name = ((*(pref_))).out_name,.out_name_is_dir = ((*(pref_))).out_name_is_dir,.path = ((*(pref_))).path,.line_info = ((*(pref_))).line_info,.linfo = ((*(pref_))).linfo,.run_only = ((*(pref_))).run_only,.exclude = ((*(pref_))).exclude,.file_list = ((*(pref_))).file_list,.compile_defines = ((*(pref_))).compile_defines,.compile_defines_all = ((*(pref_))).compile_defines_all,.compile_values = ((*(pref_))).compile_values,.run_args = ((*(pref_))).run_args,.printfn_list = ((*(pref_))).printfn_list,.print_v_files = ((*(pref_))).print_v_files,.print_watched_files = ((*(pref_))).print_watched_files,.skip_running = ((*(pref_))).skip_running,.skip_warnings = ((*(pref_))).skip_warnings,.skip_notes = ((*(pref_))).skip_notes,.warn_impure_v = ((*(pref_))).warn_impure_v,.warns_are_errors = ((*(pref_))).warns_are_errors,.notes_are_errors = ((*(pref_))).notes_are_errors,.fatal_errors = ((*(pref_))).fatal_errors,.reuse_tmpc = ((*(pref_))).reuse_tmpc,.no_rsp = ((*(pref_))).no_rsp,.no_std = ((*(pref_))).no_std,.no_parallel = ((*(pref_))).no_parallel,.parallel_cc = ((*(pref_))).parallel_cc,.only_check_syntax = ((*(pref_))).only_check_syntax,.check_only = ((*(pref_))).check_only,.experimental = ((*(pref_))).experimental,.skip_unused = ((*(pref_))).skip_unused,.use_color = ((*(pref_))).use_color,.cleanup_files = ((*(pref_))).cleanup_files,.build_options = ((*(pref_))).build_options,.cache_manager = ((*(pref_))).cache_manager,.gc_mode = ((*(pref_))).gc_mode,.gc_set_by_flag = ((*(pref_))).gc_set_by_flag,.assert_failure_mode = ((*(pref_))).assert_failure_mode,.message_limit = ((*(pref_))).message_limit,.nofloat = ((*(pref_))).nofloat,.use_coroutines = ((*(pref_))).use_coroutines,.fast_math = ((*(pref_))).fast_math,.checker_match_exhaustive_cutoff_limit = ((*(pref_))).checker_match_exhaustive_cutoff_limit,.thread_stack_size = ((*(pref_))).thread_stack_size,.thread_stack_size_set_by_flag = ((*(pref_))).thread_stack_size_set_by_flag,.wasm_stack_top = ((*(pref_))).wasm_stack_top,.wasm_validate = ((*(pref_))).wasm_validate,.warn_about_allocs = ((*(pref_))).warn_about_allocs,.div_by_zero_is_zero = ((*(pref_))).div_by_zero_is_zero,.relaxed_gcc14 = ((*(pref_))).relaxed_gcc14,.subsystem = ((*(pref_))).subsystem,.icon_path = ((*(pref_))).icon_path,.is_vls = ((*(pref_))).is_vls,.json_errors = ((*(pref_))).json_errors,.new_transform = ((*(pref_))).new_transform,.new_generic_solver = ((*(pref_))).new_generic_solver,})));
+		v__pref__Preferences* pref2 = (HEAP(v__pref__Preferences, ((v__pref__Preferences){.os = ((*(pref_))).os,.backend = ((*(pref_))).backend,.backend_set_by_flag = ((*(pref_))).backend_set_by_flag,.is_fastc = ((*(pref_))).is_fastc,.build_mode = ((*(pref_))).build_mode,.arch = ((*(pref_))).arch,.output_mode = ((*(pref_))).output_mode,.is_verbose = ((*(pref_))).is_verbose,.is_glibc = ((*(pref_))).is_glibc,.is_musl = ((*(pref_))).is_musl,.is_test = ((*(pref_))).is_test,.is_script = ((*(pref_))).is_script,.is_vsh = ((*(pref_))).is_vsh,.raw_vsh_tmp_prefix = ((*(pref_))).raw_vsh_tmp_prefix,.is_livemain = ((*(pref_))).is_livemain,.is_liveshared = ((*(pref_))).is_liveshared,.is_shared = ((*(pref_))).is_shared,.is_o = ((*(pref_))).is_o,.is_prof = ((*(pref_))).is_prof,.is_prod = ((*(pref_))).is_prod,.no_prod_options = ((*(pref_))).no_prod_options,.is_repl = ((*(pref_))).is_repl,.is_eval_argument = ((*(pref_))).is_eval_argument,.is_run = ((*(pref_))).is_run,.is_crun = ((*(pref_))).is_crun,.is_debug = ((*(pref_))).is_debug,.is_vlines = ((*(pref_))).is_vlines,.is_stats = ((*(pref_))).is_stats,.show_asserts = ((*(pref_))).show_asserts,.show_timings = ((*(pref_))).show_timings,.is_fmt = ((*(pref_))).is_fmt,.is_vdoc = ((*(pref_))).is_vdoc,.is_vet = ((*(pref_))).is_vet,.is_template = true,.is_ios_simulator = ((*(pref_))).is_ios_simulator,.is_apk = ((*(pref_))).is_apk,.is_help = ((*(pref_))).is_help,.is_quiet = ((*(pref_))).is_quiet,.is_cstrict = ((*(pref_))).is_cstrict,.is_callstack = ((*(pref_))).is_callstack,.is_trace = ((*(pref_))).is_trace,.is_coverage = ((*(pref_))).is_coverage,.is_check_return = ((*(pref_))).is_check_return,.is_check_overflow = ((*(pref_))).is_check_overflow,.eval_argument = ((*(pref_))).eval_argument,.test_runner = ((*(pref_))).test_runner,.profile_file = ((*(pref_))).profile_file,.coverage_dir = ((*(pref_))).coverage_dir,.profile_no_inline = ((*(pref_))).profile_no_inline,.profile_fns = ((*(pref_))).profile_fns,.translated = ((*(pref_))).translated,.translated_go = ((*(pref_))).translated_go,.obfuscate_removed = ((*(pref_))).obfuscate_removed,.hide_auto_str = ((*(pref_))).hide_auto_str,.sanitize = ((*(pref_))).sanitize,.sourcemap = ((*(pref_))).sourcemap,.sourcemap_inline = ((*(pref_))).sourcemap_inline,.sourcemap_src_included = ((*(pref_))).sourcemap_src_included,.show_cc = ((*(pref_))).show_cc,.show_c_output = ((*(pref_))).show_c_output,.show_callgraph = ((*(pref_))).show_callgraph,.show_depgraph = ((*(pref_))).show_depgraph,.show_unused_params = ((*(pref_))).show_unused_params,.old_compiler = ((*(pref_))).old_compiler,.new_compiler = ((*(pref_))).new_compiler,.capture_source_digests = ((*(pref_))).capture_source_digests,.c_error_bug_report_url = ((*(pref_))).c_error_bug_report_url,.dump_c_flags = ((*(pref_))).dump_c_flags,.dump_modules = ((*(pref_))).dump_modules,.dump_files = ((*(pref_))).dump_files,.dump_defines = ((*(pref_))).dump_defines,.generate_c_project = ((*(pref_))).generate_c_project,.use_cache = ((*(pref_))).use_cache,.retry_compilation = ((*(pref_))).retry_compilation,.use_os_system_to_run = ((*(pref_))).use_os_system_to_run,.macosx_version_min = ((*(pref_))).macosx_version_min,.cflags = ((*(pref_))).cflags,.ldflags = ((*(pref_))).ldflags,.pkgconfig_mode = ((*(pref_))).pkgconfig_mode,.m64 = ((*(pref_))).m64,.ccompiler = ((*(pref_))).ccompiler,.ccompiler_set_by_flag = ((*(pref_))).ccompiler_set_by_flag,.ccompiler_type = ((*(pref_))).ccompiler_type,.cppcompiler = ((*(pref_))).cppcompiler,.third_party_option = ((*(pref_))).third_party_option,.building_v = ((*(pref_))).building_v,.no_bounds_checking = ((*(pref_))).no_bounds_checking,.force_bounds_checking = ((*(pref_))).force_bounds_checking,.autofree = ((*(pref_))).autofree,.print_autofree_vars = ((*(pref_))).print_autofree_vars,.print_autofree_vars_in_fn = ((*(pref_))).print_autofree_vars_in_fn,.trace_calls = ((*(pref_))).trace_calls,.trace_fns = ((*(pref_))).trace_fns,.compress = ((*(pref_))).compress,.no_builtin = ((*(pref_))).no_builtin,.enable_globals = ((*(pref_))).enable_globals,.disable_explicit_mutability = ((*(pref_))).disable_explicit_mutability,.is_bare = ((*(pref_))).is_bare,.bare_builtin_dir = ((*(pref_))).bare_builtin_dir,.no_preludes = ((*(pref_))).no_preludes,.custom_prelude = ((*(pref_))).custom_prelude,.no_closures = ((*(pref_))).no_closures,.cmain = ((*(pref_))).cmain,.lookup_path = ((*(pref_))).lookup_path,.output_cross_c = ((*(pref_))).output_cross_c,.output_es5 = ((*(pref_))).output_es5,.prealloc = ((*(pref_))).prealloc,.vroot = ((*(pref_))).vroot,.vlib = ((*(pref_))).vlib,.vmodules_paths = ((*(pref_))).vmodules_paths,.out_name_c = ((*(pref_))).out_name_c,.out_name = ((*(pref_))).out_name,.out_name_is_dir = ((*(pref_))).out_name_is_dir,.path = ((*(pref_))).path,.line_info = ((*(pref_))).line_info,.linfo = ((*(pref_))).linfo,.run_only = ((*(pref_))).run_only,.exclude = ((*(pref_))).exclude,.file_list = ((*(pref_))).file_list,.compile_defines = ((*(pref_))).compile_defines,.compile_defines_all = ((*(pref_))).compile_defines_all,.compile_values = ((*(pref_))).compile_values,.run_args = ((*(pref_))).run_args,.printfn_list = ((*(pref_))).printfn_list,.print_v_files = ((*(pref_))).print_v_files,.print_watched_files = ((*(pref_))).print_watched_files,.skip_running = ((*(pref_))).skip_running,.skip_warnings = ((*(pref_))).skip_warnings,.skip_notes = ((*(pref_))).skip_notes,.warn_impure_v = ((*(pref_))).warn_impure_v,.warns_are_errors = ((*(pref_))).warns_are_errors,.notes_are_errors = ((*(pref_))).notes_are_errors,.fatal_errors = ((*(pref_))).fatal_errors,.reuse_tmpc = ((*(pref_))).reuse_tmpc,.no_rsp = ((*(pref_))).no_rsp,.no_std = ((*(pref_))).no_std,.no_parallel = ((*(pref_))).no_parallel,.parallel_cc = ((*(pref_))).parallel_cc,.only_check_syntax = ((*(pref_))).only_check_syntax,.check_only = ((*(pref_))).check_only,.experimental = ((*(pref_))).experimental,.skip_unused = ((*(pref_))).skip_unused,.use_color = ((*(pref_))).use_color,.cleanup_files = ((*(pref_))).cleanup_files,.build_options = ((*(pref_))).build_options,.cache_manager = ((*(pref_))).cache_manager,.gc_mode = ((*(pref_))).gc_mode,.gc_set_by_flag = ((*(pref_))).gc_set_by_flag,.assert_failure_mode = ((*(pref_))).assert_failure_mode,.message_limit = ((*(pref_))).message_limit,.nofloat = ((*(pref_))).nofloat,.use_coroutines = ((*(pref_))).use_coroutines,.fast_math = ((*(pref_))).fast_math,.checker_match_exhaustive_cutoff_limit = ((*(pref_))).checker_match_exhaustive_cutoff_limit,.thread_stack_size = ((*(pref_))).thread_stack_size,.thread_stack_size_set_by_flag = ((*(pref_))).thread_stack_size_set_by_flag,.wasm_stack_top = ((*(pref_))).wasm_stack_top,.wasm_validate = ((*(pref_))).wasm_validate,.warn_about_allocs = ((*(pref_))).warn_about_allocs,.div_by_zero_is_zero = ((*(pref_))).div_by_zero_is_zero,.relaxed_gcc14 = ((*(pref_))).relaxed_gcc14,.subsystem = ((*(pref_))).subsystem,.icon_path = ((*(pref_))).icon_path,.is_vls = ((*(pref_))).is_vls,.json_errors = ((*(pref_))).json_errors,.new_transform = ((*(pref_))).new_transform,.new_generic_solver = ((*(pref_))).new_generic_solver,})));
 		v__checker__Checker* c2 = v__checker__new_checker(c->table, pref2);
 		c2->comptime_call_pos = node->pos.pos;
 		Array_v__errors__Error template_parser_errors = builtin__array_clone_to_depth(&node->veb_tmpl.errors, 0);
@@ -205668,7 +205676,7 @@ v__ast__File* v__parser__parse_comptime(string tmpl_path, string text, v__ast__T
 	}
 	#endif
 	v__pref__Preferences *pref_copy = HEAP(v__pref__Preferences, (*pref_));
-	v__pref__Preferences* comptime_pref = (HEAP(v__pref__Preferences, ((v__pref__Preferences){.os = ((*(pref_copy))).os,.backend = ((*(pref_copy))).backend,.backend_set_by_flag = ((*(pref_copy))).backend_set_by_flag,.build_mode = ((*(pref_copy))).build_mode,.arch = ((*(pref_copy))).arch,.output_mode = v__pref__OutputMode__silent,.is_verbose = ((*(pref_copy))).is_verbose,.is_glibc = ((*(pref_copy))).is_glibc,.is_musl = ((*(pref_copy))).is_musl,.is_test = ((*(pref_copy))).is_test,.is_script = ((*(pref_copy))).is_script,.is_vsh = ((*(pref_copy))).is_vsh,.raw_vsh_tmp_prefix = ((*(pref_copy))).raw_vsh_tmp_prefix,.is_livemain = ((*(pref_copy))).is_livemain,.is_liveshared = ((*(pref_copy))).is_liveshared,.is_shared = ((*(pref_copy))).is_shared,.is_o = ((*(pref_copy))).is_o,.is_prof = ((*(pref_copy))).is_prof,.is_prod = ((*(pref_copy))).is_prod,.no_prod_options = ((*(pref_copy))).no_prod_options,.is_repl = ((*(pref_copy))).is_repl,.is_eval_argument = ((*(pref_copy))).is_eval_argument,.is_run = ((*(pref_copy))).is_run,.is_crun = ((*(pref_copy))).is_crun,.is_debug = ((*(pref_copy))).is_debug,.is_vlines = ((*(pref_copy))).is_vlines,.is_stats = ((*(pref_copy))).is_stats,.show_asserts = ((*(pref_copy))).show_asserts,.show_timings = ((*(pref_copy))).show_timings,.is_fmt = ((*(pref_copy))).is_fmt,.is_vdoc = ((*(pref_copy))).is_vdoc,.is_vet = ((*(pref_copy))).is_vet,.is_template = ((*(pref_copy))).is_template,.is_ios_simulator = ((*(pref_copy))).is_ios_simulator,.is_apk = ((*(pref_copy))).is_apk,.is_help = ((*(pref_copy))).is_help,.is_quiet = ((*(pref_copy))).is_quiet,.is_cstrict = ((*(pref_copy))).is_cstrict,.is_callstack = ((*(pref_copy))).is_callstack,.is_trace = ((*(pref_copy))).is_trace,.is_coverage = ((*(pref_copy))).is_coverage,.is_check_return = ((*(pref_copy))).is_check_return,.is_check_overflow = ((*(pref_copy))).is_check_overflow,.eval_argument = ((*(pref_copy))).eval_argument,.test_runner = ((*(pref_copy))).test_runner,.profile_file = ((*(pref_copy))).profile_file,.coverage_dir = ((*(pref_copy))).coverage_dir,.profile_no_inline = ((*(pref_copy))).profile_no_inline,.profile_fns = ((*(pref_copy))).profile_fns,.translated = ((*(pref_copy))).translated,.translated_go = ((*(pref_copy))).translated_go,.obfuscate_removed = ((*(pref_copy))).obfuscate_removed,.hide_auto_str = ((*(pref_copy))).hide_auto_str,.sanitize = ((*(pref_copy))).sanitize,.sourcemap = ((*(pref_copy))).sourcemap,.sourcemap_inline = ((*(pref_copy))).sourcemap_inline,.sourcemap_src_included = ((*(pref_copy))).sourcemap_src_included,.show_cc = ((*(pref_copy))).show_cc,.show_c_output = ((*(pref_copy))).show_c_output,.show_callgraph = ((*(pref_copy))).show_callgraph,.show_depgraph = ((*(pref_copy))).show_depgraph,.show_unused_params = ((*(pref_copy))).show_unused_params,.old_compiler = ((*(pref_copy))).old_compiler,.new_compiler = ((*(pref_copy))).new_compiler,.capture_source_digests = ((*(pref_copy))).capture_source_digests,.c_error_bug_report_url = ((*(pref_copy))).c_error_bug_report_url,.dump_c_flags = ((*(pref_copy))).dump_c_flags,.dump_modules = ((*(pref_copy))).dump_modules,.dump_files = ((*(pref_copy))).dump_files,.dump_defines = ((*(pref_copy))).dump_defines,.generate_c_project = ((*(pref_copy))).generate_c_project,.use_cache = ((*(pref_copy))).use_cache,.retry_compilation = ((*(pref_copy))).retry_compilation,.use_os_system_to_run = ((*(pref_copy))).use_os_system_to_run,.macosx_version_min = ((*(pref_copy))).macosx_version_min,.cflags = ((*(pref_copy))).cflags,.ldflags = ((*(pref_copy))).ldflags,.pkgconfig_mode = ((*(pref_copy))).pkgconfig_mode,.m64 = ((*(pref_copy))).m64,.ccompiler = ((*(pref_copy))).ccompiler,.ccompiler_set_by_flag = ((*(pref_copy))).ccompiler_set_by_flag,.ccompiler_type = ((*(pref_copy))).ccompiler_type,.cppcompiler = ((*(pref_copy))).cppcompiler,.third_party_option = ((*(pref_copy))).third_party_option,.building_v = ((*(pref_copy))).building_v,.no_bounds_checking = ((*(pref_copy))).no_bounds_checking,.force_bounds_checking = ((*(pref_copy))).force_bounds_checking,.autofree = ((*(pref_copy))).autofree,.print_autofree_vars = ((*(pref_copy))).print_autofree_vars,.print_autofree_vars_in_fn = ((*(pref_copy))).print_autofree_vars_in_fn,.trace_calls = ((*(pref_copy))).trace_calls,.trace_fns = ((*(pref_copy))).trace_fns,.compress = ((*(pref_copy))).compress,.no_builtin = ((*(pref_copy))).no_builtin,.enable_globals = ((*(pref_copy))).enable_globals,.disable_explicit_mutability = ((*(pref_copy))).disable_explicit_mutability,.is_bare = ((*(pref_copy))).is_bare,.bare_builtin_dir = ((*(pref_copy))).bare_builtin_dir,.no_preludes = ((*(pref_copy))).no_preludes,.custom_prelude = ((*(pref_copy))).custom_prelude,.no_closures = ((*(pref_copy))).no_closures,.cmain = ((*(pref_copy))).cmain,.lookup_path = ((*(pref_copy))).lookup_path,.output_cross_c = ((*(pref_copy))).output_cross_c,.output_es5 = ((*(pref_copy))).output_es5,.prealloc = ((*(pref_copy))).prealloc,.vroot = ((*(pref_copy))).vroot,.vlib = ((*(pref_copy))).vlib,.vmodules_paths = ((*(pref_copy))).vmodules_paths,.out_name_c = ((*(pref_copy))).out_name_c,.out_name = ((*(pref_copy))).out_name,.out_name_is_dir = ((*(pref_copy))).out_name_is_dir,.path = ((*(pref_copy))).path,.line_info = ((*(pref_copy))).line_info,.linfo = ((*(pref_copy))).linfo,.run_only = ((*(pref_copy))).run_only,.exclude = ((*(pref_copy))).exclude,.file_list = ((*(pref_copy))).file_list,.compile_defines = ((*(pref_copy))).compile_defines,.compile_defines_all = ((*(pref_copy))).compile_defines_all,.compile_values = ((*(pref_copy))).compile_values,.run_args = ((*(pref_copy))).run_args,.printfn_list = ((*(pref_copy))).printfn_list,.print_v_files = ((*(pref_copy))).print_v_files,.print_watched_files = ((*(pref_copy))).print_watched_files,.skip_running = ((*(pref_copy))).skip_running,.skip_warnings = ((*(pref_copy))).skip_warnings,.skip_notes = ((*(pref_copy))).skip_notes,.warn_impure_v = ((*(pref_copy))).warn_impure_v,.warns_are_errors = ((*(pref_copy))).warns_are_errors,.notes_are_errors = ((*(pref_copy))).notes_are_errors,.fatal_errors = ((*(pref_copy))).fatal_errors,.reuse_tmpc = ((*(pref_copy))).reuse_tmpc,.no_rsp = ((*(pref_copy))).no_rsp,.no_std = ((*(pref_copy))).no_std,.no_parallel = ((*(pref_copy))).no_parallel,.parallel_cc = ((*(pref_copy))).parallel_cc,.only_check_syntax = ((*(pref_copy))).only_check_syntax,.check_only = ((*(pref_copy))).check_only,.experimental = ((*(pref_copy))).experimental,.skip_unused = ((*(pref_copy))).skip_unused,.use_color = ((*(pref_copy))).use_color,.cleanup_files = ((*(pref_copy))).cleanup_files,.build_options = ((*(pref_copy))).build_options,.cache_manager = ((*(pref_copy))).cache_manager,.gc_mode = ((*(pref_copy))).gc_mode,.gc_set_by_flag = ((*(pref_copy))).gc_set_by_flag,.assert_failure_mode = ((*(pref_copy))).assert_failure_mode,.message_limit = ((*(pref_copy))).message_limit,.nofloat = ((*(pref_copy))).nofloat,.use_coroutines = ((*(pref_copy))).use_coroutines,.fast_math = ((*(pref_copy))).fast_math,.checker_match_exhaustive_cutoff_limit = ((*(pref_copy))).checker_match_exhaustive_cutoff_limit,.thread_stack_size = ((*(pref_copy))).thread_stack_size,.thread_stack_size_set_by_flag = ((*(pref_copy))).thread_stack_size_set_by_flag,.wasm_stack_top = ((*(pref_copy))).wasm_stack_top,.wasm_validate = ((*(pref_copy))).wasm_validate,.warn_about_allocs = ((*(pref_copy))).warn_about_allocs,.div_by_zero_is_zero = ((*(pref_copy))).div_by_zero_is_zero,.relaxed_gcc14 = ((*(pref_copy))).relaxed_gcc14,.subsystem = ((*(pref_copy))).subsystem,.icon_path = ((*(pref_copy))).icon_path,.is_vls = ((*(pref_copy))).is_vls,.json_errors = ((*(pref_copy))).json_errors,.new_transform = ((*(pref_copy))).new_transform,.new_generic_solver = ((*(pref_copy))).new_generic_solver,})));
+	v__pref__Preferences* comptime_pref = (HEAP(v__pref__Preferences, ((v__pref__Preferences){.os = ((*(pref_copy))).os,.backend = ((*(pref_copy))).backend,.backend_set_by_flag = ((*(pref_copy))).backend_set_by_flag,.is_fastc = ((*(pref_copy))).is_fastc,.build_mode = ((*(pref_copy))).build_mode,.arch = ((*(pref_copy))).arch,.output_mode = v__pref__OutputMode__silent,.is_verbose = ((*(pref_copy))).is_verbose,.is_glibc = ((*(pref_copy))).is_glibc,.is_musl = ((*(pref_copy))).is_musl,.is_test = ((*(pref_copy))).is_test,.is_script = ((*(pref_copy))).is_script,.is_vsh = ((*(pref_copy))).is_vsh,.raw_vsh_tmp_prefix = ((*(pref_copy))).raw_vsh_tmp_prefix,.is_livemain = ((*(pref_copy))).is_livemain,.is_liveshared = ((*(pref_copy))).is_liveshared,.is_shared = ((*(pref_copy))).is_shared,.is_o = ((*(pref_copy))).is_o,.is_prof = ((*(pref_copy))).is_prof,.is_prod = ((*(pref_copy))).is_prod,.no_prod_options = ((*(pref_copy))).no_prod_options,.is_repl = ((*(pref_copy))).is_repl,.is_eval_argument = ((*(pref_copy))).is_eval_argument,.is_run = ((*(pref_copy))).is_run,.is_crun = ((*(pref_copy))).is_crun,.is_debug = ((*(pref_copy))).is_debug,.is_vlines = ((*(pref_copy))).is_vlines,.is_stats = ((*(pref_copy))).is_stats,.show_asserts = ((*(pref_copy))).show_asserts,.show_timings = ((*(pref_copy))).show_timings,.is_fmt = ((*(pref_copy))).is_fmt,.is_vdoc = ((*(pref_copy))).is_vdoc,.is_vet = ((*(pref_copy))).is_vet,.is_template = ((*(pref_copy))).is_template,.is_ios_simulator = ((*(pref_copy))).is_ios_simulator,.is_apk = ((*(pref_copy))).is_apk,.is_help = ((*(pref_copy))).is_help,.is_quiet = ((*(pref_copy))).is_quiet,.is_cstrict = ((*(pref_copy))).is_cstrict,.is_callstack = ((*(pref_copy))).is_callstack,.is_trace = ((*(pref_copy))).is_trace,.is_coverage = ((*(pref_copy))).is_coverage,.is_check_return = ((*(pref_copy))).is_check_return,.is_check_overflow = ((*(pref_copy))).is_check_overflow,.eval_argument = ((*(pref_copy))).eval_argument,.test_runner = ((*(pref_copy))).test_runner,.profile_file = ((*(pref_copy))).profile_file,.coverage_dir = ((*(pref_copy))).coverage_dir,.profile_no_inline = ((*(pref_copy))).profile_no_inline,.profile_fns = ((*(pref_copy))).profile_fns,.translated = ((*(pref_copy))).translated,.translated_go = ((*(pref_copy))).translated_go,.obfuscate_removed = ((*(pref_copy))).obfuscate_removed,.hide_auto_str = ((*(pref_copy))).hide_auto_str,.sanitize = ((*(pref_copy))).sanitize,.sourcemap = ((*(pref_copy))).sourcemap,.sourcemap_inline = ((*(pref_copy))).sourcemap_inline,.sourcemap_src_included = ((*(pref_copy))).sourcemap_src_included,.show_cc = ((*(pref_copy))).show_cc,.show_c_output = ((*(pref_copy))).show_c_output,.show_callgraph = ((*(pref_copy))).show_callgraph,.show_depgraph = ((*(pref_copy))).show_depgraph,.show_unused_params = ((*(pref_copy))).show_unused_params,.old_compiler = ((*(pref_copy))).old_compiler,.new_compiler = ((*(pref_copy))).new_compiler,.capture_source_digests = ((*(pref_copy))).capture_source_digests,.c_error_bug_report_url = ((*(pref_copy))).c_error_bug_report_url,.dump_c_flags = ((*(pref_copy))).dump_c_flags,.dump_modules = ((*(pref_copy))).dump_modules,.dump_files = ((*(pref_copy))).dump_files,.dump_defines = ((*(pref_copy))).dump_defines,.generate_c_project = ((*(pref_copy))).generate_c_project,.use_cache = ((*(pref_copy))).use_cache,.retry_compilation = ((*(pref_copy))).retry_compilation,.use_os_system_to_run = ((*(pref_copy))).use_os_system_to_run,.macosx_version_min = ((*(pref_copy))).macosx_version_min,.cflags = ((*(pref_copy))).cflags,.ldflags = ((*(pref_copy))).ldflags,.pkgconfig_mode = ((*(pref_copy))).pkgconfig_mode,.m64 = ((*(pref_copy))).m64,.ccompiler = ((*(pref_copy))).ccompiler,.ccompiler_set_by_flag = ((*(pref_copy))).ccompiler_set_by_flag,.ccompiler_type = ((*(pref_copy))).ccompiler_type,.cppcompiler = ((*(pref_copy))).cppcompiler,.third_party_option = ((*(pref_copy))).third_party_option,.building_v = ((*(pref_copy))).building_v,.no_bounds_checking = ((*(pref_copy))).no_bounds_checking,.force_bounds_checking = ((*(pref_copy))).force_bounds_checking,.autofree = ((*(pref_copy))).autofree,.print_autofree_vars = ((*(pref_copy))).print_autofree_vars,.print_autofree_vars_in_fn = ((*(pref_copy))).print_autofree_vars_in_fn,.trace_calls = ((*(pref_copy))).trace_calls,.trace_fns = ((*(pref_copy))).trace_fns,.compress = ((*(pref_copy))).compress,.no_builtin = ((*(pref_copy))).no_builtin,.enable_globals = ((*(pref_copy))).enable_globals,.disable_explicit_mutability = ((*(pref_copy))).disable_explicit_mutability,.is_bare = ((*(pref_copy))).is_bare,.bare_builtin_dir = ((*(pref_copy))).bare_builtin_dir,.no_preludes = ((*(pref_copy))).no_preludes,.custom_prelude = ((*(pref_copy))).custom_prelude,.no_closures = ((*(pref_copy))).no_closures,.cmain = ((*(pref_copy))).cmain,.lookup_path = ((*(pref_copy))).lookup_path,.output_cross_c = ((*(pref_copy))).output_cross_c,.output_es5 = ((*(pref_copy))).output_es5,.prealloc = ((*(pref_copy))).prealloc,.vroot = ((*(pref_copy))).vroot,.vlib = ((*(pref_copy))).vlib,.vmodules_paths = ((*(pref_copy))).vmodules_paths,.out_name_c = ((*(pref_copy))).out_name_c,.out_name = ((*(pref_copy))).out_name,.out_name_is_dir = ((*(pref_copy))).out_name_is_dir,.path = ((*(pref_copy))).path,.line_info = ((*(pref_copy))).line_info,.linfo = ((*(pref_copy))).linfo,.run_only = ((*(pref_copy))).run_only,.exclude = ((*(pref_copy))).exclude,.file_list = ((*(pref_copy))).file_list,.compile_defines = ((*(pref_copy))).compile_defines,.compile_defines_all = ((*(pref_copy))).compile_defines_all,.compile_values = ((*(pref_copy))).compile_values,.run_args = ((*(pref_copy))).run_args,.printfn_list = ((*(pref_copy))).printfn_list,.print_v_files = ((*(pref_copy))).print_v_files,.print_watched_files = ((*(pref_copy))).print_watched_files,.skip_running = ((*(pref_copy))).skip_running,.skip_warnings = ((*(pref_copy))).skip_warnings,.skip_notes = ((*(pref_copy))).skip_notes,.warn_impure_v = ((*(pref_copy))).warn_impure_v,.warns_are_errors = ((*(pref_copy))).warns_are_errors,.notes_are_errors = ((*(pref_copy))).notes_are_errors,.fatal_errors = ((*(pref_copy))).fatal_errors,.reuse_tmpc = ((*(pref_copy))).reuse_tmpc,.no_rsp = ((*(pref_copy))).no_rsp,.no_std = ((*(pref_copy))).no_std,.no_parallel = ((*(pref_copy))).no_parallel,.parallel_cc = ((*(pref_copy))).parallel_cc,.only_check_syntax = ((*(pref_copy))).only_check_syntax,.check_only = ((*(pref_copy))).check_only,.experimental = ((*(pref_copy))).experimental,.skip_unused = ((*(pref_copy))).skip_unused,.use_color = ((*(pref_copy))).use_color,.cleanup_files = ((*(pref_copy))).cleanup_files,.build_options = ((*(pref_copy))).build_options,.cache_manager = ((*(pref_copy))).cache_manager,.gc_mode = ((*(pref_copy))).gc_mode,.gc_set_by_flag = ((*(pref_copy))).gc_set_by_flag,.assert_failure_mode = ((*(pref_copy))).assert_failure_mode,.message_limit = ((*(pref_copy))).message_limit,.nofloat = ((*(pref_copy))).nofloat,.use_coroutines = ((*(pref_copy))).use_coroutines,.fast_math = ((*(pref_copy))).fast_math,.checker_match_exhaustive_cutoff_limit = ((*(pref_copy))).checker_match_exhaustive_cutoff_limit,.thread_stack_size = ((*(pref_copy))).thread_stack_size,.thread_stack_size_set_by_flag = ((*(pref_copy))).thread_stack_size_set_by_flag,.wasm_stack_top = ((*(pref_copy))).wasm_stack_top,.wasm_validate = ((*(pref_copy))).wasm_validate,.warn_about_allocs = ((*(pref_copy))).warn_about_allocs,.div_by_zero_is_zero = ((*(pref_copy))).div_by_zero_is_zero,.relaxed_gcc14 = ((*(pref_copy))).relaxed_gcc14,.subsystem = ((*(pref_copy))).subsystem,.icon_path = ((*(pref_copy))).icon_path,.is_vls = ((*(pref_copy))).is_vls,.json_errors = ((*(pref_copy))).json_errors,.new_transform = ((*(pref_copy))).new_transform,.new_generic_solver = ((*(pref_copy))).new_generic_solver,})));
 	v__parser__Parser *_t2 = HEAP(v__parser__Parser, (((v__parser__Parser){
 		.pref = comptime_pref,
 		.file_base = (string){.str=(byteptr)"", .is_lit=1},
@@ -223509,7 +223517,7 @@ VV_LOC bool main__macos_v3_force_requested(string command, v__pref__Preferences*
 	if (main__v3_has_v1_only_preferences(prefs) || (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc)) {
 		return false;
 	}
-	if (prefs->autofree) {
+	if (prefs->autofree && !main__macos_v3_fastc_requested(prefs)) {
 		return false;
 	}
 	return true;
@@ -223519,19 +223527,44 @@ VV_LOC bool main__macos_v3_explicit_compilation_requested(string command, v__pre
 		return false;
 	}
 	string normalized_path = builtin__string_trim_right(builtin__string_replace(prefs->path, _S("\\"), _S("/")), _S("/"));
-	if (main__is_macos_v3_vroot_path(normalized_path, _S("cmd/v"), true) || main__is_macos_v3_vroot_path(normalized_path, _S("vlib/v3/v3.v"), false)) {
+	bool compiler_bootstrap = main__is_macos_v3_vroot_path(normalized_path, _S("cmd/v"), true) || main__is_macos_v3_vroot_path(normalized_path, _S("vlib/v3/v3.v"), false);
+	if (compiler_bootstrap && !main__macos_v3_fastc_requested(prefs)) {
 		return false;
 	}
 	return (_SLIT_EQ(command.str, command.len, "run") || _SLIT_EQ(command.str, command.len, "build")) || prefs->is_script || os__is_dir(prefs->path) || builtin__string_ends_with(normalized_path, _S(".v")) || builtin__string_ends_with(normalized_path, _S(".vsh")) || builtin__string_ends_with(normalized_path, _S(".vv"));
 }
 VV_LOC bool main__macos_v3_explicit_autofree_is_unsupported(v__pref__Preferences* prefs) {
-	return prefs->new_compiler && !prefs->old_compiler && prefs->autofree;
+	return prefs->new_compiler && !prefs->old_compiler && prefs->autofree && !main__macos_v3_fastc_requested(prefs);
 }
 VV_LOC bool main__macos_v3_explicit_v1_preferences_are_unsupported(v__pref__Preferences* prefs) {
 	if (!prefs->new_compiler || prefs->old_compiler) {
 		return false;
 	}
 	return main__v3_has_v1_only_preferences(prefs) || (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc);
+}
+VV_LOC bool main__macos_v3_fastc_requested(v__pref__Preferences* prefs) {
+	return prefs->is_fastc;
+}
+VV_LOC _option_string main__macos_v3_fastc_incompatibility(v__pref__Preferences* prefs) {
+	if (!prefs->is_fastc) {
+		return (_option_string){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+	}
+	if (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc) {
+		_option_string _t2;
+		builtin___option_ok(&(string[]) { _S("`-b fastc` only supports `-gc none`; remove the explicit collector or select `-b c`.") }, (_option*)(&_t2), sizeof(string));
+		 
+		return _t2;
+	}
+	if (main__v3_has_v1_only_preferences(prefs)) {
+		_option_string _t3;
+		builtin___option_ok(&(string[]) { _S("`-b fastc` cannot be combined with an option that is only supported by the V1 compiler.") }, (_option*)(&_t3), sizeof(string));
+		 
+		return _t3;
+	}
+	return (_option_string){ .state=2, .err=_const_none__, .data={E_STRUCT} };
+}
+VV_LOC bool main__macos_v3_test_ownership_uses_v1(v__pref__Preferences* prefs, Array_string args) {
+	return prefs->skip_running && !main__macos_v3_fastc_requested(prefs) && (prefs->autofree || (Array_string_contains(args, _S("-ownership"))));
 }
 VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command) {
 	int i = 0;
@@ -223643,6 +223676,13 @@ VV_LOC _option_main__MacosV3CErrorReport main__maybe_delegate_to_macos_v3(string
 		}
 		return main__take_macos_v3_report_content();
 	}
+	_option_string _t4 = {0};
+	if (_t4 = main__macos_v3_fastc_incompatibility(prefs), _t4.state == 0) {
+		string message = *(string*)_t4.data;
+		builtin__eprintln(message);
+		builtin___v_exit(1);
+		VUNREACHABLE();
+	}
 	if (explicit_compilation && main__macos_v3_explicit_autofree_is_unsupported(prefs)) {
 		builtin__eprintln(_S("`-new-compiler` cannot be combined with `-autofree`: the embedded V3 compiler does not include ownership support. Remove `-new-compiler` to use the established compiler."));
 		builtin___v_exit(1);
@@ -223655,6 +223695,10 @@ VV_LOC _option_main__MacosV3CErrorReport main__maybe_delegate_to_macos_v3(string
 	}
 	Array_string all_args = v__util__join_env_vflags_and_os_args();
 	Array_string forwarded_args = builtin__array_slice(all_args, 1, 2147483647);
+	if (main__macos_v3_test_ownership_uses_v1(prefs, forwarded_args)) {
+		main__trace_macos_v3_skip(_S("vtest ownership/autofree compilation"));
+		return main__take_macos_v3_report_content();
+	}
 	if (main__macos_v3_has_v1_only_leading_option(forwarded_args, command)) {
 		if (explicit_compilation) {
 			builtin__eprintln(_S("`-new-compiler` cannot be combined with a V1-only option; remove it or drop `-new-compiler`."));
@@ -223690,7 +223734,7 @@ VV_LOC bool main__is_macos_v3_relevant_command(string command, v__pref__Preferen
 	if (main__v3_has_v1_only_preferences(prefs) || (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc)) {
 		return false;
 	}
-	if (prefs->autofree) {
+	if (prefs->autofree && !main__macos_v3_fastc_requested(prefs)) {
 		return false;
 	}
 	if (_SLIT_EQ(command.str, command.len, "test")) {
@@ -223831,9 +223875,9 @@ VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_envi
 	}
 	
  	string fallback_payload = (*(string*)_t1.data);
-	multi_return_string_string mr_12290 = main__macos_v3_fallback_reason_and_stage(fallback_payload);
-	string fallback_reason = mr_12290.arg0;
-	string fallback_stage = mr_12290.arg1;
+	multi_return_string_string mr_12650 = main__macos_v3_fallback_reason_and_stage(fallback_payload);
+	string fallback_reason = mr_12650.arg0;
+	string fallback_stage = mr_12650.arg1;
 	_result_void _t2 = os__rm(fallback_file);
 	(void)_t2;
  ;
@@ -223880,9 +223924,9 @@ VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_envi
 			builtin__eprintln(_S("V3 C compilation failed; retrying with `-old-compiler`."));
 		}
 	} else if (_SLIT_EQ(fallback_reason.str, fallback_reason.len, "compiler_error")) {
-		multi_return_string_string mr_14580 = main__MacosV3InputSnapshot_current_report_source(input_snapshot);
-		string v_file = mr_14580.arg0;
-		string v_source = mr_14580.arg1;
+		multi_return_string_string mr_14940 = main__MacosV3InputSnapshot_current_report_source(input_snapshot);
+		string v_file = mr_14940.arg0;
+		string v_source = mr_14940.arg1;
 		_option_Map_string_string _t9 = main__read_macos_v3_source_digests(c_error_dir);
 		if (_t9.state != 0) {
 			*(Map_string_string*) _t9.data = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
@@ -223943,9 +223987,9 @@ VV_LOC _option_main__MacosV3CErrorReport main__take_macos_v3_report_content(void
 	return _t2;
 }
 VV_LOC void main__export_macos_v3_report_content(string kind, string ccompiler, string c_output, string c_file, Map_string_string v_sources, bool input_digests_complete) {
-	multi_return_string_string mr_17705 = v__builder__bounded_v3_fallback_source(kind, c_output, c_file, v_sources);
-	string v_file = mr_17705.arg0;
-	string v_source = mr_17705.arg1;
+	multi_return_string_string mr_18065 = v__builder__bounded_v3_fallback_source(kind, c_output, c_file, v_sources);
+	string v_file = mr_18065.arg0;
+	string v_source = mr_18065.arg1;
 	main__export_macos_v3_bounded_report_content(kind, ccompiler, c_output, v_file, v_source, v_sources, input_digests_complete);
 }
 VV_LOC void main__export_macos_v3_bounded_report_content(string kind, string ccompiler, string c_output, string v_file, string v_source, Map_string_string input_digests, bool input_digests_complete) {
@@ -223975,9 +224019,9 @@ VV_LOC main__MacosV3InputSnapshot main__macos_v3_compiler_error_input_snapshot(s
 	}
 	
  	string source = (*(string*)_t2.data);
-	multi_return_string_string mr_18943 = v__builder__bounded_v3_internal_fallback_source(v_path, source);
-	string v_file = mr_18943.arg0;
-	string v_source = mr_18943.arg1;
+	multi_return_string_string mr_19303 = v__builder__bounded_v3_internal_fallback_source(v_path, source);
+	string v_file = mr_19303.arg0;
+	string v_source = mr_19303.arg1;
 	return ((main__MacosV3InputSnapshot){.path = v_path,.digest = crypto__sha256__hexhash(source),.v_file = v_file,.v_source = v_source,});
 }
 VV_LOC multi_return_string_string main__MacosV3InputSnapshot_current_report_source(main__MacosV3InputSnapshot snapshot) {
@@ -224132,8 +224176,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("4db6ed3f664a284b38c3b65c46181e25be4a50fa") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("9749447") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("974944705303c7eaadab83f31aff54b0612bf1d5") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("eb0b9f3") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
@@ -224437,6 +224481,16 @@ VV_LOC void main__invoke_help_and_exit(Array_string remaining) {
 VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs, Array_string merged_args) {
 	bool is_ownership = (Array_string_contains(merged_args, _S("-ownership")));
 	bool is_autofree = prefs->autofree;
+	if (prefs->is_fastc) {
+		return;
+	}
+	#if defined(__APPLE__)
+	{
+		if (main__macos_v3_test_ownership_uses_v1(prefs, merged_args)) {
+			return;
+		}
+	}
+	#endif
 	if (!main__ownership_delegation_is_requested(is_ownership, is_autofree, prefs->old_compiler, prefs->new_compiler, os__user_os())) {
 		return;
 	}
@@ -224504,7 +224558,7 @@ VV_LOC bool main__autofree_requires_standard_compiler(v__pref__Preferences* pref
 	return main__v3_has_v1_only_preferences(prefs) || (prefs->gc_set_by_flag && prefs->gc_mode != v__pref__GarbageCollectionMode__no_gc);
 }
 VV_LOC bool main__v3_has_v1_only_preferences(v__pref__Preferences* prefs) {
-	bool _t2 = (prefs->cmain.len > 0 || prefs->custom_prelude.len > 0 || prefs->is_check_return || prefs->div_by_zero_is_zero || prefs->obfuscate_removed || prefs->no_std || prefs->is_vls || prefs->new_transform || prefs->show_asserts || prefs->show_callgraph || prefs->show_depgraph || prefs->hide_auto_str || prefs->no_rsp || prefs->message_limit != 200 || prefs->warn_about_allocs || prefs->c_error_bug_report_url.len > 0 || prefs->wasm_validate || prefs->wasm_stack_top != 17408 || prefs->line_info.len > 0 || prefs->use_coroutines || prefs->checker_match_exhaustive_cutoff_limit != 12 || (prefs->backend == v__pref__Backend__c && prefs->os != v__pref__OS___auto && prefs->os != v__pref__get_host_os()));
+	bool _t2 = (prefs->cmain.len > 0 || prefs->custom_prelude.len > 0 || prefs->is_check_return || prefs->div_by_zero_is_zero || prefs->obfuscate_removed || prefs->no_std || prefs->is_vls || prefs->new_transform || prefs->show_asserts || prefs->show_callgraph || prefs->show_depgraph || prefs->hide_auto_str || prefs->no_rsp || prefs->message_limit != 200 || prefs->warn_about_allocs || prefs->c_error_bug_report_url.len > 0 || prefs->wasm_validate || prefs->wasm_stack_top != 17408 || prefs->line_info.len > 0 || prefs->use_coroutines || prefs->checker_match_exhaustive_cutoff_limit != 12 || (prefs->backend == v__pref__Backend__c && !prefs->is_fastc && prefs->os != v__pref__OS___auto && prefs->os != v__pref__get_host_os()));
 	bool _t3 = false;
 	if (!_t2) {
 		Array_string _t3_orig = prefs->build_options;
