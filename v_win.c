@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "1a1d7f09d579dcdc8773a29384a10f2e02436591"
+#define V_COMMIT_HASH "46eaee4e91f0acb1ba9bd5dd76f023bbb617104d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "0ac38689d83b55958db43f0523b893d83a8d9f65"
+	#define V_COMMIT_HASH "1a1d7f09d579dcdc8773a29384a10f2e02436591"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -2030,7 +2030,7 @@ V_CLOSURE_STATIC_INLINE void v_closure_init_once(v_closure_init_fn init_fn) {
 // defined by module `builtin`
 #define v_set_unhandled_exception_filter(handler) SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)(handler))
 
-// inserted by module `builtin`, file: cfns.c.v:308:
+// inserted by module `builtin`, file: cfns.c.v:310:
 // TCC's bundled <windows.h> does not include <fileapi.h>, and TCC's own
 // <fileapi.h> cannot be used either because it pulls in <apiset.h>, a header
 // TCC does not ship. As a result GetFinalPathNameByHandleW has no declaration
@@ -26842,7 +26842,7 @@ inline VV_LOC u8* builtin__closure__closure_alloc_platform(void) {
 	return p;
 }
 inline VV_LOC void builtin__closure__closure_memory_protect_platform(voidptr ptr, isize size, builtin__closure__MemoryProtectAtrr attr) {
-	u32 tmp = ((u32)(0));
+	C__DWORD tmp = ((C__DWORD)(0));
 
 	if (attr == (builtin__closure__MemoryProtectAtrr__read_exec)) {
 		VirtualProtect(ptr, size, PAGE_EXECUTE_READ, &tmp);
@@ -30307,7 +30307,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("1a1d7f0");
+	return _S("46eaee4");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -43450,7 +43450,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("0ac38689d83b55958db43f0523b893d83a8d9f65");
+	string vhash = _S("1a1d7f09d579dcdc8773a29384a10f2e02436591");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -204721,8 +204721,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("0ac38689d83b55958db43f0523b893d83a8d9f65") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("1a1d7f0") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("1a1d7f09d579dcdc8773a29384a10f2e02436591") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("46eaee4") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
