@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "46eaee4e91f0acb1ba9bd5dd76f023bbb617104d"
+#define V_COMMIT_HASH "4db6ed3f664a284b38c3b65c46181e25be4a50fa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "1a1d7f09d579dcdc8773a29384a10f2e02436591"
+	#define V_COMMIT_HASH "46eaee4e91f0acb1ba9bd5dd76f023bbb617104d"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -555,6 +555,7 @@ typedef struct v__builder__TccMacosLibgcFileHash v__builder__TccMacosLibgcFileHa
 typedef struct v__builder__TccMacosLibgcTemporaryObject v__builder__TccMacosLibgcTemporaryObject;
 typedef struct v__builder__TccMacosLibgcPublicationResult v__builder__TccMacosLibgcPublicationResult;
 typedef struct main__MacosV3InputSnapshot main__MacosV3InputSnapshot;
+typedef struct main__MacosV3RetryState main__MacosV3RetryState;
 typedef struct main__MacosV3StagedReport main__MacosV3StagedReport;
 typedef struct main__MacosV3CErrorReport main__MacosV3CErrorReport;
 typedef struct __shared__Map_string_time__StopWatch __shared__Map_string_time__StopWatch;
@@ -5670,6 +5671,15 @@ struct strconv__BF_param {
 
 struct ToWideConfig {
 	bool from_ansi;
+};
+
+struct main__MacosV3RetryState {
+	Map_string_string caller_environment;
+	string fallback_file;
+	string c_error_dir;
+	Array_string retry_args;
+	bool is_verbose;
+	main__MacosV3InputSnapshot input_snapshot;
 };
 
 struct main__MacosV3CErrorReport {
@@ -15216,6 +15226,8 @@ VV_LOC bool main__macos_v3_explicit_v1_preferences_are_unsupported(v__pref__Pref
 VV_LOC bool main__macos_v3_has_v1_only_leading_option(Array_string args, string command);
 VV_LOC bool main__macos_v3_leading_option_consumes_value(string option);
 VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, Array_string raw_args);
+VV_LOC main__MacosV3RetryState* main__macos_v3_retry_state(main__MacosV3RetryState* state);
+VV_LOC void main__retry_macos_v3_at_exit(void);
 VV_LOC string main__macos_v3_compiler_error_message(string stage);
 VV_LOC multi_return_string_string main__macos_v3_fallback_reason_and_stage(string payload);
 VV_LOC _option_main__MacosV3CErrorReport main__maybe_delegate_to_macos_v3(string command, v__pref__Preferences* prefs);
@@ -15227,17 +15239,6 @@ VV_LOC string main__macos_v3_vroot_path_value(string relative);
 VV_LOC bool main__is_macos_v3_vroot_path(string normalized_path, string relative, bool include_children);
 VV_LOC bool main__is_macos_v3_internal_tool_bootstrap(string normalized_path, bool is_vchild);
 VV_LOC _option_main__MacosV3CErrorReport main__launch_macos_v3_compiler(v__pref__Preferences* prefs, Array_string raw_args);
-struct _V_anon_fn_a360a0234e36a406_45__10606_Ctx {
-	Map_string_string caller_environment;
-	string fallback_file;
-	string c_error_dir;
-	Array_string retry_args;
-	bool is_verbose;
-	main__MacosV3InputSnapshot input_snapshot;
-};
-
-struct _V_anon_fn_a360a0234e36a406_45__10606_Ctx;
-VV_LOC void anon_fn_a360a0234e36a406_45__10606(void);
 VV_LOC void main__replace_macos_v3_process_environment(Map_string_string environment);
 VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_environment, string fallback_file, string c_error_dir, Array_string retry_args, bool is_verbose, main__MacosV3InputSnapshot input_snapshot);
 VV_LOC _option_main__MacosV3CErrorReport main__take_macos_v3_report_content(void);
@@ -25237,11 +25238,6 @@ VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_314945(v_
 	return 0;
 }
 
-VV_LOC void anon_fn_a360a0234e36a406_45__10606(void) {
-	struct _V_anon_fn_a360a0234e36a406_45__10606_Ctx* _V_closure_ctx = g_closure.closure_get_data();
-	main__retry_macos_v3_with_old_compiler(_V_closure_ctx->caller_environment, _V_closure_ctx->fallback_file, _V_closure_ctx->c_error_dir, _V_closure_ctx->retry_args, _V_closure_ctx->is_verbose, _V_closure_ctx->input_snapshot);
-}
-
 VV_LOC void anon_fn_6a0ddf9f315b536f_47__2499(void) {
 	v__util__Timers* timers = main__timers_pointer(((void*)0));
 	v__util__Timers_show(timers, _S("TOTAL"));
@@ -30307,7 +30303,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("46eaee4");
+	return _S("4db6ed3");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -43450,7 +43446,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("1a1d7f09d579dcdc8773a29384a10f2e02436591");
+	string vhash = _S("46eaee4e91f0acb1ba9bd5dd76f023bbb617104d");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -204208,6 +204204,25 @@ VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, A
 	}
 	return forwarded_args;
 }
+VV_LOC main__MacosV3RetryState* main__macos_v3_retry_state(main__MacosV3RetryState* state) {
+	static main__MacosV3RetryState* retry_state;
+	static bool _vstatic_init_3151;
+	if (!_vstatic_init_3151) {
+		_vstatic_init_3151 = true;
+		retry_state = ((main__MacosV3RetryState*)(((void*)0)));
+	}
+	if (state != ((void*)0)) {
+		retry_state = state;
+	}
+	return retry_state;
+}
+VV_LOC void main__retry_macos_v3_at_exit(void) {
+	main__MacosV3RetryState* state = main__macos_v3_retry_state(((void*)0));
+	if (state == ((void*)0)) {
+		return;
+	}
+	main__retry_macos_v3_with_old_compiler(state->caller_environment, state->fallback_file, state->c_error_dir, state->retry_args, state->is_verbose, state->input_snapshot);
+}
 VV_LOC string main__macos_v3_compiler_error_message(string stage) {
 	string stage_suffix = ((stage).len == 0 ? (_S("")) : (builtin__string_plus_many(2, _MOV((string[2]){_S(" during "), stage}))));
 	return builtin__string_plus_many(3, _MOV((string[3]){_const_main__macos_v3_compiler_error_message_base, stage_suffix, _S(" (the stable V compiler built it successfully)")}));
@@ -204353,16 +204368,19 @@ VV_LOC _option_main__MacosV3CErrorReport main__launch_macos_v3_compiler(v__pref_
 	bool is_verbose = prefs->is_verbose;
 	main__MacosV3InputSnapshot input_snapshot = main__macos_v3_compiler_error_input_snapshot(prefs->path);
 	Array_string retry_args = builtin__array_clone_static_to_depth(builtin__array_slice(_const_os__args, 1, 2147483647), 1);
-	_result_void _t3 = builtin__at_exit((FnExitCb)	builtin__closure__closure_create_with_data(anon_fn_a360a0234e36a406_45__10606, (struct _V_anon_fn_a360a0234e36a406_45__10606_Ctx*) builtin__memdup(&(struct _V_anon_fn_a360a0234e36a406_45__10606_Ctx){.caller_environment = caller_environment,
-		.fallback_file = fallback_file,
-		.c_error_dir = c_error_dir,
-		.retry_args = retry_args,
-		.is_verbose = is_verbose,
-		.input_snapshot = input_snapshot,
-	}, sizeof(struct _V_anon_fn_a360a0234e36a406_45__10606_Ctx)), true));
-	if (_t3.is_error) {
-		IError _t4 = _t3.err;
-		IError err = _t4;
+	main__MacosV3RetryState* _t3 = (main__MacosV3RetryState*)builtin___v_malloc(sizeof(main__MacosV3RetryState) == 0 ? 1 : sizeof(main__MacosV3RetryState));
+	_t3->caller_environment = caller_environment;
+	_t3->fallback_file = fallback_file;
+	_t3->c_error_dir = c_error_dir;
+	_t3->retry_args = retry_args;
+	_t3->is_verbose = is_verbose;
+	_t3->input_snapshot = input_snapshot;
+	main__MacosV3RetryState* retry_state = _t3;
+	main__macos_v3_retry_state(retry_state);
+	_result_void _t4 = builtin__at_exit((FnExitCb)main__retry_macos_v3_at_exit);
+	if (_t4.is_error) {
+		IError _t5 = _t4.err;
+		IError err = _t5;
 		builtin__eprintln(builtin__str_intp(2, _MOV((StrIntpData[]){{_S("cannot register the V3 compatibility fallback: "), 0xfe10, {.d_s = builtin__IError_str(err)}, 0, 0, 0}, {_SLIT0, 0, { .d_c = 0 }, 0, 0, 0}})));
 		builtin___v_exit(1);
 		VUNREACHABLE();
@@ -204371,11 +204389,11 @@ VV_LOC _option_main__MacosV3CErrorReport main__launch_macos_v3_compiler(v__pref_
 	
  ;
 	main__macos_v3_driver_run(forwarded_args);
-	_result_void _t5 = os__rm(fallback_file);
-	(void)_t5;
- ;
-	_result_void _t6 = os__rmdir_all(c_error_dir);
+	_result_void _t6 = os__rm(fallback_file);
 	(void)_t6;
+ ;
+	_result_void _t7 = os__rmdir_all(c_error_dir);
+	(void)_t7;
  ;
 	builtin___v_exit(0);
 	VUNREACHABLE();
@@ -204420,9 +204438,9 @@ VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_envi
 	}
 	
  	string fallback_payload = (*(string*)_t1.data);
-	multi_return_string_string mr_11474 = main__macos_v3_fallback_reason_and_stage(fallback_payload);
-	string fallback_reason = mr_11474.arg0;
-	string fallback_stage = mr_11474.arg1;
+	multi_return_string_string mr_12290 = main__macos_v3_fallback_reason_and_stage(fallback_payload);
+	string fallback_reason = mr_12290.arg0;
+	string fallback_stage = mr_12290.arg1;
 	_result_void _t2 = os__rm(fallback_file);
 	(void)_t2;
  ;
@@ -204469,9 +204487,9 @@ VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_envi
 			builtin__eprintln(_S("V3 C compilation failed; retrying with `-old-compiler`."));
 		}
 	} else if (_SLIT_EQ(fallback_reason.str, fallback_reason.len, "compiler_error")) {
-		multi_return_string_string mr_13764 = main__MacosV3InputSnapshot_current_report_source(input_snapshot);
-		string v_file = mr_13764.arg0;
-		string v_source = mr_13764.arg1;
+		multi_return_string_string mr_14580 = main__MacosV3InputSnapshot_current_report_source(input_snapshot);
+		string v_file = mr_14580.arg0;
+		string v_source = mr_14580.arg1;
 		_option_Map_string_string _t9 = main__read_macos_v3_source_digests(c_error_dir);
 		if (_t9.state != 0) {
 			*(Map_string_string*) _t9.data = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
@@ -204532,9 +204550,9 @@ VV_LOC _option_main__MacosV3CErrorReport main__take_macos_v3_report_content(void
 	return _t2;
 }
 VV_LOC void main__export_macos_v3_report_content(string kind, string ccompiler, string c_output, string c_file, Map_string_string v_sources, bool input_digests_complete) {
-	multi_return_string_string mr_16889 = v__builder__bounded_v3_fallback_source(kind, c_output, c_file, v_sources);
-	string v_file = mr_16889.arg0;
-	string v_source = mr_16889.arg1;
+	multi_return_string_string mr_17705 = v__builder__bounded_v3_fallback_source(kind, c_output, c_file, v_sources);
+	string v_file = mr_17705.arg0;
+	string v_source = mr_17705.arg1;
 	main__export_macos_v3_bounded_report_content(kind, ccompiler, c_output, v_file, v_source, v_sources, input_digests_complete);
 }
 VV_LOC void main__export_macos_v3_bounded_report_content(string kind, string ccompiler, string c_output, string v_file, string v_source, Map_string_string input_digests, bool input_digests_complete) {
@@ -204564,9 +204582,9 @@ VV_LOC main__MacosV3InputSnapshot main__macos_v3_compiler_error_input_snapshot(s
 	}
 	
  	string source = (*(string*)_t2.data);
-	multi_return_string_string mr_18127 = v__builder__bounded_v3_internal_fallback_source(v_path, source);
-	string v_file = mr_18127.arg0;
-	string v_source = mr_18127.arg1;
+	multi_return_string_string mr_18943 = v__builder__bounded_v3_internal_fallback_source(v_path, source);
+	string v_file = mr_18943.arg0;
+	string v_source = mr_18943.arg1;
 	return ((main__MacosV3InputSnapshot){.path = v_path,.digest = crypto__sha256__hexhash(source),.v_file = v_file,.v_source = v_source,});
 }
 VV_LOC multi_return_string_string main__MacosV3InputSnapshot_current_report_source(main__MacosV3InputSnapshot snapshot) {
@@ -204721,8 +204739,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("1a1d7f09d579dcdc8773a29384a10f2e02436591") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("46eaee4") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("46eaee4e91f0acb1ba9bd5dd76f023bbb617104d") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("4db6ed3") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
@@ -206543,7 +206561,6 @@ if (_t4.state != 0) {
 }
 	_const_main__vvmrc_latest_aliases = builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("latest"), _S("current")}));
 	_const_main__vvmrc_stop_paths = builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S(".git"), _S(".hg"), _S(".svn"), _S(".v.mod.stop")}));
-	builtin__closure__closure_init();
 }
 void _vcleanup(void) {
 	static bool once = false; if (once) {return;} once = true;
