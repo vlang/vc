@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "e39fda827e3c8fea5457e60cd7d3537f6a79ed1d"
+#define V_COMMIT_HASH "91848c0cc63932401ca338a8a7f96e6fecf6537d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "80d11b0f84e1b0006522c2e58ad60f33abd49dea"
+	#define V_COMMIT_HASH "e39fda827e3c8fea5457e60cd7d3537f6a79ed1d"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44809,7 +44809,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("e39fda8");
+	return _S("91848c0");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61147,7 +61147,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("80d11b0f84e1b0006522c2e58ad60f33abd49dea");
+	string vhash = _S("e39fda827e3c8fea5457e60cd7d3537f6a79ed1d");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -224173,8 +224173,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("80d11b0f84e1b0006522c2e58ad60f33abd49dea") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("e39fda8") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("e39fda827e3c8fea5457e60cd7d3537f6a79ed1d") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("91848c0") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
