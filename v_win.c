@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "80d11b0f84e1b0006522c2e58ad60f33abd49dea"
+#define V_COMMIT_HASH "e39fda827e3c8fea5457e60cd7d3537f6a79ed1d"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482"
+	#define V_COMMIT_HASH "80d11b0f84e1b0006522c2e58ad60f33abd49dea"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -30307,7 +30307,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("80d11b0");
+	return _S("e39fda8");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -43450,7 +43450,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482");
+	string vhash = _S("80d11b0f84e1b0006522c2e58ad60f33abd49dea");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -204366,6 +204366,9 @@ VV_LOC bool main__is_macos_v3_v1_compiler_source(string normalized_path) {
 	if (_SLIT_EQ(relative.str, relative.len, "v3") || builtin__string_starts_with(relative, _S("v3/"))) {
 		return false;
 	}
+	if (builtin__string_starts_with(relative, _S("gen/c/testdata/")) && builtin__string_ends_with(relative, _S("_v3.v"))) {
+		return false;
+	}
 	return _SLIT_NE(relative.str, relative.len, "tests") && !builtin__string_starts_with(relative, _S("tests/")) && _SLIT_NE(relative.str, relative.len, "slow_tests") && !builtin__string_starts_with(relative, _S("slow_tests/"));
 }
 VV_LOC string main__macos_v3_vroot_path_value(string relative) {
@@ -204476,9 +204479,9 @@ VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_envi
 	}
 	
  	string fallback_payload = (*(string*)_t1.data);
-	multi_return_string_string mr_12650 = main__macos_v3_fallback_reason_and_stage(fallback_payload);
-	string fallback_reason = mr_12650.arg0;
-	string fallback_stage = mr_12650.arg1;
+	multi_return_string_string mr_12826 = main__macos_v3_fallback_reason_and_stage(fallback_payload);
+	string fallback_reason = mr_12826.arg0;
+	string fallback_stage = mr_12826.arg1;
 	_result_void _t2 = os__rm(fallback_file);
 	(void)_t2;
  ;
@@ -204525,9 +204528,9 @@ VV_LOC void main__retry_macos_v3_with_old_compiler(Map_string_string caller_envi
 			builtin__eprintln(_S("V3 C compilation failed; retrying with `-old-compiler`."));
 		}
 	} else if (_SLIT_EQ(fallback_reason.str, fallback_reason.len, "compiler_error")) {
-		multi_return_string_string mr_14940 = main__MacosV3InputSnapshot_current_report_source(input_snapshot);
-		string v_file = mr_14940.arg0;
-		string v_source = mr_14940.arg1;
+		multi_return_string_string mr_15116 = main__MacosV3InputSnapshot_current_report_source(input_snapshot);
+		string v_file = mr_15116.arg0;
+		string v_source = mr_15116.arg1;
 		_option_Map_string_string _t9 = main__read_macos_v3_source_digests(c_error_dir);
 		if (_t9.state != 0) {
 			*(Map_string_string*) _t9.data = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
@@ -204588,9 +204591,9 @@ VV_LOC _option_main__MacosV3CErrorReport main__take_macos_v3_report_content(void
 	return _t2;
 }
 VV_LOC void main__export_macos_v3_report_content(string kind, string ccompiler, string c_output, string c_file, Map_string_string v_sources, bool input_digests_complete) {
-	multi_return_string_string mr_18065 = v__builder__bounded_v3_fallback_source(kind, c_output, c_file, v_sources);
-	string v_file = mr_18065.arg0;
-	string v_source = mr_18065.arg1;
+	multi_return_string_string mr_18241 = v__builder__bounded_v3_fallback_source(kind, c_output, c_file, v_sources);
+	string v_file = mr_18241.arg0;
+	string v_source = mr_18241.arg1;
 	main__export_macos_v3_bounded_report_content(kind, ccompiler, c_output, v_file, v_source, v_sources, input_digests_complete);
 }
 VV_LOC void main__export_macos_v3_bounded_report_content(string kind, string ccompiler, string c_output, string v_file, string v_source, Map_string_string input_digests, bool input_digests_complete) {
@@ -204620,9 +204623,9 @@ VV_LOC main__MacosV3InputSnapshot main__macos_v3_compiler_error_input_snapshot(s
 	}
 	
  	string source = (*(string*)_t2.data);
-	multi_return_string_string mr_19303 = v__builder__bounded_v3_internal_fallback_source(v_path, source);
-	string v_file = mr_19303.arg0;
-	string v_source = mr_19303.arg1;
+	multi_return_string_string mr_19479 = v__builder__bounded_v3_internal_fallback_source(v_path, source);
+	string v_file = mr_19479.arg0;
+	string v_source = mr_19479.arg1;
 	return ((main__MacosV3InputSnapshot){.path = v_path,.digest = crypto__sha256__hexhash(source),.v_file = v_file,.v_source = v_source,});
 }
 VV_LOC multi_return_string_string main__MacosV3InputSnapshot_current_report_source(main__MacosV3InputSnapshot snapshot) {
@@ -204777,8 +204780,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("eb0b9f36b0d0e7e3dc000ac6ea7365e4271c0482") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("80d11b0") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("80d11b0f84e1b0006522c2e58ad60f33abd49dea") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("e39fda8") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
