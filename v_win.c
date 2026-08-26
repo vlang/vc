@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "e40321b45a112aa49daa3d0ff6909f58a65aa325"
+#define V_COMMIT_HASH "03ad8d3095091d60eec52523dc7ca2b65de07c1f"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "91848c0cc63932401ca338a8a7f96e6fecf6537d"
+	#define V_COMMIT_HASH "e40321b45a112aa49daa3d0ff6909f58a65aa325"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -3198,6 +3198,7 @@ typedef u8 bool;
 #define _const_v__builder__c_error_bug_report_max_env_c_output_bytes 65536
 #define _const_v__builder__v3_report_exec_reserve_bytes 16384
 #define _const_v__builder__v3_report_max_env_payload_bytes 65536
+#define _const_v__builder__v3_report_windows_max_env_value_bytes 30720
 #define _const_v__builder__max_cross_sysroot_git_symlink_depth 32
 #define _const_v__builder__windows_icon_group_resource_id 1
 #define _const_v__builder__key_query_value 1
@@ -14885,6 +14886,8 @@ VV_LOC _option_string v__builder__encode_v3_report_input_digests(Map_string_stri
 VV_LOC _option_Map_string_string v__builder__decode_v3_report_input_digests(string encoded);
 VV_LOC int v__builder__v3_report_env_entry_bytes(string suffix, string value);
 VV_LOC int v__builder__v3_report_env_payload_bytes(Map_string_string payload);
+VV_LOC int v__builder__v3_report_env_value_limit(void);
+VV_LOC bool v__builder__v3_report_env_values_fit(Map_string_string payload, int max_value_bytes);
 VV_LOC int v__builder__v3_report_env_budget(Map_string_string environment, Array_string args);
 VV_LOC void v__builder__set_v3_report_env_payload(Map_string_string payload);
 VV_LOC Map_string_string v__builder__v3_transport_limited_notice_payload(void);
@@ -30307,7 +30310,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("e40321b");
+	return _S("03ad8d3");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -43450,7 +43453,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("91848c0cc63932401ca338a8a7f96e6fecf6537d");
+	string vhash = _S("e40321b45a112aa49daa3d0ff6909f58a65aa325");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -194177,9 +194180,9 @@ VV_LOC bool v__builder__is_strict_ancestor(string ancestor, string descendant) {
 }
 VV_LOC string v__builder__external_c_error_report_cleanup_dir(string dir, bool update) {
 	static string pending_dir;
-	static bool _vstatic_init_5881;
-	if (!_vstatic_init_5881) {
-		_vstatic_init_5881 = true;
+	static bool _vstatic_init_6090;
+	if (!_vstatic_init_6090) {
+		_vstatic_init_6090 = true;
 		pending_dir = _S("");
 	}
 	if (update) {
@@ -194374,6 +194377,34 @@ VV_LOC int v__builder__v3_report_env_payload_bytes(Map_string_string payload) {
 	}
 	return total;
 }
+VV_LOC int v__builder__v3_report_env_value_limit(void) {
+	#if 1
+	{
+		return _const_v__builder__v3_report_windows_max_env_value_bytes;
+	}
+	#else
+	{
+	}
+	#endif
+	return 0;
+}
+VV_LOC bool v__builder__v3_report_env_values_fit(Map_string_string payload, int max_value_bytes) {
+	int _t2 = payload.key_values.len;
+	for (int _t1 = 0; _t1 < _t2; ++_t1 ) {
+		int _t3 = payload.key_values.len - _t2;
+		_t2 = payload.key_values.len;
+		if (_t3 < 0) {
+			_t1 = -1;
+			continue;
+		}
+		if (!builtin__DenseArray_has_index(&payload.key_values, _t1)) {continue;}
+		string value = (*(string*)builtin__DenseArray_value(&payload.key_values, _t1));
+		if (value.len > max_value_bytes) {
+			return false;
+		}
+	}
+	return true;
+}
 VV_LOC int v__builder__v3_report_env_budget(Map_string_string environment, Array_string args) {
 	int used = _const_v__builder__v3_report_exec_reserve_bytes;
 	int base_environment_entries = 0;
@@ -194474,7 +194505,8 @@ void v__builder__export_external_v3_report_to_env(v__builder__ExternalCErrorBugR
 	)
 	;
 	int budget = v__builder__v3_report_env_budget(os__environ(), _const_os__args);
-	if (v__builder__v3_report_env_payload_bytes(payload) > budget) {
+	int value_limit = v__builder__v3_report_env_value_limit();
+	if (v__builder__v3_report_env_payload_bytes(payload) > budget || !v__builder__v3_report_env_values_fit(payload, value_limit)) {
 		payload = v__builder__v3_transport_limited_notice_payload();
 		if (v__builder__v3_report_env_payload_bytes(payload) > budget) {
 			payload = builtin__new_map(sizeof(string), sizeof(string), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
@@ -194491,9 +194523,13 @@ void v__builder__export_external_v3_report_to_env(v__builder__ExternalCErrorBugR
 	if (c_output_budget > 65536) {
 		c_output_budget = _const_v__builder__c_error_bug_report_max_env_c_output_bytes;
 	}
+	if (c_output_budget > value_limit) {
+		c_output_budget = value_limit;
+	}
 	builtin__map_set(&payload, &(string[]){_S("COUTPUT")}, &(string[]) { v__builder__truncated_report_text(report.c_output, c_output_budget) });
 	content_budget = budget - v__builder__v3_report_env_payload_bytes(payload);
-	builtin__map_set(&payload, &(string[]){_S("VSOURCE")}, &(string[]) { (content_budget > 0 ? (v__builder__bounded_v_source(report.v_source, content_budget, 0)) : (_S(""))) });
+	int v_source_budget = (content_budget < value_limit ? (content_budget) : (value_limit));
+	builtin__map_set(&payload, &(string[]){_S("VSOURCE")}, &(string[]) { (v_source_budget > 0 ? (v__builder__bounded_v_source(report.v_source, v_source_budget, 0)) : (_S(""))) });
 	v__builder__set_v3_report_env_payload(payload);
 }
 multi_return_string_string v__builder__bounded_v3_fallback_source(string kind, string c_output, string c_file, Map_string_string allowed_v_sources) {
@@ -204780,8 +204816,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("91848c0cc63932401ca338a8a7f96e6fecf6537d") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("e40321b") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("e40321b45a112aa49daa3d0ff6909f58a65aa325") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("03ad8d3") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
