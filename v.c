@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ba581056712b55b95bb0f9d295f660a4b579b517"
+#define V_COMMIT_HASH "b74e26a0f699e6595df52c38b4b52ac98540e3b2"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "be7365612d15cac968c5e3b972bca345fef6fd0b"
+	#define V_COMMIT_HASH "ba581056712b55b95bb0f9d295f660a4b579b517"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -29486,6 +29486,8 @@ static inline void **v_prealloc_tls_slot(void) {
 	return slot;
 }
 #define g_memory_block (*(VMemoryBlock* *)v_prealloc_tls_slot())
+#elif defined(__cplusplus)
+thread_local VMemoryBlock* g_memory_block; // global 6
 #else
 _Thread_local VMemoryBlock* g_memory_block; // global 6
 #endif
@@ -44938,7 +44940,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ba58105");
+	return _S("b74e26a");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61814,7 +61816,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("be7365612d15cac968c5e3b972bca345fef6fd0b");
+	string vhash = _S("ba581056712b55b95bb0f9d295f660a4b579b517");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -123414,12 +123416,14 @@ VV_LOC void v__gen__c__Gen_write_prealloc_tls_global(v__gen__c__Gen* g, strings_
 	strings__Builder_writeln(def_builder, _S("\treturn slot;"));
 	strings__Builder_writeln(def_builder, _S("}"));
 	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("#define "), cname, _S(" (*("), styp, _S(" *)v_prealloc_tls_slot())")})));
+	strings__Builder_writeln(def_builder, _S("#elif defined(__cplusplus)"));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(6, _MOV((string[6]){linkage, _S("thread_local "), styp, _S(" "), cname, _S("; // global 6")})));
 	strings__Builder_writeln(def_builder, _S("#else"));
 	strings__Builder_writeln(def_builder, builtin__string_plus_many(6, _MOV((string[6]){linkage, _S("_Thread_local "), styp, _S(" "), cname, _S("; // global 6")})));
 	strings__Builder_writeln(def_builder, _S("#endif"));
 }
 VV_LOC string v__gen__c__Gen_prealloc_tls_global_extern(v__gen__c__Gen* g, string styp, string cname) {
-	return builtin__string_plus_many(9, _MOV((string[9]){_S("#if defined(__TINYC__) && defined(__APPLE__)\nvoid **v_prealloc_tls_slot(void);\n#define "), cname, _S(" (*("), styp, _S(" *)v_prealloc_tls_slot())\n#else\nextern _Thread_local "), styp, _S(" "), cname, _S(";\n#endif")}));
+	return builtin__string_plus_many(13, _MOV((string[13]){_S("#if defined(__TINYC__) && defined(__APPLE__)\nvoid **v_prealloc_tls_slot(void);\n#define "), cname, _S(" (*("), styp, _S(" *)v_prealloc_tls_slot())\n#elif defined(__cplusplus)\nextern thread_local "), styp, _S(" "), cname, _S(";\n#else\nextern _Thread_local "), styp, _S(" "), cname, _S(";\n#endif")}));
 }
 VV_LOC void v__gen__c__Gen_sort_globals_consts(v__gen__c__Gen* g) {
 	v__util__timing_start(_S("Gen.sort_globals_consts"));
@@ -225508,8 +225512,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("be7365612d15cac968c5e3b972bca345fef6fd0b") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("ba58105") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("ba581056712b55b95bb0f9d295f660a4b579b517") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("b74e26a") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
