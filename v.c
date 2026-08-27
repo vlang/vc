@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "915f2e7556e670425038df557071fb80ac01f1a9"
+#define V_COMMIT_HASH "be7365612d15cac968c5e3b972bca345fef6fd0b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "a7e86f537fde7c32d5f832ab1c609826f2549b81"
+	#define V_COMMIT_HASH "915f2e7556e670425038df557071fb80ac01f1a9"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -18,6 +18,7 @@
 #define V_THREAD_STACK_SIZE 8388608
 #endif
 #define __VTHREADS__ (1)
+#define _VPREALLOC (1)
 
 // V typedefs:
 typedef struct IError IError;
@@ -212,6 +213,7 @@ typedef struct VariantData VariantData;
 typedef struct OwnershipRegularInterfacePayload OwnershipRegularInterfacePayload;
 typedef struct OwnershipIErrorPayload OwnershipIErrorPayload;
 typedef struct VPreallocBlockCache VPreallocBlockCache;
+typedef struct PreallocStats PreallocStats;
 typedef struct VMemoryBlock VMemoryBlock;
 typedef struct VPreallocRange VPreallocRange;
 typedef struct VPreallocScope VPreallocScope;
@@ -18793,6 +18795,12 @@ struct VMemoryBlock {
 	int mallocs;
 };
 
+struct PreallocStats {
+	bool enabled;
+	u64 allocation_count;
+	u64 allocated_bytes;
+};
+
 struct VPreallocScope {
 	VMemoryBlock* previous;
 	VMemoryBlock* first;
@@ -23210,6 +23218,7 @@ typedef struct thread_arg_sync__pool__process_in_thread {
 	void (*fn) (sync__pool__PoolProcessor*, int);
 	sync__pool__PoolProcessor* arg1;
 	int arg2;
+	void* prealloc_scope;
 } thread_arg_sync__pool__process_in_thread;
 static bool Array_u8_contains(Array_u8 a, u8 v);
 static bool Array_string_contains(Array_string a, string v);
@@ -24467,19 +24476,43 @@ void builtin__panic_n2(string s, i64 number1, i64 number2);
 VV_LOC void builtin__panic_n3(string s, i64 number1, i64 number2, i64 number3);
 void builtin__panic_error_number(string basestr, int errnum);
 VV_LOC bool builtin__prealloc_recyclable_block_size(isize size);
+PreallocStats builtin__prealloc_stats_snapshot(void);
 VV_LOC void builtin__prealloc_scope_add_block(VPreallocScope* scope, VMemoryBlock* block);
 VV_LOC void builtin__vmemory_abort_on_nil(voidptr p, isize bytes);
 VV_LOC isize builtin__vmemory_effective_align(isize align);
 VV_LOC u8* builtin__vmemory_align_up(u8* ptr, isize align);
 VV_LOC i64 builtin__vmemory_block_used(VMemoryBlock* mb);
 VV_LOC i64 builtin__vmemory_block_size(VMemoryBlock* mb);
+VV_LOC void builtin__prealloc_trace_scope(char* action, VPreallocScope* scope);
 VV_LOC VMemoryBlock* builtin__vmemory_block_new(VMemoryBlock* prev, isize at_least, isize align);
 VV_LOC VMemoryBlock* builtin__vmemory_block_new_sized(VMemoryBlock* prev, isize at_least, isize align, isize min_block_size);
 VV_LOC VMemoryBlock* builtin__vmemory_block_current_or_new(void);
 VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align);
+VV_LOC void builtin__vmemory_block_free(VMemoryBlock* mb);
+VV_LOC void builtin__vmemory_block_free_chain(VMemoryBlock* first);
+VV_LOC void builtin__prealloc_recycle_cache_free(VPreallocBlockCache* cache);
+void builtin__prealloc_thread_cleanup(void);
+VV_LOC void builtin__prealloc_vinit(void);
+VV_LOC void builtin__prealloc_vcleanup(void);
+voidptr builtin__prealloc_scope_begin(void);
+void builtin__prealloc_scope_checkpoint(char* label);
+VV_LOC void builtin__prealloc_scope_free_blocks(VPreallocScope* scope);
+VV_LOC void builtin__prealloc_scope_request_free(VPreallocScope* scope, bool abandoned);
+VV_LOC void builtin__prealloc_scope_finish_if_ready(VPreallocScope* scope);
+VV_LOC void builtin__prealloc_scope_detach_current(VPreallocScope* scope);
+voidptr builtin__prealloc_scope_retain_current(void);
+void builtin__prealloc_scope_release(voidptr scope_ptr);
+void builtin__prealloc_scope_end(voidptr scope_ptr);
+void builtin__prealloc_scope_leave(voidptr scope_ptr);
+voidptr builtin__prealloc_scope_suspend(voidptr scope_ptr);
+void builtin__prealloc_scope_resume(voidptr scope_ptr, voidptr state);
+bool builtin__prealloc_scope_owns(voidptr scope_ptr, voidptr ptr);
+void builtin__prealloc_scope_abandon(voidptr scope_ptr);
+void builtin__prealloc_scope_free_after(voidptr scope_ptr);
 VV_LOC u8* builtin__prealloc_malloc(isize n);
 VV_LOC u8* builtin__prealloc_realloc(u8* old_data, isize old_size, isize new_size);
 VV_LOC u8* builtin__prealloc_calloc(isize n);
+VV_LOC u8* builtin__prealloc_malloc_align(isize n, isize align);
 VV_LOC void builtin__set_stream_unbuffered(FILE* stream);
 void builtin__eprintln(string s);
 void builtin__eprint(string s);
@@ -28713,6 +28746,7 @@ v__ast__Stmt v__ast__GotoStmt_to_sumtype_v__ast__Stmt(v__ast__GotoStmt* x, bool 
 v__ast__TypeDecl v__ast__SumTypeDecl_to_sumtype_v__ast__TypeDecl(v__ast__SumTypeDecl* x, bool is_mut);
 v__ast__TypeDecl v__ast__FnTypeDecl_to_sumtype_v__ast__TypeDecl(v__ast__FnTypeDecl* x, bool is_mut);
 v__ast__TypeInfo v__ast__Alias_to_sumtype_v__ast__TypeInfo(v__ast__Alias* x, bool is_mut);
+static bool VPreallocScope_struct_eq(VPreallocScope a, VPreallocScope b);
 static bool Array_string_arr_eq(Array_string a, Array_string b);
 static bool v__ast__Type_alias_eq(v__ast__Type a, v__ast__Type b);
 static bool Array_v__ast__Type_arr_eq(Array_v__ast__Type a, Array_v__ast__Type b);
@@ -29399,7 +29433,25 @@ static const u64 _const_max_u64 = 18446744073709551615U; // precomputed2
 static const u32 _const_hash_mask = 16777215; // precomputed2
 static const u32 _const_probe_inc = 16777216; // precomputed2
 static const u32 _const_prealloc_default_align = 16; // precomputed2
-VMemoryBlock* g_memory_block; // global 6
+#if defined(__TINYC__) && defined(__APPLE__)
+#include <pthread.h>
+static pthread_key_t v_prealloc_tls_key;
+static pthread_once_t v_prealloc_tls_once = PTHREAD_ONCE_INIT;
+static void v_prealloc_tls_slot_free(void *slot) { free(slot); }
+static void v_prealloc_tls_key_init(void) { pthread_key_create(&v_prealloc_tls_key, v_prealloc_tls_slot_free); }
+static inline void **v_prealloc_tls_slot(void) {
+	pthread_once(&v_prealloc_tls_once, v_prealloc_tls_key_init);
+	void **slot = (void **)pthread_getspecific(v_prealloc_tls_key);
+	if (slot == ((void *)0)) {
+		slot = (void **)calloc(1, sizeof(void *));
+		pthread_setspecific(v_prealloc_tls_key, slot);
+	}
+	return slot;
+}
+#define g_memory_block (*(VMemoryBlock* *)v_prealloc_tls_slot())
+#else
+_Thread_local VMemoryBlock* g_memory_block; // global 6
+#endif
 
 i64 g_prealloc_allocation_count; // global 6
 
@@ -33836,6 +33888,20 @@ static int Array_v__ast__StructField_index(Array_v__ast__StructField a, v__ast__
 		}
 	}
 	return -1;
+}
+
+static inline bool VPreallocScope_struct_eq(VPreallocScope a, VPreallocScope b) {
+	return a.previous == b.previous
+		&& a.first == b.first
+		&& a.min_address == b.min_address
+		&& a.max_address == b.max_address
+		&& a.ranges == b.ranges
+		&& a.ranges_len == b.ranges_len
+		&& a.ranges_cap == b.ranges_cap
+		&& a.refs == b.refs
+		&& a.free_requested == b.free_requested
+		&& a.abandoned == b.abandoned
+		&& a.finalized == b.finalized;
 }
 
 static inline bool Array_string_arr_eq(Array_string a, Array_string b) {
@@ -38590,8 +38656,12 @@ static void v__ast__TypeSymbol_free(v__ast__TypeSymbol* it) {
 
 // V gowrappers:
 void* sync__pool__process_in_thread_thread_wrapper(thread_arg_sync__pool__process_in_thread *arg) {
+	void* thread_prealloc_scope = builtin__prealloc_scope_begin();
 	arg->fn(arg->arg1, arg->arg2);
-	builtin___v_free(arg);
+	builtin__prealloc_scope_end(thread_prealloc_scope);
+	builtin__prealloc_scope_release(arg->prealloc_scope);
+	free(arg);
+	builtin__prealloc_thread_cleanup();
 	return 0;
 }
 
@@ -44820,7 +44890,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("915f2e7");
+	return _S("be73656");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -46748,6 +46818,18 @@ VV_LOC bool builtin__prealloc_recyclable_block_size(isize size) {
 	isize base = ((isize)(_const_prealloc_scope_block_size));
 	return size == base || size == base * 2 || size == base * 4;
 }
+PreallocStats builtin__prealloc_stats_snapshot(void) {
+	#if defined(CUSTOM_DEFINE_prealloc_stats)
+	{
+		return ((PreallocStats){.enabled = true,.allocation_count = ((u64)(v_prealloc_atomic_load_i64(&g_prealloc_allocation_count))),.allocated_bytes = ((u64)(v_prealloc_atomic_load_i64(&g_prealloc_allocated_bytes))),});
+	}
+	#else
+	{
+		return ((PreallocStats){.enabled = 0,.allocation_count = 0,.allocated_bytes = 0,});
+	}
+	#endif
+	return (PreallocStats){.enabled = 0,.allocation_count = 0,.allocated_bytes = 0,};
+}
 VV_LOC void builtin__prealloc_scope_add_block(VPreallocScope* scope, VMemoryBlock* block) {
 	if (scope == ((void*)0) || block == ((void*)0)) {
 		return;
@@ -46809,6 +46891,32 @@ VV_LOC i64 builtin__vmemory_block_used(VMemoryBlock* mb) {
 }
 VV_LOC i64 builtin__vmemory_block_size(VMemoryBlock* mb) {
 	return ((i64)(mb->stop)) - ((i64)(mb->start));
+}
+VV_LOC void builtin__prealloc_trace_scope(char* action, VPreallocScope* scope) {
+	#if defined(CUSTOM_DEFINE_trace_prealloc)
+	{
+		if (scope == ((void*)0)) {
+			fprintf(stderr, "[trace_prealloc] scope %s scope=%p\n", action, scope);
+			return;
+		}
+		{ // Unsafe block
+			int blocks = 0;
+			i64 used = ((i64)(0));
+			i64 size = ((i64)(0));
+			int mallocs = 0;
+			VMemoryBlock* mb = scope->first;
+			for (;;) {
+				if (!(mb != 0)) break;
+				blocks++;
+				used += builtin__vmemory_block_used(mb);
+				size += builtin__vmemory_block_size(mb);
+				mallocs += mb->mallocs;
+				mb = mb->next;
+			}
+			fprintf(stderr, "[trace_prealloc] scope %s scope=%p previous=%p first=%p blocks=%d used=%lld size=%lld mallocs=%d\n", action, scope, scope->previous, scope->first, blocks, used, size, mallocs);
+		}
+	}
+	#endif
 }
 VV_LOC VMemoryBlock* builtin__vmemory_block_new(VMemoryBlock* prev, isize at_least, isize align) {
 	return builtin__vmemory_block_new_sized(prev, at_least, align, ((isize)(_const_prealloc_block_size)));
@@ -46979,6 +47087,444 @@ VV_LOC u8* builtin__vmemory_block_malloc(isize n, isize align) {
 	}
 	return 0;
 }
+VV_LOC void builtin__vmemory_block_free(VMemoryBlock* mb) {
+	#if defined(CUSTOM_DEFINE_trace_prealloc)
+	{
+		if (mb->is_scope) {
+			fprintf(stderr, "[trace_prealloc] block free block=%p id=%d start=%p used=%lld size=%lld mallocs=%d\n", mb, mb->id, mb->start, builtin__vmemory_block_used(mb), builtin__vmemory_block_size(mb), mb->mallocs);
+		}
+	}
+	#endif
+	#if defined(_WIN32)
+	{
+		_aligned_free(mb->start);
+	}
+	#else
+	{
+		#if !defined(_VFREESTANDING) && !defined(__vinix__)
+		{
+			if (mb->mmap_allocated) {
+				i64 size = builtin__vmemory_block_size(mb);
+				bool recycled = false;
+				#if !defined(CUSTOM_DEFINE_prealloc_no_recycle)
+				{
+					if (builtin__prealloc_recyclable_block_size(((isize)(size)))) {
+						{ // Unsafe block
+							VPreallocBlockCache* cache = ((VPreallocBlockCache*)(((void*)0)));
+							if (g_memory_block != 0) {
+								cache = g_memory_block->recycle_cache;
+							}
+							if (cache != 0 && cache->count < 64 && cache->bytes + ((isize)(size)) <= ((isize)(_const_prealloc_scope_block_size)) * 64) {
+								cache->starts[builtin__v_fixed_index(cache->count, 64)] = ((voidptr)(mb->start));
+								cache->sizes[builtin__v_fixed_index(cache->count, 64)] = ((isize)(size));
+								cache->bytes += ((isize)(size));
+								cache->count++;
+								recycled = true;
+							}
+						}
+					}
+				}
+				#endif
+				if (!recycled) {
+					#if defined(CUSTOM_DEFINE_prealloc_trace_recycle)
+					{
+						fprintf(stderr, "[recycle-miss] size=%lld\n", size);
+					}
+					#endif
+					munmap(mb->start, ((usize)(size)));
+				}
+			} else {
+				free(mb->start);
+			}
+		}
+		#else
+		{
+			free(mb->start);
+		}
+		#endif
+	}
+	#endif
+	free(mb);
+}
+VV_LOC void builtin__vmemory_block_free_chain(VMemoryBlock* first) {
+	{ // Unsafe block
+		VMemoryBlock* mb = first;
+		for (;;) {
+			if (!(mb != 0)) break;
+			VMemoryBlock* next = mb->next;
+			builtin__vmemory_block_free(mb);
+			mb = next;
+		}
+	}
+}
+VV_LOC void builtin__prealloc_recycle_cache_free(VPreallocBlockCache* cache) {
+	if (cache == ((void*)0)) {
+		return;
+	}
+	#if !defined(_WIN32) && !defined(_VFREESTANDING) && !defined(__vinix__)
+	{
+		{ // Unsafe block
+			for (int i = 0; i < cache->count; ++i) {
+				munmap(cache->starts[builtin__v_fixed_index(i, 64)], ((usize)(cache->sizes[builtin__v_fixed_index(i, 64)])));
+			}
+		}
+	}
+	#endif
+	free(cache);
+}
+void builtin__prealloc_thread_cleanup(void) {
+	{ // Unsafe block
+		VPreallocBlockCache* cache = ((VPreallocBlockCache*)(((void*)0)));
+		if (g_memory_block != ((void*)0)) {
+			cache = g_memory_block->recycle_cache;
+		}
+		for (;;) {
+			if (!(g_memory_block != ((void*)0))) break;
+			VMemoryBlock* block = g_memory_block;
+			g_memory_block = g_memory_block->previous;
+			builtin__vmemory_block_free(block);
+		}
+		builtin__prealloc_recycle_cache_free(cache);
+	}
+}
+VV_LOC void builtin__prealloc_vinit(void) {
+	#if defined(CUSTOM_DEFINE_prealloc_trace_vinit)
+	{
+		fprintf(stderr, "prealloc_vinit started\n");
+	}
+	#endif
+	{ // Unsafe block
+		VMemoryBlock* root = builtin__vmemory_block_new(((void*)0), ((isize)(_const_prealloc_block_size)), 0);
+		root->recycle_cache = ((VPreallocBlockCache*)(calloc(1, sizeof(VPreallocBlockCache))));
+		builtin__vmemory_abort_on_nil(root->recycle_cache, sizeof(VPreallocBlockCache));
+		g_memory_block = root;
+		_result_void _t2 = builtin__at_exit((FnExitCb)builtin__prealloc_vcleanup);
+		(void)_t2;
+ ;
+	}
+}
+VV_LOC void builtin__prealloc_vcleanup(void) {
+	#if defined(CUSTOM_DEFINE_prealloc_trace_vcleanup)
+	{
+		fprintf(stderr, "prealloc_vcleanup started\n");
+	}
+	#endif
+	#if defined(CUSTOM_DEFINE_prealloc_stats)
+	{
+		i64 nr_mallocs = ((i64)(0));
+		i64 total_used = ((i64)(0));
+		VMemoryBlock* mb = g_memory_block;
+		for (;;) {
+			if (!(mb != 0)) break;
+			nr_mallocs += mb->mallocs;
+			i64 used = ((i64)(mb->current)) - ((i64)(mb->start));
+			total_used += used;
+			i64 remaining = ((i64)(mb->stop)) - ((i64)(mb->current));
+			i64 size = ((i64)(mb->stop)) - ((i64)(mb->start));
+			fprintf(stderr, "> freeing mb: %16p, mb.id: %3d | size: %10lld | rem: %10lld | start: %16p | current: %16p | used: %10lld bytes | mallocs: %6d\n", mb, mb->id, size, remaining, mb->start, mb->current, used, mb->mallocs);
+			mb = mb->previous;
+		}
+		fprintf(stderr, "> nr_mallocs: %lld, total_used: %lld bytes\n", nr_mallocs, total_used);
+	}
+	#endif
+	#if defined(CUSTOM_DEFINE_prealloc_dump)
+	{
+		fprintf(stderr, "prealloc_vcleanup dumping memory contents ...\n");
+		VMemoryBlock* start = g_memory_block;
+		{ // Unsafe block
+			for (;;) {
+				if (!(start->previous != 0)) break;
+				start = start->previous;
+			}
+			fprintf(stderr, "prealloc_vcleanup      start: %p\n", start);
+			fprintf(stderr, "prealloc_vcleanup   start.id: %d\n", start->id);
+			fprintf(stderr, "prealloc_vcleanup start.next: %p\n", start->next);
+			u64 total_used = ((u64)(0));
+			string path = _S("memdump.bin");
+			fprintf(stderr, "prealloc_vcleanup dumping process memory to path: %s\n", path.str);
+			FILE* stream = fopen(path.str, "wb");
+			VMemoryBlock* mb = start;
+			for (;;) {
+				u64 used = ((u64)(mb->current)) - ((u64)(mb->start));
+				total_used += used;
+				fprintf(stderr, "prealloc_vcleanup dumping mb: %p, mb.id: %d, used: %10lld bytes\n", mb, mb->id, used);
+				u8* ptr = mb->start;
+				isize remaining_bytes = ((isize)(used));
+				isize x = ((isize)(0));
+				for (;;) {
+					if (!(remaining_bytes > 0)) break;
+					x = ((isize)(fwrite(ptr, 1, remaining_bytes, stream)));
+					ptr += x;
+					remaining_bytes -= x;
+				}
+				if (mb->next == 0) {
+					break;
+				}
+				mb = mb->next;
+			}
+			fclose(stream);
+			fprintf(stderr, "prealloc_vcleanup total dump size in bytes: %lld\n", total_used);
+		}
+	}
+	#endif
+	builtin__prealloc_thread_cleanup();
+}
+voidptr builtin__prealloc_scope_begin(void) {
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(calloc(1, sizeof(VPreallocScope))));
+		builtin__vmemory_abort_on_nil(scope, sizeof(VPreallocScope));
+		scope->previous = builtin__vmemory_block_current_or_new();
+		scope->first = builtin__vmemory_block_new_sized(scope->previous, ((isize)(_const_prealloc_scope_block_size)), 0, ((isize)(_const_prealloc_scope_block_size)));
+		scope->first->is_scope = true;
+		scope->first->scope = scope;
+		scope->min_address = ((usize)(scope->first->start));
+		scope->max_address = ((usize)(scope->first->stop));
+		builtin__prealloc_scope_add_block(scope, scope->first);
+		g_memory_block = scope->first;
+		builtin__prealloc_trace_scope("begin", scope);
+		return scope;
+	}
+	return 0;
+}
+void builtin__prealloc_scope_checkpoint(char* label) {
+	#if defined(CUSTOM_DEFINE_trace_prealloc)
+	{
+		{ // Unsafe block
+			if (g_memory_block == 0 || !g_memory_block->is_scope) {
+				return;
+			}
+			int blocks = 0;
+			i64 used = ((i64)(0));
+			i64 size = ((i64)(0));
+			int mallocs = 0;
+			VMemoryBlock* first = g_memory_block;
+			for (;;) {
+				if (!(first->previous != 0 && first->previous->is_scope)) break;
+				first = first->previous;
+			}
+			VMemoryBlock* mb = first;
+			for (;;) {
+				if (!(mb != 0)) break;
+				blocks++;
+				used += builtin__vmemory_block_used(mb);
+				size += builtin__vmemory_block_size(mb);
+				mallocs += mb->mallocs;
+				mb = mb->next;
+			}
+			fprintf(stderr, "[trace_prealloc] checkpoint label=%s first=%p current=%p blocks=%d used=%lld size=%lld mallocs=%d\n", label, first, g_memory_block, blocks, used, size, mallocs);
+		}
+	}
+	#endif
+}
+VV_LOC void builtin__prealloc_scope_free_blocks(VPreallocScope* scope) {
+	if (scope == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		if (scope->previous != 0) {
+			scope->previous->next = ((void*)0);
+		}
+		builtin__vmemory_block_free_chain(scope->first);
+	}
+}
+VV_LOC void builtin__prealloc_scope_request_free(VPreallocScope* scope, bool abandoned) {
+	if (scope == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		if (abandoned) {
+			v_prealloc_atomic_store_i32(&scope->abandoned, 1);
+		}
+		v_prealloc_atomic_store_i32(&scope->free_requested, 1);
+		builtin__prealloc_scope_finish_if_ready(scope);
+	}
+}
+VV_LOC void builtin__prealloc_scope_finish_if_ready(VPreallocScope* scope) {
+	if (scope == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		if (v_prealloc_atomic_load_i32(&scope->free_requested) == 0) {
+			return;
+		}
+		if (v_prealloc_atomic_load_i32(&scope->refs) != 0) {
+			return;
+		}
+		if (v_prealloc_atomic_cas_i32(&scope->finalized, 0, 1) == 0) {
+			return;
+		}
+		if (v_prealloc_atomic_load_i32(&scope->abandoned) == 0) {
+			builtin__prealloc_scope_free_blocks(scope);
+		}
+		free(scope->ranges);
+		free(scope);
+	}
+}
+VV_LOC void builtin__prealloc_scope_detach_current(VPreallocScope* scope) {
+	if (scope == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		VMemoryBlock* previous = scope->previous;
+		if (previous != 0) {
+			previous->next = ((void*)0);
+		}
+		if (g_memory_block != 0 && g_memory_block->is_scope && (g_memory_block->scope == scope || (g_memory_block->scope != 0 && scope != 0 && VPreallocScope_struct_eq(*g_memory_block->scope, *scope)))) {
+			g_memory_block = previous;
+		}
+		scope->previous = ((void*)0);
+	}
+}
+voidptr builtin__prealloc_scope_retain_current(void) {
+	#if defined(_VPREALLOC)
+	{
+		{ // Unsafe block
+			if (g_memory_block == 0 || !g_memory_block->is_scope || g_memory_block->scope == 0) {
+				return ((void*)0);
+			}
+			VPreallocScope* scope = g_memory_block->scope;
+			v_prealloc_atomic_add_i32(&scope->refs, 1);
+			#if defined(CUSTOM_DEFINE_trace_prealloc)
+			{
+				builtin__prealloc_trace_scope("retain", scope);
+			}
+			#endif
+			return scope;
+		}
+	}
+	#else
+	{
+		return ((void*)0);
+	}
+	#endif
+	return 0;
+}
+void builtin__prealloc_scope_release(voidptr scope_ptr) {
+	#if defined(_VPREALLOC)
+	{
+		if (scope_ptr == ((void*)0)) {
+			return;
+		}
+		{ // Unsafe block
+			VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+			v_prealloc_atomic_add_i32(&scope->refs, -1);
+			#if defined(CUSTOM_DEFINE_trace_prealloc)
+			{
+				builtin__prealloc_trace_scope("release", scope);
+			}
+			#endif
+			builtin__prealloc_scope_finish_if_ready(scope);
+		}
+	}
+	#endif
+}
+void builtin__prealloc_scope_end(voidptr scope_ptr) {
+	if (scope_ptr == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		builtin__prealloc_trace_scope("end", scope);
+		builtin__prealloc_scope_detach_current(scope);
+		builtin__prealloc_scope_request_free(scope, false);
+	}
+}
+void builtin__prealloc_scope_leave(voidptr scope_ptr) {
+	if (scope_ptr == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		builtin__prealloc_trace_scope("leave", scope);
+		builtin__prealloc_scope_detach_current(scope);
+	}
+}
+voidptr builtin__prealloc_scope_suspend(voidptr scope_ptr) {
+	if (scope_ptr == ((void*)0)) {
+		return ((void*)0);
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		VMemoryBlock* current = g_memory_block;
+		if (current == ((void*)0) || !(current->scope == scope || (current->scope != 0 && scope != 0 && VPreallocScope_struct_eq(*current->scope, *scope))) || scope->previous == ((void*)0)) {
+			return ((void*)0);
+		}
+		VMemoryBlock* parent = scope->previous;
+		parent->next = ((void*)0);
+		scope->first->previous = ((void*)0);
+		scope->previous = ((void*)0);
+		g_memory_block = parent;
+		return current;
+	}
+	return 0;
+}
+void builtin__prealloc_scope_resume(voidptr scope_ptr, voidptr state) {
+	if (scope_ptr == ((void*)0) || state == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		VMemoryBlock* current = ((VMemoryBlock*)(state));
+		VMemoryBlock* parent = g_memory_block;
+		if (!(current->scope == scope || (current->scope != 0 && scope != 0 && VPreallocScope_struct_eq(*current->scope, *scope))) || scope->previous != ((void*)0) || parent == ((void*)0)) {
+			return;
+		}
+		parent->next = scope->first;
+		scope->first->previous = parent;
+		scope->previous = parent;
+		g_memory_block = current;
+	}
+}
+inline bool builtin__prealloc_scope_owns(voidptr scope_ptr, voidptr ptr) {
+	if (scope_ptr == ((void*)0) || ptr == ((void*)0)) {
+		return false;
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		usize address = ((usize)(ptr));
+		if (address < scope->min_address || address >= scope->max_address) {
+			return false;
+		}
+		int lo = 0;
+		int hi = scope->ranges_len;
+		for (;;) {
+			if (!(lo < hi)) break;
+			int mid = lo + VSAFE_DIV_int((hi - lo) , 2);
+			if (scope->ranges[mid].start <= address) {
+				lo = mid + 1;
+			} else {
+				hi = mid;
+			}
+		}
+		if (lo == 0) {
+			return false;
+		}
+		VPreallocRange *range = HEAP(VPreallocRange, (scope->ranges[lo - 1]));
+		return address < range->stop;
+	}
+	return 0;
+}
+void builtin__prealloc_scope_abandon(voidptr scope_ptr) {
+	if (scope_ptr == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		builtin__prealloc_trace_scope("abandon", scope);
+		builtin__prealloc_scope_leave(scope_ptr);
+		builtin__prealloc_scope_request_free(scope, true);
+	}
+}
+void builtin__prealloc_scope_free_after(voidptr scope_ptr) {
+	if (scope_ptr == ((void*)0)) {
+		return;
+	}
+	{ // Unsafe block
+		VPreallocScope* scope = ((VPreallocScope*)(scope_ptr));
+		builtin__prealloc_trace_scope("free-after", scope);
+		builtin__prealloc_scope_request_free(scope, false);
+	}
+}
 VV_LOC u8* builtin__prealloc_malloc(isize n) {
 	return builtin__vmemory_block_malloc(n, 0);
 }
@@ -47017,6 +47563,9 @@ VV_LOC u8* builtin__prealloc_calloc(isize n) {
 	u8* new_ptr = builtin__vmemory_block_malloc(n, 0);
 	memset(new_ptr, 0, n);
 	return new_ptr;
+}
+VV_LOC u8* builtin__prealloc_malloc_align(isize n, isize align) {
+	return builtin__vmemory_block_malloc(n, align);
 }
 VV_LOC void builtin__set_stream_unbuffered(FILE* stream) {
 	setvbuf(stream, ((char*)(((void*)0))), _IONBF, ((usize)(0)));
@@ -60469,10 +61018,12 @@ void sync__pool__PoolProcessor_work_on_pointers(sync__pool__PoolProcessor* pool,
 		for (int i = 0; i < njobs; i++) {
 			if (njobs > 1) {
 				// start go
-				thread_arg_sync__pool__process_in_thread *arg__t2 = (thread_arg_sync__pool__process_in_thread *) builtin___v_malloc(sizeof(thread_arg_sync__pool__process_in_thread));
+				thread_arg_sync__pool__process_in_thread *arg__t2 = (thread_arg_sync__pool__process_in_thread *) malloc(sizeof(thread_arg_sync__pool__process_in_thread));
+				if (arg__t2 == NULL) builtin___v_panic(_S("thread argument allocation failed"));
 				arg__t2->fn = sync__pool__process_in_thread;
 				arg__t2->arg1 = pool;
 				arg__t2->arg2 = i;
+				arg__t2->prealloc_scope = builtin__prealloc_scope_retain_current();
 				pthread_t thread__t2;
 				pthread_attr_t thread__t2_attributes;
 				pthread_attr_init(&thread__t2_attributes);
@@ -61088,9 +61639,9 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	}
 	string npath = builtin__string_replace(rpath, _S("\\"), _S("/"));
 	p->building_v = !p->is_repl && v__pref__is_v_compiler_target(npath);
-	#if defined(__APPLE__)
+	#if defined(__APPLE__) || defined(__linux__)
 	{
-		if (p->building_v && p->os == v__pref__OS__macos && !p->prealloc && (!p->gc_set_by_flag || p->gc_mode == v__pref__GarbageCollectionMode__no_gc)) {
+		if (p->building_v && (p->os == v__pref__OS__macos || p->os == v__pref__OS__linux) && !p->prealloc && (!p->gc_set_by_flag || p->gc_mode == v__pref__GarbageCollectionMode__no_gc) && (p->os != v__pref__OS__linux || !p->ccompiler_set_by_flag || v__pref__cc_from_string(p->ccompiler) != v__pref__CompilerType__tinyc)) {
 			p->prealloc = true;
 			builtin__array_push((array*)&p->build_options, _MOV((string[]){ _S("-prealloc") }));
 		}
@@ -61158,7 +61709,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("a7e86f537fde7c32d5f832ab1c609826f2549b81");
+	string vhash = _S("915f2e7556e670425038df557071fb80ac01f1a9");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -224226,8 +224777,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("a7e86f537fde7c32d5f832ab1c609826f2549b81") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("915f2e7") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("915f2e7556e670425038df557071fb80ac01f1a9") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("be73656") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
@@ -225044,6 +225595,7 @@ void _vinit(int ___argc, voidptr ___argv) {
 #if __STDC_HOSTED__ == 1
 	signal(11, builtin__v_segmentation_fault_handler);
 #endif
+builtin__prealloc_vinit();
 	as_cast_type_indexes = builtin__new_array_from_c_array(126, 126, sizeof(VCastTypeIndexName), _MOV((VCastTypeIndexName[126]){
 		  (VCastTypeIndexName){.tindex = 0, .tname = _S("unknown")}
 		, (VCastTypeIndexName){.tindex = 497, .tname = _S("v.ast.NodeError")}
