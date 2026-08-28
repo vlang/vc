@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "3e53b46c19a5161bcb633b31144ab71166bcb795"
+#define V_COMMIT_HASH "9fd548810f09e5b49f0b06e500ef5d6845cc8142"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "b74e26a0f699e6595df52c38b4b52ac98540e3b2"
+	#define V_COMMIT_HASH "3e53b46c19a5161bcb633b31144ab71166bcb795"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44940,7 +44940,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("3e53b46");
+	return _S("9fd5488");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61816,7 +61816,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("b74e26a0f699e6595df52c38b4b52ac98540e3b2");
+	string vhash = _S("3e53b46c19a5161bcb633b31144ab71166bcb795");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -218226,6 +218226,7 @@ VV_LOC void v__builder__Builder_setup_ccompiler_options(v__builder__Builder* v, 
 				builtin__array_push((array*)&ccoptions.args, _MOV((string[]){ os__quoted_path(builtin__string_plus_many(3, _MOV((string[3]){_S("-ffile-prefix-map="), v->out_name_c, _S("=<generated-c>")}))) }));
 				builtin__array_push((array*)&ccoptions.linker_flags, _MOV((string[]){ _S("-Wl,-reproducible") }));
 				builtin__array_push((array*)&ccoptions.linker_flags, _MOV((string[]){ _S("-Wl,-final_output,v-compiler") }));
+				builtin__array_push((array*)&ccoptions.linker_flags, _MOV((string[]){ _S("-Wl,-no_adhoc_codesign") }));
 			}
 		} else {
 			if (!builtin__fast_string_eq(v->pref->ccompiler, _S("x86_64-w64-mingw32-gcc"))) {
@@ -218310,20 +218311,20 @@ VV_LOC void v__builder__Builder_setup_ccompiler_options(v__builder__Builder* v, 
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(v);
 	if (v->pref->build_mode != v__pref__BuildMode__build_module && !v->pref->is_o) {
 		Array_string only_o_files = Array_v__cflag__CFlag_c_options_only_object_files(cflags);
-		_PUSH_MANY(&ccoptions.o_args, (only_o_files), _t70, Array_string);
+		_PUSH_MANY(&ccoptions.o_args, (only_o_files), _t71, Array_string);
 	}
-	multi_return_Array_v__cflag__CFlag_Array_string_bool mr_43352 = v__builder__Builder_split_ordered_pkgconfig_link_flags(v, cflags);
-	Array_v__cflag__CFlag legacy_cflags = mr_43352.arg0;
-	Array_string ordered_link_flags = mr_43352.arg1;
-	bool pkgconfig_pthread = mr_43352.arg2;
-	multi_return_Array_string_Array_string_Array_string mr_43425 = Array_v__cflag__CFlag_defines_others_libs(legacy_cflags);
-	Array_string defines = mr_43425.arg0;
-	Array_string others = mr_43425.arg1;
-	Array_string libs = mr_43425.arg2;
-	_PUSH_MANY(&ccoptions.pre_args, (defines), _t71, Array_string);
-	_PUSH_MANY(&ccoptions.pre_args, (others), _t72, Array_string);
-	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t73, Array_string);
-	_PUSH_MANY(&ccoptions.linker_flags, (ordered_link_flags), _t74, Array_string);
+	multi_return_Array_v__cflag__CFlag_Array_string_bool mr_43559 = v__builder__Builder_split_ordered_pkgconfig_link_flags(v, cflags);
+	Array_v__cflag__CFlag legacy_cflags = mr_43559.arg0;
+	Array_string ordered_link_flags = mr_43559.arg1;
+	bool pkgconfig_pthread = mr_43559.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_43632 = Array_v__cflag__CFlag_defines_others_libs(legacy_cflags);
+	Array_string defines = mr_43632.arg0;
+	Array_string others = mr_43632.arg1;
+	Array_string libs = mr_43632.arg2;
+	_PUSH_MANY(&ccoptions.pre_args, (defines), _t72, Array_string);
+	_PUSH_MANY(&ccoptions.pre_args, (others), _t73, Array_string);
+	_PUSH_MANY(&ccoptions.linker_flags, (libs), _t74, Array_string);
+	_PUSH_MANY(&ccoptions.linker_flags, (ordered_link_flags), _t75, Array_string);
 	ccoptions.pkgconfig_pthread = pkgconfig_pthread;
 	v__builder__Builder_fixup_tcc_macos_comma_path_flags(v, (voidptr)&ccoptions);
 	if (v->pref->use_cache && v->pref->build_mode != v__pref__BuildMode__build_module) {
@@ -218349,8 +218350,8 @@ VV_LOC void v__builder__Builder_setup_ccompiler_options(v__builder__Builder* v, 
 		if (v->pref->use_cache) {
 			builtin__array_push((array*)&ccoptions.source_args, _MOV((string[]){ _S("-x none") }));
 		} else {
-			for (int _t82 = 0; _t82 < ccoptions.linker_flags.len; ++_t82) {
-				string flag = ((string*)ccoptions.linker_flags.data)[_t82];
+			for (int _t83 = 0; _t83 < ccoptions.linker_flags.len; ++_t83) {
+				string flag = ((string*)ccoptions.linker_flags.data)[_t83];
 				if (builtin__string_starts_with(flag, _S("-"))) {
 					continue;
 				}
@@ -218367,7 +218368,7 @@ VV_LOC void v__builder__Builder_setup_ccompiler_options(v__builder__Builder* v, 
 		}
 	}
 	if (!v->pref->no_std) {
-		_PUSH_MANY(&ccoptions.source_args, (builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){builtin__string_plus_many(2, _MOV((string[2]){_S("-std="), _const_v__builder__c_std})), _S("-D_DEFAULT_SOURCE")}))), _t85, Array_string);
+		_PUSH_MANY(&ccoptions.source_args, (builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){builtin__string_plus_many(2, _MOV((string[2]){_S("-std="), _const_v__builder__c_std})), _S("-D_DEFAULT_SOURCE")}))), _t86, Array_string);
 	}
 	#if defined(CUSTOM_DEFINE_trace_ccoptions)
 	{
@@ -219887,7 +219888,6 @@ VV_LOC void v__builder__Builder_finalize_reproducible_macos_debug_compiler(v__bu
 		}
 		
  		string codesign_path = (*(string*)_t2.data);
-		os__execute(builtin__string_plus_many(3, _MOV((string[3]){os__quoted_path(codesign_path), _S(" --remove-signature "), os__quoted_path(v->pref->out_name)})));
 		os__Result codesign_result = os__execute(builtin__string_plus_many(3, _MOV((string[3]){os__quoted_path(codesign_path), _S(" --force --sign - --identifier org.vlang.v "), os__quoted_path(v->pref->out_name)})));
 		if (codesign_result.exit_code != 0) {
 			v__builder__verror(builtin__string_plus_many(2, _MOV((string[2]){_S("failed to ad-hoc sign the reproducible macOS compiler binary:\n"), codesign_result.output})));
@@ -220197,10 +220197,10 @@ VV_LOC void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = (b->pref->build_mode == v__pref__BuildMode__build_module ? (b->pref->out_name) : (builtin__string__plus(b->out_name_c, _S(".o"))));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_86199 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_86199.arg0;
-	Array_string others = mr_86199.arg1;
-	Array_string libs = mr_86199.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_86309 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_86309.arg0;
+	Array_string others = mr_86309.arg1;
+	Array_string libs = mr_86309.arg2;
 	Array_string other_flags = builtin____new_array_with_default(0, others.len, sizeof(string), 0);
 	Array_string extra_sources = builtin____new_array_with_default(0, 0, sizeof(string), 0);
 	for (int _t5 = 0; _t5 < others.len; ++_t5) {
@@ -220333,10 +220333,10 @@ VV_LOC void v__builder__Builder_cc_freebsd_cross(v__builder__Builder* b) {
 	v__builder__Builder_ensure_freebsdroot_exists(b, sysroot);
 	string obj_file = builtin__string__plus(b->out_name_c, _S(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_91583 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_91583.arg0;
-	Array_string others = mr_91583.arg1;
-	Array_string libs = mr_91583.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_91693 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_91693.arg0;
+	Array_string others = mr_91693.arg1;
+	Array_string libs = mr_91693.arg2;
 	Array_string cc_args = builtin____new_array_with_default(0, 20, sizeof(string), 0);
 	builtin__array_push((array*)&cc_args, _MOV((string[]){ _S("-w") }));
 	builtin__array_push((array*)&cc_args, _MOV((string[]){ _S("-fPIC") }));
@@ -220547,9 +220547,9 @@ VV_LOC void v__builder__Builder_fixup_tcc_macos_comma_path_flags(v__builder__Bui
 	;
 	}
 	
- 	multi_return_Array_string_Array_string mr_98169 = (*(multi_return_Array_string_Array_string*)_t4.data);
-	Array_string linker_flags = mr_98169.arg0;
-	Array_string pre_args = mr_98169.arg1;
+ 	multi_return_Array_string_Array_string mr_98279 = (*(multi_return_Array_string_Array_string*)_t4.data);
+	Array_string linker_flags = mr_98279.arg0;
+	Array_string pre_args = mr_98279.arg1;
 	ccoptions->linker_flags = linker_flags;
 	ccoptions->pre_args = pre_args;
 }
@@ -225512,8 +225512,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("b74e26a0f699e6595df52c38b4b52ac98540e3b2") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("3e53b46") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("3e53b46c19a5161bcb633b31144ab71166bcb795") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("9fd5488") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
