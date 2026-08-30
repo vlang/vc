@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "439f6b67b36ad907cd67453475ea7bc502b9e3c9"
+#define V_COMMIT_HASH "3dda937f716a77ead9d2c370d91b4d1acd42c169"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "07d8b8a50c41af3243ddc83de6225250d63b4e4b"
+	#define V_COMMIT_HASH "439f6b67b36ad907cd67453475ea7bc502b9e3c9"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -44973,7 +44973,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("439f6b6");
+	return _S("3dda937");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61849,7 +61849,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("07d8b8a50c41af3243ddc83de6225250d63b4e4b");
+	string vhash = _S("439f6b67b36ad907cd67453475ea7bc502b9e3c9");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -99359,8 +99359,8 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 									v__gen__c__Gen_write(g, _S(", ("));
 								}
 							} else {
-								multi_return_string_string mr_75332 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
-								string ptrmap_o = mr_75332.arg0;
+								multi_return_string_string mr_74765 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
+								string ptrmap_o = mr_74765.arg0;
 								if (ptrmap_o.len > 0) {
 									{
 										v__gen__c__Gen_write(g, _S("HEAP_vgc("));
@@ -99574,9 +99574,9 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 									v__gen__c__Gen_write(g, _S(")"));
 								}
 							} else {
-								multi_return_string_string mr_80369 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
-								string ptrmap = mr_80369.arg0;
-								string nptrs = mr_80369.arg1;
+								multi_return_string_string mr_79734 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
+								string ptrmap = mr_79734.arg0;
+								string nptrs = mr_79734.arg1;
 								if (ptrmap.len > 0) {
 									{
 										v__gen__c__Gen_write(g, _S("), "));
@@ -100215,9 +100215,9 @@ VV_LOC void v__gen__c__Gen_gen_cross_tmp_variable(v__gen__c__Gen* g, Array_v__as
 	}
 	else if (val._typ == 286) {
 		if ((*val._v__ast__CallExpr).is_method) {
-			multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_97639 = v__gen__c__Gen_unwrap_receiver_type(g, (*val._v__ast__CallExpr));
-			v__ast__Type unwrapped_rec_type = mr_97639.arg0;
-			v__ast__TypeSymbol* typ_sym = mr_97639.arg1;
+			multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_96840 = v__gen__c__Gen_unwrap_receiver_type(g, (*val._v__ast__CallExpr));
+			v__ast__Type unwrapped_rec_type = mr_96840.arg0;
+			v__ast__TypeSymbol* typ_sym = mr_96840.arg1;
 			v__ast__Type left_type = v__gen__c__Gen_unwrap_generic(g, (*val._v__ast__CallExpr).left_type);
 			v__ast__TypeSymbol* left_sym = v__ast__Table_sym(g->table, left_type);
 			v__ast__TypeSymbol* final_left_sym = v__ast__Table_final_sym(g->table, left_type);
@@ -225634,8 +225634,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("07d8b8a50c41af3243ddc83de6225250d63b4e4b") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("439f6b6") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("439f6b67b36ad907cd67453475ea7bc502b9e3c9") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("3dda937") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
