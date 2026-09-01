@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "ba741c3bc11261024da474dd60fd4c821efbe5eb"
+#define V_COMMIT_HASH "2baf7ffc79640bb954420e7af4f63b72a7f47b7a"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8304feed5b83b932e4af27c3a37c08b6ef9eb5e6"
+	#define V_COMMIT_HASH "ba741c3bc11261024da474dd60fd4c821efbe5eb"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -28171,7 +28171,6 @@ VV_LOC v__builder__V3FallbackInputStatus v__builder__Builder_v3_fallback_input_s
 VV_LOC Array_string v__builder__Builder_v3_fallback_trusted_native_roots(v__builder__Builder* b);
 VV_LOC bool v__builder__v3_fallback_native_path_is_trusted(string path, Array_string roots);
 VV_LOC bool v__builder__v3_fallback_backend_specific_builtin_source(string path, string builtin_root);
-VV_LOC void v__builder__discard_unverified_v3_fallback_report(void);
 void v__builder__submit_external_v3_compiler_error_bug_report(v__pref__Preferences* prefs, string v3_stage, string v3_output, string v_file, string tag);
 VV_LOC void v__builder__submit_inline_v3_compiler_error_bug_report(v__pref__Preferences* prefs, string v3_stage, string v3_output, string v_file_label, string v_source, bool v_source_truncated, string tag);
 VV_LOC _option_v__builder__CErrorBugReport v__builder__build_inline_c_error_report(v__pref__Preferences* prefs, string ccompiler, string c_output, string v_file, string v_source, bool v_source_truncated, string tag);
@@ -45005,7 +45004,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("ba741c3");
+	return _S("2baf7ff");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -61881,7 +61880,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("8304feed5b83b932e4af27c3a37c08b6ef9eb5e6");
+	string vhash = _S("ba741c3bc11261024da474dd60fd4c821efbe5eb");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -214731,9 +214730,6 @@ VV_LOC bool v__builder__v3_fallback_native_path_is_trusted(string path, Array_st
 VV_LOC bool v__builder__v3_fallback_backend_specific_builtin_source(string path, string builtin_root) {
 	return (builtin__string__eq(path, builtin_root) || builtin__string_starts_with(path, builtin__string__plus(builtin_root, _S("/")))) && (Array_string_contains(builtin__new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_S("ownership_interface_d_v3_backend.v"), _S("ownership_interface_notd_v3_backend.v"), _S("prealloc.c.v")})), os__file_name(path)));
 }
-VV_LOC void v__builder__discard_unverified_v3_fallback_report(void) {
-	builtin__eprintln(_S("note: source inputs changed before the stable compiler retry completed; the V3 fallback report was not submitted."));
-}
 void v__builder__submit_external_v3_compiler_error_bug_report(v__pref__Preferences* prefs, string v3_stage, string v3_output, string v_file, string tag) {
 	v__builder__Builder b = v__builder__new_builder(prefs);
 	v__builder__Builder_submit_v3_compiler_error_bug_report(&b, v3_stage, v3_output, ((v_file).len == 0 ? (_S("")) : (os__base(v_file))), _S(""), false, tag);
@@ -215178,8 +215174,8 @@ VV_LOC v__builder__VSourceChunk v__builder__v_source_for_report(Array_string lin
 	return ((v__builder__VSourceChunk){.text = Array_string_join(builtin__array_slice(lines, start - 1, end), _S("\n")),.focus = center - start + 1,});
 }
 VV_LOC string v__builder__bounded_v_source(string source, int max_bytes, int focus_line) {
-	multi_return_string_int mr_61250 = v__builder__bounded_v_source_with_focus(source, max_bytes, focus_line);
-	string result = mr_61250.arg0;
+	multi_return_string_int mr_61075 = v__builder__bounded_v_source_with_focus(source, max_bytes, focus_line);
+	string result = mr_61075.arg0;
 	return result;
 }
 VV_LOC multi_return_string_int v__builder__bounded_v_source_with_focus(string source, int max_bytes, int focus_line) {
@@ -221187,7 +221183,6 @@ VV_LOC void v__builder__compile_with_optional_external_c_error_report(v__pref__P
 			v__builder__print_v3_fallback_notice(_S(""), false, false, false);
 		}
 		else if (_t7 == (v__builder__V3FallbackInputStatus__changed)) {
-			v__builder__discard_unverified_v3_fallback_report();
 		}
 	}
 	v__builder__Builder_myfree(&b);
@@ -225666,8 +225661,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("8304feed5b83b932e4af27c3a37c08b6ef9eb5e6") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("ba741c3") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("ba741c3bc11261024da474dd60fd4c821efbe5eb") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("2baf7ff") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
