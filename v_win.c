@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "917dc37df68d8b484d7a7a3f1203cf7b37d00963"
+#define V_COMMIT_HASH "dfee42440672e9e8eca8321012defcdeb281dd4e"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "bfcd7b40fb31bfcc93d821cf3601826d3b862e88"
+	#define V_COMMIT_HASH "917dc37df68d8b484d7a7a3f1203cf7b37d00963"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -11608,7 +11608,7 @@ bool v__token__Kind_is_start_of_type(v__token__Kind k);
 bool v__token__Kind_is_infix(v__token__Kind kind);
 v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op);
 void v__dotgraph__start_digraph(void);
-VV_LOC void anon_fn_40181cb3d9c4559e_282__81(void);
+VV_LOC void anon_fn_347c3f0eb070fffb_282__81(void);
 v__dotgraph__DotGraph* v__dotgraph__new(string name, string label, string color);
 void v__dotgraph__DotGraph_writeln(v__dotgraph__DotGraph* d, string line);
 void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d);
@@ -13317,11 +13317,11 @@ VV_LOC bool v__gen__c__Gen_type_needs_deep_scope_gc_pin(v__gen__c__Gen* g, v__as
 VV_LOC bool v__gen__c__Gen_scope_var_needs_deep_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC bool v__gen__c__Gen_scope_gc_pin_var_available(v__gen__c__Gen* g, v__ast__Var obj, int node_pos);
 VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c__Gen* g, int node_pos);
-VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_310163(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_4c809e27a7a3a1c1_293_ref_ast__Var_ref_ast__Var__int_310163(v__ast__Var* a, v__ast__Var* b);
 VV_LOC void v__gen__c__Gen_scope_gc_pin_postgen(v__gen__c__Gen* g, Array_v__gen__c__ScopeGcPin pins);
 VV_LOC bool v__gen__c__Gen_scope_var_needs_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos pos);
-VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_315051(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_4c809e27a7a3a1c1_293_ref_ast__Var_ref_ast__Var__int_315051(v__ast__Var* a, v__ast__Var* b);
 VV_LOC bool v__gen__c__gc_pin_has_named_storage(string name);
 VV_LOC bool v__gen__c__Gen_has_veb_context(v__gen__c__Gen* g, v__ast__Type typ);
 VV_LOC _option_v__ast__Param v__gen__c__Gen_implicit_veb_ctx_alias_target(v__gen__c__Gen* g, v__ast__Var obj);
@@ -16339,11 +16339,22 @@ bool v_memory_panic = false; // global 6
 int_literal g_autostr_type_stack_len = 0; // global 6
 
 #if defined(__TINYC__) && defined(_WIN32)
+typedef DWORD (WINAPI *g_autostr_addr_state_fls_alloc_fn)(void (WINAPI *)(void*));
+typedef void* (WINAPI *g_autostr_addr_state_fls_get_fn)(DWORD);
+typedef BOOL (WINAPI *g_autostr_addr_state_fls_set_fn)(DWORD, void*);
 static DWORD g_autostr_addr_state_tls_key = 0xFFFFFFFF;
+static g_autostr_addr_state_fls_get_fn g_autostr_addr_state_fls_get;
+static g_autostr_addr_state_fls_set_fn g_autostr_addr_state_fls_set;
 static void WINAPI g_autostr_addr_state_tls_free(void* p) { free(p); }
 static void g_autostr_addr_state_tls_init(void) __attribute__((constructor));
-static void g_autostr_addr_state_tls_init(void) { g_autostr_addr_state_tls_key = FlsAlloc(g_autostr_addr_state_tls_free); }
-static AutostrAddrStackState* v_g_autostr_addr_state_tls_slot(void) { void* p = FlsGetValue(g_autostr_addr_state_tls_key); if (!p) { p = calloc(1, sizeof(AutostrAddrStackState)); FlsSetValue(g_autostr_addr_state_tls_key, p); } return (AutostrAddrStackState*)p; }
+static void g_autostr_addr_state_tls_init(void) {
+	void* kernel32 = GetModuleHandleA("kernel32.dll");
+	g_autostr_addr_state_fls_alloc_fn fls_alloc = (g_autostr_addr_state_fls_alloc_fn)GetProcAddress(kernel32, "FlsAlloc");
+	g_autostr_addr_state_fls_get = (g_autostr_addr_state_fls_get_fn)GetProcAddress(kernel32, "FlsGetValue");
+	g_autostr_addr_state_fls_set = (g_autostr_addr_state_fls_set_fn)GetProcAddress(kernel32, "FlsSetValue");
+	g_autostr_addr_state_tls_key = fls_alloc && g_autostr_addr_state_fls_get && g_autostr_addr_state_fls_set ? fls_alloc(g_autostr_addr_state_tls_free) : TlsAlloc();
+}
+static AutostrAddrStackState* v_g_autostr_addr_state_tls_slot(void) { void* p = g_autostr_addr_state_fls_get ? g_autostr_addr_state_fls_get(g_autostr_addr_state_tls_key) : TlsGetValue(g_autostr_addr_state_tls_key); if (!p) { p = calloc(1, sizeof(AutostrAddrStackState)); if (g_autostr_addr_state_fls_set) g_autostr_addr_state_fls_set(g_autostr_addr_state_tls_key, p); else TlsSetValue(g_autostr_addr_state_tls_key, p); } return (AutostrAddrStackState*)p; }
 #define g_autostr_addr_state (*v_g_autostr_addr_state_tls_slot())
 #elif defined(__TINYC__)
 #include <pthread.h>
@@ -25517,11 +25528,11 @@ u32 sync__pool__process_in_thread_thread_wrapper(thread_arg_sync__pool__process_
 }
 
 // V anon functions:
-VV_LOC void anon_fn_40181cb3d9c4559e_282__81(void) {
+VV_LOC void anon_fn_347c3f0eb070fffb_282__81(void) {
 	builtin__println(_S("}"));
 }
 
-VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_310163(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_4c809e27a7a3a1c1_293_ref_ast__Var_ref_ast__Var__int_310163(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -25537,7 +25548,7 @@ VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_310163(v_
 	return 0;
 }
 
-VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_315051(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_4c809e27a7a3a1c1_293_ref_ast__Var_ref_ast__Var__int_315051(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -30651,7 +30662,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("917dc37");
+	return _S("");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -36092,7 +36103,7 @@ v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op) {
 }
 void v__dotgraph__start_digraph(void) {
 	builtin__println(_S("digraph G {"));
-	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_40181cb3d9c4559e_282__81);
+	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_347c3f0eb070fffb_282__81);
 	(void)_t1;
  ;
 }
@@ -43794,7 +43805,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("bfcd7b40fb31bfcc93d821cf3601826d3b862e88");
+	string vhash = _S("917dc37df68d8b484d7a7a3f1203cf7b37d00963");
 	string _t3 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t4 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t5 = builtin__string_trim_space(p->cflags);
@@ -94747,7 +94758,7 @@ VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c_
 			builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 		}
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_310163)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_4c809e27a7a3a1c1_293_ref_ast__Var_ref_ast__Var__int_310163)));
 	Array_v__gen__c__ScopeGcPin pins = builtin____new_array_with_default(0, 0, sizeof(v__gen__c__ScopeGcPin), 0);
 	bool opened_scope = false;
 	for (int _t12 = 0; _t12 < vars.len; ++_t12) {
@@ -94847,7 +94858,7 @@ VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos 
 		builtin__map_set(&seen, &(string[]){var_obj.name}, &(bool[]) { true });
 		builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_315051)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_4c809e27a7a3a1c1_293_ref_ast__Var_ref_ast__Var__int_315051)));
 	for (int _t4 = 0; _t4 < vars.len; ++_t4) {
 		v__ast__Var obj = ((v__ast__Var*)vars.data)[_t4];
 		_option_string _t5 = {0};
@@ -104746,11 +104757,22 @@ VV_LOC void v__gen__c__Gen_write_autostr_tls_global(v__gen__c__Gen* g, strings__
 	string slot_fn = builtin__string_plus_many(3, _MOV((string[3]){_S("v_"), cname, _S("_tls_slot")}));
 	string slot_linkage = (g->pref->parallel_cc ? (_S("")) : (_S("static ")));
 	strings__Builder_writeln(def_builder, _S("#if defined(__TINYC__) && defined(_WIN32)"));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("typedef DWORD (WINAPI *"), cname, _S("_fls_alloc_fn)(void (WINAPI *)(void*));")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("typedef void* (WINAPI *"), cname, _S("_fls_get_fn)(DWORD);")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("typedef BOOL (WINAPI *"), cname, _S("_fls_set_fn)(DWORD, void*);")})));
 	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("static DWORD "), cname, _S("_tls_key = 0xFFFFFFFF;")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("static "), cname, _S("_fls_get_fn "), cname, _S("_fls_get;")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("static "), cname, _S("_fls_set_fn "), cname, _S("_fls_set;")})));
 	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("static void WINAPI "), cname, _S("_tls_free(void* p) { free(p); }")})));
 	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("static void "), cname, _S("_tls_init(void) __attribute__((constructor));")})));
-	strings__Builder_writeln(def_builder, builtin__string_plus_many(7, _MOV((string[7]){_S("static void "), cname, _S("_tls_init(void) { "), cname, _S("_tls_key = FlsAlloc("), cname, _S("_tls_free); }")})));
-	strings__Builder_writeln(def_builder, builtin__string_plus_many(13, _MOV((string[13]){slot_linkage, styp, _S("* "), slot_fn, _S("(void) { void* p = FlsGetValue("), cname, _S("_tls_key); if (!p) { p = calloc(1, sizeof("), styp, _S(")); FlsSetValue("), cname, _S("_tls_key, p); } return ("), styp, _S("*)p; }")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(3, _MOV((string[3]){_S("static void "), cname, _S("_tls_init(void) {")})));
+	strings__Builder_writeln(def_builder, _S("\tvoid* kernel32 = GetModuleHandleA(\"kernel32.dll\");"));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), cname, _S("_fls_alloc_fn fls_alloc = ("), cname, _S("_fls_alloc_fn)GetProcAddress(kernel32, \"FlsAlloc\");")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), cname, _S("_fls_get = ("), cname, _S("_fls_get_fn)GetProcAddress(kernel32, \"FlsGetValue\");")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("\t"), cname, _S("_fls_set = ("), cname, _S("_fls_set_fn)GetProcAddress(kernel32, \"FlsSetValue\");")})));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(9, _MOV((string[9]){_S("\t"), cname, _S("_tls_key = fls_alloc && "), cname, _S("_fls_get && "), cname, _S("_fls_set ? fls_alloc("), cname, _S("_tls_free) : TlsAlloc();")})));
+	strings__Builder_writeln(def_builder, _S("}"));
+	strings__Builder_writeln(def_builder, builtin__string_plus_many(25, _MOV((string[25]){slot_linkage, styp, _S("* "), slot_fn, _S("(void) { void* p = "), cname, _S("_fls_get ? "), cname, _S("_fls_get("), cname, _S("_tls_key) : TlsGetValue("), cname, _S("_tls_key); if (!p) { p = calloc(1, sizeof("), styp, _S(")); if ("), cname, _S("_fls_set) "), cname, _S("_fls_set("), cname, _S("_tls_key, p); else TlsSetValue("), cname, _S("_tls_key, p); } return ("), styp, _S("*)p; }")})));
 	strings__Builder_writeln(def_builder, builtin__string_plus_many(5, _MOV((string[5]){_S("#define "), cname, _S(" (*"), slot_fn, _S("())")})));
 	strings__Builder_writeln(def_builder, _S("#elif defined(__TINYC__)"));
 	strings__Builder_writeln(def_builder, _S("#include <pthread.h>"));
@@ -206885,8 +206907,8 @@ VV_LOC void main__launch_macos_v3_fastc_compiler(v__pref__Preferences* prefs, Ar
 	}
 	os__setenv(_S("VCHILD"), _S("true"), true);
 	os__setenv(_S("VEXE"), os__real_path(vexe), true);
-	os__setenv(_const_main__macos_v3_vhash_env, _S("bfcd7b40fb31bfcc93d821cf3601826d3b862e88"), true);
-	os__setenv(_const_main__macos_v3_vcurrent_hash_env, _S("917dc37"), true);
+	os__setenv(_const_main__macos_v3_vhash_env, _S("917dc37df68d8b484d7a7a3f1203cf7b37d00963"), true);
+	os__setenv(_const_main__macos_v3_vcurrent_hash_env, _S(""), true);
 	os__setenv(_const_main__macos_v3_embedded_env, _S("1"), true);
 	main__macos_v3_driver_run(forwarded_args);
 	builtin___v_exit(0);
@@ -207261,8 +207283,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("bfcd7b40fb31bfcc93d821cf3601826d3b862e88") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("917dc37") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("917dc37df68d8b484d7a7a3f1203cf7b37d00963") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
