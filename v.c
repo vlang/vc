@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "71437d263bfc57f99e27588781f34bfc91746910"
+#define V_COMMIT_HASH "5d34e4770a9391edacf78add4968567178010797"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "35784a0a0fcfc06a3c6a7648b2d86ac85f411abb"
+	#define V_COMMIT_HASH "71437d263bfc57f99e27588781f34bfc91746910"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -45465,7 +45465,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("71437d2");
+	return _S("5d34e47");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -62341,7 +62341,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("35784a0a0fcfc06a3c6a7648b2d86ac85f411abb");
+	string vhash = _S("71437d263bfc57f99e27588781f34bfc91746910");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -99010,7 +99010,8 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 		v__ast__TypeSymbol* right_sym = v__ast__Table_sym(g->table, unwrapped_val_type);
 		v__ast__TypeSymbol* unaliased_right_sym = v__ast__Table_final_sym(g->table, unwrapped_val_type);
 		v__ast__TypeSymbol* unaliased_left_sym = v__ast__Table_final_sym(g->table, v__gen__c__Gen_unwrap_generic(g, var_type));
-		bool _t90 = (unaliased_right_sym->kind == v__ast__Kind__array_fixed && (val)._typ != 507);
+		bool is_boxed_fixed_array_val = unaliased_right_sym->kind == v__ast__Kind__array_fixed && (unaliased_left_sym->kind == v__ast__Kind__sum_type || unaliased_left_sym->kind == v__ast__Kind__interface) && !v__ast__Type_has_flag(var_type, v__ast__TypeFlag__option);
+		bool _t90 = (unaliased_right_sym->kind == v__ast__Kind__array_fixed && !is_boxed_fixed_array_val && (val)._typ != 507);
 		if (_t90) {
 			bool _t93 = (((val)._typ == 526 || (val)._typ == 528 || (val)._typ == 288 || (val)._typ == 545 || (val)._typ == 518 || (val)._typ == 521 || (val)._typ == 529 || (val)._typ == 330 || (val)._typ == 331));
 			if (!_t93) {
@@ -99114,7 +99115,7 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 				}
 				v__gen__c__Gen_writeln(g, _S(";}"));
 			}
-		} else if (node.op == v__token__Kind__assign && (is_fixed_array_init || is_fixed_array_var || (unaliased_right_sym->kind == v__ast__Kind__array_fixed && (val)._typ == 513))) {
+		} else if (node.op == v__token__Kind__assign && !is_boxed_fixed_array_val && (is_fixed_array_init || is_fixed_array_var || (unaliased_right_sym->kind == v__ast__Kind__array_fixed && (val)._typ == 513))) {
 			if (unaliased_left_sym->kind != v__ast__Kind__array_fixed && unaliased_right_sym->kind == v__ast__Kind__array_fixed && (g->pref->translated || g->file->is_translated)) {
 				v__gen__c__Gen_expr(g, *left);
 				v__gen__c__Gen_write(g, _S(" = "));
@@ -99859,8 +99860,8 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 									v__gen__c__Gen_write(g, _S(", ("));
 								}
 							} else {
-								multi_return_string_string mr_75069 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
-								string ptrmap_o = mr_75069.arg0;
+								multi_return_string_string mr_75490 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
+								string ptrmap_o = mr_75490.arg0;
 								if (ptrmap_o.len > 0) {
 									{
 										v__gen__c__Gen_write(g, _S("HEAP_vgc("));
@@ -100074,9 +100075,9 @@ VV_LOC void v__gen__c__Gen_assign_stmt(v__gen__c__Gen* g, v__ast__AssignStmt nod
 									v__gen__c__Gen_write(g, _S(")"));
 								}
 							} else {
-								multi_return_string_string mr_80038 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
-								string ptrmap = mr_80038.arg0;
-								string nptrs = mr_80038.arg1;
+								multi_return_string_string mr_80459 = v__gen__c__Gen_vgc_ptrmap(g, v__ast__Type_set_nr_muls(var_type, 0));
+								string ptrmap = mr_80459.arg0;
+								string nptrs = mr_80459.arg1;
 								if (ptrmap.len > 0) {
 									{
 										v__gen__c__Gen_write(g, _S("), "));
@@ -100715,9 +100716,9 @@ VV_LOC void v__gen__c__Gen_gen_cross_tmp_variable(v__gen__c__Gen* g, Array_v__as
 	}
 	else if (val._typ == 288) {
 		if ((*val._v__ast__CallExpr).is_method) {
-			multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_97144 = v__gen__c__Gen_unwrap_receiver_type(g, (*val._v__ast__CallExpr));
-			v__ast__Type unwrapped_rec_type = mr_97144.arg0;
-			v__ast__TypeSymbol* typ_sym = mr_97144.arg1;
+			multi_return_v__ast__Type_ref_v__ast__TypeSymbol mr_97565 = v__gen__c__Gen_unwrap_receiver_type(g, (*val._v__ast__CallExpr));
+			v__ast__Type unwrapped_rec_type = mr_97565.arg0;
+			v__ast__TypeSymbol* typ_sym = mr_97565.arg1;
 			v__ast__Type left_type = v__gen__c__Gen_unwrap_generic(g, (*val._v__ast__CallExpr).left_type);
 			v__ast__TypeSymbol* left_sym = v__ast__Table_sym(g->table, left_type);
 			v__ast__TypeSymbol* final_left_sym = v__ast__Table_final_sym(g->table, left_type);
@@ -228304,8 +228305,8 @@ VV_LOC void main__launch_macos_v3_fastc_compiler(v__pref__Preferences* prefs, Ar
 	}
 	os__setenv(_S("VCHILD"), _S("true"), true);
 	os__setenv(_S("VEXE"), os__real_path(vexe), true);
-	os__setenv(_const_main__macos_v3_vhash_env, _S("35784a0a0fcfc06a3c6a7648b2d86ac85f411abb"), true);
-	os__setenv(_const_main__macos_v3_vcurrent_hash_env, _S("71437d2"), true);
+	os__setenv(_const_main__macos_v3_vhash_env, _S("71437d263bfc57f99e27588781f34bfc91746910"), true);
+	os__setenv(_const_main__macos_v3_vcurrent_hash_env, _S("5d34e47"), true);
 	os__setenv(_const_main__macos_v3_embedded_env, _S("1"), true);
 	main__macos_v3_driver_run(forwarded_args);
 	builtin___v_exit(0);
@@ -228680,8 +228681,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, string fa
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_fallback_file_env}, &(string[]) { fallback_file });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_c_error_dir_env}, &(string[]) { main__macos_v3_c_error_report_dir(fallback_file) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("35784a0a0fcfc06a3c6a7648b2d86ac85f411abb") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("71437d2") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("71437d263bfc57f99e27588781f34bfc91746910") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("5d34e47") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
