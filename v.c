@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "9d722730b393741132c3255dde8455a6fd8941c1"
+#define V_COMMIT_HASH "1f128c94619fb6e4863c5f81883e1b860405c8fa"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "65c29f2aa88813e0b7bb27a0fbece00632eb7584"
+	#define V_COMMIT_HASH "9d722730b393741132c3255dde8455a6fd8941c1"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -17805,6 +17805,7 @@ typedef array Array_v__ast__StringLiteral;
 typedef array Array_v__ast__CTempVar;
 typedef array Array_v__ast__CallExpr;
 typedef array Array_v__ast__OrKind;
+typedef array Array_v__ast__AddressingMode;
 typedef array Array_v__ast__BoolLiteral;
 typedef array Array_v__ast__GenericKindField;
 typedef array Array_v__ast__ComptimeType;
@@ -27436,10 +27437,35 @@ VV_LOC void v__checker__Checker_branch_stmt(v__checker__Checker* c, v__ast__Bran
 VV_LOC void v__checker__Checker_global_decl(v__checker__Checker* c, v__ast__GlobalDecl* node);
 VV_LOC void v__checker__Checker_asm_stmt(v__checker__Checker* c, v__ast__AsmStmt* stmt);
 VV_LOC void v__checker__Checker_check_asm_intel_ios(v__checker__Checker* c, Array_v__ast__AsmIO ios);
+VV_LOC void v__checker__Checker_check_asm_intel_operand_widths(v__checker__Checker* c, v__ast__AsmStmt stmt, Map_string_v__ast__Type aliases);
+VV_LOC bool v__checker__Checker_asm_intel_arg_has_named_alias(v__checker__Checker* c, v__ast__AsmArg arg, Map_string_v__ast__Type aliases);
+VV_LOC void v__checker__Checker_check_asm_intel_address_register_widths(v__checker__Checker* c, v__ast__AsmArg arg, Map_string_v__ast__Type aliases, int native_width, string instruction, v__token__Pos pos);
+VV_LOC string v__checker__asm_intel_normalized_instruction_name(string instruction);
+VV_LOC bool v__checker__asm_intel_mnemonic_is_one_of(string name, Array_string mnemonics);
+VV_LOC u8 v__checker__asm_intel_condition_flags(string instruction);
+VV_LOC u8 v__checker__asm_intel_instruction_read_flags(string instruction);
+VV_LOC u8 v__checker__asm_intel_instruction_set_flags(string instruction);
+VV_LOC int v__checker__asm_intel_static_shift_count(v__ast__AsmTemplate __v_template, string instruction, int native_width);
+VV_LOC u8 v__checker__asm_intel_instruction_overwritten_flags(v__ast__AsmTemplate __v_template, int native_width);
+VV_LOC bool v__checker__asm_intel_instruction_changes_control_flow(string instruction);
+VV_LOC bool v__checker__asm_intel_flags_are_observed_after(Array_v__ast__AsmTemplate templates, int template_index, int native_width);
+VV_LOC bool v__checker__Checker_check_asm_intel_named_shift_count(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int count_index, bool cl_allowed);
+VV_LOC bool v__checker__Checker_check_asm_intel_narrow_data_aliases(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int native_width, string instruction);
+VV_LOC bool v__checker__asm_intel_operand_is_data_source(string instruction, int operand_index);
+VV_LOC bool v__checker__Checker_check_asm_intel_signed_narrow_sources(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, string instruction, int explicit_width);
+VV_LOC int v__checker__asm_intel_extension_move_source_width(string instruction);
+VV_LOC int v__checker__asm_intel_extension_move_destination_width(string instruction);
+VV_LOC void v__checker__Checker_check_asm_intel_extension_move_source(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int native_width, int source_width);
+VV_LOC bool v__checker__Checker_check_asm_intel_extension_move_address_source(v__checker__Checker* c, v__ast__AsmTemplate __v_template, string instruction);
+VV_LOC bool v__checker__asm_intel_crc32_source_width_is_valid(int source_width, int native_width);
+VV_LOC void v__checker__Checker_check_asm_intel_hard_register_widths(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int native_width, bool flags_are_observed);
+VV_LOC bool v__checker__Checker_asm_intel_named_operand_is_narrow(v__checker__Checker* c, string alias, Map_string_v__ast__Type aliases, int native_width);
+VV_LOC int v__checker__Checker_asm_intel_type_width(v__checker__Checker* c, v__ast__Type typ);
+VV_LOC bool v__checker__Checker_asm_intel_type_is_signed(v__checker__Checker* c, v__ast__Type typ);
 VV_LOC _option_string v__checker__closest_asm_register(string name, Map_string_v__ast__ScopeObject registers);
 VV_LOC _option_int v__checker__asm_expected_operand_count(v__pref__Arch arch, string name);
-VV_LOC void v__checker__Checker_asm_arg(v__checker__Checker* c, v__ast__AsmArg arg, v__ast__AsmStmt stmt, Array_string aliases);
-VV_LOC Array_string v__checker__Checker_asm_ios(v__checker__Checker* c, Array_v__ast__AsmIO* ios, v__ast__Scope* scope, bool output);
+VV_LOC void v__checker__Checker_asm_arg(v__checker__Checker* c, v__ast__AsmArg arg, v__ast__AsmStmt stmt, Map_string_v__ast__Type aliases);
+VV_LOC Map_string_v__ast__Type v__checker__Checker_asm_ios(v__checker__Checker* c, Array_v__ast__AsmIO* ios, v__ast__Scope* scope, bool output);
 VV_LOC void v__checker__Checker_hash_stmt(v__checker__Checker* c, v__ast__HashStmt* node);
 VV_LOC _option_string v__checker__Checker_resolve_pseudo_variables(v__checker__Checker* c, string oflag, v__token__Pos pos);
 VV_LOC void v__checker__Checker_import_stmt(v__checker__Checker* c, v__ast__Import node);
@@ -29975,6 +30001,13 @@ static const u64 _const_v__gen__c__cgen_resolution_hash_seed = 14695981039346656
 static const u64 _const_v__gen__c__cgen_unwrap_generic_cache_salt = 11400714785074694791U; // precomputed2
 static const u64 _const_v__gen__c__cgen_scope_var_type_cache_salt = 14029467366897019727U; // precomputed2
 static Array_string _const_v__pkgconfig__default_paths; // inited later
+static const u8 _const_v__checker__asm_intel_flag_cf = 1; // precomputed2
+static const u8 _const_v__checker__asm_intel_flag_pf = 2; // precomputed2
+static const u8 _const_v__checker__asm_intel_flag_af = 4; // precomputed2
+static const u8 _const_v__checker__asm_intel_flag_zf = 8; // precomputed2
+static const u8 _const_v__checker__asm_intel_flag_sf = 16; // precomputed2
+static const u8 _const_v__checker__asm_intel_flag_of = 32; // precomputed2
+static const u8 _const_v__checker__asm_intel_status_flags = 63; // precomputed2
 static Array_string _const_v__checker__array_builtin_methods; // inited later
 static Array_string _const_v__checker__fixed_array_builtin_methods; // inited later
 static Array_string _const_v__checker__reserved_type_names; // inited later
@@ -45399,7 +45432,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("9d72273");
+	return _S("1f128c9");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -62185,7 +62218,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("65c29f2aa88813e0b7bb27a0fbece00632eb7584");
+	string vhash = _S("9d722730b393741132c3255dde8455a6fd8941c1");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -135273,16 +135306,22 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 				string plus_plus_idx = _t31;
 		v__ast__TypeSymbol* cond_sym = v__ast__Table_final_sym(g->table, node.cond_type);
 		v__ast__ArrayFixed info = *(v__ast__ArrayFixed*)builtin____as_cast((cond_sym->info)._v__ast__ArrayFixed, (cond_sym->info)._typ, 688);
-		v__ast__TypeSymbol* elem_sym = v__ast__Table_sym(g->table, info.elem_type);
-		bool elem_is_direct_fn = ((elem_sym->info)._typ == 687 ? ((*elem_sym->info._v__ast__FnType).has_decl) : (false));
 		v__gen__c__Gen_writeln(g, builtin__string_plus_many(11, _MOV((string[11]){_S("for ("), _const_v__ast__int_type_name, _S(" "), idx, _S(" = 0; "), idx, _S(" != "), builtin__int_str(info.size), _S("; "), plus_plus_idx, _S(") {")})));
 		if (!builtin__fast_string_eq(node.val_var, _S("_"))) {
 			v__ast__TypeSymbol* val_sym = v__ast__Table_sym(g->table, node.val_type);
+			v__ast__Type base_elem_type = v__gen__c__Gen_unwrap_generic(g, info.elem_type);
+			v__ast__TypeSymbol* base_elem_sym = v__ast__Table_sym(g->table, base_elem_type);
+			bool loop_var_added_ref = v__ast__Type_nr_muls(node.val_type) > v__ast__Type_nr_muls(base_elem_type);
+			bool _t34 = ((base_elem_sym->info)._typ == 687);
+			if (_t34) {
+				_t34 = (*(v__ast__FnType*)builtin____as_cast((base_elem_sym->info)._v__ast__FnType, (base_elem_sym->info)._typ, 687)).has_decl;
+			}
+			bool base_elem_is_concrete_fn = _t34;
 			bool is_fixed_array = val_sym->kind == v__ast__Kind__array_fixed && !node.val_is_mut && !v__ast__Type_has_flag(node.val_type, v__ast__TypeFlag__option);
-			if ((val_sym->info)._typ == 687) {
+			if ((val_sym->info)._typ == 687 && (!loop_var_added_ref || base_elem_is_concrete_fn)) {
 				v__gen__c__Gen_write(g, _S("\t"));
 				string tcc_bug = v__gen__c__c_name(node.val_var);
-				if (elem_is_direct_fn) {
+				if (base_elem_is_concrete_fn) {
 					v__gen__c__Gen_write_fn_ptr_decl(g, &(*val_sym->info._v__ast__FnType), tcc_bug);
 				} else {
 					v__gen__c__Gen_write_fntype_decl(g, tcc_bug, (*val_sym->info._v__ast__FnType), v__ast__Type_nr_muls(node.val_type));
@@ -135301,8 +135340,7 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 				}
 			}
 			if (!is_fixed_array) {
-				bool val_was_promoted_to_ref = v__ast__Type_nr_muls(node.val_type) > v__ast__Type_nr_muls(info.elem_type) || v__ast__Type_has_flag(node.val_type, v__ast__TypeFlag__option_mut_param_t);
-				string addr = ((node.val_is_mut || node.val_is_ref) && val_was_promoted_to_ref && !elem_is_direct_fn ? (_S("&")) : (_S("")));
+				string addr = ((node.val_is_mut || node.val_is_ref) && (v__ast__Type_has_flag(node.val_type, v__ast__TypeFlag__option_mut_param_t) || (loop_var_added_ref && !base_elem_is_concrete_fn)) ? (_S("&")) : (_S("")));
 				if (cond_type_is_ptr) {
 					v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_S(" = "), addr, _S("(*"), cond_var, _S(")["), idx, _S("];")})));
 				} else if (cond_is_literal) {
@@ -135318,23 +135356,23 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 						if ((cond_expr)._typ == 513) {
 							cond_expr = (*cond_expr._v__ast__ParExpr).expr;
 						}
-						bool _t36 = ((cond_expr)._typ == 296);
+						bool _t37 = ((cond_expr)._typ == 296);
+						if (_t37) {
+							_t37 = !v__ast__Type_has_option_or_result((*(v__ast__CallExpr*)builtin____as_cast((cond_expr)._v__ast__CallExpr, (cond_expr)._typ, 296)).return_type);
+						}
+						bool _t36 = ( _t37);
 						if (_t36) {
-							_t36 = !v__ast__Type_has_option_or_result((*(v__ast__CallExpr*)builtin____as_cast((cond_expr)._v__ast__CallExpr, (cond_expr)._typ, 296)).return_type);
+							_t36 = v__ast__Table_final_sym(g->table, (*(v__ast__CallExpr*)builtin____as_cast((cond_expr)._v__ast__CallExpr, (cond_expr)._typ, 296)).return_type)->kind == v__ast__Kind__array_fixed;
 						}
-						bool _t35 = ( _t36);
-						if (_t35) {
-							_t35 = v__ast__Table_final_sym(g->table, (*(v__ast__CallExpr*)builtin____as_cast((cond_expr)._v__ast__CallExpr, (cond_expr)._typ, 296)).return_type)->kind == v__ast__Kind__array_fixed;
-						}
-						bool _t34 = (( _t35));
-						if (!_t34) {
-							bool _t37 = ((cond_expr)._typ == 485);
-							if (_t37) {
-								_t37 = (*(v__ast__CTempVar*)builtin____as_cast((cond_expr)._v__ast__CTempVar, (cond_expr)._typ, 485)).is_fixed_ret;
+						bool _t35 = (( _t36));
+						if (!_t35) {
+							bool _t38 = ((cond_expr)._typ == 485);
+							if (_t38) {
+								_t38 = (*(v__ast__CTempVar*)builtin____as_cast((cond_expr)._v__ast__CTempVar, (cond_expr)._typ, 485)).is_fixed_ret;
 							}
-							_t34 = ( _t37);
+							_t35 = ( _t38);
 						}
-						bool cond_emits_ret_arr = _t34;
+						bool cond_emits_ret_arr = _t35;
 						if (!cond_emits_ret_arr) {
 							v__gen__c__Gen_write(g, _S(".ret_arr"));
 						}
@@ -135355,24 +135393,24 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		}
 		string dot_or_ptr = (v__ast__Type_has_flag(node.cond_type, v__ast__TypeFlag__shared_f) ? (_S("->val.")) : v__ast__Type_is_ptr(node.cond_type) || v__ast__Expr_is_auto_deref_var(resolved_cond_expr) ? (_S("->")) : (v__gen__c__Gen_dot_or_ptr(g, node.cond_type)));
 		string idx = v__gen__c__Gen_new_tmp_var(g);
-		string _t38; /* if prepend */
+		string _t39; /* if prepend */
 		if (g->do_int_overflow_checks) {
-			string _t40;
+			string _t41;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
-				_t40 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i64("), idx, _S(",1)")}));
+				_t41 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i64("), idx, _S(",1)")}));
 				;
 			#else
-				_t40 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i32("), idx, _S(",1)")}));
+				_t41 = builtin__string_plus_many(4, _MOV((string[4]){idx, _S("=builtin__overflow__add_i32("), idx, _S(",1)")}));
 				;
 			#endif
-						_t38 = _t40;
-			goto _t39;
+						_t39 = _t41;
+			goto _t40;
 		};
 		{
-			_t38 = builtin__string_plus_many(2, _MOV((string[2]){_S("++"), idx}));
+			_t39 = builtin__string_plus_many(2, _MOV((string[2]){_S("++"), idx}));
 		}
-	_t39: {};
-				string plus_plus_idx = _t38;
+	_t40: {};
+				string plus_plus_idx = _t39;
 		string map_len = v__gen__c__Gen_new_tmp_var(g);
 		g->empty_line = true;
 		v__gen__c__Gen_writeln(g, builtin__string_plus_many(7, _MOV((string[7]){_const_v__ast__int_type_name, _S(" "), map_len, _S(" = "), cond_var, dot_or_ptr, _S("key_values.len;")})));
@@ -135467,24 +135505,24 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		v__ast__Expr cond = (((node.cond)._typ == 524 || (node.cond)._typ == 523) ? (v__ast__CTempVar_to_sumtype_v__ast__Expr(ADDR(v__ast__CTempVar, (v__gen__c__Gen_new_ctemp_var_then_gen(g, node.cond, _const_v__ast__string_type))), false)) : (node.cond));
 		string field_accessor = (v__ast__Type_is_ptr(node.cond_type) ? (_S("->")) : (_S(".")));
 		string i = ((builtin__fast_string_eq(node.key_var, _S("")) || builtin__fast_string_eq(node.key_var, _S("_"))) ? (v__gen__c__Gen_new_tmp_var(g)) : (node.key_var));
-		string _t41; /* if prepend */
+		string _t42; /* if prepend */
 		if (g->do_int_overflow_checks) {
-			string _t43;
+			string _t44;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
-				_t43 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
+				_t44 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
 				;
 			#else
-				_t43 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
+				_t44 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
 			#endif
-						_t41 = _t43;
-			goto _t42;
+						_t42 = _t44;
+			goto _t43;
 		};
 		{
-			_t41 = builtin__string_plus_many(2, _MOV((string[2]){_S("++"), i}));
+			_t42 = builtin__string_plus_many(2, _MOV((string[2]){_S("++"), i}));
 		}
-	_t42: {};
-				string plus_plus_i = _t41;
+	_t43: {};
+				string plus_plus_i = _t42;
 		{
 			v__gen__c__Gen_write(g, _S("for ("));
 			v__gen__c__Gen_write(g, _const_v__ast__int_type_name);
@@ -135508,8 +135546,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 	} else if (node.kind == v__ast__Kind__struct || node.kind == v__ast__Kind__interface) {
 		v__ast__Type unwrapped_cond_type = v__gen__c__Gen_unwrap_generic(g, node.cond_type);
 		if (g->cur_concrete_types.len > 0 && g->cur_fn != ((void*)0) && (node.cond)._typ == 499) {
-			for (int _t44 = 0; _t44 < g->cur_fn->params.len; ++_t44) {
-				v__ast__Param param = ((v__ast__Param*)g->cur_fn->params.data)[_t44];
+			for (int _t45 = 0; _t45 < g->cur_fn->params.len; ++_t45) {
+				v__ast__Param param = ((v__ast__Param*)g->cur_fn->params.data)[_t45];
 				if (builtin__string__eq(param.name, ((*node.cond._v__ast__Ident)).name)) {
 					v__ast__Type resolved = v__gen__c__Gen_unwrap_generic(g, param.typ);
 					if (resolved != unwrapped_cond_type) {
@@ -135520,13 +135558,13 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 			}
 		}
 		v__ast__TypeSymbol* cond_type_sym = v__ast__Table_sym(g->table, unwrapped_cond_type);
-		v__ast__Fn _t45 = ((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,});
-		v__ast__Fn next_fn = _t45;
+		v__ast__Fn _t46 = ((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,});
+		v__ast__Fn next_fn = _t46;
 		if (cond_type_sym->kind == v__ast__Kind__alias) {
-			_option_v__ast__Fn _t46 = v__ast__TypeSymbol_find_method_with_generic_parent(cond_type_sym, _S("next"));
-			if (_t46.state != 0) {
-				_option_v__ast__Fn _t47 = v__ast__TypeSymbol_find_method_with_generic_parent(v__ast__Table_final_sym(g->table, unwrapped_cond_type), _S("next"));
-				if (_t47.state != 0) {
+			_option_v__ast__Fn _t47 = v__ast__TypeSymbol_find_method_with_generic_parent(cond_type_sym, _S("next"));
+			if (_t47.state != 0) {
+				_option_v__ast__Fn _t48 = v__ast__TypeSymbol_find_method_with_generic_parent(v__ast__Table_final_sym(g->table, unwrapped_cond_type), _S("next"));
+				if (_t48.state != 0) {
 					v__gen__c__verror(_S("`next` method not found"));
 					VUNREACHABLE();
 						if (v__gen__c__Gen_for_in_stmt_defer_1) { // defer begin
@@ -135538,13 +135576,13 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 					return;
 				}
 				
- 				*(v__ast__Fn*) _t46.data = (*(v__ast__Fn*)_t47.data);
+ 				*(v__ast__Fn*) _t47.data = (*(v__ast__Fn*)_t48.data);
 			}
 			
- 			next_fn = (*(v__ast__Fn*)_t46.data);
+ 			next_fn = (*(v__ast__Fn*)_t47.data);
 		} else {
-			_option_v__ast__Fn _t48 = v__ast__TypeSymbol_find_method_with_generic_parent(cond_type_sym, _S("next"));
-			if (_t48.state != 0) {
+			_option_v__ast__Fn _t49 = v__ast__TypeSymbol_find_method_with_generic_parent(cond_type_sym, _S("next"));
+			if (_t49.state != 0) {
 				v__gen__c__verror(_S("`next` method not found"));
 				VUNREACHABLE();
 					if (v__gen__c__Gen_for_in_stmt_defer_1) { // defer begin
@@ -135556,7 +135594,7 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 				return;
 			}
 			
- 			next_fn = (*(v__ast__Fn*)_t48.data);
+ 			next_fn = (*(v__ast__Fn*)_t49.data);
 		}
 		v__ast__Type ret_typ = v__gen__c__Gen_unwrap_generic(g, next_fn.return_type);
 		string t_expr = v__gen__c__Gen_new_tmp_var(g);
@@ -135569,24 +135607,24 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 		v__gen__c__Gen_expr(g, node.cond);
 		v__gen__c__Gen_writeln(g, _S(";"));
 		string i = node.key_var;
-		string _t49; /* if prepend */
+		string _t50; /* if prepend */
 		if (g->do_int_overflow_checks) {
-			string _t51;
+			string _t52;
 			#if defined(CUSTOM_DEFINE_new_int) && defined(TARGET_IS_64BIT)
-				_t51 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
+				_t52 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i64("), i, _S(",1)")}));
 				;
 			#else
-				_t51 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
+				_t52 = builtin__string_plus_many(4, _MOV((string[4]){i, _S("=builtin__overflow__add_i32("), i, _S(",1)")}));
 				;
 			#endif
-						_t49 = _t51;
-			goto _t50;
+						_t50 = _t52;
+			goto _t51;
 		};
 		{
-			_t49 = builtin__string_plus_many(2, _MOV((string[2]){_S("++"), i}));
+			_t50 = builtin__string_plus_many(2, _MOV((string[2]){_S("++"), i}));
 		}
-	_t50: {};
-				string plus_plus_i = _t49;
+	_t51: {};
+				string plus_plus_i = _t50;
 		if (_SLIT_EQ(i.str, i.len, "") || _SLIT_EQ(i.str, i.len, "_")) {
 			v__gen__c__Gen_writeln(g, _S("while (1) {"));
 		} else {
@@ -135656,8 +135694,8 @@ v__ast__ForInStmt node = (v__ast__ForInStmt){.key_var = (string){.str=(byteptr)"
 			}
 		}
 	} else if (node.kind == v__ast__Kind__aggregate) {
-		v__ast__TypeInfo _t52 = v__ast__Table_sym(g->table, node.cond_type)->info;
-		v__ast__Type for_type = (*(v__ast__Type*)builtin__array_get((*(v__ast__Aggregate*)builtin____as_cast((_t52)._v__ast__Aggregate, (_t52)._typ, 695)).types, g->aggregate_type_idx));
+		v__ast__TypeInfo _t53 = v__ast__Table_sym(g->table, node.cond_type)->info;
+		v__ast__Type for_type = (*(v__ast__Type*)builtin__array_get((*(v__ast__Aggregate*)builtin____as_cast((_t53)._v__ast__Aggregate, (_t53)._typ, 695)).types, g->aggregate_type_idx));
 		v__ast__Type val_type = v__ast__Table_value_type(g->table, for_type);
 		v__ast__Scope_update_var_type(node.scope, node.val_var, val_type);
 		v__gen__c__Gen_for_in_stmt(g, ((v__ast__ForInStmt){
@@ -160773,7 +160811,7 @@ VV_LOC void v__checker__Checker_reset_checker_state_at_start_of_new_file(v__chec
 void v__checker__Checker_check(v__checker__Checker* c, v__ast__File* ast_file) {
 	#if defined(CUSTOM_DEFINE_trace_check)
 	{
-		builtin__eprintln(builtin__string_plus_many(6, _MOV((string[6]){_S("> "), _S("/home/runner/work/v/v/vlib/v/checker/checker.v"), _S(":"), _S("496"), _S(" | ast_file.path: "), ast_file->path})));
+		builtin__eprintln(builtin__string_plus_many(6, _MOV((string[6]){_S("> "), _S("/home/runner/work/v/v/vlib/v/checker/checker.v"), _S(":"), _S("505"), _S(" | ast_file.path: "), ast_file->path})));
 	}
 	#endif
 	#if defined(CUSTOM_DEFINE_trace_checker)
@@ -161591,9 +161629,9 @@ VV_LOC void v__checker__Checker_sum_type_decl(v__checker__Checker* c, v__ast__Su
 		}
 		if ( _t4) {
 			string variant_name = builtin__string_all_after_last(sym->name, _S("."));
-			multi_return_string_string mr_44057 = (sym->kind == v__ast__Kind__struct ? ((multi_return_string_string){.arg0=_S("{"),.arg1=_S("}")}) : ((multi_return_string_string){.arg0=_S("("),.arg1=_S(")")}));
-			string lb = mr_44057.arg0;
-			string rb = mr_44057.arg1;
+			multi_return_string_string mr_44430 = (sym->kind == v__ast__Kind__struct ? ((multi_return_string_string){.arg0=_S("{"),.arg1=_S("}")}) : ((multi_return_string_string){.arg0=_S("("),.arg1=_S(")")}));
+			string lb = mr_44430.arg0;
+			string rb = mr_44430.arg1;
 			string _t6; /* if prepend */
 			bool _t8 = ((sym->info)._typ == 344);
 			if (_t8) {
@@ -162390,27 +162428,27 @@ VV_LOC multi_return_string_v__token__Pos v__checker__Checker_fail_if_immutable(v
 			}
 			return (multi_return_string_v__token__Pos){.arg0=_S(""), .arg1=(*expr->_v__ast__IndexExpr).pos};
 		}
-		multi_return_string_v__token__Pos mr_65082 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__IndexExpr).left);
-		to_lock = mr_65082.arg0;
-		pos = mr_65082.arg1;
+		multi_return_string_v__token__Pos mr_65455 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__IndexExpr).left);
+		to_lock = mr_65455.arg0;
+		pos = mr_65455.arg1;
 	}
 	else if (expr->_typ == 513) {
-		multi_return_string_v__token__Pos mr_65155 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__ParExpr).expr);
-		to_lock = mr_65155.arg0;
-		pos = mr_65155.arg1;
+		multi_return_string_v__token__Pos mr_65528 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__ParExpr).expr);
+		to_lock = mr_65528.arg0;
+		pos = mr_65528.arg1;
 	}
 	else if (expr->_typ == 515) {
 		if ((*expr->_v__ast__PrefixExpr).op == v__token__Kind__mul && ((*expr->_v__ast__PrefixExpr).right)._typ == 499) {
 		} else {
-			multi_return_string_v__token__Pos mr_65382 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__PrefixExpr).right);
-			to_lock = mr_65382.arg0;
-			pos = mr_65382.arg1;
+			multi_return_string_v__token__Pos mr_65755 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__PrefixExpr).right);
+			to_lock = mr_65755.arg0;
+			pos = mr_65755.arg1;
 		}
 	}
 	else if (expr->_typ == 514) {
-		multi_return_string_v__token__Pos mr_65465 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__PostfixExpr).expr);
-		to_lock = mr_65465.arg0;
-		pos = mr_65465.arg1;
+		multi_return_string_v__token__Pos mr_65838 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__PostfixExpr).expr);
+		to_lock = mr_65838.arg0;
+		pos = mr_65838.arg1;
 	}
 	else if (expr->_typ == 518) {
 		if ((*expr->_v__ast__SelectorExpr).expr_type == 0) {
@@ -162489,9 +162527,9 @@ VV_LOC multi_return_string_v__token__Pos v__checker__Checker_fail_if_immutable(v
 						v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("`"), expr_str, _S("` aliases mutable data from an immutable value")})), (*expr->_v__ast__SelectorExpr).pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 						return (multi_return_string_v__token__Pos){.arg0=_S(""), .arg1=(*expr->_v__ast__SelectorExpr).pos};
 					}
-					multi_return_string_v__token__Pos mr_68301 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__SelectorExpr).expr);
-					to_lock = mr_68301.arg0;
-					pos = mr_68301.arg1;
+					multi_return_string_v__token__Pos mr_68674 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__SelectorExpr).expr);
+					to_lock = mr_68674.arg0;
+					pos = mr_68674.arg1;
 				}
 				if ((to_lock).len != 0) {
 					explicit_lock_needed = true;
@@ -162599,9 +162637,9 @@ VV_LOC multi_return_string_v__token__Pos v__checker__Checker_fail_if_immutable(v
 	}
 	else if (expr->_typ == 296) {
 		if (builtin__fast_string_eq((*expr->_v__ast__CallExpr).name, _S("slice"))) {
-			multi_return_string_v__token__Pos mr_70755 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__CallExpr).left);
-			to_lock = mr_70755.arg0;
-			pos = mr_70755.arg1;
+			multi_return_string_v__token__Pos mr_71128 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__CallExpr).left);
+			to_lock = mr_71128.arg0;
+			pos = mr_71128.arg1;
 			if ((to_lock).len != 0) {
 				explicit_lock_needed = true;
 			}
@@ -162644,14 +162682,14 @@ VV_LOC multi_return_string_v__token__Pos v__checker__Checker_fail_if_immutable(v
 		return (multi_return_string_v__token__Pos){.arg0=_S(""), .arg1=(*expr->_v__ast__IfExpr).pos};
 	}
 	else if (expr->_typ == 481) {
-		multi_return_string_v__token__Pos mr_71771 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__AsCast).expr);
-		to_lock = mr_71771.arg0;
-		pos = mr_71771.arg1;
+		multi_return_string_v__token__Pos mr_72144 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__AsCast).expr);
+		to_lock = mr_72144.arg0;
+		pos = mr_72144.arg1;
 	}
 	else if (expr->_typ == 528) {
-		multi_return_string_v__token__Pos mr_71847 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__UnsafeExpr).expr);
-		to_lock = mr_71847.arg0;
-		pos = mr_71847.arg1;
+		multi_return_string_v__token__Pos mr_72220 = v__checker__Checker_fail_if_immutable(c, &(*expr->_v__ast__UnsafeExpr).expr);
+		to_lock = mr_72220.arg0;
+		pos = mr_72220.arg1;
 	}
 	else if (expr->_typ == 509) {
 		return (multi_return_string_v__token__Pos){.arg0=_S(""), .arg1=(*expr->_v__ast__Nil).pos};
@@ -164028,9 +164066,9 @@ VV_LOC v__ast__Type v__checker__Checker_selector_expr(v__checker__Checker* c, v_
 					*(multi_return_v__ast__StructField_Array_v__ast__Type*) _t28.data = (multi_return_v__ast__StructField_Array_v__ast__Type){.arg0=((v__ast__StructField){.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.option_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.i = 0,.has_default_expr = 0,.has_prev_newline = 0,.has_break_line = 0,.is_pub = 0,.default_val = (string){.str=(byteptr)"", .is_lit=1},.is_mut = 0,.is_global = 0,.is_volatile = 0,.is_deprecated = 0,.is_embed = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.next_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.is_recursive = 0,.is_part_of_union = 0,.container_typ = 0,.default_expr = (v__ast__Expr){._v__ast__NodeError=HEAP(v__ast__NodeError, ((v__ast__NodeError){.idx = 0,.pos = (v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,},})),._typ=477},.default_expr_typ = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.typ = 0,.unaliased_typ = 0,.anon_struct_decl = ((v__ast__StructDecl){.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name = (string){.str=(byteptr)"", .is_lit=1},.scoped_name = (string){.str=(byteptr)"", .is_lit=1},.generic_types = builtin____new_array(0, 0, sizeof(v__ast__Type)),.is_pub = 0,.mut_pos = -1,.pub_pos = -1,.pub_mut_pos = -1,.global_pos = -1,.module_pos = -1,.is_union = 0,.is_option = 0,.is_aligned = 0,.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.pre_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.end_comments = builtin____new_array(0, 0, sizeof(v__ast__Comment)),.embeds = builtin____new_array(0, 0, sizeof(v__ast__Embed)),.is_implements = 0,.implements_types = builtin____new_array(0, 0, sizeof(v__ast__TypeNode)),.language = 0,.fields = builtin____new_array(0, 0, sizeof(v__ast__StructField)),.idx = 0,}),}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				multi_return_v__ast__StructField_Array_v__ast__Type mr_113813 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t28.data);
-				field = mr_113813.arg0;
-				embed_types = mr_113813.arg1;
+ 				multi_return_v__ast__StructField_Array_v__ast__Type mr_114186 = (*(multi_return_v__ast__StructField_Array_v__ast__Type*)_t28.data);
+				field = mr_114186.arg0;
+				embed_types = mr_114186.arg1;
 				node->from_embed_types = embed_types;
 				builtin__array_push((array*)&node->generic_from_embed_types, &embed_types);
 			}
@@ -165065,45 +165103,62 @@ VV_LOC void v__checker__Checker_asm_stmt(v__checker__Checker* c, v__ast__AsmStmt
 	if (c->is_js_backend) {
 		v__checker__Checker_error(c, _S("inline assembly is not supported in the js backend"), stmt->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 	}
-	Array_string aliases = v__checker__Checker_asm_ios(c, &stmt->output, stmt->scope, true);
-	Array_string aliases2 = v__checker__Checker_asm_ios(c, &stmt->input, stmt->scope, false);
-	_PUSH_MANY(&aliases, (aliases2), _t1, Array_string);
+	Map_string_v__ast__Type aliases = v__checker__Checker_asm_ios(c, &stmt->output, stmt->scope, true);
+	Map_string_v__ast__Type aliases2 = v__checker__Checker_asm_ios(c, &stmt->input, stmt->scope, false);
+	int _t2 = aliases2.key_values.len;
+	for (int _t1 = 0; _t1 < _t2; ++_t1 ) {
+		int _t3 = aliases2.key_values.len - _t2;
+		_t2 = aliases2.key_values.len;
+		if (_t3 < 0) {
+			_t1 = -1;
+			continue;
+		}
+		if (!builtin__DenseArray_has_index(&aliases2.key_values, _t1)) {continue;}
+		string alias = *(string*)builtin__DenseArray_key(&aliases2.key_values, _t1);
+		alias = builtin__string_clone(alias);
+		v__ast__Type typ = (*(v__ast__Type*)builtin__DenseArray_value(&aliases2.key_values, _t1));
+		builtin__map_set(&aliases, &(string[]){alias}, &(v__ast__Type[]) { typ });
+	}
 	if (stmt->is_intel && !stmt->is_raw) {
+		int errors_before = c->errors.len;
 		v__checker__Checker_check_asm_intel_ios(c, stmt->output);
 		v__checker__Checker_check_asm_intel_ios(c, stmt->input);
+		if (c->errors.len == errors_before) {
+			v__checker__Checker_check_asm_intel_operand_widths(c, *stmt, aliases);
+		}
 	}
-	for (int _t2 = 0; _t2 < stmt->templates.len; ++_t2) {
-		v__ast__AsmTemplate* __v_template = ((v__ast__AsmTemplate*)stmt->templates.data) + _t2;
+	for (int _t4 = 0; _t4 < stmt->templates.len; ++_t4) {
+		v__ast__AsmTemplate* __v_template = ((v__ast__AsmTemplate*)stmt->templates.data) + _t4;
 		if (stmt->is_raw) {
 			continue;
 		}
-		bool _t4 = __v_template->is_directive;
-		_option_int _t3 = {0};
-		if (_t4) {
+		bool _t6 = __v_template->is_directive;
+		_option_int _t5 = {0};
+		if (_t6) {
 			if (!(builtin__fast_string_eq(__v_template->name, _S("skip")) || builtin__fast_string_eq(__v_template->name, _S("space")) || builtin__fast_string_eq(__v_template->name, _S("byte")) || builtin__fast_string_eq(__v_template->name, _S("word")) || builtin__fast_string_eq(__v_template->name, _S("short")) || builtin__fast_string_eq(__v_template->name, _S("int")) || builtin__fast_string_eq(__v_template->name, _S("long")) || builtin__fast_string_eq(__v_template->name, _S("quad")) || builtin__fast_string_eq(__v_template->name, _S("globl")) || builtin__fast_string_eq(__v_template->name, _S("global")) || builtin__fast_string_eq(__v_template->name, _S("section")) || builtin__fast_string_eq(__v_template->name, _S("text")) || builtin__fast_string_eq(__v_template->name, _S("data")) || builtin__fast_string_eq(__v_template->name, _S("bss")) || builtin__fast_string_eq(__v_template->name, _S("fill")) || builtin__fast_string_eq(__v_template->name, _S("org")) || builtin__fast_string_eq(__v_template->name, _S("previous")) || builtin__fast_string_eq(__v_template->name, _S("string")) || builtin__fast_string_eq(__v_template->name, _S("asciz")) || builtin__fast_string_eq(__v_template->name, _S("ascii")))) {
 				v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("unknown assembler directive: `"), __v_template->name, _S("`")})), __v_template->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 			}
-		} else if (_t3 = v__checker__asm_expected_operand_count(stmt->arch, __v_template->name), _t3.state == 0) {
-			int expected_operands = *(int*)_t3.data;
+		} else if (_t5 = v__checker__asm_expected_operand_count(stmt->arch, __v_template->name), _t5.state == 0) {
+			int expected_operands = *(int*)_t5.data;
 			if (__v_template->args.len != expected_operands) {
 				v__checker__Checker_error(c, builtin__string_plus_many(6, _MOV((string[6]){_S("asm instruction `"), __v_template->name, _S("` expects "), builtin__int_str(expected_operands), _S(" operands, but got "), builtin__int_str(__v_template->args.len)})), __v_template->pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 			}
 		}
-		for (int _t5 = 0; _t5 < __v_template->args.len; ++_t5) {
-			v__ast__AsmArg* arg = ((v__ast__AsmArg*)__v_template->args.data) + _t5;
+		for (int _t7 = 0; _t7 < __v_template->args.len; ++_t7) {
+			v__ast__AsmArg* arg = ((v__ast__AsmArg*)__v_template->args.data) + _t7;
 			v__checker__Checker_asm_arg(c, *arg, *stmt, aliases);
 		}
 	}
-	for (int _t6 = 0; _t6 < stmt->clobbered.len; ++_t6) {
-		v__ast__AsmClobbered clob = ((v__ast__AsmClobbered*)stmt->clobbered.data)[_t6];
+	for (int _t8 = 0; _t8 < stmt->clobbered.len; ++_t8) {
+		v__ast__AsmClobbered clob = ((v__ast__AsmClobbered*)stmt->clobbered.data)[_t8];
 		if (builtin__fast_string_eq(clob.reg.name, _S("cc")) || builtin__fast_string_eq(clob.reg.name, _S("memory")) || builtin__fast_string_eq(clob.reg.name, _S("dirflag")) || builtin__fast_string_eq(clob.reg.name, _S("fpsr")) || builtin__fast_string_eq(clob.reg.name, _S("flags"))) {
 			continue;
 		}
 		if (!_IN_MAP(ADDR(string, clob.reg.name), ADDR(map, stmt->scope->objects))) {
 			string msg = builtin__string_plus_many(3, _MOV((string[3]){_S("unknown clobbered register `"), clob.reg.name, _S("`")}));
-			_option_string _t7 = {0};
-			if (_t7 = v__checker__closest_asm_register(clob.reg.name, stmt->scope->objects), _t7.state == 0) {
-				string suggestion = *(string*)_t7.data;
+			_option_string _t9 = {0};
+			if (_t9 = v__checker__closest_asm_register(clob.reg.name, stmt->scope->objects), _t9.state == 0) {
+				string suggestion = *(string*)_t9.data;
 				msg = builtin__string__plus(msg, builtin__string_plus_many(3, _MOV((string[3]){_S("; did you mean `"), suggestion, _S("`?")})));
 			}
 			v__checker__Checker_error(c, msg, clob.reg.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
@@ -165118,6 +165173,720 @@ VV_LOC void v__checker__Checker_check_asm_intel_ios(v__checker__Checker* c, Arra
 			v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("constraint `"), io.constraint, _S("` is not supported for operands in structured `intel` assembly; use a register-only `r` constraint or a `raw` template with explicit operand modifiers")})), io.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 		}
 	}
+}
+VV_LOC void v__checker__Checker_check_asm_intel_operand_widths(v__checker__Checker* c, v__ast__AsmStmt stmt, Map_string_v__ast__Type aliases) {
+	if (!(stmt.arch == v__pref__Arch__amd64 || stmt.arch == v__pref__Arch__i386)) {
+		return;
+	}
+	Map_string_v__ast__Type operand_aliases = builtin__new_map(sizeof(string), sizeof(v__ast__Type), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
+	int _t2 = aliases.key_values.len;
+	for (int _t1 = 0; _t1 < _t2; ++_t1 ) {
+		int _t3 = aliases.key_values.len - _t2;
+		_t2 = aliases.key_values.len;
+		if (_t3 < 0) {
+			_t1 = -1;
+			continue;
+		}
+		if (!builtin__DenseArray_has_index(&aliases.key_values, _t1)) {continue;}
+		string alias = *(string*)builtin__DenseArray_key(&aliases.key_values, _t1);
+		alias = builtin__string_clone(alias);
+		v__ast__Type typ = (*(v__ast__Type*)builtin__DenseArray_value(&aliases.key_values, _t1));
+		if (!(Array_string_contains(stmt.local_labels, alias)) && !(Array_string_contains(stmt.global_labels, alias)) && !(Array_string_contains(c->file->global_labels, alias))) {
+			builtin__map_set(&operand_aliases, &(string[]){alias}, &(v__ast__Type[]) { typ });
+		}
+	}
+	int native_width = (c->pref->m64 ? (8) : (4));
+	for (int i = 0; i < stmt.templates.len; ++i) {
+		v__ast__AsmTemplate __v_template = ((v__ast__AsmTemplate*)stmt.templates.data)[i];
+		if (__v_template.is_directive || __v_template.is_label) {
+			continue;
+		}
+		for (int _t4 = 0; _t4 < __v_template.args.len; ++_t4) {
+			v__ast__AsmArg arg = ((v__ast__AsmArg*)__v_template.args.data)[_t4];
+			v__checker__Checker_check_asm_intel_address_register_widths(c, arg, operand_aliases, native_width, __v_template.name, __v_template.pos);
+		}
+		v__checker__Checker_check_asm_intel_hard_register_widths(c, __v_template, operand_aliases, native_width, v__checker__asm_intel_flags_are_observed_after(stmt.templates, i, native_width));
+	}
+}
+VV_LOC bool v__checker__Checker_asm_intel_arg_has_named_alias(v__checker__Checker* c, v__ast__AsmArg arg, Map_string_v__ast__Type aliases) {
+	return ((arg._typ == 628)? (_IN_MAP(ADDR(string, (*arg._v__ast__AsmAlias).name), ADDR(map, aliases))) : (arg._typ == 627)? (v__checker__Checker_asm_intel_arg_has_named_alias(c, (*arg._v__ast__AsmAddressing).base, aliases) || v__checker__Checker_asm_intel_arg_has_named_alias(c, (*arg._v__ast__AsmAddressing).index, aliases) || v__checker__Checker_asm_intel_arg_has_named_alias(c, (*arg._v__ast__AsmAddressing).displacement, aliases)) : (false));
+}
+VV_LOC void v__checker__Checker_check_asm_intel_address_register_widths(v__checker__Checker* c, v__ast__AsmArg arg, Map_string_v__ast__Type aliases, int native_width, string instruction, v__token__Pos pos) {
+	if ((arg)._typ == 627) {
+		bool displacement_is_register = (((*arg._v__ast__AsmAddressing).displacement._typ == 628)? (_IN_MAP(ADDR(string, (*(*arg._v__ast__AsmAddressing).displacement._v__ast__AsmAlias).name), ADDR(map, aliases))) : ((*arg._v__ast__AsmAddressing).displacement._typ == 549)? (true) : (false));
+		if (((*arg._v__ast__AsmAddressing).mode == v__ast__AddressingMode__base_plus_index_plus_displacement || (*arg._v__ast__AsmAddressing).mode == v__ast__AddressingMode__base_plus_index_times_scale_plus_displacement) && displacement_is_register) {
+			v__checker__Checker_error(c, _S("register-valued displacement creates a third address register in structured `intel` assembly; use at most a base and index register, or a `raw intel` block with an explicit address expression"), pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+			return;
+		}
+		if (!v__checker__Checker_asm_intel_arg_has_named_alias(c, arg, aliases)) {
+			return;
+		}
+		if ((*arg._v__ast__AsmAddressing).mode == v__ast__AddressingMode__rip_plus_displacement && v__checker__Checker_asm_intel_arg_has_named_alias(c, (*arg._v__ast__AsmAddressing).displacement, aliases)) {
+			v__checker__Checker_error(c, _S("named operands cannot be used as RIP-relative displacements in structured `intel` assembly; use a literal or label displacement, or a `raw intel` block with an explicit operand modifier"), pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+			return;
+		}
+		string name = v__checker__asm_intel_normalized_instruction_name(instruction);
+		bool is_vsib = (_SLIT_EQ(name.str, name.len, "vpgatherdd") || _SLIT_EQ(name.str, name.len, "vpgatherdq") || _SLIT_EQ(name.str, name.len, "vpgatherqd") || _SLIT_EQ(name.str, name.len, "vpgatherqq") || _SLIT_EQ(name.str, name.len, "vgatherdps") || _SLIT_EQ(name.str, name.len, "vgatherdpd") || _SLIT_EQ(name.str, name.len, "vgatherqps") || _SLIT_EQ(name.str, name.len, "vgatherqpd") || _SLIT_EQ(name.str, name.len, "vpscatterdd") || _SLIT_EQ(name.str, name.len, "vpscatterdq") || _SLIT_EQ(name.str, name.len, "vpscatterqd") || _SLIT_EQ(name.str, name.len, "vpscatterqq") || _SLIT_EQ(name.str, name.len, "vscatterdps") || _SLIT_EQ(name.str, name.len, "vscatterdpd") || _SLIT_EQ(name.str, name.len, "vscatterqps") || _SLIT_EQ(name.str, name.len, "vscatterqpd"));
+		Array_v__ast__AsmArg _t1 = builtin__new_array_from_c_array(3, 3, sizeof(v__ast__AsmArg), _MOV((v__ast__AsmArg[3]){(*arg._v__ast__AsmAddressing).base, (*arg._v__ast__AsmAddressing).index, (*arg._v__ast__AsmAddressing).displacement}));
+		for (int i = 0; i < _t1.len; ++i) {
+			v__ast__AsmArg address_arg = ((v__ast__AsmArg*)_t1.data)[i];
+			bool _t3 = ((address_arg)._typ == 628);
+			if (_t3) {
+				_t3 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((address_arg)._v__ast__AsmAlias, (address_arg)._typ, 628)).name), ADDR(map, aliases));
+			}
+			bool _t2 = ( _t3);
+			if (_t2) {
+				_t2 = v__checker__Checker_asm_intel_named_operand_is_narrow(c, (*(v__ast__AsmAlias*)builtin____as_cast((address_arg)._v__ast__AsmAlias, (address_arg)._typ, 628)).name, aliases, native_width);
+			}
+			if ( _t2) {
+				v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*address_arg._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+				if (v__checker__Checker_asm_intel_type_is_signed(c, typ)) {
+					v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("address operand `"), (*address_arg._v__ast__AsmAlias).name, _S("` has "), builtin__int_str(v__checker__Checker_asm_intel_type_width(c, typ) * 8), _S("-bit signed type `"), v__ast__Table_type_str(c->table, typ), _S("`, but structured `intel` assembly substitutes a "), builtin__int_str(native_width * 8), _S("-bit register without sign extension; use a native-width address operand, or a `raw intel` block with an explicit operand modifier")})), pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+					return;
+				}
+			}
+			bool _t5 = ((address_arg)._typ == 549);
+			if (_t5) {
+				_t5 = (*(v__ast__AsmRegister*)builtin____as_cast((address_arg)._v__ast__AsmRegister, (address_arg)._typ, 549)).size > 0;
+			}
+			bool _t4 = ( _t5);
+			if (_t4) {
+				_t4 = (*(v__ast__AsmRegister*)builtin____as_cast((address_arg)._v__ast__AsmRegister, (address_arg)._typ, 549)).size != native_width * 8;
+			}
+			if ( _t4) {
+				if (is_vsib && i == 1 && (builtin__string_starts_with((*address_arg._v__ast__AsmRegister).name, _S("xmm")) || builtin__string_starts_with((*address_arg._v__ast__AsmRegister).name, _S("ymm")) || builtin__string_starts_with((*address_arg._v__ast__AsmRegister).name, _S("zmm")))) {
+					continue;
+				}
+				v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){_S("hard register `"), (*address_arg._v__ast__AsmRegister).name, _S("` is "), builtin__int_str((*address_arg._v__ast__AsmRegister).size), _S("-bit, but named operands in the same structured `intel` address expand to "), builtin__int_str(native_width * 8), _S("-bit registers for the current compilation target; use matching address-register widths, or a `raw intel` block with explicit operand modifiers")})), pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+			}
+		}
+	}
+}
+VV_LOC string v__checker__asm_intel_normalized_instruction_name(string instruction) {
+	string name = builtin__string_to_lower_ascii(instruction);
+	for (;;) {
+		if (!(builtin__string_contains(name, _S(" ")))) break;
+		string prefix = builtin__string_all_before(name, _S(" "));
+		if (!(_SLIT_EQ(prefix.str, prefix.len, "lock") || _SLIT_EQ(prefix.str, prefix.len, "rex") || _SLIT_EQ(prefix.str, prefix.len, "vex") || _SLIT_EQ(prefix.str, prefix.len, "xop")) && !builtin__string_starts_with(prefix, _S("rex.")) && !builtin__string_starts_with(prefix, _S("vex.")) && !builtin__string_starts_with(prefix, _S("xop."))) {
+			break;
+		}
+		name = builtin__string_all_after(name, _S(" "));
+	}
+	return name;
+}
+VV_LOC bool v__checker__asm_intel_mnemonic_is_one_of(string name, Array_string mnemonics) {
+	if ((Array_string_contains(mnemonics, name))) {
+		return true;
+	}
+	return name.len > 1 && (builtin__string_at(name, name.len - 1) == 'b' || builtin__string_at(name, name.len - 1) == 'w' || builtin__string_at(name, name.len - 1) == 'l' || builtin__string_at(name, name.len - 1) == 'q') && (Array_string_contains(mnemonics, builtin__string_substr(name, 0, name.len - 1)));
+}
+VV_LOC u8 v__checker__asm_intel_condition_flags(string instruction) {
+	string name = v__checker__asm_intel_normalized_instruction_name(instruction);
+	string _t1; /* if prepend */
+	if (builtin__string_starts_with(name, _S("cmov"))) {
+		_t1 = builtin__string_substr(name, 4, 2147483647);
+		goto _t2;
+	};
+	{
+	if (builtin__string_starts_with(name, _S("set"))) {
+		_t1 = builtin__string_substr(name, 3, 2147483647);
+		goto _t2;
+	};
+	{
+	if (builtin__string_starts_with(name, _S("j"))) {
+		_t1 = builtin__string_substr(name, 1, 2147483647);
+		goto _t2;
+	};
+	{
+		return 0;
+	}
+	}
+	}
+	_t2: {};
+		string condition = _t1;
+	if (condition.len > 1 && (builtin__string_at(condition, condition.len - 1) == 'b' || builtin__string_at(condition, condition.len - 1) == 'w' || builtin__string_at(condition, condition.len - 1) == 'l' || builtin__string_at(condition, condition.len - 1) == 'q') && (builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("a")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("ae")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("b")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("be")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("c")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("e")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("g")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("ge")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("l")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("le")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("na")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nae")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nb")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nbe")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nc")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("ne")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("ng")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nge")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nl")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nle")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("no")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("np")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("ns")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("nz")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("o")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("p")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("pe")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("po")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("s")) || builtin__fast_string_eq(builtin__string_substr(condition, 0, condition.len - 1), _S("z")))) {
+		condition = builtin__string_substr(condition, 0, condition.len - 1);
+	}
+	return ((_SLIT_EQ(condition.str, condition.len, "b") || _SLIT_EQ(condition.str, condition.len, "c") || _SLIT_EQ(condition.str, condition.len, "nae") || _SLIT_EQ(condition.str, condition.len, "ae") || _SLIT_EQ(condition.str, condition.len, "nb") || _SLIT_EQ(condition.str, condition.len, "nc"))? (_const_v__checker__asm_intel_flag_cf) : (_SLIT_EQ(condition.str, condition.len, "p") || _SLIT_EQ(condition.str, condition.len, "pe") || _SLIT_EQ(condition.str, condition.len, "np") || _SLIT_EQ(condition.str, condition.len, "po"))? (_const_v__checker__asm_intel_flag_pf) : (_SLIT_EQ(condition.str, condition.len, "e") || _SLIT_EQ(condition.str, condition.len, "z") || _SLIT_EQ(condition.str, condition.len, "ne") || _SLIT_EQ(condition.str, condition.len, "nz"))? (_const_v__checker__asm_intel_flag_zf) : (_SLIT_EQ(condition.str, condition.len, "a") || _SLIT_EQ(condition.str, condition.len, "nbe") || _SLIT_EQ(condition.str, condition.len, "be") || _SLIT_EQ(condition.str, condition.len, "na"))? ((_const_v__checker__asm_intel_flag_cf | _const_v__checker__asm_intel_flag_zf)) : (_SLIT_EQ(condition.str, condition.len, "s") || _SLIT_EQ(condition.str, condition.len, "ns"))? (_const_v__checker__asm_intel_flag_sf) : (_SLIT_EQ(condition.str, condition.len, "o") || _SLIT_EQ(condition.str, condition.len, "no"))? (_const_v__checker__asm_intel_flag_of) : (_SLIT_EQ(condition.str, condition.len, "l") || _SLIT_EQ(condition.str, condition.len, "nge") || _SLIT_EQ(condition.str, condition.len, "ge") || _SLIT_EQ(condition.str, condition.len, "nl"))? ((_const_v__checker__asm_intel_flag_sf | _const_v__checker__asm_intel_flag_of)) : (_SLIT_EQ(condition.str, condition.len, "le") || _SLIT_EQ(condition.str, condition.len, "ng") || _SLIT_EQ(condition.str, condition.len, "g") || _SLIT_EQ(condition.str, condition.len, "nle"))? (((_const_v__checker__asm_intel_flag_zf | _const_v__checker__asm_intel_flag_sf) | _const_v__checker__asm_intel_flag_of)) : (((u8)(0))));
+}
+VV_LOC u8 v__checker__asm_intel_instruction_read_flags(string instruction) {
+	string name = v__checker__asm_intel_normalized_instruction_name(instruction);
+	if (_SLIT_EQ(name.str, name.len, "cmc")) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(5, 5, sizeof(string), _MOV((string[5]){_S("adc"), _S("adcx"), _S("sbb"), _S("rcl"), _S("rcr")})))) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("adox")})))) {
+		return _const_v__checker__asm_intel_flag_of;
+	}
+	u8 condition_flags = v__checker__asm_intel_condition_flags(name);
+	if (condition_flags != 0) {
+		return condition_flags;
+	}
+	if (_SLIT_EQ(name.str, name.len, "lahf")) {
+		return (_const_v__checker__asm_intel_status_flags & ~_const_v__checker__asm_intel_flag_of);
+	}
+	if (_SLIT_EQ(name.str, name.len, "pushf") || _SLIT_EQ(name.str, name.len, "pushfd") || _SLIT_EQ(name.str, name.len, "pushfq")) {
+		return _const_v__checker__asm_intel_status_flags;
+	}
+	if (builtin__string_starts_with(name, _S("loopz")) || builtin__string_starts_with(name, _S("loope")) || builtin__string_starts_with(name, _S("loopnz")) || builtin__string_starts_with(name, _S("loopne"))) {
+		return _const_v__checker__asm_intel_flag_zf;
+	}
+	return 0;
+}
+VV_LOC u8 v__checker__asm_intel_instruction_set_flags(string instruction) {
+	string name = v__checker__asm_intel_normalized_instruction_name(instruction);
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("adcx")})))) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("adox")})))) {
+		return _const_v__checker__asm_intel_flag_of;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("inc"), _S("dec")})))) {
+		return (_const_v__checker__asm_intel_status_flags & ~_const_v__checker__asm_intel_flag_cf);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S("and"), _S("or"), _S("test"), _S("xor")})))) {
+		return (_const_v__checker__asm_intel_status_flags & ~_const_v__checker__asm_intel_flag_af);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_S("andn"), _S("bextr"), _S("blsi"), _S("blsmsk"), _S("blsr"), _S("bzhi")})))) {
+		return (((_const_v__checker__asm_intel_flag_cf | _const_v__checker__asm_intel_flag_zf) | _const_v__checker__asm_intel_flag_sf) | _const_v__checker__asm_intel_flag_of);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("bsf"), _S("bsr")})))) {
+		return _const_v__checker__asm_intel_flag_zf;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S("bt"), _S("btc"), _S("btr"), _S("bts")})))) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("lzcnt"), _S("tzcnt")})))) {
+		return (_const_v__checker__asm_intel_flag_cf | _const_v__checker__asm_intel_flag_zf);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("imul"), _S("mul")})))) {
+		return (_const_v__checker__asm_intel_flag_cf | _const_v__checker__asm_intel_flag_of);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("popcnt")})))) {
+		return _const_v__checker__asm_intel_status_flags;
+	}
+	if (_SLIT_EQ(name.str, name.len, "clc") || _SLIT_EQ(name.str, name.len, "cmc") || _SLIT_EQ(name.str, name.len, "stc")) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (_SLIT_EQ(name.str, name.len, "sahf")) {
+		return (_const_v__checker__asm_intel_status_flags & ~_const_v__checker__asm_intel_flag_of);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(8, 8, sizeof(string), _MOV((string[8]){_S("add"), _S("adc"), _S("cmp"), _S("cmpxchg"), _S("neg"), _S("sbb"), _S("sub"), _S("xadd")})))) {
+		return _const_v__checker__asm_intel_status_flags;
+	}
+	return 0;
+}
+VV_LOC int v__checker__asm_intel_static_shift_count(v__ast__AsmTemplate __v_template, string instruction, int native_width) {
+	bool is_double_shift = v__checker__asm_intel_mnemonic_is_one_of(instruction, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("shld"), _S("shrd")})));
+	if (!is_double_shift && __v_template.args.len == 1) {
+		return 1;
+	}
+	if (__v_template.args.len > 0) {
+		v__ast__AsmArg count = (*(v__ast__AsmArg*)builtin__array_last(__v_template.args));
+		if ((count)._typ == 503) {
+			int operand_width = native_width * 8;
+			v__ast__AsmArg destination = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 0));
+			bool _t3 = ((destination)._typ == 549);
+			if (_t3) {
+				_t3 = (*(v__ast__AsmRegister*)builtin____as_cast((destination)._v__ast__AsmRegister, (destination)._typ, 549)).size > 0;
+			}
+			bool _t2 = _t3;
+			bool _t4;
+			if (!(_t2)) {
+				_t4 = instruction.len > 1 && (builtin__string_at(instruction, instruction.len - 1) == 'b' || builtin__string_at(instruction, instruction.len - 1) == 'w' || builtin__string_at(instruction, instruction.len - 1) == 'l' || builtin__string_at(instruction, instruction.len - 1) == 'q');
+			}
+						
+			if (_t2) {
+				operand_width = (*destination._v__ast__AsmRegister).size;
+			} else if (_t4) {
+				u8 _t5 = builtin__string_at(instruction, instruction.len - 1);
+				int_literal _t6 = 0;
+				
+				if (_t5 == ('b')) {
+					_t6 = 8;
+				}
+				else if (_t5 == ('w')) {
+					_t6 = 16;
+				}
+				else if (_t5 == ('l')) {
+					_t6 = 32;
+				}
+				else {
+					_t6 = 64;
+				}operand_width = _t6;
+			}
+			int count_mask = (operand_width == 64 ? (63) : (31));
+			return (builtin__string_int((*count._v__ast__IntegerLiteral).val) & count_mask);
+		}
+	}
+	return 0;
+}
+VV_LOC u8 v__checker__asm_intel_instruction_overwritten_flags(v__ast__AsmTemplate __v_template, int native_width) {
+	string name = v__checker__asm_intel_normalized_instruction_name(__v_template.name);
+	if (_SLIT_EQ(name.str, name.len, "popf") || _SLIT_EQ(name.str, name.len, "popfd") || _SLIT_EQ(name.str, name.len, "popfq")) {
+		return _const_v__checker__asm_intel_status_flags;
+	}
+	if (_SLIT_EQ(name.str, name.len, "clc") || _SLIT_EQ(name.str, name.len, "cmc") || _SLIT_EQ(name.str, name.len, "stc")) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (_SLIT_EQ(name.str, name.len, "sahf")) {
+		return (_const_v__checker__asm_intel_status_flags & ~_const_v__checker__asm_intel_flag_of);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("inc"), _S("dec")})))) {
+		return (_const_v__checker__asm_intel_status_flags & ~_const_v__checker__asm_intel_flag_cf);
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("adcx")})))) {
+		return _const_v__checker__asm_intel_flag_cf;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("adox")})))) {
+		return _const_v__checker__asm_intel_flag_of;
+	}
+	if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("div"), _S("idiv")})))) {
+		return _const_v__checker__asm_intel_status_flags;
+	}
+	int shift_count = v__checker__asm_intel_static_shift_count(__v_template, name, native_width);
+	if (shift_count > 0) {
+		if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S("rol"), _S("ror"), _S("rcl"), _S("rcr")})))) {
+			return (_const_v__checker__asm_intel_flag_cf | (shift_count == 1 ? (_const_v__checker__asm_intel_flag_of) : (((u8)(0)))));
+		}
+		if (v__checker__asm_intel_mnemonic_is_one_of(name, builtin__new_array_from_c_array(6, 6, sizeof(string), _MOV((string[6]){_S("sal"), _S("sar"), _S("shl"), _S("shr"), _S("shld"), _S("shrd")})))) {
+			return _const_v__checker__asm_intel_status_flags;
+		}
+	}
+	if (v__checker__asm_intel_instruction_set_flags(name) != 0) {
+		return _const_v__checker__asm_intel_status_flags;
+	}
+	return 0;
+}
+VV_LOC bool v__checker__asm_intel_instruction_changes_control_flow(string instruction) {
+	string name = v__checker__asm_intel_normalized_instruction_name(instruction);
+	return builtin__string_starts_with(name, _S("j")) || _SLIT_EQ(name.str, name.len, "ljmp") || builtin__string_starts_with(name, _S("loop"));
+}
+VV_LOC bool v__checker__asm_intel_flags_are_observed_after(Array_v__ast__AsmTemplate templates, int template_index, int native_width) {
+	u8 remaining_flags = v__checker__asm_intel_instruction_set_flags((*(v__ast__AsmTemplate*)builtin__array_get(templates, template_index)).name);
+	if (remaining_flags == 0) {
+		return false;
+	}
+	for (int i = template_index + 1; i < templates.len; ++i) {
+		if ((*(v__ast__AsmTemplate*)builtin__array_get(templates, i)).is_directive || (*(v__ast__AsmTemplate*)builtin__array_get(templates, i)).is_label) {
+			continue;
+		}
+		if ((v__checker__asm_intel_instruction_read_flags((*(v__ast__AsmTemplate*)builtin__array_get(templates, i)).name) & remaining_flags) != 0) {
+			return true;
+		}
+		if (v__checker__asm_intel_instruction_changes_control_flow((*(v__ast__AsmTemplate*)builtin__array_get(templates, i)).name)) {
+			return true;
+		}
+		remaining_flags &= (_const_v__checker__asm_intel_status_flags ^ v__checker__asm_intel_instruction_overwritten_flags((*(v__ast__AsmTemplate*)builtin__array_get(templates, i)), native_width));
+		if (remaining_flags == 0) {
+			return false;
+		}
+	}
+	return false;
+}
+VV_LOC bool v__checker__Checker_check_asm_intel_named_shift_count(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int count_index, bool cl_allowed) {
+	if (__v_template.args.len <= count_index) {
+		return false;
+	}
+	v__ast__AsmArg count = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, count_index));
+	bool _t2 = ((count)._typ == 628);
+	if (_t2) {
+		_t2 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((count)._v__ast__AsmAlias, (count)._typ, 628)).name), ADDR(map, aliases));
+	}
+	if ( _t2) {
+		string requirement = (cl_allowed ? (_S("an immediate or `cl`")) : (_S("an immediate")));
+		string remedy = (cl_allowed ? (_S("a hard `cl` register")) : (_S("a literal count")));
+		v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("named shift count `"), (*count._v__ast__AsmAlias).name, _S("` expands to a native-width register in structured `intel` assembly, but instruction `"), __v_template.name, _S("` requires "), requirement, _S("; use "), remedy, _S(", or a `raw intel` block with an explicit operand modifier")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		return true;
+	}
+	return false;
+}
+VV_LOC bool v__checker__Checker_check_asm_intel_narrow_data_aliases(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int native_width, string instruction) {
+	for (int i = 0; i < __v_template.args.len; ++i) {
+		v__ast__AsmArg arg = ((v__ast__AsmArg*)__v_template.args.data)[i];
+		bool _t2 = ((arg)._typ == 628);
+		if (_t2) {
+			_t2 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name), ADDR(map, aliases));
+		}
+		bool _t1 = ( _t2);
+		if (_t1) {
+			_t1 = v__checker__Checker_asm_intel_named_operand_is_narrow(c, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name, aliases, native_width);
+		}
+		if ( _t1) {
+			bool is_width_dependent = ((_SLIT_EQ(instruction.str, instruction.len, "movbe"))? ((i == 0 || i == 1)) : (_SLIT_EQ(instruction.str, instruction.len, "div") || _SLIT_EQ(instruction.str, instruction.len, "idiv") || _SLIT_EQ(instruction.str, instruction.len, "mul"))? (i == 0) : (_SLIT_EQ(instruction.str, instruction.len, "imul"))? (__v_template.args.len == 1 && i == 0) : (_SLIT_EQ(instruction.str, instruction.len, "bt") || _SLIT_EQ(instruction.str, instruction.len, "btc") || _SLIT_EQ(instruction.str, instruction.len, "btr") || _SLIT_EQ(instruction.str, instruction.len, "bts"))? (i == 0) : (_SLIT_EQ(instruction.str, instruction.len, "bzhi") || _SLIT_EQ(instruction.str, instruction.len, "rorx") || _SLIT_EQ(instruction.str, instruction.len, "sarx") || _SLIT_EQ(instruction.str, instruction.len, "shlx") || _SLIT_EQ(instruction.str, instruction.len, "shrx") || _SLIT_EQ(instruction.str, instruction.len, "lzcnt") || _SLIT_EQ(instruction.str, instruction.len, "tzcnt"))? (i == 1) : (_SLIT_EQ(instruction.str, instruction.len, "shld") || _SLIT_EQ(instruction.str, instruction.len, "shrd"))? ((i == 0 || i == 1)) : (_SLIT_EQ(instruction.str, instruction.len, "mulx"))? (i == 2) : (_SLIT_EQ(instruction.str, instruction.len, "crc32"))? (i == 1) : (false));
+			if (is_width_dependent) {
+				v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*arg._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+				v__checker__Checker_error(c, builtin__string_plus_many(11, _MOV((string[11]){_S("named operand `"), (*arg._v__ast__AsmAlias).name, _S("` has "), builtin__int_str(v__checker__Checker_asm_intel_type_width(c, typ) * 8), _S("-bit type `"), v__ast__Table_type_str(c->table, typ), _S("`, but instruction `"), __v_template.name, _S("` operates on the "), builtin__int_str(native_width * 8), _S("-bit register substituted by structured `intel` assembly; use native-width data operands, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+				return true;
+			}
+		}
+	}
+	return false;
+}
+VV_LOC bool v__checker__asm_intel_operand_is_data_source(string instruction, int operand_index) {
+	return ((_SLIT_EQ(instruction.str, instruction.len, "bt") || _SLIT_EQ(instruction.str, instruction.len, "btc") || _SLIT_EQ(instruction.str, instruction.len, "btr") || _SLIT_EQ(instruction.str, instruction.len, "bts"))? (false) : (_SLIT_EQ(instruction.str, instruction.len, "bextr") || _SLIT_EQ(instruction.str, instruction.len, "bzhi") || _SLIT_EQ(instruction.str, instruction.len, "rorx") || _SLIT_EQ(instruction.str, instruction.len, "shld") || _SLIT_EQ(instruction.str, instruction.len, "shrd"))? (operand_index == 1) : (_SLIT_EQ(instruction.str, instruction.len, "mulx"))? (operand_index == 2) : (operand_index > 0));
+}
+VV_LOC bool v__checker__Checker_check_asm_intel_signed_narrow_sources(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, string instruction, int explicit_width) {
+	if (__v_template.args.len < 2) {
+		return false;
+	}
+	v__ast__AsmArg destination = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 0));
+	int _t2; /* if prepend */
+	if (explicit_width > 0) {
+		_t2 = explicit_width;
+		goto _t3;
+	};
+	{
+		int _t4 = 0;
+		if (destination._typ == 628) {
+			v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*destination._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+			_t4 = (typ == 0 || v__ast__Type_has_flag(typ, v__ast__TypeFlag__generic) || v__checker__Checker_type_has_unresolved_generic_parts(c, typ) ? (0) : (v__checker__Checker_asm_intel_type_width(c, typ) * 8));
+		}
+		else if (destination._typ == 549) {
+			_t4 = (*destination._v__ast__AsmRegister).size;
+		}
+		
+		else {
+			_t4 = 0;
+		}
+		_t2 = _t4;
+	}
+	_t3: {};
+		int destination_width = _t2;
+	if (destination_width <= 0) {
+		return false;
+	}
+	for (int i = 0; i < __v_template.args.len; ++i) {
+		v__ast__AsmArg source = ((v__ast__AsmArg*)__v_template.args.data)[i];
+		if (!v__checker__asm_intel_operand_is_data_source(instruction, i)) {
+			continue;
+		}
+		bool _t6 = ((source)._typ == 628);
+		if (_t6) {
+			_t6 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((source)._v__ast__AsmAlias, (source)._typ, 628)).name), ADDR(map, aliases));
+		}
+		if ( _t6) {
+			v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*source._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+			if (typ == 0 || v__ast__Type_has_flag(typ, v__ast__TypeFlag__generic) || v__checker__Checker_type_has_unresolved_generic_parts(c, typ)) {
+				continue;
+			}
+			int source_width = v__checker__Checker_asm_intel_type_width(c, typ) * 8;
+			if (source_width > 0 && source_width < destination_width && v__checker__Checker_asm_intel_type_is_signed(c, typ)) {
+				v__checker__Checker_error(c, builtin__string_plus_many(11, _MOV((string[11]){_S("named source `"), (*source._v__ast__AsmAlias).name, _S("` has "), builtin__int_str(source_width), _S("-bit signed type `"), v__ast__Table_type_str(c->table, typ), _S("`, but instruction `"), __v_template.name, _S("` consumes the wider "), builtin__int_str(destination_width), _S("-bit register substituted by structured `intel` assembly without sign extension; use operands of matching width, explicitly sign-extend into a hard register, or use a `raw intel` block with an explicit operand modifier")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+				return true;
+			}
+		}
+	}
+	return false;
+}
+VV_LOC int v__checker__asm_intel_extension_move_source_width(string instruction) {
+	return ((_SLIT_EQ(instruction.str, instruction.len, "movzbw") || _SLIT_EQ(instruction.str, instruction.len, "movzbl") || _SLIT_EQ(instruction.str, instruction.len, "movzbq") || _SLIT_EQ(instruction.str, instruction.len, "movsbw") || _SLIT_EQ(instruction.str, instruction.len, "movsbl") || _SLIT_EQ(instruction.str, instruction.len, "movsbq"))? (8) : (_SLIT_EQ(instruction.str, instruction.len, "movzwl") || _SLIT_EQ(instruction.str, instruction.len, "movzwq") || _SLIT_EQ(instruction.str, instruction.len, "movswl") || _SLIT_EQ(instruction.str, instruction.len, "movswq"))? (16) : (_SLIT_EQ(instruction.str, instruction.len, "movsxd") || _SLIT_EQ(instruction.str, instruction.len, "movslq"))? (32) : (0));
+}
+VV_LOC int v__checker__asm_intel_extension_move_destination_width(string instruction) {
+	if (_SLIT_EQ(instruction.str, instruction.len, "movsxd")) {
+		return 64;
+	}
+	if (v__checker__asm_intel_extension_move_source_width(instruction) == 0) {
+		return 0;
+	}
+	u8 _t4 = builtin__string_at(instruction, instruction.len - 1);
+	int_literal _t5 = 0;
+	
+	if (_t4 == ('w')) {
+		_t5 = 16;
+	}
+	else if (_t4 == ('l')) {
+		_t5 = 32;
+	}
+	else {
+		_t5 = 64;
+	}return _t5;
+}
+VV_LOC void v__checker__Checker_check_asm_intel_extension_move_source(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int native_width, int source_width) {
+	if (__v_template.args.len < 2) {
+		return;
+	}
+	v__ast__AsmArg source = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 1));
+	bool _t1 = ((source)._typ == 628);
+	if (_t1) {
+		_t1 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((source)._v__ast__AsmAlias, (source)._typ, 628)).name), ADDR(map, aliases));
+	}
+	if ( _t1) {
+		v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){_S("named source `"), (*source._v__ast__AsmAlias).name, _S("` expands to a "), builtin__int_str(native_width * 8), _S("-bit register in structured `intel` assembly, but instruction `"), __v_template.name, _S("` requires a narrower source; use a hard source register of the required width, or a `raw intel` block with an explicit operand modifier")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		return;
+	}
+	if ((source)._typ == 549) {
+		bool is_valid_source = (source_width > 0 ? ((*source._v__ast__AsmRegister).size == source_width) : (((*source._v__ast__AsmRegister).size == 8 || (*source._v__ast__AsmRegister).size == 16)));
+		if (!is_valid_source) {
+			string requirement = (source_width > 0 ? (builtin__string_plus_many(3, _MOV((string[3]){_S("a source register of "), builtin__int_str(source_width), _S(" bits")}))) : (builtin__string_plus_many(3, _MOV((string[3]){_S("a source narrower than its "), builtin__int_str(native_width * 8), _S("-bit named destination")}))));
+			v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("hard source register `"), (*source._v__ast__AsmRegister).name, _S("` is "), builtin__int_str((*source._v__ast__AsmRegister).size), _S("-bit, but instruction `"), __v_template.name, _S("` requires "), requirement, _S("; use a hard source register of the required width, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		}
+	}
+}
+VV_LOC bool v__checker__Checker_check_asm_intel_extension_move_address_source(v__checker__Checker* c, v__ast__AsmTemplate __v_template, string instruction) {
+	if (!(_SLIT_EQ(instruction.str, instruction.len, "movsx") || _SLIT_EQ(instruction.str, instruction.len, "movzx")) || __v_template.args.len < 2) {
+		return false;
+	}
+	v__ast__AsmArg source = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 1));
+	if ((source)._typ == 627) {
+		v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("addressed source in instruction `"), __v_template.name, _S("` has no explicit data width in structured `intel` assembly; use a hard source register of the required width, or a `raw intel` block with an explicit source size")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		return true;
+	}
+	return false;
+}
+VV_LOC bool v__checker__asm_intel_crc32_source_width_is_valid(int source_width, int native_width) {
+	return source_width == 8 || source_width == native_width * 8 || (native_width == 4 && source_width == 16);
+}
+VV_LOC void v__checker__Checker_check_asm_intel_hard_register_widths(v__checker__Checker* c, v__ast__AsmTemplate __v_template, Map_string_v__ast__Type aliases, int native_width, bool flags_are_observed) {
+	string name = v__checker__asm_intel_normalized_instruction_name(__v_template.name);
+	bool is_movq = _SLIT_EQ(name.str, name.len, "movq");
+	int extension_source_width = v__checker__asm_intel_extension_move_source_width(name);
+	int extension_destination_width = v__checker__asm_intel_extension_move_destination_width(name);
+	bool is_extension_move = (_SLIT_EQ(name.str, name.len, "movsx") || _SLIT_EQ(name.str, name.len, "movsxd") || _SLIT_EQ(name.str, name.len, "movzx")) || extension_source_width > 0;
+	Array_string same_width_instructions = builtin__new_array_from_c_array(48, 48, sizeof(string), _MOV((string[48]){
+			_S("mov"), _S("movbe"), _S("add"), _S("adc"), _S("adcx"), _S("adox"), _S("sub"), _S("sbb"), _S("and"),
+			_S("andn"), _S("or"), _S("xor"), _S("cmp"), _S("test"), _S("xchg"), _S("xadd"), _S("cmpxchg"),
+			_S("inc"), _S("dec"), _S("neg"), _S("div"), _S("idiv"), _S("imul"), _S("mul"), _S("bsf"),
+			_S("bsr"), _S("bt"), _S("btc"), _S("btr"), _S("bts"), _S("bextr"), _S("blsi"), _S("blsmsk"),
+			_S("blsr"), _S("bzhi"), _S("mulx"), _S("pdep"), _S("pext"), _S("rorx"), _S("sarx"), _S("shlx"),
+			_S("shrx"), _S("shld"), _S("shrd"), _S("popcnt"), _S("lzcnt"), _S("tzcnt"), _S("crc32")}));
+	Array_string width_sensitive_instructions = builtin__new_array_from_c_array(9, 9, sizeof(string), _MOV((string[9]){
+			_S("bswap"), _S("rcl"), _S("rcr"), _S("rol"), _S("ror"), _S("sal"), _S("sar"), _S("shl"), _S("shr")}));
+	bool is_same_width = (Array_string_contains(same_width_instructions, name));
+	bool is_width_sensitive = (Array_string_contains(width_sensitive_instructions, name));
+	int explicit_width = 0;
+	Array_string cmov_conditions = builtin__new_array_from_c_array(30, 30, sizeof(string), _MOV((string[30]){
+			_S("a"), _S("ae"), _S("b"), _S("be"), _S("c"), _S("e"), _S("g"), _S("ge"), _S("l"),
+			_S("le"), _S("na"), _S("nae"), _S("nb"), _S("nbe"), _S("nc"), _S("ne"), _S("ng"),
+			_S("nge"), _S("nl"), _S("nle"), _S("no"), _S("np"), _S("ns"), _S("nz"), _S("o"),
+			_S("p"), _S("pe"), _S("po"), _S("s"), _S("z")}));
+	bool is_suffixed_cmov = name.len > 5 && builtin__string_starts_with(name, _S("cmov")) && (builtin__string_at(name, name.len - 1) == 'b' || builtin__string_at(name, name.len - 1) == 'w' || builtin__string_at(name, name.len - 1) == 'l' || builtin__string_at(name, name.len - 1) == 'q') && (Array_string_contains(cmov_conditions, builtin__string_substr(name, 4, name.len - 1)));
+	if (!is_same_width && name.len > 1 && (builtin__string_at(name, name.len - 1) == 'b' || builtin__string_at(name, name.len - 1) == 'w' || builtin__string_at(name, name.len - 1) == 'l' || builtin__string_at(name, name.len - 1) == 'q') && ((Array_string_contains(same_width_instructions, builtin__string_substr(name, 0, name.len - 1))) || (Array_string_contains(width_sensitive_instructions, builtin__string_substr(name, 0, name.len - 1))) || is_suffixed_cmov)) {
+		u8 _t1 = builtin__string_at(name, name.len - 1);
+		int_literal _t2 = 0;
+		
+		if (_t1 == ('b')) {
+			_t2 = 8;
+		}
+		else if (_t1 == ('w')) {
+			_t2 = 16;
+		}
+		else if (_t1 == ('l')) {
+			_t2 = 32;
+		}
+		else {
+			_t2 = 64;
+		}explicit_width = _t2;
+		name = builtin__string_substr(name, 0, name.len - 1);
+		is_same_width = true;
+		is_width_sensitive = (Array_string_contains(width_sensitive_instructions, name));
+	}
+	if (!is_same_width && !is_width_sensitive && !builtin__string_starts_with(name, _S("cmov")) && !is_extension_move) {
+		return;
+	}
+	bool is_implicit_width_arithmetic = (_SLIT_EQ(name.str, name.len, "div") || _SLIT_EQ(name.str, name.len, "idiv") || _SLIT_EQ(name.str, name.len, "mul")) || (_SLIT_EQ(name.str, name.len, "imul") && __v_template.args.len == 1);
+	if (is_implicit_width_arithmetic && explicit_width == 0 && __v_template.args.len > 0 && ((*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 0)))._typ == 627) {
+		v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("addressed operand in instruction `"), __v_template.name, _S("` has no explicit data width in structured `intel` assembly; use an explicitly suffixed instruction, or a `raw intel` block with an explicit operand size")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		return;
+	}
+	if (is_extension_move && v__checker__Checker_check_asm_intel_extension_move_address_source(c, __v_template, name)) {
+		return;
+	}
+	if (_SLIT_EQ(name.str, name.len, "crc32") && explicit_width == 0 && __v_template.args.len > 1 && ((*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 1)))._typ == 627) {
+		v__checker__Checker_error(c, builtin__string_plus_many(3, _MOV((string[3]){_S("addressed source in instruction `"), __v_template.name, _S("` has no explicit data width in structured `intel` assembly; use an explicitly suffixed instruction, or a `raw intel` block with an explicit source size")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		return;
+	}
+	bool has_named_alias = false;
+	for (int _t3 = 0; _t3 < __v_template.args.len; ++_t3) {
+		v__ast__AsmArg arg = ((v__ast__AsmArg*)__v_template.args.data)[_t3];
+		bool _t4 = ((arg)._typ == 628);
+		if (_t4) {
+			_t4 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name), ADDR(map, aliases));
+		}
+		if ( _t4) {
+			has_named_alias = true;
+			break;
+		}
+	}
+	if (!has_named_alias) {
+		return;
+	}
+	if (extension_destination_width > 0 && __v_template.args.len > 0) {
+		v__ast__AsmArg destination = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 0));
+		bool _t5 = ((destination)._typ == 628);
+		if (_t5) {
+			_t5 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((destination)._v__ast__AsmAlias, (destination)._typ, 628)).name), ADDR(map, aliases));
+		}
+		if ( _t5 && extension_destination_width != native_width * 8) {
+			v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("instruction `"), __v_template.name, _S("` selects a "), builtin__int_str(extension_destination_width), _S("-bit destination, but named destination `"), (*destination._v__ast__AsmAlias).name, _S("` expands to a "), builtin__int_str(native_width * 8), _S("-bit register in structured `intel` assembly; use a matching destination width, or a `raw intel` block with an explicit operand modifier")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+			return;
+		}
+	}
+	if (explicit_width > 0) {
+		if (_SLIT_NE(name.str, name.len, "crc32") && explicit_width != native_width * 8) {
+			v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){_S("instruction `"), __v_template.name, _S("` selects "), builtin__int_str(explicit_width), _S("-bit operands, but named operands in structured `intel` assembly expand to "), builtin__int_str(native_width * 8), _S("-bit registers for the current compilation target; use a matching instruction width, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+			return;
+		}
+		if (_SLIT_EQ(name.str, name.len, "crc32") && __v_template.args.len > 1) {
+			v__ast__AsmArg source = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 1));
+			bool _t6 = ((source)._typ == 628);
+			if (_t6) {
+				_t6 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((source)._v__ast__AsmAlias, (source)._typ, 628)).name), ADDR(map, aliases));
+			}
+			if ( _t6 && explicit_width != native_width * 8) {
+				v__checker__Checker_error(c, builtin__string_plus_many(9, _MOV((string[9]){_S("instruction `"), __v_template.name, _S("` selects a "), builtin__int_str(explicit_width), _S("-bit source, but named source `"), (*source._v__ast__AsmAlias).name, _S("` expands to a "), builtin__int_str(native_width * 8), _S("-bit register in structured `intel` assembly; use a matching instruction width, or a `raw intel` block with an explicit operand modifier")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+				return;
+			}
+			if ((source)._typ == 627 && !v__checker__asm_intel_crc32_source_width_is_valid(explicit_width, native_width)) {
+				v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){_S("instruction `"), __v_template.name, _S("` selects a "), builtin__int_str(explicit_width), _S("-bit memory source, which is incompatible with the "), builtin__int_str(native_width * 8), _S("-bit named destination in structured `intel` assembly; use a valid CRC32 source width, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+				return;
+			}
+		}
+	}
+	if (is_extension_move) {
+		v__checker__Checker_check_asm_intel_extension_move_source(c, __v_template, aliases, native_width, extension_source_width);
+		return;
+	}
+	if (v__checker__Checker_check_asm_intel_narrow_data_aliases(c, __v_template, aliases, native_width, name)) {
+		return;
+	}
+	if ((is_same_width || builtin__string_starts_with(name, _S("cmov"))) && v__checker__Checker_check_asm_intel_signed_narrow_sources(c, __v_template, aliases, name, explicit_width)) {
+		return;
+	}
+	if (_SLIT_EQ(name.str, name.len, "cmp") || _SLIT_EQ(name.str, name.len, "test")) {
+		for (int _t7 = 0; _t7 < __v_template.args.len; ++_t7) {
+			v__ast__AsmArg arg = ((v__ast__AsmArg*)__v_template.args.data)[_t7];
+			bool _t9 = ((arg)._typ == 628);
+			if (_t9) {
+				_t9 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name), ADDR(map, aliases));
+			}
+			bool _t8 = ( _t9);
+			if (_t8) {
+				_t8 = v__checker__Checker_asm_intel_named_operand_is_narrow(c, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name, aliases, native_width);
+			}
+			if ( _t8) {
+				v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*arg._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+				if (v__checker__Checker_asm_intel_type_is_signed(c, typ)) {
+					v__checker__Checker_error(c, builtin__string_plus_many(11, _MOV((string[11]){_S("named operand `"), (*arg._v__ast__AsmAlias).name, _S("` has "), builtin__int_str(v__checker__Checker_asm_intel_type_width(c, typ) * 8), _S("-bit signed type `"), v__ast__Table_type_str(c->table, typ), _S("`, but instruction `"), __v_template.name, _S("` sets flags from the "), builtin__int_str(native_width * 8), _S("-bit register substituted by structured `intel` assembly; use native-width operands, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+					return;
+				}
+			}
+		}
+	}
+	if (flags_are_observed && (_SLIT_EQ(name.str, name.len, "add") || _SLIT_EQ(name.str, name.len, "adc") || _SLIT_EQ(name.str, name.len, "adcx") || _SLIT_EQ(name.str, name.len, "adox") || _SLIT_EQ(name.str, name.len, "and") || _SLIT_EQ(name.str, name.len, "andn") || _SLIT_EQ(name.str, name.len, "blsi") || _SLIT_EQ(name.str, name.len, "blsmsk") || _SLIT_EQ(name.str, name.len, "blsr") || _SLIT_EQ(name.str, name.len, "cmp") || _SLIT_EQ(name.str, name.len, "cmpxchg") || _SLIT_EQ(name.str, name.len, "dec") || _SLIT_EQ(name.str, name.len, "imul") || _SLIT_EQ(name.str, name.len, "inc") || _SLIT_EQ(name.str, name.len, "neg") || _SLIT_EQ(name.str, name.len, "or") || _SLIT_EQ(name.str, name.len, "sbb") || _SLIT_EQ(name.str, name.len, "sub") || _SLIT_EQ(name.str, name.len, "test") || _SLIT_EQ(name.str, name.len, "xadd") || _SLIT_EQ(name.str, name.len, "xor"))) {
+		for (int _t10 = 0; _t10 < __v_template.args.len; ++_t10) {
+			v__ast__AsmArg arg = ((v__ast__AsmArg*)__v_template.args.data)[_t10];
+			bool _t12 = ((arg)._typ == 628);
+			if (_t12) {
+				_t12 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name), ADDR(map, aliases));
+			}
+			bool _t11 = ( _t12);
+			if (_t11) {
+				_t11 = v__checker__Checker_asm_intel_named_operand_is_narrow(c, (*(v__ast__AsmAlias*)builtin____as_cast((arg)._v__ast__AsmAlias, (arg)._typ, 628)).name, aliases, native_width);
+			}
+			if ( _t11) {
+				v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*arg._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+				v__checker__Checker_error(c, builtin__string_plus_many(11, _MOV((string[11]){_S("named operand `"), (*arg._v__ast__AsmAlias).name, _S("` has "), builtin__int_str(v__checker__Checker_asm_intel_type_width(c, typ) * 8), _S("-bit type `"), v__ast__Table_type_str(c->table, typ), _S("`, but instruction `"), __v_template.name, _S("` sets "), builtin__int_str(native_width * 8), _S("-bit flags that are observed later in this structured `intel` block; use native-width operands, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+				return;
+			}
+		}
+	}
+	if (is_width_sensitive) {
+		if (__v_template.args.len > 0) {
+			v__ast__AsmArg destination = (*(v__ast__AsmArg*)builtin__array_get(__v_template.args, 0));
+			bool _t13 = ((destination)._typ == 628);
+			if (_t13) {
+				_t13 = _IN_MAP(ADDR(string, (*(v__ast__AsmAlias*)builtin____as_cast((destination)._v__ast__AsmAlias, (destination)._typ, 628)).name), ADDR(map, aliases));
+			}
+			if ( _t13) {
+				v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){(*destination._v__ast__AsmAlias).name}, &(v__ast__Type[]){ 0 })));
+				if (typ != 0 && !v__ast__Type_has_flag(typ, v__ast__TypeFlag__generic) && !v__checker__Checker_type_has_unresolved_generic_parts(c, typ)) {
+					int type_width = v__checker__Checker_asm_intel_type_width(c, typ);
+					if (type_width != native_width) {
+						v__checker__Checker_error(c, builtin__string_plus_many(11, _MOV((string[11]){_S("named destination `"), (*destination._v__ast__AsmAlias).name, _S("` has "), builtin__int_str(type_width * 8), _S("-bit type `"), v__ast__Table_type_str(c->table, typ), _S("`, but instruction `"), __v_template.name, _S("` operates on the "), builtin__int_str(native_width * 8), _S("-bit register substituted by structured `intel` assembly; use a native-width destination, or a `raw intel` block with an explicit operand modifier")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+					}
+				}
+			}
+		}
+		v__checker__Checker_check_asm_intel_named_shift_count(c, __v_template, aliases, 1, true);
+		return;
+	}
+	if ((_SLIT_EQ(name.str, name.len, "shld") || _SLIT_EQ(name.str, name.len, "shrd")) && v__checker__Checker_check_asm_intel_named_shift_count(c, __v_template, aliases, 2, true)) {
+		return;
+	}
+	if (_SLIT_EQ(name.str, name.len, "rorx") && v__checker__Checker_check_asm_intel_named_shift_count(c, __v_template, aliases, 2, false)) {
+		return;
+	}
+	for (int i = 0; i < __v_template.args.len; ++i) {
+		v__ast__AsmArg arg = ((v__ast__AsmArg*)__v_template.args.data)[i];
+		bool _t15 = ((arg)._typ == 549);
+		if (_t15) {
+			_t15 = (*(v__ast__AsmRegister*)builtin____as_cast((arg)._v__ast__AsmRegister, (arg)._typ, 549)).size > 0;
+		}
+		bool _t14 = ( _t15);
+		if (_t14) {
+			_t14 = (*(v__ast__AsmRegister*)builtin____as_cast((arg)._v__ast__AsmRegister, (arg)._typ, 549)).size != native_width * 8;
+		}
+		if ( _t14) {
+			if (_SLIT_EQ(name.str, name.len, "crc32") && i == 1 && ((*arg._v__ast__AsmRegister).size == 8 || (native_width == 4 && (*arg._v__ast__AsmRegister).size == 16))) {
+				continue;
+			}
+			if (is_movq && native_width == 8 && (builtin__string_starts_with((*arg._v__ast__AsmRegister).name, _S("mm")) || builtin__string_starts_with((*arg._v__ast__AsmRegister).name, _S("xmm")))) {
+				continue;
+			}
+			if ((_SLIT_EQ(name.str, name.len, "shld") || _SLIT_EQ(name.str, name.len, "shrd")) && i == 2 && builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("cl"))) {
+				continue;
+			}
+			if (_SLIT_EQ(name.str, name.len, "mov") && (builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("cs")) || builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("ss")) || builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("ds")) || builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("es")) || builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("fs")) || builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("gs"))) && (i == 1 || (i == 0 && !builtin__fast_string_eq((*arg._v__ast__AsmRegister).name, _S("cs"))))) {
+				continue;
+			}
+			if (_SLIT_EQ(name.str, name.len, "mov") && native_width == 4 && (builtin__string_starts_with((*arg._v__ast__AsmRegister).name, _S("cr")) || builtin__string_starts_with((*arg._v__ast__AsmRegister).name, _S("dr")))) {
+				continue;
+			}
+			v__checker__Checker_error(c, builtin__string_plus_many(7, _MOV((string[7]){_S("hard register `"), (*arg._v__ast__AsmRegister).name, _S("` is "), builtin__int_str((*arg._v__ast__AsmRegister).size), _S("-bit, but named operands in structured `intel` assembly expand to "), builtin__int_str(native_width * 8), _S("-bit registers for the current compilation target; use matching register widths, or a `raw intel` block with explicit operand modifiers")})), __v_template.pos, ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
+		}
+	}
+}
+VV_LOC bool v__checker__Checker_asm_intel_named_operand_is_narrow(v__checker__Checker* c, string alias, Map_string_v__ast__Type aliases, int native_width) {
+	v__ast__Type typ = v__checker__Checker_unwrap_generic(c, (*(v__ast__Type*)builtin__map_get(ADDR(map, aliases), &(string[]){alias}, &(v__ast__Type[]){ 0 })));
+	if (typ == 0 || v__ast__Type_has_flag(typ, v__ast__TypeFlag__generic) || v__checker__Checker_type_has_unresolved_generic_parts(c, typ)) {
+		return false;
+	}
+	return v__checker__Checker_asm_intel_type_width(c, typ) != native_width;
+}
+VV_LOC int v__checker__Checker_asm_intel_type_width(v__checker__Checker* c, v__ast__Type typ) {
+	if (v__ast__Type_nr_muls(typ) == 0 && !v__ast__Type_has_option_or_result(typ)) {
+		v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, typ);
+		if ((sym->info)._typ == 344) {
+			return v__checker__Checker_asm_intel_type_width(c, (*sym->info._v__ast__Alias).parent_type);
+		}
+		bool _t2 = ((sym->info)._typ == 693);
+		if (_t2) {
+			_t2 = (*(v__ast__Enum*)builtin____as_cast((sym->info)._v__ast__Enum, (sym->info)._typ, 693)).typ != _const_v__ast__int_type;
+		}
+		if ( _t2) {
+			multi_return_int_int mr_177627 = v__ast__Table_type_size(c->table, (*sym->info._v__ast__Enum).typ);
+			int width = mr_177627.arg0;
+			return width;
+		}
+	}
+	multi_return_int_int mr_177695 = v__ast__Table_type_size(c->table, typ);
+	int width = mr_177695.arg0;
+	return width;
+}
+VV_LOC bool v__checker__Checker_asm_intel_type_is_signed(v__checker__Checker* c, v__ast__Type typ) {
+	if (v__ast__Type_nr_muls(typ) > 0 || v__ast__Type_has_option_or_result(typ)) {
+		return false;
+	}
+	v__ast__Type unaliased_typ = v__ast__Table_unaliased_type(c->table, typ);
+	v__ast__TypeSymbol* sym = v__ast__Table_sym(c->table, unaliased_typ);
+	if ((sym->info)._typ == 693) {
+		return v__ast__Type_is_signed(v__ast__Table_unaliased_type(c->table, (*sym->info._v__ast__Enum).typ));
+	}
+	return v__ast__Type_is_signed(unaliased_typ);
 }
 VV_LOC _option_string v__checker__closest_asm_register(string name, Map_string_v__ast__ScopeObject registers) {
 	int digit_start = -1;
@@ -165187,9 +165956,9 @@ VV_LOC _option_int v__checker__asm_expected_operand_count(v__pref__Arch arch, st
 		_t3.err = _const_none__;
 	}return _t3;
 }
-VV_LOC void v__checker__Checker_asm_arg(v__checker__Checker* c, v__ast__AsmArg arg, v__ast__AsmStmt stmt, Array_string aliases) {
+VV_LOC void v__checker__Checker_asm_arg(v__checker__Checker* c, v__ast__AsmArg arg, v__ast__AsmStmt stmt, Map_string_v__ast__Type aliases) {
 	if (arg._typ == 628) {
-		if (!(Array_string_contains(aliases, (*arg._v__ast__AsmAlias).name)) && !(Array_string_contains(stmt.local_labels, (*arg._v__ast__AsmAlias).name)) && !(Array_string_contains(stmt.global_labels, (*arg._v__ast__AsmAlias).name))) {
+		if (!_IN_MAP(ADDR(string, (*arg._v__ast__AsmAlias).name), ADDR(map, aliases)) && !(Array_string_contains(stmt.local_labels, (*arg._v__ast__AsmAlias).name)) && !(Array_string_contains(stmt.global_labels, (*arg._v__ast__AsmAlias).name))) {
 			_option_string _t1 = {0};
 			if (_t1 = v__checker__closest_asm_register((*arg._v__ast__AsmAlias).name, stmt.scope->objects), _t1.state == 0) {
 				string suggestion = *(string*)_t1.data;
@@ -165221,8 +165990,9 @@ VV_LOC void v__checker__Checker_asm_arg(v__checker__Checker* c, v__ast__AsmArg a
 	}
 	
 }
-VV_LOC Array_string v__checker__Checker_asm_ios(v__checker__Checker* c, Array_v__ast__AsmIO* ios, v__ast__Scope* scope, bool output) {
-	Array_string aliases = builtin____new_array_with_default(0, 0, sizeof(string), 0);
+VV_LOC Map_string_v__ast__Type v__checker__Checker_asm_ios(v__checker__Checker* c, Array_v__ast__AsmIO* ios, v__ast__Scope* scope, bool output) {
+	Map_string_v__ast__Type aliases = builtin__new_map(sizeof(string), sizeof(v__ast__Type), &builtin__map_hash_string, &builtin__map_eq_string, &builtin__map_clone_string, &builtin__map_free_string)
+	;
 	for (int _t1 = 0; _t1 < ios->len; ++_t1) {
 		v__ast__AsmIO* io = ((v__ast__AsmIO*)ios->data) + _t1;
 		v__ast__Type typ = v__checker__Checker_expr(c, &io->expr);
@@ -165230,7 +166000,7 @@ VV_LOC Array_string v__checker__Checker_asm_ios(v__checker__Checker* c, Array_v_
 			v__checker__Checker_fail_if_immutable(c, &io->expr);
 		}
 		if ((io->alias).len != 0) {
-			builtin__array_push((array*)&aliases, _MOV((string[]){ builtin__string_clone(io->alias) }));
+			builtin__map_set(&aliases, &(string[]){io->alias}, &(v__ast__Type[]) { typ });
 			if (_IN_MAP(ADDR(string, io->alias), ADDR(map, scope->objects))) {
 				builtin__map_set(&scope->objects, &(string[]){io->alias}, &(v__ast__ScopeObject[]) { v__ast__Var_to_sumtype_v__ast__ScopeObject(ADDR(v__ast__Var, (((v__ast__Var){
 					.name = io->alias,
@@ -167622,8 +168392,8 @@ VV_LOC v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast
 		}
 	} else if (v__ast__Type_is_int(to_type) && (node->expr)._typ == 503) {
 		string tt = v__ast__Table_type_to_str(c->table, to_type);
-		multi_return_int_int mr_204269 = v__ast__Table_type_size(c->table, v__ast__Type_idx_type(to_type));
-		int tsize = mr_204269.arg0;
+		multi_return_int_int mr_233417 = v__ast__Table_type_size(c->table, v__ast__Type_idx_type(to_type));
+		int tsize = mr_233417.arg0;
 		int bit_size = tsize * 8;
 		bool __v_signed = builtin__string_at((*node->expr._v__ast__IntegerLiteral).val, 0) == '-';
 		u8 _t42 = builtin__string_at((*node->expr._v__ast__IntegerLiteral).val, 0);
@@ -167636,9 +168406,9 @@ VV_LOC v__ast__Type v__checker__Checker_cast_expr(v__checker__Checker* c, v__ast
 			_t43 = (*node->expr._v__ast__IntegerLiteral).val;
 		}string value_string = _t43;
 		bool is_overflowed = false;
-		multi_return_u64_int mr_204529 = strconv__common_parse_uint2(value_string, 0, bit_size);
-		u64 v = mr_204529.arg0;
-		int e = mr_204529.arg1;
+		multi_return_u64_int mr_233677 = strconv__common_parse_uint2(value_string, 0, bit_size);
+		u64 v = mr_233677.arg0;
+		int e = mr_233677.arg1;
 		switch (e) {
 			case 0: {
 				break;
@@ -170163,10 +170933,10 @@ VV_LOC bool v__checker__Checker_check_internal_index_type(v__checker__Checker* c
 	if (c->pref->backend == v__pref__Backend__c && !is_gated) {
 		return true;
 	}
-	multi_return_int_int mr_275540 = v__ast__Table_type_size(c->table, _const_v__ast__int_type_idx);
-	int int_size = mr_275540.arg0;
-	multi_return_int_int mr_275603 = v__ast__Table_type_size(c->table, v__ast__Type_idx_type(internal_index_type));
-	int internal_index_size = mr_275603.arg0;
+	multi_return_int_int mr_304688 = v__ast__Table_type_size(c->table, _const_v__ast__int_type_idx);
+	int int_size = mr_304688.arg0;
+	multi_return_int_int mr_304751 = v__ast__Table_type_size(c->table, v__ast__Type_idx_type(internal_index_type));
+	int internal_index_size = mr_304751.arg0;
 	if (internal_index_size > int_size) {
 		string index_type_str = (typ_sym->kind == v__ast__Kind__string ? (_S("string index")) : (_S("index")));
 		string got_type_str = v__ast__Table_type_to_str(c->table, index_type);
@@ -170517,9 +171287,9 @@ VV_LOC v__ast__Type v__checker__Checker_index_expr(v__checker__Checker* c, v__as
 			v__ast__Type key_type = v__checker__Checker_unwrap_generic(c, info.key_type);
 			v__ast__Type actual_index_type = v__checker__Checker_expr_unhandled_option_type(c, node->index);
 			if (v__ast__Type_has_flag(actual_index_type, v__ast__TypeFlag__option) && !v__ast__Type_has_flag(key_type, v__ast__TypeFlag__option)) {
-				multi_return_string_string mr_289313 = v__checker__Checker_get_string_names_of(c, actual_index_type, key_type);
-				string got_typ_str = mr_289313.arg0;
-				string expected_typ_str = mr_289313.arg1;
+				multi_return_string_string mr_318461 = v__checker__Checker_get_string_names_of(c, actual_index_type, key_type);
+				string got_typ_str = mr_318461.arg0;
+				string expected_typ_str = mr_318461.arg1;
 				v__checker__Checker_error(c, builtin__string_plus_many(5, _MOV((string[5]){_S("invalid key: cannot use `"), got_typ_str, _S("` as `"), expected_typ_str, _S("`, it must be unwrapped first")})), v__ast__Expr_pos(node->index), ((v__checker__MessageOptions){.call_stack = builtin____new_array(0, 0, sizeof(v__errors__CallStackItem)),}));
 			} else if (!v__checker__Checker_check_map_key_type(c, index_type, key_type)) {
 				string err = v__checker__Checker_map_key_expected_msg(c, index_type, key_type, node->index, v__ast__Expr_str(node->left));
@@ -196752,7 +197522,7 @@ VV_LOC v__ast__AsmStmt v__parser__Parser_asm_stmt(v__parser__Parser* p, bool is_
 			name = builtin__string__plus(name, v__token__Kind_str(p->tok.kind));
 			if (p->tok.kind == v__token__Kind__key_lock && (arch == v__pref__Arch__i386 || arch == v__pref__Arch__amd64)) {
 				v__parser__Parser_next(p);
-				bool has_suffix = (builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'b' || builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'w' || builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'l' || builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'q');
+				bool has_suffix = p->tok.lit.len > 0 && (builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'b' || builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'w' || builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'l' || builtin__string_at(p->tok.lit, p->tok.lit.len - 1) == 'q');
 				if (!((Array_string_contains(_const_v__parser__allowed_lock_prefix_ins, p->tok.lit)) || (has_suffix && (Array_string_contains(_const_v__parser__allowed_lock_prefix_ins, builtin__string_substr(p->tok.lit, 0, p->tok.lit.len - 1)))))) {
 					v__parser__Parser_error(p, _S("The lock prefix cannot be used on this instruction"));
 				}
@@ -228586,8 +229356,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, Map_strin
 	}
 	builtin__map_set(&environment, &(string[]){_S("VCHILD")}, &(string[]) { _S("true") });
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("65c29f2aa88813e0b7bb27a0fbece00632eb7584") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("9d72273") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("9d722730b393741132c3255dde8455a6fd8941c1") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("1f128c9") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
