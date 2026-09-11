@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "316db75a07afe50a17c5e273a18d10af8e8068d1"
+#define V_COMMIT_HASH "5db357a6bacae819459ebdbdabda5b6e738078a3"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "6eb1613ba21f4580cf39e577644e107367e4c75f"
+	#define V_COMMIT_HASH "316db75a07afe50a17c5e273a18d10af8e8068d1"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -25196,9 +25196,11 @@ VV_LOC bool v__pref__needs_safe_default_output_name(string base, string filename
 VV_LOC string v__pref__safe_default_output_name(string filename);
 VV_LOC void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences* p);
 VV_LOC void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p);
+VV_LOC bool v__pref__Preferences_system_tcc_runtime_available(v__pref__Preferences* p, string vroot);
 VV_LOC string v__pref__usable_system_tcc_compiler(void);
 VV_LOC string v__pref__usable_bundled_tcc_compiler(string vroot);
 string v__pref__default_tcc_compiler(void);
+VV_LOC string v__pref__preferred_tcc_compiler(string vroot, bool allow_system_tcc);
 VV_LOC string v__pref__windows_default_c_compiler(string vroot);
 VV_LOC void v__pref__Preferences_clear_gc_options(v__pref__Preferences* p);
 void v__pref__Preferences_default_c_compiler(v__pref__Preferences* p);
@@ -28362,6 +28364,7 @@ VV_LOC int v__builder__Builder_retry_command_boundary(v__builder__Builder* v, Ar
 VV_LOC bool v__builder__Builder_should_forward_retry_output(v__builder__Builder* v);
 VV_LOC Array_string v__builder__Builder_retry_compilation_args(v__builder__Builder* v, Array_string original_args, string ccompiler);
 VV_LOC os__Result v__builder__Builder_retry_compilation_with(v__builder__Builder* v, string ccompiler);
+bool v__builder__Builder_retry_failed_tcc_compilation(v__builder__Builder* v, string ccompiler, string output);
 void v__builder__Builder_cc(v__builder__Builder* v);
 VV_LOC string v__builder__Builder_prepare_reproducible_macos_debug_compiler_object(v__builder__Builder* v, string ccompiler, string vdir, os__filelock__FileLock* object_usage_lock);
 VV_LOC _result_void v__builder__store_reproducible_macos_debug_compiler_object(string temporary_object, string object_dir, string object_path);
@@ -28537,7 +28540,7 @@ void v__builder__cbuilder__compile_c(v__builder__Builder* b);
 void v__builder__cbuilder__build_c(v__builder__Builder* b, Array_string v_files, string out_file);
 strings__Builder v__builder__cbuilder__gen_c(v__builder__Builder* b, Array_string v_files);
 VV_LOC string v__builder__cbuilder__parallel_cc_compiler_path(v__builder__Builder* b);
-VV_LOC bool v__builder__cbuilder__parallel_cc_uses_tcc(v__builder__CC cc_kind, string ccompiler);
+VV_LOC string v__builder__cbuilder__parallel_cc_bundled_tcc_root(string vroot, string ccompiler);
 VV_LOC string v__builder__cbuilder__parallel_cc_shell_safe_linker_arg(string arg);
 VV_LOC Array_string v__builder__cbuilder__parallel_cc_compile_driver_args(Array_string compile_args, bool pkgconfig_pthread, v__builder__CC cc_kind, v__pref__CompilerType compiler_type);
 VV_LOC _result_void v__builder__cbuilder__parallel_cc(v__builder__Builder* b, v__gen__c__GenOutput _v_toheap_result);
@@ -44746,7 +44749,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("316db75");
+	return _S("5db357a");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -65772,7 +65775,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("6eb1613ba21f4580cf39e577644e107367e4c75f");
+	string vhash = _S("316db75a07afe50a17c5e273a18d10af8e8068d1");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -65886,38 +65889,53 @@ VV_LOC void v__pref__Preferences_find_cc_if_cross_compiling(v__pref__Preferences
 	p->ccompiler = v__pref__Preferences_vcross_compiler_name(p);
 }
 VV_LOC void v__pref__Preferences_try_to_use_tcc_by_default(v__pref__Preferences* p) {
-	string preferred_tcc = v__pref__default_tcc_compiler();
+	if (p->backend != v__pref__Backend__c || p->output_cross_c) {
+		return;
+	}
 	if (builtin__fast_string_eq(p->ccompiler, _S("tcc")) || builtin__fast_string_eq(p->ccompiler, _S("tinyc"))) {
+		string preferred_tcc = v__pref__default_tcc_compiler();
 		p->ccompiler = ((preferred_tcc).len != 0 ? (preferred_tcc) : (_S("tcc")));
 		return;
 	}
-	if ((p->ccompiler).len == 0) {
-		if (p->prealloc) {
-			return;
-		}
-		if (v__pref__Preferences_needs_source_boehm_without_thread_local_alloc(p)) {
-			return;
-		}
-		if (p->is_prod) {
-			return;
-		}
-		if (v__pref__get_host_os() == v__pref__OS__macos) {
-			return;
-		}
-		p->ccompiler = preferred_tcc;
+	if ((p->ccompiler).len != 0) {
 		return;
 	}
+	if (p->prealloc) {
+		return;
+	}
+	if (v__pref__Preferences_needs_source_boehm_without_thread_local_alloc(p)) {
+		return;
+	}
+	if (p->is_prod) {
+		return;
+	}
+	if ((p->os != v__pref__OS___auto && p->os != v__pref__get_host_os()) || (p->arch != v__pref__Arch___auto && p->arch != v__pref__get_host_arch())) {
+		return;
+	}
+	if (v__pref__get_host_os() == v__pref__OS__macos) {
+		return;
+	}
+	string vroot = os__dir(v__pref__vexe_path());
+	p->ccompiler = v__pref__preferred_tcc_compiler(vroot, v__pref__Preferences_system_tcc_runtime_available(p, vroot));
+}
+VV_LOC bool v__pref__Preferences_system_tcc_runtime_available(v__pref__Preferences* p, string vroot) {
+	if (p->os == v__pref__OS__windows && !os__is_file(os__join_path(vroot, builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S("thirdparty"), _S("tcc"), _S("lib"), _S("openlibm.o")}))))) {
+		return false;
+	}
+	bool uses_boehm = (p->gc_mode == v__pref__GarbageCollectionMode__boehm_full || p->gc_mode == v__pref__GarbageCollectionMode__boehm_incr || p->gc_mode == v__pref__GarbageCollectionMode__boehm_full_opt || p->gc_mode == v__pref__GarbageCollectionMode__boehm_incr_opt || p->gc_mode == v__pref__GarbageCollectionMode__boehm_leak);
+	bool needs_bundled_libgc = uses_boehm && (p->os == v__pref__OS__windows || (p->os == v__pref__OS__linux && p->is_glibc));
+	if (!needs_bundled_libgc || (Array_string_contains(p->compile_defines_all, _S("dynamic_boehm"))) || (Array_string_contains(p->compile_defines_all, _S("use_bundled_libgc")))) {
+		return true;
+	}
+	return os__is_file(os__join_path(vroot, builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S("thirdparty"), _S("tcc"), _S("lib"), _S("libgc.a")}))));
 }
 VV_LOC string v__pref__usable_system_tcc_compiler(void) {
-	if (v__pref__get_host_os() != v__pref__OS__termux) {
-		return _S("");
-	}
-	_result_string _t2 = os__find_abs_path_of_executable(_S("tcc"));
-	if (_t2.is_error) {
+	_result_string _t1 = os__find_abs_path_of_executable(_S("tcc"));
+	if (_t1.is_error) {
 		return _S("");
 	}
 	
- 	string system_tcc = (*(string*)_t2.data);
+ 	string system_tcc = (*(string*)_t1.data);
 	os__Result tcc_probe = os__execute(builtin__string_plus_many(2, _MOV((string[2]){os__quoted_path(system_tcc), _S(" -v")})));
 	if (tcc_probe.exit_code != 0) {
 		return _S("");
@@ -65938,9 +65956,15 @@ VV_LOC string v__pref__usable_bundled_tcc_compiler(string vroot) {
 string v__pref__default_tcc_compiler(void) {
 	string vexe = v__pref__vexe_path();
 	string vroot = os__dir(vexe);
+	return v__pref__preferred_tcc_compiler(vroot, true);
+}
+VV_LOC string v__pref__preferred_tcc_compiler(string vroot, bool allow_system_tcc) {
 	string bundled_tcc = v__pref__usable_bundled_tcc_compiler(vroot);
 	if ((bundled_tcc).len != 0) {
 		return bundled_tcc;
+	}
+	if (!allow_system_tcc) {
+		return _S("");
 	}
 	return v__pref__usable_system_tcc_compiler();
 }
@@ -226552,6 +226576,33 @@ VV_LOC os__Result v__builder__Builder_retry_compilation_with(v__builder__Builder
 		} // defer end
 	return _t1;
 }
+bool v__builder__Builder_retry_failed_tcc_compilation(v__builder__Builder* v, string ccompiler, string output) {
+	if (!v__builder__is_tcc_compilation_failure(ccompiler, v->ccoptions.cc, output) || !v->pref->retry_compilation) {
+		return false;
+	}
+	string old_ccompiler = v->pref->ccompiler;
+	v__pref__Preferences_default_c_compiler(v->pref);
+	if (builtin__string__eq(v->pref->ccompiler, ccompiler) || v__builder__is_tcc_compiler_name(v->pref->ccompiler) || v__builder__is_tcc_alias_compiler(v->pref->ccompiler)) {
+		v->pref->ccompiler = v__builder__first_available_ccompiler(builtin__new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){builtin__string_clone(old_ccompiler), builtin__string_clone(ccompiler), builtin__string_clone(v->pref->ccompiler)})));
+	}
+	if ((v->pref->ccompiler).len == 0 || builtin__string__eq(v->pref->ccompiler, ccompiler)) {
+		return false;
+	}
+	if (v->pref->is_verbose) {
+		builtin__eprintln(builtin__string_plus_many(3, _MOV((string[3]){_S("Compilation with tcc failed. Retrying with "), v->pref->ccompiler, _S(" ...")})));
+	} else if (!v->pref->is_quiet) {
+		builtin__eprintln(term__red(builtin__string_plus_many(2, _MOV((string[2]){_S("warning: tcc compilation failed, falling back to "), v->pref->ccompiler}))));
+	}
+	os__Result retry_res = v__builder__Builder_retry_compilation_with(v, v->pref->ccompiler);
+	if (retry_res.exit_code != 0 || v__builder__Builder_should_forward_retry_output(v)) {
+		builtin__print(retry_res.output);
+	}
+	if (retry_res.exit_code != 0) {
+		builtin___v_exit(retry_res.exit_code);
+		VUNREACHABLE();
+	}
+	return true;
+}
 void v__builder__Builder_cc(v__builder__Builder* v) {
 	if (builtin__string_contains(os__executable(), _S("vfmt"))) {
 		return;
@@ -226875,31 +226926,11 @@ void v__builder__Builder_cc(v__builder__Builder* v) {
 					builtin___v_exit(101);
 					VUNREACHABLE();
 				}
-				if (v->pref->retry_compilation) {
-					string old_ccompiler = v->pref->ccompiler;
-					v__pref__Preferences_default_c_compiler(v->pref);
-					if (builtin__string__eq(v->pref->ccompiler, ccompiler) || v__builder__is_tcc_compiler_name(v->pref->ccompiler) || v__builder__is_tcc_alias_compiler(v->pref->ccompiler)) {
-						v->pref->ccompiler = v__builder__first_available_ccompiler(builtin__new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){builtin__string_clone(old_ccompiler), builtin__string_clone(ccompiler), builtin__string_clone(v->pref->ccompiler)})));
-					}
-					if ((v->pref->ccompiler).len != 0 && !builtin__string__eq(v->pref->ccompiler, ccompiler)) {
-						if (v->pref->is_verbose) {
-							builtin__eprintln(builtin__string_plus_many(3, _MOV((string[3]){_S("Compilation with tcc failed. Retrying with "), v->pref->ccompiler, _S(" ...")})));
-						} else if (!v->pref->is_quiet) {
-							builtin__eprintln(term__red(builtin__string_plus_many(2, _MOV((string[2]){_S("warning: tcc compilation failed, falling back to "), v->pref->ccompiler}))));
-						}
-						os__Result retry_res = v__builder__Builder_retry_compilation_with(v, v->pref->ccompiler);
-						if (retry_res.exit_code != 0 || v__builder__Builder_should_forward_retry_output(v)) {
-							builtin__print(retry_res.output);
-						}
-						if (retry_res.exit_code != 0) {
-							builtin___v_exit(retry_res.exit_code);
-							VUNREACHABLE();
-						}
-							{ // defer begin
-								os__filelock__FileLock_release(&reproducible_debug_object_lock);
-							} // defer end
-						return;
-					}
+				if (v__builder__Builder_retry_failed_tcc_compilation(v, ccompiler, res.output)) {
+						{ // defer begin
+							os__filelock__FileLock_release(&reproducible_debug_object_lock);
+						} // defer end
+					return;
 				}
 			}
 			if (res.exit_code == 127) {
@@ -227542,9 +227573,9 @@ VV_LOC _result_bool v__builder__normalize_thin_macho_uuid(Array_u8* data) {
 		builtin___result_ok(&(bool[]) { false }, (_result*)(&_t3), sizeof(bool));
 		 
 		return _t3;
-	}multi_return_int_bool mr_94071 = _t2;
-	int header_size = mr_94071.arg0;
-	bool little_endian = mr_94071.arg1;
+	}multi_return_int_bool mr_94344 = _t2;
+	int header_size = mr_94344.arg0;
+	bool little_endian = mr_94344.arg1;
 	if (data->len < header_size) {
 		return (_result_bool){ .is_error=true, .err=builtin___v_error(_S("Mach-O header is truncated")), .data={E_STRUCT} };
 	}
@@ -228075,10 +228106,10 @@ VV_LOC void v__builder__Builder_cc_linux_cross(v__builder__Builder* b) {
 	v__builder__Builder_ensure_linuxroot_exists(b, sysroot);
 	string obj_file = (b->pref->build_mode == v__pref__BuildMode__build_module ? (b->pref->out_name) : (builtin__string__plus(b->out_name_c, _S(".o"))));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_106588 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_106588.arg0;
-	Array_string others = mr_106588.arg1;
-	Array_string libs = mr_106588.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_106861 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_106861.arg0;
+	Array_string others = mr_106861.arg1;
+	Array_string libs = mr_106861.arg2;
 	Array_string other_flags = builtin____new_array_with_default(0, others.len, sizeof(string), 0);
 	Array_string extra_sources = builtin____new_array_with_default(0, 0, sizeof(string), 0);
 	for (int _t5 = 0; _t5 < others.len; ++_t5) {
@@ -228211,10 +228242,10 @@ VV_LOC void v__builder__Builder_cc_freebsd_cross(v__builder__Builder* b) {
 	v__builder__Builder_ensure_freebsdroot_exists(b, sysroot);
 	string obj_file = builtin__string__plus(b->out_name_c, _S(".o"));
 	Array_v__cflag__CFlag cflags = v__builder__Builder_get_os_cflags(b);
-	multi_return_Array_string_Array_string_Array_string mr_111960 = Array_v__cflag__CFlag_defines_others_libs(cflags);
-	Array_string defines = mr_111960.arg0;
-	Array_string others = mr_111960.arg1;
-	Array_string libs = mr_111960.arg2;
+	multi_return_Array_string_Array_string_Array_string mr_112233 = Array_v__cflag__CFlag_defines_others_libs(cflags);
+	Array_string defines = mr_112233.arg0;
+	Array_string others = mr_112233.arg1;
+	Array_string libs = mr_112233.arg2;
 	Array_string cc_args = builtin____new_array_with_default(0, 20, sizeof(string), 0);
 	builtin__array_push((array*)&cc_args, _MOV((string[]){ _S("-w") }));
 	builtin__array_push((array*)&cc_args, _MOV((string[]){ _S("-fPIC") }));
@@ -228425,9 +228456,9 @@ VV_LOC void v__builder__Builder_fixup_tcc_macos_comma_path_flags(v__builder__Bui
 	;
 	}
 	
- 	multi_return_Array_string_Array_string mr_118540 = (*(multi_return_Array_string_Array_string*)_t4.data);
-	Array_string linker_flags = mr_118540.arg0;
-	Array_string pre_args = mr_118540.arg1;
+ 	multi_return_Array_string_Array_string mr_118813 = (*(multi_return_Array_string_Array_string*)_t4.data);
+	Array_string linker_flags = mr_118813.arg0;
+	Array_string pre_args = mr_118813.arg1;
 	ccoptions->linker_flags = linker_flags;
 	ccoptions->pre_args = pre_args;
 }
@@ -232644,6 +232675,11 @@ strings__Builder v__builder__cbuilder__gen_c(v__builder__Builder* b, Array_strin
 		if (_t4.is_error) {
 			IError _t5 = _t4.err;
 			IError err = _t5;
+			v__util__timing_measure(_S("Parallel C compilation"));
+			string ccompiler = v__builder__cbuilder__parallel_cc_compiler_path(b);
+			if (v__builder__Builder_retry_failed_tcc_compilation(b, ccompiler, ((struct _IError_interface_methods*)(err._typ))->_method_msg(err._object))) {
+				return result->res_builder;
+			}
 			v__builder__verror(((struct _IError_interface_methods*)(err._typ))->_method_msg(err._object));
 			VUNREACHABLE();
 		;
@@ -232660,12 +232696,21 @@ VV_LOC string v__builder__cbuilder__parallel_cc_compiler_path(v__builder__Builde
 	}
 	return _const_v__builder__cbuilder__cc_compiler;
 }
-VV_LOC bool v__builder__cbuilder__parallel_cc_uses_tcc(v__builder__CC cc_kind, string ccompiler) {
-	if (cc_kind == v__builder__CC__tcc) {
-		return true;
+VV_LOC string v__builder__cbuilder__parallel_cc_bundled_tcc_root(string vroot, string ccompiler) {
+	if ((ccompiler).len == 0) {
+		return _S("");
 	}
-	string normalized = builtin__string_to_lower(builtin__string_replace(ccompiler, _S("\\"), _S("/")));
-	return _SLIT_EQ(normalized.str, normalized.len, "tcc") || builtin__string_ends_with(normalized, _S("/tcc")) || builtin__string_ends_with(normalized, _S("/tcc.exe")) || builtin__string_contains(normalized, _S("/thirdparty/tcc/"));
+	string bundled_tcc = os__join_path(vroot, builtin__new_array_from_c_array(3, 3, sizeof(string), _MOV((string[3]){_S("thirdparty"), _S("tcc"), _S("tcc.exe")})));
+	_result_string _t2 = os__find_abs_path_of_executable(ccompiler);
+	if (_t2.is_error) {
+		*(string*) _t2.data = ccompiler;
+	}
+	
+ 	string compiler_path = (*(string*)_t2.data);
+	if (!builtin__string__eq(os__real_path(compiler_path), os__real_path(bundled_tcc))) {
+		return _S("");
+	}
+	return os__dir(bundled_tcc);
 }
 VV_LOC string v__builder__cbuilder__parallel_cc_shell_safe_linker_arg(string arg) {
 	if (_SLIT_EQ(arg.str, arg.len, "-Wl,-(") || _SLIT_EQ(arg.str, arg.len, "-Wl,-)")) {
@@ -232795,11 +232840,12 @@ v__gen__c__GenOutput* result = HEAP(v__gen__c__GenOutput, _v_toheap_result);
 	for (int i = 0; i < c_files; ++i) {
 		os__File_close(&(*(os__File*)builtin__array_get(out_files, i)));
 	}
-	string cc = v__builder__Builder_quote_compiler_name(b, v__builder__cbuilder__parallel_cc_compiler_path(b));
+	string ccompiler = v__builder__cbuilder__parallel_cc_compiler_path(b);
+	string cc = v__builder__Builder_quote_compiler_name(b, ccompiler);
 	Array_string compile_args = v__builder__Builder_get_compile_args(b);
 	Array_string linker_args = v__builder__Builder_get_linker_args(b);
-	if (v__builder__cbuilder__parallel_cc_uses_tcc(b->ccoptions.cc, v__builder__cbuilder__parallel_cc_compiler_path(b))) {
-		string tcc_root_dir = os__join_path(_S("/home/runner/work/v/v"), builtin__new_array_from_c_array(2, 2, sizeof(string), _MOV((string[2]){_S("thirdparty"), _S("tcc")})));
+	string tcc_root_dir = v__builder__cbuilder__parallel_cc_bundled_tcc_root(b->pref->vroot, ccompiler);
+	if ((tcc_root_dir).len != 0) {
 		string tcc_lib_dir = os__join_path(tcc_root_dir, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("lib")})));
 		string tcc_nested_dir = os__join_path(tcc_lib_dir, builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_S("tcc")})));
 		string tcc_install_dir = (os__is_dir(tcc_nested_dir) ? (tcc_nested_dir) : (tcc_lib_dir));
@@ -233376,8 +233422,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, Map_strin
 	}
 	builtin__map_set(&environment, &(string[]){_S("VCHILD")}, &(string[]) { _S("true") });
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("6eb1613ba21f4580cf39e577644e107367e4c75f") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("316db75") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("316db75a07afe50a17c5e273a18d10af8e8068d1") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("5db357a") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
