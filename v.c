@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "2e6850e0ca7835b6cc041c2a0e3f06760750e3ab"
+#define V_COMMIT_HASH "5ff8ecb55f6709fd7e6f645ef7779383f30c47c0"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "8b1c7b13346d96972d7973ea487ae755e61637aa"
+	#define V_COMMIT_HASH "2e6850e0ca7835b6cc041c2a0e3f06760750e3ab"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -28825,6 +28825,7 @@ VV_LOC string main__macos_v3_v1_fallback_executable(void);
 VV_LOC bool main__macos_v3_is_self_build_target(v__pref__Preferences* prefs);
 VV_LOC bool main__macos_v3_needs_bootstrap_before_v1_fallback(v__pref__Preferences* prefs, bool needs_v1_compatibility, string executable, string fallback_executable);
 VV_LOC bool main__macos_v3_needs_v1_compatibility(string command, v__pref__Preferences* prefs);
+VV_LOC bool main__macos_v3_windows_msvc_needs_v1_compatibility(v__pref__Preferences* prefs, v__pref__OS host_os);
 VV_LOC bool main__is_macos_v3_relevant_command(string command, v__pref__Preferences* prefs);
 VV_LOC void main__launch_macos_v3_compiler(v__pref__Preferences* prefs, Array_string raw_args);
 VV_LOC string main__macos_v3_c_error_report_dir(string fallback_file);
@@ -28838,7 +28839,7 @@ VV_LOC bool main__macos_v3_driver_is_available(void);
 VV_LOC void main__macos_v3_driver_run(Array_string _d1);
 VV_LOC v__util__Timers* main__timers_pointer(v__util__Timers* p);
 VV_LOC void main__main(void);
-VV_LOC void anon_fn_6a0ddf9f315b536f_49__2153(void);
+VV_LOC void anon_fn_6a0ddf9f315b536f_49__2165(void);
 VV_LOC void main__invoke_help_and_exit(Array_string remaining);
 VV_LOC void main__maybe_delegate_to_ownership(string command, v__pref__Preferences* prefs, Array_string merged_args);
 VV_LOC bool main__autofree_args_have_unsupported_ownership_option(Array_string args, string command);
@@ -39336,7 +39337,7 @@ VV_LOC int anon_fn_f69424a11d878682_293_ref_ast__Var_ref_ast__Var__int_319810(v_
 	return 0;
 }
 
-VV_LOC void anon_fn_6a0ddf9f315b536f_49__2153(void) {
+VV_LOC void anon_fn_6a0ddf9f315b536f_49__2165(void) {
 	v__util__Timers* timers = main__timers_pointer(((void*)0));
 	v__util__Timers_show(timers, _S("TOTAL"));
 }
@@ -45579,7 +45580,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("2e6850e");
+	return _S("5ff8ecb");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -62731,7 +62732,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("8b1c7b13346d96972d7973ea487ae755e61637aa");
+	string vhash = _S("2e6850e0ca7835b6cc041c2a0e3f06760750e3ab");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -229857,9 +229858,9 @@ VV_LOC Array_string main__macos_v3_forwarded_args(v__pref__Preferences* prefs, A
 }
 VV_LOC main__MacosV3RetryState* main__macos_v3_retry_state(main__MacosV3RetryState* state) {
 	static main__MacosV3RetryState* retry_state;
-	static bool _vstatic_init_1812;
-	if (!_vstatic_init_1812) {
-		_vstatic_init_1812 = true;
+	static bool _vstatic_init_1821;
+	if (!_vstatic_init_1821) {
+		_vstatic_init_1821 = true;
 		retry_state = ((main__MacosV3RetryState*)(((void*)0)));
 	}
 	if (state != ((void*)0)) {
@@ -229902,7 +229903,7 @@ VV_LOC void main__retry_macos_v3_with_v1(main__MacosV3RetryState* state) {
 	VUNREACHABLE();
 }
 VV_LOC void main__maybe_delegate_to_macos_v3(string command, v__pref__Preferences* prefs) {
-	#if defined(__BSD__) || defined(__linux__)
+	#if defined(__BSD__) || defined(__linux__) || defined(_WIN32)
 	{
 		bool needs_v1_compatibility = main__macos_v3_needs_v1_compatibility(command, prefs);
 		string fallback_executable = main__macos_v3_v1_fallback_executable();
@@ -229944,7 +229945,7 @@ VV_LOC void main__maybe_delegate_to_macos_v3(string command, v__pref__Preference
 			builtin___v_exit(1);
 			VUNREACHABLE();
 		}
-		#if defined(__BSD__) || defined(__linux__)
+		#if defined(__BSD__) || defined(__linux__) || defined(_WIN32)
 		{
 			main__launch_macos_v1_fallback(main__macos_v3_v1_fallback_executable(), builtin__array_slice(_const_os__args, 1, 2147483647), prefs->is_verbose, _S("the embedded V3 compiler is unavailable on this target"));
 			VUNREACHABLE();
@@ -229995,7 +229996,7 @@ VNORETURN VV_LOC void main__launch_macos_v1_fallback(string executable, Array_st
 	while(1);
 }
 VV_LOC string main__macos_v3_v1_fallback_executable(void) {
-	return os__join_path(os__dir(v__pref__vexe_path()), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_const_main__macos_v3_v1_fallback_binary})));
+	return v__util__path_of_executable(os__join_path(os__dir(v__pref__vexe_path()), builtin__new_array_from_c_array(1, 1, sizeof(string), _MOV((string[1]){_const_main__macos_v3_v1_fallback_binary}))));
 }
 VV_LOC bool main__macos_v3_is_self_build_target(v__pref__Preferences* prefs) {
 	if ((prefs->path).len == 0 || prefs->output_cross_c) {
@@ -230012,6 +230013,9 @@ VV_LOC bool main__macos_v3_needs_bootstrap_before_v1_fallback(v__pref__Preferenc
 	return (prefs->old_compiler || needs_v1_compatibility) && main__macos_v3_is_self_build_target(prefs) && !(Array_string_contains(builtin__new_array_from_c_array(4, 4, sizeof(string), _MOV((string[4]){_S("v"), _S("v.exe"), _S("vnew"), _S("vnew.exe")})), os__base(executable))) && !os__is_executable(fallback_executable);
 }
 VV_LOC bool main__macos_v3_needs_v1_compatibility(string command, v__pref__Preferences* prefs) {
+	if (main__macos_v3_windows_msvc_needs_v1_compatibility(prefs, v__pref__get_host_os())) {
+		return true;
+	}
 	if (prefs->new_compiler || prefs->is_fastc || prefs->backend != v__pref__Backend__c || (prefs->path).len == 0 || _SLIT_EQ(command.str, command.len, "test") || (Array_string_contains(_const_main__external_tools, command)) || main__macos_v3_non_compilation_command(command)) {
 		return false;
 	}
@@ -230029,6 +230033,9 @@ VV_LOC bool main__macos_v3_needs_v1_compatibility(string command, v__pref__Prefe
 	string target = builtin__string_trim_right(builtin__string_replace(os__real_path(prefs->path), _S("\\"), _S("/")), _S("/"));
 	string tools = builtin__string_plus_many(2, _MOV((string[2]){vroot, _S("/cmd/tools")}));
 	return builtin__string__eq(target, tools) || builtin__string_starts_with(target, builtin__string__plus(tools, _S("/")));
+}
+VV_LOC bool main__macos_v3_windows_msvc_needs_v1_compatibility(v__pref__Preferences* prefs, v__pref__OS host_os) {
+	return host_os == v__pref__OS__windows && prefs->ccompiler_type == v__pref__CompilerType__msvc;
 }
 VV_LOC bool main__is_macos_v3_relevant_command(string command, v__pref__Preferences* prefs) {
 	if (prefs->backend != v__pref__Backend__c || _SLIT_EQ(command.str, command.len, "test") || (Array_string_contains(_const_main__external_tools, command)) || main__macos_v3_non_compilation_command(command) || (prefs->path).len == 0) {
@@ -230219,8 +230226,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, Map_strin
 	}
 	builtin__map_set(&environment, &(string[]){_S("VCHILD")}, &(string[]) { _S("true") });
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("8b1c7b13346d96972d7973ea487ae755e61637aa") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("2e6850e") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("2e6850e0ca7835b6cc041c2a0e3f06760750e3ab") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("5ff8ecb") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
@@ -230319,13 +230326,13 @@ VV_LOC bool main__macos_v3_driver_is_available(void) {
 }
 VV_LOC void main__macos_v3_driver_run(Array_string _d1) {
 }
-#if defined(CUSTOM_DEFINE_v1_fallback) || defined(CUSTOM_DEFINE_cross) || (!defined(__BSD__) && !defined(__linux__))
+#if defined(CUSTOM_DEFINE_v1_fallback) || defined(CUSTOM_DEFINE_cross) || (!defined(__BSD__) && !defined(__linux__) && !defined(_WIN32))
 #endif
 VV_LOC v__util__Timers* main__timers_pointer(v__util__Timers* p) {
 	static v__util__Timers* ptimers;
-	static bool _vstatic_init_1532;
-	if (!_vstatic_init_1532) {
-		_vstatic_init_1532 = true;
+	static bool _vstatic_init_1544;
+	if (!_vstatic_init_1544) {
+		_vstatic_init_1544 = true;
 		ptimers = ((v__util__Timers*)(((void*)0)));
 	}
 	if (p != ((void*)0)) {
@@ -230348,7 +230355,7 @@ VV_LOC void main__main(void) {
 	v__util__Timers_start(timers, _S("v start"));
 	v__util__Timers_show(timers, _S("v start"));
 	v__util__Timers_start(timers, _S("TOTAL"));
-	_result_void _t2 = builtin__at_exit((FnExitCb)	anon_fn_6a0ddf9f315b536f_49__2153);
+	_result_void _t2 = builtin__at_exit((FnExitCb)	anon_fn_6a0ddf9f315b536f_49__2165);
 	if (_t2.is_error) {
 		builtin__panic_result_not_set(((struct _IError_interface_methods*)_t2.err._typ)->_method_msg(_t2.err._object));
 		VUNREACHABLE();
@@ -230370,10 +230377,10 @@ VV_LOC void main__main(void) {
 		return;
 	}
 	Array_string args_and_flags = builtin__array_clone_static_to_depth(builtin__array_slice(v__util__join_env_vflags_and_os_args(), 1, 2147483647), 1);
-	multi_return_ref_v__pref__Preferences_string_int mr_2782 = v__pref__parse_args_for_launcher_with_command_index(_const_main__external_tools, args_and_flags, true);
-	v__pref__Preferences* prefs = mr_2782.arg0;
-	string command = mr_2782.arg1;
-	int command_idx = mr_2782.arg2;
+	multi_return_ref_v__pref__Preferences_string_int mr_2794 = v__pref__parse_args_for_launcher_with_command_index(_const_main__external_tools, args_and_flags, true);
+	v__pref__Preferences* prefs = mr_2794.arg0;
+	string command = mr_2794.arg1;
+	int command_idx = mr_2794.arg2;
 	main__maybe_delegate_to_vvmrc(command, prefs);
 	#if defined(CUSTOM_DEFINE_v1_fallback) || defined(CUSTOM_DEFINE_cross)
 	{
@@ -230724,7 +230731,7 @@ VV_LOC void main__rebuild(v__pref__Preferences* prefs) {
 		{
 			v__builder__compile(_S("build"), prefs, (v__builder__FnBackend)v__builder__cbuilder__compile_c);
 		}
-		#elif defined(__BSD__) || defined(__linux__)
+		#elif defined(__BSD__) || defined(__linux__) || defined(_WIN32)
 		{
 			builtin__eprintln(_S("internal error: C-backend compilation was not dispatched to V3"));
 			builtin___v_exit(1);
