@@ -1,7 +1,7 @@
-#define V_COMMIT_HASH "3c8278e764f930cf8a48c5b648d004b22dbc82ef"
+#define V_COMMIT_HASH "5c4290f66285fdee30d3a6f807d7e37c2cd1617b"
 
 #ifndef V_COMMIT_HASH
-	#define V_COMMIT_HASH "e231bc95a0a1c7bdf39526dde43104130010c494"
+	#define V_COMMIT_HASH "3c8278e764f930cf8a48c5b648d004b22dbc82ef"
 #endif
 
 #define V_USE_SIGNAL_H
@@ -24983,7 +24983,7 @@ bool v__token__Kind_is_infix(v__token__Kind kind);
 string v__token__kind_to_string(v__token__Kind k);
 v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op);
 void v__dotgraph__start_digraph(void);
-VV_LOC void anon_fn_c2a17bd51f8e6d60_280__81(void);
+VV_LOC void anon_fn_e579aca88784ed4a_280__81(void);
 v__dotgraph__DotGraph* v__dotgraph__new(string name, string label, string color);
 void v__dotgraph__DotGraph_writeln(v__dotgraph__DotGraph* d, string line);
 void v__dotgraph__DotGraph_finish(v__dotgraph__DotGraph* d);
@@ -26732,11 +26732,11 @@ VV_LOC bool v__gen__c__Gen_type_has_pointer_bearing_nested_c_aggregate_memo(v__g
 VV_LOC bool v__gen__c__Gen_scope_var_needs_deep_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC bool v__gen__c__Gen_scope_gc_pin_var_available(v__gen__c__Gen* g, v__ast__Var obj, int node_pos);
 VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c__Gen* g, int node_pos);
-VV_LOC int anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_314670(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_3e3f31094d731736_293_ref_ast__Var_ref_ast__Var__int_314670(v__ast__Var* a, v__ast__Var* b);
 VV_LOC void v__gen__c__Gen_scope_gc_pin_postgen(v__gen__c__Gen* g, Array_v__gen__c__ScopeGcPin pins);
 VV_LOC bool v__gen__c__Gen_scope_var_needs_gc_pin(v__gen__c__Gen* g, v__ast__Var obj);
 VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos pos);
-VV_LOC int anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_319953(v__ast__Var* a, v__ast__Var* b);
+VV_LOC int anon_fn_3e3f31094d731736_293_ref_ast__Var_ref_ast__Var__int_319953(v__ast__Var* a, v__ast__Var* b);
 VV_LOC bool v__gen__c__gc_pin_has_named_storage(string name);
 VV_LOC bool v__gen__c__Gen_has_veb_context(v__gen__c__Gen* g, v__ast__Type typ);
 VV_LOC _option_v__ast__Param v__gen__c__Gen_implicit_veb_ctx_alias_target(v__gen__c__Gen* g, v__ast__Var obj);
@@ -39338,11 +39338,11 @@ string _v_dump_expr_string(string fpath, int line, string sexpr, string dump_arg
 
 
 // V anon functions:
-VV_LOC void anon_fn_c2a17bd51f8e6d60_280__81(void) {
+VV_LOC void anon_fn_e579aca88784ed4a_280__81(void) {
 	builtin__println(_S("}"));
 }
 
-VV_LOC int anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_314670(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_3e3f31094d731736_293_ref_ast__Var_ref_ast__Var__int_314670(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -39358,7 +39358,7 @@ VV_LOC int anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_314670(v_
 	return 0;
 }
 
-VV_LOC int anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_319953(v__ast__Var* a, v__ast__Var* b) {
+VV_LOC int anon_fn_3e3f31094d731736_293_ref_ast__Var_ref_ast__Var__int_319953(v__ast__Var* a, v__ast__Var* b) {
 	if (a->pos.pos < b->pos.pos) {
 		return -1;
 	}
@@ -45613,7 +45613,7 @@ Array_string builtin__arguments(void) {
 	return res;
 }
 string builtin__vcurrent_hash(void) {
-	return _S("");
+	return _S("5c4290f");
 }
 u64 builtin__v_getpid(void) {
 	#if defined(CUSTOM_DEFINE_no_getpid)
@@ -52573,7 +52573,7 @@ v__token__Kind v__token__assign_op_to_infix_op(v__token__Kind op) {
 }
 void v__dotgraph__start_digraph(void) {
 	builtin__println(_S("digraph G {"));
-	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_c2a17bd51f8e6d60_280__81);
+	_result_void _t1 = builtin__at_exit((FnExitCb)	anon_fn_e579aca88784ed4a_280__81);
 	(void)_t1;
  ;
 }
@@ -62841,7 +62841,7 @@ void v__pref__Preferences_fill_with_defaults(v__pref__Preferences* p) {
 	if (v__pref__Preferences_is_linux_wayland_only_session(p) && !(Array_string_contains(p->compile_defines_all, _S("linux_wayland_session")))) {
 		v__pref__Preferences_parse_define(p, _S("linux_wayland_session"));
 	}
-	string vhash = _S("f388d198348edaeb69f6f357693422ed61e674d9");
+	string vhash = _S("3c8278e764f930cf8a48c5b648d004b22dbc82ef");
 	string _t6 = builtin__string_plus_many(9, _MOV((string[9]){v__pref__Backend_str(p->backend), _S(" | "), final_os, _S(" | "), p->ccompiler, _S(" | "), (p->is_prod ? _S("true") : _S("false")), _S(" | "), (p->sanitize ? _S("true") : _S("false"))}));
 	string _t7 = v__pref__Preferences_defines_map_unique_keys(p);
 	string _t8 = builtin__string_trim_space(p->cflags);
@@ -114849,7 +114849,7 @@ VV_LOC Array_v__gen__c__ScopeGcPin v__gen__c__Gen_scope_gc_pin_pregen(v__gen__c_
 			builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 		}
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_314670)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_3e3f31094d731736_293_ref_ast__Var_ref_ast__Var__int_314670)));
 	Array_v__gen__c__ScopeGcPin pins = builtin____new_array_with_default(0, 0, sizeof(v__gen__c__ScopeGcPin), 0);
 	bool opened_scope = false;
 	for (int _t12 = 0; _t12 < vars.len; ++_t12) {
@@ -114956,7 +114956,7 @@ VV_LOC void v__gen__c__Gen_write_scope_gc_pins(v__gen__c__Gen* g, v__token__Pos 
 		builtin__map_set(&seen, &(string[]){var_obj.name}, &(bool[]) { true });
 		builtin__array_push((array*)&vars, _MOV((v__ast__Var[]){ var_obj }));
 	}
-	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_ea1d7f95b9bfe274_293_ref_ast__Var_ref_ast__Var__int_319953)));
+	builtin__array_sort_with_compare(&vars, ((voidptr)(	anon_fn_3e3f31094d731736_293_ref_ast__Var_ref_ast__Var__int_319953)));
 	for (int _t4 = 0; _t4 < vars.len; ++_t4) {
 		v__ast__Var obj = ((v__ast__Var*)vars.data)[_t4];
 		_option_string _t5 = {0};
@@ -132529,7 +132529,7 @@ VV_LOC void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallExpr node)
 	if (node.left._typ == 515) {
 		if ((*node.left._v__ast__IndexExpr).left_type != 0) {
 			v__ast__TypeSymbol* indexed_container_sym = v__ast__Table_final_sym(g->table, v__gen__c__Gen_unwrap_generic(g, (*node.left._v__ast__IndexExpr).left_type));
-			if (indexed_container_sym->kind == v__ast__Kind__string && !v__ast__Type_is_ptr((*node.left._v__ast__IndexExpr).left_type)) {
+			if ((indexed_container_sym->kind == v__ast__Kind__string && !v__ast__Type_is_ptr((*node.left._v__ast__IndexExpr).left_type)) || (indexed_container_sym->kind == v__ast__Kind__map && !receiver_is_mut)) {
 				receiver_expr_is_addressable = false;
 			}
 		}
@@ -132676,8 +132676,8 @@ VV_LOC void v__gen__c__Gen_method_call(v__gen__c__Gen* g, v__ast__CallExpr node)
 					*(multi_return_v__ast__Fn_Array_v__ast__Type*) _t94.data = (multi_return_v__ast__Fn_Array_v__ast__Type){.arg0=((v__ast__Fn){.is_variadic = 0,.is_c_variadic = 0,.language = 0,.is_pub = 0,.is_ctor_new = 0,.is_deprecated = 0,.is_noreturn = 0,.is_unsafe = 0,.is_must_use = 0,.is_placeholder = 0,.is_main = 0,.is_test = 0,.is_keep_alive = 0,.is_method = 0,.is_static_type_method = 0,.no_body = 0,.is_file_translated = 0,.mod = (string){.str=(byteptr)"", .is_lit=1},.file = (string){.str=(byteptr)"", .is_lit=1},.file_mode = 0,.pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.name_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type_pos = ((v__token__Pos){.len = 0,.line_nr = 0,.pos = 0,.col = 0,.file_idx = -1,.last_line = 0,}),.return_type = 0,.receiver_type = 0,.name = (string){.str=(byteptr)"", .is_lit=1},.params = builtin____new_array(0, 0, sizeof(v__ast__Param)),.source_fn = 0,.usages = 0,.generic_names = builtin____new_array(0, 0, sizeof(string)),.dep_names = builtin____new_array(0, 0, sizeof(string)),.attrs = builtin____new_array(0, 0, sizeof(v__ast__Attr)),.is_conditional = 0,.ctdefine_idx = 0,.from_embedded_type = 0,.is_expand_simple_interpolation = 0,}),.arg1=builtin____new_array_with_default(0, 0, sizeof(v__ast__Type), 0)};
 				}
 				
- 				multi_return_v__ast__Fn_Array_v__ast__Type mr_198588 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t94.data);
-				Array_v__ast__Type embed_types = mr_198588.arg1;
+ 				multi_return_v__ast__Fn_Array_v__ast__Type mr_198655 = (*(multi_return_v__ast__Fn_Array_v__ast__Type*)_t94.data);
+				Array_v__ast__Type embed_types = mr_198655.arg1;
 				if (embed_types.len > 0) {
 					node_embed_types = builtin__array_clone_to_depth(&embed_types, 0);
 				}
@@ -132775,8 +132775,8 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 	string name = node.name;
 	if (node.is_static_method) {
 		if (g->cur_fn != ((void*)0)) {
-			multi_return_v__ast__Type_string mr_201595 = v__ast__Table_convert_generic_static_type_name(g->table, node.name, g->cur_fn->generic_names, g->cur_concrete_types);
-			name = mr_201595.arg1;
+			multi_return_v__ast__Type_string mr_201662 = v__ast__Table_convert_generic_static_type_name(g->table, node.name, g->cur_fn->generic_names, g->cur_concrete_types);
+			name = mr_201662.arg1;
 			if (node.concrete_types.len > 0) {
 				node_name = name;
 			}
@@ -133143,11 +133143,11 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 			v__gen__c__Gen_fn_call_defer_1 = true;
 		}
 		if (g->pref->is_debug && is_builtin_print && node.kind == v__ast__CallKind__panic) {
-			multi_return_int_string_string_string mr_212682 = v__gen__c__Gen_panic_debug_info(g, node.pos);
-			int paline = mr_212682.arg0;
-			string pafile = mr_212682.arg1;
-			string pamod = mr_212682.arg2;
-			string pafn = mr_212682.arg3;
+			multi_return_int_string_string_string mr_212749 = v__gen__c__Gen_panic_debug_info(g, node.pos);
+			int paline = mr_212749.arg0;
+			string pafile = mr_212749.arg1;
+			string pamod = mr_212749.arg2;
+			string pafn = mr_212749.arg3;
 			{
 				v__gen__c__Gen_write(g, _S("builtin__panic_debug("));
 				v__gen__c__Gen_write_decimal(g, paline);
@@ -133162,9 +133162,9 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 			v__gen__c__Gen_call_args(g, node);
 			v__gen__c__Gen_write(g, _S(")"));
 		} else if (builtin__string_ends_with(node.name, _S("__static__from_string")) && !v__ast__Table_known_fn(g->table, node.name)) {
-			multi_return_string_int mr_212993 = v__gen__c__Gen_get_enum_type_idx_from_fn_name(g, node.name);
-			string mod_enum_name = mr_212993.arg0;
-			int idx = mr_212993.arg1;
+			multi_return_string_int mr_213060 = v__gen__c__Gen_get_enum_type_idx_from_fn_name(g, node.name);
+			string mod_enum_name = mr_213060.arg0;
+			int idx = mr_213060.arg1;
 			string fn_mod = builtin__string_all_before_last(mod_enum_name, _S("."));
 			string full_fn_name = builtin__string_plus_many(3, _MOV((string[3]){fn_mod, _S("."), node.name}));
 			string fn_name = v__util__no_dots(full_fn_name);
@@ -133371,8 +133371,8 @@ VV_LOC void v__gen__c__Gen_fn_call(v__gen__c__Gen* g, v__ast__CallExpr node) {
 	} // defer end
 }
 VV_LOC void v__gen__c__Gen_gen_trace_call(v__gen__c__Gen* g, v__ast__CallExpr node, string name) {
-	multi_return_string_string mr_219086 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
-	string hash_fn = mr_219086.arg0;
+	multi_return_string_string mr_219153 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
+	string hash_fn = mr_219153.arg0;
 	v__ast__FnTrace* _t2 = (v__ast__FnTrace*)(builtin__map_get_check(ADDR(map, g->cur_fn->trace_fns), &(string[]){hash_fn}));
 	_option_v__ast__FnTrace _t1 = {0};
 	if (_t2) {
@@ -133397,8 +133397,8 @@ VV_LOC void v__gen__c__Gen_gen_trace_call(v__gen__c__Gen* g, v__ast__CallExpr no
 	}
 }
 VV_LOC void v__gen__c__Gen_gen_trace_fn_var_call(v__gen__c__Gen* g, v__ast__CallExpr node, string name, Array_string call_generic_names, Array_v__ast__Type call_concrete_types) {
-	multi_return_string_string mr_219528 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
-	string hash_fn = mr_219528.arg0;
+	multi_return_string_string mr_219595 = v__ast__Table_get_trace_fn_name(g->table, *g->cur_fn, node);
+	string hash_fn = mr_219595.arg0;
 	v__ast__FnTrace* _t2 = (v__ast__FnTrace*)(builtin__map_get_check(ADDR(map, g->cur_fn->trace_fns), &(string[]){hash_fn}));
 	_option_v__ast__FnTrace _t1 = {0};
 	if (_t2) {
@@ -182453,7 +182453,7 @@ VV_LOC v__ast__Type v__checker__Checker_fn_call(v__checker__Checker* c, v__ast__
 			
  ;
 			os__File_close(&tmp_c_file_with_includes);
-			os__execute(builtin__string_plus_many(4, _MOV((string[4]){os__quoted_path(_S("/home/runner/work/v/v/v1_fallback")), _S(" translate fndef "), builtin__string_substr(name, 2, 2147483647), _S(" tmp.c")})));
+			os__execute(builtin__string_plus_many(4, _MOV((string[4]){os__quoted_path(_S("/home/runner/work/v/v/v")), _S(" translate fndef "), builtin__string_substr(name, 2, 2147483647), _S(" tmp.c")})));
 			_result_string _t58 = os__read_file(_S("__cdefs_autogen.v"));
 			if (_t58.is_error) {
 				for (int _t59 = 0; _t59 < node->args.len; ++_t59) {
@@ -230566,8 +230566,8 @@ VV_LOC Map_string_string main__macos_v3_child_environment(string vexe, Map_strin
 	}
 	builtin__map_set(&environment, &(string[]){_S("VCHILD")}, &(string[]) { _S("true") });
 	builtin__map_set(&environment, &(string[]){_S("VEXE")}, &(string[]) { os__real_path(vexe) });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("f388d198348edaeb69f6f357693422ed61e674d9") });
-	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vhash_env}, &(string[]) { _S("3c8278e764f930cf8a48c5b648d004b22dbc82ef") });
+	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_vcurrent_hash_env}, &(string[]) { _S("5c4290f") });
 	builtin__map_set(&environment, &(string[]){_const_main__macos_v3_embedded_env}, &(string[]) { _S("1") });
 	return environment;
 }
