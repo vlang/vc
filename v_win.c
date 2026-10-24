@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "d1df2de5377098c11f7326c1155f3ce32cfa0340"
+#define V_COMMIT_HASH "3e77bb6a44d9b1ab276f06b38206a1ef18d981e3"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -7255,8 +7255,8 @@ typedef string Array_fixed_string_16[16];
 typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_64[64];
 typedef string Array_fixed_string_5[5];
-typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
+typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_13[13];
 typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_25[25];
@@ -32320,7 +32320,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "d1df2de", 7);
+_SL(_str_199, "3e77bb6", 7);
 _SL(_str_200, "Unhandled Exception 0x", 22);
 _SL(_str_201, " at ", 4);
 _SL(_str_202, "insufficient memory", 19);
@@ -310358,8 +310358,8 @@ i32 transform__Transformer__clone_generic_node_from(transform__Transformer* t, f
 	Array argument_types_source_ids = transform__Transformer__generic_clone_call_param_types(t, node, args_ids, return_context_id);
 	__v_int scratch_start = t->generic_clone_children.len;
 	{
-		__v_int __discard_360_437480_437481 = 0;
-		for (; __discard_360_437480_437481 < node.children_count; __discard_360_437480_437481++) {
+		__v_int __discard_360_437728_437729 = 0;
+		for (; __discard_360_437728_437729 < node.children_count; __discard_360_437728_437729++) {
 			i32 __arr_val_21 = flat__empty_node;
 			{ Array* __v3_internal_symbol_scalar_push_base_2 = &t->generic_clone_children; i32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_21; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((i32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
 		}
@@ -310386,8 +310386,8 @@ i32 transform__Transformer__clone_generic_node_from(transform__Transformer* t, f
 			u32 child_context_source_id = transform__Transformer__generic_clone_child_return_context(t, node, i, return_context_id, array__clone(&argument_types_source_ids));
 			i32 child = transform__Transformer__clone_generic_node_with_return_context(t, flat__FlatAst__child(t->a, &node, i), args_ids, child_context_source_id);
 			{
-				__v_int __discard_360_438481_438482 = 0;
-				for (; __discard_360_438481_438482 < match_smartcasts; __discard_360_438481_438482++) {
+				__v_int __discard_360_438729_438730 = 0;
+				for (; __discard_360_438729_438730 < match_smartcasts; __discard_360_438729_438730++) {
 					transform__Transformer__pop_smartcast(t);
 				}
 			}
@@ -339160,7 +339160,7 @@ Array transform__Transformer__generic_struct_args_in_scope(transform__Transforme
 				__if_val_1 = __if_val_2;
 			} else {
 				if (((parsed).typ == 23) && ((parsed.types__Alias.AliasDataRef->base_type)->typ == 12)) {
-					__if_val_1 = types__Type__source_type_id(parsed.types__Alias.AliasDataRef->base_type);
+					__if_val_1 = types__Type__source_type_id(types__unalias_type(&parsed));
 				} else {
 					u32 name = types__Type__source_type_id(&parsed);
 					int __in_lhs_5 = flat__source_type_shape(name);
@@ -368249,8 +368249,8 @@ __v_int transform__Transformer__node_context_owner(transform__Transformer* t, __
 	__v_int cursor = idx;
 	__v_int __in_lhs_0 = (__v_int)(((__v_int)(	1)) << (16));
 	{
-		__v_int __discard_360_165144_165145 = 0;
-		for (; __discard_360_165144_165145 < __in_lhs_0; __discard_360_165144_165145++) {
+		__v_int __discard_360_165392_165393 = 0;
+		for (; __discard_360_165392_165393 < __in_lhs_0; __discard_360_165392_165393++) {
 			if ((cursor < 0) || (cursor >= t->source_parent_ids.len)) {
 				break;
 			}
@@ -448194,7 +448194,11 @@ __inline types__Type* types__TypeChecker__cached_expr_type_ref(types__TypeChecke
 		}
 		return NULL;
 	}
-	return types__TypeChecker__cached_expr_type_ref_sparse(tc, id);
+	types__Type* sparse = types__TypeChecker__cached_expr_type_ref_sparse(tc, id);
+	if (isnil((void*)(sparse))) {
+		return NULL;
+	}
+	return sparse;
 }
 
 types__Type* types__TypeChecker__cached_expr_type_ref_sparse(types__TypeChecker* tc, i32 id) {
@@ -448207,7 +448211,11 @@ types__Type* types__TypeChecker__cached_expr_type_ref_sparse(types__TypeChecker*
 			return types__new_type_reference(&(types__Type[]){typ}[0]);
 		}
 		if (!isnil((void*)(tc->storage_query_probe->read_base))) {
-			return types__TypeChecker__cached_expr_type_ref(tc->storage_query_probe->read_base, id);
+			types__Type* base = types__TypeChecker__cached_expr_type_ref(tc->storage_query_probe->read_base, id);
+			if (isnil((void*)(base))) {
+				return NULL;
+			}
+			return base;
 		}
 		return NULL;
 	}
@@ -460279,7 +460287,7 @@ void types__TypeChecker__check_decl_type_strings(types__TypeChecker* tc, i32 nod
 		string alias_name = string__trim_space(flat__Node__typ_text(&node));
 		types__Type* alias_type = types__TypeChecker__parse_type(tc, flat__source_type_id(alias_name));
 		if (((alias_type)->typ == 23) && ((alias_type->types__Alias.AliasDataRef->base_type)->typ == 16)) {
-			string original_type = string__replace_once(types__Type__name(alias_type->types__Alias.AliasDataRef->base_type), _str_4841, _str_2691);
+			string original_type = string__replace_once(types__Type__name(types__unalias_type(alias_type)), _str_4841, _str_2691);
 			string __v3_internal_symbol_join_1__vmsvc10392[5]; __v3_internal_symbol_join_1__vmsvc10392[0] = _str_5371; __v3_internal_symbol_join_1__vmsvc10392[1] = alias_name; __v3_internal_symbol_join_1__vmsvc10392[2] = _str_5453; __v3_internal_symbol_join_1__vmsvc10392[3] = original_type; __v3_internal_symbol_join_1__vmsvc10392[4] = _str_5283; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc10392)), node_id, types__TypeChecker__type_diagnostic_pos(tc, node_id, alias_name));
 		}
 	}
