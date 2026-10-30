@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "83074dbd9c546ce24ff6d4bd6cb9ec58e4d04a22"
+#define V_COMMIT_HASH "93ad5d7e5d8f3f135c421af79fbc0b808051886a"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -7676,14 +7676,14 @@ typedef i32 Array_fixed_i32_64[64];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_26[26];
-typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
-typedef Array Array_fixed_Array_2[2];
 typedef string Array_fixed_string_25[25];
-typedef string Array_fixed_string_15[15];
+typedef string Array_fixed_string_26[26];
 typedef u32 Array_fixed_u32_8[8];
+typedef string Array_fixed_string_14[14];
+typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_15[15];
+typedef Array Array_fixed_Array_3[3];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -22733,6 +22733,7 @@ string driver__prune_cache_only_function_prototypes(string source, map* cache_us
 string driver__prune_cached_native_function_prototypes(string source, driver__V3ModuleCacheState* state, Array module_names);
 string driver__prune_foreign_program_wrappers(string declarations, string body);
 driver__V3PrunedDeclarations driver__prune_unreferenced_cached_functions(flat__FlatAst* a, Array keep, Array keep_in_modules, Array keep_patterns);
+__v_result_bool driver__publish_native_c_object(string temporary, string destination);
 __v_result_driver__TccMacosLibgcPublicationResult driver__publish_tcc_macos_libgc_temporary(driver__TccMacosLibgcTemporaryObject temporary, string final_dylib, driver__TccMacosLibgcFileHash expected);
 void driver__publish_transform_helper_scope_texts(flat__FlatAst* a, Array scopes);
 void driver__publish_v3_cached_executable(string source, string destination);
@@ -32392,6 +32393,7 @@ void types__TypeChecker__record_sql_error_at(types__TypeChecker* tc, int kind, s
 void types__TypeChecker__record_transform_alloc_warning(types__TypeChecker* tc, i32 id, token__Pos pos, string description);
 void types__TypeChecker__record_transform_error(types__TypeChecker* tc, i32 id, token__Pos pos, string msg);
 void types__TypeChecker__record_unhandled_result_call(types__TypeChecker* tc, i32 call_id, types__ResultType result_type);
+void types__TypeChecker__record_uninferable_generic_function_type(types__TypeChecker* tc, i32 id, flat__Node node, types__CallInfo info);
 void types__TypeChecker__record_uninferred_generic_method_type(types__TypeChecker* tc, i32 id, flat__Node node, types__CallInfo info);
 void types__TypeChecker__record_uninitialized_reference_field_notices(types__TypeChecker* tc, types__Struct struct_type, string linked_name, i32 node_id, token__Pos pos, map* checked);
 void types__TypeChecker__record_unknown_decl_type_id(types__TypeChecker* tc, u32 name_id, i32 node_id);
@@ -34744,7 +34746,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "83074db", 7);
+_SL(_str_199, "93ad5d7", 7);
 _SL(_str_200, "Unhandled Exception 0x", 22);
 _SL(_str_201, " at ", 4);
 _SL(_str_202, "insufficient memory", 19);
@@ -68325,8 +68327,8 @@ void c__FlatGen__add_native_source_context_wrapper(c__FlatGen* g, string source_
 	array_push(&wrapper_lines, &__arr_val_0);
 	__v_int __in_lhs_1 = c__c_native_source_context_depth(directives);
 	{
-		__v_int __discard_17027569468710905096_361262_361263 = 0;
-		for (; __discard_17027569468710905096_361262_361263 < __in_lhs_1; __discard_17027569468710905096_361262_361263++) {
+		__v_int __discard_17027569468710905096_361089_361090 = 0;
+		for (; __discard_17027569468710905096_361089_361090 < __in_lhs_1; __discard_17027569468710905096_361089_361090++) {
 			string __arr_val_2 = _str_2332;
 			array_push(&wrapper_lines, &__arr_val_2);
 		}
@@ -79514,8 +79516,8 @@ Array c__FlatGen__const_emission_order(c__FlatGen* g) {
 		}
 	}
 	{
-		__v_int __discard_17027569468710905096_991952_991953 = 0;
-		for (; __discard_17027569468710905096_991952_991953 < 20; __discard_17027569468710905096_991952_991953++) {
+		__v_int __discard_17027569468710905096_991779_991780 = 0;
+		for (; __discard_17027569468710905096_991779_991780 < 20; __discard_17027569468710905096_991779_991780++) {
 			if (deferred.len == 0) {
 				break;
 			}
@@ -84775,8 +84777,8 @@ bool c__FlatGen__emit_preserved_c_directive_at(c__FlatGen* g, Array directives, 
 	}
 	__v_int __in_lhs_6 = c__c_lifted_include_context_depth(prefix);
 	{
-		__v_int __discard_17027569468710905096_387061_387062 = 0;
-		for (; __discard_17027569468710905096_387061_387062 < __in_lhs_6; __discard_17027569468710905096_387061_387062++) {
+		__v_int __discard_17027569468710905096_386888_386889 = 0;
+		for (; __discard_17027569468710905096_386888_386889 < __in_lhs_6; __discard_17027569468710905096_386888_386889++) {
 			c__FlatGen__writeln(g, _str_2332);
 		}
 	}
@@ -87476,8 +87478,8 @@ __v_option_string c__FlatGen__enum_receiver_method_name(c__FlatGen* g, types__En
 __v_option_u32 c__FlatGen__enum_selector_alias_target(c__FlatGen* g, u32 name_id) {
 	u32 cur = name_id;
 	{
-		__v_int __discard_17027569468710905096_430793_430794 = 0;
-		for (; __discard_17027569468710905096_430793_430794 < 16; __discard_17027569468710905096_430793_430794++) {
+		__v_int __discard_17027569468710905096_430620_430621 = 0;
+		for (; __discard_17027569468710905096_430620_430621 < 16; __discard_17027569468710905096_430620_430621++) {
 			__v_option_u32 __or_opt_0 = flat__SourceTypeBindings__type_id(&g->tc->type_aliases, cur);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -91030,8 +91032,8 @@ Array c__FlatGen__fixed_storage_node_scan_bounds(c__FlatGen* g, __v_int max_jobs
 c__FixedStorageRefFileContext c__FlatGen__fixed_storage_ref_file_context(c__FlatGen* g, __v_int pos_id) {
 	__v_int file_id = pos_id;
 	{
-		__v_int __discard_17027569468710905096_528554_528555 = 0;
-		for (; __discard_17027569468710905096_528554_528555 < 8; __discard_17027569468710905096_528554_528555++) {
+		__v_int __discard_17027569468710905096_528381_528382 = 0;
+		for (; __discard_17027569468710905096_528381_528382 < 8; __discard_17027569468710905096_528381_528382++) {
 			__v_int __map_key_2 = file_id;
 			void* __map_ptr_3 = map__get_check(&g->a->template_call_sites, &__map_key_2);
 			token__Pos __map_val_4 = {0};
@@ -103695,6 +103697,7 @@ void c__FlatGen__gen_fns_dispatch(c__FlatGen* g, bool no_parallel) {
 				}
 			}
 			i64 _t8__vmsvc1579 = (i64)(total_cost); i64 _t9__vmsvc1580 = (i64)((i64)(worker_count)); if (_t9__vmsvc1580 == 0) v_panic(_S("division by zero")); i64 reserve_cost = (((i64)(_t8__vmsvc1579 / _t9__vmsvc1580))) + 1;
+			Array shared_items = array_slice(			items, 0, (			items).len);
 			Array fwd_bounds = c__forward_decl_lane_bounds(g->a, items);
 			Array fwd_args = array_new(			sizeof(c__ForwardDeclLaneArgs), 0, fwd_bounds.len - 1);
 			void* fwd_scope = c__cgen_worker_scope_begin(true);
@@ -103704,7 +103707,7 @@ void c__FlatGen__gen_fns_dispatch(c__FlatGen* g, bool no_parallel) {
 				for (; lane < __in_lhs_13; lane++) {
 					c__FlatGen* fwd_worker = c__FlatGen__new_parallel_worker(g, (c__max_flat_cgen_jobs + 3) + lane);
 					fwd_worker->tc->verbose = g->tc->verbose;
-					c__ForwardDeclLaneArgs __arr_val_14 = (c__ForwardDeclLaneArgs){.worker = (void*)(fwd_worker), .items_ptr = (void*)(&items), .start = (*(__v_int*)array_get(fwd_bounds, lane)), .end = (*(__v_int*)array_get(fwd_bounds, lane + 1)), .output = _str_34};
+					c__ForwardDeclLaneArgs __arr_val_14 = (c__ForwardDeclLaneArgs){.worker = (void*)(fwd_worker), .items_ptr = (void*)(&shared_items), .start = (*(__v_int*)array_get(fwd_bounds, lane)), .end = (*(__v_int*)array_get(fwd_bounds, lane + 1)), .output = _str_34};
 					array_push(&fwd_args, &__arr_val_14);
 				}
 			}
@@ -107966,15 +107969,15 @@ bool c__FlatGen__gen_interface_value_expr(c__FlatGen* g, i32 id, types__Type* ex
 
 void c__FlatGen__gen_is_expr_subject(c__FlatGen* g, i32 expr_id, __v_int extra_deref) {
 	{
-		__v_int __discard_17027569468710905096_484814_484815 = 0;
-		for (; __discard_17027569468710905096_484814_484815 < extra_deref; __discard_17027569468710905096_484814_484815++) {
+		__v_int __discard_17027569468710905096_484641_484642 = 0;
+		for (; __discard_17027569468710905096_484641_484642 < extra_deref; __discard_17027569468710905096_484641_484642++) {
 			c__FlatGen__write(g, _str_4901);
 		}
 	}
 	c__FlatGen__gen_expr(g, expr_id);
 	{
-		__v_int __discard_17027569468710905096_484883_484884 = 0;
-		for (; __discard_17027569468710905096_484883_484884 < extra_deref; __discard_17027569468710905096_484883_484884++) {
+		__v_int __discard_17027569468710905096_484710_484711 = 0;
+		for (; __discard_17027569468710905096_484710_484711 < extra_deref; __discard_17027569468710905096_484710_484711++) {
 			c__FlatGen__write(g, _str_28);
 		}
 	}
@@ -122705,6 +122708,7 @@ string c__FlatGen__gen_with_used_options(c__FlatGen* g, flat__FlatAst* a, map us
 			parallel_iface_scan = g->scope_parallel_workers && !effective_no_parallel;
 		}
 		if (parallel_iface_scan) {
+			c__FlatGen__precompute_embedded_fields(g);
 			{
 				iface_worker = c__FlatGen__new_parallel_worker(g, 4);
 				iface_worker->interface_boxed_types = new_map(sizeof(u64), sizeof(bool), map_hash_int_8, map_eq_int_8, map_clone_int_8, map_free_nop);
@@ -122727,7 +122731,9 @@ string c__FlatGen__gen_with_used_options(c__FlatGen* g, flat__FlatAst* a, map us
 			c__FlatGen__precompute_non_generic_fn_index(g);
 			c__FlatGen__precompute_generic_fn_key_index(g);
 		}
-		c__FlatGen__precompute_embedded_fields(g);
+		if (!parallel_iface_scan) {
+			c__FlatGen__precompute_embedded_fields(g);
+		}
 		string __v3_internal_symbol_join_4__vmsvc2607[3]; __v3_internal_symbol_join_4__vmsvc2607[0] = _str_9125; __v3_internal_symbol_join_4__vmsvc2607[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(*cgsw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_4__vmsvc2607[2] = _str_3490; c__FlatGen__timing_profile(g, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc2607)));
 		time__StopWatch__restart(cgsw);
 		if (parallel_iface_scan) {
@@ -124954,8 +124960,8 @@ __v_option_string c__FlatGen__global_name_for_ident(c__FlatGen* g, string name) 
 __v_option_string c__FlatGen__global_scalar_static_initializer(c__FlatGen* g, i32 id, types__Type* typ) {
 	i32 value_id = id;
 	{
-		__v_int __discard_17027569468710905096_908572_908573 = 0;
-		for (; __discard_17027569468710905096_908572_908573 < 3; __discard_17027569468710905096_908572_908573++) {
+		__v_int __discard_17027569468710905096_908399_908400 = 0;
+		for (; __discard_17027569468710905096_908399_908400 < 3; __discard_17027569468710905096_908399_908400++) {
 			if (((__v_int)(value_id) < 0) || ((__v_int)(value_id) >= g->a->nodes.len)) {
 				break;
 			}
@@ -158165,8 +158171,8 @@ void c__FlatGen__write_implicit_veb_ctx_param(c__FlatGen* g) {
 
 __inline void c__FlatGen__write_indent(c__FlatGen* g) {
 	{
-		__v_int __discard_17027569468710905096_1031110_1031111 = 0;
-		for (; __discard_17027569468710905096_1031110_1031111 < g->indent; __discard_17027569468710905096_1031110_1031111++) {
+		__v_int __discard_17027569468710905096_1030937_1030938 = 0;
+		for (; __discard_17027569468710905096_1030937_1030938 < g->indent; __discard_17027569468710905096_1030937_1030938++) {
 			strings__Builder__write_u8(&g->sb, '\t');
 		}
 	}
@@ -163156,8 +163162,8 @@ multi_return_bool_bool c__c_header_objective_c_macro_value_state(string name, ma
 	string current = name;
 	map seen = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	{
-		__v_int __discard_17027569468710905096_282182_282183 = 0;
-		for (; __discard_17027569468710905096_282182_282183 < 64; __discard_17027569468710905096_282182_282183++) {
+		__v_int __discard_17027569468710905096_282009_282010 = 0;
+		for (; __discard_17027569468710905096_282009_282010 < 64; __discard_17027569468710905096_282009_282010++) {
 			string __map_key_0 = current;
 			bool __map_zero_1 = false;
 			if (*(bool*)(map__get(&seen, &__map_key_0, &__map_zero_1))) {
@@ -163760,8 +163766,8 @@ string c__c_header_text_without_identifier(string text, string name) {
 		if (string__eq(string__substr(		text, 		token_start, 		i), name)) {
 			strings__Builder__write_string(result, string__substr(			text, 			start, 			token_start));
 			{
-				__v_int __discard_17027569468710905096_290311_290312 = token_start;
-				for (; __discard_17027569468710905096_290311_290312 < i; __discard_17027569468710905096_290311_290312++) {
+				__v_int __discard_17027569468710905096_290138_290139 = token_start;
+				for (; __discard_17027569468710905096_290138_290139 < i; __discard_17027569468710905096_290138_290139++) {
 					strings__Builder__write_u8(result, ' ');
 				}
 			}
@@ -168089,8 +168095,8 @@ __v_int c__cgen_type_pointer_depth(types__Type* t) {
 	types__Type cur = (*t);
 	__v_int depth = 0;
 	{
-		__v_int __discard_17027569468710905096_484159_484160 = 0;
-		for (; __discard_17027569468710905096_484159_484160 < 32; __discard_17027569468710905096_484159_484160++) {
+		__v_int __discard_17027569468710905096_483986_483987 = 0;
+		for (; __discard_17027569468710905096_483986_483987 < 32; __discard_17027569468710905096_483986_483987++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -168181,8 +168187,8 @@ types__Type* c__cgen_unalias_type(types__Type* typ) {
 types__Type c__cgen_unalias_unwrap_all_pointers(types__Type* t) {
 	types__Type cur = (*t);
 	{
-		__v_int __discard_17027569468710905096_484427_484428 = 0;
-		for (; __discard_17027569468710905096_484427_484428 < 32; __discard_17027569468710905096_484427_484428++) {
+		__v_int __discard_17027569468710905096_484254_484255 = 0;
+		for (; __discard_17027569468710905096_484254_484255 < 32; __discard_17027569468710905096_484254_484255++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -183356,8 +183362,8 @@ __inline u64 driver__c_hash_tag(u64 initial, __v_int value) {
 	u64 hash = initial;
 	u64 bits = (u64)(value);
 	{
-		__v_int __discard_15215236722831141574_249592_249593 = 0;
-		for (; __discard_15215236722831141574_249592_249593 < 8; __discard_15215236722831141574_249592_249593++) {
+		__v_int __discard_15215236722831141574_249932_249933 = 0;
+		for (; __discard_15215236722831141574_249932_249933 < 8; __discard_15215236722831141574_249932_249933++) {
 			hash = (hash ^ (bits & 0xff)) * (u64)(1099511628211);
 						bits = (u64)(((u64)(			bits)) >> (8));
 		}
@@ -186654,15 +186660,14 @@ __v_result_string driver__compile_cached_c_source_object(string obj_path, string
 		array_push(&stats->temporary_objects, &__arr_val_23);
 		return (__v_result_string){.ok = true, .value = uncached_obj};
 	}
-	__v_result __or_opt_24 = os__mv(temp_obj, cached_obj, (os__MvParams){.overwrite = true});
-	if (!__or_opt_24.ok) {
-		IError err = __or_opt_24.err;
-		__v_result __or_opt_25 = os__rm(temp_obj);
-		if (!__or_opt_25.ok) {
-		}
-		if (!os__exists(cached_obj)) {
-			string __v3_internal_symbol_join_8__vmsvc4309[4]; __v3_internal_symbol_join_8__vmsvc4309[0] = _str_2495; __v3_internal_symbol_join_8__vmsvc4309[1] = cached_obj; __v3_internal_symbol_join_8__vmsvc4309[2] = _str_185; __v3_internal_symbol_join_8__vmsvc4309[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_8__vmsvc4309)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
-		}
+	__v_result_bool __or_opt_24 = driver__publish_native_c_object(temp_obj, cached_obj);
+	bool __or_val_25 = {0};
+	if (__or_opt_24.ok) {
+		__or_val_25 = __or_opt_24.value;
+	} else {
+		return (__v_result_string){.ok = false, .err = __or_opt_24.err};
+	}
+	if (!__or_val_25) {
 		stats->publish_races++;
 	}
 	__v_result __or_opt_26 = driver__write_c_object_manifest(manifest_path, cached_obj, dependencies.files, stats);
@@ -186700,7 +186705,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 	}
 	driver__V3ModuleCacheState__print_module_cache_notice(state, module_name);
 	string unique = tempname__unique_token();
-	string __v3_internal_symbol_join_0__vmsvc4310[3]; __v3_internal_symbol_join_0__vmsvc4310[0] = entry.c_source; __v3_internal_symbol_join_0__vmsvc4310[1] = _str_2272; __v3_internal_symbol_join_0__vmsvc4310[2] = unique; string tmp_dir = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4310));
+	string __v3_internal_symbol_join_0__vmsvc4309[3]; __v3_internal_symbol_join_0__vmsvc4309[0] = entry.c_source; __v3_internal_symbol_join_0__vmsvc4309[1] = _str_2272; __v3_internal_symbol_join_0__vmsvc4309[2] = unique; string tmp_dir = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4309));
 	__v_result __or_opt_6 = os__mkdir_all(tmp_dir, (os__MkdirParams){.mode = 0777});
 	if (!__or_opt_6.ok) {
 		return (__v_result_bool){.ok = false, .err = __or_opt_6.err};
@@ -186734,7 +186739,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 		}
 	}
 	flags = __filter_10;
-	string __v3_internal_symbol_join_2__vmsvc4311[3]; __v3_internal_symbol_join_2__vmsvc4311[0] = entry.object; __v3_internal_symbol_join_2__vmsvc4311[1] = _str_2272; __v3_internal_symbol_join_2__vmsvc4311[2] = unique; string tmp_object = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4311));
+	string __v3_internal_symbol_join_2__vmsvc4310[3]; __v3_internal_symbol_join_2__vmsvc4310[0] = entry.object; __v3_internal_symbol_join_2__vmsvc4310[1] = _str_2272; __v3_internal_symbol_join_2__vmsvc4310[2] = unique; string tmp_object = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4310));
 	Array args = array__clone(&compiler->args);
 	if (objective_c) {
 		Array __push_many_13 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_2083, _str_2362});
@@ -186751,7 +186756,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 		__v_result __or_opt_16 = os__rm(tmp_object);
 		if (!__or_opt_16.ok) {
 		}
-		string __v3_internal_symbol_join_3__vmsvc4312[4]; __v3_internal_symbol_join_3__vmsvc4312[0] = _str_3135; __v3_internal_symbol_join_3__vmsvc4312[1] = entry.object; __v3_internal_symbol_join_3__vmsvc4312[2] = _str_2280; __v3_internal_symbol_join_3__vmsvc4312[3] = result.output; __v_result_bool _t5 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc4312)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_3__vmsvc4311[4]; __v3_internal_symbol_join_3__vmsvc4311[0] = _str_3135; __v3_internal_symbol_join_3__vmsvc4311[1] = entry.object; __v3_internal_symbol_join_3__vmsvc4311[2] = _str_2280; __v3_internal_symbol_join_3__vmsvc4311[3] = result.output; __v_result_bool _t5 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc4311)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		{
 			if (string__eq(os__getenv(_str_2273), _str_34)) {
 				__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -186772,7 +186777,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 		if (!__or_opt_18.ok) {
 		}
 		if (!os__is_file(entry.object)) {
-			string __v3_internal_symbol_join_5__vmsvc4313[4]; __v3_internal_symbol_join_5__vmsvc4313[0] = _str_3873; __v3_internal_symbol_join_5__vmsvc4313[1] = entry.object; __v3_internal_symbol_join_5__vmsvc4313[2] = _str_185; __v3_internal_symbol_join_5__vmsvc4313[3] = IError__str(err); __v_result_bool _t7 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc4313)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_5__vmsvc4312[4]; __v3_internal_symbol_join_5__vmsvc4312[0] = _str_3873; __v3_internal_symbol_join_5__vmsvc4312[1] = entry.object; __v3_internal_symbol_join_5__vmsvc4312[2] = _str_185; __v3_internal_symbol_join_5__vmsvc4312[3] = IError__str(err); __v_result_bool _t7 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc4312)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				if (string__eq(os__getenv(_str_2273), _str_34)) {
 					__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -186791,7 +186796,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 	if (!__or_opt_19.ok) {
 		IError err = __or_opt_19.err;
 		if (!os__is_file(entry.c_source)) {
-			string __v3_internal_symbol_join_7__vmsvc4314[4]; __v3_internal_symbol_join_7__vmsvc4314[0] = _str_3874; __v3_internal_symbol_join_7__vmsvc4314[1] = entry.c_source; __v3_internal_symbol_join_7__vmsvc4314[2] = _str_185; __v3_internal_symbol_join_7__vmsvc4314[3] = IError__str(err); __v_result_bool _t9 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_7__vmsvc4314)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_7__vmsvc4313[4]; __v3_internal_symbol_join_7__vmsvc4313[0] = _str_3874; __v3_internal_symbol_join_7__vmsvc4313[1] = entry.c_source; __v3_internal_symbol_join_7__vmsvc4313[2] = _str_185; __v3_internal_symbol_join_7__vmsvc4313[3] = IError__str(err); __v_result_bool _t9 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_7__vmsvc4313)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				if (string__eq(os__getenv(_str_2273), _str_34)) {
 					__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -186926,11 +186931,11 @@ __v_result_string driver__compile_v3_dev_dylib(string prefix_object, Array cache
 			hash = driver__c_hash_bytes(__order_snapshot_25, string__bytes(driver__c_object_file_signature(archive, true, stats)));
 		}
 	}
-	string __v3_internal_symbol_join_1__vmsvc4315[3]; __v3_internal_symbol_join_1__vmsvc4315[0] = _str_2450; __v3_internal_symbol_join_1__vmsvc4315[1] = u64__hex(hash); __v3_internal_symbol_join_1__vmsvc4315[2] = _str_2414; string dylib_path = os__join_path_single(manager->dir, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4315)));
+	string __v3_internal_symbol_join_1__vmsvc4314[3]; __v3_internal_symbol_join_1__vmsvc4314[0] = _str_2450; __v3_internal_symbol_join_1__vmsvc4314[1] = u64__hex(hash); __v3_internal_symbol_join_1__vmsvc4314[2] = _str_2414; string dylib_path = os__join_path_single(manager->dir, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4314)));
 	if (os__is_file(dylib_path)) {
 		return (__v_result_string){.ok = true, .value = dylib_path};
 	}
-	string __v3_internal_symbol_join_2__vmsvc4316[3]; __v3_internal_symbol_join_2__vmsvc4316[0] = dylib_path; __v3_internal_symbol_join_2__vmsvc4316[1] = _str_2272; __v3_internal_symbol_join_2__vmsvc4316[2] = tempname__unique_token(); string tmp_dylib = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4316));
+	string __v3_internal_symbol_join_2__vmsvc4315[3]; __v3_internal_symbol_join_2__vmsvc4315[0] = dylib_path; __v3_internal_symbol_join_2__vmsvc4315[1] = _str_2272; __v3_internal_symbol_join_2__vmsvc4315[2] = tempname__unique_token(); string tmp_dylib = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4315));
 	string response_path = os__join_path_single(build_dir, _str_2451);
 	Array args = array__clone(&target_args);
 	Array __arr_lit_28 = array_new(	sizeof(string), 0, 5);
@@ -186985,7 +186990,7 @@ __v_result_string driver__compile_v3_dev_dylib(string prefix_object, Array cache
 	}
 	string response_arg = string__plus(_str_2456, response_path);
 	if (show_c_command) {
-		string __v3_internal_symbol_join_4__vmsvc4317[5]; __v3_internal_symbol_join_4__vmsvc4317[0] = _str_2356; __v3_internal_symbol_join_4__vmsvc4317[1] = cmdexec__display(c_compiler, new_array_from_c_array(1, 1, sizeof(string), (string[1]){response_arg})); __v3_internal_symbol_join_4__vmsvc4317[2] = _str_1000; __v3_internal_symbol_join_4__vmsvc4317[3] = int__str(objects.len); __v3_internal_symbol_join_4__vmsvc4317[4] = _str_2457; println((string_plus_many(5, __v3_internal_symbol_join_4__vmsvc4317)));
+		string __v3_internal_symbol_join_4__vmsvc4316[5]; __v3_internal_symbol_join_4__vmsvc4316[0] = _str_2356; __v3_internal_symbol_join_4__vmsvc4316[1] = cmdexec__display(c_compiler, new_array_from_c_array(1, 1, sizeof(string), (string[1]){response_arg})); __v3_internal_symbol_join_4__vmsvc4316[2] = _str_1000; __v3_internal_symbol_join_4__vmsvc4316[3] = int__str(objects.len); __v3_internal_symbol_join_4__vmsvc4316[4] = _str_2457; println((string_plus_many(5, __v3_internal_symbol_join_4__vmsvc4316)));
 	}
 	os__Result result = cmdexec__run(c_compiler, new_array_from_c_array(1, 1, sizeof(string), (string[1]){response_arg}));
 	if (result.exit_code != 0) {
@@ -187004,7 +187009,7 @@ __v_result_string driver__compile_v3_dev_dylib(string prefix_object, Array cache
 	if (!__or_opt_42.ok) {
 		IError err = __or_opt_42.err;
 		if (!os__is_file(dylib_path)) {
-			string __v3_internal_symbol_join_6__vmsvc4318[4]; __v3_internal_symbol_join_6__vmsvc4318[0] = _str_2459; __v3_internal_symbol_join_6__vmsvc4318[1] = dylib_path; __v3_internal_symbol_join_6__vmsvc4318[2] = _str_185; __v3_internal_symbol_join_6__vmsvc4318[3] = IError__str(err); __v_result_string _t8 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc4318)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_6__vmsvc4317[4]; __v3_internal_symbol_join_6__vmsvc4317[0] = _str_2459; __v3_internal_symbol_join_6__vmsvc4317[1] = dylib_path; __v3_internal_symbol_join_6__vmsvc4317[2] = _str_185; __v3_internal_symbol_join_6__vmsvc4317[3] = IError__str(err); __v_result_string _t8 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc4317)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				__v_result __or_opt_26 = os__rm(tmp_dylib);
 				if (!__or_opt_26.ok) {
@@ -187086,7 +187091,7 @@ os__Result driver__compile_v3_macos_linux_cross(string c_compiler, driver__V3CCo
 		if (string__starts_with(input, _str_72) || !driver__v3_linux_cross_source_input(input)) {
 			continue;
 		}
-		string __v3_internal_symbol_join_0__vmsvc4319[3]; __v3_internal_symbol_join_0__vmsvc4319[0] = _str_2647; __v3_internal_symbol_join_0__vmsvc4319[1] = int__str(source_index); __v3_internal_symbol_join_0__vmsvc4319[2] = _str_2312; string object_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4319));
+		string __v3_internal_symbol_join_0__vmsvc4318[3]; __v3_internal_symbol_join_0__vmsvc4318[0] = _str_2647; __v3_internal_symbol_join_0__vmsvc4318[1] = int__str(source_index); __v3_internal_symbol_join_0__vmsvc4318[2] = _str_2312; string object_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4318));
 		source_index++;
 		Array args = array__clone(&compile_flags);
 		if (!(string__eq(language, _str_34) || string__eq(language, _str_42))) {
@@ -187105,15 +187110,15 @@ os__Result driver__compile_v3_macos_linux_cross(string c_compiler, driver__V3CCo
 		string __arr_val_6 = object_name;
 		array_push(&objects, &__arr_val_6);
 	}
-	int cond__vmsvc4322; cond__vmsvc4322 = !!((objects.len == 0)); if (cond__vmsvc4322) { Array __any_source_7__vmsvc4320 = driver__c_link_input_indices(inputs); bool __any_8__vmsvc4321 = false; {
+	int cond__vmsvc4321; cond__vmsvc4321 = !!((objects.len == 0)); if (cond__vmsvc4321) { Array __any_source_7__vmsvc4319 = driver__c_link_input_indices(inputs); bool __any_8__vmsvc4320 = false; {
 		__v_int __any_idx_9 = 0;
-		for (; __any_idx_9 < __any_source_7__vmsvc4320.len; __any_idx_9++) {
-			__v_int __any_it_10 = *(__v_int*)(array_get(__any_source_7__vmsvc4320, __any_idx_9));
+		for (; __any_idx_9 < __any_source_7__vmsvc4319.len; __any_idx_9++) {
+			__v_int __any_it_10 = *(__v_int*)(array_get(__any_source_7__vmsvc4319, __any_idx_9));
 			if (driver__c_flag_is_object_file(string__trim_space((*(string*)array_get(inputs, __any_it_10))))) {
-				__any_8__vmsvc4321 = true;
+				__any_8__vmsvc4320 = true;
 			}
 		}
-	} cond__vmsvc4322 = !!((!__any_8__vmsvc4321)); } if (cond__vmsvc4322) {
+	} cond__vmsvc4321 = !!((!__any_8__vmsvc4320)); } if (cond__vmsvc4321) {
 		return (os__Result){.exit_code = 1, .output = _str_2648};
 	}
 	string builtins_source = os__join_path_single(os__join_path_single(os__join_path_single(vroot, _str_2308), _str_2649), _str_2650);
@@ -187199,7 +187204,7 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 		__or_val_1 = __or_opt_0.value;
 	} else {
 		IError err = __or_opt_0.err;
-		string __v3_internal_symbol_join_0__vmsvc4323[4]; __v3_internal_symbol_join_0__vmsvc4323[0] = _str_2661; __v3_internal_symbol_join_0__vmsvc4323[1] = source_path; __v3_internal_symbol_join_0__vmsvc4323[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4323[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4323))};
+		string __v3_internal_symbol_join_0__vmsvc4322[4]; __v3_internal_symbol_join_0__vmsvc4322[0] = _str_2661; __v3_internal_symbol_join_0__vmsvc4322[1] = source_path; __v3_internal_symbol_join_0__vmsvc4322[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4322[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4322))};
 	}
 	string source = __or_val_1;
 	__v_result_multi_return_string_Array __or_opt_3 = driver__split_v3_parallel_c_source(source, unit_count);
@@ -187213,7 +187218,7 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 	multi_return_string_Array __multi_ret_2 = __or_val_4;
 	string prefix = __multi_ret_2.arg0;
 	Array bodies = __multi_ret_2.arg1;
-	string __v3_internal_symbol_join_1__vmsvc4324[3]; __v3_internal_symbol_join_1__vmsvc4324[0] = _str_2663; __v3_internal_symbol_join_1__vmsvc4324[1] = tempname__unique_token(); __v3_internal_symbol_join_1__vmsvc4324[2] = _str_2461; string header_name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4324));
+	string __v3_internal_symbol_join_1__vmsvc4323[3]; __v3_internal_symbol_join_1__vmsvc4323[0] = _str_2663; __v3_internal_symbol_join_1__vmsvc4323[1] = tempname__unique_token(); __v3_internal_symbol_join_1__vmsvc4323[2] = _str_2461; string header_name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4323));
 	string header_path = os__join_path_single(build_dir, header_name);
 	Array c_flags = array__clone(&c_flag_plan->before_inputs);
 	array__push_many(&c_flags, c_flag_plan->after_inputs.data, c_flag_plan->after_inputs.len);
@@ -187226,7 +187231,7 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 	__v_result __or_opt_6 = os__write_file(header_path, header);
 	if (!__or_opt_6.ok) {
 		IError err = __or_opt_6.err;
-		string __v3_internal_symbol_join_2__vmsvc4325[4]; __v3_internal_symbol_join_2__vmsvc4325[0] = _str_2664; __v3_internal_symbol_join_2__vmsvc4325[1] = header_path; __v3_internal_symbol_join_2__vmsvc4325[2] = _str_185; __v3_internal_symbol_join_2__vmsvc4325[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc4325))};
+		string __v3_internal_symbol_join_2__vmsvc4324[4]; __v3_internal_symbol_join_2__vmsvc4324[0] = _str_2664; __v3_internal_symbol_join_2__vmsvc4324[1] = header_path; __v3_internal_symbol_join_2__vmsvc4324[2] = _str_185; __v3_internal_symbol_join_2__vmsvc4324[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc4324))};
 	}
 	string cache_root = driver__v3_parallel_c_cache_root();
 	bool use_object_cache = cache_objects;
@@ -187257,8 +187262,8 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 	{
 		__v_int unit_index = 0;
 		for (; unit_index <= bodies.len; unit_index++) {
-			string __v3_internal_symbol_join_3__vmsvc4326[3]; __v3_internal_symbol_join_3__vmsvc4326[0] = _str_2667; __v3_internal_symbol_join_3__vmsvc4326[1] = int__str(unit_index); __v3_internal_symbol_join_3__vmsvc4326[2] = _str_640; string source_name = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4326));
-			string __v3_internal_symbol_join_4__vmsvc4327[3]; __v3_internal_symbol_join_4__vmsvc4327[0] = _str_2667; __v3_internal_symbol_join_4__vmsvc4327[1] = int__str(unit_index); __v3_internal_symbol_join_4__vmsvc4327[2] = _str_2312; string object_name = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4327));
+			string __v3_internal_symbol_join_3__vmsvc4325[3]; __v3_internal_symbol_join_3__vmsvc4325[0] = _str_2667; __v3_internal_symbol_join_3__vmsvc4325[1] = int__str(unit_index); __v3_internal_symbol_join_3__vmsvc4325[2] = _str_640; string source_name = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4325));
+			string __v3_internal_symbol_join_4__vmsvc4326[3]; __v3_internal_symbol_join_4__vmsvc4326[0] = _str_2667; __v3_internal_symbol_join_4__vmsvc4326[1] = int__str(unit_index); __v3_internal_symbol_join_4__vmsvc4326[2] = _str_2312; string object_name = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4326));
 			string __if_val_11 = {0};
 			if (unit_index == 0) {
 				__if_val_11 = prefix;
@@ -187275,13 +187280,13 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 				__v_result __or_opt_12 = driver__publish_v3_parallel_c_cache_source(unit_path, rendered_source);
 				if (!__or_opt_12.ok) {
 					IError err = __or_opt_12.err;
-					string __v3_internal_symbol_join_5__vmsvc4328[4]; __v3_internal_symbol_join_5__vmsvc4328[0] = _str_2668; __v3_internal_symbol_join_5__vmsvc4328[1] = source_name; __v3_internal_symbol_join_5__vmsvc4328[2] = _str_185; __v3_internal_symbol_join_5__vmsvc4328[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc4328))};
+					string __v3_internal_symbol_join_5__vmsvc4327[4]; __v3_internal_symbol_join_5__vmsvc4327[0] = _str_2668; __v3_internal_symbol_join_5__vmsvc4327[1] = source_name; __v3_internal_symbol_join_5__vmsvc4327[2] = _str_185; __v3_internal_symbol_join_5__vmsvc4327[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc4327))};
 				}
 			} else {
 				__v_result __or_opt_13 = driver__write_v3_parallel_c_source(unit_path, header_name, unit_source, owner, is_shared);
 				if (!__or_opt_13.ok) {
 					IError err = __or_opt_13.err;
-					string __v3_internal_symbol_join_6__vmsvc4329[4]; __v3_internal_symbol_join_6__vmsvc4329[0] = _str_2669; __v3_internal_symbol_join_6__vmsvc4329[1] = source_name; __v3_internal_symbol_join_6__vmsvc4329[2] = _str_185; __v3_internal_symbol_join_6__vmsvc4329[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc4329))};
+					string __v3_internal_symbol_join_6__vmsvc4328[4]; __v3_internal_symbol_join_6__vmsvc4328[0] = _str_2669; __v3_internal_symbol_join_6__vmsvc4328[1] = source_name; __v3_internal_symbol_join_6__vmsvc4328[2] = _str_185; __v3_internal_symbol_join_6__vmsvc4328[3] = IError__msg(&(err)); return (os__Result){.exit_code = 1, .output = (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc4328))};
 				}
 			}
 			bool unit_is_large = driver__v3_parallel_c_unit_is_large(os__file_size(unit_path), (u64)(header.len), owner);
@@ -187324,7 +187329,7 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 						Array cached_args = array__clone(&compile_args);
 						Array __push_many_22 = new_array_from_c_array(4, 4, sizeof(string), (string[4]){_str_615, _str_261, cached_object, unit_path});
 						array__push_many(&cached_args, __push_many_22.data, __push_many_22.len);
-						string __v3_internal_symbol_join_8__vmsvc4330[3]; __v3_internal_symbol_join_8__vmsvc4330[0] = _str_2356; __v3_internal_symbol_join_8__vmsvc4330[1] = cmdexec__display(c_compiler, cached_args); __v3_internal_symbol_join_8__vmsvc4330[2] = _str_2670; println((string_plus_many(3, __v3_internal_symbol_join_8__vmsvc4330)));
+						string __v3_internal_symbol_join_8__vmsvc4329[3]; __v3_internal_symbol_join_8__vmsvc4329[0] = _str_2356; __v3_internal_symbol_join_8__vmsvc4329[1] = cmdexec__display(c_compiler, cached_args); __v3_internal_symbol_join_8__vmsvc4329[2] = _str_2670; println((string_plus_many(3, __v3_internal_symbol_join_8__vmsvc4329)));
 					}
 					continue;
 				}
@@ -187374,7 +187379,7 @@ os__Result driver__compile_v3_parallel_c(string source_path, string c_compiler, 
 				if (!__or_opt_28.ok) {
 				}
 				if (show_command) {
-					string __v3_internal_symbol_join_10__vmsvc4331[3]; __v3_internal_symbol_join_10__vmsvc4331[0] = _str_2356; __v3_internal_symbol_join_10__vmsvc4331[1] = cmdexec__display(c_compiler, (*task)->args); __v3_internal_symbol_join_10__vmsvc4331[2] = _str_2670; println((string_plus_many(3, __v3_internal_symbol_join_10__vmsvc4331)));
+					string __v3_internal_symbol_join_10__vmsvc4330[3]; __v3_internal_symbol_join_10__vmsvc4330[0] = _str_2356; __v3_internal_symbol_join_10__vmsvc4330[1] = cmdexec__display(c_compiler, (*task)->args); __v3_internal_symbol_join_10__vmsvc4330[2] = _str_2670; println((string_plus_many(3, __v3_internal_symbol_join_10__vmsvc4330)));
 				}
 				Array __arr_lit_29 = array_new(				sizeof(string), 0, 0);
 				(*(task))->args = __arr_lit_29;
@@ -187509,7 +187514,7 @@ __v_result_string driver__compile_v3_program_object(string kind, string source, 
 	}
 	string program_identity = __if_val_9;
 	Array __arr_lit_10 = array_new(	sizeof(string), 0, 11);
-	string __v3_internal_symbol_join_0__vmsvc4332[3]; __v3_internal_symbol_join_0__vmsvc4332[0] = _str_2439; __v3_internal_symbol_join_0__vmsvc4332[1] = kind; __v3_internal_symbol_join_0__vmsvc4332[2] = _str_2440; string __arr_val_11 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4332));
+	string __v3_internal_symbol_join_0__vmsvc4331[3]; __v3_internal_symbol_join_0__vmsvc4331[0] = _str_2439; __v3_internal_symbol_join_0__vmsvc4331[1] = kind; __v3_internal_symbol_join_0__vmsvc4331[2] = _str_2440; string __arr_val_11 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4331));
 	array_push(&__arr_lit_10, &__arr_val_11);
 	string __arr_val_12 = program_identity;
 	array_push(&__arr_lit_10, &__arr_val_12);
@@ -187552,17 +187557,17 @@ __v_result_string driver__compile_v3_program_object(string kind, string source, 
 		}
 	}
 	string key = u64__hex(hash);
-	string __v3_internal_symbol_join_2__vmsvc4333[5]; __v3_internal_symbol_join_2__vmsvc4333[0] = _str_2441; __v3_internal_symbol_join_2__vmsvc4333[1] = kind; __v3_internal_symbol_join_2__vmsvc4333[2] = _str_106; __v3_internal_symbol_join_2__vmsvc4333[3] = key; __v3_internal_symbol_join_2__vmsvc4333[4] = _str_640; string source_path = os__join_path_single(manager->dir, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4333)));
-	string __v3_internal_symbol_join_3__vmsvc4334[5]; __v3_internal_symbol_join_3__vmsvc4334[0] = _str_2441; __v3_internal_symbol_join_3__vmsvc4334[1] = kind; __v3_internal_symbol_join_3__vmsvc4334[2] = _str_106; __v3_internal_symbol_join_3__vmsvc4334[3] = key; __v3_internal_symbol_join_3__vmsvc4334[4] = _str_2312; string object_path = os__join_path_single(manager->dir, (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc4334)));
+	string __v3_internal_symbol_join_2__vmsvc4332[5]; __v3_internal_symbol_join_2__vmsvc4332[0] = _str_2441; __v3_internal_symbol_join_2__vmsvc4332[1] = kind; __v3_internal_symbol_join_2__vmsvc4332[2] = _str_106; __v3_internal_symbol_join_2__vmsvc4332[3] = key; __v3_internal_symbol_join_2__vmsvc4332[4] = _str_640; string source_path = os__join_path_single(manager->dir, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4332)));
+	string __v3_internal_symbol_join_3__vmsvc4333[5]; __v3_internal_symbol_join_3__vmsvc4333[0] = _str_2441; __v3_internal_symbol_join_3__vmsvc4333[1] = kind; __v3_internal_symbol_join_3__vmsvc4333[2] = _str_106; __v3_internal_symbol_join_3__vmsvc4333[3] = key; __v3_internal_symbol_join_3__vmsvc4333[4] = _str_2312; string object_path = os__join_path_single(manager->dir, (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc4333)));
 	if (os__is_file(object_path)) {
 		return (__v_result_string){.ok = true, .value = object_path};
 	}
 	if (source.len == 0) {
-		string __v3_internal_symbol_join_4__vmsvc4335[3]; __v3_internal_symbol_join_4__vmsvc4335[0] = _str_2442; __v3_internal_symbol_join_4__vmsvc4335[1] = kind; __v3_internal_symbol_join_4__vmsvc4335[2] = _str_2443; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4335)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_4__vmsvc4334[3]; __v3_internal_symbol_join_4__vmsvc4334[0] = _str_2442; __v3_internal_symbol_join_4__vmsvc4334[1] = kind; __v3_internal_symbol_join_4__vmsvc4334[2] = _str_2443; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4334)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	string unique = tempname__unique_token();
-	string __v3_internal_symbol_join_5__vmsvc4336[3]; __v3_internal_symbol_join_5__vmsvc4336[0] = source_path; __v3_internal_symbol_join_5__vmsvc4336[1] = _str_2272; __v3_internal_symbol_join_5__vmsvc4336[2] = unique; string tmp_source = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4336));
-	string __v3_internal_symbol_join_6__vmsvc4337[3]; __v3_internal_symbol_join_6__vmsvc4337[0] = object_path; __v3_internal_symbol_join_6__vmsvc4337[1] = _str_2272; __v3_internal_symbol_join_6__vmsvc4337[2] = unique; string tmp_object = (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc4337));
+	string __v3_internal_symbol_join_5__vmsvc4335[3]; __v3_internal_symbol_join_5__vmsvc4335[0] = source_path; __v3_internal_symbol_join_5__vmsvc4335[1] = _str_2272; __v3_internal_symbol_join_5__vmsvc4335[2] = unique; string tmp_source = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4335));
+	string __v3_internal_symbol_join_6__vmsvc4336[3]; __v3_internal_symbol_join_6__vmsvc4336[0] = object_path; __v3_internal_symbol_join_6__vmsvc4336[1] = _str_2272; __v3_internal_symbol_join_6__vmsvc4336[2] = unique; string tmp_object = (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc4336));
 	__v_result __or_opt_29 = os__write_file(tmp_source, source);
 	if (!__or_opt_29.ok) {
 		__v_result_string _t8 = (__v_result_string){.ok = false, .err = __or_opt_29.err};
@@ -187581,7 +187586,7 @@ __v_result_string driver__compile_v3_program_object(string kind, string source, 
 	array__push_many(&compile_args, __push_many_30.data, __push_many_30.len);
 	os__Result result = cmdexec__run(c_compiler, compile_args);
 	if (result.exit_code != 0) {
-		string __v3_internal_symbol_join_8__vmsvc4338[4]; __v3_internal_symbol_join_8__vmsvc4338[0] = _str_2444; __v3_internal_symbol_join_8__vmsvc4338[1] = kind; __v3_internal_symbol_join_8__vmsvc4338[2] = _str_2280; __v3_internal_symbol_join_8__vmsvc4338[3] = result.output; __v_result_string _t10 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_8__vmsvc4338)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_8__vmsvc4337[4]; __v3_internal_symbol_join_8__vmsvc4337[0] = _str_2444; __v3_internal_symbol_join_8__vmsvc4337[1] = kind; __v3_internal_symbol_join_8__vmsvc4337[2] = _str_2280; __v3_internal_symbol_join_8__vmsvc4337[3] = result.output; __v_result_string _t10 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_8__vmsvc4337)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		{
 			__v_result __or_opt_27 = os__rm(tmp_source);
 			if (!__or_opt_27.ok) {
@@ -187596,7 +187601,7 @@ __v_result_string driver__compile_v3_program_object(string kind, string source, 
 	if (!__or_opt_31.ok) {
 		IError err = __or_opt_31.err;
 		if (!os__is_file(object_path)) {
-			string __v3_internal_symbol_join_10__vmsvc4339[6]; __v3_internal_symbol_join_10__vmsvc4339[0] = _str_2445; __v3_internal_symbol_join_10__vmsvc4339[1] = kind; __v3_internal_symbol_join_10__vmsvc4339[2] = _str_1; __v3_internal_symbol_join_10__vmsvc4339[3] = object_path; __v3_internal_symbol_join_10__vmsvc4339[4] = _str_185; __v3_internal_symbol_join_10__vmsvc4339[5] = IError__str(err); __v_result_string _t12 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_10__vmsvc4339)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_10__vmsvc4338[6]; __v3_internal_symbol_join_10__vmsvc4338[0] = _str_2445; __v3_internal_symbol_join_10__vmsvc4338[1] = kind; __v3_internal_symbol_join_10__vmsvc4338[2] = _str_1; __v3_internal_symbol_join_10__vmsvc4338[3] = object_path; __v3_internal_symbol_join_10__vmsvc4338[4] = _str_185; __v3_internal_symbol_join_10__vmsvc4338[5] = IError__str(err); __v_result_string _t12 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_10__vmsvc4338)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				__v_result __or_opt_27 = os__rm(tmp_source);
 				if (!__or_opt_27.ok) {
@@ -187612,7 +187617,7 @@ __v_result_string driver__compile_v3_program_object(string kind, string source, 
 	if (!__or_opt_32.ok) {
 		IError err = __or_opt_32.err;
 		if (!os__is_file(source_path)) {
-			string __v3_internal_symbol_join_12__vmsvc4340[6]; __v3_internal_symbol_join_12__vmsvc4340[0] = _str_2445; __v3_internal_symbol_join_12__vmsvc4340[1] = kind; __v3_internal_symbol_join_12__vmsvc4340[2] = _str_2446; __v3_internal_symbol_join_12__vmsvc4340[3] = source_path; __v3_internal_symbol_join_12__vmsvc4340[4] = _str_185; __v3_internal_symbol_join_12__vmsvc4340[5] = IError__str(err); __v_result_string _t14 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_12__vmsvc4340)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_12__vmsvc4339[6]; __v3_internal_symbol_join_12__vmsvc4339[0] = _str_2445; __v3_internal_symbol_join_12__vmsvc4339[1] = kind; __v3_internal_symbol_join_12__vmsvc4339[2] = _str_2446; __v3_internal_symbol_join_12__vmsvc4339[3] = source_path; __v3_internal_symbol_join_12__vmsvc4339[4] = _str_185; __v3_internal_symbol_join_12__vmsvc4339[5] = IError__str(err); __v_result_string _t14 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_12__vmsvc4339)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				__v_result __or_opt_27 = os__rm(tmp_source);
 				if (!__or_opt_27.ok) {
@@ -187802,7 +187807,7 @@ __v_result_string driver__create_tcc_macos_libgc_exclusive_temp_directory(string
 				if (collision_exists) {
 					continue;
 				}
-				string __v3_internal_symbol_join_0__vmsvc4341[4]; __v3_internal_symbol_join_0__vmsvc4341[0] = _str_4986; __v3_internal_symbol_join_0__vmsvc4341[1] = temp_directory; __v3_internal_symbol_join_0__vmsvc4341[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4341[3] = IError__msg(&(err)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4341)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_0__vmsvc4340[4]; __v3_internal_symbol_join_0__vmsvc4340[0] = _str_4986; __v3_internal_symbol_join_0__vmsvc4340[1] = temp_directory; __v3_internal_symbol_join_0__vmsvc4340[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4340[3] = IError__msg(&(err)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4340)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 			__v_result_multi_return_os__Stat_bool __or_opt_5 = driver__lstat_tcc_macos_libgc_path(temp_directory);
 			multi_return_os__Stat_bool __or_val_6 = {0};
@@ -187814,7 +187819,7 @@ __v_result_string driver__create_tcc_macos_libgc_exclusive_temp_directory(string
 				__v_result __or_opt_7 = os__rmdir(temp_directory);
 				if (!__or_opt_7.ok) {
 					IError err = __or_opt_7.err;
-					string __v3_internal_symbol_join_1__vmsvc4342[5]; __v3_internal_symbol_join_1__vmsvc4342[0] = inspection_error; __v3_internal_symbol_join_1__vmsvc4342[1] = _str_4987; __v3_internal_symbol_join_1__vmsvc4342[2] = temp_directory; __v3_internal_symbol_join_1__vmsvc4342[3] = _str_185; __v3_internal_symbol_join_1__vmsvc4342[4] = IError__msg(&(err)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc4342)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_1__vmsvc4341[5]; __v3_internal_symbol_join_1__vmsvc4341[0] = inspection_error; __v3_internal_symbol_join_1__vmsvc4341[1] = _str_4987; __v3_internal_symbol_join_1__vmsvc4341[2] = temp_directory; __v3_internal_symbol_join_1__vmsvc4341[3] = _str_185; __v3_internal_symbol_join_1__vmsvc4341[4] = IError__msg(&(err)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc4341)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = inspection_error, .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
@@ -187831,14 +187836,14 @@ __v_result_string driver__create_tcc_macos_libgc_exclusive_temp_directory(string
 				__v_result __or_opt_9 = os__rmdir(temp_directory);
 				if (!__or_opt_9.ok) {
 					IError err = __or_opt_9.err;
-					string __v3_internal_symbol_join_2__vmsvc4343[5]; __v3_internal_symbol_join_2__vmsvc4343[0] = validation_error; __v3_internal_symbol_join_2__vmsvc4343[1] = _str_4989; __v3_internal_symbol_join_2__vmsvc4343[2] = temp_directory; __v3_internal_symbol_join_2__vmsvc4343[3] = _str_185; __v3_internal_symbol_join_2__vmsvc4343[4] = IError__msg(&(err)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4343)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_2__vmsvc4342[5]; __v3_internal_symbol_join_2__vmsvc4342[0] = validation_error; __v3_internal_symbol_join_2__vmsvc4342[1] = _str_4989; __v3_internal_symbol_join_2__vmsvc4342[2] = temp_directory; __v3_internal_symbol_join_2__vmsvc4342[3] = _str_185; __v3_internal_symbol_join_2__vmsvc4342[4] = IError__msg(&(err)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4342)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = validation_error, .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 			return (__v_result_string){.ok = true, .value = temp_directory};
 		}
 	}
-	string __v3_internal_symbol_join_3__vmsvc4344[3]; __v3_internal_symbol_join_3__vmsvc4344[0] = _str_4990; __v3_internal_symbol_join_3__vmsvc4344[1] = int__str(driver__tcc_macos_libgc_temp_attempts); __v3_internal_symbol_join_3__vmsvc4344[2] = _str_4991; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4344)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+	string __v3_internal_symbol_join_3__vmsvc4343[3]; __v3_internal_symbol_join_3__vmsvc4343[0] = _str_4990; __v3_internal_symbol_join_3__vmsvc4343[1] = int__str(driver__tcc_macos_libgc_temp_attempts); __v3_internal_symbol_join_3__vmsvc4343[2] = _str_4991; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4343)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	return (__v_result_string){.ok = true};
 }
 
@@ -188141,8 +188146,8 @@ __v_option_driver__V3CgenCacheMetadata driver__decode_v3_cgen_metadata(string me
 	v_index++;
 	Array diagnostics = array_new(	sizeof(driver__V3CachedTypeDiagnostic), 0, diagnostic_count);
 	{
-		__v_int __discard_15215236722831141574_240125_240126 = 0;
-		for (; __discard_15215236722831141574_240125_240126 < diagnostic_count; __discard_15215236722831141574_240125_240126++) {
+		__v_int __discard_15215236722831141574_240465_240466 = 0;
+		for (; __discard_15215236722831141574_240465_240466 < diagnostic_count; __discard_15215236722831141574_240465_240466++) {
 			if ((v_index + 8) > parts.len) {
 				return (__v_option_driver__V3CgenCacheMetadata){.ok = false};
 			}
@@ -188214,40 +188219,40 @@ Array driver__dedupe_type_diagnostics(flat__FlatAst* a, Array type_errors) {
 		__v_int __for_idx_0 = 0;
 		for (; __for_idx_0 < type_errors.len; __for_idx_0++) {
 			types__TypeError err = *(types__TypeError*)(array_get(type_errors, __for_idx_0));
-			int cond__vmsvc4346; cond__vmsvc4346 = !!(string__ends_with(err.msg, _str_3897)); if (cond__vmsvc4346) { bool __any_1__vmsvc4345 = false; {
+			int cond__vmsvc4345; cond__vmsvc4345 = !!(string__ends_with(err.msg, _str_3897)); if (cond__vmsvc4345) { bool __any_1__vmsvc4344 = false; {
 				__v_int __any_idx_2 = 0;
 				for (; __any_idx_2 < type_errors.len; __any_idx_2++) {
 					types__TypeError __any_it_3 = *(types__TypeError*)(array_get(type_errors, __any_idx_2));
 					if (string__starts_with(__any_it_3.msg, _str_3898) && string__ends_with(__any_it_3.msg, _str_3899) && (__any_it_3.pos.id == err.pos.id) && (err.pos.offset >= __any_it_3.pos.offset) && (err.pos.end <= __any_it_3.pos.end)) {
-						__any_1__vmsvc4345 = true;
+						__any_1__vmsvc4344 = true;
 					}
 				}
-			} cond__vmsvc4346 = !!((__any_1__vmsvc4345)); } if (cond__vmsvc4346) {
+			} cond__vmsvc4345 = !!((__any_1__vmsvc4344)); } if (cond__vmsvc4345) {
 				continue;
 			}
-			int cond__vmsvc4348; cond__vmsvc4348 = !!(string__starts_with(err.msg, _str_3900)); if (cond__vmsvc4348) { bool __any_4__vmsvc4347 = false; {
+			int cond__vmsvc4347; cond__vmsvc4347 = !!(string__starts_with(err.msg, _str_3900)); if (cond__vmsvc4347) { bool __any_4__vmsvc4346 = false; {
 				__v_int __any_idx_5 = 0;
 				for (; __any_idx_5 < type_errors.len; __any_idx_5++) {
 					types__TypeError __any_it_6 = *(types__TypeError*)(array_get(type_errors, __any_idx_5));
 					if (string__eq(__any_it_6.msg, _str_3901) && (__any_it_6.pos.id == err.pos.id) && (err.pos.offset >= __any_it_6.pos.offset) && (err.pos.end <= __any_it_6.pos.end)) {
-						__any_4__vmsvc4347 = true;
+						__any_4__vmsvc4346 = true;
 					}
 				}
-			} cond__vmsvc4348 = !!((__any_4__vmsvc4347)); } if (cond__vmsvc4348) {
+			} cond__vmsvc4347 = !!((__any_4__vmsvc4346)); } if (cond__vmsvc4347) {
 				continue;
 			}
 			if (string__starts_with(err.msg, _str_3902)) {
 				string name = string__all_before(string__all_after(err.msg, _str_41), _str_41);
 				i32 err_fn = driver__type_diagnostic_enclosing_fn(a, err);
-				int cond__vmsvc4351; cond__vmsvc4351 = !!(((__v_int)(err_fn) >= 0)); if (cond__vmsvc4351) { bool __any_7__vmsvc4349 = false; {
+				int cond__vmsvc4350; cond__vmsvc4350 = !!(((__v_int)(err_fn) >= 0)); if (cond__vmsvc4350) { bool __any_7__vmsvc4348 = false; {
 					__v_int __any_idx_8 = 0;
 					for (; __any_idx_8 < type_errors.len; __any_idx_8++) {
 						types__TypeError __any_it_9 = *(types__TypeError*)(array_get(type_errors, __any_idx_8));
-						string __v3_internal_symbol_join_0__vmsvc4350[3]; __v3_internal_symbol_join_0__vmsvc4350[0] = _str_3903; __v3_internal_symbol_join_0__vmsvc4350[1] = name; __v3_internal_symbol_join_0__vmsvc4350[2] = _str_3904; if (string__starts_with(__any_it_9.msg, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4350))) && (driver__type_diagnostic_enclosing_fn(a, __any_it_9) == err_fn)) {
-							__any_7__vmsvc4349 = true;
+						string __v3_internal_symbol_join_0__vmsvc4349[3]; __v3_internal_symbol_join_0__vmsvc4349[0] = _str_3903; __v3_internal_symbol_join_0__vmsvc4349[1] = name; __v3_internal_symbol_join_0__vmsvc4349[2] = _str_3904; if (string__starts_with(__any_it_9.msg, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4349))) && (driver__type_diagnostic_enclosing_fn(a, __any_it_9) == err_fn)) {
+							__any_7__vmsvc4348 = true;
 						}
 					}
-				} cond__vmsvc4351 = !!((__any_7__vmsvc4349)); } if (cond__vmsvc4351) {
+				} cond__vmsvc4350 = !!((__any_7__vmsvc4348)); } if (cond__vmsvc4350) {
 					continue;
 				}
 			}
@@ -188342,7 +188347,7 @@ bool driver__default_bin_file_needs_safe_name(string base, string filename) {
 __v_int driver__default_selfhost_job_count(__v_int jobs, bool is_bsd_host, bool allow_overcommit, bool prod_parallel_cc, u64 total_memory) {
 	if (is_bsd_host) {
 		if (prod_parallel_cc && (total_memory > 0)) {
-			u64 _t1__vmsvc4352 = (u64)(((total_memory + driver__bsd_prod_selfhost_memory_per_job) - 1)); u64 _t2__vmsvc4353 = (u64)(driver__bsd_prod_selfhost_memory_per_job); if (_t2__vmsvc4353 == 0) v_panic(_S("division by zero")); __v_int memory_jobs = (__v_int)(((u64)(_t1__vmsvc4352 / _t2__vmsvc4353)));
+			u64 _t1__vmsvc4351 = (u64)(((total_memory + driver__bsd_prod_selfhost_memory_per_job) - 1)); u64 _t2__vmsvc4352 = (u64)(driver__bsd_prod_selfhost_memory_per_job); if (_t2__vmsvc4352 == 0) v_panic(_S("division by zero")); __v_int memory_jobs = (__v_int)(((u64)(_t1__vmsvc4351 / _t2__vmsvc4352)));
 			return int_min(jobs, int_max(driver__bsd_selfhost_job_limit, int_min(memory_jobs, driver__bsd_selfhost_parallel_cc_job_limit)));
 		}
 		return int_min(jobs, driver__bsd_selfhost_job_limit);
@@ -188350,7 +188355,7 @@ __v_int driver__default_selfhost_job_count(__v_int jobs, bool is_bsd_host, bool 
 	if (!allow_overcommit || (jobs < 2) || (jobs >= 12)) {
 		return jobs;
 	}
-	__v_int _t3__vmsvc4354 = (__v_int)(jobs); __v_int _t4__vmsvc4355 = (__v_int)(2); if (_t4__vmsvc4355 == 0) v_panic(_S("division by zero")); return int_min(12, jobs + (((__v_int)(_t3__vmsvc4354 / _t4__vmsvc4355))));
+	__v_int _t3__vmsvc4353 = (__v_int)(jobs); __v_int _t4__vmsvc4354 = (__v_int)(2); if (_t4__vmsvc4354 == 0) v_panic(_S("division by zero")); return int_min(12, jobs + (((__v_int)(_t3__vmsvc4353 / _t4__vmsvc4354))));
 }
 
 string driver__diagnostic_root_for_input(string input_file, Array user_files) {
@@ -188417,7 +188422,7 @@ Array driver__discover_eager_selfhost_modules(flat__FlatAst* a, pref__Preference
 				if (result.files.len == 0) {
 					continue;
 				}
-				string __v3_internal_symbol_join_0__vmsvc4356[3]; __v3_internal_symbol_join_0__vmsvc4356[0] = importing_dir; __v3_internal_symbol_join_0__vmsvc4356[1] = _str_0; __v3_internal_symbol_join_0__vmsvc4356[2] = import_req.path; string __map_key_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4356));
+				string __v3_internal_symbol_join_0__vmsvc4355[3]; __v3_internal_symbol_join_0__vmsvc4355[0] = importing_dir; __v3_internal_symbol_join_0__vmsvc4355[1] = _str_0; __v3_internal_symbol_join_0__vmsvc4355[2] = import_req.path; string __map_key_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4355));
 				string __map_val_8 = result.dir;
 				map__set(module_path_cache, &__map_key_7, &__map_val_8);
 				string __map_key_9 = import_req.path;
@@ -188732,7 +188737,7 @@ __v_result driver__emit_v3_js_compat_program(string input_file, string output_fi
 				continue;
 			}
 			string argument = __or_val_11;
-			string __v3_internal_symbol_join_1__vmsvc4357[3]; __v3_internal_symbol_join_1__vmsvc4357[0] = _str_2724; __v3_internal_symbol_join_1__vmsvc4357[1] = argument; __v3_internal_symbol_join_1__vmsvc4357[2] = _str_2725; strings__Builder__writeln(&output, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4357)));
+			string __v3_internal_symbol_join_1__vmsvc4356[3]; __v3_internal_symbol_join_1__vmsvc4356[0] = _str_2724; __v3_internal_symbol_join_1__vmsvc4356[1] = argument; __v3_internal_symbol_join_1__vmsvc4356[2] = _str_2725; strings__Builder__writeln(&output, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4356)));
 			emitted = true;
 		}
 	}
@@ -188811,14 +188816,14 @@ bool driver__emit_v3_js_exported_global_aliases(string source, Array* output) {
 				strings__Builder__writeln(output, _str_2734);
 			}
 			string storage_name = string__plus(_str_2735, global_name);
-			string __v3_internal_symbol_join_0__vmsvc4358[7]; __v3_internal_symbol_join_0__vmsvc4358[0] = _str_2736; __v3_internal_symbol_join_0__vmsvc4358[1] = storage_name; __v3_internal_symbol_join_0__vmsvc4358[2] = _str_2737; __v3_internal_symbol_join_0__vmsvc4358[3] = Array_string__join(params, _str_25); __v3_internal_symbol_join_0__vmsvc4358[4] = _str_2738; __v3_internal_symbol_join_0__vmsvc4358[5] = return_expr; __v3_internal_symbol_join_0__vmsvc4358[6] = _str_2739; strings__Builder__writeln(output, (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc4358)));
-			string __v3_internal_symbol_join_1__vmsvc4359[3]; __v3_internal_symbol_join_1__vmsvc4359[0] = _str_2740; __v3_internal_symbol_join_1__vmsvc4359[1] = global_name; __v3_internal_symbol_join_1__vmsvc4359[2] = _str_2741; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4359)));
-			string __v3_internal_symbol_join_2__vmsvc4360[3]; __v3_internal_symbol_join_2__vmsvc4360[0] = _str_2742; __v3_internal_symbol_join_2__vmsvc4360[1] = storage_name; __v3_internal_symbol_join_2__vmsvc4360[2] = _str_2743; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4360)));
-			string __v3_internal_symbol_join_3__vmsvc4361[3]; __v3_internal_symbol_join_3__vmsvc4361[0] = _str_2744; __v3_internal_symbol_join_3__vmsvc4361[1] = storage_name; __v3_internal_symbol_join_3__vmsvc4361[2] = _str_2745; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4361)));
+			string __v3_internal_symbol_join_0__vmsvc4357[7]; __v3_internal_symbol_join_0__vmsvc4357[0] = _str_2736; __v3_internal_symbol_join_0__vmsvc4357[1] = storage_name; __v3_internal_symbol_join_0__vmsvc4357[2] = _str_2737; __v3_internal_symbol_join_0__vmsvc4357[3] = Array_string__join(params, _str_25); __v3_internal_symbol_join_0__vmsvc4357[4] = _str_2738; __v3_internal_symbol_join_0__vmsvc4357[5] = return_expr; __v3_internal_symbol_join_0__vmsvc4357[6] = _str_2739; strings__Builder__writeln(output, (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc4357)));
+			string __v3_internal_symbol_join_1__vmsvc4358[3]; __v3_internal_symbol_join_1__vmsvc4358[0] = _str_2740; __v3_internal_symbol_join_1__vmsvc4358[1] = global_name; __v3_internal_symbol_join_1__vmsvc4358[2] = _str_2741; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4358)));
+			string __v3_internal_symbol_join_2__vmsvc4359[3]; __v3_internal_symbol_join_2__vmsvc4359[0] = _str_2742; __v3_internal_symbol_join_2__vmsvc4359[1] = storage_name; __v3_internal_symbol_join_2__vmsvc4359[2] = _str_2743; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4359)));
+			string __v3_internal_symbol_join_3__vmsvc4360[3]; __v3_internal_symbol_join_3__vmsvc4360[0] = _str_2744; __v3_internal_symbol_join_3__vmsvc4360[1] = storage_name; __v3_internal_symbol_join_3__vmsvc4360[2] = _str_2745; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4360)));
 			strings__Builder__writeln(output, _str_2746);
-			string __v3_internal_symbol_join_4__vmsvc4362[3]; __v3_internal_symbol_join_4__vmsvc4362[0] = _str_2747; __v3_internal_symbol_join_4__vmsvc4362[1] = export_name; __v3_internal_symbol_join_4__vmsvc4362[2] = _str_2741; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4362)));
-			string __v3_internal_symbol_join_5__vmsvc4363[3]; __v3_internal_symbol_join_5__vmsvc4363[0] = _str_2742; __v3_internal_symbol_join_5__vmsvc4363[1] = global_name; __v3_internal_symbol_join_5__vmsvc4363[2] = _str_2743; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4363)));
-			string __v3_internal_symbol_join_6__vmsvc4364[3]; __v3_internal_symbol_join_6__vmsvc4364[0] = _str_2744; __v3_internal_symbol_join_6__vmsvc4364[1] = global_name; __v3_internal_symbol_join_6__vmsvc4364[2] = _str_2745; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc4364)));
+			string __v3_internal_symbol_join_4__vmsvc4361[3]; __v3_internal_symbol_join_4__vmsvc4361[0] = _str_2747; __v3_internal_symbol_join_4__vmsvc4361[1] = export_name; __v3_internal_symbol_join_4__vmsvc4361[2] = _str_2741; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4361)));
+			string __v3_internal_symbol_join_5__vmsvc4362[3]; __v3_internal_symbol_join_5__vmsvc4362[0] = _str_2742; __v3_internal_symbol_join_5__vmsvc4362[1] = global_name; __v3_internal_symbol_join_5__vmsvc4362[2] = _str_2743; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4362)));
+			string __v3_internal_symbol_join_6__vmsvc4363[3]; __v3_internal_symbol_join_6__vmsvc4363[0] = _str_2744; __v3_internal_symbol_join_6__vmsvc4363[1] = global_name; __v3_internal_symbol_join_6__vmsvc4363[2] = _str_2745; strings__Builder__writeln(output, (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc4363)));
 			strings__Builder__writeln(output, _str_2746);
 			emitted = true;
 			export_name = _str_34;
@@ -188918,7 +188923,7 @@ string driver__encode_incremental_manifest(driver__V3IncrementalSnapshot snapsho
 		__v_int __for_idx_1 = 0;
 		for (; __for_idx_1 < snapshot.functions.len; __for_idx_1++) {
 			driver__V3IncrementalFn function = *(driver__V3IncrementalFn*)(array_get(snapshot.functions, __for_idx_1));
-			string __v3_internal_symbol_join_0__vmsvc4365[5]; __v3_internal_symbol_join_0__vmsvc4365[0] = function.key; __v3_internal_symbol_join_0__vmsvc4365[1] = _str_2031; __v3_internal_symbol_join_0__vmsvc4365[2] = function.signature; __v3_internal_symbol_join_0__vmsvc4365[3] = _str_2031; __v3_internal_symbol_join_0__vmsvc4365[4] = function.name; string __arr_val_2 = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4365));
+			string __v3_internal_symbol_join_0__vmsvc4364[5]; __v3_internal_symbol_join_0__vmsvc4364[0] = function.key; __v3_internal_symbol_join_0__vmsvc4364[1] = _str_2031; __v3_internal_symbol_join_0__vmsvc4364[2] = function.signature; __v3_internal_symbol_join_0__vmsvc4364[3] = _str_2031; __v3_internal_symbol_join_0__vmsvc4364[4] = function.name; string __arr_val_2 = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4364));
 			array_push(&lines, &__arr_val_2);
 		}
 	}
@@ -188936,7 +188941,7 @@ string driver__encode_monomorph_cache_specs(Array specs) {
 			if (string__eq(spec.module, _str_34) || string__eq(spec.module, _str_179)) {
 				continue;
 			}
-			string __v3_internal_symbol_join_0__vmsvc4366[5]; __v3_internal_symbol_join_0__vmsvc4366[0] = spec.decl_key; __v3_internal_symbol_join_0__vmsvc4366[1] = _str_2031; __v3_internal_symbol_join_0__vmsvc4366[2] = spec.module; __v3_internal_symbol_join_0__vmsvc4366[3] = _str_2031; __v3_internal_symbol_join_0__vmsvc4366[4] = Array_string__join(transform__MonomorphCacheSpec__args_text(&spec), _str_270); string __arr_val_2 = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4366));
+			string __v3_internal_symbol_join_0__vmsvc4365[5]; __v3_internal_symbol_join_0__vmsvc4365[0] = spec.decl_key; __v3_internal_symbol_join_0__vmsvc4365[1] = _str_2031; __v3_internal_symbol_join_0__vmsvc4365[2] = spec.module; __v3_internal_symbol_join_0__vmsvc4365[3] = _str_2031; __v3_internal_symbol_join_0__vmsvc4365[4] = Array_string__join(transform__MonomorphCacheSpec__args_text(&spec), _str_270); string __arr_val_2 = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4365));
 			array_push(&lines, &__arr_val_2);
 		}
 	}
@@ -188995,7 +189000,7 @@ __v_result_string driver__ensure_c_object_file(string obj_path, string source_la
 	if (__or_opt_0.ok) {
 		__or_val_1 = __or_opt_0.value;
 	} else {
-		string __v3_internal_symbol_join_0__vmsvc4367[3]; __v3_internal_symbol_join_0__vmsvc4367[0] = _str_2476; __v3_internal_symbol_join_0__vmsvc4367[1] = obj_path; __v3_internal_symbol_join_0__vmsvc4367[2] = _str_2477; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4367)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc4366[3]; __v3_internal_symbol_join_0__vmsvc4366[0] = _str_2476; __v3_internal_symbol_join_0__vmsvc4366[1] = obj_path; __v3_internal_symbol_join_0__vmsvc4366[2] = _str_2477; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4366)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	string source_file = __or_val_1;
 	return driver__compile_cached_c_source_object(obj_path, source_file, source_language, object_flags, c99, no_std, pic_flag, target_args, target, c_compiler, use_platform_non_c_compiler, uncached_dir, stats);
@@ -189085,7 +189090,7 @@ __v_result driver__ensure_tcc_macos_libgc_private_directory(string path) {
 		os__Stat concurrent_stat = __multi_ret_5.arg0;
 		bool concurrent_exists = __multi_ret_5.arg1;
 		if (!concurrent_exists) {
-			string __v3_internal_symbol_join_0__vmsvc4368[4]; __v3_internal_symbol_join_0__vmsvc4368[0] = _str_4964; __v3_internal_symbol_join_0__vmsvc4368[1] = path; __v3_internal_symbol_join_0__vmsvc4368[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4368[3] = IError__msg(&(err)); return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4368)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_0__vmsvc4367[4]; __v3_internal_symbol_join_0__vmsvc4367[0] = _str_4964; __v3_internal_symbol_join_0__vmsvc4367[1] = path; __v3_internal_symbol_join_0__vmsvc4367[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4367[3] = IError__msg(&(err)); return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4367)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		__v_result __or_opt_8 = driver__validate_tcc_macos_libgc_private_directory_stat(concurrent_stat, os__geteuid());
 		if (!__or_opt_8.ok) {
@@ -189117,7 +189122,7 @@ __v_result_string driver__ensure_v3_linux_cross_sysroot(void) {
 	string sysroot = driver__v3_linux_cross_sysroot();
 	string git_config = os__join_path_single(os__join_path_single(sysroot, _str_1220), _str_2519);
 	if (os__is_dir(sysroot) && !os__is_file(git_config)) {
-		string __v3_internal_symbol_join_0__vmsvc4369[3]; __v3_internal_symbol_join_0__vmsvc4369[0] = _str_2520; __v3_internal_symbol_join_0__vmsvc4369[1] = sysroot; __v3_internal_symbol_join_0__vmsvc4369[2] = _str_2521; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4369)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc4368[3]; __v3_internal_symbol_join_0__vmsvc4368[0] = _str_2520; __v3_internal_symbol_join_0__vmsvc4368[1] = sysroot; __v3_internal_symbol_join_0__vmsvc4368[2] = _str_2521; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4368)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	if (!os__is_dir(sysroot)) {
 		__v_result __or_opt_0 = os__mkdir_all(os__vmodules_dir(), (os__MkdirParams){.mode = 0777});
@@ -189127,7 +189132,7 @@ __v_result_string driver__ensure_v3_linux_cross_sysroot(void) {
 		println(_str_2522);
 		os__Result clone = cmdexec__run(_str_1969, new_array_from_c_array(3, 3, sizeof(string), (string[3]){_str_1970, _str_2523, sysroot}));
 		if ((clone.exit_code != 0) || !os__is_file(git_config)) {
-			string __v3_internal_symbol_join_1__vmsvc4370[4]; __v3_internal_symbol_join_1__vmsvc4370[0] = _str_2524; __v3_internal_symbol_join_1__vmsvc4370[1] = sysroot; __v3_internal_symbol_join_1__vmsvc4370[2] = _str_2525; __v3_internal_symbol_join_1__vmsvc4370[3] = string__trim_space(clone.output); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4370)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_1__vmsvc4369[4]; __v3_internal_symbol_join_1__vmsvc4369[0] = _str_2524; __v3_internal_symbol_join_1__vmsvc4369[1] = sysroot; __v3_internal_symbol_join_1__vmsvc4369[2] = _str_2525; __v3_internal_symbol_join_1__vmsvc4369[3] = string__trim_space(clone.output); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4369)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 	}
 	string __in_lhs_1[5];
@@ -189138,7 +189143,7 @@ __v_result_string driver__ensure_v3_linux_cross_sysroot(void) {
 			string required = __in_lhs_1[v_fixed_index(__for_idx_2, 5)];
 			string path = os__join_path_single(sysroot, required);
 			if (!os__is_file(path)) {
-				string __v3_internal_symbol_join_2__vmsvc4371[5]; __v3_internal_symbol_join_2__vmsvc4371[0] = _str_2520; __v3_internal_symbol_join_2__vmsvc4371[1] = sysroot; __v3_internal_symbol_join_2__vmsvc4371[2] = _str_2531; __v3_internal_symbol_join_2__vmsvc4371[3] = required; __v3_internal_symbol_join_2__vmsvc4371[4] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4371)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_2__vmsvc4370[5]; __v3_internal_symbol_join_2__vmsvc4370[0] = _str_2520; __v3_internal_symbol_join_2__vmsvc4370[1] = sysroot; __v3_internal_symbol_join_2__vmsvc4370[2] = _str_2531; __v3_internal_symbol_join_2__vmsvc4370[3] = required; __v3_internal_symbol_join_2__vmsvc4370[4] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4370)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 		}
 	}
@@ -189159,7 +189164,7 @@ void driver__ensure_windows_long_path_manifest(string exe_path, bool is_msvc, bo
 	if (!__or_opt_0.ok) {
 		IError err = __or_opt_0.err;
 		if (report_failure) {
-			string __v3_internal_symbol_join_0__vmsvc4372[4]; __v3_internal_symbol_join_0__vmsvc4372[0] = _str_4284; __v3_internal_symbol_join_0__vmsvc4372[1] = exe_path; __v3_internal_symbol_join_0__vmsvc4372[2] = _str_5127; __v3_internal_symbol_join_0__vmsvc4372[3] = IError__msg(&(err)); eprintln((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4372)));
+			string __v3_internal_symbol_join_0__vmsvc4371[4]; __v3_internal_symbol_join_0__vmsvc4371[0] = _str_4284; __v3_internal_symbol_join_0__vmsvc4371[1] = exe_path; __v3_internal_symbol_join_0__vmsvc4371[2] = _str_5127; __v3_internal_symbol_join_0__vmsvc4371[3] = IError__msg(&(err)); eprintln((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4371)));
 		}
 		false;
 	}
@@ -189260,7 +189265,7 @@ Array driver__expand_v3_exclude_patterns(Array patterns, string vroot) {
 }
 
 bool driver__file_index_usable_for_imports(flat__FlatAst* a) {
-	int cond__vmsvc4375; cond__vmsvc4375 = !!((a->file_node_ids.len > 0)); if (cond__vmsvc4375) { __v_int _t1__vmsvc4373 = (__v_int)(a->file_node_ids.len); __v_int _t2__vmsvc4374 = (__v_int)(2); if (_t2__vmsvc4374 == 0) v_panic(_S("modulo by zero")); cond__vmsvc4375 = !!(((((__v_int)(_t1__vmsvc4373 % _t2__vmsvc4374))) == 0)); } return cond__vmsvc4375 && !a->file_index_incomplete && string__eq(os__getenv(_str_4027), _str_34) && string__eq(os__getenv(_str_4028), _str_34);
+	int cond__vmsvc4374; cond__vmsvc4374 = !!((a->file_node_ids.len > 0)); if (cond__vmsvc4374) { __v_int _t1__vmsvc4372 = (__v_int)(a->file_node_ids.len); __v_int _t2__vmsvc4373 = (__v_int)(2); if (_t2__vmsvc4373 == 0) v_panic(_S("modulo by zero")); cond__vmsvc4374 = !!(((((__v_int)(_t1__vmsvc4372 % _t2__vmsvc4373))) == 0)); } return cond__vmsvc4374 && !a->file_index_incomplete && string__eq(os__getenv(_str_4027), _str_34) && string__eq(os__getenv(_str_4028), _str_34);
 }
 
 string driver__find_v3_project_vvmrc(string target_path) {
@@ -189276,8 +189281,8 @@ string driver__find_v3_project_vvmrc(string target_path) {
 	}
 	string current = os__real_path(folder);
 	{
-		__v_int __discard_15215236722831141574_85986_85987 = 0;
-		for (; __discard_15215236722831141574_85986_85987 < 256; __discard_15215236722831141574_85986_85987++) {
+		__v_int __discard_15215236722831141574_86326_86327 = 0;
+		for (; __discard_15215236722831141574_86326_86327 < 256; __discard_15215236722831141574_86326_86327++) {
 			string vvmrc_path = os__join_path_single(current, driver__v3_vvmrc_file_name);
 			if (os__is_file(vvmrc_path)) {
 				return vvmrc_path;
@@ -189405,9 +189410,9 @@ Array driver__format_v3_dumped_c_flags(Array flags) {
 			string value = (*(string*)array_get(flags, i + 1));
 			string __if_val_0 = {0};
 			if (string__eq(flag, _str_2395)) {
-				string __v3_internal_symbol_join_0__vmsvc4376[3]; __v3_internal_symbol_join_0__vmsvc4376[0] = flag; __v3_internal_symbol_join_0__vmsvc4376[1] = _str_1; __v3_internal_symbol_join_0__vmsvc4376[2] = value; __if_val_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4376));
+				string __v3_internal_symbol_join_0__vmsvc4375[3]; __v3_internal_symbol_join_0__vmsvc4375[0] = flag; __v3_internal_symbol_join_0__vmsvc4375[1] = _str_1; __v3_internal_symbol_join_0__vmsvc4375[2] = value; __if_val_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4375));
 			} else {
-				string __v3_internal_symbol_join_1__vmsvc4377[4]; __v3_internal_symbol_join_1__vmsvc4377[0] = flag; __v3_internal_symbol_join_1__vmsvc4377[1] = _str_3192; __v3_internal_symbol_join_1__vmsvc4377[2] = value; __v3_internal_symbol_join_1__vmsvc4377[3] = _str_363; __if_val_0 = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4377));
+				string __v3_internal_symbol_join_1__vmsvc4376[4]; __v3_internal_symbol_join_1__vmsvc4376[0] = flag; __v3_internal_symbol_join_1__vmsvc4376[1] = _str_3192; __v3_internal_symbol_join_1__vmsvc4376[2] = value; __v3_internal_symbol_join_1__vmsvc4376[3] = _str_363; __if_val_0 = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4376));
 			}
 			string __arr_val_1 = __if_val_0;
 			array_push(&lines, &__arr_val_1);
@@ -189508,7 +189513,7 @@ __v_result_driver__TccMacosLibgcFileHash driver__hash_tcc_macos_libgc_regular_fi
 			if (err._typ == 1743421611) {
 				break;
 			}
-			string __v3_internal_symbol_join_0__vmsvc4378[4]; __v3_internal_symbol_join_0__vmsvc4378[0] = _str_4978; __v3_internal_symbol_join_0__vmsvc4378[1] = path; __v3_internal_symbol_join_0__vmsvc4378[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4378[3] = IError__msg(&(err)); __v_result_driver__TccMacosLibgcFileHash _t2 = (__v_result_driver__TccMacosLibgcFileHash){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4378)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_0__vmsvc4377[4]; __v3_internal_symbol_join_0__vmsvc4377[0] = _str_4978; __v3_internal_symbol_join_0__vmsvc4377[1] = path; __v3_internal_symbol_join_0__vmsvc4377[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4377[3] = IError__msg(&(err)); __v_result_driver__TccMacosLibgcFileHash _t2 = (__v_result_driver__TccMacosLibgcFileHash){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4377)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				os__File__close(file);
 			}
@@ -189679,7 +189684,7 @@ u32 driver__implicit_expr_type(flat__FlatAst* a, i32 id, flat__TypeTextBindings 
 				driver__ImplicitFieldScanIndex__read_type(&v_index, driver__ImplicitIndexOpKind__fields, type_id);
 				driver__ImplicitFieldScanIndex__read_type(&v_index, driver__ImplicitIndexOpKind__enum_fields, type_id);
 				u32 __map_key_4 = type_id;
-				int cond__vmsvc4380; cond__vmsvc4380 = !!(map__exists(&v_index.fields, &__map_key_4)); if (!cond__vmsvc4380) { u32 __map_key_5__vmsvc4379 = type_id; cond__vmsvc4380 = !!((map__exists(&v_index.enum_fields, &__map_key_5__vmsvc4379))); } if (cond__vmsvc4380) {
+				int cond__vmsvc4379; cond__vmsvc4379 = !!(map__exists(&v_index.fields, &__map_key_4)); if (!cond__vmsvc4379) { u32 __map_key_5__vmsvc4378 = type_id; cond__vmsvc4379 = !!((map__exists(&v_index.enum_fields, &__map_key_5__vmsvc4378))); } if (cond__vmsvc4379) {
 					return type_id;
 				}
 			}
@@ -189857,7 +189862,7 @@ void driver__implicit_field_scan_index_append(flat__FlatAst* a, __v_int start, _
 					void* __map_ptr_3 = map__get_check(&a->source_files, &__map_key_2);
 					if (__map_ptr_3 != NULL) {
 						token__File* file = *(token__File**)(__map_ptr_3);
-						string __v3_internal_symbol_join_0__vmsvc4381[3]; __v3_internal_symbol_join_0__vmsvc4381[0] = file->name; __v3_internal_symbol_join_0__vmsvc4381[1] = _str_0; __v3_internal_symbol_join_0__vmsvc4381[2] = alias; string key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4381));
+						string __v3_internal_symbol_join_0__vmsvc4380[3]; __v3_internal_symbol_join_0__vmsvc4380[0] = file->name; __v3_internal_symbol_join_0__vmsvc4380[1] = _str_0; __v3_internal_symbol_join_0__vmsvc4380[2] = alias; string key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4380));
 						driver__ImplicitFieldScanIndex__write(v_index, (driver__ImplicitIndexOp){.kind = driver__ImplicitIndexOpKind__import_alias, .key = key, .fields = (flat__TypeTextBindings){.texts = (flat__TypeTextTable*)memdup(&(flat__TypeTextTable){0}, sizeof(flat__TypeTextTable)), .ids = new_map(sizeof(string), sizeof(u32), map_hash_string, map_eq_string, map_clone_string, map_free_string)}, .enum_fields = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string)});
 						string __map_key_4 = key;
 						bool __map_val_5 = true;
@@ -189976,7 +189981,7 @@ u32 driver__implicit_field_type(u32 raw_type_id, string field, driver__ImplicitF
 		}
 	}
 	int shape = flat__source_type_shape(typ);
-	int cond__vmsvc4383; cond__vmsvc4383 = !!(((shape & 2048) != 0) || ((shape & 512) != 0)); if (!cond__vmsvc4383) { int __in_lhs_0__vmsvc4382 = flat__source_type_query(typ); cond__vmsvc4383 = !!(((__in_lhs_0__vmsvc4382 & 512) != 0)); } if (cond__vmsvc4383) {
+	int cond__vmsvc4382; cond__vmsvc4382 = !!(((shape & 2048) != 0) || ((shape & 512) != 0)); if (!cond__vmsvc4382) { int __in_lhs_0__vmsvc4381 = flat__source_type_query(typ); cond__vmsvc4382 = !!(((__in_lhs_0__vmsvc4381 & 512) != 0)); } if (cond__vmsvc4382) {
 		if (string__eq(field, _str_4002) || string__eq(field, _str_4005) || string__eq(field, _str_4006) || string__eq(field, _str_1890) || string__eq(field, _str_4007)) {
 			return flat__source_type_int;
 		} else if (string__eq(field, _str_4008)) {
@@ -190114,8 +190119,8 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 				bool dropped = false;
 				__v_int __in_lhs_16 = declared + 1;
 				{
-					__v_int __discard_15215236722831141574_903893_903894 = 0;
-					for (; __discard_15215236722831141574_903893_903894 < __in_lhs_16; __discard_15215236722831141574_903893_903894++) {
+					__v_int __discard_15215236722831141574_904315_904316 = 0;
+					for (; __discard_15215236722831141574_904315_904316 < __in_lhs_16; __discard_15215236722831141574_904315_904316++) {
 						bool changed = false;
 						array__clear(&untyped);
 						{
@@ -190133,7 +190138,7 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 									__v_int name_idx = 0;
 									for (; name_idx < names; name_idx++) {
 										flat__Node* lhs = flat__FlatAst__child_node(a, declaration, driver__implicit_declared_child(name_idx, values));
-										int cond__vmsvc4385; cond__vmsvc4385 = !!((lhs->kind != flat__NodeKind__ident)); if (!cond__vmsvc4385) { string __map_key_18__vmsvc4384 = lhs->value; cond__vmsvc4385 = !!((map__exists(&ambiguous, &__map_key_18__vmsvc4384))); } if (cond__vmsvc4385) {
+										int cond__vmsvc4384; cond__vmsvc4384 = !!((lhs->kind != flat__NodeKind__ident)); if (!cond__vmsvc4384) { string __map_key_18__vmsvc4383 = lhs->value; cond__vmsvc4384 = !!((map__exists(&ambiguous, &__map_key_18__vmsvc4383))); } if (cond__vmsvc4384) {
 											continue;
 										}
 										u32 __if_val_19 = {0};
@@ -190188,7 +190193,7 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 						__v_int __for_idx_25 = 0;
 						for (; __for_idx_25 < untyped.len; __for_idx_25++) {
 							string name = *(string*)(array_get(untyped, __for_idx_25));
-							int cond__vmsvc4387; cond__vmsvc4387 = !!(flat__TypeTextBindings__contains(&bindings, name)); if (cond__vmsvc4387) { string __map_key_26__vmsvc4386 = name; cond__vmsvc4387 = !!((!map__exists(&ambiguous, &__map_key_26__vmsvc4386))); } if (cond__vmsvc4387) {
+							int cond__vmsvc4386; cond__vmsvc4386 = !!(flat__TypeTextBindings__contains(&bindings, name)); if (cond__vmsvc4386) { string __map_key_26__vmsvc4385 = name; cond__vmsvc4386 = !!((!map__exists(&ambiguous, &__map_key_26__vmsvc4385))); } if (cond__vmsvc4386) {
 								string __map_key_27 = name;
 								bool __map_val_28 = true;
 								map__set(&ambiguous, &__map_key_27, &__map_val_28);
@@ -190218,7 +190223,7 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 					flat__Node* selector = flat__FlatAst__node(a, selector_id);
 					i32 base_id = flat__FlatAst__child(a, selector, 0);
 					flat__Node* base = flat__FlatAst__node(a, base_id);
-					int cond__vmsvc4389; cond__vmsvc4389 = !!((base->kind == flat__NodeKind__ident)); if (cond__vmsvc4389) { string __map_key_30__vmsvc4388 = base->value; cond__vmsvc4389 = !!((map__exists(&ambiguous, &__map_key_30__vmsvc4388))); } if (cond__vmsvc4389) {
+					int cond__vmsvc4388; cond__vmsvc4388 = !!((base->kind == flat__NodeKind__ident)); if (cond__vmsvc4388) { string __map_key_30__vmsvc4387 = base->value; cond__vmsvc4388 = !!((map__exists(&ambiguous, &__map_key_30__vmsvc4387))); } if (cond__vmsvc4388) {
 						continue;
 					}
 					u32 base_type_source_id = driver__implicit_expr_type(a, base_id, bindings, v_index, 0);
@@ -190252,8 +190257,8 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 							void* __map_ptr_42 = map__get_check(&a->source_files, &__map_key_41);
 							if (__map_ptr_42 != NULL) {
 								token__File* file = *(token__File**)(__map_ptr_42);
-								string __v3_internal_symbol_join_4__vmsvc4390[3]; __v3_internal_symbol_join_4__vmsvc4390[0] = file->name; __v3_internal_symbol_join_4__vmsvc4390[1] = _str_0; __v3_internal_symbol_join_4__vmsvc4390[2] = base->value; driver__ImplicitFieldScanIndex__read(&v_index, _str_3978, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4390)));
-								string __v3_internal_symbol_join_5__vmsvc4391[3]; __v3_internal_symbol_join_5__vmsvc4391[0] = file->name; __v3_internal_symbol_join_5__vmsvc4391[1] = _str_0; __v3_internal_symbol_join_5__vmsvc4391[2] = base->value; string __map_key_43 = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4391));
+								string __v3_internal_symbol_join_4__vmsvc4389[3]; __v3_internal_symbol_join_4__vmsvc4389[0] = file->name; __v3_internal_symbol_join_4__vmsvc4389[1] = _str_0; __v3_internal_symbol_join_4__vmsvc4389[2] = base->value; driver__ImplicitFieldScanIndex__read(&v_index, _str_3978, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4389)));
+								string __v3_internal_symbol_join_5__vmsvc4390[3]; __v3_internal_symbol_join_5__vmsvc4390[0] = file->name; __v3_internal_symbol_join_5__vmsvc4390[1] = _str_0; __v3_internal_symbol_join_5__vmsvc4390[2] = base->value; string __map_key_43 = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4390));
 								bool __map_zero_44 = false;
 								if (*(bool*)(map__get(&v_index.imports, &__map_key_43, &__map_zero_44))) {
 									__v_int __map_key_45 = (__v_int)(selector_id);
@@ -190337,8 +190342,8 @@ Array driver__implicit_multi_value_types(u32 raw_id, driver__ImplicitFieldScanIn
 u32 driver__implicit_normalize_type(u32 raw_id, driver__ImplicitFieldScanIndex v_index) {
 	u32 typ_id = driver__implicit_trimmed_type_id(raw_id);
 	{
-		__v_int __discard_15215236722831141574_922468_922469 = 0;
-		for (; __discard_15215236722831141574_922468_922469 < 12; __discard_15215236722831141574_922468_922469++) {
+		__v_int __discard_15215236722831141574_922890_922891 = 0;
+		for (; __discard_15215236722831141574_922890_922891 < 12; __discard_15215236722831141574_922890_922891++) {
 			bool changed = false;
 			{
 				__v_int __for_idx_0 = 0;
@@ -190405,7 +190410,7 @@ string driver__import_module_identity_cached(pref__Preferences* prefs, string im
 		__if_val_0 = _str_34;
 	}
 	string importing_dir = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc4392[5]; __v3_internal_symbol_join_0__vmsvc4392[0] = importing_dir; __v3_internal_symbol_join_0__vmsvc4392[1] = _str_0; __v3_internal_symbol_join_0__vmsvc4392[2] = import_path; __v3_internal_symbol_join_0__vmsvc4392[3] = _str_0; __v3_internal_symbol_join_0__vmsvc4392[4] = import_dir; string key = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4392));
+	string __v3_internal_symbol_join_0__vmsvc4391[5]; __v3_internal_symbol_join_0__vmsvc4391[0] = importing_dir; __v3_internal_symbol_join_0__vmsvc4391[1] = _str_0; __v3_internal_symbol_join_0__vmsvc4391[2] = import_path; __v3_internal_symbol_join_0__vmsvc4391[3] = _str_0; __v3_internal_symbol_join_0__vmsvc4391[4] = import_dir; string key = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4391));
 	string __map_key_1 = key;
 	void* __map_ptr_2 = map__get_check(identity_cache, &__map_key_1);
 	if (__map_ptr_2 != NULL) {
@@ -190573,7 +190578,7 @@ __v_option_driver__V3IncrementalCFunctionSections driver__incremental_c_function
 		__v_int key_end_relative = __or_val_3;
 		__v_int key_end = key_start + key_end_relative;
 		string key = string__substr(		source, 		key_start, 		key_end);
-		string __v3_internal_symbol_join_0__vmsvc4393[3]; __v3_internal_symbol_join_0__vmsvc4393[0] = end_prefix; __v3_internal_symbol_join_0__vmsvc4393[1] = key; __v3_internal_symbol_join_0__vmsvc4393[2] = _str_2999; string end_marker = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4393));
+		string __v3_internal_symbol_join_0__vmsvc4392[3]; __v3_internal_symbol_join_0__vmsvc4392[0] = end_prefix; __v3_internal_symbol_join_0__vmsvc4392[1] = key; __v3_internal_symbol_join_0__vmsvc4392[2] = _str_2999; string end_marker = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4392));
 		__v_option___v_int __or_opt_4 = string__index(string__substr(		source, 		key_end, (		source).len), end_marker);
 		__v_int __or_val_5 = {0};
 		if (__or_opt_4.ok) {
@@ -190706,7 +190711,7 @@ bool driver__incremental_changed_functions_require_reachability_rebuild(flat__Fl
 					cur_module = _str_34;
 					string __map_key_8 = node.value;
 					bool __map_zero_9 = false;
-					int cond__vmsvc4396; cond__vmsvc4396 = !!(*(bool*)(map__get(&program_files, &__map_key_8, &__map_zero_9))); if (!cond__vmsvc4396) { string __map_key_10__vmsvc4394 = flat__FlatAst__real_source_path(a, node.value); bool __map_zero_11__vmsvc4395 = false; cond__vmsvc4396 = !!((*(bool*)(map__get(&program_files, &__map_key_10__vmsvc4394, &__map_zero_11__vmsvc4395)))); } is_program_file = cond__vmsvc4396;
+					int cond__vmsvc4395; cond__vmsvc4395 = !!(*(bool*)(map__get(&program_files, &__map_key_8, &__map_zero_9))); if (!cond__vmsvc4395) { string __map_key_10__vmsvc4393 = flat__FlatAst__real_source_path(a, node.value); bool __map_zero_11__vmsvc4394 = false; cond__vmsvc4395 = !!((*(bool*)(map__get(&program_files, &__map_key_10__vmsvc4393, &__map_zero_11__vmsvc4394)))); } is_program_file = cond__vmsvc4395;
 				} else if (__match_tmp_7 == flat__NodeKind__module_decl) {
 					cur_module = node.value;
 				} else if (__match_tmp_7 == flat__NodeKind__fn_decl) {
@@ -190833,7 +190838,7 @@ map driver__incremental_declaration_attribute_signatures(flat__FlatAst* a) {
 
 bool driver__incremental_generic_type_base_is_known(u32 base_id, string module_name, types__TypeChecker* tc) {
 	u32 __map_key_0 = base_id;
-	int cond__vmsvc4398; cond__vmsvc4398 = !!(map__exists(&tc->struct_generic_params, &__map_key_0)); if (!cond__vmsvc4398) { u32 __map_key_1__vmsvc4397 = base_id; cond__vmsvc4398 = !!((map__exists(&tc->sum_generic_params, &__map_key_1__vmsvc4397))); } int cond__vmsvc4400; cond__vmsvc4400 = !!(cond__vmsvc4398); if (!cond__vmsvc4400) { u32 __map_key_2__vmsvc4399 = base_id; cond__vmsvc4400 = !!((map__exists(&tc->type_alias_generic_params, &__map_key_2__vmsvc4399))); } if (cond__vmsvc4400) {
+	int cond__vmsvc4397; cond__vmsvc4397 = !!(map__exists(&tc->struct_generic_params, &__map_key_0)); if (!cond__vmsvc4397) { u32 __map_key_1__vmsvc4396 = base_id; cond__vmsvc4397 = !!((map__exists(&tc->sum_generic_params, &__map_key_1__vmsvc4396))); } int cond__vmsvc4399; cond__vmsvc4399 = !!(cond__vmsvc4397); if (!cond__vmsvc4399) { u32 __map_key_2__vmsvc4398 = base_id; cond__vmsvc4399 = !!((map__exists(&tc->type_alias_generic_params, &__map_key_2__vmsvc4398))); } if (cond__vmsvc4399) {
 		return true;
 	}
 	int __in_lhs_3 = flat__source_type_shape(base_id);
@@ -190845,7 +190850,7 @@ bool driver__incremental_generic_type_base_is_known(u32 base_id, string module_n
 		{ Array* __v3_internal_symbol_scalar_push_base_1 = &__arr_lit_4; u32 __v3_internal_symbol_scalar_push_value_1 = __arr_val_6; if (__v3_internal_symbol_scalar_push_base_1->len >= 0 && __v3_internal_symbol_scalar_push_base_1->len < __v3_internal_symbol_scalar_push_base_1->cap && !(__v3_internal_symbol_scalar_push_base_1->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_1->data)[__v3_internal_symbol_scalar_push_base_1->len] = __v3_internal_symbol_scalar_push_value_1; __v3_internal_symbol_scalar_push_base_1->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_1, &__v3_internal_symbol_scalar_push_value_1); } }
 		u32 qualified_id = flat__source_type_composition(flat__SourceTypeComposition__qualified, __arr_lit_4);
 		u32 __map_key_7 = qualified_id;
-		int cond__vmsvc4402; cond__vmsvc4402 = !!(map__exists(&tc->struct_generic_params, &__map_key_7)); if (!cond__vmsvc4402) { u32 __map_key_8__vmsvc4401 = qualified_id; cond__vmsvc4402 = !!((map__exists(&tc->sum_generic_params, &__map_key_8__vmsvc4401))); } int cond__vmsvc4404; cond__vmsvc4404 = !!(cond__vmsvc4402); if (!cond__vmsvc4404) { u32 __map_key_9__vmsvc4403 = qualified_id; cond__vmsvc4404 = !!((map__exists(&tc->type_alias_generic_params, &__map_key_9__vmsvc4403))); } if (cond__vmsvc4404) {
+		int cond__vmsvc4401; cond__vmsvc4401 = !!(map__exists(&tc->struct_generic_params, &__map_key_7)); if (!cond__vmsvc4401) { u32 __map_key_8__vmsvc4400 = qualified_id; cond__vmsvc4401 = !!((map__exists(&tc->sum_generic_params, &__map_key_8__vmsvc4400))); } int cond__vmsvc4403; cond__vmsvc4403 = !!(cond__vmsvc4401); if (!cond__vmsvc4403) { u32 __map_key_9__vmsvc4402 = qualified_id; cond__vmsvc4403 = !!((map__exists(&tc->type_alias_generic_params, &__map_key_9__vmsvc4402))); } if (cond__vmsvc4403) {
 			return true;
 		}
 	}
@@ -191023,8 +191028,8 @@ bool driver__incremental_node_tree_uses_generics(flat__FlatAst* a, types__TypeCh
 					string param = *(string*)(array_get(params, i));
 					string __arr_val_4 = param;
 					array_push(&rendered, &__arr_val_4);
-					int cond__vmsvc4407; cond__vmsvc4407 = !!((i > 0)); if (cond__vmsvc4407) { __v_int _t1__vmsvc4405 = (__v_int)(i); __v_int _t2__vmsvc4406 = (__v_int)(2); if (_t2__vmsvc4406 == 0) v_panic(_S("modulo by zero")); cond__vmsvc4407 = !!(((((__v_int)(_t1__vmsvc4405 % _t2__vmsvc4406))) == 1)); } if (cond__vmsvc4407) {
-						__v_int _t3__vmsvc4408 = (__v_int)((i - 1)); __v_int _t4__vmsvc4409 = (__v_int)(2); if (_t4__vmsvc4409 == 0) v_panic(_S("division by zero")); string __arr_val_5 = flat__source_type_name((*(u32*)array_get(debugger_types, ((__v_int)(_t3__vmsvc4408 / _t4__vmsvc4409)))));
+					int cond__vmsvc4406; cond__vmsvc4406 = !!((i > 0)); if (cond__vmsvc4406) { __v_int _t1__vmsvc4404 = (__v_int)(i); __v_int _t2__vmsvc4405 = (__v_int)(2); if (_t2__vmsvc4405 == 0) v_panic(_S("modulo by zero")); cond__vmsvc4406 = !!(((((__v_int)(_t1__vmsvc4404 % _t2__vmsvc4405))) == 1)); } if (cond__vmsvc4406) {
+						__v_int _t3__vmsvc4407 = (__v_int)((i - 1)); __v_int _t4__vmsvc4408 = (__v_int)(2); if (_t4__vmsvc4408 == 0) v_panic(_S("division by zero")); string __arr_val_5 = flat__source_type_name((*(u32*)array_get(debugger_types, ((__v_int)(_t3__vmsvc4407 / _t4__vmsvc4408)))));
 						array_push(&rendered, &__arr_val_5);
 					}
 				}
@@ -191039,10 +191044,10 @@ bool driver__incremental_node_tree_uses_generics(flat__FlatAst* a, types__TypeCh
 				__if_val_6 = _str_34;
 			}
 			string suffix = __if_val_6;
-			string __v3_internal_symbol_join_4__vmsvc4410[5]; __v3_internal_symbol_join_4__vmsvc4410[0] = flat__Node__value_text(node); __v3_internal_symbol_join_4__vmsvc4410[1] = _str_176; __v3_internal_symbol_join_4__vmsvc4410[2] = flat__source_type_name(flat__Node__enum_backing_type_id(&node)); __v3_internal_symbol_join_4__vmsvc4410[3] = suffix; __v3_internal_symbol_join_4__vmsvc4410[4] = _str_177; string __arr_val_7 = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc4410));
+			string __v3_internal_symbol_join_4__vmsvc4409[5]; __v3_internal_symbol_join_4__vmsvc4409[0] = flat__Node__value_text(node); __v3_internal_symbol_join_4__vmsvc4409[1] = _str_176; __v3_internal_symbol_join_4__vmsvc4409[2] = flat__source_type_name(flat__Node__enum_backing_type_id(&node)); __v3_internal_symbol_join_4__vmsvc4409[3] = suffix; __v3_internal_symbol_join_4__vmsvc4409[4] = _str_177; string __arr_val_7 = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc4409));
 			array_push(&type_names, &__arr_val_7);
 		} else if ((params.len > 0) && ((flat__Node__value_text(node)).len > 0)) {
-			string __v3_internal_symbol_join_5__vmsvc4411[4]; __v3_internal_symbol_join_5__vmsvc4411[0] = flat__Node__value_text(node); __v3_internal_symbol_join_5__vmsvc4411[1] = _str_176; __v3_internal_symbol_join_5__vmsvc4411[2] = Array_string__join(params, _str_25); __v3_internal_symbol_join_5__vmsvc4411[3] = _str_177; string __arr_val_8 = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc4411));
+			string __v3_internal_symbol_join_5__vmsvc4410[4]; __v3_internal_symbol_join_5__vmsvc4410[0] = flat__Node__value_text(node); __v3_internal_symbol_join_5__vmsvc4410[1] = _str_176; __v3_internal_symbol_join_5__vmsvc4410[2] = Array_string__join(params, _str_25); __v3_internal_symbol_join_5__vmsvc4410[3] = _str_177; string __arr_val_8 = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc4410));
 			array_push(&type_names, &__arr_val_8);
 		}
 		{
@@ -191151,7 +191156,7 @@ driver__V3IncrementalSnapshot driver__incremental_program_snapshot(flat__FlatAst
 					array_push(&functions, &__arr_val_28);
 					Array __esc_29 = strings__new_builder(128);
 					Array* declaration = (Array*)(memdup(&__esc_29, sizeof(Array)));
-					string __v3_internal_symbol_join_0__vmsvc4412[5]; __v3_internal_symbol_join_0__vmsvc4412[0] = _str_2990; __v3_internal_symbol_join_0__vmsvc4412[1] = cur_file; __v3_internal_symbol_join_0__vmsvc4412[2] = _str_2031; __v3_internal_symbol_join_0__vmsvc4412[3] = cur_module; __v3_internal_symbol_join_0__vmsvc4412[4] = _str_2031; strings__Builder__write_string(declaration, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4412)));
+					string __v3_internal_symbol_join_0__vmsvc4411[5]; __v3_internal_symbol_join_0__vmsvc4411[0] = _str_2990; __v3_internal_symbol_join_0__vmsvc4411[1] = cur_file; __v3_internal_symbol_join_0__vmsvc4411[2] = _str_2031; __v3_internal_symbol_join_0__vmsvc4411[3] = cur_module; __v3_internal_symbol_join_0__vmsvc4411[4] = _str_2031; strings__Builder__write_string(declaration, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4411)));
 					strings__Builder__write_string(declaration, u64__hex(driver__incremental_hash_fn_declaration((u64)(1469598103934665603), &node)));
 					{
 						__v_int child_idx = 0;
@@ -191177,7 +191182,7 @@ driver__V3IncrementalSnapshot driver__incremental_program_snapshot(flat__FlatAst
 						__map_val_35 = _str_34;
 					}
 					string attribute_signature = __map_val_35;
-					string __v3_internal_symbol_join_1__vmsvc4413[9]; __v3_internal_symbol_join_1__vmsvc4413[0] = flat__NodeKind__autostr(node.kind); __v3_internal_symbol_join_1__vmsvc4413[1] = _str_2031; __v3_internal_symbol_join_1__vmsvc4413[2] = cur_file; __v3_internal_symbol_join_1__vmsvc4413[3] = _str_2031; __v3_internal_symbol_join_1__vmsvc4413[4] = cur_module; __v3_internal_symbol_join_1__vmsvc4413[5] = _str_2031; __v3_internal_symbol_join_1__vmsvc4413[6] = driver__incremental_node_tree_signature(a, (i32)(idx)); __v3_internal_symbol_join_1__vmsvc4413[7] = _str_2031; __v3_internal_symbol_join_1__vmsvc4413[8] = attribute_signature; string part = (string_plus_many(9, __v3_internal_symbol_join_1__vmsvc4413));
+					string __v3_internal_symbol_join_1__vmsvc4412[9]; __v3_internal_symbol_join_1__vmsvc4412[0] = flat__NodeKind__autostr(node.kind); __v3_internal_symbol_join_1__vmsvc4412[1] = _str_2031; __v3_internal_symbol_join_1__vmsvc4412[2] = cur_file; __v3_internal_symbol_join_1__vmsvc4412[3] = _str_2031; __v3_internal_symbol_join_1__vmsvc4412[4] = cur_module; __v3_internal_symbol_join_1__vmsvc4412[5] = _str_2031; __v3_internal_symbol_join_1__vmsvc4412[6] = driver__incremental_node_tree_signature(a, (i32)(idx)); __v3_internal_symbol_join_1__vmsvc4412[7] = _str_2031; __v3_internal_symbol_join_1__vmsvc4412[8] = attribute_signature; string part = (string_plus_many(9, __v3_internal_symbol_join_1__vmsvc4412));
 					string __arr_val_36 = part;
 					array_push(&declaration_parts, &__arr_val_36);
 					if (node.kind == flat__NodeKind__import_decl) {
@@ -191194,7 +191199,7 @@ driver__V3IncrementalSnapshot driver__incremental_program_snapshot(flat__FlatAst
 					}
 				} else if ((__match_tmp_22 == flat__NodeKind__directive) || (__match_tmp_22 == flat__NodeKind__comptime_if) || (__match_tmp_22 == flat__NodeKind__comptime_for) || (__match_tmp_22 == flat__NodeKind__asm_stmt) || (__match_tmp_22 == flat__NodeKind__sql_expr) || (__match_tmp_22 == flat__NodeKind__fn_literal)) {
 					if ((*(bool*)array_get(top_level_nodes, idx))) {
-						string __v3_internal_symbol_join_2__vmsvc4414[7]; __v3_internal_symbol_join_2__vmsvc4414[0] = flat__NodeKind__autostr(node.kind); __v3_internal_symbol_join_2__vmsvc4414[1] = _str_2031; __v3_internal_symbol_join_2__vmsvc4414[2] = cur_file; __v3_internal_symbol_join_2__vmsvc4414[3] = _str_2031; __v3_internal_symbol_join_2__vmsvc4414[4] = cur_module; __v3_internal_symbol_join_2__vmsvc4414[5] = _str_2031; __v3_internal_symbol_join_2__vmsvc4414[6] = driver__incremental_node_tree_signature(a, (i32)(idx)); string part = (string_plus_many(7, __v3_internal_symbol_join_2__vmsvc4414));
+						string __v3_internal_symbol_join_2__vmsvc4413[7]; __v3_internal_symbol_join_2__vmsvc4413[0] = flat__NodeKind__autostr(node.kind); __v3_internal_symbol_join_2__vmsvc4413[1] = _str_2031; __v3_internal_symbol_join_2__vmsvc4413[2] = cur_file; __v3_internal_symbol_join_2__vmsvc4413[3] = _str_2031; __v3_internal_symbol_join_2__vmsvc4413[4] = cur_module; __v3_internal_symbol_join_2__vmsvc4413[5] = _str_2031; __v3_internal_symbol_join_2__vmsvc4413[6] = driver__incremental_node_tree_signature(a, (i32)(idx)); string part = (string_plus_many(7, __v3_internal_symbol_join_2__vmsvc4413));
 						string __arr_val_40 = part;
 						array_push(&declaration_parts, &__arr_val_40);
 						if (node.kind == flat__NodeKind__directive) {
@@ -191204,7 +191209,7 @@ driver__V3IncrementalSnapshot driver__incremental_program_snapshot(flat__FlatAst
 					}
 				} else {
 					if ((*(bool*)array_get(top_level_nodes, idx))) {
-						string __v3_internal_symbol_join_3__vmsvc4415[8]; __v3_internal_symbol_join_3__vmsvc4415[0] = _str_2991; __v3_internal_symbol_join_3__vmsvc4415[1] = flat__NodeKind__autostr(node.kind); __v3_internal_symbol_join_3__vmsvc4415[2] = _str_2031; __v3_internal_symbol_join_3__vmsvc4415[3] = cur_file; __v3_internal_symbol_join_3__vmsvc4415[4] = _str_2031; __v3_internal_symbol_join_3__vmsvc4415[5] = cur_module; __v3_internal_symbol_join_3__vmsvc4415[6] = _str_2031; __v3_internal_symbol_join_3__vmsvc4415[7] = driver__incremental_node_tree_signature(a, (i32)(idx)); string __arr_val_42 = (string_plus_many(8, __v3_internal_symbol_join_3__vmsvc4415));
+						string __v3_internal_symbol_join_3__vmsvc4414[8]; __v3_internal_symbol_join_3__vmsvc4414[0] = _str_2991; __v3_internal_symbol_join_3__vmsvc4414[1] = flat__NodeKind__autostr(node.kind); __v3_internal_symbol_join_3__vmsvc4414[2] = _str_2031; __v3_internal_symbol_join_3__vmsvc4414[3] = cur_file; __v3_internal_symbol_join_3__vmsvc4414[4] = _str_2031; __v3_internal_symbol_join_3__vmsvc4414[5] = cur_module; __v3_internal_symbol_join_3__vmsvc4414[6] = _str_2031; __v3_internal_symbol_join_3__vmsvc4414[7] = driver__incremental_node_tree_signature(a, (i32)(idx)); string __arr_val_42 = (string_plus_many(8, __v3_internal_symbol_join_3__vmsvc4414));
 						array_push(&synthetic_main_parts, &__arr_val_42);
 					}
 				}
@@ -191330,7 +191335,7 @@ string driver__incremental_qualified_fn_name(string module_name, string name) {
 	if (string__eq(module_name, _str_34) || string__eq(module_name, _str_179) || string__eq(module_name, _str_1218)) {
 		return name;
 	}
-	string __v3_internal_symbol_join_0__vmsvc4416[3]; __v3_internal_symbol_join_0__vmsvc4416[0] = module_name; __v3_internal_symbol_join_0__vmsvc4416[1] = _str_2; __v3_internal_symbol_join_0__vmsvc4416[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4416));
+	string __v3_internal_symbol_join_0__vmsvc4415[3]; __v3_internal_symbol_join_0__vmsvc4415[0] = module_name; __v3_internal_symbol_join_0__vmsvc4415[1] = _str_2; __v3_internal_symbol_join_0__vmsvc4415[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4415));
 }
 
 string driver__incremental_static_string_markers(string source) {
@@ -191418,7 +191423,7 @@ __v_option_string driver__initial_module_path_identity(pref__Preferences* prefs,
 		for (; __for_idx_2 < roots.len; __for_idx_2++) {
 			string root = *(string*)(array_get(roots, __for_idx_2));
 			string real_root = string__trim_right(string__replace(os__real_path(root), _str_373, _str_374), _str_374);
-			int cond__vmsvc4419; cond__vmsvc4419 = !!((real_root.len == 0)); if (!cond__vmsvc4419) { string __map_key_3__vmsvc4417 = real_root; bool __map_zero_4__vmsvc4418 = false; cond__vmsvc4419 = !!((*(bool*)(map__get(&seen, &__map_key_3__vmsvc4417, &__map_zero_4__vmsvc4418)))); } if (cond__vmsvc4419) {
+			int cond__vmsvc4418; cond__vmsvc4418 = !!((real_root.len == 0)); if (!cond__vmsvc4418) { string __map_key_3__vmsvc4416 = real_root; bool __map_zero_4__vmsvc4417 = false; cond__vmsvc4418 = !!((*(bool*)(map__get(&seen, &__map_key_3__vmsvc4416, &__map_zero_4__vmsvc4417)))); } if (cond__vmsvc4418) {
 				continue;
 			}
 			string __map_key_5 = real_root;
@@ -191587,14 +191592,14 @@ bool driver__input_uses_minimal_literal_output_builtin(string input_file, pref__
 			}
 		}
 	}
-	int cond__vmsvc4421; cond__vmsvc4421 = !!(__contains_0); if (!cond__vmsvc4421) { bool __contains_2__vmsvc4420 = false; {
+	int cond__vmsvc4420; cond__vmsvc4420 = !!(__contains_0); if (!cond__vmsvc4420) { bool __contains_2__vmsvc4419 = false; {
 		__v_int __contains_idx_3 = 0;
 		for (; __contains_idx_3 < prefs->user_defines.len; __contains_idx_3++) {
 			if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_3)), _str_3144)) {
-				__contains_2__vmsvc4420 = true;
+				__contains_2__vmsvc4419 = true;
 			}
 		}
-	} cond__vmsvc4421 = !!((__contains_2__vmsvc4420)); } if (cond__vmsvc4421) {
+	} cond__vmsvc4420 = !!((__contains_2__vmsvc4419)); } if (cond__vmsvc4420) {
 		return false;
 	}
 	parser__Parser* candidate_parser = __v3_internal_symbol_static_7061727365722e50617273657240737461746963406e6577(prefs);
@@ -191880,7 +191885,7 @@ bool driver__is_trivial_literal_output_program_for_target(flat__FlatAst* a, map 
 		__v_int id = 0;
 		for (; id < a->nodes.len; id++) {
 			flat__Node node = *(flat__Node*)(array_get(a->nodes, id));
-			int cond__vmsvc4423; cond__vmsvc4423 = !!((node.kind == flat__NodeKind__file)); if (cond__vmsvc4423) { string __map_key_0__vmsvc4422 = node.value; cond__vmsvc4423 = !!((map__exists(&diagnostic_files, &__map_key_0__vmsvc4422))); } if (cond__vmsvc4423 && !driver__literal_output_node_supports_console(a, (i32)(id), target.os)) {
+			int cond__vmsvc4422; cond__vmsvc4422 = !!((node.kind == flat__NodeKind__file)); if (cond__vmsvc4422) { string __map_key_0__vmsvc4421 = node.value; cond__vmsvc4422 = !!((map__exists(&diagnostic_files, &__map_key_0__vmsvc4421))); } if (cond__vmsvc4422 && !driver__literal_output_node_supports_console(a, (i32)(id), target.os)) {
 				return false;
 			}
 		}
@@ -191929,7 +191934,7 @@ string driver__keep_c_output_file(string bin_file) {
 	if (string__eq(base, _str_34) || string__eq(base, _str_2) || string__eq(base, _str_824)) {
 		base = _str_2748;
 	}
-	string __v3_internal_symbol_join_0__vmsvc4424[4]; __v3_internal_symbol_join_0__vmsvc4424[0] = base; __v3_internal_symbol_join_0__vmsvc4424[1] = _str_2; __v3_internal_symbol_join_0__vmsvc4424[2] = tempname__unique_token(); __v3_internal_symbol_join_0__vmsvc4424[3] = _str_2749; return os__real_path(os__join_path_single(os__vtmp_dir(), (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4424))));
+	string __v3_internal_symbol_join_0__vmsvc4423[4]; __v3_internal_symbol_join_0__vmsvc4423[0] = base; __v3_internal_symbol_join_0__vmsvc4423[1] = _str_2; __v3_internal_symbol_join_0__vmsvc4423[2] = tempname__unique_token(); __v3_internal_symbol_join_0__vmsvc4423[3] = _str_2749; return os__real_path(os__join_path_single(os__vtmp_dir(), (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4423))));
 }
 
 void driver__leave_instance_check_child(void) {
@@ -191980,7 +191985,7 @@ __v_result_multi_return_os__Stat_bool driver__lstat_tcc_macos_libgc_path(string 
 		if (IError__code(&(err)) == 2) {
 			return (__v_result_multi_return_os__Stat_bool){.ok = true, .value = (multi_return_os__Stat_bool){(os__Stat){0}, false}};
 		}
-		string __v3_internal_symbol_join_0__vmsvc4425[4]; __v3_internal_symbol_join_0__vmsvc4425[0] = _str_5013; __v3_internal_symbol_join_0__vmsvc4425[1] = path; __v3_internal_symbol_join_0__vmsvc4425[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4425[3] = IError__msg(&(err)); return (__v_result_multi_return_os__Stat_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4425)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc4424[4]; __v3_internal_symbol_join_0__vmsvc4424[0] = _str_5013; __v3_internal_symbol_join_0__vmsvc4424[1] = path; __v3_internal_symbol_join_0__vmsvc4424[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4424[3] = IError__msg(&(err)); return (__v_result_multi_return_os__Stat_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4424)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	os__Stat stat = __or_val_1;
 	return (__v_result_multi_return_os__Stat_bool){.ok = true, .value = (multi_return_os__Stat_bool){stat, true}};
@@ -192110,7 +192115,7 @@ map driver__macos_v3_fallback_report_sources(flat__FlatAst* a, string vroot, map
 			}
 			u8 source_digest[32];
 			memmove(source_digest, (token__File__source_sha256(file)).ret_arr, sizeof(source_digest));
-			Array _t3__vmsvc4426 = new_array_from_c_array(32, 32, sizeof(u8), &(			source_digest)[0]); int _t4__vmsvc4427 = (0); int _t5__vmsvc4428 = (32); string digest = Array_u8__hex((array_slice(_t3__vmsvc4426, _t4__vmsvc4427, _t5__vmsvc4428)));
+			Array _t3__vmsvc4425 = new_array_from_c_array(32, 32, sizeof(u8), &(			source_digest)[0]); int _t4__vmsvc4426 = (0); int _t5__vmsvc4427 = (32); string digest = Array_u8__hex((array_slice(_t3__vmsvc4425, _t4__vmsvc4426, _t5__vmsvc4427)));
 			string __map_key_6 = path;
 			void* __map_ptr_7 = map__get_check(&sources, &__map_key_6);
 			if (__map_ptr_7 != NULL) {
@@ -192201,11 +192206,11 @@ _v_ret_Array_fixed_bool_256 driver__make_import_scan_delimiters(void) {
 			delimiters[v_fixed_index(c, 256)] = true;
 		}
 	}
-	_v_ret_Array_fixed_bool_256 __fa_ret__vmsvc4429; memcpy(__fa_ret__vmsvc4429.ret_arr, delimiters, sizeof(__fa_ret__vmsvc4429.ret_arr)); return (__fa_ret__vmsvc4429);
+	_v_ret_Array_fixed_bool_256 __fa_ret__vmsvc4428; memcpy(__fa_ret__vmsvc4428.ret_arr, delimiters, sizeof(__fa_ret__vmsvc4428.ret_arr)); return (__fa_ret__vmsvc4428);
 }
 
 map driver__marker_imports_of(flat__FlatAst* a) {
-	__v_int _t1__vmsvc4430 = (__v_int)(a->file_node_ids.len); __v_int _t2__vmsvc4431 = (__v_int)(2); if (_t2__vmsvc4431 == 0) v_panic(_S("division by zero")); Array markers = __new_array_noscan(0, ((__v_int)(_t1__vmsvc4430 / _t2__vmsvc4431)), sizeof(__v_int));
+	__v_int _t1__vmsvc4429 = (__v_int)(a->file_node_ids.len); __v_int _t2__vmsvc4430 = (__v_int)(2); if (_t2__vmsvc4430 == 0) v_panic(_S("division by zero")); Array markers = __new_array_noscan(0, ((__v_int)(_t1__vmsvc4429 / _t2__vmsvc4430)), sizeof(__v_int));
 	{
 		__v_int k = 0;
 		for (; (k + 1) < a->file_node_ids.len; k += 2) {
@@ -192348,7 +192353,7 @@ void driver__maybe_delegate_v3_to_vvmrc(string input_file, bool verbose) {
 		__or_val_1 = _str_34;
 	}
 	string requested_version = driver__parse_v3_vvmrc_version(__or_val_1);
-	int cond__vmsvc4433; cond__vmsvc4433 = !!((requested_version.len == 0)); if (!cond__vmsvc4433) { string __in_lhs_2__vmsvc4432 = string__to_lower_ascii(driver__normalize_v3_vvmrc_version(requested_version)); cond__vmsvc4433 = !!((string__eq(__in_lhs_2__vmsvc4432, _str_2551) || string__eq(__in_lhs_2__vmsvc4432, _str_2552))); } if (cond__vmsvc4433) {
+	int cond__vmsvc4432; cond__vmsvc4432 = !!((requested_version.len == 0)); if (!cond__vmsvc4432) { string __in_lhs_2__vmsvc4431 = string__to_lower_ascii(driver__normalize_v3_vvmrc_version(requested_version)); cond__vmsvc4432 = !!((string__eq(__in_lhs_2__vmsvc4431, _str_2551) || string__eq(__in_lhs_2__vmsvc4431, _str_2552))); } if (cond__vmsvc4432) {
 		return;
 	}
 	__v_result_string __or_opt_3 = driver__resolve_v3_version_executable(requested_version);
@@ -192357,7 +192362,7 @@ void driver__maybe_delegate_v3_to_vvmrc(string input_file, bool verbose) {
 		__or_val_4 = __or_opt_3.value;
 	} else {
 		IError err = __or_opt_3.err;
-		string __v3_internal_symbol_join_0__vmsvc4434[7]; __v3_internal_symbol_join_0__vmsvc4434[0] = _str_2553; __v3_internal_symbol_join_0__vmsvc4434[1] = vvmrc_path; __v3_internal_symbol_join_0__vmsvc4434[2] = _str_2554; __v3_internal_symbol_join_0__vmsvc4434[3] = requested_version; __v3_internal_symbol_join_0__vmsvc4434[4] = _str_2555; __v3_internal_symbol_join_0__vmsvc4434[5] = os__executable(); __v3_internal_symbol_join_0__vmsvc4434[6] = _str_41; eprintln((string_plus_many(7, __v3_internal_symbol_join_0__vmsvc4434)));
+		string __v3_internal_symbol_join_0__vmsvc4433[7]; __v3_internal_symbol_join_0__vmsvc4433[0] = _str_2553; __v3_internal_symbol_join_0__vmsvc4433[1] = vvmrc_path; __v3_internal_symbol_join_0__vmsvc4433[2] = _str_2554; __v3_internal_symbol_join_0__vmsvc4433[3] = requested_version; __v3_internal_symbol_join_0__vmsvc4433[4] = _str_2555; __v3_internal_symbol_join_0__vmsvc4433[5] = os__executable(); __v3_internal_symbol_join_0__vmsvc4433[6] = _str_41; eprintln((string_plus_many(7, __v3_internal_symbol_join_0__vmsvc4433)));
 		return;
 	}
 	string requested_exe = __or_val_4;
@@ -192365,7 +192370,7 @@ void driver__maybe_delegate_v3_to_vvmrc(string input_file, bool verbose) {
 		return;
 	}
 	if (verbose) {
-		string __v3_internal_symbol_join_1__vmsvc4435[6]; __v3_internal_symbol_join_1__vmsvc4435[0] = _str_2556; __v3_internal_symbol_join_1__vmsvc4435[1] = requested_version; __v3_internal_symbol_join_1__vmsvc4435[2] = _str_2557; __v3_internal_symbol_join_1__vmsvc4435[3] = vvmrc_path; __v3_internal_symbol_join_1__vmsvc4435[4] = _str_2558; __v3_internal_symbol_join_1__vmsvc4435[5] = requested_exe; eprintln((string_plus_many(6, __v3_internal_symbol_join_1__vmsvc4435)));
+		string __v3_internal_symbol_join_1__vmsvc4434[6]; __v3_internal_symbol_join_1__vmsvc4434[0] = _str_2556; __v3_internal_symbol_join_1__vmsvc4434[1] = requested_version; __v3_internal_symbol_join_1__vmsvc4434[2] = _str_2557; __v3_internal_symbol_join_1__vmsvc4434[3] = vvmrc_path; __v3_internal_symbol_join_1__vmsvc4434[4] = _str_2558; __v3_internal_symbol_join_1__vmsvc4434[5] = requested_exe; eprintln((string_plus_many(6, __v3_internal_symbol_join_1__vmsvc4434)));
 	}
 	driver__release_v3_fallback_marker();
 	os__Process* process = os__new_process(requested_exe);
@@ -192462,7 +192467,7 @@ __v_option_string driver__merge_cached_generic_program_body(string cached_source
 	__v_int marker_idx = __or_val_16;
 	string declaration_text = strings__Builder__str(&additions);
 	if (declaration_text.len > 0) {
-		string __v3_internal_symbol_join_0__vmsvc4436[3]; __v3_internal_symbol_join_0__vmsvc4436[0] = string__substr(		merged, 0, 		marker_idx); __v3_internal_symbol_join_0__vmsvc4436[1] = declaration_text; __v3_internal_symbol_join_0__vmsvc4436[2] = string__substr(		merged, 		marker_idx, (		merged).len); merged = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4436));
+		string __v3_internal_symbol_join_0__vmsvc4435[3]; __v3_internal_symbol_join_0__vmsvc4435[0] = string__substr(		merged, 0, 		marker_idx); __v3_internal_symbol_join_0__vmsvc4435[1] = declaration_text; __v3_internal_symbol_join_0__vmsvc4435[2] = string__substr(		merged, 		marker_idx, (		merged).len); merged = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4435));
 	}
 	Array new_sections = strings__new_builder(1024);
 	{
@@ -192493,7 +192498,7 @@ __v_option_string driver__merge_cached_generic_program_body(string cached_source
 	if ((body_start < merged.len) && (string__at(merged, body_start) == '\n')) {
 		body_start++;
 	}
-	string __v3_internal_symbol_join_1__vmsvc4437[3]; __v3_internal_symbol_join_1__vmsvc4437[0] = string__substr(	merged, 0, 	body_start); __v3_internal_symbol_join_1__vmsvc4437[1] = new_section_text; __v3_internal_symbol_join_1__vmsvc4437[2] = string__substr(	merged, 	body_start, (	merged).len); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4437))};
+	string __v3_internal_symbol_join_1__vmsvc4436[3]; __v3_internal_symbol_join_1__vmsvc4436[0] = string__substr(	merged, 0, 	body_start); __v3_internal_symbol_join_1__vmsvc4436[1] = new_section_text; __v3_internal_symbol_join_1__vmsvc4436[2] = string__substr(	merged, 	body_start, (	merged).len); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4436))};
 	return (__v_option_string){.ok = true};
 }
 
@@ -192584,7 +192589,7 @@ __v_option_string driver__merge_incremental_program_body(string cached_source, s
 	}
 	__v_int marker_idx = __or_val_21;
 	if (declaration_text.len > 0) {
-		string __v3_internal_symbol_join_0__vmsvc4438[3]; __v3_internal_symbol_join_0__vmsvc4438[0] = string__substr(		merged, 0, 		marker_idx); __v3_internal_symbol_join_0__vmsvc4438[1] = declaration_text; __v3_internal_symbol_join_0__vmsvc4438[2] = string__substr(		merged, 		marker_idx, (		merged).len); merged = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4438));
+		string __v3_internal_symbol_join_0__vmsvc4437[3]; __v3_internal_symbol_join_0__vmsvc4437[0] = string__substr(		merged, 0, 		marker_idx); __v3_internal_symbol_join_0__vmsvc4437[1] = declaration_text; __v3_internal_symbol_join_0__vmsvc4437[2] = string__substr(		merged, 		marker_idx, (		merged).len); merged = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4437));
 	}
 	Array new_sections = strings__new_builder(1024);
 	map prefix_functions = modulecache__c_source_function_identifiers(cached_prefix);
@@ -192593,23 +192598,23 @@ __v_option_string driver__merge_incremental_program_body(string cached_source, s
 		for (; __for_idx_22 < changed_sections.keys.len; __for_idx_22++) {
 			string key = *(string*)(array_get(changed_sections.keys, __for_idx_22));
 			string __map_key_23 = key;
-			int cond__vmsvc4440; cond__vmsvc4440 = !!(map__exists(&cached_sections.sections, &__map_key_23)); if (!cond__vmsvc4440) { string __map_key_24__vmsvc4439 = key; cond__vmsvc4440 = !!((map__exists(&prefix_sections.sections, &__map_key_24__vmsvc4439))); } if (cond__vmsvc4440) {
+			int cond__vmsvc4439; cond__vmsvc4439 = !!(map__exists(&cached_sections.sections, &__map_key_23)); if (!cond__vmsvc4439) { string __map_key_24__vmsvc4438 = key; cond__vmsvc4439 = !!((map__exists(&prefix_sections.sections, &__map_key_24__vmsvc4438))); } if (cond__vmsvc4439) {
 				continue;
 			}
 			string __map_key_25 = key;
 			string __map_zero_26 = _str_34;
 			string section = *(string*)(map__get(&changed_sections.sections, &__map_key_25, &__map_zero_26));
 			map section_functions = modulecache__c_source_function_identifiers(section);
-			int cond__vmsvc4443; cond__vmsvc4443 = !!((section_functions.data->count > 0)); if (cond__vmsvc4443) { Array __all_source_27__vmsvc4441 = map__keys(&section_functions); bool __all_28__vmsvc4442 = true; {
+			int cond__vmsvc4442; cond__vmsvc4442 = !!((section_functions.data->count > 0)); if (cond__vmsvc4442) { Array __all_source_27__vmsvc4440 = map__keys(&section_functions); bool __all_28__vmsvc4441 = true; {
 				__v_int __all_idx_29 = 0;
-				for (; __all_idx_29 < __all_source_27__vmsvc4441.len; __all_idx_29++) {
-					string __all_it_30 = *(string*)(array_get(__all_source_27__vmsvc4441, __all_idx_29));
+				for (; __all_idx_29 < __all_source_27__vmsvc4440.len; __all_idx_29++) {
+					string __all_it_30 = *(string*)(array_get(__all_source_27__vmsvc4440, __all_idx_29));
 					string __map_key_31 = __all_it_30;
 					if (!(map__exists(&prefix_functions, &__map_key_31))) {
-						__all_28__vmsvc4442 = false;
+						__all_28__vmsvc4441 = false;
 					}
 				}
-			} cond__vmsvc4443 = !!((__all_28__vmsvc4442)); } if (cond__vmsvc4443) {
+			} cond__vmsvc4442 = !!((__all_28__vmsvc4441)); } if (cond__vmsvc4442) {
 				continue;
 			}
 			strings__Builder__write_string(&new_sections, section);
@@ -192631,7 +192636,7 @@ __v_option_string driver__merge_incremental_program_body(string cached_source, s
 	if ((body_start < merged.len) && (string__at(merged, body_start) == '\n')) {
 		body_start++;
 	}
-	string __v3_internal_symbol_join_1__vmsvc4444[3]; __v3_internal_symbol_join_1__vmsvc4444[0] = string__substr(	merged, 0, 	body_start); __v3_internal_symbol_join_1__vmsvc4444[1] = new_section_text; __v3_internal_symbol_join_1__vmsvc4444[2] = string__substr(	merged, 	body_start, (	merged).len); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4444))};
+	string __v3_internal_symbol_join_1__vmsvc4443[3]; __v3_internal_symbol_join_1__vmsvc4443[0] = string__substr(	merged, 0, 	body_start); __v3_internal_symbol_join_1__vmsvc4443[1] = new_section_text; __v3_internal_symbol_join_1__vmsvc4443[2] = string__substr(	merged, 	body_start, (	merged).len); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4443))};
 	return (__v_option_string){.ok = true};
 }
 
@@ -192688,7 +192693,7 @@ Array driver__merge_monomorph_cache_specs(Array cached, Array generated) {
 		__v_int v_index = 0;
 		for (; v_index < unique.len; v_index++) {
 			transform__MonomorphCacheSpec spec = *(transform__MonomorphCacheSpec*)(array_get(unique, v_index));
-			string __v3_internal_symbol_join_4__vmsvc4445[5]; __v3_internal_symbol_join_4__vmsvc4445[0] = spec.decl_key; __v3_internal_symbol_join_4__vmsvc4445[1] = _str_8; __v3_internal_symbol_join_4__vmsvc4445[2] = spec.module; __v3_internal_symbol_join_4__vmsvc4445[3] = _str_8; __v3_internal_symbol_join_4__vmsvc4445[4] = Array_string__join(transform__MonomorphCacheSpec__args_text(&spec), _str_270); driver__MonomorphCacheSpecOrder __arr_val_10 = (driver__MonomorphCacheSpecOrder){.key = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc4445)), .v_index = v_index, .last_seen = (*(__v_int*)array_get(last_seen, v_index))};
+			string __v3_internal_symbol_join_4__vmsvc4444[5]; __v3_internal_symbol_join_4__vmsvc4444[0] = spec.decl_key; __v3_internal_symbol_join_4__vmsvc4444[1] = _str_8; __v3_internal_symbol_join_4__vmsvc4444[2] = spec.module; __v3_internal_symbol_join_4__vmsvc4444[3] = _str_8; __v3_internal_symbol_join_4__vmsvc4444[4] = Array_string__join(transform__MonomorphCacheSpec__args_text(&spec), _str_270); driver__MonomorphCacheSpecOrder __arr_val_10 = (driver__MonomorphCacheSpecOrder){.key = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc4444)), .v_index = v_index, .last_seen = (*(__v_int*)array_get(last_seen, v_index))};
 			array_push(&ordered, &__arr_val_10);
 		}
 	}
@@ -192773,7 +192778,7 @@ Array driver__merge_v3_parallel_c_units(Array parts, __v_int max_units) {
 		}
 	}
 	__v_int groups_left = max_units;
-	__v_int _t1__vmsvc4446 = (__v_int)(((remaining_size + groups_left) - 1)); __v_int _t2__vmsvc4447 = (__v_int)(groups_left); if (_t2__vmsvc4447 == 0) v_panic(_S("division by zero")); __v_int target_size = ((__v_int)(_t1__vmsvc4446 / _t2__vmsvc4447));
+	__v_int _t1__vmsvc4445 = (__v_int)(((remaining_size + groups_left) - 1)); __v_int _t2__vmsvc4446 = (__v_int)(groups_left); if (_t2__vmsvc4446 == 0) v_panic(_S("division by zero")); __v_int target_size = ((__v_int)(_t1__vmsvc4445 / _t2__vmsvc4446));
 	Array merged = array_new(	sizeof(string), 0, max_units);
 	Array current = array_new(	sizeof(string), 0, 0);
 	__v_int current_size = 0;
@@ -192790,7 +192795,7 @@ Array driver__merge_v3_parallel_c_units(Array parts, __v_int max_units) {
 				array_push(&merged, &__arr_val_2);
 				remaining_size -= current_size;
 				groups_left--;
-				__v_int _t3__vmsvc4448 = (__v_int)(((remaining_size + groups_left) - 1)); __v_int _t4__vmsvc4449 = (__v_int)(groups_left); if (_t4__vmsvc4449 == 0) v_panic(_S("division by zero")); target_size = ((__v_int)(_t3__vmsvc4448 / _t4__vmsvc4449));
+				__v_int _t3__vmsvc4447 = (__v_int)(((remaining_size + groups_left) - 1)); __v_int _t4__vmsvc4448 = (__v_int)(groups_left); if (_t4__vmsvc4448 == 0) v_panic(_S("division by zero")); target_size = ((__v_int)(_t3__vmsvc4447 / _t4__vmsvc4448));
 				current = array_new(				sizeof(string), 0, 0);
 				current_size = 0;
 			}
@@ -192955,7 +192960,7 @@ string driver__modules_layout_blocked(string blocker, string command) {
 		__if_val_0 = _str_4059;
 	}
 	string kind = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc4450[6]; __v3_internal_symbol_join_0__vmsvc4450[0] = _str_4060; __v3_internal_symbol_join_0__vmsvc4450[1] = os__quoted_path(blocker); __v3_internal_symbol_join_0__vmsvc4450[2] = _str_4061; __v3_internal_symbol_join_0__vmsvc4450[3] = kind; __v3_internal_symbol_join_0__vmsvc4450[4] = _str_4062; __v3_internal_symbol_join_0__vmsvc4450[5] = command; return (string_plus_many(6, __v3_internal_symbol_join_0__vmsvc4450));
+	string __v3_internal_symbol_join_0__vmsvc4449[6]; __v3_internal_symbol_join_0__vmsvc4449[0] = _str_4060; __v3_internal_symbol_join_0__vmsvc4449[1] = os__quoted_path(blocker); __v3_internal_symbol_join_0__vmsvc4449[2] = _str_4061; __v3_internal_symbol_join_0__vmsvc4449[3] = kind; __v3_internal_symbol_join_0__vmsvc4449[4] = _str_4062; __v3_internal_symbol_join_0__vmsvc4449[5] = command; return (string_plus_many(6, __v3_internal_symbol_join_0__vmsvc4449));
 }
 
 __v_option_string driver__modules_layout_blocker(string root, string target) {
@@ -192993,11 +192998,11 @@ string driver__modules_layout_mkdir(string dir) {
 string driver__modules_layout_move(string source, string target) {
 	#if defined(_WIN32)
 	{
-		string __v3_internal_symbol_join_0__vmsvc4451[4]; __v3_internal_symbol_join_0__vmsvc4451[0] = _str_4060; __v3_internal_symbol_join_0__vmsvc4451[1] = os__quoted_path(source); __v3_internal_symbol_join_0__vmsvc4451[2] = _str_1; __v3_internal_symbol_join_0__vmsvc4451[3] = os__quoted_path(target); return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4451));
+		string __v3_internal_symbol_join_0__vmsvc4450[4]; __v3_internal_symbol_join_0__vmsvc4450[0] = _str_4060; __v3_internal_symbol_join_0__vmsvc4450[1] = os__quoted_path(source); __v3_internal_symbol_join_0__vmsvc4450[2] = _str_1; __v3_internal_symbol_join_0__vmsvc4450[3] = os__quoted_path(target); return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4450));
 	}
 	#else
 	{
-		string __v3_internal_symbol_join_1__vmsvc4452[4]; __v3_internal_symbol_join_1__vmsvc4452[0] = _str_4063; __v3_internal_symbol_join_1__vmsvc4452[1] = os__quoted_path(source); __v3_internal_symbol_join_1__vmsvc4452[2] = _str_1; __v3_internal_symbol_join_1__vmsvc4452[3] = os__quoted_path(target); return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4452));
+		string __v3_internal_symbol_join_1__vmsvc4451[4]; __v3_internal_symbol_join_1__vmsvc4451[0] = _str_4063; __v3_internal_symbol_join_1__vmsvc4451[1] = os__quoted_path(source); __v3_internal_symbol_join_1__vmsvc4451[2] = _str_1; __v3_internal_symbol_join_1__vmsvc4451[3] = os__quoted_path(target); return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4451));
 	}
 	#endif
 }
@@ -193014,7 +193019,7 @@ string driver__modules_layout_move_command(string root, string relative, string 
 		if (string__eq(blocker, top_target)) {
 			__if_val_1 = driver__modules_layout_move(top_source, top_target);
 		} else {
-			string __v3_internal_symbol_join_0__vmsvc4453[3]; __v3_internal_symbol_join_0__vmsvc4453[0] = driver__modules_layout_mkdir(os__dir(target)); __v3_internal_symbol_join_0__vmsvc4453[1] = _str_4055; __v3_internal_symbol_join_0__vmsvc4453[2] = driver__modules_layout_move(source, target); __if_val_1 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4453));
+			string __v3_internal_symbol_join_0__vmsvc4452[3]; __v3_internal_symbol_join_0__vmsvc4452[0] = driver__modules_layout_mkdir(os__dir(target)); __v3_internal_symbol_join_0__vmsvc4452[1] = _str_4055; __v3_internal_symbol_join_0__vmsvc4452[2] = driver__modules_layout_move(source, target); __if_val_1 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4452));
 		}
 		string rest = __if_val_1;
 		return driver__modules_layout_blocked(blocker, rest);
@@ -193023,13 +193028,13 @@ string driver__modules_layout_move_command(string root, string relative, string 
 		return driver__modules_layout_move(top_source, top_target);
 	}
 	if (os__exists(target)) {
-		string __v3_internal_symbol_join_1__vmsvc4454[4]; __v3_internal_symbol_join_1__vmsvc4454[0] = _str_4056; __v3_internal_symbol_join_1__vmsvc4454[1] = os__quoted_path(source); __v3_internal_symbol_join_1__vmsvc4454[2] = _str_4057; __v3_internal_symbol_join_1__vmsvc4454[3] = os__quoted_path(target); return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4454));
+		string __v3_internal_symbol_join_1__vmsvc4453[4]; __v3_internal_symbol_join_1__vmsvc4453[0] = _str_4056; __v3_internal_symbol_join_1__vmsvc4453[1] = os__quoted_path(source); __v3_internal_symbol_join_1__vmsvc4453[2] = _str_4057; __v3_internal_symbol_join_1__vmsvc4453[3] = os__quoted_path(target); return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4453));
 	}
 	string target_parent = os__dir(target);
 	if (os__is_dir(target_parent)) {
 		return driver__modules_layout_move(source, target);
 	}
-	string __v3_internal_symbol_join_2__vmsvc4455[3]; __v3_internal_symbol_join_2__vmsvc4455[0] = driver__modules_layout_mkdir(target_parent); __v3_internal_symbol_join_2__vmsvc4455[1] = _str_4055; __v3_internal_symbol_join_2__vmsvc4455[2] = driver__modules_layout_move(source, target); return (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4455));
+	string __v3_internal_symbol_join_2__vmsvc4454[3]; __v3_internal_symbol_join_2__vmsvc4454[0] = driver__modules_layout_mkdir(target_parent); __v3_internal_symbol_join_2__vmsvc4454[1] = _str_4055; __v3_internal_symbol_join_2__vmsvc4454[2] = driver__modules_layout_move(source, target); return (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc4454));
 }
 
 __v_option_string driver__modules_layout_source_link(string root, string source) {
@@ -193070,7 +193075,7 @@ Array driver__monomorph_cache_runtime_strings(flat__FlatAst* a, Array source_fil
 		__v_int idx = 0;
 		for (; idx < a->nodes.len; idx++) {
 			flat__Node node = *(flat__Node*)(array_get(a->nodes, idx));
-			int cond__vmsvc4457; cond__vmsvc4457 = !!((node.kind != flat__NodeKind__file)); if (!cond__vmsvc4457) { string __map_key_3__vmsvc4456 = flat__FlatAst__real_source_path(a, node.value); cond__vmsvc4457 = !!((!map__exists(&source_paths, &__map_key_3__vmsvc4456))); } if (cond__vmsvc4457) {
+			int cond__vmsvc4456; cond__vmsvc4456 = !!((node.kind != flat__NodeKind__file)); if (!cond__vmsvc4456) { string __map_key_3__vmsvc4455 = flat__FlatAst__real_source_path(a, node.value); cond__vmsvc4456 = !!((!map__exists(&source_paths, &__map_key_3__vmsvc4455))); } if (cond__vmsvc4456) {
 				continue;
 			}
 			i32 __arr_val_4 = (i32)(idx);
@@ -193127,7 +193132,7 @@ string driver__monomorph_cache_semantic_signature(flat__FlatAst* a, Array source
 		__v_int idx = 0;
 		for (; idx < a->nodes.len; idx++) {
 			flat__Node node = *(flat__Node*)(array_get(a->nodes, idx));
-			int cond__vmsvc4459; cond__vmsvc4459 = !!((node.kind == flat__NodeKind__file)); if (cond__vmsvc4459) { string __map_key_3__vmsvc4458 = flat__FlatAst__real_source_path(a, node.value); cond__vmsvc4459 = !!((map__exists(&source_paths, &__map_key_3__vmsvc4458))); } if (cond__vmsvc4459) {
+			int cond__vmsvc4458; cond__vmsvc4458 = !!((node.kind == flat__NodeKind__file)); if (cond__vmsvc4458) { string __map_key_3__vmsvc4457 = flat__FlatAst__real_source_path(a, node.value); cond__vmsvc4458 = !!((map__exists(&source_paths, &__map_key_3__vmsvc4457))); } if (cond__vmsvc4458) {
 				__v_int __arr_val_4 = idx;
 				{ Array* __v3_internal_symbol_scalar_push_base_0 = &file_ids; __v_int __v3_internal_symbol_scalar_push_value_0 = __arr_val_4; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
 			}
@@ -193167,7 +193172,7 @@ string driver__monomorph_cache_semantic_signature(flat__FlatAst* a, Array source
 					bool __map_val_7 = true;
 					map__set(&source_function_names, &__map_key_6, &__map_val_7);
 					if (module_name.len > 0) {
-						string __v3_internal_symbol_join_3__vmsvc4460[3]; __v3_internal_symbol_join_3__vmsvc4460[0] = module_name; __v3_internal_symbol_join_3__vmsvc4460[1] = _str_2; __v3_internal_symbol_join_3__vmsvc4460[2] = child.value; string __map_key_8 = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4460));
+						string __v3_internal_symbol_join_3__vmsvc4459[3]; __v3_internal_symbol_join_3__vmsvc4459[0] = module_name; __v3_internal_symbol_join_3__vmsvc4459[1] = _str_2; __v3_internal_symbol_join_3__vmsvc4459[2] = child.value; string __map_key_8 = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4459));
 						bool __map_val_9 = true;
 						map__set(&source_function_names, &__map_key_8, &__map_val_9);
 					}
@@ -193276,7 +193281,7 @@ Array driver__msvc_cl_args(Array args, string target_os) {
 __v_option_driver__MsvcClLocation driver__msvc_cl_location(string cl_path) {
 	Array parts = string__split(string__replace(cl_path, _str_373, _str_374), _str_374);
 	__v_int n = parts.len;
-	int cond__vmsvc4462; cond__vmsvc4462 = !!((n < 6)); if (!cond__vmsvc4462) { string __in_lhs_0__vmsvc4461 = string__to_lower_ascii((*(string*)array_get(parts, n - 1))); cond__vmsvc4462 = !!((!(string__eq(__in_lhs_0__vmsvc4461, _str_1271) || string__eq(__in_lhs_0__vmsvc4461, _str_1270)))); } if (cond__vmsvc4462 || !string__eq(string__to_lower_ascii((*(string*)array_get(parts, n - 4))), _str_2562) || !string__starts_with(string__to_lower_ascii((*(string*)array_get(parts, n - 3))), _str_4294)) {
+	int cond__vmsvc4461; cond__vmsvc4461 = !!((n < 6)); if (!cond__vmsvc4461) { string __in_lhs_0__vmsvc4460 = string__to_lower_ascii((*(string*)array_get(parts, n - 1))); cond__vmsvc4461 = !!((!(string__eq(__in_lhs_0__vmsvc4460, _str_1271) || string__eq(__in_lhs_0__vmsvc4460, _str_1270)))); } if (cond__vmsvc4461 || !string__eq(string__to_lower_ascii((*(string*)array_get(parts, n - 4))), _str_2562) || !string__starts_with(string__to_lower_ascii((*(string*)array_get(parts, n - 3))), _str_4294)) {
 		return (__v_option_driver__MsvcClLocation){.ok = false};
 	}
 	string __slice_base_1 = (*(string*)array_get(parts, n - 3));
@@ -193453,7 +193458,7 @@ __v_option_string driver__msvc_inline_asm_error(flat__FlatAst* a, map used_fns) 
 				cur_module = node.value;
 				continue;
 			}
-			int cond__vmsvc4466; cond__vmsvc4466 = !!((node.kind != flat__NodeKind__fn_decl)); if (!cond__vmsvc4466) { int cond__vmsvc4465; cond__vmsvc4465 = !!(((flat__Node__generic_params(&node)).len > 0)); if (cond__vmsvc4465) { __v_int __map_key_2__vmsvc4463 = idx; bool __map_zero_3__vmsvc4464 = false; cond__vmsvc4465 = !!((!*(bool*)(map__get(&a->specialized_fn_nodes, &__map_key_2__vmsvc4463, &__map_zero_3__vmsvc4464)))); } cond__vmsvc4466 = !!((cond__vmsvc4465)); } if (cond__vmsvc4466) {
+			int cond__vmsvc4465; cond__vmsvc4465 = !!((node.kind != flat__NodeKind__fn_decl)); if (!cond__vmsvc4465) { int cond__vmsvc4464; cond__vmsvc4464 = !!(((flat__Node__generic_params(&node)).len > 0)); if (cond__vmsvc4464) { __v_int __map_key_2__vmsvc4462 = idx; bool __map_zero_3__vmsvc4463 = false; cond__vmsvc4464 = !!((!*(bool*)(map__get(&a->specialized_fn_nodes, &__map_key_2__vmsvc4462, &__map_zero_3__vmsvc4463)))); } cond__vmsvc4465 = !!((cond__vmsvc4464)); } if (cond__vmsvc4465) {
 				continue;
 			}
 			__v_int __map_key_6 = idx;
@@ -193507,28 +193512,28 @@ __v_option_string driver__msvc_inline_asm_node_error(flat__FlatAst* a, i32 id, b
 }
 
 bool driver__msvc_is_all_digits_part(string text) {
-	int cond__vmsvc4469; cond__vmsvc4469 = !!((text.len > 0) && (text.len <= driver__msvc_max_version_digits)); if (cond__vmsvc4469) { Array __all_source_0__vmsvc4467 = string__bytes(text); bool __all_1__vmsvc4468 = true; {
+	int cond__vmsvc4468; cond__vmsvc4468 = !!((text.len > 0) && (text.len <= driver__msvc_max_version_digits)); if (cond__vmsvc4468) { Array __all_source_0__vmsvc4466 = string__bytes(text); bool __all_1__vmsvc4467 = true; {
 		__v_int __all_idx_2 = 0;
-		for (; __all_idx_2 < __all_source_0__vmsvc4467.len; __all_idx_2++) {
-			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc4467, __all_idx_2));
+		for (; __all_idx_2 < __all_source_0__vmsvc4466.len; __all_idx_2++) {
+			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc4466, __all_idx_2));
 			if (!(u8__is_digit(__all_it_3))) {
-				__all_1__vmsvc4468 = false;
+				__all_1__vmsvc4467 = false;
 			}
 		}
-	} cond__vmsvc4469 = !!((__all_1__vmsvc4468)); } return cond__vmsvc4469;
+	} cond__vmsvc4468 = !!((__all_1__vmsvc4467)); } return cond__vmsvc4468;
 }
 
 bool driver__msvc_is_version_name(string name) {
 	Array parts = string__split(name, _str_2);
-	int cond__vmsvc4471; cond__vmsvc4471 = !!((parts.len >= 2)); if (cond__vmsvc4471) { bool __all_0__vmsvc4470 = true; {
+	int cond__vmsvc4470; cond__vmsvc4470 = !!((parts.len >= 2)); if (cond__vmsvc4470) { bool __all_0__vmsvc4469 = true; {
 		__v_int __all_idx_1 = 0;
 		for (; __all_idx_1 < parts.len; __all_idx_1++) {
 			string __all_it_2 = *(string*)(array_get(parts, __all_idx_1));
 			if (!(driver__msvc_is_all_digits_part(__all_it_2))) {
-				__all_0__vmsvc4470 = false;
+				__all_0__vmsvc4469 = false;
 			}
 		}
-	} cond__vmsvc4471 = !!((__all_0__vmsvc4470)); } return cond__vmsvc4471;
+	} cond__vmsvc4470 = !!((__all_0__vmsvc4469)); } return cond__vmsvc4470;
 }
 
 string driver__msvc_lib_value(string tools_dir, driver__MsvcWindowsSdk sdk, string arch) {
@@ -193561,7 +193566,7 @@ __v_result driver__msvc_lower_c_file(string path) {
 
 string driver__msvc_missing_cl_message(string c_compiler, string host_os, pref__Target target) {
 	if (string__eq(host_os, _str_865)) {
-		string __v3_internal_symbol_join_0__vmsvc4472[3]; __v3_internal_symbol_join_0__vmsvc4472[0] = _str_4285; __v3_internal_symbol_join_0__vmsvc4472[1] = c_compiler; __v3_internal_symbol_join_0__vmsvc4472[2] = _str_4286; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4472));
+		string __v3_internal_symbol_join_0__vmsvc4471[3]; __v3_internal_symbol_join_0__vmsvc4471[0] = _str_4285; __v3_internal_symbol_join_0__vmsvc4471[1] = c_compiler; __v3_internal_symbol_join_0__vmsvc4471[2] = _str_4286; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4471));
 	}
 	Array flags = array_new(	sizeof(string), 0, 0);
 	if (!string__eq(target.os, _str_865)) {
@@ -193574,7 +193579,7 @@ string driver__msvc_missing_cl_message(string c_compiler, string host_os, pref__
 	}
 	Array __push_many_2 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_4289, _str_4290});
 	array__push_many(&flags, __push_many_2.data, __push_many_2.len);
-	string __v3_internal_symbol_join_1__vmsvc4473[5]; __v3_internal_symbol_join_1__vmsvc4473[0] = _str_4291; __v3_internal_symbol_join_1__vmsvc4473[1] = host_os; __v3_internal_symbol_join_1__vmsvc4473[2] = _str_4292; __v3_internal_symbol_join_1__vmsvc4473[3] = Array_string__join(flags, _str_1); __v3_internal_symbol_join_1__vmsvc4473[4] = _str_4293; return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc4473));
+	string __v3_internal_symbol_join_1__vmsvc4472[5]; __v3_internal_symbol_join_1__vmsvc4472[0] = _str_4291; __v3_internal_symbol_join_1__vmsvc4472[1] = host_os; __v3_internal_symbol_join_1__vmsvc4472[2] = _str_4292; __v3_internal_symbol_join_1__vmsvc4472[3] = Array_string__join(flags, _str_1); __v3_internal_symbol_join_1__vmsvc4472[4] = _str_4293; return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc4472));
 }
 
 string driver__msvc_newest_version_dir(string dir, _fn_ptr_ceca9c2c6f0dd71 usable) {
@@ -193604,11 +193609,11 @@ string driver__msvc_newest_version_dir(string dir, _fn_ptr_ceca9c2c6f0dd71 usabl
 }
 
 string driver__msvc_no_sdk_message(string arch) {
-	string __v3_internal_symbol_join_0__vmsvc4474[3]; string __v3_internal_symbol_join_1__vmsvc4475[3]; __v3_internal_symbol_join_1__vmsvc4475[0] = _str_4334; __v3_internal_symbol_join_1__vmsvc4475[1] = arch; __v3_internal_symbol_join_1__vmsvc4475[2] = _str_4335; __v3_internal_symbol_join_0__vmsvc4474[0] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4475)); __v3_internal_symbol_join_0__vmsvc4474[1] = _str_4336; __v3_internal_symbol_join_0__vmsvc4474[2] = _str_4337; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4474));
+	string __v3_internal_symbol_join_0__vmsvc4473[3]; string __v3_internal_symbol_join_1__vmsvc4474[3]; __v3_internal_symbol_join_1__vmsvc4474[0] = _str_4334; __v3_internal_symbol_join_1__vmsvc4474[1] = arch; __v3_internal_symbol_join_1__vmsvc4474[2] = _str_4335; __v3_internal_symbol_join_0__vmsvc4473[0] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4474)); __v3_internal_symbol_join_0__vmsvc4473[1] = _str_4336; __v3_internal_symbol_join_0__vmsvc4473[2] = _str_4337; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4473));
 }
 
 string driver__msvc_no_tools_message(string arch) {
-	string __v3_internal_symbol_join_0__vmsvc4476[3]; string __v3_internal_symbol_join_1__vmsvc4477[3]; __v3_internal_symbol_join_1__vmsvc4477[0] = _str_4330; __v3_internal_symbol_join_1__vmsvc4477[1] = arch; __v3_internal_symbol_join_1__vmsvc4477[2] = _str_4331; __v3_internal_symbol_join_0__vmsvc4476[0] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4477)); __v3_internal_symbol_join_0__vmsvc4476[1] = _str_4332; __v3_internal_symbol_join_0__vmsvc4476[2] = _str_4333; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4476));
+	string __v3_internal_symbol_join_0__vmsvc4475[3]; string __v3_internal_symbol_join_1__vmsvc4476[3]; __v3_internal_symbol_join_1__vmsvc4476[0] = _str_4330; __v3_internal_symbol_join_1__vmsvc4476[1] = arch; __v3_internal_symbol_join_1__vmsvc4476[2] = _str_4331; __v3_internal_symbol_join_0__vmsvc4475[0] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4476)); __v3_internal_symbol_join_0__vmsvc4475[1] = _str_4332; __v3_internal_symbol_join_0__vmsvc4475[2] = _str_4333; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4475));
 }
 
 string driver__msvc_parse_registry_value(string output, string name) {
@@ -193641,7 +193646,7 @@ string driver__msvc_path_with_front(string dir) {
 	if (string__eq(path, _str_34)) {
 		return dir;
 	} else {
-		string __v3_internal_symbol_join_0__vmsvc4478[3]; __v3_internal_symbol_join_0__vmsvc4478[0] = dir; __v3_internal_symbol_join_0__vmsvc4478[1] = os__path_delimiter; __v3_internal_symbol_join_0__vmsvc4478[2] = path; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4478));
+		string __v3_internal_symbol_join_0__vmsvc4477[3]; __v3_internal_symbol_join_0__vmsvc4477[0] = dir; __v3_internal_symbol_join_0__vmsvc4477[1] = os__path_delimiter; __v3_internal_symbol_join_0__vmsvc4477[2] = path; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4477));
 	}
 }
 
@@ -194188,7 +194193,7 @@ Array driver__native_build_input_paths(flat__FlatAst* a, pref__Preferences* pref
 	array__push_many(&roots, __push_many_1.data, __push_many_1.len);
 	string __if_val_2 = {0};
 	if ((roots.len == 0) && (flags.len > 0) && !driver__c_compiler_is_msvc(c_compiler)) {
-		string __v3_internal_symbol_join_0__vmsvc4479[3]; __v3_internal_symbol_join_0__vmsvc4479[0] = _str_3987; __v3_internal_symbol_join_0__vmsvc4479[1] = tempname__unique_token(); __v3_internal_symbol_join_0__vmsvc4479[2] = _str_640; __if_val_2 = os__join_path_single(os__vtmp_dir(), (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4479)));
+		string __v3_internal_symbol_join_0__vmsvc4478[3]; __v3_internal_symbol_join_0__vmsvc4478[0] = _str_3987; __v3_internal_symbol_join_0__vmsvc4478[1] = tempname__unique_token(); __v3_internal_symbol_join_0__vmsvc4478[2] = _str_640; __if_val_2 = os__join_path_single(os__vtmp_dir(), (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4478)));
 	} else {
 		__if_val_2 = _str_34;
 	}
@@ -194337,8 +194342,8 @@ __v_option_string driver__nearest_vroot_for_path(string path) {
 		dir = os__dir(dir);
 	}
 	{
-		__v_int __discard_15215236722831141574_818424_818425 = 0;
-		for (; __discard_15215236722831141574_818424_818425 < 8; __discard_15215236722831141574_818424_818425++) {
+		__v_int __discard_15215236722831141574_818846_818847 = 0;
+		for (; __discard_15215236722831141574_818846_818847 < 8; __discard_15215236722831141574_818846_818847++) {
 			if (driver__is_valid_vroot(dir)) {
 				return (__v_option_string){.ok = true, .value = dir};
 			}
@@ -194395,7 +194400,7 @@ __v_option_types__TypeError driver__no_closures_error(flat__FlatAst* a, types__T
 			if (idx < a->user_code_start) {
 				continue;
 			}
-			int cond__vmsvc4481; cond__vmsvc4481 = !!((node.kind == flat__NodeKind__selector) && (node.children_count > 0)); if (cond__vmsvc4481) { __v_int __map_key_5__vmsvc4480 = idx; cond__vmsvc4481 = !!((!map__exists(&call_callees, &__map_key_5__vmsvc4480))); } if (cond__vmsvc4481 && types__TypeChecker__expr_is_method_value(tc, (i32)(idx))) {
+			int cond__vmsvc4480; cond__vmsvc4480 = !!((node.kind == flat__NodeKind__selector) && (node.children_count > 0)); if (cond__vmsvc4480) { __v_int __map_key_5__vmsvc4479 = idx; cond__vmsvc4480 = !!((!map__exists(&call_callees, &__map_key_5__vmsvc4479))); } if (cond__vmsvc4480 && types__TypeChecker__expr_is_method_value(tc, (i32)(idx))) {
 				token__Pos member_pos = token__new_span(node.pos.id, node.pos.end - node.value.len, node.pos.end);
 				return (__v_option_types__TypeError){.ok = true, .value = (types__TypeError){.msg = string__plus(_str_3993, node.value), .kind = types__TypeErrorKind__compile_error, .node = (i32)(idx), .node_kind = flat__NodeKind__autostr(node.kind), .node_value = node.value, .pos = member_pos, .severity = _str_3994, .file = _str_34, .node_pos = _str_34, .details = array_new(sizeof(string), 0, 0)}};
 			}
@@ -194511,7 +194516,7 @@ multi_return_Array_bool driver__parse_files_dispatch_profiled(parser__Parser* p,
 		if (source_weight == 0) {
 			__if_val_4 = elapsed_us;
 		} else {
-			i64 _t1__vmsvc4482 = (i64)(elapsed_us * header_weight); i64 _t2__vmsvc4483 = (i64)(total_weight); if (_t2__vmsvc4483 == 0) v_panic(_S("division by zero")); __if_val_4 = ((i64)(_t1__vmsvc4482 / _t2__vmsvc4483));
+			i64 _t1__vmsvc4481 = (i64)(elapsed_us * header_weight); i64 _t2__vmsvc4482 = (i64)(total_weight); if (_t2__vmsvc4482 == 0) v_panic(_S("division by zero")); __if_val_4 = ((i64)(_t1__vmsvc4481 / _t2__vmsvc4482));
 		}
 	}
 	i64 header_us = __if_val_4;
@@ -194547,7 +194552,7 @@ __v_result_Array driver__parse_ico_bytes(Array data) {
 			__v_int image_offset = (__v_int)(binary__little_endian_u32(array_slice(			data, 			entry_offset + 12, 			entry_offset + 16)));
 			__v_int image_end = image_offset + image_size;
 			if ((image_offset < 0) || (image_size <= 0) || (image_offset > data.len) || (image_end > data.len)) {
-				string __v3_internal_symbol_join_0__vmsvc4484[3]; __v3_internal_symbol_join_0__vmsvc4484[0] = _str_5115; __v3_internal_symbol_join_0__vmsvc4484[1] = int__str(i + 1); __v3_internal_symbol_join_0__vmsvc4484[2] = _str_5116; return (__v_result_Array){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4484)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_0__vmsvc4483[3]; __v3_internal_symbol_join_0__vmsvc4483[0] = _str_5115; __v3_internal_symbol_join_0__vmsvc4483[1] = int__str(i + 1); __v3_internal_symbol_join_0__vmsvc4483[2] = _str_5116; return (__v_result_Array){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4483)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 			Array __addr_0 = array_slice(			data, 			image_offset, 			image_end);
 			driver__WindowsIconImage __arr_val_1 = (driver__WindowsIconImage){.width = (*(u8*)array_get(data, entry_offset)), .height = (*(u8*)array_get(data, entry_offset + 1)), .color_count = (*(u8*)array_get(data, entry_offset + 2)), .planes = binary__little_endian_u16(array_slice(			data, 			entry_offset + 4, 			entry_offset + 6)), .bit_count = binary__little_endian_u16(array_slice(			data, 			entry_offset + 6, 			entry_offset + 8)), .bytes_in_res = (u32)(image_size), .image_data = array__clone(&__addr_0)};
@@ -194610,15 +194615,15 @@ __v_result_i64 driver__parse_memory_limit(string value) {
 	}
 	string number = __match_result_0;
 	i64 multiplier = __match_result_1;
-	int cond__vmsvc4487; cond__vmsvc4487 = !!((number.len == 0)); if (!cond__vmsvc4487) { Array __all_source_11__vmsvc4485 = string__bytes(number); bool __all_12__vmsvc4486 = true; {
+	int cond__vmsvc4486; cond__vmsvc4486 = !!((number.len == 0)); if (!cond__vmsvc4486) { Array __all_source_11__vmsvc4484 = string__bytes(number); bool __all_12__vmsvc4485 = true; {
 		__v_int __all_idx_13 = 0;
-		for (; __all_idx_13 < __all_source_11__vmsvc4485.len; __all_idx_13++) {
-			u8 __all_it_14 = *(u8*)(array_get(__all_source_11__vmsvc4485, __all_idx_13));
+		for (; __all_idx_13 < __all_source_11__vmsvc4484.len; __all_idx_13++) {
+			u8 __all_it_14 = *(u8*)(array_get(__all_source_11__vmsvc4484, __all_idx_13));
 			if (!((__all_it_14 >= '0') && (__all_it_14 <= '9'))) {
-				__all_12__vmsvc4486 = false;
+				__all_12__vmsvc4485 = false;
 			}
 		}
-	} cond__vmsvc4487 = !!((!__all_12__vmsvc4486)); } if (cond__vmsvc4487) {
+	} cond__vmsvc4486 = !!((!__all_12__vmsvc4485)); } if (cond__vmsvc4486) {
 		return (__v_result_i64){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = _str_3190, .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	__v_result_i64 __or_opt_15 = strconv__parse_int(number, 10, 64);
@@ -194630,7 +194635,7 @@ __v_result_i64 driver__parse_memory_limit(string value) {
 		return (__v_result_i64){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = _str_3191, .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	i64 limit = __or_val_16;
-	i64 _t1__vmsvc4488 = (i64)(builtin__max_i64); i64 _t2__vmsvc4489 = (i64)(multiplier); if (_t2__vmsvc4489 == 0) v_panic(_S("division by zero")); if (limit > (((i64)(_t1__vmsvc4488 / _t2__vmsvc4489)))) {
+	i64 _t1__vmsvc4487 = (i64)(builtin__max_i64); i64 _t2__vmsvc4488 = (i64)(multiplier); if (_t2__vmsvc4488 == 0) v_panic(_S("division by zero")); if (limit > (((i64)(_t1__vmsvc4487 / _t2__vmsvc4488)))) {
 		return (__v_result_i64){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = _str_3191, .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	return (__v_result_i64){.ok = true, .value = limit * multiplier};
@@ -194649,7 +194654,7 @@ Array driver__parse_v3_environment_flags(string name) {
 		__or_val_2 = __or_opt_1.value;
 	} else {
 		IError err = __or_opt_1.err;
-		string __v3_internal_symbol_join_0__vmsvc4490[4]; __v3_internal_symbol_join_0__vmsvc4490[0] = _str_3179; __v3_internal_symbol_join_0__vmsvc4490[1] = name; __v3_internal_symbol_join_0__vmsvc4490[2] = _str_3180; __v3_internal_symbol_join_0__vmsvc4490[3] = IError__msg(&(err)); eprintln((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4490)));
+		string __v3_internal_symbol_join_0__vmsvc4489[4]; __v3_internal_symbol_join_0__vmsvc4489[0] = _str_3179; __v3_internal_symbol_join_0__vmsvc4489[1] = name; __v3_internal_symbol_join_0__vmsvc4489[2] = _str_3180; __v3_internal_symbol_join_0__vmsvc4489[3] = IError__msg(&(err)); eprintln((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4489)));
 		v_exit(1);
 	}
 	return __or_val_2;
@@ -194743,7 +194748,7 @@ bool driver__parsed_files_import_linux_gg(flat__FlatAst* a, Array files) {
 	map imports = driver__imports_from_files(a, files);
 	string __map_key_0 = _str_4049;
 	bool __map_zero_1 = false;
-	int cond__vmsvc4493; cond__vmsvc4493 = !!(*(bool*)(map__get(&imports, &__map_key_0, &__map_zero_1))); if (!cond__vmsvc4493) { string __map_key_2__vmsvc4491 = _str_4050; bool __map_zero_3__vmsvc4492 = false; cond__vmsvc4493 = !!((*(bool*)(map__get(&imports, &__map_key_2__vmsvc4491, &__map_zero_3__vmsvc4492)))); } return cond__vmsvc4493;
+	int cond__vmsvc4492; cond__vmsvc4492 = !!(*(bool*)(map__get(&imports, &__map_key_0, &__map_zero_1))); if (!cond__vmsvc4492) { string __map_key_2__vmsvc4490 = _str_4050; bool __map_zero_3__vmsvc4491 = false; cond__vmsvc4492 = !!((*(bool*)(map__get(&imports, &__map_key_2__vmsvc4490, &__map_zero_3__vmsvc4491)))); } return cond__vmsvc4492;
 }
 
 bool driver__path_is_within_tcc_macos_libgc_dir(string path, string directory) {
@@ -194806,13 +194811,13 @@ __v_result_driver__TccMacosLibgcPlan driver__plan_tcc_macos_libgc_store(string v
 		}
 	}
 	if ((near_dylibs > 0) || (near_rpaths > 0)) {
-		string __v3_internal_symbol_join_0__vmsvc4494[5]; __v3_internal_symbol_join_0__vmsvc4494[0] = _str_4933; __v3_internal_symbol_join_0__vmsvc4494[1] = int__str(near_dylibs); __v3_internal_symbol_join_0__vmsvc4494[2] = _str_4934; __v3_internal_symbol_join_0__vmsvc4494[3] = int__str(near_rpaths); __v3_internal_symbol_join_0__vmsvc4494[4] = _str_4935; return (__v_result_driver__TccMacosLibgcPlan){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4494)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc4493[5]; __v3_internal_symbol_join_0__vmsvc4493[0] = _str_4933; __v3_internal_symbol_join_0__vmsvc4493[1] = int__str(near_dylibs); __v3_internal_symbol_join_0__vmsvc4493[2] = _str_4934; __v3_internal_symbol_join_0__vmsvc4493[3] = int__str(near_rpaths); __v3_internal_symbol_join_0__vmsvc4493[4] = _str_4935; return (__v_result_driver__TccMacosLibgcPlan){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc4493)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	if ((dylib_locations.len == 0) && (rpath_locations.len == 0)) {
 		return (__v_result_driver__TccMacosLibgcPlan){.ok = true, .value = (driver__TccMacosLibgcPlan){.source_dylib = _str_34, .source_dylib_token = _str_34, .source_rpath_token = _str_34, .dylib_location = (driver__TccMacosLibgcTokenLocation){.v_index = -1, .arg_list = driver__TccMacosLibgcArgList__linker_flags}, .rpath_location = (driver__TccMacosLibgcTokenLocation){.v_index = -1, .arg_list = driver__TccMacosLibgcArgList__linker_flags}}};
 	}
 	if ((dylib_locations.len != 1) || (rpath_locations.len != 1)) {
-		string __v3_internal_symbol_join_1__vmsvc4495[4]; __v3_internal_symbol_join_1__vmsvc4495[0] = _str_4936; __v3_internal_symbol_join_1__vmsvc4495[1] = int__str(dylib_locations.len); __v3_internal_symbol_join_1__vmsvc4495[2] = _str_374; __v3_internal_symbol_join_1__vmsvc4495[3] = int__str(rpath_locations.len); return (__v_result_driver__TccMacosLibgcPlan){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4495)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_1__vmsvc4494[4]; __v3_internal_symbol_join_1__vmsvc4494[0] = _str_4936; __v3_internal_symbol_join_1__vmsvc4494[1] = int__str(dylib_locations.len); __v3_internal_symbol_join_1__vmsvc4494[2] = _str_374; __v3_internal_symbol_join_1__vmsvc4494[3] = int__str(rpath_locations.len); return (__v_result_driver__TccMacosLibgcPlan){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4494)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	return (__v_result_driver__TccMacosLibgcPlan){.ok = true, .value = (driver__TccMacosLibgcPlan){.required = true, .source_dylib = source_dylib, .source_dylib_token = dylib_token, .source_rpath_token = rpath_token, .dylib_location = (*(driver__TccMacosLibgcTokenLocation*)array_get(dylib_locations, 0)), .rpath_location = (*(driver__TccMacosLibgcTokenLocation*)array_get(rpath_locations, 0))}};
 	return (__v_result_driver__TccMacosLibgcPlan){.ok = true};
@@ -195070,7 +195075,7 @@ __v_result_string driver__prepare_cross_windows_icon_resource(string icon_path, 
 	string ico_path = __or_val_1;
 	string rc_path = os__join_path_single(build_dir, _str_5088);
 	string obj_path = os__join_path_single(build_dir, _str_5089);
-	string __v3_internal_symbol_join_0__vmsvc4496[3]; __v3_internal_symbol_join_0__vmsvc4496[0] = _str_5090; __v3_internal_symbol_join_0__vmsvc4496[1] = driver__rc_quoted_string(ico_path); __v3_internal_symbol_join_0__vmsvc4496[2] = _str_0; __v_result __or_opt_2 = os__write_file(rc_path, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4496)));
+	string __v3_internal_symbol_join_0__vmsvc4495[3]; __v3_internal_symbol_join_0__vmsvc4495[0] = _str_5090; __v3_internal_symbol_join_0__vmsvc4495[1] = driver__rc_quoted_string(ico_path); __v3_internal_symbol_join_0__vmsvc4495[2] = _str_0; __v_result __or_opt_2 = os__write_file(rc_path, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4495)));
 	if (!__or_opt_2.ok) {
 		return (__v_result_string){.ok = false, .err = __or_opt_2.err};
 	}
@@ -195088,7 +195093,7 @@ __v_result_string driver__prepare_cross_windows_icon_resource(string icon_path, 
 	}
 	os__Result res = cmdexec__run(windres, args);
 	if (res.exit_code != 0) {
-		string __v3_internal_symbol_join_1__vmsvc4497[4]; __v3_internal_symbol_join_1__vmsvc4497[0] = _str_5092; __v3_internal_symbol_join_1__vmsvc4497[1] = windres; __v3_internal_symbol_join_1__vmsvc4497[2] = _str_279; __v3_internal_symbol_join_1__vmsvc4497[3] = string__trim_space(res.output); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4497)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_1__vmsvc4496[4]; __v3_internal_symbol_join_1__vmsvc4496[0] = _str_5092; __v3_internal_symbol_join_1__vmsvc4496[1] = windres; __v3_internal_symbol_join_1__vmsvc4496[2] = _str_279; __v3_internal_symbol_join_1__vmsvc4496[3] = string__trim_space(res.output); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc4496)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	return (__v_result_string){.ok = true, .value = obj_path};
 	return (__v_result_string){.ok = true};
@@ -195230,8 +195235,8 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_cached_generic_body(
 	}
 	string tcc_declarations = driver__tcc_cached_main_source(__if_val_11, main_body);
 	string unique_string_definitions = modulecache__without_duplicate_static_string_definitions(current_string_definitions, cached_prefix);
-	string __v3_internal_symbol_join_0__vmsvc4498[3]; __v3_internal_symbol_join_0__vmsvc4498[0] = cached_prefix; __v3_internal_symbol_join_0__vmsvc4498[1] = unique_string_definitions; __v3_internal_symbol_join_0__vmsvc4498[2] = main_body; string main_source = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4498));
-	string __v3_internal_symbol_join_1__vmsvc4499[3]; __v3_internal_symbol_join_1__vmsvc4499[0] = _str_3805; __v3_internal_symbol_join_1__vmsvc4499[1] = tcc_declarations; __v3_internal_symbol_join_1__vmsvc4499[2] = main_body; string tcc_main_source = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4499));
+	string __v3_internal_symbol_join_0__vmsvc4497[3]; __v3_internal_symbol_join_0__vmsvc4497[0] = cached_prefix; __v3_internal_symbol_join_0__vmsvc4497[1] = unique_string_definitions; __v3_internal_symbol_join_0__vmsvc4497[2] = main_body; string main_source = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4497));
+	string __v3_internal_symbol_join_1__vmsvc4498[3]; __v3_internal_symbol_join_1__vmsvc4498[0] = _str_3805; __v3_internal_symbol_join_1__vmsvc4498[1] = tcc_declarations; __v3_internal_symbol_join_1__vmsvc4498[2] = main_body; string tcc_main_source = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc4498));
 	return (__v_result_driver__V3PreparedModuleCache){.ok = true, .value = (driver__V3PreparedModuleCache){.main_source = main_source, .tcc_main_source = tcc_main_source, .main_body = main_body, .program_prefix_source = cached_prefix, .program_declarations = combined_declarations, .tcc_program_declarations = tcc_declarations, .objects = driver__cache_object_paths(state->objects), .program_body_cache = _str_34}};
 	return (__v_result_driver__V3PreparedModuleCache){.ok = true};
 }
@@ -195383,7 +195388,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 		__map_val_34 = _str_34;
 	}
 	string program_support = __map_val_34;
-	string __v3_internal_symbol_join_0__vmsvc4500[3]; __v3_internal_symbol_join_0__vmsvc4500[0] = program_specializations; __v3_internal_symbol_join_0__vmsvc4500[1] = program_support; __v3_internal_symbol_join_0__vmsvc4500[2] = main_body; string program_generated_support = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4500));
+	string __v3_internal_symbol_join_0__vmsvc4499[3]; __v3_internal_symbol_join_0__vmsvc4499[0] = program_specializations; __v3_internal_symbol_join_0__vmsvc4499[1] = program_support; __v3_internal_symbol_join_0__vmsvc4499[2] = main_body; string program_generated_support = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4499));
 	driver__V3TccDylibBindings* native_bindings = (driver__V3TccDylibBindings*)memdup(&(driver__V3TccDylibBindings){.owner = _str_34, .declarations = _str_34}, sizeof(driver__V3TccDylibBindings));
 	if (state->native_bridge) {
 		map functions = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
@@ -195394,7 +195399,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 			string prototype = *(string*)((		state->bridge_functions).data->key_values.values + __mi_1 * (		state->bridge_functions).data->key_values.value_bytes);
 			string __map_key_35 = string__plus(_str_2688, name);
 			bool __map_zero_36 = false;
-			int cond__vmsvc4503; cond__vmsvc4503 = !!(*(bool*)(map__get((map*)(cache_used_fns), &__map_key_35, &__map_zero_36))); if (!cond__vmsvc4503) { string __map_key_37__vmsvc4501 = name; bool __map_zero_38__vmsvc4502 = false; cond__vmsvc4503 = !!((*(bool*)(map__get((map*)(cache_used_fns), &__map_key_37__vmsvc4501, &__map_zero_38__vmsvc4502)))); } int cond__vmsvc4506; cond__vmsvc4506 = !!(cond__vmsvc4503); if (!cond__vmsvc4506) { string __map_key_39__vmsvc4504 = string__plus(_str_2688, name); bool __map_zero_40__vmsvc4505 = false; cond__vmsvc4506 = !!((*(bool*)(map__get((map*)(program_used_fns), &__map_key_39__vmsvc4504, &__map_zero_40__vmsvc4505)))); } int cond__vmsvc4509; cond__vmsvc4509 = !!(cond__vmsvc4506); if (!cond__vmsvc4509) { string __map_key_41__vmsvc4507 = name; bool __map_zero_42__vmsvc4508 = false; cond__vmsvc4509 = !!((*(bool*)(map__get((map*)(program_used_fns), &__map_key_41__vmsvc4507, &__map_zero_42__vmsvc4508)))); } if (cond__vmsvc4509) {
+			int cond__vmsvc4502; cond__vmsvc4502 = !!(*(bool*)(map__get((map*)(cache_used_fns), &__map_key_35, &__map_zero_36))); if (!cond__vmsvc4502) { string __map_key_37__vmsvc4500 = name; bool __map_zero_38__vmsvc4501 = false; cond__vmsvc4502 = !!((*(bool*)(map__get((map*)(cache_used_fns), &__map_key_37__vmsvc4500, &__map_zero_38__vmsvc4501)))); } int cond__vmsvc4505; cond__vmsvc4505 = !!(cond__vmsvc4502); if (!cond__vmsvc4505) { string __map_key_39__vmsvc4503 = string__plus(_str_2688, name); bool __map_zero_40__vmsvc4504 = false; cond__vmsvc4505 = !!((*(bool*)(map__get((map*)(program_used_fns), &__map_key_39__vmsvc4503, &__map_zero_40__vmsvc4504)))); } int cond__vmsvc4508; cond__vmsvc4508 = !!(cond__vmsvc4505); if (!cond__vmsvc4508) { string __map_key_41__vmsvc4506 = name; bool __map_zero_42__vmsvc4507 = false; cond__vmsvc4508 = !!((*(bool*)(map__get((map*)(program_used_fns), &__map_key_41__vmsvc4506, &__map_zero_42__vmsvc4507)))); } if (cond__vmsvc4508) {
 				string __map_key_43 = name;
 				string __map_val_44 = prototype;
 				map__set(&functions, &__map_key_43, &__map_val_44);
@@ -195420,16 +195425,16 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 		__if_val_47 = raw_main_prefix;
 	}
 	string main_prefix = __if_val_47;
-	string __v3_internal_symbol_join_2__vmsvc4510[5]; __v3_internal_symbol_join_2__vmsvc4510[0] = _str_3805; __v3_internal_symbol_join_2__vmsvc4510[1] = main_prefix; __v3_internal_symbol_join_2__vmsvc4510[2] = program_specializations; __v3_internal_symbol_join_2__vmsvc4510[3] = program_support; __v3_internal_symbol_join_2__vmsvc4510[4] = main_body; string main_source = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4510));
+	string __v3_internal_symbol_join_2__vmsvc4509[5]; __v3_internal_symbol_join_2__vmsvc4509[0] = _str_3805; __v3_internal_symbol_join_2__vmsvc4509[1] = main_prefix; __v3_internal_symbol_join_2__vmsvc4509[2] = program_specializations; __v3_internal_symbol_join_2__vmsvc4509[3] = program_support; __v3_internal_symbol_join_2__vmsvc4509[4] = main_body; string main_source = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc4509));
 	string dylib_prefix = _str_34;
 	string main_declarations = _str_34;
 	string tcc_declarations = _str_34;
 	string tcc_main = _str_34;
 	if (!state->objects_only) {
-		string __v3_internal_symbol_join_3__vmsvc4511[3]; __v3_internal_symbol_join_3__vmsvc4511[0] = main_prefix; __v3_internal_symbol_join_3__vmsvc4511[1] = program_specializations; __v3_internal_symbol_join_3__vmsvc4511[2] = program_support; dylib_prefix = modulecache__prune_unreferenced_static_string_definitions((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4511)));
+		string __v3_internal_symbol_join_3__vmsvc4510[3]; __v3_internal_symbol_join_3__vmsvc4510[0] = main_prefix; __v3_internal_symbol_join_3__vmsvc4510[1] = program_specializations; __v3_internal_symbol_join_3__vmsvc4510[2] = program_support; dylib_prefix = modulecache__prune_unreferenced_static_string_definitions((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4510)));
 	}
 	if (!state->objects_only && !state->no_program_declarations) {
-		string __v3_internal_symbol_join_4__vmsvc4512[3]; __v3_internal_symbol_join_4__vmsvc4512[0] = split->prefix; __v3_internal_symbol_join_4__vmsvc4512[1] = program_specializations; __v3_internal_symbol_join_4__vmsvc4512[2] = program_support; main_declarations = driver__v3_cached_c_unit_source(driver__prune_cache_only_function_prototypes(driver__cache_source_without_cached_native_inputs(modulecache__declaration_header((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4512))), state, false), cache_used_fns, program_generated_support, tc, state), false);
+		string __v3_internal_symbol_join_4__vmsvc4511[3]; __v3_internal_symbol_join_4__vmsvc4511[0] = split->prefix; __v3_internal_symbol_join_4__vmsvc4511[1] = program_specializations; __v3_internal_symbol_join_4__vmsvc4511[2] = program_support; main_declarations = driver__v3_cached_c_unit_source(driver__prune_cache_only_function_prototypes(driver__cache_source_without_cached_native_inputs(modulecache__declaration_header((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4511))), state, false), cache_used_fns, program_generated_support, tc, state), false);
 		if (state->native_bridge) {
 			string __map_key_51 = _str_3809;
 			string __map_zero_52 = _str_34;
@@ -195444,7 +195449,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 			__if_val_54 = main_declarations;
 		}
 		tcc_declarations = driver__tcc_cached_main_source(__if_val_54, main_body);
-		string __v3_internal_symbol_join_5__vmsvc4513[3]; __v3_internal_symbol_join_5__vmsvc4513[0] = _str_3805; __v3_internal_symbol_join_5__vmsvc4513[1] = tcc_declarations; __v3_internal_symbol_join_5__vmsvc4513[2] = main_body; tcc_main = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4513));
+		string __v3_internal_symbol_join_5__vmsvc4512[3]; __v3_internal_symbol_join_5__vmsvc4512[0] = _str_3805; __v3_internal_symbol_join_5__vmsvc4512[1] = tcc_declarations; __v3_internal_symbol_join_5__vmsvc4512[2] = main_body; tcc_main = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc4512));
 	}
 	map object_paths = map__clone(&state->objects);
 	Array __if_val_55 = {0};
@@ -195568,7 +195573,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 			driver__V3CachedNativeSource bundle_native = driver__cache_source_with_cached_native_inputs(bundle_declarations, state, bundle_roots);
 			string __if_val_78 = {0};
 			if (bundle_native.has_native) {
-				string __v3_internal_symbol_join_6__vmsvc4514[5]; __v3_internal_symbol_join_6__vmsvc4514[0] = _str_3805; __v3_internal_symbol_join_6__vmsvc4514[1] = driver__prune_foreign_program_wrappers(bundle_native.source, bundle_code); __v3_internal_symbol_join_6__vmsvc4514[2] = _str_3810; __v3_internal_symbol_join_6__vmsvc4514[3] = bundle_native.remaining_includes; __v3_internal_symbol_join_6__vmsvc4514[4] = bundle_code; __if_val_78 = (string_plus_many(5, __v3_internal_symbol_join_6__vmsvc4514));
+				string __v3_internal_symbol_join_6__vmsvc4513[5]; __v3_internal_symbol_join_6__vmsvc4513[0] = _str_3805; __v3_internal_symbol_join_6__vmsvc4513[1] = driver__prune_foreign_program_wrappers(bundle_native.source, bundle_code); __v3_internal_symbol_join_6__vmsvc4513[2] = _str_3810; __v3_internal_symbol_join_6__vmsvc4513[3] = bundle_native.remaining_includes; __v3_internal_symbol_join_6__vmsvc4513[4] = bundle_code; __if_val_78 = (string_plus_many(5, __v3_internal_symbol_join_6__vmsvc4513));
 			} else {
 				__if_val_78 = string__plus(driver__prune_foreign_program_wrappers(declarations, bundle_code), bundle_code);
 			}
@@ -195706,7 +195711,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 				driver__V3CachedNativeSource native = driver__cache_source_with_cached_native_inputs(module_declarations, state, new_array_from_c_array(1, 1, sizeof(string), (string[1]){module_name}));
 				string __if_val_112 = {0};
 				if (native.has_native) {
-					string __v3_internal_symbol_join_8__vmsvc4515[5]; __v3_internal_symbol_join_8__vmsvc4515[0] = _str_3805; __v3_internal_symbol_join_8__vmsvc4515[1] = driver__prune_foreign_program_wrappers(native.source, body); __v3_internal_symbol_join_8__vmsvc4515[2] = _str_3810; __v3_internal_symbol_join_8__vmsvc4515[3] = native.remaining_includes; __v3_internal_symbol_join_8__vmsvc4515[4] = body; __if_val_112 = (string_plus_many(5, __v3_internal_symbol_join_8__vmsvc4515));
+					string __v3_internal_symbol_join_8__vmsvc4514[5]; __v3_internal_symbol_join_8__vmsvc4514[0] = _str_3805; __v3_internal_symbol_join_8__vmsvc4514[1] = driver__prune_foreign_program_wrappers(native.source, body); __v3_internal_symbol_join_8__vmsvc4514[2] = _str_3810; __v3_internal_symbol_join_8__vmsvc4514[3] = native.remaining_includes; __v3_internal_symbol_join_8__vmsvc4514[4] = body; __if_val_112 = (string_plus_many(5, __v3_internal_symbol_join_8__vmsvc4514));
 				} else {
 					__if_val_112 = string__plus(driver__prune_foreign_program_wrappers(declarations, body), body);
 				}
@@ -195769,7 +195774,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 	if (state->objects_only || state->no_program_declarations) {
 		__if_val_127 = _str_34;
 	} else {
-		string __v3_internal_symbol_join_9__vmsvc4516[4]; __v3_internal_symbol_join_9__vmsvc4516[0] = driver__incremental_static_string_markers(split->prefix); __v3_internal_symbol_join_9__vmsvc4516[1] = _str_3811; __v3_internal_symbol_join_9__vmsvc4516[2] = main_body; __v3_internal_symbol_join_9__vmsvc4516[3] = _str_3812; __if_val_127 = (string_plus_many(4, __v3_internal_symbol_join_9__vmsvc4516));
+		string __v3_internal_symbol_join_9__vmsvc4515[4]; __v3_internal_symbol_join_9__vmsvc4515[0] = driver__incremental_static_string_markers(split->prefix); __v3_internal_symbol_join_9__vmsvc4515[1] = _str_3811; __v3_internal_symbol_join_9__vmsvc4515[2] = main_body; __v3_internal_symbol_join_9__vmsvc4515[3] = _str_3812; __if_val_127 = (string_plus_many(4, __v3_internal_symbol_join_9__vmsvc4515));
 	}
 	return (__v_result_driver__V3PreparedModuleCache){.ok = true, .value = (driver__V3PreparedModuleCache){.main_source = __struct_field_124, .tcc_main_source = __struct_field_125, .main_body = __struct_field_126, .program_body_cache = __if_val_127, .program_prefix_source = string__plus(_str_3805, dylib_prefix), .program_declarations = main_declarations, .tcc_program_declarations = tcc_declarations, .objects = driver__cache_used_object_paths(object_paths, program_used_fns, program_generated_support, tc, state), .newly_cached_modules = newly_cached_modules.data->count}};
 	return (__v_result_driver__V3PreparedModuleCache){.ok = true};
@@ -196053,7 +196058,7 @@ void driver__print_type_diagnostics(flat__FlatAst* a, Array notices, Array type_
 		}
 	}
 	if ((message_limit < 0) && !fatal_errors && !all_errors && (ordered_errors.len > max_errors)) {
-		string __v3_internal_symbol_join_0__vmsvc4517[3]; __v3_internal_symbol_join_0__vmsvc4517[0] = _str_3891; __v3_internal_symbol_join_0__vmsvc4517[1] = int__str(ordered_errors.len - max_errors); __v3_internal_symbol_join_0__vmsvc4517[2] = _str_3892; eprintln((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4517)));
+		string __v3_internal_symbol_join_0__vmsvc4516[3]; __v3_internal_symbol_join_0__vmsvc4516[0] = _str_3891; __v3_internal_symbol_join_0__vmsvc4516[1] = int__str(ordered_errors.len - max_errors); __v3_internal_symbol_join_0__vmsvc4516[2] = _str_3892; eprintln((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4516)));
 	}
 }
 
@@ -196070,7 +196075,7 @@ void driver__print_vls_answers(types__TypeChecker* tc, Array queries, pref__Pref
 		__v_int i = 0;
 		for (; i < queries.len; i++) {
 			types__VlsQuery query = *(types__VlsQuery*)(array_get(queries, i));
-			string __v3_internal_symbol_join_0__vmsvc4518[3]; __v3_internal_symbol_join_0__vmsvc4518[0] = int__str(i); __v3_internal_symbol_join_0__vmsvc4518[1] = _str_2031; __v3_internal_symbol_join_0__vmsvc4518[2] = types__TypeChecker__vls_answer(tc, query); println((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4518)));
+			string __v3_internal_symbol_join_0__vmsvc4517[3]; __v3_internal_symbol_join_0__vmsvc4517[0] = int__str(i); __v3_internal_symbol_join_0__vmsvc4517[1] = _str_2031; __v3_internal_symbol_join_0__vmsvc4517[2] = types__TypeChecker__vls_answer(tc, query); println((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4517)));
 		}
 	}
 }
@@ -196084,15 +196089,15 @@ bool driver__program_has_translated_module_attributes(flat__FlatAst* a) {
 				continue;
 			}
 			__v_int idx = string__int(string__all_after(node.value, _str_2268));
-			int cond__vmsvc4521; cond__vmsvc4521 = !!((idx >= 0) && (idx < a->nodes.len) && (((*(flat__Node*)array_get(a->nodes, idx))).kind == flat__NodeKind__module_decl)); if (cond__vmsvc4521) { Array __any_source_1__vmsvc4519 = flat__Node__generic_params(&node); bool __any_2__vmsvc4520 = false; {
+			int cond__vmsvc4520; cond__vmsvc4520 = !!((idx >= 0) && (idx < a->nodes.len) && (((*(flat__Node*)array_get(a->nodes, idx))).kind == flat__NodeKind__module_decl)); if (cond__vmsvc4520) { Array __any_source_1__vmsvc4518 = flat__Node__generic_params(&node); bool __any_2__vmsvc4519 = false; {
 				__v_int __any_idx_3 = 0;
-				for (; __any_idx_3 < __any_source_1__vmsvc4519.len; __any_idx_3++) {
-					string __any_it_4 = *(string*)(array_get(__any_source_1__vmsvc4519, __any_idx_3));
+				for (; __any_idx_3 < __any_source_1__vmsvc4518.len; __any_idx_3++) {
+					string __any_it_4 = *(string*)(array_get(__any_source_1__vmsvc4518, __any_idx_3));
 					if (string__eq(string__trim_space(string__all_before(__any_it_4, _str_92)), _str_2989)) {
-						__any_2__vmsvc4520 = true;
+						__any_2__vmsvc4519 = true;
 					}
 				}
-			} cond__vmsvc4521 = !!((__any_2__vmsvc4520)); } if (cond__vmsvc4521) {
+			} cond__vmsvc4520 = !!((__any_2__vmsvc4519)); } if (cond__vmsvc4520) {
 				return true;
 			}
 		}
@@ -196146,7 +196151,7 @@ void driver__promote_scoped_ast_nodes_flagged(flat__FlatAst* ast, __v_int base_n
 		u64* word_data = (u64*)(flags.data);
 		__v_int idx = base_nodes;
 		while (idx < limit) {
-			__v_int _t1__vmsvc4522 = (__v_int)(idx); __v_int _t2__vmsvc4523 = (__v_int)(8); if (_t2__vmsvc4523 == 0) v_panic(_S("modulo by zero")); int cond__vmsvc4526; cond__vmsvc4526 = !!(((((__v_int)(_t1__vmsvc4522 % _t2__vmsvc4523))) == 0) && ((idx + 8) <= limit)); if (cond__vmsvc4526) { __v_int _t3__vmsvc4524 = (__v_int)(idx); __v_int _t4__vmsvc4525 = (__v_int)(8); if (_t4__vmsvc4525 == 0) v_panic(_S("division by zero")); cond__vmsvc4526 = !!(((word_data)[((__v_int)(_t3__vmsvc4524 / _t4__vmsvc4525))] == 0)); } if (cond__vmsvc4526) {
+			__v_int _t1__vmsvc4521 = (__v_int)(idx); __v_int _t2__vmsvc4522 = (__v_int)(8); if (_t2__vmsvc4522 == 0) v_panic(_S("modulo by zero")); int cond__vmsvc4525; cond__vmsvc4525 = !!(((((__v_int)(_t1__vmsvc4521 % _t2__vmsvc4522))) == 0) && ((idx + 8) <= limit)); if (cond__vmsvc4525) { __v_int _t3__vmsvc4523 = (__v_int)(idx); __v_int _t4__vmsvc4524 = (__v_int)(8); if (_t4__vmsvc4524 == 0) v_panic(_S("division by zero")); cond__vmsvc4525 = !!(((word_data)[((__v_int)(_t3__vmsvc4523 / _t4__vmsvc4524))] == 0)); } if (cond__vmsvc4525) {
 				idx += 8;
 				continue;
 			}
@@ -196432,11 +196437,11 @@ string driver__prune_cache_only_function_prototypes(string source, map* cache_us
 			__map_val_8 = _str_34;
 		}
 		string source_file = __map_val_8;
-		int cond__vmsvc4529; cond__vmsvc4529 = !!(driver__cache_path_is_vlib(source_file)); if (!cond__vmsvc4529) { string __map_key_9__vmsvc4527 = source_file; bool __map_zero_10__vmsvc4528 = false; cond__vmsvc4529 = !!((*(bool*)(map__get(&vlib_paths, &__map_key_9__vmsvc4527, &__map_zero_10__vmsvc4528)))); } int cond__vmsvc4532; cond__vmsvc4532 = !!(cond__vmsvc4529); if (!cond__vmsvc4532) { string __map_key_11__vmsvc4530 = os__real_path(source_file); bool __map_zero_12__vmsvc4531 = false; cond__vmsvc4532 = !!((*(bool*)(map__get(&vlib_paths, &__map_key_11__vmsvc4530, &__map_zero_12__vmsvc4531)))); } if (cond__vmsvc4532) {
+		int cond__vmsvc4528; cond__vmsvc4528 = !!(driver__cache_path_is_vlib(source_file)); if (!cond__vmsvc4528) { string __map_key_9__vmsvc4526 = source_file; bool __map_zero_10__vmsvc4527 = false; cond__vmsvc4528 = !!((*(bool*)(map__get(&vlib_paths, &__map_key_9__vmsvc4526, &__map_zero_10__vmsvc4527)))); } int cond__vmsvc4531; cond__vmsvc4531 = !!(cond__vmsvc4528); if (!cond__vmsvc4531) { string __map_key_11__vmsvc4529 = os__real_path(source_file); bool __map_zero_12__vmsvc4530 = false; cond__vmsvc4531 = !!((*(bool*)(map__get(&vlib_paths, &__map_key_11__vmsvc4529, &__map_zero_12__vmsvc4530)))); } if (cond__vmsvc4531) {
 			continue;
 		}
 		string c_name = driver__restored_fn_c_name(name);
-		int cond__vmsvc4535; cond__vmsvc4535 = !!(string__contains(c_name, _str_174)); if (!cond__vmsvc4535) { string __map_key_13__vmsvc4533 = c_name; bool __map_zero_14__vmsvc4534 = false; cond__vmsvc4535 = !!((*(bool*)(map__get(&interface_dispatch_methods, &__map_key_13__vmsvc4533, &__map_zero_14__vmsvc4534)))); } if (cond__vmsvc4535) {
+		int cond__vmsvc4534; cond__vmsvc4534 = !!(string__contains(c_name, _str_174)); if (!cond__vmsvc4534) { string __map_key_13__vmsvc4532 = c_name; bool __map_zero_14__vmsvc4533 = false; cond__vmsvc4534 = !!((*(bool*)(map__get(&interface_dispatch_methods, &__map_key_13__vmsvc4532, &__map_zero_14__vmsvc4533)))); } if (cond__vmsvc4534) {
 			continue;
 		}
 		string __map_key_15 = c_name;
@@ -196456,7 +196461,7 @@ string driver__prune_cache_only_function_prototypes(string source, map* cache_us
 			string c_name = *(string*)(array_get(__in_lhs_17, __for_idx_18));
 			string __map_key_19 = c_name;
 			u8 __map_zero_20 = 0;
-			int cond__vmsvc4538; cond__vmsvc4538 = !!((*(u8*)(map__get(&program_references, &__map_key_19, &__map_zero_20)) > 0)); if (!cond__vmsvc4538) { string __map_key_21__vmsvc4536 = c_name; u8 __map_zero_22__vmsvc4537 = 0; cond__vmsvc4538 = !!((*(u8*)(map__get(&source_references, &__map_key_21__vmsvc4536, &__map_zero_22__vmsvc4537)) > 1)); } if (cond__vmsvc4538) {
+			int cond__vmsvc4537; cond__vmsvc4537 = !!((*(u8*)(map__get(&program_references, &__map_key_19, &__map_zero_20)) > 0)); if (!cond__vmsvc4537) { string __map_key_21__vmsvc4535 = c_name; u8 __map_zero_22__vmsvc4536 = 0; cond__vmsvc4537 = !!((*(u8*)(map__get(&source_references, &__map_key_21__vmsvc4535, &__map_zero_22__vmsvc4536)) > 1)); } if (cond__vmsvc4537) {
 				continue;
 			}
 			string __map_key_23 = c_name;
@@ -196591,7 +196596,7 @@ string driver__prune_cached_native_function_prototypes(string source, driver__V3
 			}
 		}
 		string name = driver__cached_native_function_prototype_name(line);
-		int cond__vmsvc4541; cond__vmsvc4541 = !!((name.len == 0)); if (!cond__vmsvc4541) { string __map_key_29__vmsvc4539 = name; bool __map_zero_30__vmsvc4540 = false; cond__vmsvc4541 = !!((!*(bool*)(map__get(&declared_functions, &__map_key_29__vmsvc4539, &__map_zero_30__vmsvc4540)))); } if (cond__vmsvc4541) {
+		int cond__vmsvc4540; cond__vmsvc4540 = !!((name.len == 0)); if (!cond__vmsvc4540) { string __map_key_29__vmsvc4538 = name; bool __map_zero_30__vmsvc4539 = false; cond__vmsvc4540 = !!((!*(bool*)(map__get(&declared_functions, &__map_key_29__vmsvc4538, &__map_zero_30__vmsvc4539)))); } if (cond__vmsvc4540) {
 			strings__Builder__writeln(out, line);
 		}
 		i++;
@@ -196724,7 +196729,7 @@ string driver__prune_foreign_program_wrappers(string declarations, string body) 
 			{
 				__v_int line = item.first_line;
 				for (; line < __in_lhs_30; line++) {
-					int cond__vmsvc4544; cond__vmsvc4544 = !!(string__starts_with((*(string*)array_get(lines, line)), driver__v3_callback_identity_case)); if (cond__vmsvc4544) { string __map_key_31__vmsvc4542 = string__all_before(string__substr(					(*(string*)array_get(lines, line)), 					59, (					(*(string*)array_get(lines, line))).len), _str_28); bool __map_zero_32__vmsvc4543 = false; cond__vmsvc4544 = !!((*(bool*)(map__get(&pending, &__map_key_31__vmsvc4542, &__map_zero_32__vmsvc4543)))); } if (cond__vmsvc4544) {
+					int cond__vmsvc4543; cond__vmsvc4543 = !!(string__starts_with((*(string*)array_get(lines, line)), driver__v3_callback_identity_case)); if (cond__vmsvc4543) { string __map_key_31__vmsvc4541 = string__all_before(string__substr(					(*(string*)array_get(lines, line)), 					59, (					(*(string*)array_get(lines, line))).len), _str_28); bool __map_zero_32__vmsvc4542 = false; cond__vmsvc4543 = !!((*(bool*)(map__get(&pending, &__map_key_31__vmsvc4541, &__map_zero_32__vmsvc4542)))); } if (cond__vmsvc4543) {
 						__v_int __map_key_33 = line;
 						bool __map_val_34 = true;
 						map__set(&dropped_lines, &__map_key_33, &__map_val_34);
@@ -196784,7 +196789,7 @@ driver__V3PrunedDeclarations driver__prune_unreferenced_cached_functions(flat__F
 		__v_int __for_idx_4 = 0;
 		for (; __for_idx_4 < a->nodes.len; __for_idx_4++) {
 			flat__Node node = *(flat__Node*)(array_get(a->nodes, __for_idx_4));
-			int cond__vmsvc4546; cond__vmsvc4546 = !!((node.kind != flat__NodeKind__file)); if (!cond__vmsvc4546) { string __map_key_5__vmsvc4545 = node.value; cond__vmsvc4546 = !!((!map__exists(&a->cached_header_sources, &__map_key_5__vmsvc4545))); } if (cond__vmsvc4546) {
+			int cond__vmsvc4545; cond__vmsvc4545 = !!((node.kind != flat__NodeKind__file)); if (!cond__vmsvc4545) { string __map_key_5__vmsvc4544 = node.value; cond__vmsvc4545 = !!((!map__exists(&a->cached_header_sources, &__map_key_5__vmsvc4544))); } if (cond__vmsvc4545) {
 				continue;
 			}
 			string module_name = _str_34;
@@ -196877,7 +196882,7 @@ driver__V3PrunedDeclarations driver__prune_unreferenced_cached_functions(flat__F
 			string module_name = string__all_after_last((*(string*)array_get(candidate_modules, i)), _str_2);
 			string __map_key_24 = node.value;
 			bool __map_zero_25 = false;
-			int cond__vmsvc4549; cond__vmsvc4549 = !!(*(bool*)(map__get(&named, &__map_key_24, &__map_zero_25))); if (!cond__vmsvc4549) { string __map_key_26__vmsvc4547 = v_short; bool __map_zero_27__vmsvc4548 = false; cond__vmsvc4549 = !!((*(bool*)(map__get(&named, &__map_key_26__vmsvc4547, &__map_zero_27__vmsvc4548)))); } int cond__vmsvc4553; cond__vmsvc4553 = !!(cond__vmsvc4549); if (!cond__vmsvc4553) { string __v3_internal_symbol_join_4__vmsvc4552[3]; __v3_internal_symbol_join_4__vmsvc4552[0] = module_name; __v3_internal_symbol_join_4__vmsvc4552[1] = _str_2; __v3_internal_symbol_join_4__vmsvc4552[2] = v_short; string __map_key_28__vmsvc4550 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4552)); bool __map_zero_29__vmsvc4551 = false; cond__vmsvc4553 = !!((*(bool*)(map__get(&kept_in_module, &__map_key_28__vmsvc4550, &__map_zero_29__vmsvc4551)))); } if (cond__vmsvc4553 || driver__v3_name_fits_a_pattern(patterns, module_name, v_short)) {
+			int cond__vmsvc4548; cond__vmsvc4548 = !!(*(bool*)(map__get(&named, &__map_key_24, &__map_zero_25))); if (!cond__vmsvc4548) { string __map_key_26__vmsvc4546 = v_short; bool __map_zero_27__vmsvc4547 = false; cond__vmsvc4548 = !!((*(bool*)(map__get(&named, &__map_key_26__vmsvc4546, &__map_zero_27__vmsvc4547)))); } int cond__vmsvc4552; cond__vmsvc4552 = !!(cond__vmsvc4548); if (!cond__vmsvc4552) { string __v3_internal_symbol_join_4__vmsvc4551[3]; __v3_internal_symbol_join_4__vmsvc4551[0] = module_name; __v3_internal_symbol_join_4__vmsvc4551[1] = _str_2; __v3_internal_symbol_join_4__vmsvc4551[2] = v_short; string __map_key_28__vmsvc4549 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4551)); bool __map_zero_29__vmsvc4550 = false; cond__vmsvc4552 = !!((*(bool*)(map__get(&kept_in_module, &__map_key_28__vmsvc4549, &__map_zero_29__vmsvc4550)))); } if (cond__vmsvc4552 || driver__v3_name_fits_a_pattern(patterns, module_name, v_short)) {
 				continue;
 			}
 			((*(flat__Node*)array_get(a->nodes, id))).kind = flat__NodeKind__empty;
@@ -196910,6 +196915,42 @@ driver__V3PrunedDeclarations driver__prune_unreferenced_cached_functions(flat__F
 		}
 	}
 	return pruned;
+}
+
+__v_result_bool driver__publish_native_c_object(string temporary, string destination) {
+	__v_result __or_opt_1 = os__link(temporary, destination);
+	if (!__or_opt_1.ok) {
+		IError err = __or_opt_1.err;
+		if (!os__is_file(destination)) {
+			string __v3_internal_symbol_join_0__vmsvc4553[4]; __v3_internal_symbol_join_0__vmsvc4553[0] = _str_2495; __v3_internal_symbol_join_0__vmsvc4553[1] = destination; __v3_internal_symbol_join_0__vmsvc4553[2] = _str_185; __v3_internal_symbol_join_0__vmsvc4553[3] = IError__str(err); __v_result_bool _t2 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc4553)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			{
+				__v_result __or_opt_0 = os__rm(temporary);
+				if (!__or_opt_0.ok) {
+				}
+			}
+			return _t2;
+		}
+		__v_result_bool _t3 = (__v_result_bool){.ok = true, .value = 		false};
+		{
+			__v_result __or_opt_0 = os__rm(temporary);
+			if (!__or_opt_0.ok) {
+			}
+		}
+		return _t3;
+	}
+	__v_result_bool _t4 = (__v_result_bool){.ok = true, .value = 	true};
+	{
+		__v_result __or_opt_0 = os__rm(temporary);
+		if (!__or_opt_0.ok) {
+		}
+	}
+	return _t4;
+	{
+		__v_result __or_opt_0 = os__rm(temporary);
+		if (!__or_opt_0.ok) {
+		}
+	}
+	return (__v_result_bool){.ok = true};
 }
 
 __v_result_driver__TccMacosLibgcPublicationResult driver__publish_tcc_macos_libgc_temporary(driver__TccMacosLibgcTemporaryObject temporary, string final_dylib, driver__TccMacosLibgcFileHash expected) {
@@ -203967,13 +204008,13 @@ void driver__run(Array args) {
 		if (prepare_transform_overlap) {
 			transform__materialize_inferred_anonymous_structs_before_prepare(a, pre_tc);
 		}
+		if (!building_v || !types__TypeChecker__reuse_direct_parent_index_for_unchanged_ast(pre_tc, a)) {
+			types__TypeChecker__refresh_direct_parent_index(pre_tc, a);
+		}
 		Array prepared_transform_threads = array_new(		sizeof(__v_thread), 0, 0);
 		if (prepare_transform_overlap) {
 			transform__prepare_selfhost_transform_thread_args* _sa57__vmsvc4735 = (transform__prepare_selfhost_transform_thread_args*)__v_thread_alloc(sizeof(transform__prepare_selfhost_transform_thread_args)); _sa57__vmsvc4735->a0 = a; _sa57__vmsvc4735->a1 = pre_tc; _sa57__vmsvc4735->a2 = 			true; __v_thread __arr_val_626 = (__v_thread_spawn(transform__prepare_selfhost_transform_args_thread_wrapper, (void*)_sa57__vmsvc4735, __v_thread_free));
 			array_push(&prepared_transform_threads, &__arr_val_626);
-		}
-		if (!building_v || !types__TypeChecker__reuse_direct_parent_index_for_unchanged_ast(pre_tc, a)) {
-			types__TypeChecker__refresh_direct_parent_index(pre_tc, a);
 		}
 		markused__MarkusedDeclCache* markused_decls = (markused__MarkusedDeclCache*)(NULL);
 		if (skip_library_bodies && scope_prealloc_markused && !generic_cache_hit && !library_body_frontiers) {
@@ -224808,8 +224849,8 @@ string driver__v3_windows_batch_quote_arg(string argument) {
 			if (ch == '"') {
 				__v_int __in_lhs_1 = (pending_backslashes * 2) + 1;
 				{
-					__v_int __discard_15215236722831141574_144491_144492 = 0;
-					for (; __discard_15215236722831141574_144491_144492 < __in_lhs_1; __discard_15215236722831141574_144491_144492++) {
+					__v_int __discard_15215236722831141574_144831_144832 = 0;
+					for (; __discard_15215236722831141574_144831_144832 < __in_lhs_1; __discard_15215236722831141574_144831_144832++) {
 						strings__Builder__write_u8(quoted, '\\');
 					}
 				}
@@ -224818,8 +224859,8 @@ string driver__v3_windows_batch_quote_arg(string argument) {
 				continue;
 			}
 			{
-				__v_int __discard_15215236722831141574_144635_144636 = 0;
-				for (; __discard_15215236722831141574_144635_144636 < pending_backslashes; __discard_15215236722831141574_144635_144636++) {
+				__v_int __discard_15215236722831141574_144975_144976 = 0;
+				for (; __discard_15215236722831141574_144975_144976 < pending_backslashes; __discard_15215236722831141574_144975_144976++) {
 					strings__Builder__write_u8(quoted, '\\');
 				}
 			}
@@ -224833,8 +224874,8 @@ string driver__v3_windows_batch_quote_arg(string argument) {
 	}
 	__v_int __in_lhs_2 = pending_backslashes * 2;
 	{
-		__v_int __discard_15215236722831141574_144883_144884 = 0;
-		for (; __discard_15215236722831141574_144883_144884 < __in_lhs_2; __discard_15215236722831141574_144883_144884++) {
+		__v_int __discard_15215236722831141574_145223_145224 = 0;
+		for (; __discard_15215236722831141574_145223_145224 < __in_lhs_2; __discard_15215236722831141574_145223_145224++) {
 			strings__Builder__write_u8(quoted, '\\');
 		}
 	}
@@ -471874,6 +471915,7 @@ void types__TypeChecker__check_call(types__TypeChecker* tc, i32 id, flat__Node n
 			}
 		}
 		types__TypeChecker__record_uninferred_generic_method_type(tc, id, node, info0);
+		types__TypeChecker__record_uninferable_generic_function_type(tc, id, node, info0);
 		types__TypeChecker__record_chained_bare_generic_struct_method_inference_error(tc, id, node, info);
 		if ((info.name.len > 0) && !types__is_array_dsl_call_name(info.name)) {
 			types__TypeChecker__remember_resolved_call(tc, id, info.name);
@@ -518351,16 +518393,12 @@ void types__TypeChecker__enter_module(types__TypeChecker* tc, string name) {
 	tc->cur_module = name;
 	if (tc->cur_file.len > 0) {
 		string __map_key_0 = tc->cur_file;
-		void* __map_ptr_1 = map__get_check(&tc->file_modules, &__map_key_0);
-		if (__map_ptr_1 != NULL) {
-			string existing = *(string*)(__map_ptr_1);
-			if (!string__eq(existing, name)) {
-				return;
-			}
+		if (map__exists(&tc->file_modules, &__map_key_0)) {
+			return;
 		}
-		string __map_key_2 = tc->cur_file;
-		string __map_val_3 = name;
-		map__set(&tc->file_modules, &__map_key_2, &__map_val_3);
+		string __map_key_1 = tc->cur_file;
+		string __map_val_2 = name;
+		map__set(&tc->file_modules, &__map_key_1, &__map_val_2);
 	}
 }
 
@@ -525308,8 +525346,8 @@ bool types__TypeChecker__for_body_writes_key_before(types__TypeChecker* tc, flat
 types__Type types__TypeChecker__for_in_iterable_type(types__TypeChecker* tc, i32 container_id) {
 	types__Type clean = types__unwrap_pointer(&((types__Type[]){types__TypeChecker__resolve_type(tc, container_id)})[0]);
 	{
-		__v_int __discard_11228908513863090449_414871_414872 = 0;
-		for (; __discard_11228908513863090449_414871_414872 < 8; __discard_11228908513863090449_414871_414872++) {
+		__v_int __discard_11228908513863090449_414981_414982 = 0;
+		for (; __discard_11228908513863090449_414981_414982 < 8; __discard_11228908513863090449_414981_414982++) {
 			if ((clean).typ == 23) {
 				types__Type base = *clean.types__Alias.AliasDataRef->base_type;
 				types__Type* pointed = types__unalias_type(&((types__Type[]){types__unwrap_pointer(&base)})[0]);
@@ -525345,8 +525383,8 @@ bool types__TypeChecker__for_in_iterable_yields_ref(types__TypeChecker* tc, i32 
 	}
 	types__Type typ = types__TypeChecker__resolve_type(tc, container_id);
 	{
-		__v_int __discard_11228908513863090449_415904_415905 = 0;
-		for (; __discard_11228908513863090449_415904_415905 < 8; __discard_11228908513863090449_415904_415905++) {
+		__v_int __discard_11228908513863090449_416014_416015 = 0;
+		for (; __discard_11228908513863090449_416014_416015 < 8; __discard_11228908513863090449_416014_416015++) {
 			if ((typ).typ == 23) {
 				typ = *typ.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -527288,9 +527326,16 @@ __v_option_types__GenericReceiverMethodPatternMatch types__TypeChecker__generic_
 					bool is_exact = true;
 					{
 						__v_int i = 0;
-						for (; i < patterns.len; i++) {
-							u32 pattern = *(u32*)(array_get(patterns, i));
-							if (types__Type__source_type_id(types__TypeChecker__parse_type(tc, types__trimmed_source_type_id(pattern))) != types__Type__source_type_id(types__TypeChecker__parse_type(tc, types__trimmed_source_type_id((*(u32*)array_get(actual_args_ids, i)))))) {
+						for (; i < actual_args_ids.len; i++) {
+							u32 actual_arg = *(u32*)(array_get(actual_args_ids, i));
+							u32 pattern_arg = types__trimmed_source_type_id((*(u32*)array_get(patterns, i)));
+							u32 actual_arg_id = types__trimmed_source_type_id(actual_arg);
+							if (pattern_arg == actual_arg_id) {
+								continue;
+							}
+							u32 pattern_id = types__Type__source_type_id(types__TypeChecker__parse_type(tc, pattern_arg));
+							u32 actual_id = types__Type__source_type_id(types__TypeChecker__parse_type(tc, actual_arg_id));
+							if (pattern_id != actual_id) {
 								is_exact = false;
 								break;
 							}
@@ -528284,8 +528329,8 @@ bool types__TypeChecker__ident_is_integer_literal_range_var(types__TypeChecker* 
 	}
 	i32 current = id;
 	{
-		__v_int __discard_18429473170254815075_842735_842736 = 0;
-		for (; __discard_18429473170254815075_842735_842736 < 128; __discard_18429473170254815075_842735_842736++) {
+		__v_int __discard_18429473170254815075_842921_842922 = 0;
+		for (; __discard_18429473170254815075_842921_842922 < 128; __discard_18429473170254815075_842921_842922++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, current);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				return false;
@@ -528919,8 +528964,8 @@ bool types__TypeChecker__if_chain_option_head_accepts(types__TypeChecker* tc, i3
 	}
 	i32 head_id = id;
 	{
-		__v_int __discard_829746590774759415_804154_804155 = 0;
-		for (; __discard_829746590774759415_804154_804155 < 1024; __discard_829746590774759415_804154_804155++) {
+		__v_int __discard_829746590774759415_805760_805761 = 0;
+		for (; __discard_829746590774759415_805760_805761 < 1024; __discard_829746590774759415_805760_805761++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, head_id);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				break;
@@ -529313,8 +529358,8 @@ __v_option_types__Type types__TypeChecker__if_sibling_branch_array_context(types
 	}
 	i32 child_id = id;
 	{
-		__v_int __discard_11228908513863090449_396264_396265 = 0;
-		for (; __discard_11228908513863090449_396264_396265 < 32; __discard_11228908513863090449_396264_396265++) {
+		__v_int __discard_11228908513863090449_396374_396375 = 0;
+		for (; __discard_11228908513863090449_396374_396375 < 32; __discard_11228908513863090449_396374_396375++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, child_id);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				return (__v_option_types__Type){.ok = false};
@@ -539397,8 +539442,8 @@ __v_option_string types__TypeChecker__local_bare_fn_signature_key(types__TypeChe
 bool types__TypeChecker__local_decl_is_in_nested_function(types__TypeChecker* tc, i32 id, i32 owner_fn) {
 	i32 current = id;
 	{
-		__v_int __discard_829746590774759415_259418_259419 = 0;
-		for (; __discard_829746590774759415_259418_259419 < 128; __discard_829746590774759415_259418_259419++) {
+		__v_int __discard_829746590774759415_261024_261025 = 0;
+		for (; __discard_829746590774759415_261024_261025 < 128; __discard_829746590774759415_261024_261025++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, current);
 			if (parent_id == owner_fn) {
 				return false;
@@ -556319,6 +556364,130 @@ void types__TypeChecker__record_unhandled_result_call(types__TypeChecker* tc, i3
 	string __v3_internal_symbol_join_0__vmsvc12812[4]; __v3_internal_symbol_join_0__vmsvc12812[0] = __interp_part_1; __v3_internal_symbol_join_0__vmsvc12812[1] = __interp_part_2; __v3_internal_symbol_join_0__vmsvc12812[2] = __interp_part_3; __v3_internal_symbol_join_0__vmsvc12812[3] = __interp_part_4; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc12812)), call_id, types__TypeChecker__wrapped_operand_diagnostic_pos(tc, call_id));
 }
 
+void types__TypeChecker__record_uninferable_generic_function_type(types__TypeChecker* tc, i32 id, flat__Node node, types__CallInfo info) {
+	if (info.has_receiver || types__TypeChecker__call_has_explicit_generic_args(tc, node) || (node.children_count == 0)) {
+		return;
+	}
+	string __map_key_2 = info.name;
+	void* __map_ptr_3 = map__get_check(&tc->fn_generic_params, &__map_key_2);
+	Array __map_val_4 = {0};
+	if (__map_ptr_3 != NULL) {
+		__map_val_4 = *(Array*)(__map_ptr_3);
+	} else {
+		return;
+	}
+	Array generic_params = __map_val_4;
+	if (generic_params.len == 0) {
+		return;
+	}
+	__v_option_Array __or_opt_5 = flat__TypeTextListBindings__type_ids(&tc->fn_param_type_texts, info.name);
+	Array __or_val_6 = {0};
+	if (__or_opt_5.ok) {
+		__or_val_6 = __or_opt_5.value;
+	} else {
+		return;
+	}
+	Array param_texts = __or_val_6;
+	__v_option_u32 __or_opt_7 = flat__TypeTextBindings__type_id(&tc->fn_ret_type_texts, info.name);
+	u32 __or_val_8 = {0};
+	if (__or_opt_7.ok) {
+		__or_val_8 = __or_opt_7.value;
+	} else {
+		__or_val_8 = (u32)(0);
+	}
+	u32 return_text = __or_val_8;
+	{
+		__v_int __for_idx_9 = 0;
+		for (; __for_idx_9 < generic_params.len; __for_idx_9++) {
+			u32 param = *(u32*)(array_get(generic_params, __for_idx_9));
+			u32 __contains_needle_11 = param;
+			Array __in_arr_10 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(return_text));
+			bool __contains_12 = false;
+			{
+				__v_int __contains_idx_13 = 0;
+				for (; __contains_idx_13 < __in_arr_10.len; __contains_idx_13++) {
+					if (*(u32*)(array_get(__in_arr_10, __contains_idx_13)) == __contains_needle_11) {
+						__contains_12 = true;
+					}
+				}
+			}
+			int cond__vmsvc12814; cond__vmsvc12814 = !!(__contains_12); if (!cond__vmsvc12814) { bool __any_14__vmsvc12813 = false; {
+				__v_int __any_idx_15 = 0;
+				for (; __any_idx_15 < param_texts.len; __any_idx_15++) {
+					u32 __any_it_16 = *(u32*)(array_get(param_texts, __any_idx_15));
+					u32 __contains_needle_18 = param;
+					Array __in_arr_17 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(__any_it_16));
+					bool __contains_19 = false;
+					{
+						__v_int __contains_idx_20 = 0;
+						for (; __contains_idx_20 < __in_arr_17.len; __contains_idx_20++) {
+							if (*(u32*)(array_get(__in_arr_17, __contains_idx_20)) == __contains_needle_18) {
+								__contains_19 = true;
+							}
+						}
+					}
+					if (__contains_19) {
+						__any_14__vmsvc12813 = true;
+					}
+				}
+			} cond__vmsvc12814 = !!((__any_14__vmsvc12813)); } if (cond__vmsvc12814) {
+				continue;
+			}
+			string __map_key_23 = info.name;
+			void* __map_ptr_24 = map__get_check(&tc->fn_type_modules, &__map_key_23);
+			string __map_val_25 = {0};
+			if (__map_ptr_24 != NULL) {
+				__map_val_25 = *(string*)(__map_ptr_24);
+			} else {
+				__map_val_25 = tc->cur_module;
+			}
+			string decl_module = __map_val_25;
+			__v_option_types__VisibleMutationFnDecl __if_guard_26 = types__TypeChecker__visible_mutation_fn_decl(tc, info.name, decl_module);
+			if (__if_guard_26.ok) {
+				types__VisibleMutationFnDecl decl = __if_guard_26.value;
+				Array constraints = flat__Node__generic_constraint_ids(flat__FlatAst__node(tc->a, (i32)(decl.idx)));
+				bool __any_27 = false;
+				{
+					__v_int __any_idx_28 = 0;
+					for (; __any_idx_28 < constraints.len; __any_idx_28++) {
+						u32 __any_it_29 = *(u32*)(array_get(constraints, __any_idx_28));
+						u32 __contains_needle_31 = param;
+						Array __in_arr_30 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(__any_it_29));
+						bool __contains_32 = false;
+						{
+							__v_int __contains_idx_33 = 0;
+							for (; __contains_idx_33 < __in_arr_30.len; __contains_idx_33++) {
+								if (*(u32*)(array_get(__in_arr_30, __contains_idx_33)) == __contains_needle_31) {
+									__contains_32 = true;
+								}
+							}
+						}
+						if (__contains_32) {
+							__any_27 = true;
+						}
+					}
+				}
+				if (__any_27) {
+					continue;
+				}
+			}
+			flat__Node* callee = flat__FlatAst__child_node(tc->a, &node, 0);
+			if (!((callee->kind == flat__NodeKind__ident) || (callee->kind == flat__NodeKind__selector))) {
+				return;
+			}
+			token__Pos __if_val_34 = {0};
+			if (callee->kind == flat__NodeKind__selector) {
+				__if_val_34 = types__TypeChecker__method_call_name_pos(tc, node, *callee);
+			} else {
+				__if_val_34 = callee->pos;
+			}
+			token__Pos name_pos = __if_val_34;
+			string __v3_internal_symbol_join_0__vmsvc12815[5]; __v3_internal_symbol_join_0__vmsvc12815[0] = _str_3518; __v3_internal_symbol_join_0__vmsvc12815[1] = flat__source_type_name(param); __v3_internal_symbol_join_0__vmsvc12815[2] = _str_7896; __v3_internal_symbol_join_0__vmsvc12815[3] = info.name; __v3_internal_symbol_join_0__vmsvc12815[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unsupported_generic, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12815)), id, token__new_span(name_pos.id, name_pos.offset, node.pos.end));
+			return;
+		}
+	}
+}
+
 void types__TypeChecker__record_uninferred_generic_method_type(types__TypeChecker* tc, i32 id, flat__Node node, types__CallInfo info) {
 	if (!info.has_receiver || types__TypeChecker__call_has_explicit_generic_args(tc, node) || (node.children_count == 0)) {
 		return;
@@ -556511,7 +556680,7 @@ void types__TypeChecker__record_uninferred_generic_method_type(types__TypeChecke
 		return;
 	}
 	token__Pos name_pos = types__TypeChecker__method_call_name_pos(tc, node, *callee);
-	string __v3_internal_symbol_join_2__vmsvc12813[5]; __v3_internal_symbol_join_2__vmsvc12813[0] = _str_3518; __v3_internal_symbol_join_2__vmsvc12813[1] = flat__source_type_name(missing); __v3_internal_symbol_join_2__vmsvc12813[2] = _str_7896; __v3_internal_symbol_join_2__vmsvc12813[3] = callee->value; __v3_internal_symbol_join_2__vmsvc12813[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unsupported_generic, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12813)), id, token__new_span(name_pos.id, name_pos.offset, node.pos.end));
+	string __v3_internal_symbol_join_2__vmsvc12816[5]; __v3_internal_symbol_join_2__vmsvc12816[0] = _str_3518; __v3_internal_symbol_join_2__vmsvc12816[1] = flat__source_type_name(missing); __v3_internal_symbol_join_2__vmsvc12816[2] = _str_7896; __v3_internal_symbol_join_2__vmsvc12816[3] = callee->value; __v3_internal_symbol_join_2__vmsvc12816[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unsupported_generic, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12816)), id, token__new_span(name_pos.id, name_pos.offset, node.pos.end));
 	{
 		tc->generic_decl_file = saved_generic_decl_file;
 	}
@@ -556538,11 +556707,11 @@ void types__TypeChecker__record_uninitialized_reference_field_notices(types__Typ
 			}
 			types__Type* field_type = types__unalias_type(&field.typ);
 			if ((field_type)->typ == 15) {
-				string __v3_internal_symbol_join_0__vmsvc12814[7]; __v3_internal_symbol_join_0__vmsvc12814[0] = _str_7007; __v3_internal_symbol_join_0__vmsvc12814[1] = linked_name; __v3_internal_symbol_join_0__vmsvc12814[2] = _str_2; __v3_internal_symbol_join_0__vmsvc12814[3] = field.name; __v3_internal_symbol_join_0__vmsvc12814[4] = _str_7008; __v3_internal_symbol_join_0__vmsvc12814[5] = types__Struct__name(struct_type); __v3_internal_symbol_join_0__vmsvc12814[6] = _str_351; types__TypeChecker__record_notice_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc12814)), node_id, pos);
+				string __v3_internal_symbol_join_0__vmsvc12817[7]; __v3_internal_symbol_join_0__vmsvc12817[0] = _str_7007; __v3_internal_symbol_join_0__vmsvc12817[1] = linked_name; __v3_internal_symbol_join_0__vmsvc12817[2] = _str_2; __v3_internal_symbol_join_0__vmsvc12817[3] = field.name; __v3_internal_symbol_join_0__vmsvc12817[4] = _str_7008; __v3_internal_symbol_join_0__vmsvc12817[5] = types__Struct__name(struct_type); __v3_internal_symbol_join_0__vmsvc12817[6] = _str_351; types__TypeChecker__record_notice_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc12817)), node_id, pos);
 				continue;
 			}
 			if (((field_type)->typ == 19) && !field.is_embed) {
-				string __v3_internal_symbol_join_1__vmsvc12815[3]; __v3_internal_symbol_join_1__vmsvc12815[0] = linked_name; __v3_internal_symbol_join_1__vmsvc12815[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12815[2] = field.name; types__TypeChecker__record_uninitialized_reference_field_notices(tc, field_type->types__Struct, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12815)), node_id, pos, checked);
+				string __v3_internal_symbol_join_1__vmsvc12818[3]; __v3_internal_symbol_join_1__vmsvc12818[0] = linked_name; __v3_internal_symbol_join_1__vmsvc12818[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12818[2] = field.name; types__TypeChecker__record_uninitialized_reference_field_notices(tc, field_type->types__Struct, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12818)), node_id, pos, checked);
 			}
 		}
 	}
@@ -556552,8 +556721,8 @@ void types__TypeChecker__record_unknown_decl_type_id(types__TypeChecker* tc, u32
 	bool should_diagnose = types__TypeChecker__should_diagnose(tc, node_id);
 	string name = flat__source_type_name(name_id);
 	bool report_import_scope_error = false;
-	int cond__vmsvc12817; cond__vmsvc12817 = !!(!should_diagnose); if (cond__vmsvc12817) { int __in_lhs_0__vmsvc12816 = flat__source_type_shape(name_id); cond__vmsvc12817 = !!((!((__in_lhs_0__vmsvc12816 & 1) != 0))); } if (cond__vmsvc12817 && !((name_id == types__checker_source_error) || (name_id == types__checker_source_message_error) || (name_id == types__ierror_source_interface_name)) && !(string__eq(tc->cur_module, _str_34) || string__eq(tc->cur_module, _str_179) || string__eq(tc->cur_module, _str_1218))) {
-		int cond__vmsvc12819; cond__vmsvc12819 = !!(types__TypeChecker__selected_main_file_declares_type(tc, name_id)); if (cond__vmsvc12819) { string __v3_internal_symbol_join_0__vmsvc12818[3]; __v3_internal_symbol_join_0__vmsvc12818[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc12818[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12818[2] = name; cond__vmsvc12819 = !!(!types__TypeChecker__qualify_candidate_type_spelling_exists(tc, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12818)))); } report_import_scope_error = cond__vmsvc12819 && !types__TypeChecker__source_declares_type_in_scope(tc, name_id, tc->cur_file, tc->cur_module);
+	int cond__vmsvc12820; cond__vmsvc12820 = !!(!should_diagnose); if (cond__vmsvc12820) { int __in_lhs_0__vmsvc12819 = flat__source_type_shape(name_id); cond__vmsvc12820 = !!((!((__in_lhs_0__vmsvc12819 & 1) != 0))); } if (cond__vmsvc12820 && !((name_id == types__checker_source_error) || (name_id == types__checker_source_message_error) || (name_id == types__ierror_source_interface_name)) && !(string__eq(tc->cur_module, _str_34) || string__eq(tc->cur_module, _str_179) || string__eq(tc->cur_module, _str_1218))) {
+		int cond__vmsvc12822; cond__vmsvc12822 = !!(types__TypeChecker__selected_main_file_declares_type(tc, name_id)); if (cond__vmsvc12822) { string __v3_internal_symbol_join_0__vmsvc12821[3]; __v3_internal_symbol_join_0__vmsvc12821[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc12821[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12821[2] = name; cond__vmsvc12822 = !!(!types__TypeChecker__qualify_candidate_type_spelling_exists(tc, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12821)))); } report_import_scope_error = cond__vmsvc12822 && !types__TypeChecker__source_declares_type_in_scope(tc, name_id, tc->cur_file, tc->cur_module);
 	}
 	if (!should_diagnose && !report_import_scope_error) {
 		return;
@@ -556565,19 +556734,19 @@ void types__TypeChecker__record_unknown_decl_type_id(types__TypeChecker* tc, u32
 		__v_option_Array __if_guard_1 = types__TypeChecker__selective_import_candidates(tc, name_id);
 		if (__if_guard_1.ok) {
 			Array candidates = __if_guard_1.value;
-			int cond__vmsvc12821; cond__vmsvc12821 = !!((candidates.len > 0)); if (cond__vmsvc12821) { bool __all_2__vmsvc12820 = true; {
+			int cond__vmsvc12824; cond__vmsvc12824 = !!((candidates.len > 0)); if (cond__vmsvc12824) { bool __all_2__vmsvc12823 = true; {
 				__v_int __all_idx_3 = 0;
 				for (; __all_idx_3 < candidates.len; __all_idx_3++) {
 					u32 __all_it_4 = *(u32*)(array_get(candidates, __all_idx_3));
 					if (!(!types__TypeChecker__type_symbol_known(tc, __all_it_4))) {
-						__all_2__vmsvc12820 = false;
+						__all_2__vmsvc12823 = false;
 					}
 				}
-			} cond__vmsvc12821 = !!((__all_2__vmsvc12820)); } if (cond__vmsvc12821) {
+			} cond__vmsvc12824 = !!((__all_2__vmsvc12823)); } if (cond__vmsvc12824) {
 				string qualified_candidate = flat__source_type_name((*(u32*)array_get(candidates, 0)));
 				token__Pos pos = types__TypeChecker__type_name_diagnostic_pos(tc, node_id, name);
 				if (!types__TypeChecker__unknown_type_already_reported_on_line(tc, qualified_candidate, pos)) {
-					string __v3_internal_symbol_join_1__vmsvc12822[3]; __v3_internal_symbol_join_1__vmsvc12822[0] = _str_3900; __v3_internal_symbol_join_1__vmsvc12822[1] = qualified_candidate; __v3_internal_symbol_join_1__vmsvc12822[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12822)), node_id, pos);
+					string __v3_internal_symbol_join_1__vmsvc12825[3]; __v3_internal_symbol_join_1__vmsvc12825[0] = _str_3900; __v3_internal_symbol_join_1__vmsvc12825[1] = qualified_candidate; __v3_internal_symbol_join_1__vmsvc12825[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12825)), node_id, pos);
 				}
 				return;
 			}
@@ -556585,7 +556754,7 @@ void types__TypeChecker__record_unknown_decl_type_id(types__TypeChecker* tc, u32
 	}
 	token__Pos pos = types__TypeChecker__type_diagnostic_pos(tc, node_id, name);
 	flat__Node* node = flat__FlatAst__node(tc->a, node_id);
-	int cond__vmsvc12825; cond__vmsvc12825 = !!((node->kind == flat__NodeKind__field_decl)); if (cond__vmsvc12825) { string __map_key_5__vmsvc12823 = node->value; bool __map_zero_6__vmsvc12824 = false; cond__vmsvc12825 = !!((*(bool*)(map__get(&tc->global_names, &__map_key_5__vmsvc12823, &__map_zero_6__vmsvc12824)))); } if (cond__vmsvc12825 && (node->typ != name_id) && (pos.end > (pos.offset + 1))) {
+	int cond__vmsvc12828; cond__vmsvc12828 = !!((node->kind == flat__NodeKind__field_decl)); if (cond__vmsvc12828) { string __map_key_5__vmsvc12826 = node->value; bool __map_zero_6__vmsvc12827 = false; cond__vmsvc12828 = !!((*(bool*)(map__get(&tc->global_names, &__map_key_5__vmsvc12826, &__map_zero_6__vmsvc12827)))); } if (cond__vmsvc12828 && (node->typ != name_id) && (pos.end > (pos.offset + 1))) {
 		pos = token__new_span(pos.id, pos.offset, pos.offset + 1);
 	}
 	if (types__TypeChecker__unknown_type_already_reported_on_line(tc, name, pos)) {
@@ -556613,7 +556782,7 @@ bool types__TypeChecker__record_unknown_import_function_call(types__TypeChecker*
 	flat__Node callee = __multi_ret_0.arg0;
 	string alias = __multi_ret_0.arg1;
 	string module_name = __multi_ret_0.arg2;
-	string __v3_internal_symbol_join_0__vmsvc12826[3]; __v3_internal_symbol_join_0__vmsvc12826[0] = alias; __v3_internal_symbol_join_0__vmsvc12826[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12826[2] = callee.value; string display = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12826));
+	string __v3_internal_symbol_join_0__vmsvc12829[3]; __v3_internal_symbol_join_0__vmsvc12829[0] = alias; __v3_internal_symbol_join_0__vmsvc12829[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12829[2] = callee.value; string display = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12829));
 	Array candidates = array_new(	sizeof(string), 0, 0);
 	string prefix = string__plus(module_name, _str_2);
 	for (int __mi_1 = 0; __mi_1 < (	tc->fn_ret_types).data->key_values.len; __mi_1++) {
@@ -556622,11 +556791,11 @@ bool types__TypeChecker__record_unknown_import_function_call(types__TypeChecker*
 		name = string__clone(name);
 		types__Type _ = *(types__Type*)((	tc->fn_ret_types).data->key_values.values + __mi_1 * (	tc->fn_ret_types).data->key_values.value_bytes);
 		if (string__starts_with(name, prefix) && !string__contains(string__substr(		name, 		prefix.len, (		name).len), _str_2)) {
-			string __v3_internal_symbol_join_2__vmsvc12827[3]; __v3_internal_symbol_join_2__vmsvc12827[0] = alias; __v3_internal_symbol_join_2__vmsvc12827[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12827[2] = string__substr(			name, 			prefix.len, (			name).len); string __arr_val_3 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12827));
+			string __v3_internal_symbol_join_2__vmsvc12830[3]; __v3_internal_symbol_join_2__vmsvc12830[0] = alias; __v3_internal_symbol_join_2__vmsvc12830[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12830[2] = string__substr(			name, 			prefix.len, (			name).len); string __arr_val_3 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12830));
 			array_push(&candidates, &__arr_val_3);
 		}
 	}
-	string __v3_internal_symbol_join_3__vmsvc12828[3]; __v3_internal_symbol_join_3__vmsvc12828[0] = _str_6557; __v3_internal_symbol_join_3__vmsvc12828[1] = display; __v3_internal_symbol_join_3__vmsvc12828[2] = _str_1; string message = util__Suggestion__say(util__new_suggestion(display, candidates, (util__SuggestionParams){.similarity_threshold = (float)(0.5), .similarity_fn = strings__dice_coefficient}), (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12828)));
+	string __v3_internal_symbol_join_3__vmsvc12831[3]; __v3_internal_symbol_join_3__vmsvc12831[0] = _str_6557; __v3_internal_symbol_join_3__vmsvc12831[1] = display; __v3_internal_symbol_join_3__vmsvc12831[2] = _str_1; string message = util__Suggestion__say(util__new_suggestion(display, candidates, (util__SuggestionParams){.similarity_threshold = (float)(0.5), .similarity_fn = strings__dice_coefficient}), (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12831)));
 	types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, message, id, types__TypeChecker__method_call_name_pos(tc, node, callee));
 	types__MultiReturnData __promoted_default_4 = *types__empty_multi_return_data;
 	__promoted_default_4.types = array_new(	sizeof(types__Type), 0, 0);
@@ -556655,15 +556824,15 @@ bool types__TypeChecker__record_unknown_method_call(types__TypeChecker* tc, i32 
 	string display = __if_val_3;
 	i32 receiver_id = flat__FlatAst__child(tc->a, &callee, 0);
 	if (types__TypeChecker__ident_is_multi_pattern_match_subject(tc, receiver_id)) {
-		string __v3_internal_symbol_join_0__vmsvc12829[5]; __v3_internal_symbol_join_0__vmsvc12829[0] = _str_6674; __v3_internal_symbol_join_0__vmsvc12829[1] = display; __v3_internal_symbol_join_0__vmsvc12829[2] = _str_2; __v3_internal_symbol_join_0__vmsvc12829[3] = callee.value; __v3_internal_symbol_join_0__vmsvc12829[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12829)), id, types__TypeChecker__method_call_name_pos(tc, node, callee));
+		string __v3_internal_symbol_join_0__vmsvc12832[5]; __v3_internal_symbol_join_0__vmsvc12832[0] = _str_6674; __v3_internal_symbol_join_0__vmsvc12832[1] = display; __v3_internal_symbol_join_0__vmsvc12832[2] = _str_2; __v3_internal_symbol_join_0__vmsvc12832[3] = callee.value; __v3_internal_symbol_join_0__vmsvc12832[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12832)), id, types__TypeChecker__method_call_name_pos(tc, node, callee));
 		types__TypeChecker__register_synth_type(tc, id, &(types__Type[]){types__builtin_void_type}[0]);
 		return true;
 	}
 	string __if_val_4 = {0};
 	if (types__TypeChecker__generic_receiver_method_rejects_voidptr(tc, receiver_name_id, callee.value)) {
-		string __v3_internal_symbol_join_1__vmsvc12830[5]; __v3_internal_symbol_join_1__vmsvc12830[0] = _str_3523; __v3_internal_symbol_join_1__vmsvc12830[1] = receiver_name; __v3_internal_symbol_join_1__vmsvc12830[2] = _str_2; __v3_internal_symbol_join_1__vmsvc12830[3] = callee.value; __v3_internal_symbol_join_1__vmsvc12830[4] = _str_7907; __if_val_4 = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12830));
+		string __v3_internal_symbol_join_1__vmsvc12833[5]; __v3_internal_symbol_join_1__vmsvc12833[0] = _str_3523; __v3_internal_symbol_join_1__vmsvc12833[1] = receiver_name; __v3_internal_symbol_join_1__vmsvc12833[2] = _str_2; __v3_internal_symbol_join_1__vmsvc12833[3] = callee.value; __v3_internal_symbol_join_1__vmsvc12833[4] = _str_7907; __if_val_4 = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12833));
 	} else {
-		string __v3_internal_symbol_join_2__vmsvc12831[5]; __v3_internal_symbol_join_2__vmsvc12831[0] = _str_3522; __v3_internal_symbol_join_2__vmsvc12831[1] = display; __v3_internal_symbol_join_2__vmsvc12831[2] = _str_2; __v3_internal_symbol_join_2__vmsvc12831[3] = callee.value; __v3_internal_symbol_join_2__vmsvc12831[4] = _str_41; string base = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12831));
+		string __v3_internal_symbol_join_2__vmsvc12834[5]; __v3_internal_symbol_join_2__vmsvc12834[0] = _str_3522; __v3_internal_symbol_join_2__vmsvc12834[1] = display; __v3_internal_symbol_join_2__vmsvc12834[2] = _str_2; __v3_internal_symbol_join_2__vmsvc12834[3] = callee.value; __v3_internal_symbol_join_2__vmsvc12834[4] = _str_41; string base = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12834));
 		__if_val_4 = util__Suggestion__say(util__new_suggestion(callee.value, types__TypeChecker__method_name_suggestions(tc, receiver_name_id), (util__SuggestionParams){.similarity_threshold = (float)(0.5), .similarity_fn = strings__dice_coefficient}), base);
 	}
 	string message = __if_val_4;
@@ -556802,14 +556971,14 @@ void types__TypeChecker__record_unused_fn_labels(types__TypeChecker* tc, flat__N
 			string __map_key_22 = label->value;
 			bool __map_zero_23 = false;
 			if (!*(bool*)(map__get(&used, &__map_key_22, &__map_zero_23)) && !types__TypeChecker__comptime_skipped_body_uses_goto_label(tc, node, label->value)) {
-				string __v3_internal_symbol_join_3__vmsvc12832[3]; __v3_internal_symbol_join_3__vmsvc12832[0] = _str_6527; __v3_internal_symbol_join_3__vmsvc12832[1] = label->value; __v3_internal_symbol_join_3__vmsvc12832[2] = _str_7690; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12832)), label_id, (flat__FlatAst__node(tc->a, label_id))->pos);
+				string __v3_internal_symbol_join_3__vmsvc12835[3]; __v3_internal_symbol_join_3__vmsvc12835[0] = _str_6527; __v3_internal_symbol_join_3__vmsvc12835[1] = label->value; __v3_internal_symbol_join_3__vmsvc12835[2] = _str_7690; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12835)), label_id, (flat__FlatAst__node(tc->a, label_id))->pos);
 			}
 		}
 	}
 }
 
 void types__TypeChecker__record_unused_fn_params(types__TypeChecker* tc, flat__Node node) {
-	int cond__vmsvc12834; cond__vmsvc12834 = !!(types__TypeChecker__node_is_from_translated_file(tc, node) || (node.op == flat__Op__arrow)); if (!cond__vmsvc12834) { string __map_key_0__vmsvc12833 = node.value; cond__vmsvc12834 = !!((map__exists(&tc->a->disabled_fns, &__map_key_0__vmsvc12833))); } if (cond__vmsvc12834 || (types__is_regular_v_test_file(tc->cur_file) && types__is_v_test_fn_name(node.value))) {
+	int cond__vmsvc12837; cond__vmsvc12837 = !!(types__TypeChecker__node_is_from_translated_file(tc, node) || (node.op == flat__Op__arrow)); if (!cond__vmsvc12837) { string __map_key_0__vmsvc12836 = node.value; cond__vmsvc12837 = !!((map__exists(&tc->a->disabled_fns, &__map_key_0__vmsvc12836))); } if (cond__vmsvc12837 || (types__is_regular_v_test_file(tc->cur_file) && types__is_v_test_fn_name(node.value))) {
 		return;
 	}
 	{
@@ -556846,7 +557015,7 @@ void types__TypeChecker__record_unused_fn_params(types__TypeChecker* tc, flat__N
 			if (has_param_error) {
 				continue;
 			}
-			string __v3_internal_symbol_join_0__vmsvc12835[3]; __v3_internal_symbol_join_0__vmsvc12835[0] = _str_7152; __v3_internal_symbol_join_0__vmsvc12835[1] = param->value; __v3_internal_symbol_join_0__vmsvc12835[2] = _str_41; types__TypeChecker__record_notice_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12835)), param_id, types__TypeChecker__node_value_diagnostic_pos(tc, param_id));
+			string __v3_internal_symbol_join_0__vmsvc12838[3]; __v3_internal_symbol_join_0__vmsvc12838[0] = _str_7152; __v3_internal_symbol_join_0__vmsvc12838[1] = param->value; __v3_internal_symbol_join_0__vmsvc12838[2] = _str_41; types__TypeChecker__record_notice_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12838)), param_id, types__TypeChecker__node_value_diagnostic_pos(tc, param_id));
 		}
 	}
 }
@@ -556898,7 +557067,7 @@ void types__TypeChecker__record_unused_fn_vars(types__TypeChecker* tc, flat__Nod
 				map__set(&payload_ref_guards, &__map_key_4, &__map_val_5);
 			}
 		}
-		int cond__vmsvc12838; cond__vmsvc12838 = !!((current->kind == flat__NodeKind__decl_assign)); if (cond__vmsvc12838) { __v_int __map_key_6__vmsvc12836 = (__v_int)(id); bool __map_zero_7__vmsvc12837 = false; cond__vmsvc12838 = !!((!*(bool*)(map__get(&payload_ref_guards, &__map_key_6__vmsvc12836, &__map_zero_7__vmsvc12837)))); } if (cond__vmsvc12838) {
+		int cond__vmsvc12841; cond__vmsvc12841 = !!((current->kind == flat__NodeKind__decl_assign)); if (cond__vmsvc12841) { __v_int __map_key_6__vmsvc12839 = (__v_int)(id); bool __map_zero_7__vmsvc12840 = false; cond__vmsvc12841 = !!((!*(bool*)(map__get(&payload_ref_guards, &__map_key_6__vmsvc12839, &__map_zero_7__vmsvc12840)))); } if (cond__vmsvc12841) {
 			Array lhs_ids = types__TypeChecker__multi_assign_lhs_ids(tc, *current);
 			__v_int rhs_count = types__TypeChecker__multi_assign_rhs_count(tc, *current);
 			{
@@ -556997,7 +557166,7 @@ void types__TypeChecker__record_unused_fn_vars(types__TypeChecker* tc, flat__Nod
 			if (types__TypeChecker__comptime_skipped_body_reads(tc, node, candidate.name)) {
 				continue;
 			}
-			string __v3_internal_symbol_join_2__vmsvc12839[3]; __v3_internal_symbol_join_2__vmsvc12839[0] = _str_3890; __v3_internal_symbol_join_2__vmsvc12839[1] = candidate.name; __v3_internal_symbol_join_2__vmsvc12839[2] = _str_41; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12839)), candidate.lhs_id, types__TypeChecker__node_value_diagnostic_pos(tc, candidate.lhs_id));
+			string __v3_internal_symbol_join_2__vmsvc12842[3]; __v3_internal_symbol_join_2__vmsvc12842[0] = _str_3890; __v3_internal_symbol_join_2__vmsvc12842[1] = candidate.name; __v3_internal_symbol_join_2__vmsvc12842[2] = _str_41; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12842)), candidate.lhs_id, types__TypeChecker__node_value_diagnostic_pos(tc, candidate.lhs_id));
 		}
 	}
 }
@@ -557008,10 +557177,10 @@ void types__TypeChecker__record_unused_import_warning(types__TypeChecker* tc, i3
 	if (string__eq(flat__Node__typ_text(&node), module_path)) {
 		__if_val_0 = module_path;
 	} else {
-		string __v3_internal_symbol_join_0__vmsvc12840[4]; __v3_internal_symbol_join_0__vmsvc12840[0] = flat__Node__typ_text(&node); __v3_internal_symbol_join_0__vmsvc12840[1] = _str_1000; __v3_internal_symbol_join_0__vmsvc12840[2] = module_path; __v3_internal_symbol_join_0__vmsvc12840[3] = _str_28; __if_val_0 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc12840));
+		string __v3_internal_symbol_join_0__vmsvc12843[4]; __v3_internal_symbol_join_0__vmsvc12843[0] = flat__Node__typ_text(&node); __v3_internal_symbol_join_0__vmsvc12843[1] = _str_1000; __v3_internal_symbol_join_0__vmsvc12843[2] = module_path; __v3_internal_symbol_join_0__vmsvc12843[3] = _str_28; __if_val_0 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc12843));
 	}
 	string display_name = __if_val_0;
-	string __v3_internal_symbol_join_1__vmsvc12841[5]; __v3_internal_symbol_join_1__vmsvc12841[0] = _str_5705; __v3_internal_symbol_join_1__vmsvc12841[1] = display_name; __v3_internal_symbol_join_1__vmsvc12841[2] = _str_5706; __v3_internal_symbol_join_1__vmsvc12841[3] = display_name; __v3_internal_symbol_join_1__vmsvc12841[4] = _str_5707; types__TypeChecker__record_warning_or_error_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12841)), id, types__TypeChecker__import_module_path_pos(tc, node), tc->explicit_warns_are_errors);
+	string __v3_internal_symbol_join_1__vmsvc12844[5]; __v3_internal_symbol_join_1__vmsvc12844[0] = _str_5705; __v3_internal_symbol_join_1__vmsvc12844[1] = display_name; __v3_internal_symbol_join_1__vmsvc12844[2] = _str_5706; __v3_internal_symbol_join_1__vmsvc12844[3] = display_name; __v3_internal_symbol_join_1__vmsvc12844[4] = _str_5707; types__TypeChecker__record_warning_or_error_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12844)), id, types__TypeChecker__import_module_path_pos(tc, node), tc->explicit_warns_are_errors);
 }
 
 void types__TypeChecker__record_unused_top_level_vars(types__TypeChecker* tc, flat__Node node) {
@@ -557038,11 +557207,11 @@ void types__TypeChecker__record_unused_top_level_vars(types__TypeChecker* tc, fl
 					}
 					i32 rhs_id = flat__FlatAst__child(tc->a, child, j + 1);
 					flat__Node* rhs = flat__FlatAst__node(tc->a, rhs_id);
-					int cond__vmsvc12845; cond__vmsvc12845 = !!((rhs->kind == flat__NodeKind__cast_expr)); if (cond__vmsvc12845) { u32 __map_key_0__vmsvc12842 = flat__Node__source_value_id(*rhs); int cond__vmsvc12844; cond__vmsvc12844 = !!(map__exists(&tc->interface_generic_params, &__map_key_0__vmsvc12842)); if (!cond__vmsvc12844) { u32 __map_key_1__vmsvc12843 = types__TypeChecker__qualify_type_name(tc, flat__Node__source_value_id(*rhs)); cond__vmsvc12844 = !!((map__exists(&tc->interface_generic_params, &__map_key_1__vmsvc12843))); } cond__vmsvc12845 = !!(((cond__vmsvc12844))); } bool generic_interface_cast = cond__vmsvc12845;
+					int cond__vmsvc12848; cond__vmsvc12848 = !!((rhs->kind == flat__NodeKind__cast_expr)); if (cond__vmsvc12848) { u32 __map_key_0__vmsvc12845 = flat__Node__source_value_id(*rhs); int cond__vmsvc12847; cond__vmsvc12847 = !!(map__exists(&tc->interface_generic_params, &__map_key_0__vmsvc12845)); if (!cond__vmsvc12847) { u32 __map_key_1__vmsvc12846 = types__TypeChecker__qualify_type_name(tc, flat__Node__source_value_id(*rhs)); cond__vmsvc12847 = !!((map__exists(&tc->interface_generic_params, &__map_key_1__vmsvc12846))); } cond__vmsvc12848 = !!(((cond__vmsvc12847))); } bool generic_interface_cast = cond__vmsvc12848;
 					if (types__TypeChecker__expr_subtree_has_error(tc, rhs_id) && !types__TypeChecker__expr_contains_nil_deref(tc, rhs_id) && !generic_interface_cast) {
 						continue;
 					}
-					string __v3_internal_symbol_join_0__vmsvc12846[3]; __v3_internal_symbol_join_0__vmsvc12846[0] = _str_3890; __v3_internal_symbol_join_0__vmsvc12846[1] = lhs->value; __v3_internal_symbol_join_0__vmsvc12846[2] = _str_41; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12846)), lhs_id, types__TypeChecker__node_value_diagnostic_pos(tc, lhs_id));
+					string __v3_internal_symbol_join_0__vmsvc12849[3]; __v3_internal_symbol_join_0__vmsvc12849[0] = _str_3890; __v3_internal_symbol_join_0__vmsvc12849[1] = lhs->value; __v3_internal_symbol_join_0__vmsvc12849[2] = _str_41; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12849)), lhs_id, types__TypeChecker__node_value_diagnostic_pos(tc, lhs_id));
 				}
 			}
 		}
@@ -557065,7 +557234,7 @@ void types__TypeChecker__record_valid_method_value(types__TypeChecker* tc, i32 i
 		}
 		u32 recv_name_id = types__TypeChecker__method_value_receiver_name(tc, types__Struct__source_type_id(clean_recv.types__Struct), node.value);
 		string recv_name = flat__source_type_name(recv_name_id);
-		string __v3_internal_symbol_join_0__vmsvc12847[3]; __v3_internal_symbol_join_0__vmsvc12847[0] = recv_name; __v3_internal_symbol_join_0__vmsvc12847[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12847[2] = node.value; string mkey = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12847));
+		string __v3_internal_symbol_join_0__vmsvc12850[3]; __v3_internal_symbol_join_0__vmsvc12850[0] = recv_name; __v3_internal_symbol_join_0__vmsvc12850[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12850[2] = node.value; string mkey = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12850));
 		bool is_generic_method_value = false;
 		string __map_key_0 = mkey;
 		if (!map__exists(&tc->fn_param_types, &__map_key_0)) {
@@ -557080,12 +557249,12 @@ void types__TypeChecker__record_valid_method_value(types__TypeChecker* tc, i32 i
 				}
 				string __map_key_6 = node.value;
 				types__CallInfo __map_val_7 = ci;
-				void* _ifexpr__vmsvc12848; if (map__exists(&tc->generic_method_value_info, &__map_key_2)) {
-				_ifexpr__vmsvc12848 = map__get_check(&tc->generic_method_value_info, &__map_key_2);
+				void* _ifexpr__vmsvc12851; if (map__exists(&tc->generic_method_value_info, &__map_key_2)) {
+				_ifexpr__vmsvc12851 = map__get_check(&tc->generic_method_value_info, &__map_key_2);
 				} else {
 				map __map_zero_5 = new_map(sizeof(string), sizeof(types__CallInfo), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-				_ifexpr__vmsvc12848 = map__get_and_set(&tc->generic_method_value_info, &__map_key_2, &__map_zero_5);
-				} map__set((map*)((_ifexpr__vmsvc12848)), &__map_key_6, &__map_val_7);
+				_ifexpr__vmsvc12851 = map__get_and_set(&tc->generic_method_value_info, &__map_key_2, &__map_zero_5);
+				} map__set((map*)((_ifexpr__vmsvc12851)), &__map_key_6, &__map_val_7);
 				mkey = ci.name;
 				is_generic_method_value = true;
 			}
@@ -557098,7 +557267,7 @@ void types__TypeChecker__record_valid_method_value(types__TypeChecker* tc, i32 i
 			string __arr_val_12 = mkey;
 			array_push(&__map_val_10, &__arr_val_12);
 			map__set(&tc->method_values_by_fn, &__map_key_9, &__map_val_10);
-			string __v3_internal_symbol_join_1__vmsvc12849[3]; __v3_internal_symbol_join_1__vmsvc12849[0] = recv_name; __v3_internal_symbol_join_1__vmsvc12849[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12849[2] = node.value; string concrete_mkey = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12849));
+			string __v3_internal_symbol_join_1__vmsvc12852[3]; __v3_internal_symbol_join_1__vmsvc12852[0] = recv_name; __v3_internal_symbol_join_1__vmsvc12852[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12852[2] = node.value; string concrete_mkey = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12852));
 			if (!string__eq(concrete_mkey, mkey)) {
 				__v_int __map_key_13 = tc->fn_context.node_id;
 				Array __map_zero_15 = array_new(sizeof(string), 0, 0);
@@ -557139,7 +557308,7 @@ void types__TypeChecker__record_valid_method_value(types__TypeChecker* tc, i32 i
 			__v_int __map_key_24 = tc->fn_context.node_id;
 			Array __map_zero_26 = array_new(sizeof(string), 0, 0);
 			Array __map_val_25 = *(Array*)(map__get(&tc->method_values_by_fn, &__map_key_24, &__map_zero_26));
-			string __v3_internal_symbol_join_2__vmsvc12850[3]; __v3_internal_symbol_join_2__vmsvc12850[0] = types__Interface__name(clean_recv.types__Interface); __v3_internal_symbol_join_2__vmsvc12850[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12850[2] = node.value; string __arr_val_27 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12850));
+			string __v3_internal_symbol_join_2__vmsvc12853[3]; __v3_internal_symbol_join_2__vmsvc12853[0] = types__Interface__name(clean_recv.types__Interface); __v3_internal_symbol_join_2__vmsvc12853[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12853[2] = node.value; string __arr_val_27 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12853));
 			array_push(&__map_val_25, &__arr_val_27);
 			map__set(&tc->method_values_by_fn, &__map_key_24, &__map_val_25);
 		}
@@ -557232,7 +557401,7 @@ void types__TypeChecker__record_wrapped_infix_operand_error(types__TypeChecker* 
 		__if_val_0 = types__Type__name(&(*wrapped));
 	}
 	string display_name = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc12851[5]; __v3_internal_symbol_join_0__vmsvc12851[0] = _str_41; __v3_internal_symbol_join_0__vmsvc12851[1] = display_name; __v3_internal_symbol_join_0__vmsvc12851[2] = _str_6970; __v3_internal_symbol_join_0__vmsvc12851[3] = expected_name; __v3_internal_symbol_join_0__vmsvc12851[4] = _str_6971; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12851)), id, types__TypeChecker__wrapped_operand_diagnostic_pos(tc, id));
+	string __v3_internal_symbol_join_0__vmsvc12854[5]; __v3_internal_symbol_join_0__vmsvc12854[0] = _str_41; __v3_internal_symbol_join_0__vmsvc12854[1] = display_name; __v3_internal_symbol_join_0__vmsvc12854[2] = _str_6970; __v3_internal_symbol_join_0__vmsvc12854[3] = expected_name; __v3_internal_symbol_join_0__vmsvc12854[4] = _str_6971; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12854)), id, types__TypeChecker__wrapped_operand_diagnostic_pos(tc, id));
 }
 
 __v_option_types__Type types__TypeChecker__recursive_alias_reference(types__TypeChecker* tc, u32 typ_id) {
@@ -557678,7 +557847,7 @@ void types__TypeChecker__recursive_str_apply_condition_facts(types__TypeChecker*
 			return;
 		}
 	}
-	int cond__vmsvc12853; cond__vmsvc12853 = !!((node->kind == flat__NodeKind__selector)); if (cond__vmsvc12853) { types__Type __addr_5__vmsvc12852 = types__TypeChecker__resolve_type(tc, id); cond__vmsvc12853 = !!((types__Type__source_type_id(&__addr_5__vmsvc12852) == flat__source_type_bool)); } if (cond__vmsvc12853) {
+	int cond__vmsvc12856; cond__vmsvc12856 = !!((node->kind == flat__NodeKind__selector)); if (cond__vmsvc12856) { types__Type __addr_5__vmsvc12855 = types__TypeChecker__resolve_type(tc, id); cond__vmsvc12856 = !!((types__Type__source_type_id(&__addr_5__vmsvc12855) == flat__source_type_bool)); } if (cond__vmsvc12856) {
 		__v_option_string __if_guard_6 = types__TypeChecker__recursive_str_condition_field_key(tc, id);
 		if (__if_guard_6.ok) {
 			string key = __if_guard_6.value;
@@ -559479,7 +559648,7 @@ types__RecursiveStrBinding types__TypeChecker__recursive_str_eval_if_expr(types_
 }
 
 void types__TypeChecker__recursive_str_eval_invoked_closure(types__TypeChecker* tc, i32 id, types__RecursiveStrBinding closure, Array args, types__RecursiveStrEnv* env, types__RecursiveStrContext ctx) {
-	int cond__vmsvc12856; cond__vmsvc12856 = !!(!types__TypeChecker__valid_node_id(tc, id)); if (!cond__vmsvc12856) { __v_int __map_key_0__vmsvc12854 = (__v_int)(id); bool __map_zero_1__vmsvc12855 = false; cond__vmsvc12856 = !!((*(bool*)(map__get(&env->active_closure_ids, &__map_key_0__vmsvc12854, &__map_zero_1__vmsvc12855)))); } if (cond__vmsvc12856) {
+	int cond__vmsvc12859; cond__vmsvc12859 = !!(!types__TypeChecker__valid_node_id(tc, id)); if (!cond__vmsvc12859) { __v_int __map_key_0__vmsvc12857 = (__v_int)(id); bool __map_zero_1__vmsvc12858 = false; cond__vmsvc12859 = !!((*(bool*)(map__get(&env->active_closure_ids, &__map_key_0__vmsvc12857, &__map_zero_1__vmsvc12858)))); } if (cond__vmsvc12859) {
 		return;
 	}
 	flat__Node* node = flat__FlatAst__node(tc->a, id);
@@ -559572,7 +559741,7 @@ void types__TypeChecker__recursive_str_eval_invoked_helper(types__TypeChecker* t
 		return;
 	}
 	i32 decl_id = __or_val_5;
-	int cond__vmsvc12859; cond__vmsvc12859 = !!((decl_id == ctx.fn_id)); if (!cond__vmsvc12859) { __v_int __map_key_6__vmsvc12857 = (__v_int)(decl_id); bool __map_zero_7__vmsvc12858 = false; cond__vmsvc12859 = !!((*(bool*)(map__get(&env.active_helper_ids, &__map_key_6__vmsvc12857, &__map_zero_7__vmsvc12858)))); } if (cond__vmsvc12859) {
+	int cond__vmsvc12862; cond__vmsvc12862 = !!((decl_id == ctx.fn_id)); if (!cond__vmsvc12862) { __v_int __map_key_6__vmsvc12860 = (__v_int)(decl_id); bool __map_zero_7__vmsvc12861 = false; cond__vmsvc12862 = !!((*(bool*)(map__get(&env.active_helper_ids, &__map_key_6__vmsvc12860, &__map_zero_7__vmsvc12861)))); } if (cond__vmsvc12862) {
 		return;
 	}
 	flat__Node* decl = flat__FlatAst__node(tc->a, decl_id);
@@ -560038,13 +560207,13 @@ bool types__TypeChecker__recursive_str_has_diagnostic_context(types__TypeChecker
 	if (tc->valid_diagnostic_fast) {
 		return false;
 	}
-	int cond__vmsvc12861; cond__vmsvc12861 = !!((tc->diagnostic_files.data->count == 0)); if (!cond__vmsvc12861) { string __map_key_0__vmsvc12860 = tc->cur_file; cond__vmsvc12861 = !!((map__exists(&tc->diagnostic_files, &__map_key_0__vmsvc12860))); } if (cond__vmsvc12861) {
+	int cond__vmsvc12864; cond__vmsvc12864 = !!((tc->diagnostic_files.data->count == 0)); if (!cond__vmsvc12864) { string __map_key_0__vmsvc12863 = tc->cur_file; cond__vmsvc12864 = !!((map__exists(&tc->diagnostic_files, &__map_key_0__vmsvc12863))); } if (cond__vmsvc12864) {
 		return true;
 	}
 	if (tc->checker_fixture_mode) {
 		return false;
 	}
-	int cond__vmsvc12864; cond__vmsvc12864 = !!((tc->fn_context.node_id >= 0) && (tc->fn_context.node_id < tc->a->specialized_fn_nodes.data->count)); if (cond__vmsvc12864) { __v_int __map_key_1__vmsvc12862 = tc->fn_context.node_id; bool __map_zero_2__vmsvc12863 = false; cond__vmsvc12864 = !!((*(bool*)(map__get(&tc->a->specialized_fn_nodes, &__map_key_1__vmsvc12862, &__map_zero_2__vmsvc12863)))); } if (cond__vmsvc12864) {
+	int cond__vmsvc12867; cond__vmsvc12867 = !!((tc->fn_context.node_id >= 0) && (tc->fn_context.node_id < tc->a->specialized_fn_nodes.data->count)); if (cond__vmsvc12867) { __v_int __map_key_1__vmsvc12865 = tc->fn_context.node_id; bool __map_zero_2__vmsvc12866 = false; cond__vmsvc12867 = !!((*(bool*)(map__get(&tc->a->specialized_fn_nodes, &__map_key_1__vmsvc12865, &__map_zero_2__vmsvc12866)))); } if (cond__vmsvc12867) {
 		return true;
 	}
 	if (types__TypeChecker__current_fn_is_concrete_generic_receiver_specialization(tc)) {
@@ -560068,14 +560237,14 @@ types__RecursiveStrBinding types__TypeChecker__recursive_str_index_binding(types
 		if ((result->kind == flat__NodeKind__v_index) && string__eq(result->value, _str_3999)) {
 			return types__TypeChecker__recursive_str_slice_binding(tc, base, *result, result_id, env);
 		}
-		int cond__vmsvc12866; cond__vmsvc12866 = !!((base.element_keys.len == base.elements.len)); if (cond__vmsvc12866) { bool __contains_0__vmsvc12865 = false; {
+		int cond__vmsvc12869; cond__vmsvc12869 = !!((base.element_keys.len == base.elements.len)); if (cond__vmsvc12869) { bool __contains_0__vmsvc12868 = false; {
 			__v_int __contains_idx_1 = 0;
 			for (; __contains_idx_1 < base.element_keys.len; __contains_idx_1++) {
 				if (string__eq(*(string*)(array_get(base.element_keys, __contains_idx_1)), _str_34)) {
-					__contains_0__vmsvc12865 = true;
+					__contains_0__vmsvc12868 = true;
 				}
 			}
-		} cond__vmsvc12866 = !!((!__contains_0__vmsvc12865)); } if (cond__vmsvc12866) {
+		} cond__vmsvc12869 = !!((!__contains_0__vmsvc12868)); } if (cond__vmsvc12869) {
 			__v_option_string __if_guard_2 = types__TypeChecker__recursive_str_constant_map_key(tc, index_id);
 			if (__if_guard_2.ok) {
 				string key = __if_guard_2.value;
@@ -562151,7 +562320,7 @@ bool types__TypeChecker__recursive_str_stmt_always_returns(types__TypeChecker* t
 				}
 				blocks++;
 				all_return = all_return && types__TypeChecker__recursive_str_stmt_always_returns(tc, *child);
-				int cond__vmsvc12869; cond__vmsvc12869 = !!((i == (node.children_count - 1))); if (cond__vmsvc12869) { __v_int _t1__vmsvc12867 = (__v_int)(i); __v_int _t2__vmsvc12868 = (__v_int)(2); if (_t2__vmsvc12868 == 0) v_panic(_S("modulo by zero")); cond__vmsvc12869 = !!(((((__v_int)(_t1__vmsvc12867 % _t2__vmsvc12868))) == 0)); } if (cond__vmsvc12869) {
+				int cond__vmsvc12872; cond__vmsvc12872 = !!((i == (node.children_count - 1))); if (cond__vmsvc12872) { __v_int _t1__vmsvc12870 = (__v_int)(i); __v_int _t2__vmsvc12871 = (__v_int)(2); if (_t2__vmsvc12871 == 0) v_panic(_S("modulo by zero")); cond__vmsvc12872 = !!(((((__v_int)(_t1__vmsvc12870 % _t2__vmsvc12871))) == 0)); } if (cond__vmsvc12872) {
 					has_else = true;
 				}
 			}
@@ -562544,7 +562713,7 @@ bool types__TypeChecker__recursive_str_struct_update_field_changes_base(types__T
 		__v_option_string __if_guard_1 = types__TypeChecker__recursive_str_value_expr_key(tc, base_id);
 		if (__if_guard_1.ok) {
 			string base_key = __if_guard_1.value;
-			string __v3_internal_symbol_join_0__vmsvc12870[3]; __v3_internal_symbol_join_0__vmsvc12870[0] = base_key; __v3_internal_symbol_join_0__vmsvc12870[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12870[2] = field.value; string field_key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12870));
+			string __v3_internal_symbol_join_0__vmsvc12873[3]; __v3_internal_symbol_join_0__vmsvc12873[0] = base_key; __v3_internal_symbol_join_0__vmsvc12873[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12873[2] = field.value; string field_key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12873));
 			string __map_key_2 = field_key;
 			void* __map_ptr_3 = map__get_check(&env.known_values, &__map_key_2);
 			if (__map_ptr_3 != NULL) {
@@ -562582,14 +562751,14 @@ __v_option___v_int types__TypeChecker__recursive_str_tracked_element_index(types
 	if ((binding.elements.len == 0) || binding.repeated_element) {
 		return (__v_option___v_int){.ok = false};
 	}
-	int cond__vmsvc12872; cond__vmsvc12872 = !!((binding.element_keys.len == binding.elements.len)); if (cond__vmsvc12872) { bool __contains_0__vmsvc12871 = false; {
+	int cond__vmsvc12875; cond__vmsvc12875 = !!((binding.element_keys.len == binding.elements.len)); if (cond__vmsvc12875) { bool __contains_0__vmsvc12874 = false; {
 		__v_int __contains_idx_1 = 0;
 		for (; __contains_idx_1 < binding.element_keys.len; __contains_idx_1++) {
 			if (string__eq(*(string*)(array_get(binding.element_keys, __contains_idx_1)), _str_34)) {
-				__contains_0__vmsvc12871 = true;
+				__contains_0__vmsvc12874 = true;
 			}
 		}
-	} cond__vmsvc12872 = !!((!__contains_0__vmsvc12871)); } if (cond__vmsvc12872) {
+	} cond__vmsvc12875 = !!((!__contains_0__vmsvc12874)); } if (cond__vmsvc12875) {
 		__v_option_string __or_opt_2 = types__TypeChecker__recursive_str_constant_map_key(tc, index_id);
 		string __or_val_3 = {0};
 		if (__or_opt_2.ok) {
@@ -562662,7 +562831,7 @@ __v_option_string types__TypeChecker__recursive_str_value_expr_key(types__TypeCh
 			return (__v_option_string){.ok = false};
 		}
 		string base = __or_val_1;
-		string __v3_internal_symbol_join_0__vmsvc12873[3]; __v3_internal_symbol_join_0__vmsvc12873[0] = base; __v3_internal_symbol_join_0__vmsvc12873[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12873[2] = node->value; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12873))};
+		string __v3_internal_symbol_join_0__vmsvc12876[3]; __v3_internal_symbol_join_0__vmsvc12876[0] = base; __v3_internal_symbol_join_0__vmsvc12876[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12876[2] = node->value; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12876))};
 	}
 	return (__v_option_string){.ok = false};
 	return (__v_option_string){.ok = true};
@@ -562870,7 +563039,7 @@ void types__TypeChecker__register_declaration_visibility(types__TypeChecker* tc,
 					for (; i < node.children_count; i++) {
 						flat__Node* field = flat__FlatAst__child_node(tc->a, &node, i);
 						if ((field->kind == flat__NodeKind__interface_field) && (field->op == flat__Op__dot)) {
-							string __v3_internal_symbol_join_0__vmsvc12874[3]; __v3_internal_symbol_join_0__vmsvc12874[0] = name; __v3_internal_symbol_join_0__vmsvc12874[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12874[2] = field->value; string __map_key_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12874));
+							string __v3_internal_symbol_join_0__vmsvc12877[3]; __v3_internal_symbol_join_0__vmsvc12877[0] = name; __v3_internal_symbol_join_0__vmsvc12877[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12877[2] = field->value; string __map_key_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12877));
 							types__DeclarationVisibility __map_val_8 = (types__DeclarationVisibility){.module_name = module_name, .kind = flat__NodeKind__fn_decl, .is_pub = true};
 							map__set(&tc->declaration_visibility, &__map_key_7, &__map_val_8);
 						}
@@ -562971,7 +563140,7 @@ void types__TypeChecker__register_fn_name_alias_owned(types__TypeChecker* tc, st
 	map__set(&tc->fn_param_types, &__map_key_2, &__map_val_3);
 	bool write_file = false;
 	if (tc->cur_file.len > 0) {
-		int cond__vmsvc12876; cond__vmsvc12876 = !!(!string__starts_with(name, _str_2688)); if (!cond__vmsvc12876) { string __map_key_4__vmsvc12875 = name; cond__vmsvc12876 = !!((!map__exists(&tc->fn_type_modules, &__map_key_4__vmsvc12875))); } if (cond__vmsvc12876 || string__eq(tc->cur_module, _str_34) || string__eq(tc->cur_module, _str_179)) {
+		int cond__vmsvc12879; cond__vmsvc12879 = !!(!string__starts_with(name, _str_2688)); if (!cond__vmsvc12879) { string __map_key_4__vmsvc12878 = name; cond__vmsvc12879 = !!((!map__exists(&tc->fn_type_modules, &__map_key_4__vmsvc12878))); } if (cond__vmsvc12879 || string__eq(tc->cur_module, _str_34) || string__eq(tc->cur_module, _str_179)) {
 			write_file = true;
 			string __map_key_5 = name;
 			string __map_val_6 = tc->cur_module;
@@ -563004,7 +563173,7 @@ void types__TypeChecker__register_fn_ret_type_text(types__TypeChecker* tc, strin
 void types__TypeChecker__register_fn_signature(types__TypeChecker* tc, string name, types__Type* ret_type, Array params, Array shared_params, bool is_variadic, bool implicit_veb_ctx) {
 	types__TypeChecker__register_fn_name_alias(tc, name, &(types__Type[]){(*ret_type)}[0], params, shared_params, is_variadic, implicit_veb_ctx);
 	string lowered_name = types__TypeChecker__cached_c_name(tc, name);
-	int cond__vmsvc12879; cond__vmsvc12879 = !!(!string__eq(lowered_name, name)); if (cond__vmsvc12879) { int cond__vmsvc12878; cond__vmsvc12878 = !!(string__starts_with(name, _str_2688)); if (cond__vmsvc12878) { string __map_key_0__vmsvc12877 = lowered_name; cond__vmsvc12878 = !!((map__exists(&tc->v_fn_semantic_names, &__map_key_0__vmsvc12877))); } cond__vmsvc12879 = !!(!(cond__vmsvc12878)); } if (cond__vmsvc12879) {
+	int cond__vmsvc12882; cond__vmsvc12882 = !!(!string__eq(lowered_name, name)); if (cond__vmsvc12882) { int cond__vmsvc12881; cond__vmsvc12881 = !!(string__starts_with(name, _str_2688)); if (cond__vmsvc12881) { string __map_key_0__vmsvc12880 = lowered_name; cond__vmsvc12881 = !!((map__exists(&tc->v_fn_semantic_names, &__map_key_0__vmsvc12880))); } cond__vmsvc12882 = !!(!(cond__vmsvc12881)); } if (cond__vmsvc12882) {
 		types__TypeChecker__register_fn_name_alias(tc, lowered_name, &(types__Type[]){(*ret_type)}[0], params, shared_params, is_variadic, implicit_veb_ctx);
 	}
 	if (string__ends_with(name, _str_2722)) {
@@ -563018,7 +563187,7 @@ void types__TypeChecker__register_fn_signature(types__TypeChecker* tc, string na
 
 void types__TypeChecker__register_fn_signature_owned(types__TypeChecker* tc, string name, string lowered_name, types__Type* ret_type, Array params, Array shared_params, bool is_variadic, bool implicit_veb_ctx) {
 	types__TypeChecker__register_fn_name_alias_owned(tc, name, &(types__Type[]){(*ret_type)}[0], params, shared_params, is_variadic, implicit_veb_ctx);
-	int cond__vmsvc12882; cond__vmsvc12882 = !!(!string__eq(lowered_name, name)); if (cond__vmsvc12882) { int cond__vmsvc12881; cond__vmsvc12881 = !!(string__starts_with(name, _str_2688)); if (cond__vmsvc12881) { string __map_key_0__vmsvc12880 = lowered_name; cond__vmsvc12881 = !!((map__exists(&tc->v_fn_semantic_names, &__map_key_0__vmsvc12880))); } cond__vmsvc12882 = !!(!(cond__vmsvc12881)); } if (cond__vmsvc12882) {
+	int cond__vmsvc12885; cond__vmsvc12885 = !!(!string__eq(lowered_name, name)); if (cond__vmsvc12885) { int cond__vmsvc12884; cond__vmsvc12884 = !!(string__starts_with(name, _str_2688)); if (cond__vmsvc12884) { string __map_key_0__vmsvc12883 = lowered_name; cond__vmsvc12884 = !!((map__exists(&tc->v_fn_semantic_names, &__map_key_0__vmsvc12883))); } cond__vmsvc12885 = !!(!(cond__vmsvc12884)); } if (cond__vmsvc12885) {
 		types__TypeChecker__register_fn_name_alias_owned(tc, lowered_name, &(types__Type[]){(*ret_type)}[0], params, shared_params, is_variadic, implicit_veb_ctx);
 	}
 	if (string__ends_with(name, _str_2722)) {
@@ -563093,16 +563262,16 @@ void types__TypeChecker__register_selective_imports(types__TypeChecker* tc, flat
 				map__set(&info->selective_imports, &__map_key_3, &__map_val_4);
 				string __if_val_5 = {0};
 				if (tc->cur_module.len == 0) {
-					string __v3_internal_symbol_join_0__vmsvc12883[3]; __v3_internal_symbol_join_0__vmsvc12883[0] = _str_5718; __v3_internal_symbol_join_0__vmsvc12883[1] = child.value; __v3_internal_symbol_join_0__vmsvc12883[2] = _str_5719; __if_val_5 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12883));
+					string __v3_internal_symbol_join_0__vmsvc12886[3]; __v3_internal_symbol_join_0__vmsvc12886[0] = _str_5718; __v3_internal_symbol_join_0__vmsvc12886[1] = child.value; __v3_internal_symbol_join_0__vmsvc12886[2] = _str_5719; __if_val_5 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12886));
 				} else {
-					string __v3_internal_symbol_join_1__vmsvc12884[3]; __v3_internal_symbol_join_1__vmsvc12884[0] = _str_5720; __v3_internal_symbol_join_1__vmsvc12884[1] = child.value; __v3_internal_symbol_join_1__vmsvc12884[2] = _str_41; __if_val_5 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12884));
+					string __v3_internal_symbol_join_1__vmsvc12887[3]; __v3_internal_symbol_join_1__vmsvc12887[0] = _str_5720; __v3_internal_symbol_join_1__vmsvc12887[1] = child.value; __v3_internal_symbol_join_1__vmsvc12887[2] = _str_41; __if_val_5 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12887));
 				}
 				string message = __if_val_5;
 				types__TypeChecker__record_error_unfiltered(tc, types__TypeErrorKind__unknown_fn, message, child_id);
 				continue;
 			}
-			string __v3_internal_symbol_join_2__vmsvc12885[3]; __v3_internal_symbol_join_2__vmsvc12885[0] = types__TypeChecker__import_module_path_text(tc, node); __v3_internal_symbol_join_2__vmsvc12885[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12885[2] = child.value; u32 path_id = flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12885)));
-			string __v3_internal_symbol_join_3__vmsvc12886[3]; __v3_internal_symbol_join_3__vmsvc12886[0] = flat__Node__typ_text(&node); __v3_internal_symbol_join_3__vmsvc12886[1] = _str_2; __v3_internal_symbol_join_3__vmsvc12886[2] = child.value; u32 alias_id = flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12886)));
+			string __v3_internal_symbol_join_2__vmsvc12888[3]; __v3_internal_symbol_join_2__vmsvc12888[0] = types__TypeChecker__import_module_path_text(tc, node); __v3_internal_symbol_join_2__vmsvc12888[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12888[2] = child.value; u32 path_id = flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12888)));
+			string __v3_internal_symbol_join_3__vmsvc12889[3]; __v3_internal_symbol_join_3__vmsvc12889[0] = flat__Node__typ_text(&node); __v3_internal_symbol_join_3__vmsvc12889[1] = _str_2; __v3_internal_symbol_join_3__vmsvc12889[2] = child.value; u32 alias_id = flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12889)));
 			u32 __map_key_6 = name_id;
 			Array __if_val_8 = {0};
 			if (alias_id != path_id) {
@@ -563205,9 +563374,9 @@ void types__TypeChecker__register_visible_mutation_fn_decl_keys(types__TypeCheck
 			__v_int key_len = (decl_module.len + 1) + candidate.len;
 			string __if_val_10 = {0};
 			if (key_len <= 192) {
-				u8* key_start__vmsvc12887 = (u8*)(&key_buf[0]); vmemcpy((void*)(key_start__vmsvc12887), (void*)(decl_module.str), decl_module.len); (key_start__vmsvc12887)[decl_module.len] = 0x01; vmemcpy((void*)((key_start__vmsvc12887 + decl_module.len) + 1), (void*)(candidate.str), candidate.len); __if_val_10 = (tos(key_start__vmsvc12887, key_len));
+				u8* key_start__vmsvc12890 = (u8*)(&key_buf[0]); vmemcpy((void*)(key_start__vmsvc12890), (void*)(decl_module.str), decl_module.len); (key_start__vmsvc12890)[decl_module.len] = 0x01; vmemcpy((void*)((key_start__vmsvc12890 + decl_module.len) + 1), (void*)(candidate.str), candidate.len); __if_val_10 = (tos(key_start__vmsvc12890, key_len));
 			} else {
-				string __v3_internal_symbol_join_0__vmsvc12888[3]; __v3_internal_symbol_join_0__vmsvc12888[0] = decl_module; __v3_internal_symbol_join_0__vmsvc12888[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc12888[2] = candidate; __if_val_10 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12888));
+				string __v3_internal_symbol_join_0__vmsvc12891[3]; __v3_internal_symbol_join_0__vmsvc12891[0] = decl_module; __v3_internal_symbol_join_0__vmsvc12891[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc12891[2] = candidate; __if_val_10 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12891));
 			}
 			string key = __if_val_10;
 			string __map_key_11 = key;
@@ -563428,11 +563597,11 @@ void types__TypeChecker__remember_parsed_scalar_type(types__TypeChecker* tc, u32
 		return;
 	}
 	types__TypeCache* type_cache = tc->type_cache;
-	int cond__vmsvc12890; cond__vmsvc12890 = !!(isnil((void*)(type_cache->parsed_scalars))); if (!cond__vmsvc12890) { bool __ptr_eq_0__vmsvc12889 = (void*)(type_cache->parsed_scalars->owner) == (void*)(tc->type_interner); if (!__ptr_eq_0__vmsvc12889 && ((void*)(type_cache->parsed_scalars->owner) != NULL) && ((void*)(tc->type_interner) != NULL)) {
+	int cond__vmsvc12893; cond__vmsvc12893 = !!(isnil((void*)(type_cache->parsed_scalars))); if (!cond__vmsvc12893) { bool __ptr_eq_0__vmsvc12892 = (void*)(type_cache->parsed_scalars->owner) == (void*)(tc->type_interner); if (!__ptr_eq_0__vmsvc12892 && ((void*)(type_cache->parsed_scalars->owner) != NULL) && ((void*)(tc->type_interner) != NULL)) {
 		types__TypeInterner __eq_lhs_1 = *type_cache->parsed_scalars->owner;
 		types__TypeInterner __eq_rhs_2 = *tc->type_interner;
-		__ptr_eq_0__vmsvc12889 = (__eq_lhs_1.lock == __eq_rhs_2.lock) && __v3_array_eq_raw(__eq_lhs_1.types, __eq_rhs_2.types, sizeof(types__Type*)) && __v3_array_eq_raw(__eq_lhs_1.names, __eq_rhs_2.names, sizeof(u32)) && map_map_eq(__eq_lhs_1.buckets, __eq_rhs_2.buckets) && __v3_array_eq_raw(__eq_lhs_1.entries, __eq_rhs_2.entries, sizeof(types__CanonicalTypeEntry*)) && (memcmp(&__eq_lhs_1.recent, &__eq_rhs_2.recent, sizeof(void*[4096])) == 0) && (memcmp(&__eq_lhs_1.identities, &__eq_rhs_2.identities, sizeof(void*[4096])) == 0) && (memcmp(&__eq_lhs_1.primitives, &__eq_rhs_2.primitives, sizeof(void*[8192])) == 0);
-	} cond__vmsvc12890 = !!((!__ptr_eq_0__vmsvc12889)); } if (cond__vmsvc12890) {
+		__ptr_eq_0__vmsvc12892 = (__eq_lhs_1.lock == __eq_rhs_2.lock) && __v3_array_eq_raw(__eq_lhs_1.types, __eq_rhs_2.types, sizeof(types__Type*)) && __v3_array_eq_raw(__eq_lhs_1.names, __eq_rhs_2.names, sizeof(u32)) && map_map_eq(__eq_lhs_1.buckets, __eq_rhs_2.buckets) && __v3_array_eq_raw(__eq_lhs_1.entries, __eq_rhs_2.entries, sizeof(types__CanonicalTypeEntry*)) && (memcmp(&__eq_lhs_1.recent, &__eq_rhs_2.recent, sizeof(void*[4096])) == 0) && (memcmp(&__eq_lhs_1.identities, &__eq_rhs_2.identities, sizeof(void*[4096])) == 0) && (memcmp(&__eq_lhs_1.primitives, &__eq_rhs_2.primitives, sizeof(void*[8192])) == 0);
+	} cond__vmsvc12893 = !!((!__ptr_eq_0__vmsvc12892)); } if (cond__vmsvc12893) {
 		type_cache->parsed_scalars = (types__ParsedScalarTypeCache*)memdup(&(types__ParsedScalarTypeCache){.owner = tc->type_interner, .values = array_new(		sizeof(types__Type*), 128, 0)}, sizeof(types__ParsedScalarTypeCache));
 	}
 	types__ParsedScalarTypeCache* cache = type_cache->parsed_scalars;
@@ -563605,9 +563774,9 @@ void types__TypeChecker__report_unused_private_declarations(types__TypeChecker* 
 			types__UnusedDeclCandidate cand = *(types__UnusedDeclCandidate*)(array_get(unused, __for_idx_4));
 			tc->cur_file = cand.file;
 			if (cand.is_fn) {
-				string __v3_internal_symbol_join_0__vmsvc12891[3]; __v3_internal_symbol_join_0__vmsvc12891[0] = _str_5727; __v3_internal_symbol_join_0__vmsvc12891[1] = cand.name; __v3_internal_symbol_join_0__vmsvc12891[2] = _str_41; types__TypeChecker__record_notice_once_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12891)), cand.node_id, types__TypeChecker__node_value_diagnostic_pos(tc, cand.node_id), &seen);
+				string __v3_internal_symbol_join_0__vmsvc12894[3]; __v3_internal_symbol_join_0__vmsvc12894[0] = _str_5727; __v3_internal_symbol_join_0__vmsvc12894[1] = cand.name; __v3_internal_symbol_join_0__vmsvc12894[2] = _str_41; types__TypeChecker__record_notice_once_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12894)), cand.node_id, types__TypeChecker__node_value_diagnostic_pos(tc, cand.node_id), &seen);
 			} else {
-				string __v3_internal_symbol_join_1__vmsvc12892[3]; __v3_internal_symbol_join_1__vmsvc12892[0] = _str_5728; __v3_internal_symbol_join_1__vmsvc12892[1] = cand.name; __v3_internal_symbol_join_1__vmsvc12892[2] = _str_41; types__TypeChecker__record_notice_once_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12892)), cand.node_id, cand.position, &seen);
+				string __v3_internal_symbol_join_1__vmsvc12895[3]; __v3_internal_symbol_join_1__vmsvc12895[0] = _str_5728; __v3_internal_symbol_join_1__vmsvc12895[1] = cand.name; __v3_internal_symbol_join_1__vmsvc12895[2] = _str_41; types__TypeChecker__record_notice_once_at(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12895)), cand.node_id, cand.position, &seen);
 			}
 		}
 	}
@@ -563627,14 +563796,14 @@ void types__TypeChecker__report_written_nested_option_types(types__TypeChecker* 
 			}
 		}
 	}
-	int cond__vmsvc12895; cond__vmsvc12895 = !!(((node.kind == flat__NodeKind__ident) || (node.kind == flat__NodeKind__struct_init))); if (cond__vmsvc12895) { string __contains_needle_3__vmsvc12893 = flat__Node__value_text(node); bool __contains_4__vmsvc12894 = false; {
+	int cond__vmsvc12898; cond__vmsvc12898 = !!(((node.kind == flat__NodeKind__ident) || (node.kind == flat__NodeKind__struct_init))); if (cond__vmsvc12898) { string __contains_needle_3__vmsvc12896 = flat__Node__value_text(node); bool __contains_4__vmsvc12897 = false; {
 		__v_int __contains_idx_5 = 0;
 		for (; __contains_idx_5 < texts.len; __contains_idx_5++) {
-			if (string__eq(*(string*)(array_get(texts, __contains_idx_5)), __contains_needle_3__vmsvc12893)) {
-				__contains_4__vmsvc12894 = true;
+			if (string__eq(*(string*)(array_get(texts, __contains_idx_5)), __contains_needle_3__vmsvc12896)) {
+				__contains_4__vmsvc12897 = true;
 			}
 		}
-	} cond__vmsvc12895 = !!((!__contains_4__vmsvc12894)); } if (cond__vmsvc12895) {
+	} cond__vmsvc12898 = !!((!__contains_4__vmsvc12897)); } if (cond__vmsvc12898) {
 		string __arr_val_6 = flat__Node__value_text(node);
 		array_push(&texts, &__arr_val_6);
 	}
@@ -563662,9 +563831,9 @@ void types__TypeChecker__report_written_nested_option_types(types__TypeChecker* 
 				__if_val_9 = _str_5866;
 			} else {
 				if (outer == '?') {
-					string __v3_internal_symbol_join_0__vmsvc12896[3]; __v3_internal_symbol_join_0__vmsvc12896[0] = _str_5867; __v3_internal_symbol_join_0__vmsvc12896[1] = nested; __v3_internal_symbol_join_0__vmsvc12896[2] = _str_5868; __if_val_9 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12896));
+					string __v3_internal_symbol_join_0__vmsvc12899[3]; __v3_internal_symbol_join_0__vmsvc12899[0] = _str_5867; __v3_internal_symbol_join_0__vmsvc12899[1] = nested; __v3_internal_symbol_join_0__vmsvc12899[2] = _str_5868; __if_val_9 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12899));
 				} else {
-					string __v3_internal_symbol_join_1__vmsvc12897[3]; __v3_internal_symbol_join_1__vmsvc12897[0] = _str_5869; __v3_internal_symbol_join_1__vmsvc12897[1] = nested; __v3_internal_symbol_join_1__vmsvc12897[2] = _str_5868; __if_val_9 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12897));
+					string __v3_internal_symbol_join_1__vmsvc12900[3]; __v3_internal_symbol_join_1__vmsvc12900[0] = _str_5869; __v3_internal_symbol_join_1__vmsvc12900[1] = nested; __v3_internal_symbol_join_1__vmsvc12900[2] = _str_5868; __if_val_9 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12900));
 				}
 			}
 			string msg = __if_val_9;
@@ -563687,12 +563856,12 @@ void types__TypeChecker__report_written_nested_option_types(types__TypeChecker* 
 			} else {
 				if (outer == '?') {
 					Array __arr_lit_14 = array_new(					sizeof(string), 0, 1);
-					string __v3_internal_symbol_join_2__vmsvc12898[3]; __v3_internal_symbol_join_2__vmsvc12898[0] = _str_5870; __v3_internal_symbol_join_2__vmsvc12898[1] = string__substr(					nested, 					1, (					nested).len); __v3_internal_symbol_join_2__vmsvc12898[2] = _str_5697; string __arr_val_15 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12898));
+					string __v3_internal_symbol_join_2__vmsvc12901[3]; __v3_internal_symbol_join_2__vmsvc12901[0] = _str_5870; __v3_internal_symbol_join_2__vmsvc12901[1] = string__substr(					nested, 					1, (					nested).len); __v3_internal_symbol_join_2__vmsvc12901[2] = _str_5697; string __arr_val_15 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12901));
 					array_push(&__arr_lit_14, &__arr_val_15);
 					__if_val_13 = __arr_lit_14;
 				} else {
 					Array __arr_lit_16 = array_new(					sizeof(string), 0, 1);
-					string __v3_internal_symbol_join_3__vmsvc12899[3]; __v3_internal_symbol_join_3__vmsvc12899[0] = _str_5871; __v3_internal_symbol_join_3__vmsvc12899[1] = string__substr(					nested, 					1, (					nested).len); __v3_internal_symbol_join_3__vmsvc12899[2] = _str_5697; string __arr_val_17 = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12899));
+					string __v3_internal_symbol_join_3__vmsvc12902[3]; __v3_internal_symbol_join_3__vmsvc12902[0] = _str_5871; __v3_internal_symbol_join_3__vmsvc12902[1] = string__substr(					nested, 					1, (					nested).len); __v3_internal_symbol_join_3__vmsvc12902[2] = _str_5697; string __arr_val_17 = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12902));
 					array_push(&__arr_lit_16, &__arr_val_17);
 					__if_val_13 = __arr_lit_16;
 				}
@@ -563728,8 +563897,8 @@ void types__TypeChecker__reserve_collect_maps(types__TypeChecker* tc) {
 			map__reserve(&tc->receiver_method_suffix_index, (u32)(tc->receiver_method_suffix_index.data->count) + (decl_estimate * 3));
 			if (!isnil((void*)(tc->visible_mutation_cache))) {
 				types__VisibleMutationCache* mutation_cache = tc->visible_mutation_cache;
-				u32 _t1__vmsvc12900 = (u32)(decl_estimate * 3); u32 _t2__vmsvc12901 = (u32)(2); if (_t2__vmsvc12901 == 0) v_panic(_S("division by zero")); map__reserve(&mutation_cache->decls, (u32)(mutation_cache->decls.data->count) + (((u32)(_t1__vmsvc12900 / _t2__vmsvc12901))));
-				u32 _t3__vmsvc12902 = (u32)(decl_estimate * 3); u32 _t4__vmsvc12903 = (u32)(2); if (_t4__vmsvc12903 == 0) v_panic(_S("division by zero")); map__reserve(&mutation_cache->global_decls, (u32)(mutation_cache->global_decls.data->count) + (((u32)(_t3__vmsvc12902 / _t4__vmsvc12903))));
+				u32 _t1__vmsvc12903 = (u32)(decl_estimate * 3); u32 _t2__vmsvc12904 = (u32)(2); if (_t2__vmsvc12904 == 0) v_panic(_S("division by zero")); map__reserve(&mutation_cache->decls, (u32)(mutation_cache->decls.data->count) + (((u32)(_t1__vmsvc12903 / _t2__vmsvc12904))));
+				u32 _t3__vmsvc12905 = (u32)(decl_estimate * 3); u32 _t4__vmsvc12906 = (u32)(2); if (_t4__vmsvc12906 == 0) v_panic(_S("division by zero")); map__reserve(&mutation_cache->global_decls, (u32)(mutation_cache->global_decls.data->count) + (((u32)(_t3__vmsvc12905 / _t4__vmsvc12906))));
 			}
 			if (string__eq(os__getenv(_str_5630), _str_34)) {
 				map__reserve(&tc->fn_type_files, (u32)(tc->fn_type_files.data->count) + (decl_estimate * 3));
@@ -563918,7 +564087,7 @@ types__CallInfo types__TypeChecker__resolve_builtin_copy_call_info(types__TypeCh
 		__or_val_3 = __or_opt_2.value;
 	} else {
 		if (diagnose) {
-			string __v3_internal_symbol_join_0__vmsvc12904[3]; __v3_internal_symbol_join_0__vmsvc12904[0] = _str_8066; __v3_internal_symbol_join_0__vmsvc12904[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_type); __v3_internal_symbol_join_0__vmsvc12904[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12904)), dst_id, types__TypeChecker__call_argument_diagnostic_pos(tc, dst_id));
+			string __v3_internal_symbol_join_0__vmsvc12907[3]; __v3_internal_symbol_join_0__vmsvc12907[0] = _str_8066; __v3_internal_symbol_join_0__vmsvc12907[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_type); __v3_internal_symbol_join_0__vmsvc12907[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12907)), dst_id, types__TypeChecker__call_argument_diagnostic_pos(tc, dst_id));
 		}
 		types__CallInfo __assoc_4 = info;
 		Array __arr_lit_5 = array_new(		sizeof(types__Type), 0, 2);
@@ -563939,17 +564108,17 @@ types__CallInfo types__TypeChecker__resolve_builtin_copy_call_info(types__TypeCh
 		src_param = src_type;
 		if ((types__unalias_and_unwrap_pointer_type(&src_type)).typ == 4) {
 			if (!types__semantic_types_equal(types__unalias_type(&dst_elem), &types__builtin_u8_type) && diagnose) {
-				string __v3_internal_symbol_join_1__vmsvc12905[3]; __v3_internal_symbol_join_1__vmsvc12905[0] = _str_8067; __v3_internal_symbol_join_1__vmsvc12905[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_type); __v3_internal_symbol_join_1__vmsvc12905[2] = _str_8068; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12905)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
+				string __v3_internal_symbol_join_1__vmsvc12908[3]; __v3_internal_symbol_join_1__vmsvc12908[0] = _str_8067; __v3_internal_symbol_join_1__vmsvc12908[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_type); __v3_internal_symbol_join_1__vmsvc12908[2] = _str_8068; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12908)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
 			}
 		} else {
 			__v_option_types__Type __if_guard_8 = types__copy_arg_elem_type(&(types__Type[]){src_type}[0]);
 			if (__if_guard_8.ok) {
 				types__Type src_elem = __if_guard_8.value;
 				if (!types__semantic_types_equal(types__unalias_type(&dst_elem), types__unalias_type(&src_elem)) && diagnose) {
-					string __v3_internal_symbol_join_2__vmsvc12906[5]; __v3_internal_symbol_join_2__vmsvc12906[0] = _str_8069; __v3_internal_symbol_join_2__vmsvc12906[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_type); __v3_internal_symbol_join_2__vmsvc12906[2] = _str_3298; __v3_internal_symbol_join_2__vmsvc12906[3] = types__TypeChecker__diagnostic_type_name(tc, &src_type); __v3_internal_symbol_join_2__vmsvc12906[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12906)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
+					string __v3_internal_symbol_join_2__vmsvc12909[5]; __v3_internal_symbol_join_2__vmsvc12909[0] = _str_8069; __v3_internal_symbol_join_2__vmsvc12909[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_type); __v3_internal_symbol_join_2__vmsvc12909[2] = _str_3298; __v3_internal_symbol_join_2__vmsvc12909[3] = types__TypeChecker__diagnostic_type_name(tc, &src_type); __v3_internal_symbol_join_2__vmsvc12909[4] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12909)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
 				}
 			} else if (diagnose) {
-				string __v3_internal_symbol_join_3__vmsvc12907[3]; __v3_internal_symbol_join_3__vmsvc12907[0] = _str_8070; __v3_internal_symbol_join_3__vmsvc12907[1] = types__TypeChecker__diagnostic_type_name(tc, &src_type); __v3_internal_symbol_join_3__vmsvc12907[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12907)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
+				string __v3_internal_symbol_join_3__vmsvc12910[3]; __v3_internal_symbol_join_3__vmsvc12910[0] = _str_8070; __v3_internal_symbol_join_3__vmsvc12910[1] = types__TypeChecker__diagnostic_type_name(tc, &src_type); __v3_internal_symbol_join_3__vmsvc12910[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12910)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
 			}
 		}
 	}
@@ -563957,7 +564126,7 @@ types__CallInfo types__TypeChecker__resolve_builtin_copy_call_info(types__TypeCh
 		__v_option_string __if_guard_9 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){dst_elem}[0]);
 		if (__if_guard_9.ok) {
 			string bad_type = __if_guard_9.value;
-			string __v3_internal_symbol_join_4__vmsvc12908[5]; __v3_internal_symbol_join_4__vmsvc12908[0] = _str_8071; __v3_internal_symbol_join_4__vmsvc12908[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_elem); __v3_internal_symbol_join_4__vmsvc12908[2] = _str_8072; __v3_internal_symbol_join_4__vmsvc12908[3] = bad_type; __v3_internal_symbol_join_4__vmsvc12908[4] = _str_8073; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc12908)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
+			string __v3_internal_symbol_join_4__vmsvc12911[5]; __v3_internal_symbol_join_4__vmsvc12911[0] = _str_8071; __v3_internal_symbol_join_4__vmsvc12911[1] = types__TypeChecker__diagnostic_type_name(tc, &dst_elem); __v3_internal_symbol_join_4__vmsvc12911[2] = _str_8072; __v3_internal_symbol_join_4__vmsvc12911[3] = bad_type; __v3_internal_symbol_join_4__vmsvc12911[4] = _str_8073; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc12911)), src_id, types__TypeChecker__call_argument_diagnostic_pos(tc, src_id));
 		}
 	}
 	types__CallInfo __assoc_10 = info;
@@ -564026,14 +564195,14 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 		return (__v_option_types__CallInfo){.ok = false};
 	}
 	flat__Node* fn_node = flat__FlatAst__node(tc->a, flat__FlatAst__child(tc->a, &node, 0));
-	int cond__vmsvc12911; cond__vmsvc12911 = !!((fn_node->kind == flat__NodeKind__selector)); if (cond__vmsvc12911) { Array __in_arr_0__vmsvc12909 = flat__Node__generic_params(fn_node); bool __contains_1__vmsvc12910 = false; {
+	int cond__vmsvc12914; cond__vmsvc12914 = !!((fn_node->kind == flat__NodeKind__selector)); if (cond__vmsvc12914) { Array __in_arr_0__vmsvc12912 = flat__Node__generic_params(fn_node); bool __contains_1__vmsvc12913 = false; {
 		__v_int __contains_idx_2 = 0;
-		for (; __contains_idx_2 < __in_arr_0__vmsvc12909.len; __contains_idx_2++) {
-			if (string__eq(*(string*)(array_get(__in_arr_0__vmsvc12909, __contains_idx_2)), _str_2982)) {
-				__contains_1__vmsvc12910 = true;
+		for (; __contains_idx_2 < __in_arr_0__vmsvc12912.len; __contains_idx_2++) {
+			if (string__eq(*(string*)(array_get(__in_arr_0__vmsvc12912, __contains_idx_2)), _str_2982)) {
+				__contains_1__vmsvc12913 = true;
 			}
 		}
-	} cond__vmsvc12911 = !!((__contains_1__vmsvc12910)); } if (cond__vmsvc12911 && (fn_node->typ != 0)) {
+	} cond__vmsvc12914 = !!((__contains_1__vmsvc12913)); } if (cond__vmsvc12914 && (fn_node->typ != 0)) {
 		return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = fn_node->value, .params = array_new(		sizeof(types__Type), 0, 0), .return_type = *(types__TypeChecker__parse_type(tc, fn_node->typ)), .has_receiver = true, .params_known = false, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 	}
 	__v_option_types__CallInfo __if_guard_3 = types__TypeChecker__resolve_generic_call_info(tc, id, *fn_node);
@@ -564287,7 +564456,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					}
 				}
 				if (string__eq(base_node.value, tc->cur_module)) {
-					string __v3_internal_symbol_join_0__vmsvc12912[3]; __v3_internal_symbol_join_0__vmsvc12912[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc12912[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12912[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12912));
+					string __v3_internal_symbol_join_0__vmsvc12915[3]; __v3_internal_symbol_join_0__vmsvc12915[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc12915[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12915[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12915));
 					string __map_key_56 = mod_name;
 					if (map__exists(&tc->fn_ret_types, &__map_key_56)) {
 						__v_option_types__CallInfo __if_guard_57 = types__TypeChecker__decode_call_info_from_type_arg(tc, node, mod_name, false);
@@ -564312,7 +564481,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 						return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = types__tarr1(&(types__Type[]){types__builtin_string_type}[0]), .return_type = (types__Type){.typ = 17, .types__OptionType = (types__OptionType){.base_type = types__TypeChecker__intern_type_reference(tc, &((types__Type[]){(types__Type){.typ = 21, .types__Enum = (types__Enum){.name_id = enum_name_source_id, .is_flag = map__exists(&tc->flag_enums, &__map_key_60)}}})[0])}}, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 					}
 				}
-				int cond__vmsvc12914; cond__vmsvc12914 = !!(string__eq(fn_node->value, _str_7921)); if (cond__vmsvc12914) { u32 __map_key_61__vmsvc12913 = qbase; cond__vmsvc12914 = !!((map__exists(&tc->flag_enums, &__map_key_61__vmsvc12913))); } if (cond__vmsvc12914) {
+				int cond__vmsvc12917; cond__vmsvc12917 = !!(string__eq(fn_node->value, _str_7921)); if (cond__vmsvc12917) { u32 __map_key_61__vmsvc12916 = qbase; cond__vmsvc12917 = !!((map__exists(&tc->flag_enums, &__map_key_61__vmsvc12916))); } if (cond__vmsvc12917) {
 					return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = array_new(					sizeof(types__Type), 0, 0), .return_type = (types__Type){.typ = 21, .types__Enum = (types__Enum){.name_id = qbase, .is_flag = true}}, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 				}
 				if (string__eq(fn_node->value, _str_7065) && types__TypeChecker__active_generic_param(tc, base_node.value)) {
@@ -564320,7 +564489,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					__promoted_default_62.reason = _str_7922;
 					return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = types__tarr1(&(types__Type[]){(types__Type){.typ = 2, .types__Unknown = (types__Unknown){.UnknownDataRef = (types__UnknownData*)(memdup(&__promoted_default_62, sizeof(types__UnknownData)))}}}[0]), .return_type = *(types__TypeChecker__parse_type(tc, flat__source_type_composition_one(flat__SourceTypeComposition__result, flat__Node__source_value_id(base_node)))), .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 				}
-				int cond__vmsvc12916; cond__vmsvc12916 = !!(string__eq(fn_node->value, _str_7065)); if (cond__vmsvc12916) { u32 __map_key_63__vmsvc12915 = qbase; cond__vmsvc12916 = !!((map__exists(&tc->enum_names, &__map_key_63__vmsvc12915))); } if (cond__vmsvc12916) {
+				int cond__vmsvc12919; cond__vmsvc12919 = !!(string__eq(fn_node->value, _str_7065)); if (cond__vmsvc12919) { u32 __map_key_63__vmsvc12918 = qbase; cond__vmsvc12919 = !!((map__exists(&tc->enum_names, &__map_key_63__vmsvc12918))); } if (cond__vmsvc12919) {
 					return (__v_option_types__CallInfo){.ok = true, .value = types__TypeChecker__enum_from_call_info(tc, qbase)};
 				}
 				if (string__eq(fn_node->value, _str_7065)) {
@@ -564361,7 +564530,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					string static_name = __if_guard_69.value;
 					return (__v_option_types__CallInfo){.ok = true, .value = types__TypeChecker__call_info(tc, static_name, false)};
 				}
-				string __v3_internal_symbol_join_1__vmsvc12917[5]; __v3_internal_symbol_join_1__vmsvc12917[0] = mod_name; __v3_internal_symbol_join_1__vmsvc12917[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12917[2] = base_node.value; __v3_internal_symbol_join_1__vmsvc12917[3] = _str_2; __v3_internal_symbol_join_1__vmsvc12917[4] = fn_node->value; string full_name = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12917));
+				string __v3_internal_symbol_join_1__vmsvc12920[5]; __v3_internal_symbol_join_1__vmsvc12920[0] = mod_name; __v3_internal_symbol_join_1__vmsvc12920[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12920[2] = base_node.value; __v3_internal_symbol_join_1__vmsvc12920[3] = _str_2; __v3_internal_symbol_join_1__vmsvc12920[4] = fn_node->value; string full_name = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12920));
 				string __map_key_70 = full_name;
 				if (map__exists(&tc->fn_ret_types, &__map_key_70)) {
 					return (__v_option_types__CallInfo){.ok = true, .value = types__TypeChecker__call_info(tc, full_name, false)};
@@ -564448,7 +564617,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 			return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = __struct_field_91, .return_type = __if_val_92, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 		}
 		if (((clean).typ == 20) && (string__eq(fn_node->value, _str_5800) || string__eq(fn_node->value, _str_5799))) {
-			string __v3_internal_symbol_join_2__vmsvc12918[3]; __v3_internal_symbol_join_2__vmsvc12918[0] = types__Interface__name(clean.types__Interface); __v3_internal_symbol_join_2__vmsvc12918[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12918[2] = fn_node->value; string __struct_field_93 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12918));
+			string __v3_internal_symbol_join_2__vmsvc12921[3]; __v3_internal_symbol_join_2__vmsvc12921[0] = types__Interface__name(clean.types__Interface); __v3_internal_symbol_join_2__vmsvc12921[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12921[2] = fn_node->value; string __struct_field_93 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12921));
 			Array __struct_field_94 = types__tarr1(&(types__Type[]){base_type}[0]);
 			types__Type __if_val_95 = {0};
 			if (string__eq(fn_node->value, _str_5800)) {
@@ -564505,7 +564674,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 				__v_int __for_idx_102 = 0;
 				for (; __for_idx_102 < __in_lhs_101.len; __for_idx_102++) {
 					string mname = *(string*)(array_get(__in_lhs_101, __for_idx_102));
-					int cond__vmsvc12920; cond__vmsvc12920 = !!(types__checker_is_raw_collection_method_name(mname, _str_5830) || types__checker_is_raw_collection_method_name(mname, _str_5831)); if (!cond__vmsvc12920) { string __map_key_103__vmsvc12919 = mname; cond__vmsvc12920 = !!((!map__exists(&tc->fn_ret_types, &__map_key_103__vmsvc12919))); } if (cond__vmsvc12920) {
+					int cond__vmsvc12923; cond__vmsvc12923 = !!(types__checker_is_raw_collection_method_name(mname, _str_5830) || types__checker_is_raw_collection_method_name(mname, _str_5831)); if (!cond__vmsvc12923) { string __map_key_103__vmsvc12922 = mname; cond__vmsvc12923 = !!((!map__exists(&tc->fn_ret_types, &__map_key_103__vmsvc12922))); } if (cond__vmsvc12923) {
 						continue;
 					}
 					if (!types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, fn_node->value, mname)) {
@@ -564516,8 +564685,8 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 			}
 			types__Alias alias_level = clean.types__Alias;
 			{
-				__v_int __discard_829746590774759415_354554_354555 = 0;
-				for (; __discard_829746590774759415_354554_354555 < 64; __discard_829746590774759415_354554_354555++) {
+				__v_int __discard_829746590774759415_356160_356161 = 0;
+				for (; __discard_829746590774759415_356160_356161 < 64; __discard_829746590774759415_356160_356161++) {
 					types__Type* __if_val_104 = {0};
 					__v_option_u32 __if_guard_105 = types__TypeChecker__alias_target_type_text(tc, types__Alias__source_type_id(alias_level));
 					if (__if_guard_105.ok) {
@@ -564545,7 +564714,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 							__v_int __for_idx_109 = 0;
 							for (; __for_idx_109 < __in_lhs_108.len; __for_idx_109++) {
 								string mname = *(string*)(array_get(__in_lhs_108, __for_idx_109));
-								int cond__vmsvc12922; cond__vmsvc12922 = !!(types__checker_is_raw_collection_method_name(mname, _str_5830) || types__checker_is_raw_collection_method_name(mname, _str_5831)); if (!cond__vmsvc12922) { string __map_key_110__vmsvc12921 = mname; cond__vmsvc12922 = !!((!map__exists(&tc->fn_ret_types, &__map_key_110__vmsvc12921))); } if (cond__vmsvc12922) {
+								int cond__vmsvc12925; cond__vmsvc12925 = !!(types__checker_is_raw_collection_method_name(mname, _str_5830) || types__checker_is_raw_collection_method_name(mname, _str_5831)); if (!cond__vmsvc12925) { string __map_key_110__vmsvc12924 = mname; cond__vmsvc12925 = !!((!map__exists(&tc->fn_ret_types, &__map_key_110__vmsvc12924))); } if (cond__vmsvc12925) {
 									continue;
 								}
 								if (!types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, fn_node->value, mname)) {
@@ -564644,7 +564813,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					__v_int __for_idx_114 = 0;
 					for (; __for_idx_114 < __in_lhs_113.len; __for_idx_114++) {
 						string mname = *(string*)(array_get(__in_lhs_113, __for_idx_114));
-						int cond__vmsvc12924; cond__vmsvc12924 = !!(types__checker_is_raw_collection_method_name(mname, _str_5830)); if (!cond__vmsvc12924) { string __map_key_115__vmsvc12923 = mname; cond__vmsvc12924 = !!((!map__exists(&tc->fn_ret_types, &__map_key_115__vmsvc12923))); } if (cond__vmsvc12924) {
+						int cond__vmsvc12927; cond__vmsvc12927 = !!(types__checker_is_raw_collection_method_name(mname, _str_5830)); if (!cond__vmsvc12927) { string __map_key_115__vmsvc12926 = mname; cond__vmsvc12927 = !!((!map__exists(&tc->fn_ret_types, &__map_key_115__vmsvc12926))); } if (cond__vmsvc12927) {
 							continue;
 						}
 						if (!types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, fn_node->value, mname)) {
@@ -564698,7 +564867,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 				__v_option_string __if_guard_123 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_array.elem_type}[0]);
 				if (__if_guard_123.ok) {
 					string bad_type = __if_guard_123.value;
-					string __v3_internal_symbol_join_3__vmsvc12925[5]; __v3_internal_symbol_join_3__vmsvc12925[0] = _str_7624; __v3_internal_symbol_join_3__vmsvc12925[1] = fn_node->value; __v3_internal_symbol_join_3__vmsvc12925[2] = _str_7938; __v3_internal_symbol_join_3__vmsvc12925[3] = bad_type; __v3_internal_symbol_join_3__vmsvc12925[4] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc12925)), id);
+					string __v3_internal_symbol_join_3__vmsvc12928[5]; __v3_internal_symbol_join_3__vmsvc12928[0] = _str_7624; __v3_internal_symbol_join_3__vmsvc12928[1] = fn_node->value; __v3_internal_symbol_join_3__vmsvc12928[2] = _str_7938; __v3_internal_symbol_join_3__vmsvc12928[3] = bad_type; __v3_internal_symbol_join_3__vmsvc12928[4] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc12928)), id);
 				}
 				return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = string__plus(_str_5830, fn_node->value), .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = (types__Type){.typ = 11, .types__Array = clean_array}, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 			}
@@ -564711,7 +564880,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 				__v_int __for_idx_126 = 0;
 				for (; __for_idx_126 < __in_lhs_125.len; __for_idx_126++) {
 					string mname = *(string*)(array_get(__in_lhs_125, __for_idx_126));
-					int cond__vmsvc12927; cond__vmsvc12927 = !!(types__checker_is_raw_collection_method_name(mname, _str_5831)); if (!cond__vmsvc12927) { string __map_key_127__vmsvc12926 = mname; cond__vmsvc12927 = !!((!map__exists(&tc->fn_ret_types, &__map_key_127__vmsvc12926))); } if (cond__vmsvc12927) {
+					int cond__vmsvc12930; cond__vmsvc12930 = !!(types__checker_is_raw_collection_method_name(mname, _str_5831)); if (!cond__vmsvc12930) { string __map_key_127__vmsvc12929 = mname; cond__vmsvc12930 = !!((!map__exists(&tc->fn_ret_types, &__map_key_127__vmsvc12929))); } if (cond__vmsvc12930) {
 						continue;
 					}
 					if (!types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, fn_node->value, mname)) {
@@ -564726,12 +564895,12 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					__v_option_string __if_guard_129 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_map.MapDataRef->key_type}[0]);
 					if (__if_guard_129.ok) {
 						string bad_type = __if_guard_129.value;
-						string __v3_internal_symbol_join_4__vmsvc12928[3]; __v3_internal_symbol_join_4__vmsvc12928[0] = _str_7939; __v3_internal_symbol_join_4__vmsvc12928[1] = bad_type; __v3_internal_symbol_join_4__vmsvc12928[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc12928)), id);
+						string __v3_internal_symbol_join_4__vmsvc12931[3]; __v3_internal_symbol_join_4__vmsvc12931[0] = _str_7939; __v3_internal_symbol_join_4__vmsvc12931[1] = bad_type; __v3_internal_symbol_join_4__vmsvc12931[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc12931)), id);
 					}
 					__v_option_string __if_guard_130 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_map.MapDataRef->value_type}[0]);
 					if (__if_guard_130.ok) {
 						string bad_type = __if_guard_130.value;
-						string __v3_internal_symbol_join_5__vmsvc12929[3]; __v3_internal_symbol_join_5__vmsvc12929[0] = _str_7940; __v3_internal_symbol_join_5__vmsvc12929[1] = bad_type; __v3_internal_symbol_join_5__vmsvc12929[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc12929)), id);
+						string __v3_internal_symbol_join_5__vmsvc12932[3]; __v3_internal_symbol_join_5__vmsvc12932[0] = _str_7940; __v3_internal_symbol_join_5__vmsvc12932[1] = bad_type; __v3_internal_symbol_join_5__vmsvc12932[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc12932)), id);
 					}
 					return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = base_type, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 				} else {
@@ -564745,7 +564914,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 				__v_option_string __if_guard_132 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_map.MapDataRef->key_type}[0]);
 				if (__if_guard_132.ok) {
 					string bad_type = __if_guard_132.value;
-					string __v3_internal_symbol_join_6__vmsvc12930[3]; __v3_internal_symbol_join_6__vmsvc12930[0] = _str_7941; __v3_internal_symbol_join_6__vmsvc12930[1] = bad_type; __v3_internal_symbol_join_6__vmsvc12930[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc12930)), id);
+					string __v3_internal_symbol_join_6__vmsvc12933[3]; __v3_internal_symbol_join_6__vmsvc12933[0] = _str_7941; __v3_internal_symbol_join_6__vmsvc12933[1] = bad_type; __v3_internal_symbol_join_6__vmsvc12933[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc12933)), id);
 				}
 				return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_7271, .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = (types__Type){.typ = 11, .types__Array = (types__Array){.elem_type = clean_map.MapDataRef->key_type}}, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 			}
@@ -564753,7 +564922,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 				__v_option_string __if_guard_133 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_map.MapDataRef->value_type}[0]);
 				if (__if_guard_133.ok) {
 					string bad_type = __if_guard_133.value;
-					string __v3_internal_symbol_join_7__vmsvc12931[3]; __v3_internal_symbol_join_7__vmsvc12931[0] = _str_7942; __v3_internal_symbol_join_7__vmsvc12931[1] = bad_type; __v3_internal_symbol_join_7__vmsvc12931[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc12931)), id);
+					string __v3_internal_symbol_join_7__vmsvc12934[3]; __v3_internal_symbol_join_7__vmsvc12934[0] = _str_7942; __v3_internal_symbol_join_7__vmsvc12934[1] = bad_type; __v3_internal_symbol_join_7__vmsvc12934[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc12934)), id);
 				}
 				return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_7272, .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = (types__Type){.typ = 11, .types__Array = (types__Array){.elem_type = clean_map.MapDataRef->value_type}}, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 			}
@@ -564778,7 +564947,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 						__v_option_string __if_guard_138 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_array.elem_type}[0]);
 						if (__if_guard_138.ok) {
 							string bad_type = __if_guard_138.value;
-							string __v3_internal_symbol_join_8__vmsvc12932[3]; __v3_internal_symbol_join_8__vmsvc12932[0] = _str_7943; __v3_internal_symbol_join_8__vmsvc12932[1] = bad_type; __v3_internal_symbol_join_8__vmsvc12932[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc12932)), id);
+							string __v3_internal_symbol_join_8__vmsvc12935[3]; __v3_internal_symbol_join_8__vmsvc12935[0] = _str_7943; __v3_internal_symbol_join_8__vmsvc12935[1] = bad_type; __v3_internal_symbol_join_8__vmsvc12935[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc12935)), id);
 						}
 					}
 					return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = *clean_array.elem_type, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
@@ -564797,7 +564966,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					__v_option_string __if_guard_139 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_array.elem_type}[0]);
 					if (__if_guard_139.ok) {
 						string bad_type = __if_guard_139.value;
-						string __v3_internal_symbol_join_9__vmsvc12933[3]; __v3_internal_symbol_join_9__vmsvc12933[0] = _str_7947; __v3_internal_symbol_join_9__vmsvc12933[1] = bad_type; __v3_internal_symbol_join_9__vmsvc12933[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc12933)), id);
+						string __v3_internal_symbol_join_9__vmsvc12936[3]; __v3_internal_symbol_join_9__vmsvc12936[0] = _str_7947; __v3_internal_symbol_join_9__vmsvc12936[1] = bad_type; __v3_internal_symbol_join_9__vmsvc12936[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc12936)), id);
 					}
 					return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_7864, .params = types__tarr2(&(types__Type[]){base_type}[0], &(types__Type[]){types__builtin_int_type}[0]), .return_type = base_type, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 				} else if (string__eq(__match_tmp_137, _str_7948)) {
@@ -564819,7 +564988,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 					__v_option_string __if_guard_141 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){*clean_array.elem_type}[0]);
 					if (__if_guard_141.ok) {
 						string bad_type = __if_guard_141.value;
-						string __v3_internal_symbol_join_10__vmsvc12934[3]; __v3_internal_symbol_join_10__vmsvc12934[0] = _str_7949; __v3_internal_symbol_join_10__vmsvc12934[1] = bad_type; __v3_internal_symbol_join_10__vmsvc12934[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_10__vmsvc12934)), id);
+						string __v3_internal_symbol_join_10__vmsvc12937[3]; __v3_internal_symbol_join_10__vmsvc12937[0] = _str_7949; __v3_internal_symbol_join_10__vmsvc12937[1] = bad_type; __v3_internal_symbol_join_10__vmsvc12937[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_10__vmsvc12937)), id);
 					}
 					types__Type __if_val_142 = {0};
 					if (types__receiver_is_fixed_array(&clean)) {
@@ -564835,7 +565004,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 						__v_option_string __if_guard_143 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){elem_type}[0]);
 						if (__if_guard_143.ok) {
 							string bad_type = __if_guard_143.value;
-							string __v3_internal_symbol_join_11__vmsvc12935[3]; __v3_internal_symbol_join_11__vmsvc12935[0] = _str_7950; __v3_internal_symbol_join_11__vmsvc12935[1] = bad_type; __v3_internal_symbol_join_11__vmsvc12935[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_11__vmsvc12935)), id);
+							string __v3_internal_symbol_join_11__vmsvc12938[3]; __v3_internal_symbol_join_11__vmsvc12938[0] = _str_7950; __v3_internal_symbol_join_11__vmsvc12938[1] = bad_type; __v3_internal_symbol_join_11__vmsvc12938[2] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(3, __v3_internal_symbol_join_11__vmsvc12938)), id);
 						}
 					}
 					types__Type* fixed = types__unalias_type(&clean);
@@ -564943,7 +565112,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 			string method_name = __multi_ret_166.arg0;
 			bool ambiguous = __multi_ret_166.arg1;
 			if (ambiguous) {
-				string __v3_internal_symbol_join_12__vmsvc12936[5]; __v3_internal_symbol_join_12__vmsvc12936[0] = _str_7848; __v3_internal_symbol_join_12__vmsvc12936[1] = fn_node->value; __v3_internal_symbol_join_12__vmsvc12936[2] = _str_6718; __v3_internal_symbol_join_12__vmsvc12936[3] = flat__source_type_name(type_name); __v3_internal_symbol_join_12__vmsvc12936[4] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(5, __v3_internal_symbol_join_12__vmsvc12936)), id);
+				string __v3_internal_symbol_join_12__vmsvc12939[5]; __v3_internal_symbol_join_12__vmsvc12939[0] = _str_7848; __v3_internal_symbol_join_12__vmsvc12939[1] = fn_node->value; __v3_internal_symbol_join_12__vmsvc12939[2] = _str_6718; __v3_internal_symbol_join_12__vmsvc12939[3] = flat__source_type_name(type_name); __v3_internal_symbol_join_12__vmsvc12939[4] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(5, __v3_internal_symbol_join_12__vmsvc12939)), id);
 				return (__v_option_types__CallInfo){.ok = false};
 			}
 			if ((method_name.len > 0) && types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, fn_node->value, method_name)) {
@@ -565030,7 +565199,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 				types__CallInfo info = __if_guard_178.value;
 				return (__v_option_types__CallInfo){.ok = true, .value = info};
 			}
-			string __v3_internal_symbol_join_13__vmsvc12937[3]; __v3_internal_symbol_join_13__vmsvc12937[0] = types__SumType__name(clean.types__SumType); __v3_internal_symbol_join_13__vmsvc12937[1] = _str_2; __v3_internal_symbol_join_13__vmsvc12937[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_13__vmsvc12937));
+			string __v3_internal_symbol_join_13__vmsvc12940[3]; __v3_internal_symbol_join_13__vmsvc12940[0] = types__SumType__name(clean.types__SumType); __v3_internal_symbol_join_13__vmsvc12940[1] = _str_2; __v3_internal_symbol_join_13__vmsvc12940[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_13__vmsvc12940));
 			string __map_key_179 = mname;
 			if (map__exists(&tc->fn_ret_types, &__map_key_179)) {
 				return (__v_option_types__CallInfo){.ok = true, .value = types__TypeChecker__call_info(tc, mname, true)};
@@ -565052,7 +565221,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 			if (string__eq(fn_node->value, _str_4004)) {
 				return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = string__plus(types__Enum__name(clean.types__Enum), _str_2722), .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = types__builtin_string_type, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 			}
-			string __v3_internal_symbol_join_14__vmsvc12938[3]; __v3_internal_symbol_join_14__vmsvc12938[0] = types__Enum__name(clean.types__Enum); __v3_internal_symbol_join_14__vmsvc12938[1] = _str_2; __v3_internal_symbol_join_14__vmsvc12938[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_14__vmsvc12938));
+			string __v3_internal_symbol_join_14__vmsvc12941[3]; __v3_internal_symbol_join_14__vmsvc12941[0] = types__Enum__name(clean.types__Enum); __v3_internal_symbol_join_14__vmsvc12941[1] = _str_2; __v3_internal_symbol_join_14__vmsvc12941[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_14__vmsvc12941));
 			string __map_key_180 = mname;
 			if (map__exists(&tc->fn_ret_types, &__map_key_180)) {
 				return (__v_option_types__CallInfo){.ok = true, .value = types__TypeChecker__call_info(tc, mname, true)};
@@ -565085,7 +565254,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_call_info_uncached(types_
 			__v_option_string __if_guard_186 = types__TypeChecker__ownership_default_clone_missing_method(tc, &(types__Type[]){clean}[0]);
 			if (__if_guard_186.ok) {
 				string bad_type = __if_guard_186.value;
-				string __v3_internal_symbol_join_15__vmsvc12939[5]; __v3_internal_symbol_join_15__vmsvc12939[0] = _str_7961; __v3_internal_symbol_join_15__vmsvc12939[1] = types__Type__name(&clean); __v3_internal_symbol_join_15__vmsvc12939[2] = _str_7962; __v3_internal_symbol_join_15__vmsvc12939[3] = bad_type; __v3_internal_symbol_join_15__vmsvc12939[4] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_15__vmsvc12939)), id);
+				string __v3_internal_symbol_join_15__vmsvc12942[5]; __v3_internal_symbol_join_15__vmsvc12942[0] = _str_7961; __v3_internal_symbol_join_15__vmsvc12942[1] = types__Type__name(&clean); __v3_internal_symbol_join_15__vmsvc12942[2] = _str_7962; __v3_internal_symbol_join_15__vmsvc12942[3] = bad_type; __v3_internal_symbol_join_15__vmsvc12942[4] = _str_6714; types__TypeChecker__record_error(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_15__vmsvc12942)), id);
 			}
 			return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = _str_34, .params = types__tarr1(&(types__Type[]){base_type}[0]), .return_type = clean, .has_receiver = true, .params_known = true, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
 		}
@@ -565209,7 +565378,7 @@ void types__TypeChecker__resolve_const_types_of(types__TypeChecker* tc, map cons
 				string name = *(string*)((			const_exprs).data->key_values.keys + __mi_1 * (			const_exprs).data->key_values.key_bytes);
 				name = string__clone(name);
 				i32 expr_id = *(i32*)((			const_exprs).data->key_values.values + __mi_1 * (			const_exprs).data->key_values.value_bytes);
-				int cond__vmsvc12942; cond__vmsvc12942 = !!((iteration > 0)); if (cond__vmsvc12942) { string __map_key_13__vmsvc12940 = name; bool __map_zero_14__vmsvc12941 = false; cond__vmsvc12942 = !!((*(bool*)(map__get(&resolved_numeric, &__map_key_13__vmsvc12940, &__map_zero_14__vmsvc12941)))); } if (cond__vmsvc12942) {
+				int cond__vmsvc12945; cond__vmsvc12945 = !!((iteration > 0)); if (cond__vmsvc12945) { string __map_key_13__vmsvc12943 = name; bool __map_zero_14__vmsvc12944 = false; cond__vmsvc12945 = !!((*(bool*)(map__get(&resolved_numeric, &__map_key_13__vmsvc12943, &__map_zero_14__vmsvc12944)))); } if (cond__vmsvc12945) {
 					continue;
 				}
 				string __map_key_17 = name;
@@ -565309,7 +565478,7 @@ __v_option_u32 types__TypeChecker__resolve_enum_alias_target(types__TypeChecker*
 				return (__v_option_u32){.ok = false};
 			}
 			u32 __map_key_2 = target;
-			int cond__vmsvc12944; cond__vmsvc12944 = !!(map__exists(&tc->enum_names, &__map_key_2)); if (!cond__vmsvc12944) { u32 __map_key_3__vmsvc12943 = target; cond__vmsvc12944 = !!((map__exists(&tc->flag_enums, &__map_key_3__vmsvc12943))); } if (cond__vmsvc12944) {
+			int cond__vmsvc12947; cond__vmsvc12947 = !!(map__exists(&tc->enum_names, &__map_key_2)); if (!cond__vmsvc12947) { u32 __map_key_3__vmsvc12946 = target; cond__vmsvc12947 = !!((map__exists(&tc->flag_enums, &__map_key_3__vmsvc12946))); } if (cond__vmsvc12947) {
 				return (__v_option_u32){.ok = true, .value = target};
 			}
 			cur = target;
@@ -565357,7 +565526,7 @@ __v_option_u32 types__TypeChecker__resolve_enum_name(types__TypeChecker* tc, u32
 		if (__if_guard_8.ok) {
 			u32 resolved_id = __if_guard_8.value;
 			u32 __map_key_9 = resolved_id;
-			int cond__vmsvc12946; cond__vmsvc12946 = !!(map__exists(&tc->enum_names, &__map_key_9)); if (!cond__vmsvc12946) { u32 __map_key_10__vmsvc12945 = resolved_id; cond__vmsvc12946 = !!((map__exists(&tc->flag_enums, &__map_key_10__vmsvc12945))); } if (cond__vmsvc12946) {
+			int cond__vmsvc12949; cond__vmsvc12949 = !!(map__exists(&tc->enum_names, &__map_key_9)); if (!cond__vmsvc12949) { u32 __map_key_10__vmsvc12948 = resolved_id; cond__vmsvc12949 = !!((map__exists(&tc->flag_enums, &__map_key_10__vmsvc12948))); } if (cond__vmsvc12949) {
 				return (__v_option_u32){.ok = true, .value = resolved_id};
 			}
 			__v_option_u32 __if_guard_11 = types__TypeChecker__resolve_enum_alias_target(tc, resolved_id);
@@ -565498,7 +565667,7 @@ types__Type types__TypeChecker__resolve_expr(types__TypeChecker* tc, i32 id, typ
 				types__TypeChecker__register_synth_type(tc, id, &(types__Type[]){enum_expected}[0]);
 				return enum_expected;
 			}
-			string __v3_internal_symbol_join_0__vmsvc12947[5]; __v3_internal_symbol_join_0__vmsvc12947[0] = _str_8189; __v3_internal_symbol_join_0__vmsvc12947[1] = node.value; __v3_internal_symbol_join_0__vmsvc12947[2] = _str_5843; __v3_internal_symbol_join_0__vmsvc12947[3] = types__Enum__name(enum_expected.types__Enum); __v3_internal_symbol_join_0__vmsvc12947[4] = _str_41; types__TypeChecker__type_mismatch(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12947)), id);
+			string __v3_internal_symbol_join_0__vmsvc12950[5]; __v3_internal_symbol_join_0__vmsvc12950[0] = _str_8189; __v3_internal_symbol_join_0__vmsvc12950[1] = node.value; __v3_internal_symbol_join_0__vmsvc12950[2] = _str_5843; __v3_internal_symbol_join_0__vmsvc12950[3] = types__Enum__name(enum_expected.types__Enum); __v3_internal_symbol_join_0__vmsvc12950[4] = _str_41; types__TypeChecker__type_mismatch(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12950)), id);
 			return types__builtin_int_type;
 		}
 	}
@@ -565824,13 +565993,13 @@ types__Type types__TypeChecker__resolve_generic_call_arg_type(types__TypeChecker
 	if (types__type_contains_unknown(&typ) && (node->kind == flat__NodeKind__selector) && (node->children_count > 0)) {
 		flat__Node* base = flat__FlatAst__child_node(tc->a, node, 0);
 		if ((base->kind == flat__NodeKind__ident) && !types__TypeChecker__ident_resolves_to_value(tc, base->value)) {
-			string __v3_internal_symbol_join_0__vmsvc12948[3]; __v3_internal_symbol_join_0__vmsvc12948[0] = base->value; __v3_internal_symbol_join_0__vmsvc12948[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12948[2] = node->value; string method_key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12948));
+			string __v3_internal_symbol_join_0__vmsvc12951[3]; __v3_internal_symbol_join_0__vmsvc12951[0] = base->value; __v3_internal_symbol_join_0__vmsvc12951[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12951[2] = node->value; string method_key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12951));
 			__v_option_types__Type __if_guard_2 = types__TypeChecker__fn_type_from_key(tc, method_key);
 			if (__if_guard_2.ok) {
 				types__Type method_type = __if_guard_2.value;
 				__v_option_types__DeclarationVisibility __if_guard_3 = types__TypeChecker__private_declaration(tc, method_key);
 				if (__if_guard_3.ok) {
-					string __v3_internal_symbol_join_1__vmsvc12949[3]; __v3_internal_symbol_join_1__vmsvc12949[0] = _str_3523; __v3_internal_symbol_join_1__vmsvc12949[1] = method_key; __v3_internal_symbol_join_1__vmsvc12949[2] = _str_3899; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12949)), id, types__TypeChecker__node_value_diagnostic_pos(tc, id));
+					string __v3_internal_symbol_join_1__vmsvc12952[3]; __v3_internal_symbol_join_1__vmsvc12952[0] = _str_3523; __v3_internal_symbol_join_1__vmsvc12952[1] = method_key; __v3_internal_symbol_join_1__vmsvc12952[2] = _str_3899; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12952)), id, types__TypeChecker__node_value_diagnostic_pos(tc, id));
 					return types__builtin_void_type;
 				}
 				types__TypeChecker__remember_resolved_fn_value(tc, id, method_key);
@@ -565842,13 +566011,13 @@ types__Type types__TypeChecker__resolve_generic_call_arg_type(types__TypeChecker
 				__v_int __for_idx_5 = 0;
 				for (; __for_idx_5 < __in_lhs_4.len; __for_idx_5++) {
 					u32 type_id = *(u32*)(array_get(__in_lhs_4, __for_idx_5));
-					string __v3_internal_symbol_join_2__vmsvc12950[3]; __v3_internal_symbol_join_2__vmsvc12950[0] = flat__source_type_name(type_id); __v3_internal_symbol_join_2__vmsvc12950[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12950[2] = node->value; string qualified_key = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12950));
+					string __v3_internal_symbol_join_2__vmsvc12953[3]; __v3_internal_symbol_join_2__vmsvc12953[0] = flat__source_type_name(type_id); __v3_internal_symbol_join_2__vmsvc12953[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12953[2] = node->value; string qualified_key = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12953));
 					__v_option_types__Type __if_guard_6 = types__TypeChecker__fn_type_from_key(tc, qualified_key);
 					if (__if_guard_6.ok) {
 						types__Type method_type = __if_guard_6.value;
 						__v_option_types__DeclarationVisibility __if_guard_7 = types__TypeChecker__private_declaration(tc, qualified_key);
 						if (__if_guard_7.ok) {
-							string __v3_internal_symbol_join_3__vmsvc12951[3]; __v3_internal_symbol_join_3__vmsvc12951[0] = _str_3523; __v3_internal_symbol_join_3__vmsvc12951[1] = qualified_key; __v3_internal_symbol_join_3__vmsvc12951[2] = _str_3899; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12951)), id, types__TypeChecker__node_value_diagnostic_pos(tc, id));
+							string __v3_internal_symbol_join_3__vmsvc12954[3]; __v3_internal_symbol_join_3__vmsvc12954[0] = _str_3523; __v3_internal_symbol_join_3__vmsvc12954[1] = qualified_key; __v3_internal_symbol_join_3__vmsvc12954[2] = _str_3899; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12954)), id, types__TypeChecker__node_value_diagnostic_pos(tc, id));
 							return types__builtin_void_type;
 						}
 						types__TypeChecker__remember_resolved_fn_value(tc, id, qualified_key);
@@ -565936,7 +566105,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_call_info(types__
 			string method_name = __multi_ret_1.arg0;
 			bool ambiguous = __multi_ret_1.arg1;
 			if (ambiguous) {
-				string __v3_internal_symbol_join_0__vmsvc12952[5]; __v3_internal_symbol_join_0__vmsvc12952[0] = _str_7848; __v3_internal_symbol_join_0__vmsvc12952[1] = base_node.value; __v3_internal_symbol_join_0__vmsvc12952[2] = _str_6718; __v3_internal_symbol_join_0__vmsvc12952[3] = flat__source_type_name(type_name); __v3_internal_symbol_join_0__vmsvc12952[4] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12952)), id);
+				string __v3_internal_symbol_join_0__vmsvc12955[5]; __v3_internal_symbol_join_0__vmsvc12955[0] = _str_7848; __v3_internal_symbol_join_0__vmsvc12955[1] = base_node.value; __v3_internal_symbol_join_0__vmsvc12955[2] = _str_6718; __v3_internal_symbol_join_0__vmsvc12955[3] = flat__source_type_name(type_name); __v3_internal_symbol_join_0__vmsvc12955[4] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__unknown_fn, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12955)), id);
 				return (__v_option_types__CallInfo){.ok = false};
 			}
 			if (method_name.len > 0) {
@@ -565952,11 +566121,11 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_call_info(types__
 			}
 			if (string__eq(base_node.value, _str_7931) && types__TypeChecker__type_is_pointer_receiver(tc, &base_type)) {
 				types__Type underlying = types__unalias_and_unwrap_pointer_type(&base_type);
-				int cond__vmsvc12954; cond__vmsvc12954 = !!(((underlying).typ == 19)); if (cond__vmsvc12954) { int __in_lhs_3__vmsvc12953 = flat__source_type_query(types__Struct__source_type_id(underlying.types__Struct)); cond__vmsvc12954 = !!(((__in_lhs_3__vmsvc12953 & 8192) != 0)); } if (cond__vmsvc12954) {
+				int cond__vmsvc12957; cond__vmsvc12957 = !!(((underlying).typ == 19)); if (cond__vmsvc12957) { int __in_lhs_3__vmsvc12956 = flat__source_type_query(types__Struct__source_type_id(underlying.types__Struct)); cond__vmsvc12957 = !!(((__in_lhs_3__vmsvc12956 & 8192) != 0)); } if (cond__vmsvc12957) {
 					return (__v_option_types__CallInfo){.ok = false};
 				}
 			}
-			string __v3_internal_symbol_join_1__vmsvc12955[3]; __v3_internal_symbol_join_1__vmsvc12955[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_1__vmsvc12955[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12955[2] = base_node.value; string call_name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12955));
+			string __v3_internal_symbol_join_1__vmsvc12958[3]; __v3_internal_symbol_join_1__vmsvc12958[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_1__vmsvc12958[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12958[2] = base_node.value; string call_name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12958));
 			string __map_key_4 = call_name;
 			if (map__exists(&tc->fn_ret_types, &__map_key_4) && types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, base_node.value, call_name)) {
 				if (types__TypeChecker__explicit_generic_arg_count_mismatch(tc, call_name, type_args_source_ids, id)) {
@@ -566414,8 +566583,8 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_struct_method(typ
 					__map_val_27 = __map_val_32;
 				}
 				string module_name = __map_val_27;
-				int cond__vmsvc12957; cond__vmsvc12957 = !!(!(string__eq(module_name, _str_34) || string__eq(module_name, _str_179) || string__eq(module_name, _str_1218))); if (cond__vmsvc12957) { int __in_lhs_33__vmsvc12956 = flat__source_type_shape(candidate_id); cond__vmsvc12957 = !!((!((__in_lhs_33__vmsvc12956 & 1) != 0))); } if (cond__vmsvc12957) {
-					string __v3_internal_symbol_join_1__vmsvc12958[3]; __v3_internal_symbol_join_1__vmsvc12958[0] = module_name; __v3_internal_symbol_join_1__vmsvc12958[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12958[2] = candidate; string __arr_val_34 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12958));
+				int cond__vmsvc12960; cond__vmsvc12960 = !!(!(string__eq(module_name, _str_34) || string__eq(module_name, _str_179) || string__eq(module_name, _str_1218))); if (cond__vmsvc12960) { int __in_lhs_33__vmsvc12959 = flat__source_type_shape(candidate_id); cond__vmsvc12960 = !!((!((__in_lhs_33__vmsvc12959 & 1) != 0))); } if (cond__vmsvc12960) {
+					string __v3_internal_symbol_join_1__vmsvc12961[3]; __v3_internal_symbol_join_1__vmsvc12961[0] = module_name; __v3_internal_symbol_join_1__vmsvc12961[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12961[2] = candidate; string __arr_val_34 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12961));
 					array_push(&method_bases, &__arr_val_34);
 				}
 				{
@@ -566431,7 +566600,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_struct_method(typ
 							__v_int __for_idx_39 = 0;
 							for (; __for_idx_39 < __arr_lit_36.len; __for_idx_39++) {
 								string method_spelling = *(string*)(array_get(__arr_lit_36, __for_idx_39));
-								string __v3_internal_symbol_join_2__vmsvc12959[5]; __v3_internal_symbol_join_2__vmsvc12959[0] = method_base; __v3_internal_symbol_join_2__vmsvc12959[1] = _str_176; __v3_internal_symbol_join_2__vmsvc12959[2] = types__generic_param_ids_join(candidate_params, _str_25); __v3_internal_symbol_join_2__vmsvc12959[3] = _str_8379; __v3_internal_symbol_join_2__vmsvc12959[4] = method_spelling; string candidate_key = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12959));
+								string __v3_internal_symbol_join_2__vmsvc12962[5]; __v3_internal_symbol_join_2__vmsvc12962[0] = method_base; __v3_internal_symbol_join_2__vmsvc12962[1] = _str_176; __v3_internal_symbol_join_2__vmsvc12962[2] = types__generic_param_ids_join(candidate_params, _str_25); __v3_internal_symbol_join_2__vmsvc12962[3] = _str_8379; __v3_internal_symbol_join_2__vmsvc12962[4] = method_spelling; string candidate_key = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12962));
 								string __map_key_40 = candidate_key;
 								if (map__exists(&tc->fn_ret_types, &__map_key_40)) {
 									generic_base = candidate_id;
@@ -566440,7 +566609,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_struct_method(typ
 									generic_key = candidate_key;
 									break;
 								}
-								string __v3_internal_symbol_join_3__vmsvc12960[3]; __v3_internal_symbol_join_3__vmsvc12960[0] = method_base; __v3_internal_symbol_join_3__vmsvc12960[1] = _str_2; __v3_internal_symbol_join_3__vmsvc12960[2] = method_spelling; string plain_candidate_key = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12960));
+								string __v3_internal_symbol_join_3__vmsvc12963[3]; __v3_internal_symbol_join_3__vmsvc12963[0] = method_base; __v3_internal_symbol_join_3__vmsvc12963[1] = _str_2; __v3_internal_symbol_join_3__vmsvc12963[2] = method_spelling; string plain_candidate_key = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12963));
 								string __map_key_41 = plain_candidate_key;
 								if (map__exists(&tc->fn_ret_types, &__map_key_41)) {
 									generic_base = candidate_id;
@@ -566463,11 +566632,11 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_struct_method(typ
 							__v_int __for_idx_45 = 0;
 							for (; __for_idx_45 < __arr_lit_42.len; __for_idx_45++) {
 								string method_spelling = *(string*)(array_get(__arr_lit_42, __for_idx_45));
-								string __v3_internal_symbol_join_4__vmsvc12961[3]; __v3_internal_symbol_join_4__vmsvc12961[0] = method_base; __v3_internal_symbol_join_4__vmsvc12961[1] = _str_2; __v3_internal_symbol_join_4__vmsvc12961[2] = method_spelling; string __map_key_46 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc12961));
+								string __v3_internal_symbol_join_4__vmsvc12964[3]; __v3_internal_symbol_join_4__vmsvc12964[0] = method_base; __v3_internal_symbol_join_4__vmsvc12964[1] = _str_2; __v3_internal_symbol_join_4__vmsvc12964[2] = method_spelling; string __map_key_46 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc12964));
 								void* __map_ptr_47 = map__get_check(&tc->receiver_method_suffix_index, &__map_key_46);
 								if (__map_ptr_47 != NULL) {
 									string indexed = *(string*)(__map_ptr_47);
-									int cond__vmsvc12963; cond__vmsvc12963 = !!(!string__eq(indexed, types__receiver_method_suffix_ambiguous)); if (cond__vmsvc12963) { string __map_key_48__vmsvc12962 = indexed; cond__vmsvc12963 = !!((map__exists(&tc->fn_ret_types, &__map_key_48__vmsvc12962))); } if (cond__vmsvc12963 && string__contains(string__all_before_last(indexed, _str_2), _str_176)) {
+									int cond__vmsvc12966; cond__vmsvc12966 = !!(!string__eq(indexed, types__receiver_method_suffix_ambiguous)); if (cond__vmsvc12966) { string __map_key_48__vmsvc12965 = indexed; cond__vmsvc12966 = !!((map__exists(&tc->fn_ret_types, &__map_key_48__vmsvc12965))); } if (cond__vmsvc12966 && string__contains(string__all_before_last(indexed, _str_2), _str_176)) {
 										Array indexed_params = types__generic_method_receiver_params_from_key(indexed, candidate_params);
 										Array indexed_args = array__clone(&candidate_concrete_args);
 										if (has_type_args) {
@@ -566663,7 +566832,7 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_sum_method(types_
 		__v_int __for_idx_7 = 0;
 		for (; __for_idx_7 < __arr_lit_4.len; __for_idx_7++) {
 			string method_spelling = *(string*)(array_get(__arr_lit_4, __for_idx_7));
-			string __v3_internal_symbol_join_1__vmsvc12964[5]; __v3_internal_symbol_join_1__vmsvc12964[0] = base; __v3_internal_symbol_join_1__vmsvc12964[1] = _str_176; __v3_internal_symbol_join_1__vmsvc12964[2] = types__generic_param_ids_join(params, _str_25); __v3_internal_symbol_join_1__vmsvc12964[3] = _str_8379; __v3_internal_symbol_join_1__vmsvc12964[4] = method_spelling; string candidate = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12964));
+			string __v3_internal_symbol_join_1__vmsvc12967[5]; __v3_internal_symbol_join_1__vmsvc12967[0] = base; __v3_internal_symbol_join_1__vmsvc12967[1] = _str_176; __v3_internal_symbol_join_1__vmsvc12967[2] = types__generic_param_ids_join(params, _str_25); __v3_internal_symbol_join_1__vmsvc12967[3] = _str_8379; __v3_internal_symbol_join_1__vmsvc12967[4] = method_spelling; string candidate = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12967));
 			string __map_key_8 = candidate;
 			if (map__exists(&tc->fn_ret_types, &__map_key_8)) {
 				generic_key = candidate;
@@ -566770,7 +566939,7 @@ u32 types__TypeChecker__resolve_ierror_payload_name(types__TypeChecker* tc, u32 
 		}
 	}
 	if ((tc->cur_module.len > 0) && !string__eq(tc->cur_module, _str_179) && !string__eq(tc->cur_module, _str_1218)) {
-		string __v3_internal_symbol_join_0__vmsvc12965[3]; __v3_internal_symbol_join_0__vmsvc12965[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc12965[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12965[2] = flat__source_type_name(name_id); string local = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12965));
+		string __v3_internal_symbol_join_0__vmsvc12968[3]; __v3_internal_symbol_join_0__vmsvc12968[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc12968[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12968[2] = flat__source_type_name(name_id); string local = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12968));
 		__v_option_u32 __if_guard_2 = flat__source_type_existing_id(local);
 		if (__if_guard_2.ok) {
 			u32 local_id = __if_guard_2.value;
@@ -566843,7 +567012,7 @@ u32 types__TypeChecker__resolve_imported_type_text(types__TypeChecker* tc, u32 t
 			int __in_lhs_2 = flat__source_type_shape(rest_id);
 			if (!((__in_lhs_2 & 1) != 0)) {
 				string rest = flat__source_type_name(rest_id);
-				int cond__vmsvc12967; cond__vmsvc12967 = !!(types__is_builtin_type_name_id(rest_id) || (rest_id == types__qualify_source_type_uint) || types__TypeChecker__qualify_candidate_type_exists(tc, rest_id)); if (!cond__vmsvc12967) { string __map_key_3__vmsvc12966 = rest; cond__vmsvc12967 = !!((map__exists(&tc->const_types, &__map_key_3__vmsvc12966))); } if (cond__vmsvc12967) {
+				int cond__vmsvc12970; cond__vmsvc12970 = !!(types__is_builtin_type_name_id(rest_id) || (rest_id == types__qualify_source_type_uint) || types__TypeChecker__qualify_candidate_type_exists(tc, rest_id)); if (!cond__vmsvc12970) { string __map_key_3__vmsvc12969 = rest; cond__vmsvc12970 = !!((map__exists(&tc->const_types, &__map_key_3__vmsvc12969))); } if (cond__vmsvc12970) {
 					return rest_id;
 				}
 				if (types__Scope__contains(tc->file_scope, rest)) {
@@ -566871,7 +567040,7 @@ u32 types__TypeChecker__resolve_imported_type_text(types__TypeChecker* tc, u32 t
 
 u32 types__TypeChecker__resolve_imported_type_text_in_file(types__TypeChecker* tc, u32 typ_id, string file) {
 	int __in_lhs_0 = flat__source_type_shape(typ_id);
-	int cond__vmsvc12969; cond__vmsvc12969 = !!(!((__in_lhs_0 & 1) != 0)); if (!cond__vmsvc12969) { int __in_lhs_1__vmsvc12968 = flat__source_type_query(typ_id); cond__vmsvc12969 = !!(((__in_lhs_1__vmsvc12968 & 8192) != 0)); } if (cond__vmsvc12969) {
+	int cond__vmsvc12972; cond__vmsvc12972 = !!(!((__in_lhs_0 & 1) != 0)); if (!cond__vmsvc12972) { int __in_lhs_1__vmsvc12971 = flat__source_type_query(typ_id); cond__vmsvc12972 = !!(((__in_lhs_1__vmsvc12971 & 8192) != 0)); } if (cond__vmsvc12972) {
 		return typ_id;
 	}
 	flat__SourceTypeSyntax* syntax = flat__source_type_syntax(typ_id);
@@ -566997,7 +567166,7 @@ types__Type types__TypeChecker__resolve_index_lvalue_type(types__TypeChecker* tc
 				}
 				if (!types__TypeChecker__index_overload_key_types_match(tc, &(*(types__Type*)array_get(setter.params, 1)), &(*(types__Type*)array_get(getter.params, 1)))) {
 					if (types__TypeChecker__should_diagnose(tc, lhs_id)) {
-						string __v3_internal_symbol_join_0__vmsvc12970[5]; __v3_internal_symbol_join_0__vmsvc12970[0] = _str_7772; __v3_internal_symbol_join_0__vmsvc12970[1] = types__Type__name(&(*(types__Type*)array_get(getter.params, 1))); __v3_internal_symbol_join_0__vmsvc12970[2] = _str_7773; __v3_internal_symbol_join_0__vmsvc12970[3] = types__Type__name(&(*(types__Type*)array_get(setter.params, 1))); __v3_internal_symbol_join_0__vmsvc12970[4] = _str_351; types__TypeChecker__record_error(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12970)), lhs_id);
+						string __v3_internal_symbol_join_0__vmsvc12973[5]; __v3_internal_symbol_join_0__vmsvc12973[0] = _str_7772; __v3_internal_symbol_join_0__vmsvc12973[1] = types__Type__name(&(*(types__Type*)array_get(getter.params, 1))); __v3_internal_symbol_join_0__vmsvc12973[2] = _str_7773; __v3_internal_symbol_join_0__vmsvc12973[3] = types__Type__name(&(*(types__Type*)array_get(setter.params, 1))); __v3_internal_symbol_join_0__vmsvc12973[4] = _str_351; types__TypeChecker__record_error(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc12973)), lhs_id);
 					}
 					types__Type invalid_type = types__unknown_type(_str_7774);
 					types__TypeChecker__register_synth_type(tc, lhs_id, &(types__Type[]){invalid_type}[0]);
@@ -567006,7 +567175,7 @@ types__Type types__TypeChecker__resolve_index_lvalue_type(types__TypeChecker* tc
 				types__Type value_type = (*(types__Type*)array_get(setter.params, 2));
 				if (!types__TypeChecker__type_compatible(tc, &getter.return_type, &value_type)) {
 					if (types__TypeChecker__should_diagnose(tc, lhs_id)) {
-						string __v3_internal_symbol_join_1__vmsvc12971[5]; __v3_internal_symbol_join_1__vmsvc12971[0] = _str_7775; __v3_internal_symbol_join_1__vmsvc12971[1] = types__Type__name(&getter.return_type); __v3_internal_symbol_join_1__vmsvc12971[2] = _str_7776; __v3_internal_symbol_join_1__vmsvc12971[3] = types__Type__name(&value_type); __v3_internal_symbol_join_1__vmsvc12971[4] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12971)), lhs_id);
+						string __v3_internal_symbol_join_1__vmsvc12974[5]; __v3_internal_symbol_join_1__vmsvc12974[0] = _str_7775; __v3_internal_symbol_join_1__vmsvc12974[1] = types__Type__name(&getter.return_type); __v3_internal_symbol_join_1__vmsvc12974[2] = _str_7776; __v3_internal_symbol_join_1__vmsvc12974[3] = types__Type__name(&value_type); __v3_internal_symbol_join_1__vmsvc12974[4] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc12974)), lhs_id);
 					}
 					types__Type invalid_type = types__unknown_type(_str_7777);
 					types__TypeChecker__register_synth_type(tc, lhs_id, &(types__Type[]){invalid_type}[0]);
@@ -567014,7 +567183,7 @@ types__Type types__TypeChecker__resolve_index_lvalue_type(types__TypeChecker* tc
 				}
 			} else {
 				if (types__TypeChecker__should_diagnose(tc, lhs_id)) {
-					string __v3_internal_symbol_join_2__vmsvc12972[3]; __v3_internal_symbol_join_2__vmsvc12972[0] = _str_7778; __v3_internal_symbol_join_2__vmsvc12972[1] = types__Type__name(&base_type); __v3_internal_symbol_join_2__vmsvc12972[2] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12972)), lhs_id);
+					string __v3_internal_symbol_join_2__vmsvc12975[3]; __v3_internal_symbol_join_2__vmsvc12975[0] = _str_7778; __v3_internal_symbol_join_2__vmsvc12975[1] = types__Type__name(&base_type); __v3_internal_symbol_join_2__vmsvc12975[2] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc12975)), lhs_id);
 				}
 				types__Type invalid_type = types__unknown_type(_str_7779);
 				types__TypeChecker__register_synth_type(tc, lhs_id, &(types__Type[]){invalid_type}[0]);
@@ -567029,7 +567198,7 @@ types__Type types__TypeChecker__resolve_index_lvalue_type(types__TypeChecker* tc
 	if (__if_guard_2.ok) {
 		types__CallInfo getter = __if_guard_2.value;
 		if (types__TypeChecker__should_diagnose(tc, lhs_id)) {
-			string __v3_internal_symbol_join_3__vmsvc12973[3]; __v3_internal_symbol_join_3__vmsvc12973[0] = _str_7780; __v3_internal_symbol_join_3__vmsvc12973[1] = types__Type__name(&base_type); __v3_internal_symbol_join_3__vmsvc12973[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12973)), lhs_id, types__TypeChecker__index_brackets_pos(tc, lhs));
+			string __v3_internal_symbol_join_3__vmsvc12976[3]; __v3_internal_symbol_join_3__vmsvc12976[0] = _str_7780; __v3_internal_symbol_join_3__vmsvc12976[1] = types__Type__name(&base_type); __v3_internal_symbol_join_3__vmsvc12976[2] = _str_41; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12976)), lhs_id, types__TypeChecker__index_brackets_pos(tc, lhs));
 		}
 		if (getter.params.len >= 2) {
 			types__TypeChecker__check_index_overload_arg(tc, lhs_id, lhs, getter, _str_2009);
@@ -567275,14 +567444,14 @@ types__Type types__TypeChecker__resolve_known_field_type(types__TypeChecker* tc,
 	if (map__exists(&tc->structs, &__map_key_0)) {
 		return (types__Type){.typ = 19, .types__Struct = (types__Struct){.name_id = qname_id}};
 	}
-	int cond__vmsvc12975; cond__vmsvc12975 = !!(allow_bare_symbol); if (cond__vmsvc12975) { u32 __map_key_1__vmsvc12974 = type_name_id; cond__vmsvc12975 = !!((map__exists(&tc->structs, &__map_key_1__vmsvc12974))); } if (cond__vmsvc12975) {
+	int cond__vmsvc12978; cond__vmsvc12978 = !!(allow_bare_symbol); if (cond__vmsvc12978) { u32 __map_key_1__vmsvc12977 = type_name_id; cond__vmsvc12978 = !!((map__exists(&tc->structs, &__map_key_1__vmsvc12977))); } if (cond__vmsvc12978) {
 		return (types__Type){.typ = 19, .types__Struct = (types__Struct){.name_id = type_name_id}};
 	}
 	u32 __map_key_2 = qname_id;
 	if (map__exists(&tc->interface_names, &__map_key_2)) {
 		return (types__Type){.typ = 20, .types__Interface = (types__Interface){.name_id = qname_id}};
 	}
-	int cond__vmsvc12977; cond__vmsvc12977 = !!(allow_bare_symbol); if (cond__vmsvc12977) { u32 __map_key_3__vmsvc12976 = type_name_id; cond__vmsvc12977 = !!((map__exists(&tc->interface_names, &__map_key_3__vmsvc12976))); } if (cond__vmsvc12977) {
+	int cond__vmsvc12980; cond__vmsvc12980 = !!(allow_bare_symbol); if (cond__vmsvc12980) { u32 __map_key_3__vmsvc12979 = type_name_id; cond__vmsvc12980 = !!((map__exists(&tc->interface_names, &__map_key_3__vmsvc12979))); } if (cond__vmsvc12980) {
 		return (types__Type){.typ = 20, .types__Interface = (types__Interface){.name_id = type_name_id}};
 	}
 	if (flat__SourceTypeBindings__contains(&tc->type_aliases, qname_id)) {
@@ -567338,7 +567507,7 @@ types__Type types__TypeChecker__resolve_lvalue_type(types__TypeChecker* tc, i32 
 			__v_option_token__Pos __if_guard_5 = types__TypeChecker__malformed_const_keyword_pos(tc, lhs_id);
 			if (__if_guard_5.ok) {
 			} else {
-				string __v3_internal_symbol_join_0__vmsvc12978[3]; __v3_internal_symbol_join_0__vmsvc12978[0] = _str_7318; __v3_internal_symbol_join_0__vmsvc12978[1] = lhs.value; __v3_internal_symbol_join_0__vmsvc12978[2] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12978)), lhs_id);
+				string __v3_internal_symbol_join_0__vmsvc12981[3]; __v3_internal_symbol_join_0__vmsvc12981[0] = _str_7318; __v3_internal_symbol_join_0__vmsvc12981[1] = lhs.value; __v3_internal_symbol_join_0__vmsvc12981[2] = _str_41; types__TypeChecker__record_error(tc, types__TypeErrorKind__unknown_ident, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12981)), lhs_id);
 			}
 		}
 		return types__unknown_type_quoting(_str_7769, lhs.value);
@@ -567409,7 +567578,7 @@ __v_option_string types__TypeChecker__resolve_selective_import_symbol(types__Typ
 		for (; __for_idx_6 < candidates.len; __for_idx_6++) {
 			u32 candidate_id = *(u32*)(array_get(candidates, __for_idx_6));
 			string candidate = flat__source_type_name(candidate_id);
-			int cond__vmsvc12980; cond__vmsvc12980 = !!(types__TypeChecker__fn_signature_known(tc, candidate)); if (!cond__vmsvc12980) { string __map_key_7__vmsvc12979 = candidate; cond__vmsvc12980 = !!((map__exists(&tc->fn_ret_types, &__map_key_7__vmsvc12979))); } int cond__vmsvc12982; cond__vmsvc12982 = !!(cond__vmsvc12980); if (!cond__vmsvc12982) { string __map_key_8__vmsvc12981 = candidate; cond__vmsvc12982 = !!((map__exists(&tc->fn_param_types, &__map_key_8__vmsvc12981))); } if (cond__vmsvc12982) {
+			int cond__vmsvc12983; cond__vmsvc12983 = !!(types__TypeChecker__fn_signature_known(tc, candidate)); if (!cond__vmsvc12983) { string __map_key_7__vmsvc12982 = candidate; cond__vmsvc12983 = !!((map__exists(&tc->fn_ret_types, &__map_key_7__vmsvc12982))); } int cond__vmsvc12985; cond__vmsvc12985 = !!(cond__vmsvc12983); if (!cond__vmsvc12985) { string __map_key_8__vmsvc12984 = candidate; cond__vmsvc12985 = !!((map__exists(&tc->fn_param_types, &__map_key_8__vmsvc12984))); } if (cond__vmsvc12985) {
 				return (__v_option_string){.ok = true, .value = candidate};
 			}
 		}
@@ -567501,39 +567670,39 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 				}
 			}
 		} else if (__match_tmp_0 == flat__NodeKind__selector) {
-			int cond__vmsvc12984; cond__vmsvc12984 = !!((tc->errors.len > 0)); if (cond__vmsvc12984) { bool __any_3__vmsvc12983 = false; {
+			int cond__vmsvc12987; cond__vmsvc12987 = !!((tc->errors.len > 0)); if (cond__vmsvc12987) { bool __any_3__vmsvc12986 = false; {
 				__v_int __any_idx_4 = 0;
 				for (; __any_idx_4 < tc->errors.len; __any_idx_4++) {
 					types__TypeError __any_it_5 = *(types__TypeError*)(array_get(tc->errors, __any_idx_4));
 					if ((__any_it_5.node == id) && string__contains(__any_it_5.msg, _str_8397)) {
-						__any_3__vmsvc12983 = true;
+						__any_3__vmsvc12986 = true;
 					}
 				}
-			} cond__vmsvc12984 = !!((__any_3__vmsvc12983)); } if (cond__vmsvc12984) {
+			} cond__vmsvc12987 = !!((__any_3__vmsvc12986)); } if (cond__vmsvc12987) {
 				return types__builtin_void_type;
 			}
 		} else if (__match_tmp_0 == flat__NodeKind__infix) {
-			int cond__vmsvc12986; cond__vmsvc12986 = !!((tc->errors.len > 0)); if (cond__vmsvc12986) { bool __any_6__vmsvc12985 = false; {
+			int cond__vmsvc12989; cond__vmsvc12989 = !!((tc->errors.len > 0)); if (cond__vmsvc12989) { bool __any_6__vmsvc12988 = false; {
 				__v_int __any_idx_7 = 0;
 				for (; __any_idx_7 < tc->errors.len; __any_idx_7++) {
 					types__TypeError __any_it_8 = *(types__TypeError*)(array_get(tc->errors, __any_idx_7));
 					if ((__any_it_8.node == id) && string__starts_with(__any_it_8.msg, _str_8398)) {
-						__any_6__vmsvc12985 = true;
+						__any_6__vmsvc12988 = true;
 					}
 				}
-			} cond__vmsvc12986 = !!((__any_6__vmsvc12985)); } if (cond__vmsvc12986) {
+			} cond__vmsvc12989 = !!((__any_6__vmsvc12988)); } if (cond__vmsvc12989) {
 				return types__builtin_void_type;
 			}
 		} else if (__match_tmp_0 == flat__NodeKind__call) {
-			int cond__vmsvc12988; cond__vmsvc12988 = !!((tc->errors.len > 0)); if (cond__vmsvc12988) { bool __any_9__vmsvc12987 = false; {
+			int cond__vmsvc12991; cond__vmsvc12991 = !!((tc->errors.len > 0)); if (cond__vmsvc12991) { bool __any_9__vmsvc12990 = false; {
 				__v_int __any_idx_10 = 0;
 				for (; __any_idx_10 < tc->errors.len; __any_idx_10++) {
 					types__TypeError __any_it_11 = *(types__TypeError*)(array_get(tc->errors, __any_idx_10));
 					if ((__any_it_11.node == id) && string__starts_with(__any_it_11.msg, _str_6670)) {
-						__any_9__vmsvc12987 = true;
+						__any_9__vmsvc12990 = true;
 					}
 				}
-			} cond__vmsvc12988 = !!((__any_9__vmsvc12987)); } if (cond__vmsvc12988) {
+			} cond__vmsvc12991 = !!((__any_9__vmsvc12990)); } if (cond__vmsvc12991) {
 				return types__builtin_void_type;
 			}
 			if ((node->typ != 0) && !types__call_type_annotation_is_placeholder(node->typ)) {
@@ -567940,7 +568109,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 								}
 								return __map_val_67;
 							}
-							string __v3_internal_symbol_join_0__vmsvc12989[3]; __v3_internal_symbol_join_0__vmsvc12989[0] = resolved; __v3_internal_symbol_join_0__vmsvc12989[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12989[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12989));
+							string __v3_internal_symbol_join_0__vmsvc12992[3]; __v3_internal_symbol_join_0__vmsvc12992[0] = resolved; __v3_internal_symbol_join_0__vmsvc12992[1] = _str_2; __v3_internal_symbol_join_0__vmsvc12992[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc12992));
 							__v_option_u32 __if_guard_68 = flat__source_type_existing_id(mod_name);
 							if (__if_guard_68.ok) {
 								u32 mod_name_id = __if_guard_68.value;
@@ -567959,9 +568128,9 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 						}
 					}
 					u32 __map_key_71 = flat__Node__source_value_id(*base_node);
-					int cond__vmsvc12991; cond__vmsvc12991 = !!(map__exists(&tc->structs, &__map_key_71)); if (!cond__vmsvc12991) { u32 __map_key_72__vmsvc12990 = flat__Node__source_value_id(*base_node); cond__vmsvc12991 = !!((map__exists(&tc->enum_names, &__map_key_72__vmsvc12990))); } if (cond__vmsvc12991) {
+					int cond__vmsvc12994; cond__vmsvc12994 = !!(map__exists(&tc->structs, &__map_key_71)); if (!cond__vmsvc12994) { u32 __map_key_72__vmsvc12993 = flat__Node__source_value_id(*base_node); cond__vmsvc12994 = !!((map__exists(&tc->enum_names, &__map_key_72__vmsvc12993))); } if (cond__vmsvc12994) {
 						string qname = types__TypeChecker__qualify_name(tc, base_node->value);
-						string __v3_internal_symbol_join_1__vmsvc12992[3]; __v3_internal_symbol_join_1__vmsvc12992[0] = qname; __v3_internal_symbol_join_1__vmsvc12992[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12992[2] = fn_node->value; string sname = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12992));
+						string __v3_internal_symbol_join_1__vmsvc12995[3]; __v3_internal_symbol_join_1__vmsvc12995[0] = qname; __v3_internal_symbol_join_1__vmsvc12995[1] = _str_2; __v3_internal_symbol_join_1__vmsvc12995[2] = fn_node->value; string sname = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc12995));
 						string __map_key_73 = sname;
 						void* __map_ptr_74 = map__get_check(&tc->fn_ret_types, &__map_key_73);
 						if (__map_ptr_74 != NULL) {
@@ -567994,14 +568163,14 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 							__or_val_82 = inner->value;
 						}
 						string mod_name = __or_val_82;
-						string __v3_internal_symbol_join_2__vmsvc12993[5]; __v3_internal_symbol_join_2__vmsvc12993[0] = mod_name; __v3_internal_symbol_join_2__vmsvc12993[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12993[2] = base_node->value; __v3_internal_symbol_join_2__vmsvc12993[3] = _str_2; __v3_internal_symbol_join_2__vmsvc12993[4] = fn_node->value; string full_name = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12993));
+						string __v3_internal_symbol_join_2__vmsvc12996[5]; __v3_internal_symbol_join_2__vmsvc12996[0] = mod_name; __v3_internal_symbol_join_2__vmsvc12996[1] = _str_2; __v3_internal_symbol_join_2__vmsvc12996[2] = base_node->value; __v3_internal_symbol_join_2__vmsvc12996[3] = _str_2; __v3_internal_symbol_join_2__vmsvc12996[4] = fn_node->value; string full_name = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc12996));
 						string __map_key_83 = full_name;
 						void* __map_ptr_84 = map__get_check(&tc->fn_ret_types, &__map_key_83);
 						if (__map_ptr_84 != NULL) {
 							types__Type ret = *(types__Type*)(__map_ptr_84);
 							return ret;
 						}
-						string __v3_internal_symbol_join_3__vmsvc12994[3]; __v3_internal_symbol_join_3__vmsvc12994[0] = mod_name; __v3_internal_symbol_join_3__vmsvc12994[1] = _str_2; __v3_internal_symbol_join_3__vmsvc12994[2] = base_node->value; __v_option_string __if_guard_85 = types__TypeChecker__static_assoc_fn_key_for_base(tc, flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12994))), fn_node->value);
+						string __v3_internal_symbol_join_3__vmsvc12997[3]; __v3_internal_symbol_join_3__vmsvc12997[0] = mod_name; __v3_internal_symbol_join_3__vmsvc12997[1] = _str_2; __v3_internal_symbol_join_3__vmsvc12997[2] = base_node->value; __v_option_string __if_guard_85 = types__TypeChecker__static_assoc_fn_key_for_base(tc, flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc12997))), fn_node->value);
 						if (__if_guard_85.ok) {
 							string static_name = __if_guard_85.value;
 							string __map_key_88 = static_name;
@@ -568031,7 +568200,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 				}
 				types__Type base_type = __or_val_93;
 				if ((base_type).typ == 2) {
-					string __v3_internal_symbol_join_4__vmsvc12995[3]; __v3_internal_symbol_join_4__vmsvc12995[0] = _str_8400; __v3_internal_symbol_join_4__vmsvc12995[1] = fn_node->value; __v3_internal_symbol_join_4__vmsvc12995[2] = _str_7025; return types__unknown_type((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc12995)));
+					string __v3_internal_symbol_join_4__vmsvc12998[3]; __v3_internal_symbol_join_4__vmsvc12998[0] = _str_8400; __v3_internal_symbol_join_4__vmsvc12998[1] = fn_node->value; __v3_internal_symbol_join_4__vmsvc12998[2] = _str_7025; return types__unknown_type((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc12998)));
 				}
 				__v_option_types__FnType __if_guard_94 = types__TypeChecker__selector_field_fn_type(tc, *fn_node, &(types__Type[]){base_type}[0]);
 				if (__if_guard_94.ok) {
@@ -568214,9 +568383,9 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 						short_elem_id = flat__SourceTypeSyntax__unqualified(elem_syntax);
 						mod_prefix_id = flat__SourceTypeSyntax__qualifier(elem_syntax);
 					}
-					string __v3_internal_symbol_join_5__vmsvc12996[4]; __v3_internal_symbol_join_5__vmsvc12996[0] = _str_2009; __v3_internal_symbol_join_5__vmsvc12996[1] = flat__source_type_name(short_elem_id); __v3_internal_symbol_join_5__vmsvc12996[2] = _str_2; __v3_internal_symbol_join_5__vmsvc12996[3] = fn_node->value; string arr_mname1 = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc12996));
+					string __v3_internal_symbol_join_5__vmsvc12999[4]; __v3_internal_symbol_join_5__vmsvc12999[0] = _str_2009; __v3_internal_symbol_join_5__vmsvc12999[1] = flat__source_type_name(short_elem_id); __v3_internal_symbol_join_5__vmsvc12999[2] = _str_2; __v3_internal_symbol_join_5__vmsvc12999[3] = fn_node->value; string arr_mname1 = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc12999));
 					if (mod_prefix_id != 0) {
-						string __v3_internal_symbol_join_6__vmsvc12997[3]; __v3_internal_symbol_join_6__vmsvc12997[0] = flat__source_type_name(mod_prefix_id); __v3_internal_symbol_join_6__vmsvc12997[1] = _str_2; __v3_internal_symbol_join_6__vmsvc12997[2] = arr_mname1; string arr_mkey = (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc12997));
+						string __v3_internal_symbol_join_6__vmsvc13000[3]; __v3_internal_symbol_join_6__vmsvc13000[0] = flat__source_type_name(mod_prefix_id); __v3_internal_symbol_join_6__vmsvc13000[1] = _str_2; __v3_internal_symbol_join_6__vmsvc13000[2] = arr_mname1; string arr_mkey = (string_plus_many(3, __v3_internal_symbol_join_6__vmsvc13000));
 						string __map_key_121 = arr_mkey;
 						void* __map_ptr_122 = map__get_check(&tc->fn_ret_types, &__map_key_121);
 						if (__map_ptr_122 != NULL) {
@@ -568293,7 +568462,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					return types__builtin_string_type;
 				}
 				if ((clean_type).typ == 23) {
-					string __v3_internal_symbol_join_7__vmsvc12998[3]; __v3_internal_symbol_join_7__vmsvc12998[0] = types__Alias__name(clean_type.types__Alias); __v3_internal_symbol_join_7__vmsvc12998[1] = _str_2; __v3_internal_symbol_join_7__vmsvc12998[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc12998));
+					string __v3_internal_symbol_join_7__vmsvc13001[3]; __v3_internal_symbol_join_7__vmsvc13001[0] = types__Alias__name(clean_type.types__Alias); __v3_internal_symbol_join_7__vmsvc13001[1] = _str_2; __v3_internal_symbol_join_7__vmsvc13001[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc13001));
 					string __map_key_135 = mname;
 					void* __map_ptr_136 = map__get_check(&tc->fn_ret_types, &__map_key_135);
 					if (__map_ptr_136 != NULL) {
@@ -568318,7 +568487,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					}
 				}
 				if ((clean_type).typ == 19) {
-					string __v3_internal_symbol_join_8__vmsvc12999[3]; __v3_internal_symbol_join_8__vmsvc12999[0] = types__Struct__name(clean_type.types__Struct); __v3_internal_symbol_join_8__vmsvc12999[1] = _str_2; __v3_internal_symbol_join_8__vmsvc12999[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc12999));
+					string __v3_internal_symbol_join_8__vmsvc13002[3]; __v3_internal_symbol_join_8__vmsvc13002[0] = types__Struct__name(clean_type.types__Struct); __v3_internal_symbol_join_8__vmsvc13002[1] = _str_2; __v3_internal_symbol_join_8__vmsvc13002[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc13002));
 					string __map_key_141 = mname;
 					void* __map_ptr_142 = map__get_check(&tc->fn_ret_types, &__map_key_141);
 					if (__map_ptr_142 != NULL) {
@@ -568332,7 +568501,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					}
 				}
 				if ((clean_type).typ == 20) {
-					string __v3_internal_symbol_join_9__vmsvc13000[3]; __v3_internal_symbol_join_9__vmsvc13000[0] = types__Interface__name(clean_type.types__Interface); __v3_internal_symbol_join_9__vmsvc13000[1] = _str_2; __v3_internal_symbol_join_9__vmsvc13000[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc13000));
+					string __v3_internal_symbol_join_9__vmsvc13003[3]; __v3_internal_symbol_join_9__vmsvc13003[0] = types__Interface__name(clean_type.types__Interface); __v3_internal_symbol_join_9__vmsvc13003[1] = _str_2; __v3_internal_symbol_join_9__vmsvc13003[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc13003));
 					string __map_key_144 = mname;
 					void* __map_ptr_145 = map__get_check(&tc->fn_ret_types, &__map_key_144);
 					if (__map_ptr_145 != NULL) {
@@ -568341,7 +568510,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					}
 				}
 				if ((clean_type).typ == 22) {
-					string __v3_internal_symbol_join_10__vmsvc13001[3]; __v3_internal_symbol_join_10__vmsvc13001[0] = types__SumType__name(clean_type.types__SumType); __v3_internal_symbol_join_10__vmsvc13001[1] = _str_2; __v3_internal_symbol_join_10__vmsvc13001[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_10__vmsvc13001));
+					string __v3_internal_symbol_join_10__vmsvc13004[3]; __v3_internal_symbol_join_10__vmsvc13004[0] = types__SumType__name(clean_type.types__SumType); __v3_internal_symbol_join_10__vmsvc13004[1] = _str_2; __v3_internal_symbol_join_10__vmsvc13004[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_10__vmsvc13004));
 					string __map_key_146 = mname;
 					void* __map_ptr_147 = map__get_check(&tc->fn_ret_types, &__map_key_146);
 					if (__map_ptr_147 != NULL) {
@@ -568353,7 +568522,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					if (string__eq(fn_node->value, _str_4004)) {
 						return types__builtin_string_type;
 					}
-					string __v3_internal_symbol_join_11__vmsvc13002[3]; __v3_internal_symbol_join_11__vmsvc13002[0] = types__Enum__name(clean_type.types__Enum); __v3_internal_symbol_join_11__vmsvc13002[1] = _str_2; __v3_internal_symbol_join_11__vmsvc13002[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_11__vmsvc13002));
+					string __v3_internal_symbol_join_11__vmsvc13005[3]; __v3_internal_symbol_join_11__vmsvc13005[0] = types__Enum__name(clean_type.types__Enum); __v3_internal_symbol_join_11__vmsvc13005[1] = _str_2; __v3_internal_symbol_join_11__vmsvc13005[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_11__vmsvc13005));
 					string __map_key_148 = mname;
 					void* __map_ptr_149 = map__get_check(&tc->fn_ret_types, &__map_key_148);
 					if (__map_ptr_149 != NULL) {
@@ -568362,7 +568531,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					}
 				}
 				if ((clean_type).typ == 3) {
-					string __v3_internal_symbol_join_12__vmsvc13003[3]; __v3_internal_symbol_join_12__vmsvc13003[0] = types__prim_c_type_from(clean_type.types__Primitive.props, clean_type.types__Primitive.size); __v3_internal_symbol_join_12__vmsvc13003[1] = _str_2; __v3_internal_symbol_join_12__vmsvc13003[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_12__vmsvc13003));
+					string __v3_internal_symbol_join_12__vmsvc13006[3]; __v3_internal_symbol_join_12__vmsvc13006[0] = types__prim_c_type_from(clean_type.types__Primitive.props, clean_type.types__Primitive.size); __v3_internal_symbol_join_12__vmsvc13006[1] = _str_2; __v3_internal_symbol_join_12__vmsvc13006[2] = fn_node->value; string mname = (string_plus_many(3, __v3_internal_symbol_join_12__vmsvc13006));
 					string __map_key_150 = mname;
 					void* __map_ptr_151 = map__get_check(&tc->fn_ret_types, &__map_key_150);
 					if (__map_ptr_151 != NULL) {
@@ -568449,7 +568618,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 				return types__unsigned_shift_result_type(&(types__Type[]){lt}[0]);
 			}
 			if ((node->op == flat__Op__left_shift) || (node->op == flat__Op__right_shift)) {
-				int cond__vmsvc13006; cond__vmsvc13006 = !!(types__TypeChecker__node_is_in_translated_file(tc, id)); if (cond__vmsvc13006) { int cond__vmsvc13005; cond__vmsvc13005 = !!((types__TypeChecker__integer_shift_bit_size(tc, &(types__Type[]){lt}[0]) < 32)); if (!cond__vmsvc13005) { types__Type __in_lhs_164__vmsvc13004 = *types__unalias_type(&lt); cond__vmsvc13005 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_164__vmsvc13004}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } cond__vmsvc13006 = !!((cond__vmsvc13005)); } if (cond__vmsvc13006) {
+				int cond__vmsvc13009; cond__vmsvc13009 = !!(types__TypeChecker__node_is_in_translated_file(tc, id)); if (cond__vmsvc13009) { int cond__vmsvc13008; cond__vmsvc13008 = !!((types__TypeChecker__integer_shift_bit_size(tc, &(types__Type[]){lt}[0]) < 32)); if (!cond__vmsvc13008) { types__Type __in_lhs_164__vmsvc13007 = *types__unalias_type(&lt); cond__vmsvc13008 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_164__vmsvc13007}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } cond__vmsvc13009 = !!((cond__vmsvc13008)); } if (cond__vmsvc13009) {
 					return (types__Type){.typ = 3, .types__Primitive = types__i32_};
 				}
 				return lt_raw;
@@ -568685,7 +568854,7 @@ types__Type types__TypeChecker__resolve_type_nonliteral(types__TypeChecker* tc, 
 					__or_val_185 = base_node->value;
 				}
 				string resolved = __or_val_185;
-				string __v3_internal_symbol_join_13__vmsvc13007[3]; __v3_internal_symbol_join_13__vmsvc13007[0] = resolved; __v3_internal_symbol_join_13__vmsvc13007[1] = _str_2; __v3_internal_symbol_join_13__vmsvc13007[2] = node->value; string qname = (string_plus_many(3, __v3_internal_symbol_join_13__vmsvc13007));
+				string __v3_internal_symbol_join_13__vmsvc13010[3]; __v3_internal_symbol_join_13__vmsvc13010[0] = resolved; __v3_internal_symbol_join_13__vmsvc13010[1] = _str_2; __v3_internal_symbol_join_13__vmsvc13010[2] = node->value; string qname = (string_plus_many(3, __v3_internal_symbol_join_13__vmsvc13010));
 				if (string__starts_with(qname, _str_2688)) {
 					if (types__c_int_selector_name(node->value)) {
 						return types__builtin_int_type;
@@ -569347,7 +569516,7 @@ __v_option_string types__TypeChecker__resolved_fn_value_name(types__TypeChecker*
 	}
 	if (tc->sparse_fn_value_filter_ready) {
 		u32 bit = types__sparse_fn_value_filter_bit(idx);
-		u64 _t1__vmsvc13008 = (u64)(		(u64)(1)); u64 _t2__vmsvc13009 = (u64)((bit & 63)); if ((tc->sparse_fn_value_filter[(u32)(((u32)(		bit)) >> (6))] & ((_t2__vmsvc13009 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13008 << _t2__vmsvc13009)))) == 0) {
+		u64 _t1__vmsvc13011 = (u64)(		(u64)(1)); u64 _t2__vmsvc13012 = (u64)((bit & 63)); if ((tc->sparse_fn_value_filter[(u32)(((u32)(		bit)) >> (6))] & ((_t2__vmsvc13012 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13011 << _t2__vmsvc13012)))) == 0) {
 			return (__v_option_string){.ok = false};
 		}
 	}
@@ -569756,15 +569925,15 @@ bool types__TypeChecker__return_call_has_undefined_receiver(types__TypeChecker* 
 	}
 	i32 base_id = flat__FlatAst__child(tc->a, callee, 0);
 	flat__Node* base = flat__FlatAst__node(tc->a, base_id);
-	int cond__vmsvc13011; cond__vmsvc13011 = !!((base->kind == flat__NodeKind__ident)); if (cond__vmsvc13011) { bool __any_0__vmsvc13010 = false; {
+	int cond__vmsvc13014; cond__vmsvc13014 = !!((base->kind == flat__NodeKind__ident)); if (cond__vmsvc13014) { bool __any_0__vmsvc13013 = false; {
 		__v_int __any_idx_1 = 0;
 		for (; __any_idx_1 < tc->errors.len; __any_idx_1++) {
 			types__TypeError __any_it_2 = *(types__TypeError*)(array_get(tc->errors, __any_idx_1));
 			if ((__any_it_2.node == base_id) && (__any_it_2.kind == types__TypeErrorKind__unknown_ident) && (string__starts_with(__any_it_2.msg, _str_7158) || string__starts_with(__any_it_2.msg, _str_5704))) {
-				__any_0__vmsvc13010 = true;
+				__any_0__vmsvc13013 = true;
 			}
 		}
-	} cond__vmsvc13011 = !!((__any_0__vmsvc13010)); } return cond__vmsvc13011;
+	} cond__vmsvc13014 = !!((__any_0__vmsvc13013)); } return cond__vmsvc13014;
 }
 
 token__Pos types__TypeChecker__return_if_keyword_pos(types__TypeChecker* tc, flat__Node node) {
@@ -569947,7 +570116,7 @@ Array types__TypeChecker__returned_alias_arguments(types__TypeChecker* tc, i32 i
 		return __new_array_noscan(0, 0, sizeof(i32));
 	}
 	flat__Node* node = flat__FlatAst__node(tc->a, id);
-	int cond__vmsvc13013; cond__vmsvc13013 = !!((node->kind == flat__NodeKind__ident)); if (cond__vmsvc13013) { string __map_key_0__vmsvc13012 = node->value; cond__vmsvc13013 = !!((map__exists(&args_by_param, &__map_key_0__vmsvc13012))); } if (cond__vmsvc13013) {
+	int cond__vmsvc13016; cond__vmsvc13016 = !!((node->kind == flat__NodeKind__ident)); if (cond__vmsvc13016) { string __map_key_0__vmsvc13015 = node->value; cond__vmsvc13016 = !!((map__exists(&args_by_param, &__map_key_0__vmsvc13015))); } if (cond__vmsvc13016) {
 		Array __arr_lit_1 = __new_array_noscan(0, 1, sizeof(i32));
 		string __map_key_3 = node->value;
 		i32 __map_zero_4 = 0;
@@ -570013,7 +570182,7 @@ __v_int types__TypeChecker__root_scope_global_name_prefix(types__TypeChecker* tc
 		tc->root_scope_global_prefix = 0;
 	}
 	__v_int n = tc->root_scope_global_prefix;
-	for (;;) { int cond__vmsvc13015; cond__vmsvc13015 = !!((n < scope->names.len)); if (cond__vmsvc13015) { string __map_key_0__vmsvc13014 = (*(string*)array_get(scope->names, n)); cond__vmsvc13015 = !!((map__exists(&tc->global_names, &__map_key_0__vmsvc13014))); } if (!(cond__vmsvc13015)) break; {
+	for (;;) { int cond__vmsvc13018; cond__vmsvc13018 = !!((n < scope->names.len)); if (cond__vmsvc13018) { string __map_key_0__vmsvc13017 = (*(string*)array_get(scope->names, n)); cond__vmsvc13018 = !!((map__exists(&tc->global_names, &__map_key_0__vmsvc13017))); } if (!(cond__vmsvc13018)) break; {
 		n++;
 	} }
 	tc->root_scope_global_prefix = n;
@@ -570049,7 +570218,7 @@ bool types__TypeChecker__run_parallel_check(types__TypeChecker* tc, Array items,
 	if (!bodies_only) {
 		types__TypeChecker__check_top_level_declaration_values(tc);
 	}
-	string __v3_internal_symbol_join_0__vmsvc13016[3]; __v3_internal_symbol_join_0__vmsvc13016[0] = _str_7497; __v3_internal_symbol_join_0__vmsvc13016[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(tlv_sw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_0__vmsvc13016[2] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13016)));
+	string __v3_internal_symbol_join_0__vmsvc13019[3]; __v3_internal_symbol_join_0__vmsvc13019[0] = _str_7497; __v3_internal_symbol_join_0__vmsvc13019[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(tlv_sw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_0__vmsvc13019[2] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13019)));
 	time__StopWatch split_sw = time__new_stopwatch((time__StopWatchOptions){.auto_start = true});
 	__v_int chunk_target = n_jobs;
 	if (tc->scope_parallel_check_workers) {
@@ -570100,7 +570269,7 @@ bool types__TypeChecker__run_parallel_check(types__TypeChecker* tc, Array items,
 		__if_val_5 = thread_count;
 	}
 	__v_int worker_count = __if_val_5;
-	string __v3_internal_symbol_join_2__vmsvc13017[3]; __v3_internal_symbol_join_2__vmsvc13017[0] = _str_7499; __v3_internal_symbol_join_2__vmsvc13017[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(split_sw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_2__vmsvc13017[2] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13017)));
+	string __v3_internal_symbol_join_2__vmsvc13020[3]; __v3_internal_symbol_join_2__vmsvc13020[0] = _str_7499; __v3_internal_symbol_join_2__vmsvc13020[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(split_sw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_2__vmsvc13020[2] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13020)));
 	time__StopWatch rpsw = time__new_stopwatch((time__StopWatchOptions){.auto_start = true});
 	Array checker_workers = array_new(	sizeof(void*), 0, worker_count);
 	{
@@ -570112,7 +570281,7 @@ bool types__TypeChecker__run_parallel_check(types__TypeChecker* tc, Array items,
 			array_push(&checker_workers, &__arr_val_6);
 		}
 	}
-	string __v3_internal_symbol_join_3__vmsvc13018[5]; __v3_internal_symbol_join_3__vmsvc13018[0] = _str_7500; __v3_internal_symbol_join_3__vmsvc13018[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(rpsw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_3__vmsvc13018[2] = _str_7501; __v3_internal_symbol_join_3__vmsvc13018[3] = int__str(worker_count); __v3_internal_symbol_join_3__vmsvc13018[4] = _str_28; types__TypeChecker__timing_profile(tc, (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13018)));
+	string __v3_internal_symbol_join_3__vmsvc13021[5]; __v3_internal_symbol_join_3__vmsvc13021[0] = _str_7500; __v3_internal_symbol_join_3__vmsvc13021[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(rpsw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_3__vmsvc13021[2] = _str_7501; __v3_internal_symbol_join_3__vmsvc13021[3] = int__str(worker_count); __v3_internal_symbol_join_3__vmsvc13021[4] = _str_28; types__TypeChecker__timing_profile(tc, (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13021)));
 	Array args = array_new(	sizeof(types__CheckChunkArgs), 0, chunk_count);
 	void* dynamic_items_ptr = NULL;
 	if (dynamic_dispatch) {
@@ -570176,7 +570345,7 @@ bool types__TypeChecker__run_parallel_check(types__TypeChecker* tc, Array items,
 			}
 		}
 	}
-	string __v3_internal_symbol_join_5__vmsvc13019[5]; __v3_internal_symbol_join_5__vmsvc13019[0] = _str_7504; __v3_internal_symbol_join_5__vmsvc13019[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(rpsw2)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_5__vmsvc13019[2] = _str_7505; __v3_internal_symbol_join_5__vmsvc13019[3] = int__str(chunk_count); __v3_internal_symbol_join_5__vmsvc13019[4] = _str_28; types__TypeChecker__timing_profile(tc, (string_plus_many(5, __v3_internal_symbol_join_5__vmsvc13019)));
+	string __v3_internal_symbol_join_5__vmsvc13022[5]; __v3_internal_symbol_join_5__vmsvc13022[0] = _str_7504; __v3_internal_symbol_join_5__vmsvc13022[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(rpsw2)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_5__vmsvc13022[2] = _str_7505; __v3_internal_symbol_join_5__vmsvc13022[3] = int__str(chunk_count); __v3_internal_symbol_join_5__vmsvc13022[4] = _str_28; types__TypeChecker__timing_profile(tc, (string_plus_many(5, __v3_internal_symbol_join_5__vmsvc13022)));
 	if (tc->scope_parallel_check_workers) {
 		types__TypeChecker__merge_scoped_signature_checks(tc, signature_args);
 	}
@@ -570246,15 +570415,15 @@ bool types__TypeChecker__run_parallel_check(types__TypeChecker* tc, Array items,
 	}
 	double mg_clone_ms = (double)((double)(mg_clone_ns)) / 1e6;
 	double mg_merge_ms = (double)((double)(mg_merge_ns)) / 1e6;
-	string __v3_internal_symbol_join_6__vmsvc13020[5]; __v3_internal_symbol_join_6__vmsvc13020[0] = _str_7506; __v3_internal_symbol_join_6__vmsvc13020[1] = v3_string_pad(v3_f64_fixed(mg_clone_ms, 2), 7, 0); __v3_internal_symbol_join_6__vmsvc13020[2] = _str_7507; u8 __v3_internal_symbol_join_6_float_3__vmsvc13021[314]; __v3_internal_symbol_join_6__vmsvc13020[3] = v3_f64_fixed_buf(mg_merge_ms, 2, __v3_internal_symbol_join_6_float_3__vmsvc13021); __v3_internal_symbol_join_6__vmsvc13020[4] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(5, __v3_internal_symbol_join_6__vmsvc13020)));
-	string __v3_internal_symbol_join_7__vmsvc13022[3]; __v3_internal_symbol_join_7__vmsvc13022[0] = _str_7508; __v3_internal_symbol_join_7__vmsvc13022[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(rpsw2)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_7__vmsvc13022[2] = _str_7509; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc13022)));
+	string __v3_internal_symbol_join_6__vmsvc13023[5]; __v3_internal_symbol_join_6__vmsvc13023[0] = _str_7506; __v3_internal_symbol_join_6__vmsvc13023[1] = v3_string_pad(v3_f64_fixed(mg_clone_ms, 2), 7, 0); __v3_internal_symbol_join_6__vmsvc13023[2] = _str_7507; u8 __v3_internal_symbol_join_6_float_3__vmsvc13024[314]; __v3_internal_symbol_join_6__vmsvc13023[3] = v3_f64_fixed_buf(mg_merge_ms, 2, __v3_internal_symbol_join_6_float_3__vmsvc13024); __v3_internal_symbol_join_6__vmsvc13023[4] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(5, __v3_internal_symbol_join_6__vmsvc13023)));
+	string __v3_internal_symbol_join_7__vmsvc13025[3]; __v3_internal_symbol_join_7__vmsvc13025[0] = _str_7508; __v3_internal_symbol_join_7__vmsvc13025[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(rpsw2)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_7__vmsvc13025[2] = _str_7509; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc13025)));
 	types__check_worker_scope_free(setup_scope);
 	if (bodies_only) {
 		return any_started;
 	}
 	time__StopWatch sort_sw = time__new_stopwatch((time__StopWatchOptions){.auto_start = true});
 	types__TypeChecker__sort_parallel_check_errors(tc);
-	string __v3_internal_symbol_join_8__vmsvc13023[3]; __v3_internal_symbol_join_8__vmsvc13023[0] = _str_7510; __v3_internal_symbol_join_8__vmsvc13023[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(sort_sw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_8__vmsvc13023[2] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc13023)));
+	string __v3_internal_symbol_join_8__vmsvc13026[3]; __v3_internal_symbol_join_8__vmsvc13026[0] = _str_7510; __v3_internal_symbol_join_8__vmsvc13026[1] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(sort_sw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_8__vmsvc13026[2] = _str_3490; types__TypeChecker__timing_profile(tc, (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc13026)));
 	return any_started;
 }
 
@@ -570357,7 +570526,7 @@ bool types__TypeChecker__same_simple_comparison_expr(types__TypeChecker* tc, i32
 	}
 	string rhs = __or_val_3;
 	types__Type __addr_4 = types__TypeChecker__resolve_type(tc, lhs_id);
-	int cond__vmsvc13025; cond__vmsvc13025 = !!(types__Type__is_float(&__addr_4)); if (!cond__vmsvc13025) { types__Type __addr_5__vmsvc13024 = types__TypeChecker__resolve_type(tc, rhs_id); cond__vmsvc13025 = !!((types__Type__is_float(&__addr_5__vmsvc13024))); } if (cond__vmsvc13025) {
+	int cond__vmsvc13028; cond__vmsvc13028 = !!(types__Type__is_float(&__addr_4)); if (!cond__vmsvc13028) { types__Type __addr_5__vmsvc13027 = types__TypeChecker__resolve_type(tc, rhs_id); cond__vmsvc13028 = !!((types__Type__is_float(&__addr_5__vmsvc13027))); } if (cond__vmsvc13028) {
 		return false;
 	}
 	return string__eq(lhs, rhs);
@@ -570666,7 +570835,7 @@ void types__TypeChecker__scan_unused_candidate_references(types__TypeChecker* tc
 			key = string__clone(key);
 			Array hits = *(Array*)((		fn_keys).data->key_values.values + __mi_2 * (		fn_keys).data->key_values.value_bytes);
 			string __map_key_2 = key;
-			int cond__vmsvc13027; cond__vmsvc13027 = !!(map__exists(&prepared->called, &__map_key_2)); if (!cond__vmsvc13027) { string __map_key_3__vmsvc13026 = key; cond__vmsvc13027 = !!((map__exists(&prepared->function_named, &__map_key_3__vmsvc13026))); } if (cond__vmsvc13027) {
+			int cond__vmsvc13030; cond__vmsvc13030 = !!(map__exists(&prepared->called, &__map_key_2)); if (!cond__vmsvc13030) { string __map_key_3__vmsvc13029 = key; cond__vmsvc13030 = !!((map__exists(&prepared->function_named, &__map_key_3__vmsvc13029))); } if (cond__vmsvc13030) {
 				{
 					__v_int __for_idx_4 = 0;
 					for (; __for_idx_4 < hits.len; __for_idx_4++) {
@@ -570691,7 +570860,7 @@ void types__TypeChecker__scan_unused_candidate_references(types__TypeChecker* tc
 	{
 		__v_int job = 0;
 		for (; job < n_jobs; job++) {
-			__v_int _t5__vmsvc13028 = (__v_int)((n_nodes - start) * job); __v_int _t6__vmsvc13029 = (__v_int)(n_jobs); if (_t6__vmsvc13029 == 0) v_panic(_S("division by zero")); __v_int _t7__vmsvc13030 = (__v_int)((n_nodes - start) * (job + 1)); __v_int _t8__vmsvc13031 = (__v_int)(n_jobs); if (_t8__vmsvc13031 == 0) v_panic(_S("division by zero")); types__UnusedAliveScanArgs __arr_val_5 = (types__UnusedAliveScanArgs){.tc = (void*)(tc), .fn_keys = fn_keys, .const_keys = const_keys, .start = start + (((__v_int)(_t5__vmsvc13028 / _t6__vmsvc13029))), .end = start + (((__v_int)(_t7__vmsvc13030 / _t8__vmsvc13031))), .alive = __new_array_noscan(alive->len, 0, sizeof(bool))};
+			__v_int _t5__vmsvc13031 = (__v_int)((n_nodes - start) * job); __v_int _t6__vmsvc13032 = (__v_int)(n_jobs); if (_t6__vmsvc13032 == 0) v_panic(_S("division by zero")); __v_int _t7__vmsvc13033 = (__v_int)((n_nodes - start) * (job + 1)); __v_int _t8__vmsvc13034 = (__v_int)(n_jobs); if (_t8__vmsvc13034 == 0) v_panic(_S("division by zero")); types__UnusedAliveScanArgs __arr_val_5 = (types__UnusedAliveScanArgs){.tc = (void*)(tc), .fn_keys = fn_keys, .const_keys = const_keys, .start = start + (((__v_int)(_t5__vmsvc13031 / _t6__vmsvc13032))), .end = start + (((__v_int)(_t7__vmsvc13033 / _t8__vmsvc13034))), .alive = __new_array_noscan(alive->len, 0, sizeof(bool))};
 			array_push(&args, &__arr_val_5);
 		}
 	}
@@ -570769,13 +570938,13 @@ __v_option_string types__TypeChecker__selected_file_call_base_name(types__TypeCh
 				__v_option_string __if_guard_4 = types__TypeChecker__resolve_import_alias(tc, base_node->value);
 				if (__if_guard_4.ok) {
 					string resolved_mod = __if_guard_4.value;
-					string __v3_internal_symbol_join_0__vmsvc13032[3]; __v3_internal_symbol_join_0__vmsvc13032[0] = resolved_mod; __v3_internal_symbol_join_0__vmsvc13032[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13032[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13032));
+					string __v3_internal_symbol_join_0__vmsvc13035[3]; __v3_internal_symbol_join_0__vmsvc13035[0] = resolved_mod; __v3_internal_symbol_join_0__vmsvc13035[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13035[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13035));
 					if (types__TypeChecker__fn_signature_known(tc, mod_name)) {
 						return (__v_option_string){.ok = true, .value = mod_name};
 					}
 				}
 				if (string__eq(base_node->value, tc->cur_module)) {
-					string __v3_internal_symbol_join_1__vmsvc13033[3]; __v3_internal_symbol_join_1__vmsvc13033[0] = tc->cur_module; __v3_internal_symbol_join_1__vmsvc13033[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13033[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13033));
+					string __v3_internal_symbol_join_1__vmsvc13036[3]; __v3_internal_symbol_join_1__vmsvc13036[0] = tc->cur_module; __v3_internal_symbol_join_1__vmsvc13036[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13036[2] = fn_node->value; string mod_name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13036));
 					if (types__TypeChecker__fn_signature_known(tc, mod_name)) {
 						return (__v_option_string){.ok = true, .value = mod_name};
 					}
@@ -570807,11 +570976,11 @@ __v_option_string types__TypeChecker__selected_file_call_name(types__TypeChecker
 
 __v_option_string types__TypeChecker__selected_file_collection_method_without_collection_decl(types__TypeChecker* tc, types__Type* base_type, types__Type* recv, u32 type_name, string method) {
 	string type_text = flat__source_type_name(type_name);
-	string __v3_internal_symbol_join_0__vmsvc13034[3]; __v3_internal_symbol_join_0__vmsvc13034[0] = type_text; __v3_internal_symbol_join_0__vmsvc13034[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13034[2] = method; string plain = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13034));
+	string __v3_internal_symbol_join_0__vmsvc13037[3]; __v3_internal_symbol_join_0__vmsvc13037[0] = type_text; __v3_internal_symbol_join_0__vmsvc13037[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13037[2] = method; string plain = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13037));
 	if (types__TypeChecker__fn_signature_known(tc, plain) && types__TypeChecker__method_can_be_called_on_receiver(tc, &(*base_type), method, plain)) {
 		return (__v_option_string){.ok = true, .value = plain};
 	}
-	string __v3_internal_symbol_join_1__vmsvc13035[3]; __v3_internal_symbol_join_1__vmsvc13035[0] = type_text; __v3_internal_symbol_join_1__vmsvc13035[1] = _str_5829; __v3_internal_symbol_join_1__vmsvc13035[2] = method; string escaped = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13035));
+	string __v3_internal_symbol_join_1__vmsvc13038[3]; __v3_internal_symbol_join_1__vmsvc13038[0] = type_text; __v3_internal_symbol_join_1__vmsvc13038[1] = _str_5829; __v3_internal_symbol_join_1__vmsvc13038[2] = method; string escaped = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13038));
 	if (types__TypeChecker__fn_signature_known(tc, escaped) && types__TypeChecker__method_can_be_called_on_receiver(tc, &(*base_type), method, escaped)) {
 		return (__v_option_string){.ok = true, .value = escaped};
 	}
@@ -570881,7 +571050,7 @@ bool types__TypeChecker__selected_file_method_suffix_known(types__TypeChecker* t
 	}
 	if (string__contains(method, _str_2)) {
 		string __map_key_0 = method;
-		int cond__vmsvc13037; cond__vmsvc13037 = !!(map__exists(&tc->receiver_method_suffix_index, &__map_key_0)); if (!cond__vmsvc13037) { string __map_key_1__vmsvc13036 = string__plus(_str_2456, method); cond__vmsvc13037 = !!((map__exists(&tc->receiver_method_suffix_index, &__map_key_1__vmsvc13036))); } return cond__vmsvc13037;
+		int cond__vmsvc13040; cond__vmsvc13040 = !!(map__exists(&tc->receiver_method_suffix_index, &__map_key_0)); if (!cond__vmsvc13040) { string __map_key_1__vmsvc13039 = string__plus(_str_2456, method); cond__vmsvc13040 = !!((map__exists(&tc->receiver_method_suffix_index, &__map_key_1__vmsvc13039))); } return cond__vmsvc13040;
 	}
 	string __map_key_2 = method;
 	return map__exists(&tc->receiver_method_short_names, &__map_key_2);
@@ -570906,23 +571075,23 @@ __v_option_string types__TypeChecker__selected_file_receiver_method_name(types__
 	if ((recv).typ == 23) {
 		recv = *recv.types__Alias.AliasDataRef->base_type;
 	}
-	{ int taken__vmsvc13038 = 0; if (!((recv).typ == 11) && !((recv).typ == 14)) { taken__vmsvc13038 = 1; {
+	{ int taken__vmsvc13041 = 0; if (!((recv).typ == 11) && !((recv).typ == 14)) { taken__vmsvc13041 = 1; {
 		string type_text = flat__source_type_name(type_name);
-		string __v3_internal_symbol_join_0__vmsvc13039[3]; __v3_internal_symbol_join_0__vmsvc13039[0] = type_text; __v3_internal_symbol_join_0__vmsvc13039[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13039[2] = method; string plain = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13039));
+		string __v3_internal_symbol_join_0__vmsvc13042[3]; __v3_internal_symbol_join_0__vmsvc13042[0] = type_text; __v3_internal_symbol_join_0__vmsvc13042[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13042[2] = method; string plain = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13042));
 		if (types__TypeChecker__fn_signature_known(tc, plain) && types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, method, plain)) {
 			return (__v_option_string){.ok = true, .value = plain};
 		}
-		string __v3_internal_symbol_join_1__vmsvc13040[3]; __v3_internal_symbol_join_1__vmsvc13040[0] = type_text; __v3_internal_symbol_join_1__vmsvc13040[1] = _str_5829; __v3_internal_symbol_join_1__vmsvc13040[2] = method; string escaped = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13040));
+		string __v3_internal_symbol_join_1__vmsvc13043[3]; __v3_internal_symbol_join_1__vmsvc13043[0] = type_text; __v3_internal_symbol_join_1__vmsvc13043[1] = _str_5829; __v3_internal_symbol_join_1__vmsvc13043[2] = method; string escaped = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13043));
 		if (types__TypeChecker__fn_signature_known(tc, escaped) && types__TypeChecker__method_can_be_called_on_receiver(tc, &base_type, method, escaped)) {
 			return (__v_option_string){.ok = true, .value = escaped};
 		}
-	} } if (!taken__vmsvc13038) { int cond__vmsvc13042; cond__vmsvc13042 = !!(tc->method_suffix_prescreen && (tc->top_level_idx.len > 0) && (string__index_u8(method, '.') < 0)); if (cond__vmsvc13042) { string __map_key_0__vmsvc13041 = method; cond__vmsvc13042 = !!((!map__exists(&tc->collection_method_short_names, &__map_key_0__vmsvc13041))); } if (cond__vmsvc13042) { taken__vmsvc13038 = 1; {
+	} } if (!taken__vmsvc13041) { int cond__vmsvc13045; cond__vmsvc13045 = !!(tc->method_suffix_prescreen && (tc->top_level_idx.len > 0) && (string__index_u8(method, '.') < 0)); if (cond__vmsvc13045) { string __map_key_0__vmsvc13044 = method; cond__vmsvc13045 = !!((!map__exists(&tc->collection_method_short_names, &__map_key_0__vmsvc13044))); } if (cond__vmsvc13045) { taken__vmsvc13041 = 1; {
 		__v_option_string __if_guard_1 = types__TypeChecker__selected_file_collection_method_without_collection_decl(tc, &(types__Type[]){base_type}[0], &(types__Type[]){recv}[0], type_name, method);
 		if (__if_guard_1.ok) {
 			string found = __if_guard_1.value;
 			return (__v_option_string){.ok = true, .value = found};
 		}
-	} } } if (!taken__vmsvc13038) {
+	} } } if (!taken__vmsvc13041) {
 		Array __in_lhs_2 = types__receiver_method_name_candidates(&(types__Type[]){clean}[0], method, tc->cur_module);
 		{
 			__v_int __for_idx_3 = 0;
@@ -571072,7 +571241,7 @@ __v_option_string types__TypeChecker__selective_import_fn_in_module_files(types_
 				for (; __for_idx_7 < candidates.len; __for_idx_7++) {
 					u32 candidate_id = *(u32*)(array_get(candidates, __for_idx_7));
 					string candidate = flat__source_type_name(candidate_id);
-					int cond__vmsvc13044; cond__vmsvc13044 = !!(!types__TypeChecker__fn_signature_known(tc, candidate)); if (cond__vmsvc13044) { string __map_key_8__vmsvc13043 = candidate; cond__vmsvc13044 = !!((!map__exists(&tc->fn_ret_types, &__map_key_8__vmsvc13043))); } int cond__vmsvc13046; cond__vmsvc13046 = !!(cond__vmsvc13044); if (cond__vmsvc13046) { string __map_key_9__vmsvc13045 = candidate; cond__vmsvc13046 = !!((!map__exists(&tc->fn_param_types, &__map_key_9__vmsvc13045))); } if (cond__vmsvc13046) {
+					int cond__vmsvc13047; cond__vmsvc13047 = !!(!types__TypeChecker__fn_signature_known(tc, candidate)); if (cond__vmsvc13047) { string __map_key_8__vmsvc13046 = candidate; cond__vmsvc13047 = !!((!map__exists(&tc->fn_ret_types, &__map_key_8__vmsvc13046))); } int cond__vmsvc13049; cond__vmsvc13049 = !!(cond__vmsvc13047); if (cond__vmsvc13049) { string __map_key_9__vmsvc13048 = candidate; cond__vmsvc13049 = !!((!map__exists(&tc->fn_param_types, &__map_key_9__vmsvc13048))); } if (cond__vmsvc13049) {
 						continue;
 					}
 					if ((resolved != 0) && (resolved != candidate_id)) {
@@ -571106,7 +571275,7 @@ bool types__TypeChecker__selective_import_has_const(types__TypeChecker* tc, flat
 				__v_int __for_idx_4 = 0;
 				for (; __for_idx_4 < __arr_lit_0.len; __for_idx_4++) {
 					string module_name = *(string*)(array_get(__arr_lit_0, __for_idx_4));
-					string __v3_internal_symbol_join_0__vmsvc13047[3]; __v3_internal_symbol_join_0__vmsvc13047[0] = module_name; __v3_internal_symbol_join_0__vmsvc13047[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13047[2] = child->value; string __map_key_5 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13047));
+					string __v3_internal_symbol_join_0__vmsvc13050[3]; __v3_internal_symbol_join_0__vmsvc13050[0] = module_name; __v3_internal_symbol_join_0__vmsvc13050[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13050[2] = child->value; string __map_key_5 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13050));
 					if (map__exists(&tc->const_types, &__map_key_5)) {
 						return true;
 					}
@@ -571137,8 +571306,8 @@ bool types__TypeChecker__selective_import_has_missing_value_symbol(types__TypeCh
 				__v_int __for_idx_4 = 0;
 				for (; __for_idx_4 < __arr_lit_0.len; __for_idx_4++) {
 					string module_name = *(string*)(array_get(__arr_lit_0, __for_idx_4));
-					string __v3_internal_symbol_join_0__vmsvc13048[3]; __v3_internal_symbol_join_0__vmsvc13048[0] = module_name; __v3_internal_symbol_join_0__vmsvc13048[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13048[2] = child->value; string name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13048));
-					int cond__vmsvc13050; cond__vmsvc13050 = !!(types__TypeChecker__fn_signature_known(tc, name)); if (!cond__vmsvc13050) { string __map_key_5__vmsvc13049 = name; cond__vmsvc13050 = !!((map__exists(&tc->fn_ret_types, &__map_key_5__vmsvc13049))); } int cond__vmsvc13052; cond__vmsvc13052 = !!(cond__vmsvc13050); if (!cond__vmsvc13052) { string __map_key_6__vmsvc13051 = name; cond__vmsvc13052 = !!((map__exists(&tc->const_types, &__map_key_6__vmsvc13051))); } if (cond__vmsvc13052) {
+					string __v3_internal_symbol_join_0__vmsvc13051[3]; __v3_internal_symbol_join_0__vmsvc13051[0] = module_name; __v3_internal_symbol_join_0__vmsvc13051[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13051[2] = child->value; string name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13051));
+					int cond__vmsvc13053; cond__vmsvc13053 = !!(types__TypeChecker__fn_signature_known(tc, name)); if (!cond__vmsvc13053) { string __map_key_5__vmsvc13052 = name; cond__vmsvc13053 = !!((map__exists(&tc->fn_ret_types, &__map_key_5__vmsvc13052))); } int cond__vmsvc13055; cond__vmsvc13055 = !!(cond__vmsvc13053); if (!cond__vmsvc13055) { string __map_key_6__vmsvc13054 = name; cond__vmsvc13055 = !!((map__exists(&tc->const_types, &__map_key_6__vmsvc13054))); } if (cond__vmsvc13055) {
 						symbol_exists = true;
 						break;
 					}
@@ -571157,7 +571326,7 @@ __v_option_u32 types__TypeChecker__selective_import_known_type_candidate_id(type
 		__v_int __for_idx_0 = 0;
 		for (; __for_idx_0 < candidates.len; __for_idx_0++) {
 			u32 candidate_id = *(u32*)(array_get(candidates, __for_idx_0));
-			int cond__vmsvc13054; cond__vmsvc13054 = !!(types__TypeChecker__type_symbol_known(tc, candidate_id)); if (!cond__vmsvc13054) { u32 __map_key_1__vmsvc13053 = candidate_id; cond__vmsvc13054 = !!((map__exists(&tc->struct_generic_params, &__map_key_1__vmsvc13053))); } if (cond__vmsvc13054) {
+			int cond__vmsvc13057; cond__vmsvc13057 = !!(types__TypeChecker__type_symbol_known(tc, candidate_id)); if (!cond__vmsvc13057) { u32 __map_key_1__vmsvc13056 = candidate_id; cond__vmsvc13057 = !!((map__exists(&tc->struct_generic_params, &__map_key_1__vmsvc13056))); } if (cond__vmsvc13057) {
 				return (__v_option_u32){.ok = true, .value = candidate_id};
 			}
 		}
@@ -571469,7 +571638,7 @@ __v_option_string types__TypeChecker__selector_fn_value_key(types__TypeChecker* 
 		__v_option_string __if_guard_0 = types__TypeChecker__resolve_import_alias(tc, base->value);
 		if (__if_guard_0.ok) {
 			string resolved_mod = __if_guard_0.value;
-			string __v3_internal_symbol_join_0__vmsvc13055[3]; __v3_internal_symbol_join_0__vmsvc13055[0] = resolved_mod; __v3_internal_symbol_join_0__vmsvc13055[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13055[2] = node.value; string key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13055));
+			string __v3_internal_symbol_join_0__vmsvc13058[3]; __v3_internal_symbol_join_0__vmsvc13058[0] = resolved_mod; __v3_internal_symbol_join_0__vmsvc13058[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13058[2] = node.value; string key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13058));
 			if (types__TypeChecker__fn_signature_known(tc, key)) {
 				return (__v_option_string){.ok = true, .value = key};
 			}
@@ -571488,7 +571657,7 @@ __v_option_string types__TypeChecker__selector_fn_value_key(types__TypeChecker* 
 			__v_int __for_idx_3 = 0;
 			for (; __for_idx_3 < __in_lhs_2.len; __for_idx_3++) {
 				u32 type_id = *(u32*)(array_get(__in_lhs_2, __for_idx_3));
-				string __v3_internal_symbol_join_1__vmsvc13056[3]; __v3_internal_symbol_join_1__vmsvc13056[0] = flat__source_type_name(type_id); __v3_internal_symbol_join_1__vmsvc13056[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13056[2] = node.value; string key = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13056));
+				string __v3_internal_symbol_join_1__vmsvc13059[3]; __v3_internal_symbol_join_1__vmsvc13059[0] = flat__source_type_name(type_id); __v3_internal_symbol_join_1__vmsvc13059[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13059[2] = node.value; string key = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13059));
 				if (types__TypeChecker__fn_signature_known(tc, key)) {
 					return (__v_option_string){.ok = true, .value = key};
 				}
@@ -571504,7 +571673,7 @@ __v_option_string types__TypeChecker__selector_fn_value_key(types__TypeChecker* 
 	if ((base->kind == flat__NodeKind__selector) && (base->children_count > 0)) {
 		flat__Node* inner = flat__FlatAst__child_node(tc->a, base, 0);
 		if (inner->kind == flat__NodeKind__ident) {
-			int cond__vmsvc13058; cond__vmsvc13058 = !!(types__TypeChecker__ident_resolves_to_value(tc, inner->value)); if (!cond__vmsvc13058) { string __map_key_5__vmsvc13057 = inner->value; cond__vmsvc13058 = !!((map__exists(&tc->const_types, &__map_key_5__vmsvc13057))); } int cond__vmsvc13060; cond__vmsvc13060 = !!(cond__vmsvc13058); if (!cond__vmsvc13060) { string __map_key_6__vmsvc13059 = types__TypeChecker__qualify_name(tc, inner->value); cond__vmsvc13060 = !!((map__exists(&tc->const_types, &__map_key_6__vmsvc13059))); } if (cond__vmsvc13060) {
+			int cond__vmsvc13061; cond__vmsvc13061 = !!(types__TypeChecker__ident_resolves_to_value(tc, inner->value)); if (!cond__vmsvc13061) { string __map_key_5__vmsvc13060 = inner->value; cond__vmsvc13061 = !!((map__exists(&tc->const_types, &__map_key_5__vmsvc13060))); } int cond__vmsvc13063; cond__vmsvc13063 = !!(cond__vmsvc13061); if (!cond__vmsvc13063) { string __map_key_6__vmsvc13062 = types__TypeChecker__qualify_name(tc, inner->value); cond__vmsvc13063 = !!((map__exists(&tc->const_types, &__map_key_6__vmsvc13062))); } if (cond__vmsvc13063) {
 				return (__v_option_string){.ok = false};
 			}
 			__v_option_string __or_opt_7 = types__TypeChecker__resolve_import_alias(tc, inner->value);
@@ -571521,7 +571690,7 @@ __v_option_string types__TypeChecker__selector_fn_value_key(types__TypeChecker* 
 				string static_key = __if_guard_9.value;
 				return (__v_option_string){.ok = true, .value = static_key};
 			}
-			string __v3_internal_symbol_join_2__vmsvc13061[5]; __v3_internal_symbol_join_2__vmsvc13061[0] = mod_name; __v3_internal_symbol_join_2__vmsvc13061[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13061[2] = base->value; __v3_internal_symbol_join_2__vmsvc13061[3] = _str_2; __v3_internal_symbol_join_2__vmsvc13061[4] = node.value; string key = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13061));
+			string __v3_internal_symbol_join_2__vmsvc13064[5]; __v3_internal_symbol_join_2__vmsvc13064[0] = mod_name; __v3_internal_symbol_join_2__vmsvc13064[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13064[2] = base->value; __v3_internal_symbol_join_2__vmsvc13064[3] = _str_2; __v3_internal_symbol_join_2__vmsvc13064[4] = node.value; string key = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13064));
 			if (types__TypeChecker__fn_signature_known(tc, key)) {
 				return (__v_option_string){.ok = true, .value = key};
 			}
@@ -571671,11 +571840,11 @@ __inline bool types__TypeChecker__selector_names_no_const(types__TypeChecker* tc
 		return true;
 	}
 	string __map_key_0 = field;
-	int cond__vmsvc13063; cond__vmsvc13063 = !!(!map__exists(&tc->const_suffixes, &__map_key_0)); if (cond__vmsvc13063) { string __map_key_1__vmsvc13062 = field; cond__vmsvc13063 = !!((!map__exists(&tc->const_types, &__map_key_1__vmsvc13062))); } return cond__vmsvc13063;
+	int cond__vmsvc13066; cond__vmsvc13066 = !!(!map__exists(&tc->const_suffixes, &__map_key_0)); if (cond__vmsvc13066) { string __map_key_1__vmsvc13065 = field; cond__vmsvc13066 = !!((!map__exists(&tc->const_types, &__map_key_1__vmsvc13065))); } return cond__vmsvc13066;
 }
 
 __inline bool types__TypeChecker__selector_names_no_global(types__TypeChecker* tc, string field) {
-	int cond__vmsvc13065; cond__vmsvc13065 = !!((tc->global_short_names_count == tc->global_names.data->count)); if (cond__vmsvc13065) { string __map_key_0__vmsvc13064 = types__short_name_view(field); cond__vmsvc13065 = !!((!map__exists(&tc->global_short_names, &__map_key_0__vmsvc13064))); } return cond__vmsvc13065;
+	int cond__vmsvc13068; cond__vmsvc13068 = !!((tc->global_short_names_count == tc->global_names.data->count)); if (cond__vmsvc13068) { string __map_key_0__vmsvc13067 = types__short_name_view(field); cond__vmsvc13068 = !!((!map__exists(&tc->global_short_names, &__map_key_0__vmsvc13067))); } return cond__vmsvc13068;
 }
 
 __v_option_types__Type types__TypeChecker__selector_type(types__TypeChecker* tc, i32 _id, flat__Node node) {
@@ -571761,7 +571930,7 @@ __v_option_types__Type types__TypeChecker__selector_type(types__TypeChecker* tc,
 			types__Type typ = __if_guard_6.value;
 			return (__v_option_types__Type){.ok = true, .value = typ};
 		}
-		int cond__vmsvc13068; cond__vmsvc13068 = !!((alias_receiver_id != 0)); if (cond__vmsvc13068) { string __v3_internal_symbol_join_0__vmsvc13067[3]; __v3_internal_symbol_join_0__vmsvc13067[0] = flat__source_type_name(alias_receiver_id); __v3_internal_symbol_join_0__vmsvc13067[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13067[2] = node.value; string __map_key_7__vmsvc13066 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13067)); cond__vmsvc13068 = !!((map__exists(&tc->fn_param_types, &__map_key_7__vmsvc13066))); } if (cond__vmsvc13068) {
+		int cond__vmsvc13071; cond__vmsvc13071 = !!((alias_receiver_id != 0)); if (cond__vmsvc13071) { string __v3_internal_symbol_join_0__vmsvc13070[3]; __v3_internal_symbol_join_0__vmsvc13070[0] = flat__source_type_name(alias_receiver_id); __v3_internal_symbol_join_0__vmsvc13070[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13070[2] = node.value; string __map_key_7__vmsvc13069 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13070)); cond__vmsvc13071 = !!((map__exists(&tc->fn_param_types, &__map_key_7__vmsvc13069))); } if (cond__vmsvc13071) {
 			__v_option_types__Type __if_guard_8 = types__TypeChecker__method_value_type(tc, alias_receiver_id, node.value);
 			if (__if_guard_8.ok) {
 				types__Type typ = __if_guard_8.value;
@@ -571812,7 +571981,7 @@ __v_option_types__Type types__TypeChecker__selector_type(types__TypeChecker* tc,
 	if (base_node.kind == flat__NodeKind__string_literal) {
 		string method_name = string__plus(_str_8127, node.value);
 		string __map_key_18 = method_name;
-		int cond__vmsvc13070; cond__vmsvc13070 = !!(map__exists(&tc->fn_param_types, &__map_key_18)); if (!cond__vmsvc13070) { string __map_key_19__vmsvc13069 = method_name; cond__vmsvc13070 = !!((map__exists(&tc->fn_ret_types, &__map_key_19__vmsvc13069))); } if (cond__vmsvc13070) {
+		int cond__vmsvc13073; cond__vmsvc13073 = !!(map__exists(&tc->fn_param_types, &__map_key_18)); if (!cond__vmsvc13073) { string __map_key_19__vmsvc13072 = method_name; cond__vmsvc13073 = !!((map__exists(&tc->fn_ret_types, &__map_key_19__vmsvc13072))); } if (cond__vmsvc13073) {
 			return types__TypeChecker__method_value_type(tc, flat__source_type_string, node.value);
 		}
 	}
@@ -572055,12 +572224,12 @@ void types__TypeChecker__set_struct_fields(types__TypeChecker* tc, u32 name_id, 
 			}
 			string __map_key_13 = field_name;
 			bool __map_val_14 = true;
-			void* _ifexpr__vmsvc13071; if (map__exists(&tc->struct_shared_fields, &__map_key_9)) {
-			_ifexpr__vmsvc13071 = map__get_check(&tc->struct_shared_fields, &__map_key_9);
+			void* _ifexpr__vmsvc13074; if (map__exists(&tc->struct_shared_fields, &__map_key_9)) {
+			_ifexpr__vmsvc13074 = map__get_check(&tc->struct_shared_fields, &__map_key_9);
 			} else {
 			map __map_zero_12 = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-			_ifexpr__vmsvc13071 = map__get_and_set(&tc->struct_shared_fields, &__map_key_9, &__map_zero_12);
-			} map__set((map*)((_ifexpr__vmsvc13071)), &__map_key_13, &__map_val_14);
+			_ifexpr__vmsvc13074 = map__get_and_set(&tc->struct_shared_fields, &__map_key_9, &__map_zero_12);
+			} map__set((map*)((_ifexpr__vmsvc13074)), &__map_key_13, &__map_val_14);
 		}
 	}
 	{
@@ -572075,12 +572244,12 @@ void types__TypeChecker__set_struct_fields(types__TypeChecker* tc, u32 name_id, 
 			}
 			string __map_key_20 = field_name;
 			bool __map_val_21 = true;
-			void* _ifexpr__vmsvc13072; if (map__exists(&tc->struct_shared_element_fields, &__map_key_16)) {
-			_ifexpr__vmsvc13072 = map__get_check(&tc->struct_shared_element_fields, &__map_key_16);
+			void* _ifexpr__vmsvc13075; if (map__exists(&tc->struct_shared_element_fields, &__map_key_16)) {
+			_ifexpr__vmsvc13075 = map__get_check(&tc->struct_shared_element_fields, &__map_key_16);
 			} else {
 			map __map_zero_19 = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-			_ifexpr__vmsvc13072 = map__get_and_set(&tc->struct_shared_element_fields, &__map_key_16, &__map_zero_19);
-			} map__set((map*)((_ifexpr__vmsvc13072)), &__map_key_20, &__map_val_21);
+			_ifexpr__vmsvc13075 = map__get_and_set(&tc->struct_shared_element_fields, &__map_key_16, &__map_zero_19);
+			} map__set((map*)((_ifexpr__vmsvc13075)), &__map_key_20, &__map_val_21);
 		}
 	}
 	for (int __mi_0 = 0; __mi_0 < (	field_c_abi_fns).data->key_values.len; __mi_0++) {
@@ -572096,12 +572265,12 @@ void types__TypeChecker__set_struct_fields(types__TypeChecker* tc, u32 name_id, 
 		}
 		string __map_key_26 = field_name;
 		string __map_val_27 = c_abi_fn;
-		void* _ifexpr__vmsvc13073; if (map__exists(&tc->struct_field_c_abi_fns, &__map_key_22)) {
-		_ifexpr__vmsvc13073 = map__get_check(&tc->struct_field_c_abi_fns, &__map_key_22);
+		void* _ifexpr__vmsvc13076; if (map__exists(&tc->struct_field_c_abi_fns, &__map_key_22)) {
+		_ifexpr__vmsvc13076 = map__get_check(&tc->struct_field_c_abi_fns, &__map_key_22);
 		} else {
 		map __map_zero_25 = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-		_ifexpr__vmsvc13073 = map__get_and_set(&tc->struct_field_c_abi_fns, &__map_key_22, &__map_zero_25);
-		} map__set((map*)((_ifexpr__vmsvc13073)), &__map_key_26, &__map_val_27);
+		_ifexpr__vmsvc13076 = map__get_and_set(&tc->struct_field_c_abi_fns, &__map_key_22, &__map_zero_25);
+		} map__set((map*)((_ifexpr__vmsvc13076)), &__map_key_26, &__map_val_27);
 	}
 }
 
@@ -572167,7 +572336,7 @@ __v_option_string types__TypeChecker__shadowed_local_fn_key(types__TypeChecker* 
 	}
 	string qualified = types__TypeChecker__qualify_fn_name(tc, name);
 	string key = _str_34;
-	int cond__vmsvc13075; cond__vmsvc13075 = !!(!string__eq(qualified, name)); if (cond__vmsvc13075) { string __map_key_0__vmsvc13074 = qualified; cond__vmsvc13075 = !!((map__exists(&tc->fn_ret_types, &__map_key_0__vmsvc13074))); } if (cond__vmsvc13075) {
+	int cond__vmsvc13078; cond__vmsvc13078 = !!(!string__eq(qualified, name)); if (cond__vmsvc13078) { string __map_key_0__vmsvc13077 = qualified; cond__vmsvc13078 = !!((map__exists(&tc->fn_ret_types, &__map_key_0__vmsvc13077))); } if (cond__vmsvc13078) {
 		key = qualified;
 	} else {
 		string __map_key_1 = name;
@@ -572292,7 +572461,7 @@ string types__TypeChecker__shared_lock_key(types__TypeChecker* tc, i32 id) {
 			}
 			string base = types__TypeChecker__shared_lock_key(tc, flat__FlatAst__child(tc->a, node, 0));
 			if (base.len > 0) {
-				string __v3_internal_symbol_join_0__vmsvc13076[3]; __v3_internal_symbol_join_0__vmsvc13076[0] = base; __v3_internal_symbol_join_0__vmsvc13076[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13076[2] = node->value; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13076));
+				string __v3_internal_symbol_join_0__vmsvc13079[3]; __v3_internal_symbol_join_0__vmsvc13079[0] = base; __v3_internal_symbol_join_0__vmsvc13079[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13079[2] = node->value; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13079));
 			} else {
 				return node->value;
 			}
@@ -572644,7 +572813,7 @@ bool types__TypeChecker__should_annotate_fn(types__TypeChecker* tc, flat__Node n
 		return true;
 	}
 	string cname = types__TypeChecker__cached_c_name(tc, qname);
-	int cond__vmsvc13078; cond__vmsvc13078 = !!(!string__eq(cname, qname)); if (cond__vmsvc13078) { string __map_key_3__vmsvc13077 = cname; cond__vmsvc13078 = !!((map__exists(&used_fns, &__map_key_3__vmsvc13077))); } if (cond__vmsvc13078) {
+	int cond__vmsvc13081; cond__vmsvc13081 = !!(!string__eq(cname, qname)); if (cond__vmsvc13081) { string __map_key_3__vmsvc13080 = cname; cond__vmsvc13081 = !!((map__exists(&used_fns, &__map_key_3__vmsvc13080))); } if (cond__vmsvc13081) {
 		return true;
 	}
 	return false;
@@ -572666,7 +572835,7 @@ bool types__TypeChecker__should_check_source_name(types__TypeChecker* tc, i32 id
 		if (*(bool*)(map__get(&tc->translated_files, &__map_key_5, &__map_zero_6))) {
 			return false;
 		}
-		int cond__vmsvc13080; cond__vmsvc13080 = !!((tc->diagnostic_files.data->count == 0)); if (!cond__vmsvc13080) { string __map_key_7__vmsvc13079 = tc->cur_file; cond__vmsvc13080 = !!((map__exists(&tc->diagnostic_files, &__map_key_7__vmsvc13079))); } return cond__vmsvc13080;
+		int cond__vmsvc13083; cond__vmsvc13083 = !!((tc->diagnostic_files.data->count == 0)); if (!cond__vmsvc13083) { string __map_key_7__vmsvc13082 = tc->cur_file; cond__vmsvc13083 = !!((map__exists(&tc->diagnostic_files, &__map_key_7__vmsvc13082))); } return cond__vmsvc13083;
 	}
 	token__File* file = __map_val_4;
 	string __map_key_8 = file->name;
@@ -572680,7 +572849,7 @@ bool types__TypeChecker__should_check_source_name(types__TypeChecker* tc, i32 id
 			return false;
 		}
 	}
-	int cond__vmsvc13082; cond__vmsvc13082 = !!((tc->diagnostic_files.data->count == 0)); if (!cond__vmsvc13082) { string __map_key_10__vmsvc13081 = file->name; cond__vmsvc13082 = !!((map__exists(&tc->diagnostic_files, &__map_key_10__vmsvc13081))); } return cond__vmsvc13082;
+	int cond__vmsvc13085; cond__vmsvc13085 = !!((tc->diagnostic_files.data->count == 0)); if (!cond__vmsvc13085) { string __map_key_10__vmsvc13084 = file->name; cond__vmsvc13085 = !!((map__exists(&tc->diagnostic_files, &__map_key_10__vmsvc13084))); } return cond__vmsvc13085;
 }
 
 bool types__TypeChecker__should_check_type_declaration_name(types__TypeChecker* tc, i32 id, flat__Node node) {
@@ -572730,7 +572899,7 @@ bool types__TypeChecker__should_diagnose_with_dependencies(types__TypeChecker* t
 	if (((__v_int)(id) < tc->a->nodes.len) && (((*(flat__Node*)array_get(tc->a->nodes, (__v_int)(id)))).kind != flat__NodeKind__import_decl) && types__TypeChecker__node_is_on_multiple_module_import_line(tc, id)) {
 		return false;
 	}
-	int cond__vmsvc13085; cond__vmsvc13085 = !!((tc->fn_context.node_id >= 0) && (tc->fn_context.node_id < tc->a->specialized_fn_nodes.data->count)); if (cond__vmsvc13085) { __v_int __map_key_0__vmsvc13083 = tc->fn_context.node_id; bool __map_zero_1__vmsvc13084 = false; cond__vmsvc13085 = !!((*(bool*)(map__get(&tc->a->specialized_fn_nodes, &__map_key_0__vmsvc13083, &__map_zero_1__vmsvc13084)))); } if (cond__vmsvc13085) {
+	int cond__vmsvc13088; cond__vmsvc13088 = !!((tc->fn_context.node_id >= 0) && (tc->fn_context.node_id < tc->a->specialized_fn_nodes.data->count)); if (cond__vmsvc13088) { __v_int __map_key_0__vmsvc13086 = tc->fn_context.node_id; bool __map_zero_1__vmsvc13087 = false; cond__vmsvc13088 = !!((*(bool*)(map__get(&tc->a->specialized_fn_nodes, &__map_key_0__vmsvc13086, &__map_zero_1__vmsvc13087)))); } if (cond__vmsvc13088) {
 		if (tc->checker_fixture_mode && (tc->diagnostic_files.data->count > 0)) {
 			string __map_key_2 = tc->cur_file;
 			return map__exists(&tc->diagnostic_files, &__map_key_2);
@@ -572882,7 +573051,7 @@ Array types__TypeChecker__sizeof_value_conditions(types__TypeChecker* tc, i32 de
 				string __arr_val_0 = parent.value;
 				array_push(&conditions, &__arr_val_0);
 			} else if ((parent.children_count > 1) && (flat__FlatAst__child(tc->a, &parent, 1) == child)) {
-				string __v3_internal_symbol_join_0__vmsvc13086[3]; __v3_internal_symbol_join_0__vmsvc13086[0] = _str_6861; __v3_internal_symbol_join_0__vmsvc13086[1] = parent.value; __v3_internal_symbol_join_0__vmsvc13086[2] = _str_28; string __arr_val_1 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13086));
+				string __v3_internal_symbol_join_0__vmsvc13089[3]; __v3_internal_symbol_join_0__vmsvc13089[0] = _str_6861; __v3_internal_symbol_join_0__vmsvc13089[1] = parent.value; __v3_internal_symbol_join_0__vmsvc13089[2] = _str_28; string __arr_val_1 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13089));
 				array_push(&conditions, &__arr_val_1);
 			}
 		}
@@ -572899,7 +573068,7 @@ __v_option_i32 types__TypeChecker__sizeof_value_declaration(types__TypeChecker* 
 		return (__v_option_i32){.ok = true, .value = initializer};
 	}
 	string __map_key_2 = name;
-	int cond__vmsvc13089; cond__vmsvc13089 = !!(!map__exists(&tc->const_types, &__map_key_2)); if (cond__vmsvc13089) { string __map_key_3__vmsvc13087 = name; bool __map_zero_4__vmsvc13088 = false; cond__vmsvc13089 = !!((!*(bool*)(map__get(&tc->global_names, &__map_key_3__vmsvc13087, &__map_zero_4__vmsvc13088)))); } if (cond__vmsvc13089) {
+	int cond__vmsvc13092; cond__vmsvc13092 = !!(!map__exists(&tc->const_types, &__map_key_2)); if (cond__vmsvc13092) { string __map_key_3__vmsvc13090 = name; bool __map_zero_4__vmsvc13091 = false; cond__vmsvc13092 = !!((!*(bool*)(map__get(&tc->global_names, &__map_key_3__vmsvc13090, &__map_zero_4__vmsvc13091)))); } if (cond__vmsvc13092) {
 		return (__v_option_i32){.ok = false};
 	}
 	string module_name = _str_34;
@@ -572922,7 +573091,7 @@ __v_option_i32 types__TypeChecker__sizeof_value_declaration(types__TypeChecker* 
 						if (string__eq(module_name, _str_34) || string__eq(module_name, _str_179) || string__eq(module_name, _str_1218)) {
 							__if_val_6 = field->value;
 						} else {
-							string __v3_internal_symbol_join_0__vmsvc13090[3]; __v3_internal_symbol_join_0__vmsvc13090[0] = module_name; __v3_internal_symbol_join_0__vmsvc13090[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13090[2] = field->value; __if_val_6 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13090));
+							string __v3_internal_symbol_join_0__vmsvc13093[3]; __v3_internal_symbol_join_0__vmsvc13093[0] = module_name; __v3_internal_symbol_join_0__vmsvc13093[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13093[2] = field->value; __if_val_6 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13093));
 						}
 						string qualified = __if_val_6;
 						if (string__eq(qualified, name)) {
@@ -572974,12 +573143,12 @@ bool types__TypeChecker__skips_library_body(types__TypeChecker* tc, flat__Node n
 }
 
 bool types__TypeChecker__skips_library_body_in_file(types__TypeChecker* tc, flat__Node node, string file, string module_name) {
-	int cond__vmsvc13093; cond__vmsvc13093 = !!((node.kind != flat__NodeKind__fn_decl) || !tc->skips_library_bodies); if (!cond__vmsvc13093) { string __map_key_0__vmsvc13091 = file; bool __map_zero_1__vmsvc13092 = false; cond__vmsvc13093 = !!((!*(bool*)(map__get(&tc->library_files, &__map_key_0__vmsvc13091, &__map_zero_1__vmsvc13092)))); } if (cond__vmsvc13093) {
+	int cond__vmsvc13096; cond__vmsvc13096 = !!((node.kind != flat__NodeKind__fn_decl) || !tc->skips_library_bodies); if (!cond__vmsvc13096) { string __map_key_0__vmsvc13094 = file; bool __map_zero_1__vmsvc13095 = false; cond__vmsvc13096 = !!((!*(bool*)(map__get(&tc->library_files, &__map_key_0__vmsvc13094, &__map_zero_1__vmsvc13095)))); } if (cond__vmsvc13096) {
 		return false;
 	}
 	string __map_key_2 = node.value;
 	bool __map_zero_3 = false;
-	int cond__vmsvc13096; cond__vmsvc13096 = !!(*(bool*)(map__get(&tc->reachable_library_fns, &__map_key_2, &__map_zero_3))); if (!cond__vmsvc13096) { string __map_key_4__vmsvc13094 = types__library_fn_body_key(module_name, node.value); bool __map_zero_5__vmsvc13095 = false; cond__vmsvc13096 = !!((*(bool*)(map__get(&tc->reachable_library_fns, &__map_key_4__vmsvc13094, &__map_zero_5__vmsvc13095)))); } if (cond__vmsvc13096) {
+	int cond__vmsvc13099; cond__vmsvc13099 = !!(*(bool*)(map__get(&tc->reachable_library_fns, &__map_key_2, &__map_zero_3))); if (!cond__vmsvc13099) { string __map_key_4__vmsvc13097 = types__library_fn_body_key(module_name, node.value); bool __map_zero_5__vmsvc13098 = false; cond__vmsvc13099 = !!((*(bool*)(map__get(&tc->reachable_library_fns, &__map_key_4__vmsvc13097, &__map_zero_5__vmsvc13098)))); } if (cond__vmsvc13099) {
 		return false;
 	}
 	return (types__TypeChecker__infer_decl_generic_param_ids(tc, node)).len == 0;
@@ -573455,7 +573624,7 @@ __v_option_Array types__TypeChecker__source_call_param_type_ids(types__TypeCheck
 
 bool types__TypeChecker__source_declares_bodyless_function(types__TypeChecker* tc, string name) {
 	string __map_key_0 = name;
-	int cond__vmsvc13098; cond__vmsvc13098 = !!(map__exists(&tc->source_no_body_fn_suffixes, &__map_key_0)); if (!cond__vmsvc13098) { string __map_key_1__vmsvc13097 = types__short_name_view(name); cond__vmsvc13098 = !!((map__exists(&tc->source_no_body_fn_suffixes, &__map_key_1__vmsvc13097))); } return cond__vmsvc13098;
+	int cond__vmsvc13101; cond__vmsvc13101 = !!(map__exists(&tc->source_no_body_fn_suffixes, &__map_key_0)); if (!cond__vmsvc13101) { string __map_key_1__vmsvc13100 = types__short_name_view(name); cond__vmsvc13101 = !!((map__exists(&tc->source_no_body_fn_suffixes, &__map_key_1__vmsvc13100))); } return cond__vmsvc13101;
 }
 
 bool types__TypeChecker__source_declares_type_in_scope(types__TypeChecker* tc, u32 name_id, string file, string mod_name) {
@@ -573469,7 +573638,7 @@ bool types__TypeChecker__source_declares_type_in_scope(types__TypeChecker* tc, u
 		__if_val_0 = mod_name;
 	}
 	string norm_mod = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc13099[3]; __v3_internal_symbol_join_0__vmsvc13099[0] = file; __v3_internal_symbol_join_0__vmsvc13099[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13099[2] = norm_mod; __v_option_u32 __or_opt_1 = flat__source_type_existing_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13099)));
+	string __v3_internal_symbol_join_0__vmsvc13102[3]; __v3_internal_symbol_join_0__vmsvc13102[0] = file; __v3_internal_symbol_join_0__vmsvc13102[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13102[2] = norm_mod; __v_option_u32 __or_opt_1 = flat__source_type_existing_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13102)));
 	u32 __or_val_2 = {0};
 	if (__or_opt_1.ok) {
 		__or_val_2 = __or_opt_1.value;
@@ -573488,7 +573657,7 @@ bool types__TypeChecker__source_enclosing_fn_has_generic_param(types__TypeChecke
 	}
 	__v_int node_idx = (__v_int)(id);
 	if ((name.len == 1) && (string__at(name, 0) >= 'A') && (string__at(name, 0) <= 'Z') && (node_idx < tc->enclosing_generic_param_masks.len)) {
-		u32 _t1__vmsvc13100 = (u32)(		(u32)(1)); u64 _t2__vmsvc13101 = (u64)((u32)(string__at(name, 0) - 'A')); u32 mask = (_t2__vmsvc13101 >= 32 ? (u32)0 : (u32)(_t1__vmsvc13100 << _t2__vmsvc13101));
+		u32 _t1__vmsvc13103 = (u32)(		(u32)(1)); u64 _t2__vmsvc13104 = (u64)((u32)(string__at(name, 0) - 'A')); u32 mask = (_t2__vmsvc13104 >= 32 ? (u32)0 : (u32)(_t1__vmsvc13103 << _t2__vmsvc13104));
 		return ((*(u32*)array_get(tc->enclosing_generic_param_masks, node_idx)) & mask) != 0;
 	}
 	if ((tc->fn_context.node_id >= 0) && ((__v_int)(id) >= tc->check_range_lo) && ((__v_int)(id) <= tc->check_range_hi)) {
@@ -573605,7 +573774,7 @@ bool types__TypeChecker__source_enclosing_fn_has_generic_param(types__TypeChecke
 }
 
 bool types__TypeChecker__source_file_declares_bare_fn(types__TypeChecker* tc, string name, __v_int file_id) {
-	string __v3_internal_symbol_join_0__vmsvc13102[3]; __v3_internal_symbol_join_0__vmsvc13102[0] = int__str(file_id); __v3_internal_symbol_join_0__vmsvc13102[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13102[2] = name; string __map_key_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13102));
+	string __v3_internal_symbol_join_0__vmsvc13105[3]; __v3_internal_symbol_join_0__vmsvc13105[0] = int__str(file_id); __v3_internal_symbol_join_0__vmsvc13105[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13105[2] = name; string __map_key_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13105));
 	return map__exists(&tc->file_bare_fn_names, &__map_key_0);
 }
 
@@ -573648,7 +573817,7 @@ __v_option_string types__TypeChecker__source_file_import_path_for_alias(types__T
 		return (__v_option_string){.ok = false};
 	}
 	token__File* file = __map_val_4;
-	string __v3_internal_symbol_join_0__vmsvc13103[3]; __v3_internal_symbol_join_0__vmsvc13103[0] = file->name; __v3_internal_symbol_join_0__vmsvc13103[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13103[2] = alias; string __map_key_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13103));
+	string __v3_internal_symbol_join_0__vmsvc13106[3]; __v3_internal_symbol_join_0__vmsvc13106[0] = file->name; __v3_internal_symbol_join_0__vmsvc13106[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13106[2] = alias; string __map_key_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13106));
 	void* __map_ptr_8 = map__get_check(&tc->file_import_alias_paths, &__map_key_7);
 	__v_option_string __map_val_9 = {0};
 	if (__map_ptr_8 != NULL) {
@@ -573783,7 +573952,7 @@ token__Pos types__TypeChecker__source_line_declaration_pos(types__TypeChecker* t
 	while ((start < end) && ((string__at(source, start) == ' ') || (string__at(source, start) == '\t'))) {
 		start++;
 	}
-	for (;;) { int cond__vmsvc13105; cond__vmsvc13105 = !!((end > start)); if (cond__vmsvc13105) { u8 __in_lhs_12__vmsvc13104 = string__at(source, end - 1); cond__vmsvc13105 = !!(((__in_lhs_12__vmsvc13104 == '\n') || (__in_lhs_12__vmsvc13104 == '\r') || (__in_lhs_12__vmsvc13104 == ' ') || (__in_lhs_12__vmsvc13104 == '\t'))); } if (!(cond__vmsvc13105)) break; {
+	for (;;) { int cond__vmsvc13108; cond__vmsvc13108 = !!((end > start)); if (cond__vmsvc13108) { u8 __in_lhs_12__vmsvc13107 = string__at(source, end - 1); cond__vmsvc13108 = !!(((__in_lhs_12__vmsvc13107 == '\n') || (__in_lhs_12__vmsvc13107 == '\r') || (__in_lhs_12__vmsvc13107 == ' ') || (__in_lhs_12__vmsvc13107 == '\t'))); } if (!(cond__vmsvc13108)) break; {
 		end--;
 	} }
 	return token__new_span(name_pos.id, start, end);
@@ -574098,7 +574267,7 @@ Array types__TypeChecker__source_struct_field_decls(types__TypeChecker* tc, u32 
 				} else if (__match_tmp_16 == flat__NodeKind__struct_decl) {
 					string __if_val_17 = {0};
 					if ((cur_module.len > 0) && !string__contains(decl.value, _str_2)) {
-						string __v3_internal_symbol_join_0__vmsvc13106[3]; __v3_internal_symbol_join_0__vmsvc13106[0] = cur_module; __v3_internal_symbol_join_0__vmsvc13106[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13106[2] = decl.value; __if_val_17 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13106));
+						string __v3_internal_symbol_join_0__vmsvc13109[3]; __v3_internal_symbol_join_0__vmsvc13109[0] = cur_module; __v3_internal_symbol_join_0__vmsvc13109[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13109[2] = decl.value; __if_val_17 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13109));
 					} else {
 						__if_val_17 = decl.value;
 					}
@@ -574112,14 +574281,14 @@ Array types__TypeChecker__source_struct_field_decls(types__TypeChecker* tc, u32 
 							}
 						}
 					}
-					int cond__vmsvc13108; cond__vmsvc13108 = !!(!__contains_18); if (cond__vmsvc13108) { bool __contains_20__vmsvc13107 = false; {
+					int cond__vmsvc13111; cond__vmsvc13111 = !!(!__contains_18); if (cond__vmsvc13111) { bool __contains_20__vmsvc13110 = false; {
 						__v_int __contains_idx_21 = 0;
 						for (; __contains_idx_21 < candidates.len; __contains_idx_21++) {
 							if (string__eq(*(string*)(array_get(candidates, __contains_idx_21)), decl_qname)) {
-								__contains_20__vmsvc13107 = true;
+								__contains_20__vmsvc13110 = true;
 							}
 						}
-					} cond__vmsvc13108 = !!((!__contains_20__vmsvc13107)); } if (cond__vmsvc13108) {
+					} cond__vmsvc13111 = !!((!__contains_20__vmsvc13110)); } if (cond__vmsvc13111) {
 						continue;
 					}
 					if ((wanted_file.len > 0) && (cur_file.len > 0) && !string__eq(cur_file, wanted_file)) {
@@ -574405,7 +574574,7 @@ __v_option_types__Type types__TypeChecker__spawn_child_call_return_type(types__T
 		array_push(&candidates, &__arr_val_9);
 	}
 	if (tc->cur_module.len > 0) {
-		string __v3_internal_symbol_join_0__vmsvc13109[3]; __v3_internal_symbol_join_0__vmsvc13109[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc13109[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13109[2] = fn_node->value; string __arr_val_10 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13109));
+		string __v3_internal_symbol_join_0__vmsvc13112[3]; __v3_internal_symbol_join_0__vmsvc13112[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc13112[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13112[2] = fn_node->value; string __arr_val_10 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13112));
 		array_push(&candidates, &__arr_val_10);
 	}
 	string __arr_val_11 = string__plus(_str_5177, fn_node->value);
@@ -574529,7 +574698,7 @@ u32 types__TypeChecker__specialize_generic_factory_return(types__TypeChecker* tc
 				__if_val_9 = flat__SourceTypeSyntax__application_args(actual);
 			}
 			Array concrete_receiver_args = __if_val_9;
-			string __v3_internal_symbol_join_0__vmsvc13110[3]; __v3_internal_symbol_join_0__vmsvc13110[0] = flat__source_type_name(receiver_pattern_id); __v3_internal_symbol_join_0__vmsvc13110[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13110[2] = string__all_after_last(name, _str_2); string pattern_key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13110));
+			string __v3_internal_symbol_join_0__vmsvc13113[3]; __v3_internal_symbol_join_0__vmsvc13113[0] = flat__source_type_name(receiver_pattern_id); __v3_internal_symbol_join_0__vmsvc13113[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13113[2] = string__all_after_last(name, _str_2); string pattern_key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13113));
 			__v_option_multi_return_Array_Array __if_guard_10 = types__TypeChecker__generic_method_receiver_pattern_args(tc, pattern_key, concrete_receiver_args);
 			if (__if_guard_10.ok) {
 				Array receiver_params = __if_guard_10.value.arg0;
@@ -574747,14 +574916,14 @@ __declspec(noinline) types__CallInfo types__TypeChecker__specialize_plain_generi
 				}
 			}
 			bool defer_numeric_literal = false;
-			int cond__vmsvc13112; cond__vmsvc13112 = !!(((arg_node->kind == flat__NodeKind__int_literal) || (arg_node->kind == flat__NodeKind__float_literal))); if (cond__vmsvc13112) { bool __contains_22__vmsvc13111 = false; {
+			int cond__vmsvc13115; cond__vmsvc13115 = !!(((arg_node->kind == flat__NodeKind__int_literal) || (arg_node->kind == flat__NodeKind__float_literal))); if (cond__vmsvc13115) { bool __contains_22__vmsvc13114 = false; {
 				__v_int __contains_idx_23 = 0;
 				for (; __contains_idx_23 < generic_params.len; __contains_idx_23++) {
 					if (*(u32*)(array_get(generic_params, __contains_idx_23)) == param_type_id) {
-						__contains_22__vmsvc13111 = true;
+						__contains_22__vmsvc13114 = true;
 					}
 				}
-			} cond__vmsvc13112 = !!((__contains_22__vmsvc13111)); } if (cond__vmsvc13112) {
+			} cond__vmsvc13115 = !!((__contains_22__vmsvc13114)); } if (cond__vmsvc13115) {
 				__v_int __in_lhs_24 = param_idx + 1;
 				{
 					__v_int later_param_idx = __in_lhs_24;
@@ -574938,7 +575107,7 @@ types__CallInfo types__TypeChecker__specialized_index_overload_call_info(types__
 		if (!flat__SourceTypeSyntax__application_valid(syntax) || ((flat__SourceTypeSyntax__application_args(syntax)).len == 0)) {
 			return *info;
 		}
-		string __v3_internal_symbol_join_0__vmsvc13113[3]; __v3_internal_symbol_join_0__vmsvc13113[0] = flat__source_type_name(type_name_id); __v3_internal_symbol_join_0__vmsvc13113[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13113[2] = method; __or_val_3 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13113));
+		string __v3_internal_symbol_join_0__vmsvc13116[3]; __v3_internal_symbol_join_0__vmsvc13116[0] = flat__source_type_name(type_name_id); __v3_internal_symbol_join_0__vmsvc13116[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13116[2] = method; __or_val_3 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13116));
 	}
 	string concrete = __or_val_3;
 	if (string__eq(concrete, info->name)) {
@@ -575533,7 +575702,7 @@ token__Pos types__TypeChecker__sql_orm_field_attribute_pos(types__TypeChecker* t
 	}
 	__v_int line_end = __or_val_13;
 	string line = string__substr(	source, 	line_start, 	line_end);
-	string __v3_internal_symbol_join_0__vmsvc13114[3]; __v3_internal_symbol_join_0__vmsvc13114[0] = _str_3887; __v3_internal_symbol_join_0__vmsvc13114[1] = attr_name; __v3_internal_symbol_join_0__vmsvc13114[2] = _str_177; string exact = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13114));
+	string __v3_internal_symbol_join_0__vmsvc13117[3]; __v3_internal_symbol_join_0__vmsvc13117[0] = _str_3887; __v3_internal_symbol_join_0__vmsvc13117[1] = attr_name; __v3_internal_symbol_join_0__vmsvc13117[2] = _str_177; string exact = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13117));
 	__v_option___v_int __if_guard_14 = string__index(line, exact);
 	if (__if_guard_14.ok) {
 		__v_int relative = __if_guard_14.value;
@@ -576580,10 +576749,10 @@ __v_option_string types__TypeChecker__static_assoc_fn_key_for_base(types__TypeCh
 	if (string__eq(method, _str_34)) {
 		return (__v_option_string){.ok = false};
 	}
-	int cond__vmsvc13117; cond__vmsvc13117 = !!(!tc->resolution_type_mode && (tc->static_associated_signature_count == tc->fn_ret_types.data->count)); if (cond__vmsvc13117) { string __map_key_0__vmsvc13115 = method; bool __map_zero_1__vmsvc13116 = false; cond__vmsvc13117 = !!((!*(bool*)(map__get(&tc->static_associated_method_names, &__map_key_0__vmsvc13115, &__map_zero_1__vmsvc13116)))); } if (cond__vmsvc13117) {
+	int cond__vmsvc13120; cond__vmsvc13120 = !!(!tc->resolution_type_mode && (tc->static_associated_signature_count == tc->fn_ret_types.data->count)); if (cond__vmsvc13120) { string __map_key_0__vmsvc13118 = method; bool __map_zero_1__vmsvc13119 = false; cond__vmsvc13120 = !!((!*(bool*)(map__get(&tc->static_associated_method_names, &__map_key_0__vmsvc13118, &__map_zero_1__vmsvc13119)))); } if (cond__vmsvc13120) {
 		return (__v_option_string){.ok = false};
 	}
-	int cond__vmsvc13120; cond__vmsvc13120 = !!((tc->transform_static_method_count == tc->fn_ret_types.data->count)); if (cond__vmsvc13120) { string __map_key_2__vmsvc13118 = method; bool __map_zero_3__vmsvc13119 = false; cond__vmsvc13120 = !!((!*(bool*)(map__get(&tc->transform_static_method_names, &__map_key_2__vmsvc13118, &__map_zero_3__vmsvc13119)))); } if (cond__vmsvc13120) {
+	int cond__vmsvc13123; cond__vmsvc13123 = !!((tc->transform_static_method_count == tc->fn_ret_types.data->count)); if (cond__vmsvc13123) { string __map_key_2__vmsvc13121 = method; bool __map_zero_3__vmsvc13122 = false; cond__vmsvc13123 = !!((!*(bool*)(map__get(&tc->transform_static_method_names, &__map_key_2__vmsvc13121, &__map_zero_3__vmsvc13122)))); } if (cond__vmsvc13123) {
 		return (__v_option_string){.ok = false};
 	}
 	Array direct_candidates = __new_array_noscan(0, 0, sizeof(u32));
@@ -576605,7 +576774,7 @@ __v_option_string types__TypeChecker__static_assoc_fn_key_for_base(types__TypeCh
 		for (; __for_idx_6 < __in_lhs_5.len; __for_idx_6++) {
 			u32 type_id = *(u32*)(array_get(__in_lhs_5, __for_idx_6));
 			string key = flat__encode_static_type_method_name(flat__source_type_name(type_id), method);
-			int cond__vmsvc13122; cond__vmsvc13122 = !!(types__TypeChecker__fn_signature_known(tc, key)); if (!cond__vmsvc13122) { string __map_key_7__vmsvc13121 = key; cond__vmsvc13122 = !!((map__exists(&tc->fn_ret_types, &__map_key_7__vmsvc13121))); } if (cond__vmsvc13122) {
+			int cond__vmsvc13125; cond__vmsvc13125 = !!(types__TypeChecker__fn_signature_known(tc, key)); if (!cond__vmsvc13125) { string __map_key_7__vmsvc13124 = key; cond__vmsvc13125 = !!((map__exists(&tc->fn_ret_types, &__map_key_7__vmsvc13124))); } if (cond__vmsvc13125) {
 				return (__v_option_string){.ok = true, .value = key};
 			}
 		}
@@ -576637,14 +576806,14 @@ Array types__TypeChecker__static_assoc_type_candidates(types__TypeChecker* tc, u
 		__v_int __for_idx_2 = 0;
 		for (; __for_idx_2 < candidates.len; __for_idx_2++) {
 			u32 candidate_id = *(u32*)(array_get(candidates, __for_idx_2));
-			int cond__vmsvc13124; cond__vmsvc13124 = !!(types__TypeChecker__static_assoc_type_known(tc, candidate_id)); if (cond__vmsvc13124) { bool __contains_3__vmsvc13123 = false; {
+			int cond__vmsvc13127; cond__vmsvc13127 = !!(types__TypeChecker__static_assoc_type_known(tc, candidate_id)); if (cond__vmsvc13127) { bool __contains_3__vmsvc13126 = false; {
 				__v_int __contains_idx_4 = 0;
 				for (; __contains_idx_4 < result.len; __contains_idx_4++) {
 					if (*(u32*)(array_get(result, __contains_idx_4)) == candidate_id) {
-						__contains_3__vmsvc13123 = true;
+						__contains_3__vmsvc13126 = true;
 					}
 				}
-			} cond__vmsvc13124 = !!((!__contains_3__vmsvc13123)); } if (cond__vmsvc13124) {
+			} cond__vmsvc13127 = !!((!__contains_3__vmsvc13126)); } if (cond__vmsvc13127) {
 				u32 __arr_val_5 = candidate_id;
 				{ Array* __v3_internal_symbol_scalar_push_base_0 = &result; u32 __v3_internal_symbol_scalar_push_value_0 = __arr_val_5; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
 			}
@@ -576655,7 +576824,7 @@ Array types__TypeChecker__static_assoc_type_candidates(types__TypeChecker* tc, u
 
 bool types__TypeChecker__static_assoc_type_known(types__TypeChecker* tc, u32 type_name_id) {
 	u32 __map_key_0 = type_name_id;
-	int cond__vmsvc13126; cond__vmsvc13126 = !!(map__exists(&tc->structs, &__map_key_0)); if (!cond__vmsvc13126) { u32 __map_key_1__vmsvc13125 = type_name_id; cond__vmsvc13126 = !!((map__exists(&tc->enum_names, &__map_key_1__vmsvc13125))); } int cond__vmsvc13128; cond__vmsvc13128 = !!(cond__vmsvc13126 || flat__SourceTypeListBindings__contains(&tc->sum_types, type_name_id)); if (!cond__vmsvc13128) { u32 __map_key_2__vmsvc13127 = type_name_id; cond__vmsvc13128 = !!((map__exists(&tc->interface_names, &__map_key_2__vmsvc13127))); } return cond__vmsvc13128 || flat__SourceTypeBindings__contains(&tc->type_aliases, type_name_id);
+	int cond__vmsvc13129; cond__vmsvc13129 = !!(map__exists(&tc->structs, &__map_key_0)); if (!cond__vmsvc13129) { u32 __map_key_1__vmsvc13128 = type_name_id; cond__vmsvc13129 = !!((map__exists(&tc->enum_names, &__map_key_1__vmsvc13128))); } int cond__vmsvc13131; cond__vmsvc13131 = !!(cond__vmsvc13129 || flat__SourceTypeListBindings__contains(&tc->sum_types, type_name_id)); if (!cond__vmsvc13131) { u32 __map_key_2__vmsvc13130 = type_name_id; cond__vmsvc13131 = !!((map__exists(&tc->interface_names, &__map_key_2__vmsvc13130))); } return cond__vmsvc13131 || flat__SourceTypeBindings__contains(&tc->type_aliases, type_name_id);
 }
 
 bool types__TypeChecker__static_initializer_is_constant(types__TypeChecker* tc, i32 id) {
@@ -576920,7 +577089,7 @@ bool types__TypeChecker__storage_lvalue_is_rooted_at_param_alias(types__TypeChec
 	} else {
 		return false;
 	}
-	string __discard_829746590774759415_452075_452076 = __or_val_1;
+	string __discard_829746590774759415_453681_453682 = __or_val_1;
 	return true;
 }
 
@@ -576930,14 +577099,14 @@ __v_option_string types__TypeChecker__storage_lvalue_path_from_param(types__Type
 	}
 	flat__Node node = (*(flat__Node*)array_get(tc->a->nodes, (__v_int)(id)));
 	if (node.kind == flat__NodeKind__ident) {
-		int cond__vmsvc13134; cond__vmsvc13134 = !!(string__eq(node.value, name)); if (!cond__vmsvc13134) { __v_int __contains_needle_3__vmsvc13129 = target_param_idx; string __map_key_0__vmsvc13130 = node.value; Array __map_zero_1__vmsvc13131 = __new_array_noscan(0, 0, sizeof(__v_int)); Array __in_arr_2__vmsvc13132 = *(Array*)(map__get(&aliases, &__map_key_0__vmsvc13130, &__map_zero_1__vmsvc13131)); bool __contains_4__vmsvc13133 = false; {
+		int cond__vmsvc13137; cond__vmsvc13137 = !!(string__eq(node.value, name)); if (!cond__vmsvc13137) { __v_int __contains_needle_3__vmsvc13132 = target_param_idx; string __map_key_0__vmsvc13133 = node.value; Array __map_zero_1__vmsvc13134 = __new_array_noscan(0, 0, sizeof(__v_int)); Array __in_arr_2__vmsvc13135 = *(Array*)(map__get(&aliases, &__map_key_0__vmsvc13133, &__map_zero_1__vmsvc13134)); bool __contains_4__vmsvc13136 = false; {
 			__v_int __contains_idx_5 = 0;
-			for (; __contains_idx_5 < __in_arr_2__vmsvc13132.len; __contains_idx_5++) {
-				if (*(__v_int*)(array_get(__in_arr_2__vmsvc13132, __contains_idx_5)) == __contains_needle_3__vmsvc13129) {
-					__contains_4__vmsvc13133 = true;
+			for (; __contains_idx_5 < __in_arr_2__vmsvc13135.len; __contains_idx_5++) {
+				if (*(__v_int*)(array_get(__in_arr_2__vmsvc13135, __contains_idx_5)) == __contains_needle_3__vmsvc13132) {
+					__contains_4__vmsvc13136 = true;
 				}
 			}
-		} cond__vmsvc13134 = !!((__contains_4__vmsvc13133)); } if (cond__vmsvc13134) {
+		} cond__vmsvc13137 = !!((__contains_4__vmsvc13136)); } if (cond__vmsvc13137) {
 			return (__v_option_string){.ok = true, .value = _str_34};
 		} else {
 			return (__v_option_string){.ok = false};
@@ -576955,7 +577124,7 @@ __v_option_string types__TypeChecker__storage_lvalue_path_from_param(types__Type
 			return (__v_option_string){.ok = false};
 		}
 		string base = __or_val_7;
-		string __v3_internal_symbol_join_0__vmsvc13135[3]; __v3_internal_symbol_join_0__vmsvc13135[0] = base; __v3_internal_symbol_join_0__vmsvc13135[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13135[2] = node.value; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13135))};
+		string __v3_internal_symbol_join_0__vmsvc13138[3]; __v3_internal_symbol_join_0__vmsvc13138[0] = base; __v3_internal_symbol_join_0__vmsvc13138[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13138[2] = node.value; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13138))};
 	}
 	if ((node.kind == flat__NodeKind__v_index) && (node.children_count > 1)) {
 		__v_option_string __or_opt_8 = types__TypeChecker__storage_lvalue_path_from_param(tc, flat__FlatAst__child(tc->a, &node, 0), name, aliases, target_param_idx);
@@ -576968,7 +577137,7 @@ __v_option_string types__TypeChecker__storage_lvalue_path_from_param(types__Type
 		string base = __or_val_9;
 		flat__Node* v_index = flat__FlatAst__child_node(tc->a, &node, 1);
 		if ((v_index->kind == flat__NodeKind__ident) || (v_index->kind == flat__NodeKind__int_literal) || (v_index->kind == flat__NodeKind__string_literal) || (v_index->kind == flat__NodeKind__char_literal) || (v_index->kind == flat__NodeKind__bool_literal)) {
-			string __v3_internal_symbol_join_1__vmsvc13136[6]; __v3_internal_symbol_join_1__vmsvc13136[0] = base; __v3_internal_symbol_join_1__vmsvc13136[1] = _str_176; __v3_internal_symbol_join_1__vmsvc13136[2] = flat__NodeKind__autostr(v_index->kind); __v3_internal_symbol_join_1__vmsvc13136[3] = _str_92; __v3_internal_symbol_join_1__vmsvc13136[4] = v_index->value; __v3_internal_symbol_join_1__vmsvc13136[5] = _str_177; return (__v_option_string){.ok = true, .value = (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13136))};
+			string __v3_internal_symbol_join_1__vmsvc13139[6]; __v3_internal_symbol_join_1__vmsvc13139[0] = base; __v3_internal_symbol_join_1__vmsvc13139[1] = _str_176; __v3_internal_symbol_join_1__vmsvc13139[2] = flat__NodeKind__autostr(v_index->kind); __v3_internal_symbol_join_1__vmsvc13139[3] = _str_92; __v3_internal_symbol_join_1__vmsvc13139[4] = v_index->value; __v3_internal_symbol_join_1__vmsvc13139[5] = _str_177; return (__v_option_string){.ok = true, .value = (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13139))};
 		}
 		return (__v_option_string){.ok = true, .value = string__plus(base, _str_7976)};
 	}
@@ -577058,24 +577227,24 @@ bool types__TypeChecker__storage_query_probe_facts_unchanged(types__TypeChecker*
 		return false;
 	}
 	types__TypeChecker* base = probe->read_base;
-	int cond__vmsvc13138; cond__vmsvc13138 = !!(isnil((void*)(base)) || (tc->errors.len != probe->initial_error_count) || (tc->a->nodes.len != probe->initial_node_count) || (tc->a->children.len != probe->initial_children_count) || (tc->fn_context.node_id != base->fn_context.node_id) || ((void*)(tc->cur_scope) != (void*)(base->cur_scope)) || !string__eq(tc->cur_file, base->cur_file) || !string__eq(tc->cur_module, base->cur_module)); if (!cond__vmsvc13138) { bool __map_eq_0__vmsvc13137 = tc->smartcasts.data->count == base->smartcasts.data->count; for (int __mi_0 = 0; __mi_0 < (	tc->smartcasts).data->key_values.len; __mi_0++) {
+	int cond__vmsvc13141; cond__vmsvc13141 = !!(isnil((void*)(base)) || (tc->errors.len != probe->initial_error_count) || (tc->a->nodes.len != probe->initial_node_count) || (tc->a->children.len != probe->initial_children_count) || (tc->fn_context.node_id != base->fn_context.node_id) || ((void*)(tc->cur_scope) != (void*)(base->cur_scope)) || !string__eq(tc->cur_file, base->cur_file) || !string__eq(tc->cur_module, base->cur_module)); if (!cond__vmsvc13141) { bool __map_eq_0__vmsvc13140 = tc->smartcasts.data->count == base->smartcasts.data->count; for (int __mi_0 = 0; __mi_0 < (	tc->smartcasts).data->key_values.len; __mi_0++) {
 		if ((	tc->smartcasts).data->key_values.all_deleted && (	tc->smartcasts).data->key_values.all_deleted[__mi_0]) continue;
 		string __map_eq_key_1 = *(string*)((	tc->smartcasts).data->key_values.keys + __mi_0 * (	tc->smartcasts).data->key_values.key_bytes);
 		__map_eq_key_1 = string__clone(__map_eq_key_1);
 		types__Type __map_eq_val_2 = *(types__Type*)((	tc->smartcasts).data->key_values.values + __mi_0 * (	tc->smartcasts).data->key_values.value_bytes);
 		types__Type __map_zero_3 = (types__Type){.typ = 1, .types__Void = (types__Void){0}};
-		if (__map_eq_0__vmsvc13137 && (!(map__exists(&base->smartcasts, &__map_eq_key_1)) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__map_eq_val_2}[0], &(types__Type[]){*(types__Type*)(map__get(&base->smartcasts, &__map_eq_key_1, &__map_zero_3))}[0])))) {
-			__map_eq_0__vmsvc13137 = false;
+		if (__map_eq_0__vmsvc13140 && (!(map__exists(&base->smartcasts, &__map_eq_key_1)) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__map_eq_val_2}[0], &(types__Type[]){*(types__Type*)(map__get(&base->smartcasts, &__map_eq_key_1, &__map_zero_3))}[0])))) {
+			__map_eq_0__vmsvc13140 = false;
 		}
-	} cond__vmsvc13138 = !!((!__map_eq_0__vmsvc13137)); } int cond__vmsvc13140; cond__vmsvc13140 = !!(cond__vmsvc13138 || (tc->expected_expr_id != base->expected_expr_id) || (tc->trust_checked_expr_types != base->trust_checked_expr_types) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){tc->expected_expr_type}[0], &(types__Type[]){base->expected_expr_type}[0])) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){tc->cur_fn_ret_type}[0], &(types__Type[]){base->cur_fn_ret_type}[0])) || (tc->channel_send_or_expr_id != base->channel_send_or_expr_id) || !__v3_array_eq_raw(tc->fn_context.generic_params, base->fn_context.generic_params, sizeof(u32)) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){tc->fn_context.return_type}[0], &(types__Type[]){base->fn_context.return_type}[0]))); if (!cond__vmsvc13140) { bool __map_eq_4__vmsvc13139 = tc->placeholder_types.data->count == base->placeholder_types.data->count; for (int __mi_1 = 0; __mi_1 < (	tc->placeholder_types).data->key_values.len; __mi_1++) {
+	} cond__vmsvc13141 = !!((!__map_eq_0__vmsvc13140)); } int cond__vmsvc13143; cond__vmsvc13143 = !!(cond__vmsvc13141 || (tc->expected_expr_id != base->expected_expr_id) || (tc->trust_checked_expr_types != base->trust_checked_expr_types) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){tc->expected_expr_type}[0], &(types__Type[]){base->expected_expr_type}[0])) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){tc->cur_fn_ret_type}[0], &(types__Type[]){base->cur_fn_ret_type}[0])) || (tc->channel_send_or_expr_id != base->channel_send_or_expr_id) || !__v3_array_eq_raw(tc->fn_context.generic_params, base->fn_context.generic_params, sizeof(u32)) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){tc->fn_context.return_type}[0], &(types__Type[]){base->fn_context.return_type}[0]))); if (!cond__vmsvc13143) { bool __map_eq_4__vmsvc13142 = tc->placeholder_types.data->count == base->placeholder_types.data->count; for (int __mi_1 = 0; __mi_1 < (	tc->placeholder_types).data->key_values.len; __mi_1++) {
 		if ((	tc->placeholder_types).data->key_values.all_deleted && (	tc->placeholder_types).data->key_values.all_deleted[__mi_1]) continue;
 		__v_int __map_eq_key_5 = *(__v_int*)((	tc->placeholder_types).data->key_values.keys + __mi_1 * (	tc->placeholder_types).data->key_values.key_bytes);
 		types__Type __map_eq_val_6 = *(types__Type*)((	tc->placeholder_types).data->key_values.values + __mi_1 * (	tc->placeholder_types).data->key_values.value_bytes);
 		types__Type __map_zero_7 = (types__Type){.typ = 1, .types__Void = (types__Void){0}};
-		if (__map_eq_4__vmsvc13139 && (!(map__exists(&base->placeholder_types, &__map_eq_key_5)) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__map_eq_val_6}[0], &(types__Type[]){*(types__Type*)(map__get(&base->placeholder_types, &__map_eq_key_5, &__map_zero_7))}[0])))) {
-			__map_eq_4__vmsvc13139 = false;
+		if (__map_eq_4__vmsvc13142 && (!(map__exists(&base->placeholder_types, &__map_eq_key_5)) || !(__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__map_eq_val_6}[0], &(types__Type[]){*(types__Type*)(map__get(&base->placeholder_types, &__map_eq_key_5, &__map_zero_7))}[0])))) {
+			__map_eq_4__vmsvc13142 = false;
 		}
-	} cond__vmsvc13140 = !!((!__map_eq_4__vmsvc13139)); } if (cond__vmsvc13140 || !map_map_eq(tc->type_param_texts, base->type_param_texts) || !map_map_eq(tc->type_params_expanding, base->type_params_expanding) || !string__eq(tc->generic_decl_file, base->generic_decl_file)) {
+	} cond__vmsvc13143 = !!((!__map_eq_4__vmsvc13142)); } if (cond__vmsvc13143 || !map_map_eq(tc->type_param_texts, base->type_param_texts) || !map_map_eq(tc->type_params_expanding, base->type_params_expanding) || !string__eq(tc->generic_decl_file, base->generic_decl_file)) {
 		return false;
 	}
 	if ((tc->sparse_expr_type_values.data->count > 0) || (tc->sparse_resolved_call_names.data->count > 0) || (tc->sparse_resolved_fn_values.data->count > 0) || (tc->fork_fn_value_writes.data->count > 0) || (tc->sparse_statement_nodes.data->count > 0)) {
@@ -577277,7 +577446,7 @@ int types__TypeChecker__struct_allocation_layout(types__TypeChecker* tc, u32 nam
 
 bool types__TypeChecker__struct_c_name_collides_with_v3_runtime(types__TypeChecker* tc, u32 name_id, string cname) {
 	string __map_key_0 = cname;
-	int cond__vmsvc13142; cond__vmsvc13142 = !!(!map__exists(&types__export_v3_reserved_c_symbols, &__map_key_0)); if (!cond__vmsvc13142) { int __in_lhs_1__vmsvc13141 = flat__source_type_query(name_id); cond__vmsvc13142 = !!(((__in_lhs_1__vmsvc13141 & 8192) != 0)); } if (cond__vmsvc13142) {
+	int cond__vmsvc13145; cond__vmsvc13145 = !!(!map__exists(&types__export_v3_reserved_c_symbols, &__map_key_0)); if (!cond__vmsvc13145) { int __in_lhs_1__vmsvc13144 = flat__source_type_query(name_id); cond__vmsvc13145 = !!(((__in_lhs_1__vmsvc13144 & 8192) != 0)); } if (cond__vmsvc13145) {
 		return false;
 	}
 	u32 __map_key_2 = name_id;
@@ -577430,7 +577599,7 @@ token__Pos types__TypeChecker__struct_field_declaration_pos(types__TypeChecker* 
 }
 
 __v_option_multi_return_u32_u32 types__TypeChecker__struct_field_diagnostic_fn_type(types__TypeChecker* tc, u32 struct_name_id, string field_name, __v_int field_index) {
-	string __v3_internal_symbol_join_0__vmsvc13143[5]; __v3_internal_symbol_join_0__vmsvc13143[0] = strconv__format_uint((u32)(struct_name_id), 10); __v3_internal_symbol_join_0__vmsvc13143[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13143[2] = field_name; __v3_internal_symbol_join_0__vmsvc13143[3] = _str_8; __v3_internal_symbol_join_0__vmsvc13143[4] = int__str(field_index); string key = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13143));
+	string __v3_internal_symbol_join_0__vmsvc13146[5]; __v3_internal_symbol_join_0__vmsvc13146[0] = strconv__format_uint((u32)(struct_name_id), 10); __v3_internal_symbol_join_0__vmsvc13146[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13146[2] = field_name; __v3_internal_symbol_join_0__vmsvc13146[3] = _str_8; __v3_internal_symbol_join_0__vmsvc13146[4] = int__str(field_index); string key = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13146));
 	types__TypeCache* cache = tc->type_cache;
 	if (!isnil((void*)(cache))) {
 		string __map_key_0 = key;
@@ -577733,7 +577902,7 @@ __v_option_types__Type types__TypeChecker__struct_field_type_inner(types__TypeCh
 		}
 	}
 	u32 lookup_id = __if_val_1;
-	int cond__vmsvc13145; cond__vmsvc13145 = !!((seen->data->count > 0)); if (cond__vmsvc13145) { u32 __map_key_5__vmsvc13144 = lookup_id; cond__vmsvc13145 = !!((map__exists(seen, &__map_key_5__vmsvc13144))); } if (cond__vmsvc13145) {
+	int cond__vmsvc13148; cond__vmsvc13148 = !!((seen->data->count > 0)); if (cond__vmsvc13148) { u32 __map_key_5__vmsvc13147 = lookup_id; cond__vmsvc13148 = !!((map__exists(seen, &__map_key_5__vmsvc13147))); } if (cond__vmsvc13148) {
 		return (__v_option_types__Type){.ok = false};
 	}
 	u32 __map_key_8 = lookup_id;
@@ -577975,7 +578144,7 @@ __v_option_types__Type types__TypeChecker__struct_field_type_uncached(types__Typ
 			types__TypeChecker__remember_struct_field_type(tc, struct_name_id, field_name, typ, true, unguarded);
 			return (__v_option_types__Type){.ok = true, .value = *typ};
 		}
-		int cond__vmsvc13148; cond__vmsvc13148 = !!(types__cached_struct_field_miss(tc->type_cache->struct_field_misses, struct_name_id, field_name)); if (!cond__vmsvc13148) { u32 __map_key_10__vmsvc13146 = struct_name_id; bool __map_zero_11__vmsvc13147 = false; cond__vmsvc13148 = !!((*(bool*)(map__get(&tc->type_cache->struct_field_complete, &__map_key_10__vmsvc13146, &__map_zero_11__vmsvc13147)))); } if (cond__vmsvc13148) {
+		int cond__vmsvc13151; cond__vmsvc13151 = !!(types__cached_struct_field_miss(tc->type_cache->struct_field_misses, struct_name_id, field_name)); if (!cond__vmsvc13151) { u32 __map_key_10__vmsvc13149 = struct_name_id; bool __map_zero_11__vmsvc13150 = false; cond__vmsvc13151 = !!((*(bool*)(map__get(&tc->type_cache->struct_field_complete, &__map_key_10__vmsvc13149, &__map_zero_11__vmsvc13150)))); } if (cond__vmsvc13151) {
 			types__TypeChecker__remember_struct_field_type(tc, struct_name_id, field_name, types__empty_type, false, unguarded);
 			return (__v_option_types__Type){.ok = false};
 		}
@@ -578236,7 +578405,7 @@ token__Pos types__TypeChecker__struct_implements_type_pos(types__TypeChecker* tc
 				cursor++;
 			}
 			__v_int item_end = cursor;
-			for (;;) { int cond__vmsvc13150; cond__vmsvc13150 = !!((item_end > item_start)); if (cond__vmsvc13150) { u8 __in_lhs_15__vmsvc13149 = string__at(source, item_end - 1); cond__vmsvc13150 = !!(((__in_lhs_15__vmsvc13149 == ' ') || (__in_lhs_15__vmsvc13149 == '\t') || (__in_lhs_15__vmsvc13149 == '\n') || (__in_lhs_15__vmsvc13149 == '\r'))); } if (!(cond__vmsvc13150)) break; {
+			for (;;) { int cond__vmsvc13153; cond__vmsvc13153 = !!((item_end > item_start)); if (cond__vmsvc13153) { u8 __in_lhs_15__vmsvc13152 = string__at(source, item_end - 1); cond__vmsvc13153 = !!(((__in_lhs_15__vmsvc13152 == ' ') || (__in_lhs_15__vmsvc13152 == '\t') || (__in_lhs_15__vmsvc13152 == '\n') || (__in_lhs_15__vmsvc13152 == '\r'))); } if (!(cond__vmsvc13153)) break; {
 				item_end--;
 			} }
 			if (current == ordinal) {
@@ -578555,20 +578724,20 @@ token__Pos types__TypeChecker__struct_init_unsafe_nil_value_pos(types__TypeCheck
 
 string types__TypeChecker__struct_literal_unknown_field_message(types__TypeChecker* tc, string struct_name, string field_name, Array fields) {
 	string display_name = string__all_after_last(struct_name, _str_2);
-	string __v3_internal_symbol_join_0__vmsvc13151[5]; __v3_internal_symbol_join_0__vmsvc13151[0] = _str_6032; __v3_internal_symbol_join_0__vmsvc13151[1] = field_name; __v3_internal_symbol_join_0__vmsvc13151[2] = _str_8281; __v3_internal_symbol_join_0__vmsvc13151[3] = display_name; __v3_internal_symbol_join_0__vmsvc13151[4] = _str_41; string base = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13151));
+	string __v3_internal_symbol_join_0__vmsvc13154[5]; __v3_internal_symbol_join_0__vmsvc13154[0] = _str_6032; __v3_internal_symbol_join_0__vmsvc13154[1] = field_name; __v3_internal_symbol_join_0__vmsvc13154[2] = _str_8281; __v3_internal_symbol_join_0__vmsvc13154[3] = display_name; __v3_internal_symbol_join_0__vmsvc13154[4] = _str_41; string base = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13154));
 	Array candidates = array_new(	sizeof(string), 0, 0);
 	{
 		__v_int __for_idx_0 = 0;
 		for (; __for_idx_0 < fields.len; __for_idx_0++) {
 			types__StructField field = *(types__StructField*)(array_get(fields, __for_idx_0));
-			int cond__vmsvc13153; cond__vmsvc13153 = !!((field.name.len > 0)); if (cond__vmsvc13153) { bool __contains_1__vmsvc13152 = false; {
+			int cond__vmsvc13156; cond__vmsvc13156 = !!((field.name.len > 0)); if (cond__vmsvc13156) { bool __contains_1__vmsvc13155 = false; {
 				__v_int __contains_idx_2 = 0;
 				for (; __contains_idx_2 < candidates.len; __contains_idx_2++) {
 					if (string__eq(*(string*)(array_get(candidates, __contains_idx_2)), field.name)) {
-						__contains_1__vmsvc13152 = true;
+						__contains_1__vmsvc13155 = true;
 					}
 				}
-			} cond__vmsvc13153 = !!((!__contains_1__vmsvc13152)); } if (cond__vmsvc13153) {
+			} cond__vmsvc13156 = !!((!__contains_1__vmsvc13155)); } if (cond__vmsvc13156) {
 				string __arr_val_3 = field.name;
 				array_push(&candidates, &__arr_val_3);
 			}
@@ -578593,12 +578762,12 @@ string types__TypeChecker__struct_literal_unknown_field_message(types__TypeCheck
 		__v_int __map_idx_7 = 0;
 		for (; __map_idx_7 < candidates.len; __map_idx_7++) {
 			string __map_it_5 = *(string*)(array_get(candidates, __map_idx_7));
-			string __v3_internal_symbol_join_1__vmsvc13154[3]; __v3_internal_symbol_join_1__vmsvc13154[0] = _str_41; __v3_internal_symbol_join_1__vmsvc13154[1] = __map_it_5; __v3_internal_symbol_join_1__vmsvc13154[2] = _str_41; string __map_val_8 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13154));
+			string __v3_internal_symbol_join_1__vmsvc13157[3]; __v3_internal_symbol_join_1__vmsvc13157[0] = _str_41; __v3_internal_symbol_join_1__vmsvc13157[1] = __map_it_5; __v3_internal_symbol_join_1__vmsvc13157[2] = _str_41; string __map_val_8 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13157));
 			array_push(&__map_6, &__map_val_8);
 		}
 	}
 	Array quoted = __map_6;
-	string __v3_internal_symbol_join_2__vmsvc13155[8]; __v3_internal_symbol_join_2__vmsvc13155[0] = base; __v3_internal_symbol_join_2__vmsvc13155[1] = _str_2013; __v3_internal_symbol_join_2__vmsvc13155[2] = int__str(candidates.len); __v3_internal_symbol_join_2__vmsvc13155[3] = _str_1; __v3_internal_symbol_join_2__vmsvc13155[4] = grammar; __v3_internal_symbol_join_2__vmsvc13155[5] = _str_185; __v3_internal_symbol_join_2__vmsvc13155[6] = Array_string__join(quoted, _str_25); __v3_internal_symbol_join_2__vmsvc13155[7] = _str_2; return (string_plus_many(8, __v3_internal_symbol_join_2__vmsvc13155));
+	string __v3_internal_symbol_join_2__vmsvc13158[8]; __v3_internal_symbol_join_2__vmsvc13158[0] = base; __v3_internal_symbol_join_2__vmsvc13158[1] = _str_2013; __v3_internal_symbol_join_2__vmsvc13158[2] = int__str(candidates.len); __v3_internal_symbol_join_2__vmsvc13158[3] = _str_1; __v3_internal_symbol_join_2__vmsvc13158[4] = grammar; __v3_internal_symbol_join_2__vmsvc13158[5] = _str_185; __v3_internal_symbol_join_2__vmsvc13158[6] = Array_string__join(quoted, _str_25); __v3_internal_symbol_join_2__vmsvc13158[7] = _str_2; return (string_plus_many(8, __v3_internal_symbol_join_2__vmsvc13158));
 }
 
 string types__TypeChecker__struct_module_for_type(types__TypeChecker* tc, u32 name_id) {
@@ -578666,7 +578835,7 @@ bool types__TypeChecker__struct_value_path_reaches(types__TypeChecker* tc, u32 c
 }
 
 types__Type types__TypeChecker__substitute_generic_param_type(types__TypeChecker* tc, types__Type* v_open, u32 param_source_id, Array concrete_types, Array generic_params) {
-	int cond__vmsvc13157; cond__vmsvc13157 = !!((((*v_open)).typ == 15)); if (cond__vmsvc13157) { int __in_lhs_0__vmsvc13156 = flat__source_type_shape(param_source_id); cond__vmsvc13157 = !!(((__in_lhs_0__vmsvc13156 & 16777216) != 0)); } int cond__vmsvc13159; cond__vmsvc13159 = !!(cond__vmsvc13157); if (cond__vmsvc13159) { int __in_lhs_1__vmsvc13158 = flat__source_type_query(param_source_id); cond__vmsvc13159 = !!((!((__in_lhs_1__vmsvc13158 & 134217728) != 0))); } if (cond__vmsvc13159) {
+	int cond__vmsvc13160; cond__vmsvc13160 = !!((((*v_open)).typ == 15)); if (cond__vmsvc13160) { int __in_lhs_0__vmsvc13159 = flat__source_type_shape(param_source_id); cond__vmsvc13160 = !!(((__in_lhs_0__vmsvc13159 & 16777216) != 0)); } int cond__vmsvc13162; cond__vmsvc13162 = !!(cond__vmsvc13160); if (cond__vmsvc13162) { int __in_lhs_1__vmsvc13161 = flat__source_type_query(param_source_id); cond__vmsvc13162 = !!((!((__in_lhs_1__vmsvc13161 & 134217728) != 0))); } if (cond__vmsvc13162) {
 		types__Type base = *(*v_open).types__Pointer.base_type;
 		if (((base).typ == 17) && ((base.types__OptionType.base_type)->typ == 15)) {
 			types__Pointer payload_ref = base.types__OptionType.base_type->types__Pointer;
@@ -579018,7 +579187,7 @@ bool types__TypeChecker__subtree_depends_on_type_params(types__TypeChecker* tc, 
 			continue;
 		}
 		flat__Node* node = flat__FlatAst__node(tc->a, current);
-		int cond__vmsvc13161; cond__vmsvc13161 = !!((node->kind == flat__NodeKind__ident)); if (cond__vmsvc13161) { string __map_key_0__vmsvc13160 = node->value; cond__vmsvc13161 = !!((map__exists(&names, &__map_key_0__vmsvc13160))); } if (cond__vmsvc13161) {
+		int cond__vmsvc13164; cond__vmsvc13164 = !!((node->kind == flat__NodeKind__ident)); if (cond__vmsvc13164) { string __map_key_0__vmsvc13163 = node->value; cond__vmsvc13164 = !!((map__exists(&names, &__map_key_0__vmsvc13163))); } if (cond__vmsvc13164) {
 			return true;
 		}
 		if (types__type_id_names_any(node->typ, params)) {
@@ -579251,7 +579420,7 @@ bool types__TypeChecker__sum_constraint_cycle_expands(types__TypeChecker* tc, u3
 	{
 		__v_int i = 0;
 		for (; i < params.len; i++) {
-			string __v3_internal_symbol_join_0__vmsvc13162[3]; __v3_internal_symbol_join_0__vmsvc13162[0] = _str_7359; __v3_internal_symbol_join_0__vmsvc13162[1] = int__str(i); __v3_internal_symbol_join_0__vmsvc13162[2] = _str_175; u32 __arr_val_0 = types__TypeChecker__qualify_type_name(tc, flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13162))));
+			string __v3_internal_symbol_join_0__vmsvc13165[3]; __v3_internal_symbol_join_0__vmsvc13165[0] = _str_7359; __v3_internal_symbol_join_0__vmsvc13165[1] = int__str(i); __v3_internal_symbol_join_0__vmsvc13165[2] = _str_175; u32 __arr_val_0 = types__TypeChecker__qualify_type_name(tc, flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13165))));
 			{ Array* __v3_internal_symbol_scalar_push_base_1 = &symbols; u32 __v3_internal_symbol_scalar_push_value_1 = __arr_val_0; if (__v3_internal_symbol_scalar_push_base_1->len >= 0 && __v3_internal_symbol_scalar_push_base_1->len < __v3_internal_symbol_scalar_push_base_1->cap && !(__v3_internal_symbol_scalar_push_base_1->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_1->data)[__v3_internal_symbol_scalar_push_base_1->len] = __v3_internal_symbol_scalar_push_value_1; __v3_internal_symbol_scalar_push_base_1->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_1, &__v3_internal_symbol_scalar_push_value_1); } }
 		}
 	}
@@ -579730,7 +579899,7 @@ token__Pos types__TypeChecker__sum_type_variant_source_pos(types__TypeChecker* t
 						}
 					} else if ((string__at(source, i) == '|') && (depth == 0)) {
 						variant_end = i;
-						for (;;) { int cond__vmsvc13164; cond__vmsvc13164 = !!((variant_end > variant_start)); if (cond__vmsvc13164) { u8 __in_lhs_18__vmsvc13163 = string__at(source, variant_end - 1); cond__vmsvc13164 = !!(((__in_lhs_18__vmsvc13163 == ' ') || (__in_lhs_18__vmsvc13163 == '\t'))); } if (!(cond__vmsvc13164)) break; {
+						for (;;) { int cond__vmsvc13167; cond__vmsvc13167 = !!((variant_end > variant_start)); if (cond__vmsvc13167) { u8 __in_lhs_18__vmsvc13166 = string__at(source, variant_end - 1); cond__vmsvc13167 = !!(((__in_lhs_18__vmsvc13166 == ' ') || (__in_lhs_18__vmsvc13166 == '\t'))); } if (!(cond__vmsvc13167)) break; {
 							variant_end--;
 						} }
 						break;
@@ -579873,9 +580042,9 @@ string types__TypeChecker__sum_variant_diagnostic_name(types__TypeChecker* tc, s
 	__v_option_string __if_guard_0 = types__TypeChecker__resolve_import_alias(tc, module_name);
 	if (__if_guard_0.ok) {
 		string resolved = __if_guard_0.value;
-		string __v3_internal_symbol_join_0__vmsvc13165[3]; __v3_internal_symbol_join_0__vmsvc13165[0] = string__all_after_last(resolved, _str_2); __v3_internal_symbol_join_0__vmsvc13165[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13165[2] = v_short; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13165));
+		string __v3_internal_symbol_join_0__vmsvc13168[3]; __v3_internal_symbol_join_0__vmsvc13168[0] = string__all_after_last(resolved, _str_2); __v3_internal_symbol_join_0__vmsvc13168[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13168[2] = v_short; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13168));
 	}
-	string __v3_internal_symbol_join_1__vmsvc13166[3]; __v3_internal_symbol_join_1__vmsvc13166[0] = string__all_after_last(module_name, _str_2); __v3_internal_symbol_join_1__vmsvc13166[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13166[2] = v_short; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13166));
+	string __v3_internal_symbol_join_1__vmsvc13169[3]; __v3_internal_symbol_join_1__vmsvc13169[0] = string__all_after_last(module_name, _str_2); __v3_internal_symbol_join_1__vmsvc13169[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13169[2] = v_short; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13169));
 }
 
 __v_option_u32 types__TypeChecker__sum_variant_type_for_pattern(types__TypeChecker* tc, u32 sum_name_id, u32 variant_name_id) {
@@ -580124,7 +580293,7 @@ map types__TypeChecker__supplied_fields_for_embeds(types__TypeChecker* tc, flat_
 		string name = *(string*)((	supplied).data->key_values.keys + __mi_0 * (	supplied).data->key_values.key_bytes);
 		name = string__clone(name);
 		bool is_supplied = *(bool*)((	supplied).data->key_values.values + __mi_0 * (	supplied).data->key_values.value_bytes);
-		int cond__vmsvc13168; cond__vmsvc13168 = !!(is_supplied); if (cond__vmsvc13168) { string __map_key_5__vmsvc13167 = name; cond__vmsvc13168 = !!((!map__exists(&embed_fields, &__map_key_5__vmsvc13167))); } if (cond__vmsvc13168) {
+		int cond__vmsvc13171; cond__vmsvc13171 = !!(is_supplied); if (cond__vmsvc13171) { string __map_key_5__vmsvc13170 = name; cond__vmsvc13171 = !!((!map__exists(&embed_fields, &__map_key_5__vmsvc13170))); } if (cond__vmsvc13171) {
 			string __map_key_6 = name;
 			bool __map_val_7 = true;
 			map__set(&promoted, &__map_key_6, &__map_val_7);
@@ -580339,7 +580508,7 @@ __v_option_types__Type types__TypeChecker__thread_wait_return_type(types__TypeCh
 	types__Type clean = types__unwrap_pointer(&(*t));
 	if ((clean).typ == 19) {
 		u32 thread_id = types__trimmed_source_type_id(types__Struct__source_type_id(clean.types__Struct));
-		int cond__vmsvc13170; cond__vmsvc13170 = !!((thread_id == types__checker_source_thread)); if (!cond__vmsvc13170) { int __in_lhs_0__vmsvc13169 = flat__source_type_query(thread_id); cond__vmsvc13170 = !!(((__in_lhs_0__vmsvc13169 & 524288) != 0)); } if (cond__vmsvc13170) {
+		int cond__vmsvc13173; cond__vmsvc13173 = !!((thread_id == types__checker_source_thread)); if (!cond__vmsvc13173) { int __in_lhs_0__vmsvc13172 = flat__source_type_query(thread_id); cond__vmsvc13173 = !!(((__in_lhs_0__vmsvc13172 & 524288) != 0)); } if (cond__vmsvc13173) {
 			return (__v_option_types__Type){.ok = true, .value = types__builtin_void_type};
 		}
 		int __in_lhs_1 = flat__source_type_shape(thread_id);
@@ -580415,7 +580584,7 @@ bool types__TypeChecker__top_level_file_reads_ident(types__TypeChecker* tc, flat
 		{
 			__v_int i = 0;
 			for (; i < current->children_count; i++) {
-				__v_int _t2__vmsvc13171 = (__v_int)(i); __v_int _t3__vmsvc13172 = (__v_int)(2); if (_t3__vmsvc13172 == 0) v_panic(_S("modulo by zero")); if (((((__v_int)(_t2__vmsvc13171 % _t3__vmsvc13172))) == 0) && (current->kind == flat__NodeKind__decl_assign)) {
+				__v_int _t2__vmsvc13174 = (__v_int)(i); __v_int _t3__vmsvc13175 = (__v_int)(2); if (_t3__vmsvc13175 == 0) v_panic(_S("modulo by zero")); if (((((__v_int)(_t2__vmsvc13174 % _t3__vmsvc13175))) == 0) && (current->kind == flat__NodeKind__decl_assign)) {
 					continue;
 				}
 				if ((i == 0) && (current->kind == flat__NodeKind__assign)) {
@@ -580629,7 +580798,7 @@ bool types__TypeChecker__translated_array_element_types_match(types__TypeChecker
 	if (((element)->typ == 15) && ((pointee)->typ == 15)) {
 		return types__TypeChecker__translated_array_element_types_match(tc, element->types__Pointer.base_type, pointee->types__Pointer.base_type);
 	}
-	int cond__vmsvc13176; cond__vmsvc13176 = !!(types__semantic_types_equal(element, pointee)); if (!cond__vmsvc13176) { u32 __in_lhs_0__vmsvc13173 = types__Type__source_type_id(element); int cond__vmsvc13175; cond__vmsvc13175 = !!(((__in_lhs_0__vmsvc13173 == flat__source_type_char) || (__in_lhs_0__vmsvc13173 == flat__source_type_i8) || (__in_lhs_0__vmsvc13173 == flat__source_type_u8))); if (cond__vmsvc13175) { u32 __in_lhs_1__vmsvc13174 = types__Type__source_type_id(pointee); cond__vmsvc13175 = !!(((__in_lhs_1__vmsvc13174 == flat__source_type_char) || (__in_lhs_1__vmsvc13174 == flat__source_type_i8) || (__in_lhs_1__vmsvc13174 == flat__source_type_u8))); } cond__vmsvc13176 = !!(((cond__vmsvc13175))); } return cond__vmsvc13176;
+	int cond__vmsvc13179; cond__vmsvc13179 = !!(types__semantic_types_equal(element, pointee)); if (!cond__vmsvc13179) { u32 __in_lhs_0__vmsvc13176 = types__Type__source_type_id(element); int cond__vmsvc13178; cond__vmsvc13178 = !!(((__in_lhs_0__vmsvc13176 == flat__source_type_char) || (__in_lhs_0__vmsvc13176 == flat__source_type_i8) || (__in_lhs_0__vmsvc13176 == flat__source_type_u8))); if (cond__vmsvc13178) { u32 __in_lhs_1__vmsvc13177 = types__Type__source_type_id(pointee); cond__vmsvc13178 = !!(((__in_lhs_1__vmsvc13177 == flat__source_type_char) || (__in_lhs_1__vmsvc13177 == flat__source_type_i8) || (__in_lhs_1__vmsvc13177 == flat__source_type_u8))); } cond__vmsvc13179 = !!(((cond__vmsvc13178))); } return cond__vmsvc13179;
 }
 
 bool types__TypeChecker__translated_c_string_fixed_array_compatible(types__TypeChecker* tc, i32 id, types__Type* expected) {
@@ -580768,10 +580937,10 @@ __v_option_u32 types__TypeChecker__translated_named_cast_call_name_id(types__Typ
 	}
 	u32 qualified_id = types__TypeChecker__qualify_type_name(tc, flat__Node__source_value_id(*callee));
 	string __map_key_0 = callee->value;
-	int cond__vmsvc13178; cond__vmsvc13178 = !!(map__exists(&tc->fn_ret_types, &__map_key_0)); if (!cond__vmsvc13178) { string __map_key_1__vmsvc13177 = flat__source_type_name(qualified_id); cond__vmsvc13178 = !!((map__exists(&tc->fn_ret_types, &__map_key_1__vmsvc13177))); } if (cond__vmsvc13178) {
+	int cond__vmsvc13181; cond__vmsvc13181 = !!(map__exists(&tc->fn_ret_types, &__map_key_0)); if (!cond__vmsvc13181) { string __map_key_1__vmsvc13180 = flat__source_type_name(qualified_id); cond__vmsvc13181 = !!((map__exists(&tc->fn_ret_types, &__map_key_1__vmsvc13180))); } if (cond__vmsvc13181) {
 		return (__v_option_u32){.ok = false};
 	}
-	int cond__vmsvc13180; cond__vmsvc13180 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, qualified_id)); if (!cond__vmsvc13180) { u32 __map_key_2__vmsvc13179 = qualified_id; cond__vmsvc13180 = !!((map__exists(&tc->structs, &__map_key_2__vmsvc13179))); } int cond__vmsvc13182; cond__vmsvc13182 = !!(cond__vmsvc13180); if (!cond__vmsvc13182) { u32 __map_key_3__vmsvc13181 = qualified_id; cond__vmsvc13182 = !!((map__exists(&tc->enum_names, &__map_key_3__vmsvc13181))); } if (cond__vmsvc13182) {
+	int cond__vmsvc13183; cond__vmsvc13183 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, qualified_id)); if (!cond__vmsvc13183) { u32 __map_key_2__vmsvc13182 = qualified_id; cond__vmsvc13183 = !!((map__exists(&tc->structs, &__map_key_2__vmsvc13182))); } int cond__vmsvc13185; cond__vmsvc13185 = !!(cond__vmsvc13183); if (!cond__vmsvc13185) { u32 __map_key_3__vmsvc13184 = qualified_id; cond__vmsvc13185 = !!((map__exists(&tc->enum_names, &__map_key_3__vmsvc13184))); } if (cond__vmsvc13185) {
 		return (__v_option_u32){.ok = true, .value = qualified_id};
 	}
 	return (__v_option_u32){.ok = false};
@@ -580819,7 +580988,7 @@ types__Type types__TypeChecker__translated_promoted_numeric_type(types__TypeChec
 			return *backing;
 		}
 	}
-	int cond__vmsvc13184; cond__vmsvc13184 = !!(((clean)->typ == 5)); if (!cond__vmsvc13184) { types__Type __in_lhs_0__vmsvc13183 = *clean; cond__vmsvc13184 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_0__vmsvc13183}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } if (cond__vmsvc13184) {
+	int cond__vmsvc13187; cond__vmsvc13187 = !!(((clean)->typ == 5)); if (!cond__vmsvc13187) { types__Type __in_lhs_0__vmsvc13186 = *clean; cond__vmsvc13187 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_0__vmsvc13186}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } if (cond__vmsvc13187) {
 		return (types__Type){.typ = 3, .types__Primitive = types__int_};
 	}
 	if (((clean)->typ == 3) && ((clean->types__Primitive.props & 4) != 0) && (clean->types__Primitive.size > 0) && (clean->types__Primitive.size < 32)) {
@@ -581174,7 +581343,7 @@ bool types__TypeChecker__type_compatible_unequal(types__TypeChecker* tc, types__
 		return true;
 	}
 	int __in_lhs_0 = flat__source_type_shape(actual_name_comparison_type_id);
-	int cond__vmsvc13186; cond__vmsvc13186 = !!(((__in_lhs_0 & 1) != 0)); if (cond__vmsvc13186) { int __in_lhs_1__vmsvc13185 = flat__source_type_shape(expected_name_comparison_type_id); cond__vmsvc13186 = !!(((__in_lhs_1__vmsvc13185 & 1) != 0)); } if (cond__vmsvc13186) {
+	int cond__vmsvc13189; cond__vmsvc13189 = !!(((__in_lhs_0 & 1) != 0)); if (cond__vmsvc13189) { int __in_lhs_1__vmsvc13188 = flat__source_type_shape(expected_name_comparison_type_id); cond__vmsvc13189 = !!(((__in_lhs_1__vmsvc13188 & 1) != 0)); } if (cond__vmsvc13189) {
 		flat__SourceTypeSyntax* actual_syntax = flat__source_type_syntax(actual_name_comparison_type_id);
 		flat__SourceTypeSyntax* expected_syntax = flat__source_type_syntax(expected_name_comparison_type_id);
 		if ((flat__SourceTypeSyntax__unqualified(actual_syntax) == flat__SourceTypeSyntax__unqualified(expected_syntax)) && (flat__SourceTypeSyntax__qualified_modifiers(actual_syntax) == flat__SourceTypeSyntax__qualified_modifiers(expected_syntax))) {
@@ -581233,7 +581402,7 @@ bool types__TypeChecker__type_compatible_unequal(types__TypeChecker* tc, types__
 		return types__TypeChecker__fn_value_signature_compatible(tc, actual_raw, expected_raw);
 	}
 	int __in_lhs_8 = flat__source_type_shape(actual_name_comparison_type_id);
-	int cond__vmsvc13188; cond__vmsvc13188 = !!(((__in_lhs_8 & 2) != 0)); if (!cond__vmsvc13188) { int __in_lhs_9__vmsvc13187 = flat__source_type_shape(expected_name_comparison_type_id); cond__vmsvc13188 = !!(((__in_lhs_9__vmsvc13187 & 2) != 0)); } if ((cond__vmsvc13188) && types__TypeChecker__generic_type_name_matches(tc, actual_name_comparison_type_id, expected_name_comparison_type_id)) {
+	int cond__vmsvc13191; cond__vmsvc13191 = !!(((__in_lhs_8 & 2) != 0)); if (!cond__vmsvc13191) { int __in_lhs_9__vmsvc13190 = flat__source_type_shape(expected_name_comparison_type_id); cond__vmsvc13191 = !!(((__in_lhs_9__vmsvc13190 & 2) != 0)); } if ((cond__vmsvc13191) && types__TypeChecker__generic_type_name_matches(tc, actual_name_comparison_type_id, expected_name_comparison_type_id)) {
 		return true;
 	}
 	if ((types__TypeChecker__sum_variant_type_for_pattern(tc, expected_name_comparison_type_id, actual_name_comparison_type_id)).ok) {
@@ -581703,14 +581872,14 @@ token__Pos types__TypeChecker__type_diagnostic_pos(types__TypeChecker* tc, i32 n
 		string __arr_val_12 = type_text;
 		array_push(&candidates, &__arr_val_12);
 	}
-	int cond__vmsvc13190; cond__vmsvc13190 = !!(!string__eq(name, _str_34)); if (cond__vmsvc13190) { bool __contains_13__vmsvc13189 = false; {
+	int cond__vmsvc13193; cond__vmsvc13193 = !!(!string__eq(name, _str_34)); if (cond__vmsvc13193) { bool __contains_13__vmsvc13192 = false; {
 		__v_int __contains_idx_14 = 0;
 		for (; __contains_idx_14 < candidates.len; __contains_idx_14++) {
 			if (string__eq(*(string*)(array_get(candidates, __contains_idx_14)), name)) {
-				__contains_13__vmsvc13189 = true;
+				__contains_13__vmsvc13192 = true;
 			}
 		}
-	} cond__vmsvc13190 = !!((!__contains_13__vmsvc13189)); } if (cond__vmsvc13190) {
+	} cond__vmsvc13193 = !!((!__contains_13__vmsvc13192)); } if (cond__vmsvc13193) {
 		string __arr_val_15 = name;
 		array_push(&candidates, &__arr_val_15);
 	}
@@ -581959,7 +582128,7 @@ __v_option_types__Type types__TypeChecker__type_from_typeof_type_id(types__TypeC
 		i32 expression_id = (i32)(flat__SourceTypeSyntax__expr_id(inner));
 		if (((__v_int)(expression_id) >= 0) && ((__v_int)(expression_id) < tc->a->nodes.len)) {
 			u32 witness_id = ((*(flat__Node*)array_get(tc->a->nodes, (__v_int)(expression_id)))).typ;
-			int cond__vmsvc13192; cond__vmsvc13192 = !!((witness_id != 0)); if (cond__vmsvc13192) { int __in_lhs_0__vmsvc13191 = flat__source_type_query(witness_id); cond__vmsvc13192 = !!((!((__in_lhs_0__vmsvc13191 & 16777216) != 0))); } if (cond__vmsvc13192 && !((witness_id == types__qualify_source_type_array) || (witness_id == flat__source_type_unknown) || (witness_id == flat__source_type_void))) {
+			int cond__vmsvc13195; cond__vmsvc13195 = !!((witness_id != 0)); if (cond__vmsvc13195) { int __in_lhs_0__vmsvc13194 = flat__source_type_query(witness_id); cond__vmsvc13195 = !!((!((__in_lhs_0__vmsvc13194 & 16777216) != 0))); } if (cond__vmsvc13195 && !((witness_id == types__qualify_source_type_array) || (witness_id == flat__source_type_unknown) || (witness_id == flat__source_type_void))) {
 				return (__v_option_types__Type){.ok = true, .value = types__TypeChecker__parse_resolution_type(tc, witness_id)};
 			}
 			__v_option_types__Type __or_opt_1 = types__TypeChecker__expr_type(tc, expression_id);
@@ -581970,7 +582139,7 @@ __v_option_types__Type types__TypeChecker__type_from_typeof_type_id(types__TypeC
 				__or_val_2 = types__TypeChecker__resolve_type(tc, expression_id);
 			}
 			types__Type value = __or_val_2;
-			int cond__vmsvc13194; cond__vmsvc13194 = !!(((value).typ == 1) || ((value).typ == 2) || types__type_contains_unknown(&value)); if (!cond__vmsvc13194) { int __in_lhs_3__vmsvc13193 = flat__source_type_query(types__Type__source_type_id(&value)); cond__vmsvc13194 = !!(((__in_lhs_3__vmsvc13193 & 16777216) != 0)); } if (cond__vmsvc13194) {
+			int cond__vmsvc13197; cond__vmsvc13197 = !!(((value).typ == 1) || ((value).typ == 2) || types__type_contains_unknown(&value)); if (!cond__vmsvc13197) { int __in_lhs_3__vmsvc13196 = flat__source_type_query(types__Type__source_type_id(&value)); cond__vmsvc13197 = !!(((__in_lhs_3__vmsvc13196 & 16777216) != 0)); } if (cond__vmsvc13197) {
 				return (__v_option_types__Type){.ok = false};
 			}
 			return (__v_option_types__Type){.ok = true, .value = value};
@@ -582048,7 +582217,7 @@ bool types__TypeChecker__type_has_implicit_str_method(types__TypeChecker* tc, u3
 			}
 			u32 base_name = flat__SourceTypeSyntax__generic_base(flat__source_type_syntax(candidate_id));
 			u32 __map_key_3 = candidate_id;
-			int cond__vmsvc13196; cond__vmsvc13196 = !!(map__exists(&tc->structs, &__map_key_3)); if (!cond__vmsvc13196) { u32 __map_key_4__vmsvc13195 = base_name; cond__vmsvc13196 = !!((map__exists(&tc->structs, &__map_key_4__vmsvc13195))); } int cond__vmsvc13198; cond__vmsvc13198 = !!(cond__vmsvc13196); if (!cond__vmsvc13198) { u32 __map_key_5__vmsvc13197 = candidate_id; cond__vmsvc13198 = !!((map__exists(&tc->enum_names, &__map_key_5__vmsvc13197))); } int cond__vmsvc13200; cond__vmsvc13200 = !!(cond__vmsvc13198); if (!cond__vmsvc13200) { u32 __map_key_6__vmsvc13199 = candidate_id; cond__vmsvc13200 = !!((map__exists(&tc->flag_enums, &__map_key_6__vmsvc13199))); } int cond__vmsvc13202; cond__vmsvc13202 = !!(cond__vmsvc13200); if (!cond__vmsvc13202) { u32 __map_key_7__vmsvc13201 = candidate_id; cond__vmsvc13202 = !!((map__exists(&tc->interface_names, &__map_key_7__vmsvc13201))); } if (cond__vmsvc13202) {
+			int cond__vmsvc13199; cond__vmsvc13199 = !!(map__exists(&tc->structs, &__map_key_3)); if (!cond__vmsvc13199) { u32 __map_key_4__vmsvc13198 = base_name; cond__vmsvc13199 = !!((map__exists(&tc->structs, &__map_key_4__vmsvc13198))); } int cond__vmsvc13201; cond__vmsvc13201 = !!(cond__vmsvc13199); if (!cond__vmsvc13201) { u32 __map_key_5__vmsvc13200 = candidate_id; cond__vmsvc13201 = !!((map__exists(&tc->enum_names, &__map_key_5__vmsvc13200))); } int cond__vmsvc13203; cond__vmsvc13203 = !!(cond__vmsvc13201); if (!cond__vmsvc13203) { u32 __map_key_6__vmsvc13202 = candidate_id; cond__vmsvc13203 = !!((map__exists(&tc->flag_enums, &__map_key_6__vmsvc13202))); } int cond__vmsvc13205; cond__vmsvc13205 = !!(cond__vmsvc13203); if (!cond__vmsvc13205) { u32 __map_key_7__vmsvc13204 = candidate_id; cond__vmsvc13205 = !!((map__exists(&tc->interface_names, &__map_key_7__vmsvc13204))); } if (cond__vmsvc13205) {
 				return true;
 			}
 			if (types__is_builtin_type_name_id(candidate_id)) {
@@ -582081,7 +582250,7 @@ bool types__TypeChecker__type_has_infix_operator_method(types__TypeChecker* tc, 
 	}
 	string op_name = __or_val_1;
 	types__Type underlying = types__unalias_and_unwrap_pointer_type(typ);
-	int cond__vmsvc13204; cond__vmsvc13204 = !!(((underlying).typ == 19)); if (cond__vmsvc13204) { int __in_lhs_2__vmsvc13203 = flat__source_type_query(types__Struct__source_type_id(underlying.types__Struct)); cond__vmsvc13204 = !!(((__in_lhs_2__vmsvc13203 & 8192) != 0)); } if (cond__vmsvc13204) {
+	int cond__vmsvc13207; cond__vmsvc13207 = !!(((underlying).typ == 19)); if (cond__vmsvc13207) { int __in_lhs_2__vmsvc13206 = flat__source_type_query(types__Struct__source_type_id(underlying.types__Struct)); cond__vmsvc13207 = !!(((__in_lhs_2__vmsvc13206 & 8192) != 0)); } if (cond__vmsvc13207) {
 		return (types__TypeChecker__c_struct_infix_operator_call_info(tc, op, &(types__Type[]){*typ}[0])).ok;
 	}
 	u32 type_name = types__resolve_type_name_for_method(&((types__Type[]){types__unwrap_pointer(typ)})[0]);
@@ -582092,7 +582261,7 @@ bool types__TypeChecker__type_has_infix_operator_method(types__TypeChecker* tc, 
 	if (__if_guard_3.ok) {
 		return true;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13205[3]; __v3_internal_symbol_join_0__vmsvc13205[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_0__vmsvc13205[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13205[2] = op_name; string method_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13205));
+	string __v3_internal_symbol_join_0__vmsvc13208[3]; __v3_internal_symbol_join_0__vmsvc13208[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_0__vmsvc13208[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13208[2] = op_name; string method_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13208));
 	string __map_key_4 = method_name;
 	return map__exists(&tc->fn_ret_types, &__map_key_4);
 }
@@ -582115,15 +582284,15 @@ bool types__TypeChecker__type_has_member(types__TypeChecker* tc, types__Type* ty
 		if (__contains_2) {
 			return true;
 		}
-		int cond__vmsvc13208; cond__vmsvc13208 = !!(!is_call); if (cond__vmsvc13208) { Array __any_source_4__vmsvc13206 = types__TypeChecker__interface_field_list(tc, iface_name_id); bool __any_5__vmsvc13207 = false; {
+		int cond__vmsvc13211; cond__vmsvc13211 = !!(!is_call); if (cond__vmsvc13211) { Array __any_source_4__vmsvc13209 = types__TypeChecker__interface_field_list(tc, iface_name_id); bool __any_5__vmsvc13210 = false; {
 			__v_int __any_idx_6 = 0;
-			for (; __any_idx_6 < __any_source_4__vmsvc13206.len; __any_idx_6++) {
-				types__StructField __any_it_7 = *(types__StructField*)(array_get(__any_source_4__vmsvc13206, __any_idx_6));
+			for (; __any_idx_6 < __any_source_4__vmsvc13209.len; __any_idx_6++) {
+				types__StructField __any_it_7 = *(types__StructField*)(array_get(__any_source_4__vmsvc13209, __any_idx_6));
 				if (string__eq(__any_it_7.name, member)) {
-					__any_5__vmsvc13207 = true;
+					__any_5__vmsvc13210 = true;
 				}
 			}
-		} cond__vmsvc13208 = !!((__any_5__vmsvc13207)); } return cond__vmsvc13208;
+		} cond__vmsvc13211 = !!((__any_5__vmsvc13210)); } return cond__vmsvc13211;
 	}
 	u32 name_id = types__method_type_name(&((types__Type[]){types__unwrap_pointer(&(*typ))})[0]);
 	if ((name_id != 0) && (types__TypeChecker__concrete_method_signature_key(tc, name_id, member)).ok) {
@@ -582158,19 +582327,19 @@ bool types__TypeChecker__type_has_member(types__TypeChecker* tc, types__Type* ty
 	if (((clean).typ == 13) && (string__eq(member, _str_4002) || string__eq(member, _str_4005) || string__eq(member, _str_7403))) {
 		return true;
 	}
-	int cond__vmsvc13214; cond__vmsvc13214 = !!((builtin_id != 0)); if (cond__vmsvc13214) { u32 __map_key_11__vmsvc13209 = builtin_id; void* __map_ptr_12__vmsvc13210 = map__get_check(&tc->structs, &__map_key_11__vmsvc13209); Array __map_val_13__vmsvc13211 = {0}; if (__map_ptr_12__vmsvc13210 != NULL) {
-		__map_val_13__vmsvc13211 = *(Array*)(__map_ptr_12__vmsvc13210);
+	int cond__vmsvc13217; cond__vmsvc13217 = !!((builtin_id != 0)); if (cond__vmsvc13217) { u32 __map_key_11__vmsvc13212 = builtin_id; void* __map_ptr_12__vmsvc13213 = map__get_check(&tc->structs, &__map_key_11__vmsvc13212); Array __map_val_13__vmsvc13214 = {0}; if (__map_ptr_12__vmsvc13213 != NULL) {
+		__map_val_13__vmsvc13214 = *(Array*)(__map_ptr_12__vmsvc13213);
 	} else {
-		__map_val_13__vmsvc13211 = array_new(		sizeof(types__StructField), 0, 0);
-	} Array __any_source_14__vmsvc13212 = (__map_val_13__vmsvc13211); bool __any_15__vmsvc13213 = false; {
+		__map_val_13__vmsvc13214 = array_new(		sizeof(types__StructField), 0, 0);
+	} Array __any_source_14__vmsvc13215 = (__map_val_13__vmsvc13214); bool __any_15__vmsvc13216 = false; {
 		__v_int __any_idx_16 = 0;
-		for (; __any_idx_16 < __any_source_14__vmsvc13212.len; __any_idx_16++) {
-			types__StructField __any_it_17 = *(types__StructField*)(array_get(__any_source_14__vmsvc13212, __any_idx_16));
+		for (; __any_idx_16 < __any_source_14__vmsvc13215.len; __any_idx_16++) {
+			types__StructField __any_it_17 = *(types__StructField*)(array_get(__any_source_14__vmsvc13215, __any_idx_16));
 			if (string__eq(__any_it_17.name, member)) {
-				__any_15__vmsvc13213 = true;
+				__any_15__vmsvc13216 = true;
 			}
 		}
-	} cond__vmsvc13214 = !!((__any_15__vmsvc13213)); } if (cond__vmsvc13214) {
+	} cond__vmsvc13217 = !!((__any_15__vmsvc13216)); } if (cond__vmsvc13217) {
 		return true;
 	}
 	return (name_id != 0) && (types__TypeChecker__struct_field_type(tc, name_id, member)).ok;
@@ -582493,17 +582662,17 @@ bool types__TypeChecker__type_name_known(types__TypeChecker* tc, u32 typ_id) {
 		__v_option_u32 __if_guard_2 = types__TypeChecker__imported_type_short_name(tc, typ_id);
 		if (__if_guard_2.ok) {
 			u32 short_source_id = __if_guard_2.value;
-			int cond__vmsvc13216; cond__vmsvc13216 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, short_source_id)); if (!cond__vmsvc13216) { u32 __map_key_3__vmsvc13215 = short_source_id; cond__vmsvc13216 = !!((map__exists(&tc->structs, &__map_key_3__vmsvc13215))); } int cond__vmsvc13218; cond__vmsvc13218 = !!(cond__vmsvc13216); if (!cond__vmsvc13218) { u32 __map_key_4__vmsvc13217 = short_source_id; cond__vmsvc13218 = !!((map__exists(&tc->interface_names, &__map_key_4__vmsvc13217))); } int cond__vmsvc13220; cond__vmsvc13220 = !!(cond__vmsvc13218); if (!cond__vmsvc13220) { u32 __map_key_5__vmsvc13219 = short_source_id; cond__vmsvc13220 = !!((map__exists(&tc->enum_names, &__map_key_5__vmsvc13219))); } if (cond__vmsvc13220 || flat__SourceTypeListBindings__contains(&tc->sum_types, short_source_id)) {
+			int cond__vmsvc13219; cond__vmsvc13219 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, short_source_id)); if (!cond__vmsvc13219) { u32 __map_key_3__vmsvc13218 = short_source_id; cond__vmsvc13219 = !!((map__exists(&tc->structs, &__map_key_3__vmsvc13218))); } int cond__vmsvc13221; cond__vmsvc13221 = !!(cond__vmsvc13219); if (!cond__vmsvc13221) { u32 __map_key_4__vmsvc13220 = short_source_id; cond__vmsvc13221 = !!((map__exists(&tc->interface_names, &__map_key_4__vmsvc13220))); } int cond__vmsvc13223; cond__vmsvc13223 = !!(cond__vmsvc13221); if (!cond__vmsvc13223) { u32 __map_key_5__vmsvc13222 = short_source_id; cond__vmsvc13223 = !!((map__exists(&tc->enum_names, &__map_key_5__vmsvc13222))); } if (cond__vmsvc13223 || flat__SourceTypeListBindings__contains(&tc->sum_types, short_source_id)) {
 				return true;
 			}
 		}
 	}
-	int cond__vmsvc13222; cond__vmsvc13222 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, qtyp_id)); if (!cond__vmsvc13222) { u32 __map_key_6__vmsvc13221 = qtyp_id; cond__vmsvc13222 = !!((map__exists(&tc->structs, &__map_key_6__vmsvc13221))); } int cond__vmsvc13224; cond__vmsvc13224 = !!(cond__vmsvc13222); if (!cond__vmsvc13224) { u32 __map_key_7__vmsvc13223 = qtyp_id; cond__vmsvc13224 = !!((map__exists(&tc->interface_names, &__map_key_7__vmsvc13223))); } int cond__vmsvc13226; cond__vmsvc13226 = !!(cond__vmsvc13224); if (!cond__vmsvc13226) { u32 __map_key_8__vmsvc13225 = qtyp_id; cond__vmsvc13226 = !!((map__exists(&tc->enum_names, &__map_key_8__vmsvc13225))); } return cond__vmsvc13226 || flat__SourceTypeListBindings__contains(&tc->sum_types, qtyp_id);
+	int cond__vmsvc13225; cond__vmsvc13225 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, qtyp_id)); if (!cond__vmsvc13225) { u32 __map_key_6__vmsvc13224 = qtyp_id; cond__vmsvc13225 = !!((map__exists(&tc->structs, &__map_key_6__vmsvc13224))); } int cond__vmsvc13227; cond__vmsvc13227 = !!(cond__vmsvc13225); if (!cond__vmsvc13227) { u32 __map_key_7__vmsvc13226 = qtyp_id; cond__vmsvc13227 = !!((map__exists(&tc->interface_names, &__map_key_7__vmsvc13226))); } int cond__vmsvc13229; cond__vmsvc13229 = !!(cond__vmsvc13227); if (!cond__vmsvc13229) { u32 __map_key_8__vmsvc13228 = qtyp_id; cond__vmsvc13229 = !!((map__exists(&tc->enum_names, &__map_key_8__vmsvc13228))); } return cond__vmsvc13229 || flat__SourceTypeListBindings__contains(&tc->sum_types, qtyp_id);
 }
 
 bool types__TypeChecker__type_name_known_in_current_module(types__TypeChecker* tc, u32 typ_id) {
 	u32 qtyp_id = types__TypeChecker__qualify_type_name(tc, typ_id);
-	int cond__vmsvc13228; cond__vmsvc13228 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, qtyp_id)); if (!cond__vmsvc13228) { u32 __map_key_0__vmsvc13227 = qtyp_id; cond__vmsvc13228 = !!((map__exists(&tc->structs, &__map_key_0__vmsvc13227))); } int cond__vmsvc13230; cond__vmsvc13230 = !!(cond__vmsvc13228); if (!cond__vmsvc13230) { u32 __map_key_1__vmsvc13229 = qtyp_id; cond__vmsvc13230 = !!((map__exists(&tc->interface_names, &__map_key_1__vmsvc13229))); } int cond__vmsvc13232; cond__vmsvc13232 = !!(cond__vmsvc13230); if (!cond__vmsvc13232) { u32 __map_key_2__vmsvc13231 = qtyp_id; cond__vmsvc13232 = !!((map__exists(&tc->enum_names, &__map_key_2__vmsvc13231))); } return cond__vmsvc13232 || flat__SourceTypeListBindings__contains(&tc->sum_types, qtyp_id);
+	int cond__vmsvc13231; cond__vmsvc13231 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, qtyp_id)); if (!cond__vmsvc13231) { u32 __map_key_0__vmsvc13230 = qtyp_id; cond__vmsvc13231 = !!((map__exists(&tc->structs, &__map_key_0__vmsvc13230))); } int cond__vmsvc13233; cond__vmsvc13233 = !!(cond__vmsvc13231); if (!cond__vmsvc13233) { u32 __map_key_1__vmsvc13232 = qtyp_id; cond__vmsvc13233 = !!((map__exists(&tc->interface_names, &__map_key_1__vmsvc13232))); } int cond__vmsvc13235; cond__vmsvc13235 = !!(cond__vmsvc13233); if (!cond__vmsvc13235) { u32 __map_key_2__vmsvc13234 = qtyp_id; cond__vmsvc13235 = !!((map__exists(&tc->enum_names, &__map_key_2__vmsvc13234))); } return cond__vmsvc13235 || flat__SourceTypeListBindings__contains(&tc->sum_types, qtyp_id);
 }
 
 bool types__TypeChecker__type_name_known_in_scope_id(types__TypeChecker* tc, u32 name_id, string file, string mod_name) {
@@ -582557,7 +582726,7 @@ bool types__TypeChecker__type_name_resolves_to_sum_type(types__TypeChecker* tc, 
 			__or_val_6 = (u32)(0);
 		}
 		u32 next_id = __or_val_6;
-		int cond__vmsvc13234; cond__vmsvc13234 = !!((next_id == 0)); if (cond__vmsvc13234) { int __in_lhs_7__vmsvc13233 = flat__source_type_shape(current_id); cond__vmsvc13234 = !!((!((__in_lhs_7__vmsvc13233 & 1) != 0))); } if (cond__vmsvc13234) {
+		int cond__vmsvc13237; cond__vmsvc13237 = !!((next_id == 0)); if (cond__vmsvc13237) { int __in_lhs_7__vmsvc13236 = flat__source_type_shape(current_id); cond__vmsvc13237 = !!((!((__in_lhs_7__vmsvc13236 & 1) != 0))); } if (cond__vmsvc13237) {
 			next_id = flat__SourceTypeBindings__value_id(&tc->type_aliases, types__TypeChecker__qualify_type_name(tc, current_id));
 		}
 		current_id = types__trimmed_source_type_id(next_id);
@@ -582733,7 +582902,7 @@ map types__TypeChecker__type_param_dependent_names(types__TypeChecker* tc, flat_
 							__v_int i = 0;
 							for (; i < node->children_count; i++) {
 								flat__Node* param = flat__FlatAst__child_node(tc->a, node, i);
-								int cond__vmsvc13236; cond__vmsvc13236 = !!((param->kind == flat__NodeKind__param) && (param->value.len > 0)); if (cond__vmsvc13236) { string __map_key_6__vmsvc13235 = param->value; cond__vmsvc13236 = !!((!map__exists(&names, &__map_key_6__vmsvc13235))); } if (cond__vmsvc13236 && types__type_id_names_any(param->typ, params)) {
+								int cond__vmsvc13239; cond__vmsvc13239 = !!((param->kind == flat__NodeKind__param) && (param->value.len > 0)); if (cond__vmsvc13239) { string __map_key_6__vmsvc13238 = param->value; cond__vmsvc13239 = !!((!map__exists(&names, &__map_key_6__vmsvc13238))); } if (cond__vmsvc13239 && types__type_id_names_any(param->typ, params)) {
 									string __map_key_7 = param->value;
 									bool __map_val_8 = true;
 									map__set(&names, &__map_key_7, &__map_val_8);
@@ -582817,15 +582986,15 @@ __v_option_map types__TypeChecker__type_param_instance_texts(types__TypeChecker*
 				}
 			}
 		}
-		int cond__vmsvc13238; cond__vmsvc13238 = !!((options.len == 0)); if (!cond__vmsvc13238) { bool __any_14__vmsvc13237 = false; {
+		int cond__vmsvc13241; cond__vmsvc13241 = !!((options.len == 0)); if (!cond__vmsvc13241) { bool __any_14__vmsvc13240 = false; {
 			__v_int __any_idx_15 = 0;
 			for (; __any_idx_15 < options.len; __any_idx_15++) {
 				u32 __any_it_16 = *(u32*)(array_get(options, __any_idx_15));
 				if (__any_it_16 == 0) {
-					__any_14__vmsvc13237 = true;
+					__any_14__vmsvc13240 = true;
 				}
 			}
-		} cond__vmsvc13238 = !!((__any_14__vmsvc13237)); } if (cond__vmsvc13238) {
+		} cond__vmsvc13241 = !!((__any_14__vmsvc13240)); } if (cond__vmsvc13241) {
 			return (__v_option_map){.ok = false};
 		}
 		u32 __map_key_17 = name;
@@ -582853,7 +583022,7 @@ types__TypeParamScope types__TypeChecker__type_param_scope(types__TypeChecker* t
 			flat__Node* receiver = flat__FlatAst__child_node(tc->a, &node, 0);
 			u32 receiver_id = flat__SourceTypeSyntax__constraint_receiver_base(flat__source_type_syntax(receiver->typ));
 			flat__SourceTypeSyntax* receiver_syntax = flat__source_type_syntax(receiver_id);
-			int cond__vmsvc13240; cond__vmsvc13240 = !!((receiver->kind == flat__NodeKind__param)); if (cond__vmsvc13240) { int __in_lhs_5__vmsvc13239 = flat__source_type_shape(receiver_id); cond__vmsvc13240 = !!(((__in_lhs_5__vmsvc13239 & 2) != 0)); } if (cond__vmsvc13240 && flat__SourceTypeSyntax__closing_bracket(receiver_syntax)) {
+			int cond__vmsvc13243; cond__vmsvc13243 = !!((receiver->kind == flat__NodeKind__param)); if (cond__vmsvc13243) { int __in_lhs_5__vmsvc13242 = flat__source_type_shape(receiver_id); cond__vmsvc13243 = !!(((__in_lhs_5__vmsvc13242 & 2) != 0)); } if (cond__vmsvc13243 && flat__SourceTypeSyntax__closing_bracket(receiver_syntax)) {
 				Array __in_lhs_6 = flat__SourceTypeSyntax__receiver_raw_app_args(receiver_syntax);
 				{
 					__v_int __for_idx_7 = 0;
@@ -582920,7 +583089,7 @@ bool types__TypeChecker__type_supports_implicit_str(types__TypeChecker* tc, type
 }
 
 bool types__TypeChecker__type_symbol_known(types__TypeChecker* tc, u32 name_id) {
-	int cond__vmsvc13242; cond__vmsvc13242 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, name_id)); if (!cond__vmsvc13242) { u32 __map_key_0__vmsvc13241 = name_id; cond__vmsvc13242 = !!((map__exists(&tc->structs, &__map_key_0__vmsvc13241))); } int cond__vmsvc13244; cond__vmsvc13244 = !!(cond__vmsvc13242); if (!cond__vmsvc13244) { u32 __map_key_1__vmsvc13243 = name_id; cond__vmsvc13244 = !!((map__exists(&tc->interface_names, &__map_key_1__vmsvc13243))); } int cond__vmsvc13246; cond__vmsvc13246 = !!(cond__vmsvc13244); if (!cond__vmsvc13246) { u32 __map_key_2__vmsvc13245 = name_id; cond__vmsvc13246 = !!((map__exists(&tc->flag_enums, &__map_key_2__vmsvc13245))); } int cond__vmsvc13248; cond__vmsvc13248 = !!(cond__vmsvc13246); if (!cond__vmsvc13248) { u32 __map_key_3__vmsvc13247 = name_id; cond__vmsvc13248 = !!((map__exists(&tc->enum_names, &__map_key_3__vmsvc13247))); } return cond__vmsvc13248 || flat__SourceTypeListBindings__contains(&tc->sum_types, name_id);
+	int cond__vmsvc13245; cond__vmsvc13245 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, name_id)); if (!cond__vmsvc13245) { u32 __map_key_0__vmsvc13244 = name_id; cond__vmsvc13245 = !!((map__exists(&tc->structs, &__map_key_0__vmsvc13244))); } int cond__vmsvc13247; cond__vmsvc13247 = !!(cond__vmsvc13245); if (!cond__vmsvc13247) { u32 __map_key_1__vmsvc13246 = name_id; cond__vmsvc13247 = !!((map__exists(&tc->interface_names, &__map_key_1__vmsvc13246))); } int cond__vmsvc13249; cond__vmsvc13249 = !!(cond__vmsvc13247); if (!cond__vmsvc13249) { u32 __map_key_2__vmsvc13248 = name_id; cond__vmsvc13249 = !!((map__exists(&tc->flag_enums, &__map_key_2__vmsvc13248))); } int cond__vmsvc13251; cond__vmsvc13251 = !!(cond__vmsvc13249); if (!cond__vmsvc13251) { u32 __map_key_3__vmsvc13250 = name_id; cond__vmsvc13251 = !!((map__exists(&tc->enum_names, &__map_key_3__vmsvc13250))); } return cond__vmsvc13251 || flat__SourceTypeListBindings__contains(&tc->sum_types, name_id);
 }
 
 bool types__TypeChecker__type_symbol_spelling_known(types__TypeChecker* tc, string name) {
@@ -583006,15 +583175,15 @@ bool types__TypeChecker__type_text_has_generic_struct_placeholder_application(ty
 	u32 base_id = flat__SourceTypeSyntax__application_base(syntax);
 	u32 qualified_id = types__TypeChecker__qualify_type_name(tc, base_id);
 	u32 __map_key_1 = base_id;
-	int cond__vmsvc13250; cond__vmsvc13250 = !!(map__exists(&tc->struct_generic_params, &__map_key_1)); if (!cond__vmsvc13250) { u32 __map_key_2__vmsvc13249 = qualified_id; cond__vmsvc13250 = !!((map__exists(&tc->struct_generic_params, &__map_key_2__vmsvc13249))); } int cond__vmsvc13253; cond__vmsvc13253 = !!((cond__vmsvc13250)); if (cond__vmsvc13253) { Array __any_source_3__vmsvc13251 = flat__SourceTypeSyntax__application_args(syntax); bool __any_4__vmsvc13252 = false; {
+	int cond__vmsvc13253; cond__vmsvc13253 = !!(map__exists(&tc->struct_generic_params, &__map_key_1)); if (!cond__vmsvc13253) { u32 __map_key_2__vmsvc13252 = qualified_id; cond__vmsvc13253 = !!((map__exists(&tc->struct_generic_params, &__map_key_2__vmsvc13252))); } int cond__vmsvc13256; cond__vmsvc13256 = !!((cond__vmsvc13253)); if (cond__vmsvc13256) { Array __any_source_3__vmsvc13254 = flat__SourceTypeSyntax__application_args(syntax); bool __any_4__vmsvc13255 = false; {
 		__v_int __any_idx_5 = 0;
-		for (; __any_idx_5 < __any_source_3__vmsvc13251.len; __any_idx_5++) {
-			u32 __any_it_6 = *(u32*)(array_get(__any_source_3__vmsvc13251, __any_idx_5));
+		for (; __any_idx_5 < __any_source_3__vmsvc13254.len; __any_idx_5++) {
+			u32 __any_it_6 = *(u32*)(array_get(__any_source_3__vmsvc13254, __any_idx_5));
 			if (types__TypeChecker__type_text_has_generic_placeholder(tc, __any_it_6)) {
-				__any_4__vmsvc13252 = true;
+				__any_4__vmsvc13255 = true;
 			}
 		}
-	} cond__vmsvc13253 = !!((__any_4__vmsvc13252)); } if (cond__vmsvc13253) {
+	} cond__vmsvc13256 = !!((__any_4__vmsvc13255)); } if (cond__vmsvc13256) {
 		return true;
 	}
 	Array __in_lhs_7 = flat__SourceTypeSyntax__application_args(syntax);
@@ -583039,14 +583208,14 @@ bool types__TypeChecker__type_text_has_unbound_generic_placeholder_ids(types__Ty
 	flat__SourceTypeSyntax* syntax = flat__source_type_syntax(clean_id);
 	int shape = flat__source_type_shape(clean_id);
 	if (flat__SourceTypeSyntax__bare_generic(syntax)) {
-		int cond__vmsvc13255; cond__vmsvc13255 = !!(!types__TypeChecker__is_known_type_text(tc, clean_id)); if (cond__vmsvc13255) { bool __contains_1__vmsvc13254 = false; {
+		int cond__vmsvc13258; cond__vmsvc13258 = !!(!types__TypeChecker__is_known_type_text(tc, clean_id)); if (cond__vmsvc13258) { bool __contains_1__vmsvc13257 = false; {
 			__v_int __contains_idx_2 = 0;
 			for (; __contains_idx_2 < bound.len; __contains_idx_2++) {
 				if (*(u32*)(array_get(bound, __contains_idx_2)) == clean_id) {
-					__contains_1__vmsvc13254 = true;
+					__contains_1__vmsvc13257 = true;
 				}
 			}
-		} cond__vmsvc13255 = !!((!__contains_1__vmsvc13254)); } return cond__vmsvc13255;
+		} cond__vmsvc13258 = !!((!__contains_1__vmsvc13257)); } return cond__vmsvc13258;
 	}
 	if (((shape & 128) != 0) || ((shape & 65536) != 0) || ((shape & 64) != 0) || ((shape & 512) != 0) || ((shape & 2048) != 0)) {
 		return types__TypeChecker__type_text_has_unbound_generic_placeholder_ids(tc, flat__SourceTypeSyntax__raw_base(syntax), bound);
@@ -583069,14 +583238,14 @@ bool types__TypeChecker__type_text_has_unbound_generic_placeholder_ids(types__Ty
 			}
 		}
 	}
-	int cond__vmsvc13258; cond__vmsvc13258 = !!(((shape & 1) != 0) && types__source_type_is_bare_generic_param(flat__SourceTypeSyntax__unqualified(syntax)) && !types__TypeChecker__is_known_type_text(tc, clean_id)); if (cond__vmsvc13258) { u32 __contains_needle_5__vmsvc13256 = flat__SourceTypeSyntax__unqualified(syntax); bool __contains_6__vmsvc13257 = false; {
+	int cond__vmsvc13261; cond__vmsvc13261 = !!(((shape & 1) != 0) && types__source_type_is_bare_generic_param(flat__SourceTypeSyntax__unqualified(syntax)) && !types__TypeChecker__is_known_type_text(tc, clean_id)); if (cond__vmsvc13261) { u32 __contains_needle_5__vmsvc13259 = flat__SourceTypeSyntax__unqualified(syntax); bool __contains_6__vmsvc13260 = false; {
 		__v_int __contains_idx_7 = 0;
 		for (; __contains_idx_7 < bound.len; __contains_idx_7++) {
-			if (*(u32*)(array_get(bound, __contains_idx_7)) == __contains_needle_5__vmsvc13256) {
-				__contains_6__vmsvc13257 = true;
+			if (*(u32*)(array_get(bound, __contains_idx_7)) == __contains_needle_5__vmsvc13259) {
+				__contains_6__vmsvc13260 = true;
 			}
 		}
-	} cond__vmsvc13258 = !!((!__contains_6__vmsvc13257)); } return cond__vmsvc13258;
+	} cond__vmsvc13261 = !!((!__contains_6__vmsvc13260)); } return cond__vmsvc13261;
 }
 
 bool types__TypeChecker__type_text_implements_interface(types__TypeChecker* tc, u32 actual_id, u32 iface_id) {
@@ -583470,7 +583639,7 @@ __v_option_multi_return_flat__Node_string_string types__TypeChecker__unknown_imp
 		return (__v_option_multi_return_flat__Node_string_string){.ok = false};
 	}
 	string module_name = __or_val_1;
-	string __v3_internal_symbol_join_0__vmsvc13259[3]; __v3_internal_symbol_join_0__vmsvc13259[0] = module_name; __v3_internal_symbol_join_0__vmsvc13259[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13259[2] = callee->value; string full_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13259));
+	string __v3_internal_symbol_join_0__vmsvc13262[3]; __v3_internal_symbol_join_0__vmsvc13262[0] = module_name; __v3_internal_symbol_join_0__vmsvc13262[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13262[2] = callee->value; string full_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13262));
 	string __map_key_2 = full_name;
 	if (map__exists(&tc->fn_ret_types, &__map_key_2)) {
 		return (__v_option_multi_return_flat__Node_string_string){.ok = false};
@@ -583511,7 +583680,7 @@ bool types__TypeChecker__unknown_imported_enum_selector(types__TypeChecker* tc, 
 		__or_val_1 = module_node->value;
 	}
 	string module_name = __or_val_1;
-	string __v3_internal_symbol_join_0__vmsvc13260[3]; __v3_internal_symbol_join_0__vmsvc13260[0] = module_name; __v3_internal_symbol_join_0__vmsvc13260[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13260[2] = base->value; return !(types__TypeChecker__resolve_enum_name(tc, flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13260))))).ok;
+	string __v3_internal_symbol_join_0__vmsvc13263[3]; __v3_internal_symbol_join_0__vmsvc13263[0] = module_name; __v3_internal_symbol_join_0__vmsvc13263[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13263[2] = base->value; return !(types__TypeChecker__resolve_enum_name(tc, flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13263))))).ok;
 }
 
 __v_option_multi_return_flat__Node_types__Type_u32 types__TypeChecker__unknown_method_call_parts(types__TypeChecker* tc, flat__Node node) {
@@ -583536,7 +583705,7 @@ __v_option_multi_return_flat__Node_types__Type_u32 types__TypeChecker__unknown_m
 		return (__v_option_multi_return_flat__Node_types__Type_u32){.ok = false};
 	}
 	types__Type underlying = types__unalias_and_unwrap_pointer_type(&receiver);
-	int cond__vmsvc13262; cond__vmsvc13262 = !!(((underlying).typ == 19)); if (cond__vmsvc13262) { int __in_lhs_0__vmsvc13261 = flat__source_type_query(types__Struct__source_type_id(underlying.types__Struct)); cond__vmsvc13262 = !!(((__in_lhs_0__vmsvc13261 & 8192) != 0)); } if (cond__vmsvc13262) {
+	int cond__vmsvc13265; cond__vmsvc13265 = !!(((underlying).typ == 19)); if (cond__vmsvc13265) { int __in_lhs_0__vmsvc13264 = flat__source_type_query(types__Struct__source_type_id(underlying.types__Struct)); cond__vmsvc13265 = !!(((__in_lhs_0__vmsvc13264 & 8192) != 0)); } if (cond__vmsvc13265) {
 		multi_return_string_bool __multi_ret_1 = types__TypeChecker__lookup_c_struct_receiver_method(tc, &(types__Type[]){receiver}[0], callee->value);
 		string method_name = __multi_ret_1.arg0;
 		bool ambiguous = __multi_ret_1.arg1;
@@ -583607,7 +583776,7 @@ string types__TypeChecker__unknown_method_receiver_display(types__TypeChecker* t
 		__if_val_10 = types__generic_param_ids_join(params, _str_25);
 	}
 	string diagnostic_params = __if_val_10;
-	string __v3_internal_symbol_join_0__vmsvc13263[4]; __v3_internal_symbol_join_0__vmsvc13263[0] = flat__source_type_name(short_base_id); __v3_internal_symbol_join_0__vmsvc13263[1] = _str_176; __v3_internal_symbol_join_0__vmsvc13263[2] = diagnostic_params; __v3_internal_symbol_join_0__vmsvc13263[3] = _str_177; return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13263));
+	string __v3_internal_symbol_join_0__vmsvc13266[4]; __v3_internal_symbol_join_0__vmsvc13266[0] = flat__source_type_name(short_base_id); __v3_internal_symbol_join_0__vmsvc13266[1] = _str_176; __v3_internal_symbol_join_0__vmsvc13266[2] = diagnostic_params; __v3_internal_symbol_join_0__vmsvc13266[3] = _str_177; return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13266));
 }
 
 token__Pos types__TypeChecker__unknown_qualified_struct_init_pos(types__TypeChecker* tc, flat__Node node) {
@@ -583643,7 +583812,7 @@ bool types__TypeChecker__unknown_type_already_reported_on_line(types__TypeChecke
 	if (!token__Pos__is_valid(pos)) {
 		return false;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13264[3]; __v3_internal_symbol_join_0__vmsvc13264[0] = _str_3900; __v3_internal_symbol_join_0__vmsvc13264[1] = name; __v3_internal_symbol_join_0__vmsvc13264[2] = _str_41; string msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13264));
+	string __v3_internal_symbol_join_0__vmsvc13267[3]; __v3_internal_symbol_join_0__vmsvc13267[0] = _str_3900; __v3_internal_symbol_join_0__vmsvc13267[1] = name; __v3_internal_symbol_join_0__vmsvc13267[2] = _str_41; string msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13267));
 	__v_option_token__Position __or_opt_0 = flat__FlatAst__source_position(tc->a, pos);
 	token__Position __or_val_1 = {0};
 	if (__or_opt_0.ok) {
@@ -583693,18 +583862,18 @@ string types__TypeChecker__unknown_type_message(types__TypeChecker* tc, string n
 		__or_val_2 = lookup_name;
 	}
 	string display_name = __or_val_2;
-	string __v3_internal_symbol_join_0__vmsvc13265[3]; __v3_internal_symbol_join_0__vmsvc13265[0] = _str_3900; __v3_internal_symbol_join_0__vmsvc13265[1] = display_name; __v3_internal_symbol_join_0__vmsvc13265[2] = _str_41; string base = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13265));
+	string __v3_internal_symbol_join_0__vmsvc13268[3]; __v3_internal_symbol_join_0__vmsvc13268[0] = _str_3900; __v3_internal_symbol_join_0__vmsvc13268[1] = display_name; __v3_internal_symbol_join_0__vmsvc13268[2] = _str_41; string base = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13268));
 	if (((__v_int)(node_id) >= 0) && ((__v_int)(node_id) < tc->a->nodes.len)) {
 		flat__Node node = (*(flat__Node*)array_get(tc->a->nodes, (__v_int)(node_id)));
-		int cond__vmsvc13269; cond__vmsvc13269 = !!((node.kind == flat__NodeKind__type_decl)); if (cond__vmsvc13269) { int __in_lhs_3__vmsvc13266 = flat__source_type_shape(node.typ); int cond__vmsvc13268; cond__vmsvc13268 = !!(((__in_lhs_3__vmsvc13266 & 1048576) != 0)); if (!cond__vmsvc13268) { int __in_lhs_4__vmsvc13267 = flat__source_type_shape(node.typ); cond__vmsvc13268 = !!(((__in_lhs_4__vmsvc13267 & 2097152) != 0)); } cond__vmsvc13269 = !!(((cond__vmsvc13268))); } if (cond__vmsvc13269) {
+		int cond__vmsvc13272; cond__vmsvc13272 = !!((node.kind == flat__NodeKind__type_decl)); if (cond__vmsvc13272) { int __in_lhs_3__vmsvc13269 = flat__source_type_shape(node.typ); int cond__vmsvc13271; cond__vmsvc13271 = !!(((__in_lhs_3__vmsvc13269 & 1048576) != 0)); if (!cond__vmsvc13271) { int __in_lhs_4__vmsvc13270 = flat__source_type_shape(node.typ); cond__vmsvc13271 = !!(((__in_lhs_4__vmsvc13270 & 2097152) != 0)); } cond__vmsvc13272 = !!(((cond__vmsvc13271))); } if (cond__vmsvc13272) {
 			return base;
 		}
-		int cond__vmsvc13271; cond__vmsvc13271 = !!((node.kind == flat__NodeKind__type_decl)); if (cond__vmsvc13271) { int __in_lhs_5__vmsvc13270 = flat__source_type_shape(node.typ); cond__vmsvc13271 = !!(((__in_lhs_5__vmsvc13270 & 8192) != 0)); } if (cond__vmsvc13271) {
-			string __v3_internal_symbol_join_1__vmsvc13272[4]; __v3_internal_symbol_join_1__vmsvc13272[0] = base; __v3_internal_symbol_join_1__vmsvc13272[1] = _str_2010; __v3_internal_symbol_join_1__vmsvc13272[2] = node.value; __v3_internal_symbol_join_1__vmsvc13272[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc13272));
+		int cond__vmsvc13274; cond__vmsvc13274 = !!((node.kind == flat__NodeKind__type_decl)); if (cond__vmsvc13274) { int __in_lhs_5__vmsvc13273 = flat__source_type_shape(node.typ); cond__vmsvc13274 = !!(((__in_lhs_5__vmsvc13273 & 8192) != 0)); } if (cond__vmsvc13274) {
+			string __v3_internal_symbol_join_1__vmsvc13275[4]; __v3_internal_symbol_join_1__vmsvc13275[0] = base; __v3_internal_symbol_join_1__vmsvc13275[1] = _str_2010; __v3_internal_symbol_join_1__vmsvc13275[2] = node.value; __v3_internal_symbol_join_1__vmsvc13275[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc13275));
 		}
-		int cond__vmsvc13274; cond__vmsvc13274 = !!((node.kind == flat__NodeKind__field_decl)); if (cond__vmsvc13274) { int __in_lhs_6__vmsvc13273 = flat__source_type_shape(node.typ); cond__vmsvc13274 = !!(((__in_lhs_6__vmsvc13273 & 8192) != 0)); } if (cond__vmsvc13274 && flat__SourceTypeSyntax__fn_fragment(flat__source_type_syntax(node.typ))) {
+		int cond__vmsvc13277; cond__vmsvc13277 = !!((node.kind == flat__NodeKind__field_decl)); if (cond__vmsvc13277) { int __in_lhs_6__vmsvc13276 = flat__source_type_shape(node.typ); cond__vmsvc13277 = !!(((__in_lhs_6__vmsvc13276 & 8192) != 0)); } if (cond__vmsvc13277 && flat__SourceTypeSyntax__fn_fragment(flat__source_type_syntax(node.typ))) {
 			string suggestion = string__replace_once(types__Type__name(types__TypeChecker__parse_type(tc, node.typ)), _str_5201, _str_2732);
-			string __v3_internal_symbol_join_2__vmsvc13275[4]; __v3_internal_symbol_join_2__vmsvc13275[0] = base; __v3_internal_symbol_join_2__vmsvc13275[1] = _str_2010; __v3_internal_symbol_join_2__vmsvc13275[2] = suggestion; __v3_internal_symbol_join_2__vmsvc13275[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13275));
+			string __v3_internal_symbol_join_2__vmsvc13278[4]; __v3_internal_symbol_join_2__vmsvc13278[0] = base; __v3_internal_symbol_join_2__vmsvc13278[1] = _str_2010; __v3_internal_symbol_join_2__vmsvc13278[2] = suggestion; __v3_internal_symbol_join_2__vmsvc13278[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13278));
 		}
 	}
 	Array contextual_candidates = types__TypeChecker__contextual_generic_sum_type_candidates(tc, node_id);
@@ -583747,7 +583916,7 @@ string types__TypeChecker__unknown_type_message(types__TypeChecker* tc, string n
 					continue;
 				}
 				if (types__TypeChecker__node_tree_contains(tc, (i32)(v_index), node_id, 0)) {
-					string __v3_internal_symbol_join_3__vmsvc13276[4]; __v3_internal_symbol_join_3__vmsvc13276[0] = base; __v3_internal_symbol_join_3__vmsvc13276[1] = _str_2010; __v3_internal_symbol_join_3__vmsvc13276[2] = string__all_after_last(decl.value, _str_2); __v3_internal_symbol_join_3__vmsvc13276[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13276));
+					string __v3_internal_symbol_join_3__vmsvc13279[4]; __v3_internal_symbol_join_3__vmsvc13279[0] = base; __v3_internal_symbol_join_3__vmsvc13279[1] = _str_2010; __v3_internal_symbol_join_3__vmsvc13279[2] = string__all_after_last(decl.value, _str_2); __v3_internal_symbol_join_3__vmsvc13279[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13279));
 				}
 			}
 		}
@@ -583771,7 +583940,7 @@ string types__TypeChecker__unknown_type_message(types__TypeChecker* tc, string n
 			if (name.len <= 3) {
 				__if_val_13 = 2;
 			} else {
-				__v_int _t5__vmsvc13277 = (__v_int)(name.len); __v_int _t6__vmsvc13278 = (__v_int)(3); if (_t6__vmsvc13278 == 0) v_panic(_S("division by zero")); __if_val_13 = int_max(1, ((__v_int)(_t5__vmsvc13277 / _t6__vmsvc13278)));
+				__v_int _t5__vmsvc13280 = (__v_int)(name.len); __v_int _t6__vmsvc13281 = (__v_int)(3); if (_t6__vmsvc13281 == 0) v_panic(_S("division by zero")); __if_val_13 = int_max(1, ((__v_int)(_t5__vmsvc13280 / _t6__vmsvc13281)));
 			}
 			__v_int max_distance = __if_val_13;
 			if ((distance <= max_distance) && (distance < closest_distance)) {
@@ -583781,7 +583950,7 @@ string types__TypeChecker__unknown_type_message(types__TypeChecker* tc, string n
 		}
 	}
 	if (closest.len > 0) {
-		string __v3_internal_symbol_join_6__vmsvc13279[4]; __v3_internal_symbol_join_6__vmsvc13279[0] = base; __v3_internal_symbol_join_6__vmsvc13279[1] = _str_2010; __v3_internal_symbol_join_6__vmsvc13279[2] = closest; __v3_internal_symbol_join_6__vmsvc13279[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc13279));
+		string __v3_internal_symbol_join_6__vmsvc13282[4]; __v3_internal_symbol_join_6__vmsvc13282[0] = base; __v3_internal_symbol_join_6__vmsvc13282[1] = _str_2010; __v3_internal_symbol_join_6__vmsvc13282[2] = closest; __v3_internal_symbol_join_6__vmsvc13282[3] = _str_2011; return (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc13282));
 	}
 	return message;
 }
@@ -583970,14 +584139,14 @@ Array types__TypeChecker__unmentioned_generic_names_in_type(types__TypeChecker* 
 			}
 			u32 __map_key_2 = name_id;
 			bool __map_zero_3 = false;
-			int cond__vmsvc13281; cond__vmsvc13281 = !!(*(bool*)(map__get(&explicit_params, &__map_key_2, &__map_zero_3)) || types__TypeChecker__type_name_known(tc, name_id) || types__TypeChecker__local_type_name_known(tc, flat__source_type_name(name_id))); if (!cond__vmsvc13281) { bool __contains_4__vmsvc13280 = false; {
+			int cond__vmsvc13284; cond__vmsvc13284 = !!(*(bool*)(map__get(&explicit_params, &__map_key_2, &__map_zero_3)) || types__TypeChecker__type_name_known(tc, name_id) || types__TypeChecker__local_type_name_known(tc, flat__source_type_name(name_id))); if (!cond__vmsvc13284) { bool __contains_4__vmsvc13283 = false; {
 				__v_int __contains_idx_5 = 0;
 				for (; __contains_idx_5 < names.len; __contains_idx_5++) {
 					if (*(u32*)(array_get(names, __contains_idx_5)) == name_id) {
-						__contains_4__vmsvc13280 = true;
+						__contains_4__vmsvc13283 = true;
 					}
 				}
-			} cond__vmsvc13281 = !!((__contains_4__vmsvc13280)); } if (cond__vmsvc13281) {
+			} cond__vmsvc13284 = !!((__contains_4__vmsvc13283)); } if (cond__vmsvc13284) {
 				continue;
 			}
 			u32 __arr_val_6 = name_id;
@@ -583988,7 +584157,7 @@ Array types__TypeChecker__unmentioned_generic_names_in_type(types__TypeChecker* 
 }
 
 bool types__TypeChecker__unmentioned_generic_type_was_reported(types__TypeChecker* tc, string name, i32 node_id) {
-	string __v3_internal_symbol_join_0__vmsvc13282[3]; __v3_internal_symbol_join_0__vmsvc13282[0] = _str_3903; __v3_internal_symbol_join_0__vmsvc13282[1] = name; __v3_internal_symbol_join_0__vmsvc13282[2] = _str_3904; string needle = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13282));
+	string __v3_internal_symbol_join_0__vmsvc13285[3]; __v3_internal_symbol_join_0__vmsvc13285[0] = _str_3903; __v3_internal_symbol_join_0__vmsvc13285[1] = name; __v3_internal_symbol_join_0__vmsvc13285[2] = _str_3904; string needle = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13285));
 	i32 enclosing_fn = types__TypeChecker__diagnostic_enclosing_fn(tc, node_id);
 	{
 		__v_int __for_idx_0 = 0;
@@ -584018,7 +584187,7 @@ bool types__TypeChecker__unqualified_type_id_has_scoped_shadow(types__TypeChecke
 	}
 	string name = flat__source_type_name(name_id);
 	if ((tc->cur_module.len > 0) && !string__eq(tc->cur_module, _str_179) && !string__eq(tc->cur_module, _str_1218)) {
-		string __v3_internal_symbol_join_0__vmsvc13283[3]; __v3_internal_symbol_join_0__vmsvc13283[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc13283[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13283[2] = name; string local = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13283));
+		string __v3_internal_symbol_join_0__vmsvc13286[3]; __v3_internal_symbol_join_0__vmsvc13286[0] = tc->cur_module; __v3_internal_symbol_join_0__vmsvc13286[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13286[2] = name; string local = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13286));
 		if (types__TypeChecker__type_symbol_spelling_known(tc, local)) {
 			return true;
 		}
@@ -584045,12 +584214,12 @@ bool types__TypeChecker__unqualified_type_id_has_scoped_shadow(types__TypeChecke
 bool types__TypeChecker__unqualified_type_id_is_builtin(types__TypeChecker* tc, u32 name_id) {
 	u32 __map_key_0 = name_id;
 	void* __map_ptr_1 = map__get_check(&tc->struct_modules, &__map_key_0);
-	{ int taken__vmsvc13284 = 0; if (__map_ptr_1 != NULL) { taken__vmsvc13284 = 1; {
+	{ int taken__vmsvc13287 = 0; if (__map_ptr_1 != NULL) { taken__vmsvc13287 = 1; {
 		string mod_name = *(string*)(__map_ptr_1);
 		if (!string__eq(mod_name, _str_1218)) {
 			return false;
 		}
-	} } if (!taken__vmsvc13284) { int cond__vmsvc13286; cond__vmsvc13286 = !!((name_id != types__ierror_source_interface_name)); if (cond__vmsvc13286) { u32 __map_key_2__vmsvc13285 = name_id; cond__vmsvc13286 = !!((!map__exists(&tc->enum_names, &__map_key_2__vmsvc13285))); } int cond__vmsvc13288; cond__vmsvc13288 = !!(cond__vmsvc13286); if (cond__vmsvc13288) { u32 __map_key_3__vmsvc13287 = name_id; cond__vmsvc13288 = !!((!map__exists(&tc->flag_enums, &__map_key_3__vmsvc13287))); } if (cond__vmsvc13288) { taken__vmsvc13284 = 1; {
+	} } if (!taken__vmsvc13287) { int cond__vmsvc13289; cond__vmsvc13289 = !!((name_id != types__ierror_source_interface_name)); if (cond__vmsvc13289) { u32 __map_key_2__vmsvc13288 = name_id; cond__vmsvc13289 = !!((!map__exists(&tc->enum_names, &__map_key_2__vmsvc13288))); } int cond__vmsvc13291; cond__vmsvc13291 = !!(cond__vmsvc13289); if (cond__vmsvc13291) { u32 __map_key_3__vmsvc13290 = name_id; cond__vmsvc13291 = !!((!map__exists(&tc->flag_enums, &__map_key_3__vmsvc13290))); } if (cond__vmsvc13291) { taken__vmsvc13287 = 1; {
 		return false;
 	} } } }
 	return !types__TypeChecker__unqualified_type_id_has_scoped_shadow(tc, name_id);
@@ -584066,7 +584235,7 @@ bool types__TypeChecker__unqualified_type_name_shadows_builtin_in_scope_id(types
 		return true;
 	}
 	string name = flat__source_type_name(name_id);
-	int cond__vmsvc13290; cond__vmsvc13290 = !!(module_scoped); if (cond__vmsvc13290) { string __v3_internal_symbol_join_0__vmsvc13289[3]; __v3_internal_symbol_join_0__vmsvc13289[0] = mod_name; __v3_internal_symbol_join_0__vmsvc13289[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13289[2] = name; cond__vmsvc13290 = !!(types__TypeChecker__type_symbol_spelling_known(tc, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13289)))); } if (cond__vmsvc13290) {
+	int cond__vmsvc13293; cond__vmsvc13293 = !!(module_scoped); if (cond__vmsvc13293) { string __v3_internal_symbol_join_0__vmsvc13292[3]; __v3_internal_symbol_join_0__vmsvc13292[0] = mod_name; __v3_internal_symbol_join_0__vmsvc13292[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13292[2] = name; cond__vmsvc13293 = !!(types__TypeChecker__type_symbol_spelling_known(tc, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13292)))); } if (cond__vmsvc13293) {
 		return true;
 	}
 	__v_option_Array __if_guard_0 = types__TypeChecker__file_selective_import_ids(tc, file, name_id);
@@ -584093,7 +584262,7 @@ bool types__TypeChecker__unqualified_type_name_shadows_builtin_in_scope_id(types
 		}
 		return !string__eq(__map_val_7, _str_1218);
 	}
-	int cond__vmsvc13292; cond__vmsvc13292 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, name_id) || flat__SourceTypeListBindings__contains(&tc->sum_types, name_id)); if (!cond__vmsvc13292) { u32 __map_key_8__vmsvc13291 = name_id; cond__vmsvc13292 = !!((map__exists(&tc->interface_names, &__map_key_8__vmsvc13291))); } int cond__vmsvc13294; cond__vmsvc13294 = !!(cond__vmsvc13292); if (!cond__vmsvc13294) { u32 __map_key_9__vmsvc13293 = name_id; cond__vmsvc13294 = !!((map__exists(&tc->enum_names, &__map_key_9__vmsvc13293))); } if (cond__vmsvc13294) {
+	int cond__vmsvc13295; cond__vmsvc13295 = !!(flat__SourceTypeBindings__contains(&tc->type_aliases, name_id) || flat__SourceTypeListBindings__contains(&tc->sum_types, name_id)); if (!cond__vmsvc13295) { u32 __map_key_8__vmsvc13294 = name_id; cond__vmsvc13295 = !!((map__exists(&tc->interface_names, &__map_key_8__vmsvc13294))); } int cond__vmsvc13297; cond__vmsvc13297 = !!(cond__vmsvc13295); if (!cond__vmsvc13297) { u32 __map_key_9__vmsvc13296 = name_id; cond__vmsvc13297 = !!((map__exists(&tc->enum_names, &__map_key_9__vmsvc13296))); } if (cond__vmsvc13297) {
 		return true;
 	}
 	return false;
@@ -584516,7 +584685,7 @@ multi_return_bool_bool types__TypeChecker__untyped_numeric_literal_node_info(typ
 				__map_val_19 = base->value;
 			}
 			string module_name = __map_val_19;
-			string __v3_internal_symbol_join_0__vmsvc13295[3]; __v3_internal_symbol_join_0__vmsvc13295[0] = module_name; __v3_internal_symbol_join_0__vmsvc13295[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13295[2] = node->value; string __map_key_22 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13295));
+			string __v3_internal_symbol_join_0__vmsvc13298[3]; __v3_internal_symbol_join_0__vmsvc13298[0] = module_name; __v3_internal_symbol_join_0__vmsvc13298[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13298[2] = node->value; string __map_key_22 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13298));
 			void* __map_ptr_23 = map__get_check(&tc->const_exprs, &__map_key_22);
 			i32 __map_val_24 = {0};
 			if (__map_ptr_23 != NULL) {
@@ -584778,7 +584947,7 @@ Array types__TypeChecker__unused_private_declarations(types__TypeChecker* tc, ma
 				string cname = types__TypeChecker__cached_c_name(tc, qname);
 				string __map_key_8 = node.value;
 				bool __map_zero_9 = false;
-				int cond__vmsvc13298; cond__vmsvc13298 = !!(*(bool*)(map__get(&used_fns, &__map_key_8, &__map_zero_9))); if (!cond__vmsvc13298) { string __map_key_10__vmsvc13296 = qname; bool __map_zero_11__vmsvc13297 = false; cond__vmsvc13298 = !!((*(bool*)(map__get(&used_fns, &__map_key_10__vmsvc13296, &__map_zero_11__vmsvc13297)))); } int cond__vmsvc13301; cond__vmsvc13301 = !!(cond__vmsvc13298); if (!cond__vmsvc13301) { string __map_key_12__vmsvc13299 = cname; bool __map_zero_13__vmsvc13300 = false; cond__vmsvc13301 = !!((*(bool*)(map__get(&used_fns, &__map_key_12__vmsvc13299, &__map_zero_13__vmsvc13300)))); } if (cond__vmsvc13301) {
+				int cond__vmsvc13301; cond__vmsvc13301 = !!(*(bool*)(map__get(&used_fns, &__map_key_8, &__map_zero_9))); if (!cond__vmsvc13301) { string __map_key_10__vmsvc13299 = qname; bool __map_zero_11__vmsvc13300 = false; cond__vmsvc13301 = !!((*(bool*)(map__get(&used_fns, &__map_key_10__vmsvc13299, &__map_zero_11__vmsvc13300)))); } int cond__vmsvc13304; cond__vmsvc13304 = !!(cond__vmsvc13301); if (!cond__vmsvc13304) { string __map_key_12__vmsvc13302 = cname; bool __map_zero_13__vmsvc13303 = false; cond__vmsvc13304 = !!((*(bool*)(map__get(&used_fns, &__map_key_12__vmsvc13302, &__map_zero_13__vmsvc13303)))); } if (cond__vmsvc13304) {
 					continue;
 				}
 				__v_int cand_idx = candidates.len;
@@ -584816,7 +584985,7 @@ Array types__TypeChecker__unused_private_declarations(types__TypeChecker* tc, ma
 					}
 					string __if_val_23 = {0};
 					if ((module_name.len > 0) && !string__eq(module_name, _str_179)) {
-						string __v3_internal_symbol_join_2__vmsvc13302[3]; __v3_internal_symbol_join_2__vmsvc13302[0] = module_name; __v3_internal_symbol_join_2__vmsvc13302[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13302[2] = field->value; __if_val_23 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13302));
+						string __v3_internal_symbol_join_2__vmsvc13305[3]; __v3_internal_symbol_join_2__vmsvc13305[0] = module_name; __v3_internal_symbol_join_2__vmsvc13305[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13305[2] = field->value; __if_val_23 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13305));
 					} else {
 						__if_val_23 = field->value;
 					}
@@ -585135,7 +585304,7 @@ void types__TypeChecker__validate_goto_boundary_nodes(types__TypeChecker* tc, i3
 				}
 				string __map_key_0 = child->value;
 				if (!map__exists(&labels, &__map_key_0)) {
-					string __v3_internal_symbol_join_0__vmsvc13303[3]; __v3_internal_symbol_join_0__vmsvc13303[0] = _str_5758; __v3_internal_symbol_join_0__vmsvc13303[1] = child->value; __v3_internal_symbol_join_0__vmsvc13303[2] = _str_41; types__TypeChecker__record_goto_diagnostic(tc, child_id, false, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13303)));
+					string __v3_internal_symbol_join_0__vmsvc13306[3]; __v3_internal_symbol_join_0__vmsvc13306[0] = _str_5758; __v3_internal_symbol_join_0__vmsvc13306[1] = child->value; __v3_internal_symbol_join_0__vmsvc13306[2] = _str_41; types__TypeChecker__record_goto_diagnostic(tc, child_id, false, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13306)));
 				}
 			}
 			bool child_inside_unsafe = inside_unsafe || ((child->kind == flat__NodeKind__block) && string__eq(child->value, _str_5648));
@@ -585469,7 +585638,7 @@ void types__TypeChecker__verify_incremental_check(types__TypeChecker* tc) {
 			if (__map_ptr_4 != NULL) {
 				__map_val_5 = *(types__IncrementalCaptured*)(__map_ptr_4);
 			} else {
-				string __v3_internal_symbol_join_0__vmsvc13304[3]; __v3_internal_symbol_join_0__vmsvc13304[0] = _str_8429; __v3_internal_symbol_join_0__vmsvc13304[1] = f.key; __v3_internal_symbol_join_0__vmsvc13304[2] = _str_8446; string __arr_val_6 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13304));
+				string __v3_internal_symbol_join_0__vmsvc13307[3]; __v3_internal_symbol_join_0__vmsvc13307[0] = _str_8429; __v3_internal_symbol_join_0__vmsvc13307[1] = f.key; __v3_internal_symbol_join_0__vmsvc13307[2] = _str_8446; string __arr_val_6 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13307));
 				array_push(&state->trace, &__arr_val_6);
 				continue;
 			}
@@ -585512,7 +585681,7 @@ void types__TypeChecker__verify_incremental_check(types__TypeChecker* tc) {
 				}
 			}
 			if (!__v3_array_eq_string(found, put_back)) {
-				string __v3_internal_symbol_join_1__vmsvc13305[6]; __v3_internal_symbol_join_1__vmsvc13305[0] = _str_8429; __v3_internal_symbol_join_1__vmsvc13305[1] = f.key; __v3_internal_symbol_join_1__vmsvc13305[2] = _str_8447; __v3_internal_symbol_join_1__vmsvc13305[3] = Array_string__str(put_back); __v3_internal_symbol_join_1__vmsvc13305[4] = _str_8448; __v3_internal_symbol_join_1__vmsvc13305[5] = Array_string__str(found); string __arr_val_16 = (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13305));
+				string __v3_internal_symbol_join_1__vmsvc13308[6]; __v3_internal_symbol_join_1__vmsvc13308[0] = _str_8429; __v3_internal_symbol_join_1__vmsvc13308[1] = f.key; __v3_internal_symbol_join_1__vmsvc13308[2] = _str_8447; __v3_internal_symbol_join_1__vmsvc13308[3] = Array_string__str(put_back); __v3_internal_symbol_join_1__vmsvc13308[4] = _str_8448; __v3_internal_symbol_join_1__vmsvc13308[5] = Array_string__str(found); string __arr_val_16 = (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13308));
 				array_push(&state->trace, &__arr_val_16);
 			}
 		}
@@ -585546,7 +585715,7 @@ void types__TypeChecker__verify_incremental_instances(types__TypeChecker* tc) {
 	}
 	Array put_back = __map_5;
 	if (!__v3_array_eq_string(found, put_back)) {
-		string __v3_internal_symbol_join_0__vmsvc13306[4]; __v3_internal_symbol_join_0__vmsvc13306[0] = _str_8444; __v3_internal_symbol_join_0__vmsvc13306[1] = Array_string__str(found); __v3_internal_symbol_join_0__vmsvc13306[2] = _str_8445; __v3_internal_symbol_join_0__vmsvc13306[3] = Array_string__str(put_back); string __arr_val_8 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13306));
+		string __v3_internal_symbol_join_0__vmsvc13309[4]; __v3_internal_symbol_join_0__vmsvc13309[0] = _str_8444; __v3_internal_symbol_join_0__vmsvc13309[1] = Array_string__str(found); __v3_internal_symbol_join_0__vmsvc13309[2] = _str_8445; __v3_internal_symbol_join_0__vmsvc13309[3] = Array_string__str(put_back); string __arr_val_8 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13309));
 		array_push(&state->trace, &__arr_val_8);
 	}
 	array__trim(&tc->errors, start);
@@ -585996,10 +586165,10 @@ string types__TypeChecker__visible_mutation_call_name(types__TypeChecker* tc, i3
 	if ((fn_node->kind == flat__NodeKind__selector) && (fn_node->children_count > 0)) {
 		flat__Node* base = flat__FlatAst__child_node(tc->a, fn_node, 0);
 		if ((base->kind == flat__NodeKind__ident) && (base->value.len > 0) && (string__at(base->value, 0) >= 'A') && (string__at(base->value, 0) <= 'Z')) {
-			string __v3_internal_symbol_join_0__vmsvc13307[3]; __v3_internal_symbol_join_0__vmsvc13307[0] = base->value; __v3_internal_symbol_join_0__vmsvc13307[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13307[2] = fn_node->value; return types__checker_qualified_fn_name(decl_mod, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13307)));
+			string __v3_internal_symbol_join_0__vmsvc13310[3]; __v3_internal_symbol_join_0__vmsvc13310[0] = base->value; __v3_internal_symbol_join_0__vmsvc13310[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13310[2] = fn_node->value; return types__checker_qualified_fn_name(decl_mod, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13310)));
 		}
 		string receiver_name = flat__source_type_name(types__visible_mutation_receiver_type_name(root_type_id));
-		string __v3_internal_symbol_join_1__vmsvc13308[3]; __v3_internal_symbol_join_1__vmsvc13308[0] = receiver_name; __v3_internal_symbol_join_1__vmsvc13308[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13308[2] = fn_node->value; return types__checker_qualified_fn_name(decl_mod, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13308)));
+		string __v3_internal_symbol_join_1__vmsvc13311[3]; __v3_internal_symbol_join_1__vmsvc13311[0] = receiver_name; __v3_internal_symbol_join_1__vmsvc13311[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13311[2] = fn_node->value; return types__checker_qualified_fn_name(decl_mod, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13311)));
 	}
 	return _str_34;
 }
@@ -586023,9 +586192,9 @@ __v_option_types__VisibleMutationFnDecl types__TypeChecker__visible_mutation_fn_
 	__v_int key_len = (fallback_mod.len + 1) + lookup_name.len;
 	string __if_val_2 = {0};
 	if (key_len <= 192) {
-		u8* key_start__vmsvc13309 = (u8*)(&key_buf[0]); vmemcpy((void*)(key_start__vmsvc13309), (void*)(fallback_mod.str), fallback_mod.len); (key_start__vmsvc13309)[fallback_mod.len] = 0x01; vmemcpy((void*)((key_start__vmsvc13309 + fallback_mod.len) + 1), (void*)(lookup_name.str), lookup_name.len); __if_val_2 = (tos(key_start__vmsvc13309, key_len));
+		u8* key_start__vmsvc13312 = (u8*)(&key_buf[0]); vmemcpy((void*)(key_start__vmsvc13312), (void*)(fallback_mod.str), fallback_mod.len); (key_start__vmsvc13312)[fallback_mod.len] = 0x01; vmemcpy((void*)((key_start__vmsvc13312 + fallback_mod.len) + 1), (void*)(lookup_name.str), lookup_name.len); __if_val_2 = (tos(key_start__vmsvc13312, key_len));
 	} else {
-		string __v3_internal_symbol_join_0__vmsvc13310[3]; __v3_internal_symbol_join_0__vmsvc13310[0] = fallback_mod; __v3_internal_symbol_join_0__vmsvc13310[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13310[2] = lookup_name; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13310));
+		string __v3_internal_symbol_join_0__vmsvc13313[3]; __v3_internal_symbol_join_0__vmsvc13313[0] = fallback_mod; __v3_internal_symbol_join_0__vmsvc13313[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13313[2] = lookup_name; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13313));
 	}
 	string cache_key = __if_val_2;
 	if (!isnil((void*)(tc->visible_mutation_cache))) {
@@ -587059,7 +587228,7 @@ __v_option_string types__TypeChecker__vls_condition_value_hover_at(types__TypeCh
 				if (types__type_contains_unknown(declared)) {
 					return (__v_option_string){.ok = true, .value = types__TypeChecker__vls_generic_value_text(tc, id, word, param->typ)};
 				}
-				string __v3_internal_symbol_join_0__vmsvc13311[3]; __v3_internal_symbol_join_0__vmsvc13311[0] = word; __v3_internal_symbol_join_0__vmsvc13311[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13311[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*declared}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13311))};
+				string __v3_internal_symbol_join_0__vmsvc13314[3]; __v3_internal_symbol_join_0__vmsvc13314[0] = word; __v3_internal_symbol_join_0__vmsvc13314[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13314[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*declared}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13314))};
 			}
 		}
 	}
@@ -587713,7 +587882,7 @@ __v_option_u32 types__TypeChecker__vls_enum_receiver(types__TypeChecker* tc, fla
 	if ((receiver->kind == flat__NodeKind__selector) && (receiver->children_count > 0)) {
 		flat__Node* module_node = flat__FlatAst__child_node(tc->a, receiver, 0);
 		if (module_node->kind == flat__NodeKind__ident) {
-			string __v3_internal_symbol_join_0__vmsvc13312[3]; __v3_internal_symbol_join_0__vmsvc13312[0] = module_node->value; __v3_internal_symbol_join_0__vmsvc13312[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13312[2] = receiver->value; string qualified = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13312));
+			string __v3_internal_symbol_join_0__vmsvc13315[3]; __v3_internal_symbol_join_0__vmsvc13315[0] = module_node->value; __v3_internal_symbol_join_0__vmsvc13315[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13315[2] = receiver->value; string qualified = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13315));
 			__v_option_u32 __if_guard_0 = flat__source_type_existing_id(qualified);
 			if (__if_guard_0.ok) {
 				u32 name_id = __if_guard_0.value;
@@ -587756,7 +587925,7 @@ __v_option_types__VlsPos types__TypeChecker__vls_enum_value_definition(types__Ty
 }
 
 string types__TypeChecker__vls_enum_value_hover(types__TypeChecker* tc, u32 enum_name_id, string field) {
-	string __v3_internal_symbol_join_0__vmsvc13313[3]; __v3_internal_symbol_join_0__vmsvc13313[0] = flat__source_type_name(flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(enum_name_id))); __v3_internal_symbol_join_0__vmsvc13313[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13313[2] = field; string name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13313));
+	string __v3_internal_symbol_join_0__vmsvc13316[3]; __v3_internal_symbol_join_0__vmsvc13316[0] = flat__source_type_name(flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(enum_name_id))); __v3_internal_symbol_join_0__vmsvc13316[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13316[2] = field; string name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13316));
 	u32 __map_key_2 = enum_name_id;
 	void* __map_ptr_3 = map__get_check(&tc->first_type_declaration_ids, &__map_key_2);
 	__v_int __map_val_4 = {0};
@@ -587788,7 +587957,7 @@ string types__TypeChecker__vls_enum_value_hover(types__TypeChecker* tc, u32 enum
 		return name;
 	}
 	string value = __map_val_15;
-	string __v3_internal_symbol_join_1__vmsvc13314[3]; __v3_internal_symbol_join_1__vmsvc13314[0] = name; __v3_internal_symbol_join_1__vmsvc13314[1] = _str_97; __v3_internal_symbol_join_1__vmsvc13314[2] = value; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13314));
+	string __v3_internal_symbol_join_1__vmsvc13317[3]; __v3_internal_symbol_join_1__vmsvc13317[0] = name; __v3_internal_symbol_join_1__vmsvc13317[1] = _str_97; __v3_internal_symbol_join_1__vmsvc13317[2] = value; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13317));
 }
 
 map types__TypeChecker__vls_enum_values(types__TypeChecker* tc, flat__Node decl) {
@@ -587834,7 +588003,7 @@ map types__TypeChecker__vls_enum_values(types__TypeChecker* tc, flat__Node decl)
 			__v_int i = 0;
 			for (; i < field_names.len; i++) {
 				string name = *(string*)(array_get(field_names, i));
-				u64 _t1__vmsvc13315 = (u64)(				(u64)(1)); u64 _t2__vmsvc13316 = (u64)(i); u64 bit = (_t2__vmsvc13316 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13315 << _t2__vmsvc13316));
+				u64 _t1__vmsvc13318 = (u64)(				(u64)(1)); u64 _t2__vmsvc13319 = (u64)(i); u64 bit = (_t2__vmsvc13319 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13318 << _t2__vmsvc13319));
 				string bits = strconv__format_uint(bit, 2);
 				string __if_val_13 = {0};
 				if (field_names.len > bits.len) {
@@ -587844,7 +588013,7 @@ map types__TypeChecker__vls_enum_values(types__TypeChecker* tc, flat__Node decl)
 				}
 				string padding = __if_val_13;
 				string __map_key_14 = name;
-				string __v3_internal_symbol_join_2__vmsvc13317[6]; __v3_internal_symbol_join_2__vmsvc13317[0] = _str_108; __v3_internal_symbol_join_2__vmsvc13317[1] = padding; __v3_internal_symbol_join_2__vmsvc13317[2] = bits; __v3_internal_symbol_join_2__vmsvc13317[3] = _str_1000; __v3_internal_symbol_join_2__vmsvc13317[4] = u64__str(bit); __v3_internal_symbol_join_2__vmsvc13317[5] = _str_28; string __map_val_15 = (string_plus_many(6, __v3_internal_symbol_join_2__vmsvc13317));
+				string __v3_internal_symbol_join_2__vmsvc13320[6]; __v3_internal_symbol_join_2__vmsvc13320[0] = _str_108; __v3_internal_symbol_join_2__vmsvc13320[1] = padding; __v3_internal_symbol_join_2__vmsvc13320[2] = bits; __v3_internal_symbol_join_2__vmsvc13320[3] = _str_1000; __v3_internal_symbol_join_2__vmsvc13320[4] = u64__str(bit); __v3_internal_symbol_join_2__vmsvc13320[5] = _str_28; string __map_val_15 = (string_plus_many(6, __v3_internal_symbol_join_2__vmsvc13320));
 				map__set(&texts, &__map_key_14, &__map_val_15);
 			}
 		}
@@ -588266,7 +588435,7 @@ void types__TypeChecker__vls_field_order_hints(types__TypeChecker* tc, Array fie
 				continue;
 			}
 			__v_int name_start = __or_val_8;
-			string __v3_internal_symbol_join_0__vmsvc13318[3]; __v3_internal_symbol_join_0__vmsvc13318[0] = _str_8508; __v3_internal_symbol_join_0__vmsvc13318[1] = field_init->value; __v3_internal_symbol_join_0__vmsvc13318[2] = _str_8509; types__VlsInlayHint __arr_val_9 = (types__VlsInlayHint){.offset = name_start, .label = _str_8507, .kind = types__vls_hint_kind_parameter, .tooltip = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13318))};
+			string __v3_internal_symbol_join_0__vmsvc13321[3]; __v3_internal_symbol_join_0__vmsvc13321[0] = _str_8508; __v3_internal_symbol_join_0__vmsvc13321[1] = field_init->value; __v3_internal_symbol_join_0__vmsvc13321[2] = _str_8509; types__VlsInlayHint __arr_val_9 = (types__VlsInlayHint){.offset = name_start, .label = _str_8507, .kind = types__vls_hint_kind_parameter, .tooltip = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13321))};
 			array_push(hints, &__arr_val_9);
 		}
 	}
@@ -588445,7 +588614,7 @@ __v_option_string types__TypeChecker__vls_fn_signature(types__TypeChecker* tc, s
 		return (__v_option_string){.ok = false};
 	}
 	types__VlsSignature sig = __or_val_1;
-	string __v3_internal_symbol_join_0__vmsvc13319[7]; __v3_internal_symbol_join_0__vmsvc13319[0] = _str_5250; __v3_internal_symbol_join_0__vmsvc13319[1] = sig.name; __v3_internal_symbol_join_0__vmsvc13319[2] = sig.type_params; __v3_internal_symbol_join_0__vmsvc13319[3] = _str_158; __v3_internal_symbol_join_0__vmsvc13319[4] = Array_string__join(sig.params, _str_25); __v3_internal_symbol_join_0__vmsvc13319[5] = _str_28; __v3_internal_symbol_join_0__vmsvc13319[6] = sig.ret; return (__v_option_string){.ok = true, .value = (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13319))};
+	string __v3_internal_symbol_join_0__vmsvc13322[7]; __v3_internal_symbol_join_0__vmsvc13322[0] = _str_5250; __v3_internal_symbol_join_0__vmsvc13322[1] = sig.name; __v3_internal_symbol_join_0__vmsvc13322[2] = sig.type_params; __v3_internal_symbol_join_0__vmsvc13322[3] = _str_158; __v3_internal_symbol_join_0__vmsvc13322[4] = Array_string__join(sig.params, _str_25); __v3_internal_symbol_join_0__vmsvc13322[5] = _str_28; __v3_internal_symbol_join_0__vmsvc13322[6] = sig.ret; return (__v_option_string){.ok = true, .value = (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13322))};
 	return (__v_option_string){.ok = true};
 }
 
@@ -588665,7 +588834,7 @@ string types__TypeChecker__vls_generic_value_text(types__TypeChecker* tc, i32 id
 	if (__or_opt_1.ok) {
 		__or_val_2 = __or_opt_1.value;
 	} else {
-		string __v3_internal_symbol_join_0__vmsvc13320[3]; __v3_internal_symbol_join_0__vmsvc13320[0] = name; __v3_internal_symbol_join_0__vmsvc13320[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13320[2] = flat__source_type_name(type_id); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13320));
+		string __v3_internal_symbol_join_0__vmsvc13323[3]; __v3_internal_symbol_join_0__vmsvc13323[0] = name; __v3_internal_symbol_join_0__vmsvc13323[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13323[2] = flat__source_type_name(type_id); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13323));
 	}
 	multi_return_flat__Node_Array __multi_ret_0 = __or_val_2;
 	flat__Node decl = __multi_ret_0.arg0;
@@ -588717,16 +588886,16 @@ string types__TypeChecker__vls_generic_value_text(types__TypeChecker* tc, i32 id
 	}
 	string __if_val_16 = {0};
 	if (names.len > 0) {
-		string __v3_internal_symbol_join_3__vmsvc13321[3]; __v3_internal_symbol_join_3__vmsvc13321[0] = name; __v3_internal_symbol_join_3__vmsvc13321[1] = _str_1; __v3_internal_symbol_join_3__vmsvc13321[2] = flat__source_type_name(types__subst_generic_text(type_id, args, names)); __if_val_16 = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13321));
+		string __v3_internal_symbol_join_3__vmsvc13324[3]; __v3_internal_symbol_join_3__vmsvc13324[0] = name; __v3_internal_symbol_join_3__vmsvc13324[1] = _str_1; __v3_internal_symbol_join_3__vmsvc13324[2] = flat__source_type_name(types__subst_generic_text(type_id, args, names)); __if_val_16 = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13324));
 	} else {
-		string __v3_internal_symbol_join_4__vmsvc13322[3]; __v3_internal_symbol_join_4__vmsvc13322[0] = name; __v3_internal_symbol_join_4__vmsvc13322[1] = _str_1; __v3_internal_symbol_join_4__vmsvc13322[2] = flat__source_type_name(type_id); __if_val_16 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13322));
+		string __v3_internal_symbol_join_4__vmsvc13325[3]; __v3_internal_symbol_join_4__vmsvc13325[0] = name; __v3_internal_symbol_join_4__vmsvc13325[1] = _str_1; __v3_internal_symbol_join_4__vmsvc13325[2] = flat__source_type_name(type_id); __if_val_16 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13325));
 	}
 	string text = __if_val_16;
 	{
 		__v_int __for_idx_17 = 0;
 		for (; __for_idx_17 < lines.len; __for_idx_17++) {
 			string line = *(string*)(array_get(lines, __for_idx_17));
-			string __v3_internal_symbol_join_5__vmsvc13323[3]; __v3_internal_symbol_join_5__vmsvc13323[0] = text; __v3_internal_symbol_join_5__vmsvc13323[1] = _str_0; __v3_internal_symbol_join_5__vmsvc13323[2] = line; text = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13323));
+			string __v3_internal_symbol_join_5__vmsvc13326[3]; __v3_internal_symbol_join_5__vmsvc13326[0] = text; __v3_internal_symbol_join_5__vmsvc13326[1] = _str_0; __v3_internal_symbol_join_5__vmsvc13326[2] = line; text = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13326));
 		}
 	}
 	return text;
@@ -588813,7 +588982,7 @@ string types__TypeChecker__vls_hover_declaration(types__TypeChecker* tc, types__
 			if ((enum_type).typ == 21) {
 				return types__TypeChecker__vls_enum_value_hover(tc, enum_type.types__Enum.name_id, node.value);
 			}
-			string __v3_internal_symbol_join_0__vmsvc13324[3]; __v3_internal_symbol_join_0__vmsvc13324[0] = string__all_after_last(types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]), _str_2); __v3_internal_symbol_join_0__vmsvc13324[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13324[2] = node.value; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13324));
+			string __v3_internal_symbol_join_0__vmsvc13327[3]; __v3_internal_symbol_join_0__vmsvc13327[0] = string__all_after_last(types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]), _str_2); __v3_internal_symbol_join_0__vmsvc13327[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13327[2] = node.value; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13327));
 		} else if (__match_tmp_4 == flat__NodeKind__enum_field) {
 			i32 decl_id = types__TypeChecker__vls_parent_id(tc, id);
 			if (!types__TypeChecker__valid_node_id(tc, decl_id) || ((flat__FlatAst__node(tc->a, decl_id))->kind != flat__NodeKind__enum_decl)) {
@@ -588827,10 +588996,10 @@ string types__TypeChecker__vls_hover_declaration(types__TypeChecker* tc, types__
 			if (__map_ptr_13 != NULL) {
 				__map_val_14 = *(string*)(__map_ptr_13);
 			} else {
-				string __v3_internal_symbol_join_1__vmsvc13325[3]; __v3_internal_symbol_join_1__vmsvc13325[0] = decl->value; __v3_internal_symbol_join_1__vmsvc13325[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13325[2] = node.value; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13325));
+				string __v3_internal_symbol_join_1__vmsvc13328[3]; __v3_internal_symbol_join_1__vmsvc13328[0] = decl->value; __v3_internal_symbol_join_1__vmsvc13328[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13328[2] = node.value; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13328));
 			}
 			string value = __map_val_14;
-			string __v3_internal_symbol_join_2__vmsvc13326[5]; __v3_internal_symbol_join_2__vmsvc13326[0] = decl->value; __v3_internal_symbol_join_2__vmsvc13326[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13326[2] = node.value; __v3_internal_symbol_join_2__vmsvc13326[3] = _str_97; __v3_internal_symbol_join_2__vmsvc13326[4] = value; return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13326));
+			string __v3_internal_symbol_join_2__vmsvc13329[5]; __v3_internal_symbol_join_2__vmsvc13329[0] = decl->value; __v3_internal_symbol_join_2__vmsvc13329[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13329[2] = node.value; __v3_internal_symbol_join_2__vmsvc13329[3] = _str_97; __v3_internal_symbol_join_2__vmsvc13329[4] = value; return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13329));
 		} else if ((__match_tmp_4 == flat__NodeKind__cast_expr) || (__match_tmp_4 == flat__NodeKind__struct_init) || (__match_tmp_4 == flat__NodeKind__is_expr) || (__match_tmp_4 == flat__NodeKind__as_expr)) {
 			__v_option_string __if_guard_15 = types__TypeChecker__vls_type_param_hover(tc, id, flat__Node__value_text(node));
 			if (__if_guard_15.ok) {
@@ -588850,7 +589019,7 @@ string types__TypeChecker__vls_hover_declaration(types__TypeChecker* tc, types__
 			if (types__type_contains_unknown(declared)) {
 				return types__TypeChecker__vls_generic_value_text(tc, id, node.value, node.typ);
 			}
-			string __v3_internal_symbol_join_3__vmsvc13327[3]; __v3_internal_symbol_join_3__vmsvc13327[0] = node.value; __v3_internal_symbol_join_3__vmsvc13327[1] = _str_1; __v3_internal_symbol_join_3__vmsvc13327[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*declared}[0]); return (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13327));
+			string __v3_internal_symbol_join_3__vmsvc13330[3]; __v3_internal_symbol_join_3__vmsvc13330[0] = node.value; __v3_internal_symbol_join_3__vmsvc13330[1] = _str_1; __v3_internal_symbol_join_3__vmsvc13330[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*declared}[0]); return (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13330));
 		} else if (__match_tmp_4 == flat__NodeKind__field_init) {
 			__v_option_types__Type __or_opt_18 = types__TypeChecker__vls_field_init_owner(tc, id);
 			types__Type __or_val_19 = {0};
@@ -588868,7 +589037,7 @@ string types__TypeChecker__vls_hover_declaration(types__TypeChecker* tc, types__
 				return _str_34;
 			}
 			types__Type typ = __or_val_21;
-			string __v3_internal_symbol_join_4__vmsvc13328[3]; __v3_internal_symbol_join_4__vmsvc13328[0] = node.value; __v3_internal_symbol_join_4__vmsvc13328[1] = _str_1; __v3_internal_symbol_join_4__vmsvc13328[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13328));
+			string __v3_internal_symbol_join_4__vmsvc13331[3]; __v3_internal_symbol_join_4__vmsvc13331[0] = node.value; __v3_internal_symbol_join_4__vmsvc13331[1] = _str_1; __v3_internal_symbol_join_4__vmsvc13331[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13331));
 		} else {
 			return _str_34;
 		}
@@ -588901,9 +589070,9 @@ string types__TypeChecker__vls_hover_ident(types__TypeChecker* tc, i32 id, flat_
 			__v_option_types__Type __if_guard_4 = types__TypeChecker__vls_smartcast_type(tc, id, &(types__Type[]){*declared}[0]);
 			if (__if_guard_4.ok) {
 				types__Type narrowed = __if_guard_4.value;
-				string __v3_internal_symbol_join_0__vmsvc13329[3]; __v3_internal_symbol_join_0__vmsvc13329[0] = name; __v3_internal_symbol_join_0__vmsvc13329[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13329[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){narrowed}[0]); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13329));
+				string __v3_internal_symbol_join_0__vmsvc13332[3]; __v3_internal_symbol_join_0__vmsvc13332[0] = name; __v3_internal_symbol_join_0__vmsvc13332[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13332[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){narrowed}[0]); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13332));
 			}
-			string __v3_internal_symbol_join_1__vmsvc13330[3]; __v3_internal_symbol_join_1__vmsvc13330[0] = name; __v3_internal_symbol_join_1__vmsvc13330[1] = _str_1; __v3_internal_symbol_join_1__vmsvc13330[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*declared}[0]); return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13330));
+			string __v3_internal_symbol_join_1__vmsvc13333[3]; __v3_internal_symbol_join_1__vmsvc13333[0] = name; __v3_internal_symbol_join_1__vmsvc13333[1] = _str_1; __v3_internal_symbol_join_1__vmsvc13333[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*declared}[0]); return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13333));
 		}
 		__v_option_types__Type __if_guard_5 = types__TypeChecker__expr_type(tc, id);
 		if (__if_guard_5.ok) {
@@ -588932,7 +589101,7 @@ string types__TypeChecker__vls_hover_ident(types__TypeChecker* tc, i32 id, flat_
 	__v_option_types__Type __if_guard_8 = types__TypeChecker__vls_const_type(tc, name);
 	if (__if_guard_8.ok) {
 		types__Type typ = __if_guard_8.value;
-		string __v3_internal_symbol_join_2__vmsvc13331[4]; __v3_internal_symbol_join_2__vmsvc13331[0] = _str_5498; __v3_internal_symbol_join_2__vmsvc13331[1] = string__all_after_last(name, _str_2); __v3_internal_symbol_join_2__vmsvc13331[2] = _str_1; __v3_internal_symbol_join_2__vmsvc13331[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13331));
+		string __v3_internal_symbol_join_2__vmsvc13334[4]; __v3_internal_symbol_join_2__vmsvc13334[0] = _str_5498; __v3_internal_symbol_join_2__vmsvc13334[1] = string__all_after_last(name, _str_2); __v3_internal_symbol_join_2__vmsvc13334[2] = _str_1; __v3_internal_symbol_join_2__vmsvc13334[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13334));
 	}
 	if (types__TypeChecker__vls_is_global(tc, name)) {
 		__v_option_types__Type __or_opt_9 = types__TypeChecker__expr_type(tc, id);
@@ -588943,7 +589112,7 @@ string types__TypeChecker__vls_hover_ident(types__TypeChecker* tc, i32 id, flat_
 			return _str_34;
 		}
 		types__Type typ = __or_val_10;
-		string __v3_internal_symbol_join_3__vmsvc13332[4]; __v3_internal_symbol_join_3__vmsvc13332[0] = _str_2730; __v3_internal_symbol_join_3__vmsvc13332[1] = string__all_after_last(name, _str_2); __v3_internal_symbol_join_3__vmsvc13332[2] = _str_1; __v3_internal_symbol_join_3__vmsvc13332[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13332));
+		string __v3_internal_symbol_join_3__vmsvc13335[4]; __v3_internal_symbol_join_3__vmsvc13335[0] = _str_2730; __v3_internal_symbol_join_3__vmsvc13335[1] = string__all_after_last(name, _str_2); __v3_internal_symbol_join_3__vmsvc13335[2] = _str_1; __v3_internal_symbol_join_3__vmsvc13335[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13335));
 	}
 	__v_option_types__Type __if_guard_11 = types__TypeChecker__vls_local_type(tc, id);
 	if (__if_guard_11.ok) {
@@ -589014,7 +589183,7 @@ string types__TypeChecker__vls_hover_selector(types__TypeChecker* tc, flat__Node
 	__v_option_types__Type __if_guard_4 = types__TypeChecker__vls_field_type(tc, &(types__Type[]){receiver_type}[0], node.value);
 	if (__if_guard_4.ok) {
 		types__Type field_type = __if_guard_4.value;
-		string __v3_internal_symbol_join_0__vmsvc13333[3]; __v3_internal_symbol_join_0__vmsvc13333[0] = node.value; __v3_internal_symbol_join_0__vmsvc13333[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13333[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){field_type}[0]); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13333));
+		string __v3_internal_symbol_join_0__vmsvc13336[3]; __v3_internal_symbol_join_0__vmsvc13336[0] = node.value; __v3_internal_symbol_join_0__vmsvc13336[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13336[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){field_type}[0]); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13336));
 	}
 	__v_option_string __or_opt_5 = types__TypeChecker__vls_method_target(tc, receiver_id, node.value);
 	string __or_val_6 = {0};
@@ -589090,14 +589259,14 @@ __v_option_types__VlsPos types__TypeChecker__vls_implicit_binding(types__TypeChe
 	}
 	Array methods = __if_val_0;
 	flat__Node* callee = flat__FlatAst__child_node(tc->a, p, 0);
-	int cond__vmsvc13335; cond__vmsvc13335 = !!((callee->kind != flat__NodeKind__selector)); if (!cond__vmsvc13335) { bool __contains_1__vmsvc13334 = false; {
+	int cond__vmsvc13338; cond__vmsvc13338 = !!((callee->kind != flat__NodeKind__selector)); if (!cond__vmsvc13338) { bool __contains_1__vmsvc13337 = false; {
 		__v_int __contains_idx_2 = 0;
 		for (; __contains_idx_2 < methods.len; __contains_idx_2++) {
 			if (string__eq(*(string*)(array_get(methods, __contains_idx_2)), callee->value)) {
-				__contains_1__vmsvc13334 = true;
+				__contains_1__vmsvc13337 = true;
 			}
 		}
-	} cond__vmsvc13335 = !!((!__contains_1__vmsvc13334)); } if (cond__vmsvc13335 || types__TypeChecker__vls_calls_no_array_method(tc, p_id, p)) {
+	} cond__vmsvc13338 = !!((!__contains_1__vmsvc13337)); } if (cond__vmsvc13338 || types__TypeChecker__vls_calls_no_array_method(tc, p_id, p)) {
 		return (__v_option_types__VlsPos){.ok = false};
 	}
 	return (__v_option_types__VlsPos){.ok = true, .value = (types__VlsPos){.file_id = (__v_int)(callee->pos.id), .offset = (__v_int)(callee->pos.end) - callee->value.len}};
@@ -589246,7 +589415,7 @@ string types__TypeChecker__vls_inlay_hints(types__TypeChecker* tc, __v_int file_
 		__v_int __for_idx_19 = 0;
 		for (; __for_idx_19 < hints.len; __for_idx_19++) {
 			types__VlsInlayHint hint = *(types__VlsInlayHint*)(array_get(hints, __for_idx_19));
-			string __v3_internal_symbol_join_0__vmsvc13336[3]; __v3_internal_symbol_join_0__vmsvc13336[0] = int__str(hint.offset); __v3_internal_symbol_join_0__vmsvc13336[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13336[2] = hint.label; string key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13336));
+			string __v3_internal_symbol_join_0__vmsvc13339[3]; __v3_internal_symbol_join_0__vmsvc13339[0] = int__str(hint.offset); __v3_internal_symbol_join_0__vmsvc13339[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13339[2] = hint.label; string key = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13339));
 			string __map_key_20 = key;
 			if (map__exists(&seen, &__map_key_20)) {
 				continue;
@@ -589260,7 +589429,7 @@ string types__TypeChecker__vls_inlay_hints(types__TypeChecker* tc, __v_int file_
 			multi_return___v_int___v_int __multi_ret_23 = token__File__find_line_and_column(file, hint.offset);
 			__v_int line = __multi_ret_23.arg0;
 			__v_int col = __multi_ret_23.arg1;
-			string __v3_internal_symbol_join_1__vmsvc13337[11]; __v3_internal_symbol_join_1__vmsvc13337[0] = _str_8500; __v3_internal_symbol_join_1__vmsvc13337[1] = int__str(line - 1); __v3_internal_symbol_join_1__vmsvc13337[2] = _str_8501; __v3_internal_symbol_join_1__vmsvc13337[3] = int__str(col - 1); __v3_internal_symbol_join_1__vmsvc13337[4] = _str_8487; __v3_internal_symbol_join_1__vmsvc13337[5] = types__vls_json_escape(hint.label); __v3_internal_symbol_join_1__vmsvc13337[6] = _str_8502; __v3_internal_symbol_join_1__vmsvc13337[7] = int__str(hint.kind); __v3_internal_symbol_join_1__vmsvc13337[8] = _str_8503; __v3_internal_symbol_join_1__vmsvc13337[9] = types__vls_json_escape(hint.tooltip); __v3_internal_symbol_join_1__vmsvc13337[10] = _str_8504; strings__Builder__write_string(sb, (string_plus_many(11, __v3_internal_symbol_join_1__vmsvc13337)));
+			string __v3_internal_symbol_join_1__vmsvc13340[11]; __v3_internal_symbol_join_1__vmsvc13340[0] = _str_8500; __v3_internal_symbol_join_1__vmsvc13340[1] = int__str(line - 1); __v3_internal_symbol_join_1__vmsvc13340[2] = _str_8501; __v3_internal_symbol_join_1__vmsvc13340[3] = int__str(col - 1); __v3_internal_symbol_join_1__vmsvc13340[4] = _str_8487; __v3_internal_symbol_join_1__vmsvc13340[5] = types__vls_json_escape(hint.label); __v3_internal_symbol_join_1__vmsvc13340[6] = _str_8502; __v3_internal_symbol_join_1__vmsvc13340[7] = int__str(hint.kind); __v3_internal_symbol_join_1__vmsvc13340[8] = _str_8503; __v3_internal_symbol_join_1__vmsvc13340[9] = types__vls_json_escape(hint.tooltip); __v3_internal_symbol_join_1__vmsvc13340[10] = _str_8504; strings__Builder__write_string(sb, (string_plus_many(11, __v3_internal_symbol_join_1__vmsvc13340)));
 		}
 	}
 	strings__Builder__write_string(sb, _str_8492);
@@ -589377,7 +589546,7 @@ __v_option_types__VlsSignature types__TypeChecker__vls_interface_method_signatur
 					continue;
 				}
 				string text = types__TypeChecker__vls_written_type_text(tc, types__subst_generic_text(param->typ, type_args, type_params));
-				string __v3_internal_symbol_join_2__vmsvc13338[3]; __v3_internal_symbol_join_2__vmsvc13338[0] = param->value; __v3_internal_symbol_join_2__vmsvc13338[1] = _str_1; __v3_internal_symbol_join_2__vmsvc13338[2] = string__replace(text, _str_5201, _str_2732); string __arr_val_14 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13338));
+				string __v3_internal_symbol_join_2__vmsvc13341[3]; __v3_internal_symbol_join_2__vmsvc13341[0] = param->value; __v3_internal_symbol_join_2__vmsvc13341[1] = _str_1; __v3_internal_symbol_join_2__vmsvc13341[2] = string__replace(text, _str_5201, _str_2732); string __arr_val_14 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13341));
 				array_push(&params, &__arr_val_14);
 				string __arr_val_15 = param->value;
 				array_push(&names, &__arr_val_15);
@@ -589478,12 +589647,12 @@ __v_option_types__VlsSignature types__TypeChecker__vls_interface_method_signatur
 
 bool types__TypeChecker__vls_is_enum(types__TypeChecker* tc, u32 name_id) {
 	u32 __map_key_0 = name_id;
-	int cond__vmsvc13340; cond__vmsvc13340 = !!(map__exists(&tc->enum_names, &__map_key_0)); if (!cond__vmsvc13340) { u32 __map_key_1__vmsvc13339 = types__TypeChecker__qualify_type_name(tc, name_id); cond__vmsvc13340 = !!((map__exists(&tc->enum_names, &__map_key_1__vmsvc13339))); } return cond__vmsvc13340;
+	int cond__vmsvc13343; cond__vmsvc13343 = !!(map__exists(&tc->enum_names, &__map_key_0)); if (!cond__vmsvc13343) { u32 __map_key_1__vmsvc13342 = types__TypeChecker__qualify_type_name(tc, name_id); cond__vmsvc13343 = !!((map__exists(&tc->enum_names, &__map_key_1__vmsvc13342))); } return cond__vmsvc13343;
 }
 
 bool types__TypeChecker__vls_is_global(types__TypeChecker* tc, string name) {
 	string __map_key_0 = name;
-	int cond__vmsvc13342; cond__vmsvc13342 = !!(map__exists(&tc->global_names, &__map_key_0)); if (!cond__vmsvc13342) { string __map_key_1__vmsvc13341 = types__TypeChecker__qualify_name(tc, name); cond__vmsvc13342 = !!((map__exists(&tc->global_names, &__map_key_1__vmsvc13341))); } return cond__vmsvc13342;
+	int cond__vmsvc13345; cond__vmsvc13345 = !!(map__exists(&tc->global_names, &__map_key_0)); if (!cond__vmsvc13345) { string __map_key_1__vmsvc13344 = types__TypeChecker__qualify_name(tc, name); cond__vmsvc13345 = !!((map__exists(&tc->global_names, &__map_key_1__vmsvc13344))); } return cond__vmsvc13345;
 }
 
 __v_option_types__Type types__TypeChecker__vls_lambda_param_type(types__TypeChecker* tc, i32 decl_id) {
@@ -589591,14 +589760,14 @@ __v_option_types__Type types__TypeChecker__vls_local_named_type(types__TypeCheck
 				continue;
 			}
 			flat__Node* parent = flat__FlatAst__node(tc->a, parent_id);
-			int cond__vmsvc13346; cond__vmsvc13346 = !!((parent->kind == flat__NodeKind__decl_assign)); if (cond__vmsvc13346) { i32 __contains_needle_3__vmsvc13343 = id; Array __in_arr_2__vmsvc13344 = types__TypeChecker__multi_assign_lhs_ids(tc, *parent); bool __contains_4__vmsvc13345 = false; {
+			int cond__vmsvc13349; cond__vmsvc13349 = !!((parent->kind == flat__NodeKind__decl_assign)); if (cond__vmsvc13349) { i32 __contains_needle_3__vmsvc13346 = id; Array __in_arr_2__vmsvc13347 = types__TypeChecker__multi_assign_lhs_ids(tc, *parent); bool __contains_4__vmsvc13348 = false; {
 				__v_int __contains_idx_5 = 0;
-				for (; __contains_idx_5 < __in_arr_2__vmsvc13344.len; __contains_idx_5++) {
-					if (*(i32*)(array_get(__in_arr_2__vmsvc13344, __contains_idx_5)) == __contains_needle_3__vmsvc13343) {
-						__contains_4__vmsvc13345 = true;
+				for (; __contains_idx_5 < __in_arr_2__vmsvc13347.len; __contains_idx_5++) {
+					if (*(i32*)(array_get(__in_arr_2__vmsvc13347, __contains_idx_5)) == __contains_needle_3__vmsvc13346) {
+						__contains_4__vmsvc13348 = true;
 					}
 				}
-			} cond__vmsvc13346 = !!((__contains_4__vmsvc13345)); } if ((cond__vmsvc13346) || (parent->kind == flat__NodeKind__for_in_stmt)) {
+			} cond__vmsvc13349 = !!((__contains_4__vmsvc13348)); } if ((cond__vmsvc13349) || (parent->kind == flat__NodeKind__for_in_stmt)) {
 				__v_option_types__Type __if_guard_6 = types__TypeChecker__vls_local_type(tc, id);
 				if (__if_guard_6.ok) {
 					types__Type typ = __if_guard_6.value;
@@ -589832,7 +590001,7 @@ string types__TypeChecker__vls_member_name(types__TypeChecker* tc, string module
 		__map_val_4 = module_name;
 	}
 	string full = __map_val_4;
-	string __v3_internal_symbol_join_0__vmsvc13347[3]; __v3_internal_symbol_join_0__vmsvc13347[0] = full; __v3_internal_symbol_join_0__vmsvc13347[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13347[2] = member; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13347));
+	string __v3_internal_symbol_join_0__vmsvc13350[3]; __v3_internal_symbol_join_0__vmsvc13350[0] = full; __v3_internal_symbol_join_0__vmsvc13350[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13350[2] = member; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13350));
 }
 
 __v_option_u32 types__TypeChecker__vls_member_owner(types__TypeChecker* tc, types__Type* typ) {
@@ -589867,7 +590036,7 @@ void types__TypeChecker__vls_method_details(types__TypeChecker* tc, string owner
 			continue;
 		}
 		string method = string__substr(		key, 		prefix.len, (		key).len);
-		int cond__vmsvc13349; cond__vmsvc13349 = !!(string__contains(method, _str_2) || string__contains(method, _str_2456)); if (!cond__vmsvc13349) { string __map_key_0__vmsvc13348 = method; cond__vmsvc13349 = !!((map__exists(seen, &__map_key_0__vmsvc13348))); } if (cond__vmsvc13349 || !types__TypeChecker__vls_visible(tc, key)) {
+		int cond__vmsvc13352; cond__vmsvc13352 = !!(string__contains(method, _str_2) || string__contains(method, _str_2456)); if (!cond__vmsvc13352) { string __map_key_0__vmsvc13351 = method; cond__vmsvc13352 = !!((map__exists(seen, &__map_key_0__vmsvc13351))); } if (cond__vmsvc13352 || !types__TypeChecker__vls_visible(tc, key)) {
 			continue;
 		}
 		string __map_key_1 = method;
@@ -589894,7 +590063,7 @@ __v_option_string types__TypeChecker__vls_method_target(types__TypeChecker* tc, 
 	}
 	types__Type alias_receiver = types__unwrap_all_pointers(&receiver_type);
 	if ((alias_receiver).typ == 23) {
-		string __v3_internal_symbol_join_0__vmsvc13350[3]; __v3_internal_symbol_join_0__vmsvc13350[0] = types__Alias__name(alias_receiver.types__Alias); __v3_internal_symbol_join_0__vmsvc13350[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13350[2] = method; string alias_method = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13350));
+		string __v3_internal_symbol_join_0__vmsvc13353[3]; __v3_internal_symbol_join_0__vmsvc13353[0] = types__Alias__name(alias_receiver.types__Alias); __v3_internal_symbol_join_0__vmsvc13353[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13353[2] = method; string alias_method = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13353));
 		string __map_key_3 = alias_method;
 		if (map__exists(&tc->fn_type_files, &__map_key_3)) {
 			return (__v_option_string){.ok = true, .value = alias_method};
@@ -589909,7 +590078,7 @@ __v_option_string types__TypeChecker__vls_method_target(types__TypeChecker* tc, 
 	}
 	u32 owner_id = __or_val_5;
 	string owner = flat__source_type_name(owner_id);
-	string __v3_internal_symbol_join_1__vmsvc13351[3]; __v3_internal_symbol_join_1__vmsvc13351[0] = owner; __v3_internal_symbol_join_1__vmsvc13351[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13351[2] = method; string name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13351));
+	string __v3_internal_symbol_join_1__vmsvc13354[3]; __v3_internal_symbol_join_1__vmsvc13354[0] = owner; __v3_internal_symbol_join_1__vmsvc13354[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13354[2] = method; string name = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13354));
 	string __map_key_6 = name;
 	if (map__exists(&tc->fn_type_files, &__map_key_6) || (types__TypeChecker__vls_builtin_method_decl(tc, name)).ok) {
 		return (__v_option_string){.ok = true, .value = name};
@@ -589921,7 +590090,7 @@ __v_option_string types__TypeChecker__vls_method_target(types__TypeChecker* tc, 
 	}
 	Array owners = types__TypeChecker__embedded_method_candidates(tc, owner_id, method);
 	if (owners.len == 1) {
-		string __v3_internal_symbol_join_2__vmsvc13352[3]; __v3_internal_symbol_join_2__vmsvc13352[0] = flat__source_type_name((*(u32*)array_get(owners, 0))); __v3_internal_symbol_join_2__vmsvc13352[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13352[2] = method; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13352))};
+		string __v3_internal_symbol_join_2__vmsvc13355[3]; __v3_internal_symbol_join_2__vmsvc13355[0] = flat__source_type_name((*(u32*)array_get(owners, 0))); __v3_internal_symbol_join_2__vmsvc13355[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13355[2] = method; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13355))};
 	}
 	__v_option_flat__Node __if_guard_8 = types__TypeChecker__vls_interface_member(tc, owner_id, method);
 	if (__if_guard_8.ok) {
@@ -590009,7 +590178,7 @@ __v_option_string types__TypeChecker__vls_module_member_declaration(types__TypeC
 	__v_option_types__Type __if_guard_0 = types__TypeChecker__vls_const_type(tc, qualified);
 	if (__if_guard_0.ok) {
 		types__Type typ = __if_guard_0.value;
-		string __v3_internal_symbol_join_0__vmsvc13353[4]; __v3_internal_symbol_join_0__vmsvc13353[0] = _str_5498; __v3_internal_symbol_join_0__vmsvc13353[1] = member; __v3_internal_symbol_join_0__vmsvc13353[2] = _str_1; __v3_internal_symbol_join_0__vmsvc13353[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13353))};
+		string __v3_internal_symbol_join_0__vmsvc13356[4]; __v3_internal_symbol_join_0__vmsvc13356[0] = _str_5498; __v3_internal_symbol_join_0__vmsvc13356[1] = member; __v3_internal_symbol_join_0__vmsvc13356[2] = _str_1; __v3_internal_symbol_join_0__vmsvc13356[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){typ}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13356))};
 	}
 	__v_option_string __if_guard_1 = types__TypeChecker__vls_fn_signature(tc, qualified);
 	if (__if_guard_1.ok) {
@@ -590054,7 +590223,7 @@ string types__TypeChecker__vls_named_type_text(types__TypeChecker* tc, u32 name_
 	string base = string__all_before(name, _str_176);
 	if (string__contains(base, _str_2)) {
 		string module_path = string__all_before_last(base, _str_2);
-		string __v3_internal_symbol_join_0__vmsvc13354[3]; __v3_internal_symbol_join_0__vmsvc13354[0] = string__all_after_last(module_path, _str_2); __v3_internal_symbol_join_0__vmsvc13354[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13354[2] = string__substr(		name, 		module_path.len + 1, (		name).len); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13354));
+		string __v3_internal_symbol_join_0__vmsvc13357[3]; __v3_internal_symbol_join_0__vmsvc13357[0] = string__all_after_last(module_path, _str_2); __v3_internal_symbol_join_0__vmsvc13357[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13357[2] = string__substr(		name, 		module_path.len + 1, (		name).len); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13357));
 	}
 	if (string__contains(name, _str_176)) {
 		return name;
@@ -590293,7 +590462,7 @@ string types__TypeChecker__vls_param_text(types__TypeChecker* tc, flat__Node* pa
 		}
 		type_text = __if_val_0;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13355[3]; __v3_internal_symbol_join_0__vmsvc13355[0] = param->value; __v3_internal_symbol_join_0__vmsvc13355[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13355[2] = string__replace(type_text, _str_5201, _str_2732); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13355));
+	string __v3_internal_symbol_join_0__vmsvc13358[3]; __v3_internal_symbol_join_0__vmsvc13358[0] = param->value; __v3_internal_symbol_join_0__vmsvc13358[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13358[2] = string__replace(type_text, _str_5201, _str_2732); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13358));
 }
 
 i32 types__TypeChecker__vls_parent_id(types__TypeChecker* tc, i32 id) {
@@ -590339,13 +590508,13 @@ string types__TypeChecker__vls_position_text(types__TypeChecker* tc, __v_int fil
 		string real_path = os__real_path(path);
 		if (os__is_dir(input)) {
 			if (string__eq(os__dir(real_path), os__real_path(input))) {
-				string __v3_internal_symbol_join_0__vmsvc13356[3]; __v3_internal_symbol_join_0__vmsvc13356[0] = string__trim_right(input, _str_374); __v3_internal_symbol_join_0__vmsvc13356[1] = _str_374; __v3_internal_symbol_join_0__vmsvc13356[2] = os__file_name(path); path = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13356));
+				string __v3_internal_symbol_join_0__vmsvc13359[3]; __v3_internal_symbol_join_0__vmsvc13359[0] = string__trim_right(input, _str_374); __v3_internal_symbol_join_0__vmsvc13359[1] = _str_374; __v3_internal_symbol_join_0__vmsvc13359[2] = os__file_name(path); path = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13359));
 			}
 		} else if (string__eq(real_path, os__real_path(input))) {
 			path = input;
 		}
 	}
-	string __v3_internal_symbol_join_1__vmsvc13357[5]; __v3_internal_symbol_join_1__vmsvc13357[0] = path; __v3_internal_symbol_join_1__vmsvc13357[1] = _str_92; __v3_internal_symbol_join_1__vmsvc13357[2] = int__str(line); __v3_internal_symbol_join_1__vmsvc13357[3] = _str_92; __v3_internal_symbol_join_1__vmsvc13357[4] = int__str(col - 1); return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13357));
+	string __v3_internal_symbol_join_1__vmsvc13360[5]; __v3_internal_symbol_join_1__vmsvc13360[0] = path; __v3_internal_symbol_join_1__vmsvc13360[1] = _str_92; __v3_internal_symbol_join_1__vmsvc13360[2] = int__str(line); __v3_internal_symbol_join_1__vmsvc13360[3] = _str_92; __v3_internal_symbol_join_1__vmsvc13360[4] = int__str(col - 1); return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13360));
 }
 
 __v_option_types__VlsPos types__TypeChecker__vls_receiver_name_at(types__TypeChecker* tc, i32 param_id, flat__Node* param, string source) {
@@ -590627,7 +590796,7 @@ __v_option_types__VlsSignature types__TypeChecker__vls_signature(types__TypeChec
 			string constraint = __if_val_24;
 			string __if_val_25 = {0};
 			if (constraint.len > 0) {
-				string __v3_internal_symbol_join_0__vmsvc13358[3]; __v3_internal_symbol_join_0__vmsvc13358[0] = string__trim_space(generic_name); __v3_internal_symbol_join_0__vmsvc13358[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13358[2] = constraint; __if_val_25 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13358));
+				string __v3_internal_symbol_join_0__vmsvc13361[3]; __v3_internal_symbol_join_0__vmsvc13361[0] = string__trim_space(generic_name); __v3_internal_symbol_join_0__vmsvc13361[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13361[2] = constraint; __if_val_25 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13361));
 			} else {
 				__if_val_25 = string__trim_space(generic_name);
 			}
@@ -590638,7 +590807,7 @@ __v_option_types__VlsSignature types__TypeChecker__vls_signature(types__TypeChec
 	string __struct_field_27 = v_short;
 	string __if_val_28 = {0};
 	if (written.len > 0) {
-		string __v3_internal_symbol_join_1__vmsvc13359[3]; __v3_internal_symbol_join_1__vmsvc13359[0] = _str_176; __v3_internal_symbol_join_1__vmsvc13359[1] = Array_string__join(written, _str_25); __v3_internal_symbol_join_1__vmsvc13359[2] = _str_177; __if_val_28 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13359));
+		string __v3_internal_symbol_join_1__vmsvc13362[3]; __v3_internal_symbol_join_1__vmsvc13362[0] = _str_176; __v3_internal_symbol_join_1__vmsvc13362[1] = Array_string__join(written, _str_25); __v3_internal_symbol_join_1__vmsvc13362[2] = _str_177; __if_val_28 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13362));
 	} else {
 		__if_val_28 = _str_34;
 	}
@@ -590689,18 +590858,18 @@ string types__TypeChecker__vls_signature_help(types__TypeChecker* tc, __v_int fi
 	if ((sig.params.len > 0) && (active >= sig.params.len)) {
 		active = sig.params.len - 1;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13360[5]; __v3_internal_symbol_join_0__vmsvc13360[0] = sig.name; __v3_internal_symbol_join_0__vmsvc13360[1] = _str_158; __v3_internal_symbol_join_0__vmsvc13360[2] = Array_string__join(sig.params, _str_25); __v3_internal_symbol_join_0__vmsvc13360[3] = _str_28; __v3_internal_symbol_join_0__vmsvc13360[4] = sig.ret; string label = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13360));
+	string __v3_internal_symbol_join_0__vmsvc13363[5]; __v3_internal_symbol_join_0__vmsvc13363[0] = sig.name; __v3_internal_symbol_join_0__vmsvc13363[1] = _str_158; __v3_internal_symbol_join_0__vmsvc13363[2] = Array_string__join(sig.params, _str_25); __v3_internal_symbol_join_0__vmsvc13363[3] = _str_28; __v3_internal_symbol_join_0__vmsvc13363[4] = sig.ret; string label = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13363));
 	Array __map_7 = array_new(	sizeof(string), 0, sig.params.len);
 	{
 		__v_int __map_idx_8 = 0;
 		for (; __map_idx_8 < sig.params.len; __map_idx_8++) {
 			string __map_it_6 = *(string*)(array_get(sig.params, __map_idx_8));
-			string __v3_internal_symbol_join_1__vmsvc13361[3]; __v3_internal_symbol_join_1__vmsvc13361[0] = _str_8520; __v3_internal_symbol_join_1__vmsvc13361[1] = types__vls_json_escape(__map_it_6); __v3_internal_symbol_join_1__vmsvc13361[2] = _str_8504; string __map_val_9 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13361));
+			string __v3_internal_symbol_join_1__vmsvc13364[3]; __v3_internal_symbol_join_1__vmsvc13364[0] = _str_8520; __v3_internal_symbol_join_1__vmsvc13364[1] = types__vls_json_escape(__map_it_6); __v3_internal_symbol_join_1__vmsvc13364[2] = _str_8504; string __map_val_9 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13364));
 			array_push(&__map_7, &__map_val_9);
 		}
 	}
 	string params = Array_string__join(__map_7, _str_1101);
-	string __v3_internal_symbol_join_2__vmsvc13362[7]; __v3_internal_symbol_join_2__vmsvc13362[0] = _str_8521; __v3_internal_symbol_join_2__vmsvc13362[1] = types__vls_json_escape(label); __v3_internal_symbol_join_2__vmsvc13362[2] = _str_8522; __v3_internal_symbol_join_2__vmsvc13362[3] = params; __v3_internal_symbol_join_2__vmsvc13362[4] = _str_8523; __v3_internal_symbol_join_2__vmsvc13362[5] = int__str(active); __v3_internal_symbol_join_2__vmsvc13362[6] = _str_2032; return (string_plus_many(7, __v3_internal_symbol_join_2__vmsvc13362));
+	string __v3_internal_symbol_join_2__vmsvc13365[7]; __v3_internal_symbol_join_2__vmsvc13365[0] = _str_8521; __v3_internal_symbol_join_2__vmsvc13365[1] = types__vls_json_escape(label); __v3_internal_symbol_join_2__vmsvc13365[2] = _str_8522; __v3_internal_symbol_join_2__vmsvc13365[3] = params; __v3_internal_symbol_join_2__vmsvc13365[4] = _str_8523; __v3_internal_symbol_join_2__vmsvc13365[5] = int__str(active); __v3_internal_symbol_join_2__vmsvc13365[6] = _str_2032; return (string_plus_many(7, __v3_internal_symbol_join_2__vmsvc13365));
 }
 
 void types__TypeChecker__vls_slice_hints(types__TypeChecker* tc, flat__Node node, string source, Array* hints) {
@@ -590756,7 +590925,7 @@ __v_option_types__Type types__TypeChecker__vls_smartcast_type(types__TypeChecker
 	}
 	types__Type typ = __or_val_1;
 	types__Type narrowed = types__unwrap_pointer(&typ);
-	int cond__vmsvc13364; cond__vmsvc13364 = !!(((narrowed).typ == 2) || ((narrowed).typ == 1) || (types__Type__source_type_id(&narrowed) == types__Type__source_type_id(base))); if (!cond__vmsvc13364) { types__Type __addr_2__vmsvc13363 = types__unwrap_pointer(&(*declared)); cond__vmsvc13364 = !!((types__Type__source_type_id(&narrowed) == types__Type__source_type_id(&__addr_2__vmsvc13363))); } if (cond__vmsvc13364) {
+	int cond__vmsvc13367; cond__vmsvc13367 = !!(((narrowed).typ == 2) || ((narrowed).typ == 1) || (types__Type__source_type_id(&narrowed) == types__Type__source_type_id(base))); if (!cond__vmsvc13367) { types__Type __addr_2__vmsvc13366 = types__unwrap_pointer(&(*declared)); cond__vmsvc13367 = !!((types__Type__source_type_id(&narrowed) == types__Type__source_type_id(&__addr_2__vmsvc13366))); } if (cond__vmsvc13367) {
 		return (__v_option_types__Type){.ok = false};
 	}
 	return (__v_option_types__Type){.ok = true, .value = typ};
@@ -591115,12 +591284,12 @@ __v_option_string types__TypeChecker__vls_type_declaration(types__TypeChecker* t
 					}
 				}
 				Array texts = __map_9;
-				string __v3_internal_symbol_join_2__vmsvc13365[4]; __v3_internal_symbol_join_2__vmsvc13365[0] = _str_5506; __v3_internal_symbol_join_2__vmsvc13365[1] = v_short; __v3_internal_symbol_join_2__vmsvc13365[2] = _str_97; __v3_internal_symbol_join_2__vmsvc13365[3] = Array_string__join(texts, _str_5541); return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13365))};
+				string __v3_internal_symbol_join_2__vmsvc13368[4]; __v3_internal_symbol_join_2__vmsvc13368[0] = _str_5506; __v3_internal_symbol_join_2__vmsvc13368[1] = v_short; __v3_internal_symbol_join_2__vmsvc13368[2] = _str_97; __v3_internal_symbol_join_2__vmsvc13368[3] = Array_string__join(texts, _str_5541); return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13368))};
 			}
 			__v_option_u32 __if_guard_12 = flat__SourceTypeBindings__type_id(&tc->type_aliases, key);
 			if (__if_guard_12.ok) {
 				u32 parent_source_id = __if_guard_12.value;
-				string __v3_internal_symbol_join_3__vmsvc13366[4]; __v3_internal_symbol_join_3__vmsvc13366[0] = _str_5506; __v3_internal_symbol_join_3__vmsvc13366[1] = v_short; __v3_internal_symbol_join_3__vmsvc13366[2] = _str_97; __v3_internal_symbol_join_3__vmsvc13366[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*types__TypeChecker__parse_type(tc, parent_source_id)}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13366))};
+				string __v3_internal_symbol_join_3__vmsvc13369[4]; __v3_internal_symbol_join_3__vmsvc13369[0] = _str_5506; __v3_internal_symbol_join_3__vmsvc13369[1] = v_short; __v3_internal_symbol_join_3__vmsvc13369[2] = _str_97; __v3_internal_symbol_join_3__vmsvc13369[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*types__TypeChecker__parse_type(tc, parent_source_id)}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13369))};
 			}
 		}
 	}
@@ -591288,7 +591457,7 @@ void types__TypeChecker__vls_type_generic_body(types__TypeChecker* tc, i32 id) {
 			}
 		}
 	}
-	int cond__vmsvc13369; cond__vmsvc13369 = !!(!types__TypeChecker__valid_node_id(tc, fn_id) || ((__v_int)(fn_id) >= tc->vls_added_start)); if (!cond__vmsvc13369) { __v_int __map_key_5__vmsvc13367 = (__v_int)(fn_id); bool __map_zero_6__vmsvc13368 = false; cond__vmsvc13369 = !!((*(bool*)(map__get(&tc->vls_typed_bodies, &__map_key_5__vmsvc13367, &__map_zero_6__vmsvc13368)))); } if (cond__vmsvc13369) {
+	int cond__vmsvc13372; cond__vmsvc13372 = !!(!types__TypeChecker__valid_node_id(tc, fn_id) || ((__v_int)(fn_id) >= tc->vls_added_start)); if (!cond__vmsvc13372) { __v_int __map_key_5__vmsvc13370 = (__v_int)(fn_id); bool __map_zero_6__vmsvc13371 = false; cond__vmsvc13372 = !!((*(bool*)(map__get(&tc->vls_typed_bodies, &__map_key_5__vmsvc13370, &__map_zero_6__vmsvc13371)))); } if (cond__vmsvc13372) {
 		return;
 	}
 	__v_int __map_key_7 = (__v_int)(fn_id);
@@ -591358,14 +591527,14 @@ void types__TypeChecker__vls_type_generic_body(types__TypeChecker* tc, i32 id) {
 		for (; i >= 0; i--) {
 			i32 current = (*(i32*)array_get(order, i));
 			flat__Node* n = flat__FlatAst__node(tc->a, current);
-			int cond__vmsvc13371; cond__vmsvc13371 = !!((n->kind == flat__NodeKind__ident)); if (cond__vmsvc13371) { string __map_key_14__vmsvc13370 = n->value; cond__vmsvc13371 = !!((map__exists(&dependent, &__map_key_14__vmsvc13370))); } bool depending = (cond__vmsvc13371) || types__type_id_names_any(n->typ, params) || (!((n->kind == flat__NodeKind__string_literal) || (n->kind == flat__NodeKind__char_literal) || (n->kind == flat__NodeKind__int_literal) || (n->kind == flat__NodeKind__float_literal)) && (n->value.len > 0) && types__type_id_names_any(flat__Node__source_value_id(*n), params));
+			int cond__vmsvc13374; cond__vmsvc13374 = !!((n->kind == flat__NodeKind__ident)); if (cond__vmsvc13374) { string __map_key_14__vmsvc13373 = n->value; cond__vmsvc13374 = !!((map__exists(&dependent, &__map_key_14__vmsvc13373))); } bool depending = (cond__vmsvc13374) || types__type_id_names_any(n->typ, params) || (!((n->kind == flat__NodeKind__string_literal) || (n->kind == flat__NodeKind__char_literal) || (n->kind == flat__NodeKind__int_literal) || (n->kind == flat__NodeKind__float_literal)) && (n->value.len > 0) && types__type_id_names_any(flat__Node__source_value_id(*n), params));
 			bool generic_call = (n->kind == flat__NodeKind__call) && types__TypeChecker__vls_calls_generic(tc, current, *n);
 			{
 				__v_int j = 0;
 				for (; j < n->children_count; j++) {
 					__v_int child = (__v_int)(flat__FlatAst__child(tc->a, n, j));
-					int cond__vmsvc13374; cond__vmsvc13374 = !!(depending); if (!cond__vmsvc13374) { __v_int __map_key_15__vmsvc13372 = child; bool __map_zero_16__vmsvc13373 = false; cond__vmsvc13374 = !!((*(bool*)(map__get(&depends, &__map_key_15__vmsvc13372, &__map_zero_16__vmsvc13373)))); } depending = cond__vmsvc13374;
-					int cond__vmsvc13377; cond__vmsvc13377 = !!(generic_call); if (!cond__vmsvc13377) { __v_int __map_key_17__vmsvc13375 = child; bool __map_zero_18__vmsvc13376 = false; cond__vmsvc13377 = !!((*(bool*)(map__get(&around_generic_call, &__map_key_17__vmsvc13375, &__map_zero_18__vmsvc13376)))); } generic_call = cond__vmsvc13377;
+					int cond__vmsvc13377; cond__vmsvc13377 = !!(depending); if (!cond__vmsvc13377) { __v_int __map_key_15__vmsvc13375 = child; bool __map_zero_16__vmsvc13376 = false; cond__vmsvc13377 = !!((*(bool*)(map__get(&depends, &__map_key_15__vmsvc13375, &__map_zero_16__vmsvc13376)))); } depending = cond__vmsvc13377;
+					int cond__vmsvc13380; cond__vmsvc13380 = !!(generic_call); if (!cond__vmsvc13380) { __v_int __map_key_17__vmsvc13378 = child; bool __map_zero_18__vmsvc13379 = false; cond__vmsvc13380 = !!((*(bool*)(map__get(&around_generic_call, &__map_key_17__vmsvc13378, &__map_zero_18__vmsvc13379)))); } generic_call = cond__vmsvc13380;
 				}
 			}
 			__v_int __map_key_19 = (__v_int)(current);
@@ -591609,7 +591778,7 @@ __v_option_string types__TypeChecker__vls_type_param_hover(types__TypeChecker* t
 		if (__map_ptr_16 != NULL) {
 			__map_val_17 = *(types__GenericConstraint*)(__map_ptr_16);
 		} else {
-			string __v3_internal_symbol_join_0__vmsvc13378[3]; __v3_internal_symbol_join_0__vmsvc13378[0] = _str_176; __v3_internal_symbol_join_0__vmsvc13378[1] = word; __v3_internal_symbol_join_0__vmsvc13378[2] = _str_177; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13378))};
+			string __v3_internal_symbol_join_0__vmsvc13381[3]; __v3_internal_symbol_join_0__vmsvc13381[0] = _str_176; __v3_internal_symbol_join_0__vmsvc13381[1] = word; __v3_internal_symbol_join_0__vmsvc13381[2] = _str_177; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13381))};
 		}
 		types__GenericConstraint narrowed = __map_val_17;
 		__v_option_string __or_opt_18 = types__TypeChecker__vls_type_param_line(tc, word, narrowed);
@@ -591617,13 +591786,13 @@ __v_option_string types__TypeChecker__vls_type_param_hover(types__TypeChecker* t
 		if (__or_opt_18.ok) {
 			__or_val_19 = __or_opt_18.value;
 		} else {
-			string __v3_internal_symbol_join_1__vmsvc13379[3]; __v3_internal_symbol_join_1__vmsvc13379[0] = _str_176; __v3_internal_symbol_join_1__vmsvc13379[1] = word; __v3_internal_symbol_join_1__vmsvc13379[2] = _str_177; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13379))};
+			string __v3_internal_symbol_join_1__vmsvc13382[3]; __v3_internal_symbol_join_1__vmsvc13382[0] = _str_176; __v3_internal_symbol_join_1__vmsvc13382[1] = word; __v3_internal_symbol_join_1__vmsvc13382[2] = _str_177; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13382))};
 		}
 		string line = __or_val_19;
-		string __v3_internal_symbol_join_2__vmsvc13380[4]; __v3_internal_symbol_join_2__vmsvc13380[0] = _str_176; __v3_internal_symbol_join_2__vmsvc13380[1] = word; __v3_internal_symbol_join_2__vmsvc13380[2] = _str_8498; __v3_internal_symbol_join_2__vmsvc13380[3] = line; return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13380))};
+		string __v3_internal_symbol_join_2__vmsvc13383[4]; __v3_internal_symbol_join_2__vmsvc13383[0] = _str_176; __v3_internal_symbol_join_2__vmsvc13383[1] = word; __v3_internal_symbol_join_2__vmsvc13383[2] = _str_8498; __v3_internal_symbol_join_2__vmsvc13383[3] = line; return (__v_option_string){.ok = true, .value = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13383))};
 	}
 	types__GenericConstraint declared = __map_val_11;
-	string __v3_internal_symbol_join_3__vmsvc13381[5]; __v3_internal_symbol_join_3__vmsvc13381[0] = _str_176; __v3_internal_symbol_join_3__vmsvc13381[1] = word; __v3_internal_symbol_join_3__vmsvc13381[2] = _str_1; __v3_internal_symbol_join_3__vmsvc13381[3] = types__GenericConstraint__name_text(&declared); __v3_internal_symbol_join_3__vmsvc13381[4] = _str_177; string head = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13381));
+	string __v3_internal_symbol_join_3__vmsvc13384[5]; __v3_internal_symbol_join_3__vmsvc13384[0] = _str_176; __v3_internal_symbol_join_3__vmsvc13384[1] = word; __v3_internal_symbol_join_3__vmsvc13384[2] = _str_1; __v3_internal_symbol_join_3__vmsvc13384[3] = types__GenericConstraint__name_text(&declared); __v3_internal_symbol_join_3__vmsvc13384[4] = _str_177; string head = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13384));
 	if (!types__TypeChecker__vls_constraint_known(tc, decl, declared)) {
 		return (__v_option_string){.ok = true, .value = head};
 	}
@@ -591645,7 +591814,7 @@ __v_option_string types__TypeChecker__vls_type_param_hover(types__TypeChecker* t
 		return (__v_option_string){.ok = true, .value = head};
 	}
 	string line = __or_val_27;
-	string __v3_internal_symbol_join_4__vmsvc13382[3]; __v3_internal_symbol_join_4__vmsvc13382[0] = head; __v3_internal_symbol_join_4__vmsvc13382[1] = _str_0; __v3_internal_symbol_join_4__vmsvc13382[2] = line; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13382))};
+	string __v3_internal_symbol_join_4__vmsvc13385[3]; __v3_internal_symbol_join_4__vmsvc13385[0] = head; __v3_internal_symbol_join_4__vmsvc13385[1] = _str_0; __v3_internal_symbol_join_4__vmsvc13385[2] = line; return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13385))};
 	return (__v_option_string){.ok = true};
 }
 
@@ -591673,7 +591842,7 @@ __v_option_string types__TypeChecker__vls_type_param_hover_at(types__TypeChecker
 
 __v_option_string types__TypeChecker__vls_type_param_line(types__TypeChecker* tc, string param, types__GenericConstraint constraint) {
 	if (constraint.is_interface) {
-		string __v3_internal_symbol_join_0__vmsvc13383[3]; __v3_internal_symbol_join_0__vmsvc13383[0] = param; __v3_internal_symbol_join_0__vmsvc13383[1] = _str_8495; __v3_internal_symbol_join_0__vmsvc13383[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){(types__Type){.typ = 20, .types__Interface = constraint.iface}}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13383))};
+		string __v3_internal_symbol_join_0__vmsvc13386[3]; __v3_internal_symbol_join_0__vmsvc13386[0] = param; __v3_internal_symbol_join_0__vmsvc13386[1] = _str_8495; __v3_internal_symbol_join_0__vmsvc13386[2] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){(types__Type){.typ = 20, .types__Interface = constraint.iface}}[0]); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13386))};
 	}
 	Array texts = array_new(	sizeof(string), 0, constraint.types.len);
 	{
@@ -591698,7 +591867,7 @@ __v_option_string types__TypeChecker__vls_type_param_line(types__TypeChecker* tc
 	if (texts.len == 0) {
 		return (__v_option_string){.ok = false};
 	}
-	string __v3_internal_symbol_join_1__vmsvc13384[3]; __v3_internal_symbol_join_1__vmsvc13384[0] = param; __v3_internal_symbol_join_1__vmsvc13384[1] = _str_185; __v3_internal_symbol_join_1__vmsvc13384[2] = Array_string__join(texts, _str_5541); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13384))};
+	string __v3_internal_symbol_join_1__vmsvc13387[3]; __v3_internal_symbol_join_1__vmsvc13387[0] = param; __v3_internal_symbol_join_1__vmsvc13387[1] = _str_185; __v3_internal_symbol_join_1__vmsvc13387[2] = Array_string__join(texts, _str_5541); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13387))};
 	return (__v_option_string){.ok = true};
 }
 
@@ -591730,9 +591899,9 @@ string types__TypeChecker__vls_type_text(types__TypeChecker* tc, types__Type* __
 			__if_val_2 = int__str(t->types__ArrayFixed.ArrayFixedDataRef->len);
 		}
 		string len_text = __if_val_2;
-		string __v3_internal_symbol_join_0__vmsvc13385[4]; __v3_internal_symbol_join_0__vmsvc13385[0] = _str_176; __v3_internal_symbol_join_0__vmsvc13385[1] = len_text; __v3_internal_symbol_join_0__vmsvc13385[2] = _str_177; __v3_internal_symbol_join_0__vmsvc13385[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__ArrayFixed.ArrayFixedDataRef->elem_type}[0]); return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13385));
+		string __v3_internal_symbol_join_0__vmsvc13388[4]; __v3_internal_symbol_join_0__vmsvc13388[0] = _str_176; __v3_internal_symbol_join_0__vmsvc13388[1] = len_text; __v3_internal_symbol_join_0__vmsvc13388[2] = _str_177; __v3_internal_symbol_join_0__vmsvc13388[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__ArrayFixed.ArrayFixedDataRef->elem_type}[0]); return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13388));
 	} else if ((*t).typ == 14) {
-		string __v3_internal_symbol_join_1__vmsvc13386[4]; __v3_internal_symbol_join_1__vmsvc13386[0] = _str_5200; __v3_internal_symbol_join_1__vmsvc13386[1] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__Map.MapDataRef->key_type}[0]); __v3_internal_symbol_join_1__vmsvc13386[2] = _str_177; __v3_internal_symbol_join_1__vmsvc13386[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__Map.MapDataRef->value_type}[0]); return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc13386));
+		string __v3_internal_symbol_join_1__vmsvc13389[4]; __v3_internal_symbol_join_1__vmsvc13389[0] = _str_5200; __v3_internal_symbol_join_1__vmsvc13389[1] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__Map.MapDataRef->key_type}[0]); __v3_internal_symbol_join_1__vmsvc13389[2] = _str_177; __v3_internal_symbol_join_1__vmsvc13389[3] = types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__Map.MapDataRef->value_type}[0]); return (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc13389));
 	} else if ((*t).typ == 17) {
 		if ((t->types__OptionType.base_type)->typ == 1) {
 			return _str_3081;
@@ -591777,7 +591946,7 @@ string types__TypeChecker__vls_type_text(types__TypeChecker* tc, types__Type* __
 			__if_val_6 = string__plus(_str_1, types__TypeChecker__vls_type_text(tc, &(types__Type[]){*t->types__FnType.FnTypeDataRef->return_type}[0]));
 		}
 		string ret = __if_val_6;
-		string __v3_internal_symbol_join_2__vmsvc13387[4]; __v3_internal_symbol_join_2__vmsvc13387[0] = _str_2732; __v3_internal_symbol_join_2__vmsvc13387[1] = Array_string__join(params, _str_25); __v3_internal_symbol_join_2__vmsvc13387[2] = _str_28; __v3_internal_symbol_join_2__vmsvc13387[3] = ret; return (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13387));
+		string __v3_internal_symbol_join_2__vmsvc13390[4]; __v3_internal_symbol_join_2__vmsvc13390[0] = _str_2732; __v3_internal_symbol_join_2__vmsvc13390[1] = Array_string__join(params, _str_25); __v3_internal_symbol_join_2__vmsvc13390[2] = _str_28; __v3_internal_symbol_join_2__vmsvc13390[3] = ret; return (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13390));
 	} else if ((*t).typ == 2) {
 		__v_option_string __if_guard_7 = types__generic_placeholder_from_unknown(t->types__Unknown);
 		if (__if_guard_7.ok) {
@@ -591868,7 +592037,7 @@ string types__TypeChecker__vls_value_hover(types__TypeChecker* tc, i32 id, strin
 	if (types__type_contains_unknown(&(*typ)) || !types__vls_type_params_hold(text_id, new_map(sizeof(u32), sizeof(bool), map_hash_int_4, map_eq_int_4, map_clone_int_4, map_free_nop))) {
 		return types__TypeChecker__vls_generic_value_text(tc, id, name, text_id);
 	}
-	string __v3_internal_symbol_join_0__vmsvc13388[3]; __v3_internal_symbol_join_0__vmsvc13388[0] = name; __v3_internal_symbol_join_0__vmsvc13388[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13388[2] = text; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13388));
+	string __v3_internal_symbol_join_0__vmsvc13391[3]; __v3_internal_symbol_join_0__vmsvc13391[0] = name; __v3_internal_symbol_join_0__vmsvc13391[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13391[2] = text; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13391));
 }
 
 __v_option_types__Type types__TypeChecker__vls_value_type(types__TypeChecker* tc, i32 id) {
@@ -591985,7 +592154,7 @@ __v_option_string types__TypeChecker__vsh_os_fn_key(types__TypeChecker* tc, stri
 		return (__v_option_string){.ok = false};
 	}
 	string key = string__plus(_str_5665, name);
-	int cond__vmsvc13390; cond__vmsvc13390 = !!(types__TypeChecker__fn_signature_known(tc, key)); if (!cond__vmsvc13390) { string __map_key_1__vmsvc13389 = key; cond__vmsvc13390 = !!((map__exists(&tc->fn_ret_types, &__map_key_1__vmsvc13389))); } int cond__vmsvc13392; cond__vmsvc13392 = !!(cond__vmsvc13390); if (!cond__vmsvc13392) { string __map_key_2__vmsvc13391 = key; cond__vmsvc13392 = !!((map__exists(&tc->fn_param_types, &__map_key_2__vmsvc13391))); } if (cond__vmsvc13392) {
+	int cond__vmsvc13393; cond__vmsvc13393 = !!(types__TypeChecker__fn_signature_known(tc, key)); if (!cond__vmsvc13393) { string __map_key_1__vmsvc13392 = key; cond__vmsvc13393 = !!((map__exists(&tc->fn_ret_types, &__map_key_1__vmsvc13392))); } int cond__vmsvc13395; cond__vmsvc13395 = !!(cond__vmsvc13393); if (!cond__vmsvc13395) { string __map_key_2__vmsvc13394 = key; cond__vmsvc13395 = !!((map__exists(&tc->fn_param_types, &__map_key_2__vmsvc13394))); } if (cond__vmsvc13395) {
 		return (__v_option_string){.ok = true, .value = key};
 	}
 	return (__v_option_string){.ok = false};
@@ -592036,7 +592205,7 @@ void types__TypeChecker__warn_alloc_at(types__TypeChecker* tc, string descriptio
 		direct_child = current;
 		current = parent;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13393[3]; __v3_internal_symbol_join_0__vmsvc13393[0] = _str_5614; __v3_internal_symbol_join_0__vmsvc13393[1] = description; __v3_internal_symbol_join_0__vmsvc13393[2] = _str_28; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__compile_error, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13393)), id, pos);
+	string __v3_internal_symbol_join_0__vmsvc13396[3]; __v3_internal_symbol_join_0__vmsvc13396[0] = _str_5614; __v3_internal_symbol_join_0__vmsvc13396[1] = description; __v3_internal_symbol_join_0__vmsvc13396[2] = _str_28; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__compile_error, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13396)), id, pos);
 }
 
 void types__TypeChecker__warn_if_integer_literal_outside_known_type_range(types__TypeChecker* tc, i32 id, types__Type* expected, token__Pos warning_pos) {
@@ -592063,9 +592232,9 @@ void types__TypeChecker__warn_if_integer_literal_outside_known_type_range(types_
 	if (!types__integer_literal_outside_range(literal, type_range)) {
 		return;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13394[5]; __v3_internal_symbol_join_0__vmsvc13394[0] = _str_6841; __v3_internal_symbol_join_0__vmsvc13394[1] = literal; __v3_internal_symbol_join_0__vmsvc13394[2] = _str_6846; __v3_internal_symbol_join_0__vmsvc13394[3] = types__IntegerTypeRange__name_text(&type_range); __v3_internal_symbol_join_0__vmsvc13394[4] = _str_6847; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13394)), id, warning_pos);
+	string __v3_internal_symbol_join_0__vmsvc13397[5]; __v3_internal_symbol_join_0__vmsvc13397[0] = _str_6841; __v3_internal_symbol_join_0__vmsvc13397[1] = literal; __v3_internal_symbol_join_0__vmsvc13397[2] = _str_6846; __v3_internal_symbol_join_0__vmsvc13397[3] = types__IntegerTypeRange__name_text(&type_range); __v3_internal_symbol_join_0__vmsvc13397[4] = _str_6847; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13397)), id, warning_pos);
 	if (types__integer_literal_overflows_signed_64(literal)) {
-		string __v3_internal_symbol_join_1__vmsvc13395[3]; __v3_internal_symbol_join_1__vmsvc13395[0] = _str_6844; __v3_internal_symbol_join_1__vmsvc13395[1] = literal; __v3_internal_symbol_join_1__vmsvc13395[2] = _str_6845; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13395)), id, ((*(flat__Node*)array_get(tc->a->nodes, (__v_int)(id)))).pos);
+		string __v3_internal_symbol_join_1__vmsvc13398[3]; __v3_internal_symbol_join_1__vmsvc13398[0] = _str_6844; __v3_internal_symbol_join_1__vmsvc13398[1] = literal; __v3_internal_symbol_join_1__vmsvc13398[2] = _str_6845; types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13398)), id, ((*(flat__Node*)array_get(tc->a->nodes, (__v_int)(id)))).pos);
 	}
 }
 
@@ -592114,15 +592283,15 @@ void types__TypeChecker__warn_invalid_enum_cast(types__TypeChecker* tc, i32 id, 
 	}
 	__v_int value = __or_val_1;
 	Array cases = types__TypeChecker__comptime_static_enum_decl_value_cases(tc, types__Enum__source_type_id(target));
-	int cond__vmsvc13397; cond__vmsvc13397 = !!((cases.len == 0)); if (!cond__vmsvc13397) { bool __any_2__vmsvc13396 = false; {
+	int cond__vmsvc13400; cond__vmsvc13400 = !!((cases.len == 0)); if (!cond__vmsvc13400) { bool __any_2__vmsvc13399 = false; {
 		__v_int __any_idx_3 = 0;
 		for (; __any_idx_3 < cases.len; __any_idx_3++) {
 			types__ComptimeStaticValueCase __any_it_4 = *(types__ComptimeStaticValueCase*)(array_get(cases, __any_idx_3));
 			if (!__any_it_4.has_value || __any_it_4.value_from_c) {
-				__any_2__vmsvc13396 = true;
+				__any_2__vmsvc13399 = true;
 			}
 		}
-	} cond__vmsvc13397 = !!((__any_2__vmsvc13396)); } if (cond__vmsvc13397) {
+	} cond__vmsvc13400 = !!((__any_2__vmsvc13399)); } if (cond__vmsvc13400) {
 		return;
 	}
 	bool valid = false;
@@ -592152,7 +592321,7 @@ void types__TypeChecker__warn_invalid_enum_cast(types__TypeChecker* tc, i32 id, 
 		valid = __any_6;
 	}
 	if (!valid) {
-		string __v3_internal_symbol_join_0__vmsvc13398[3]; __v3_internal_symbol_join_0__vmsvc13398[0] = int__str(value); __v3_internal_symbol_join_0__vmsvc13398[1] = _str_6805; __v3_internal_symbol_join_0__vmsvc13398[2] = types__Enum__name(target); types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13398)), id, node.pos);
+		string __v3_internal_symbol_join_0__vmsvc13401[3]; __v3_internal_symbol_join_0__vmsvc13401[0] = int__str(value); __v3_internal_symbol_join_0__vmsvc13401[1] = _str_6805; __v3_internal_symbol_join_0__vmsvc13401[2] = types__Enum__name(target); types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__assignment_mismatch, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13401)), id, node.pos);
 	}
 }
 
@@ -592200,7 +592369,7 @@ void types__TypeChecker__warn_unhandled_result_calls(types__TypeChecker* tc) {
 				__if_val_8 = _str_8420;
 			}
 			string hint = __if_val_8;
-			string __v3_internal_symbol_join_0__vmsvc13399[5]; __v3_internal_symbol_join_0__vmsvc13399[0] = types__TypeChecker__call_display_name(tc, node); __v3_internal_symbol_join_0__vmsvc13399[1] = _str_6849; __v3_internal_symbol_join_0__vmsvc13399[2] = types__Type__name(&typ); __v3_internal_symbol_join_0__vmsvc13399[3] = _str_7378; __v3_internal_symbol_join_0__vmsvc13399[4] = hint; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13399)), id, types__TypeChecker__wrapped_operand_diagnostic_pos(tc, id));
+			string __v3_internal_symbol_join_0__vmsvc13402[5]; __v3_internal_symbol_join_0__vmsvc13402[0] = types__TypeChecker__call_display_name(tc, node); __v3_internal_symbol_join_0__vmsvc13402[1] = _str_6849; __v3_internal_symbol_join_0__vmsvc13402[2] = types__Type__name(&typ); __v3_internal_symbol_join_0__vmsvc13402[3] = _str_7378; __v3_internal_symbol_join_0__vmsvc13402[4] = hint; types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__call_arg_mismatch, (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13402)), id, types__TypeChecker__wrapped_operand_diagnostic_pos(tc, id));
 		}
 	}
 	tc->cur_file = saved_file;
@@ -592225,7 +592394,7 @@ void types__TypeChecker__warn_unknown_attribute_names(types__TypeChecker* tc, i3
 			string name = string__trim_space(string__all_before(raw, _str_92));
 			string __map_key_4 = name;
 			bool __map_zero_5 = false;
-			int cond__vmsvc13402; cond__vmsvc13402 = !!(*(bool*)(map__get(&matched, &__map_key_4, &__map_zero_5))); if (!cond__vmsvc13402) { string __map_key_6__vmsvc13400 = name; bool __map_zero_7__vmsvc13401 = false; cond__vmsvc13402 = !!((*(bool*)(map__get(&warned, &__map_key_6__vmsvc13400, &__map_zero_7__vmsvc13401)))); } if (cond__vmsvc13402 || !types__is_attribute_warnable_name(name) || types__is_builtin_attribute_name(name)) {
+			int cond__vmsvc13405; cond__vmsvc13405 = !!(*(bool*)(map__get(&matched, &__map_key_4, &__map_zero_5))); if (!cond__vmsvc13405) { string __map_key_6__vmsvc13403 = name; bool __map_zero_7__vmsvc13404 = false; cond__vmsvc13405 = !!((*(bool*)(map__get(&warned, &__map_key_6__vmsvc13403, &__map_zero_7__vmsvc13404)))); } if (cond__vmsvc13405 || !types__is_attribute_warnable_name(name) || types__is_builtin_attribute_name(name)) {
 				continue;
 			}
 			__v_int __map_key_10 = node.pos.id;
@@ -592277,9 +592446,9 @@ void types__TypeChecker__warn_unknown_attribute_names(types__TypeChecker* tc, i3
 				continue;
 			}
 			string hint = types__TypeChecker__attribute_unknown_hint(tc, name, module);
-			string __v3_internal_symbol_join_0__vmsvc13403[3]; __v3_internal_symbol_join_0__vmsvc13403[0] = _str_6025; __v3_internal_symbol_join_0__vmsvc13403[1] = name; __v3_internal_symbol_join_0__vmsvc13403[2] = _str_41; string message = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13403));
+			string __v3_internal_symbol_join_0__vmsvc13406[3]; __v3_internal_symbol_join_0__vmsvc13406[0] = _str_6025; __v3_internal_symbol_join_0__vmsvc13406[1] = name; __v3_internal_symbol_join_0__vmsvc13406[2] = _str_41; string message = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13406));
 			if (hint.len > 0) {
-				string __v3_internal_symbol_join_1__vmsvc13404[4]; __v3_internal_symbol_join_1__vmsvc13404[0] = _str_6025; __v3_internal_symbol_join_1__vmsvc13404[1] = name; __v3_internal_symbol_join_1__vmsvc13404[2] = _str_629; __v3_internal_symbol_join_1__vmsvc13404[3] = hint; message = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc13404));
+				string __v3_internal_symbol_join_1__vmsvc13407[4]; __v3_internal_symbol_join_1__vmsvc13407[0] = _str_6025; __v3_internal_symbol_join_1__vmsvc13407[1] = name; __v3_internal_symbol_join_1__vmsvc13407[2] = _str_629; __v3_internal_symbol_join_1__vmsvc13407[3] = hint; message = (string_plus_many(4, __v3_internal_symbol_join_1__vmsvc13407));
 			}
 			message = string__plus(message, _str_6026);
 			types__TypeChecker__record_warning_at(tc, types__TypeErrorKind__assignment_mismatch, message, node_id, token__new_span(node.pos.id, offset, offset + name.len));
@@ -592556,7 +592725,7 @@ string types__TypeChecker__wrapped_receiver_payload_diagnostic_name(types__TypeC
 		__v_option_string __if_guard_2 = types__TypeChecker__current_file_import_path_for_alias(tc, alias);
 		if (__if_guard_2.ok) {
 			string import_path = __if_guard_2.value;
-			string __v3_internal_symbol_join_0__vmsvc13405[3]; __v3_internal_symbol_join_0__vmsvc13405[0] = import_path; __v3_internal_symbol_join_0__vmsvc13405[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13405[2] = flat__source_type_name(flat__SourceTypeSyntax__first_dot_suffix(syntax)); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13405));
+			string __v3_internal_symbol_join_0__vmsvc13408[3]; __v3_internal_symbol_join_0__vmsvc13408[0] = import_path; __v3_internal_symbol_join_0__vmsvc13408[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13408[2] = flat__source_type_name(flat__SourceTypeSyntax__first_dot_suffix(syntax)); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13408));
 		}
 	}
 	__v_option_u32 __if_guard_3 = types__TypeChecker__unique_qualified_type_name(tc, flat__SourceTypeSyntax__unqualified(syntax));
@@ -592715,7 +592884,7 @@ __inline types__CanonicalTypeEntry* types__TypeInterner__canonical_identity(type
 	if ((t)->typ == 3) {
 		return NULL;
 	}
-	size_t _t1__vmsvc13406 = (size_t)(	(size_t)(t)); u64 _t2__vmsvc13407 = (u64)(4); __v_int slot = (__v_int)(((_t2__vmsvc13407 >= (sizeof(size_t) * 8) ? (size_t)0 : (size_t)(_t1__vmsvc13406 >> _t2__vmsvc13407))) & (types__canonical_identity_cache_slots - 1));
+	size_t _t1__vmsvc13409 = (size_t)(	(size_t)(t)); u64 _t2__vmsvc13410 = (u64)(4); __v_int slot = (__v_int)(((_t2__vmsvc13410 >= (sizeof(size_t) * 8) ? (size_t)0 : (size_t)(_t1__vmsvc13409 >> _t2__vmsvc13410))) & (types__canonical_identity_cache_slots - 1));
 	types__CanonicalTypeEntry* entry = (types__CanonicalTypeEntry*)(atomic_load_ptr(&i->identities[slot]));
 	if (!isnil((void*)(entry)) && ((void*)(entry->typ) == (void*)(t))) {
 		return entry;
@@ -592787,7 +592956,7 @@ multi_return_u32_types__Typeptr types__TypeInterner__intern_locked(types__TypeIn
 		if (__map_ptr_1 != NULL) {
 			u32 id = *(u32*)(__map_ptr_1);
 			if (((__v_int)(id) < 0) || ((__v_int)(id) >= i->types.len)) {
-				string __v3_internal_symbol_join_0__vmsvc13408[5]; __v3_internal_symbol_join_0__vmsvc13408[0] = _str_8482; __v3_internal_symbol_join_0__vmsvc13408[1] = strconv__format_uint((u32)(id), 10); __v3_internal_symbol_join_0__vmsvc13408[2] = _str_8483; __v3_internal_symbol_join_0__vmsvc13408[3] = int__str(i->types.len); __v3_internal_symbol_join_0__vmsvc13408[4] = _str_8484; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13408)));
+				string __v3_internal_symbol_join_0__vmsvc13411[5]; __v3_internal_symbol_join_0__vmsvc13411[0] = _str_8482; __v3_internal_symbol_join_0__vmsvc13411[1] = strconv__format_uint((u32)(id), 10); __v3_internal_symbol_join_0__vmsvc13411[2] = _str_8483; __v3_internal_symbol_join_0__vmsvc13411[3] = int__str(i->types.len); __v3_internal_symbol_join_0__vmsvc13411[4] = _str_8484; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13411)));
 			}
 			types__Type* candidate = (*(types__Type**)array_get(i->types, (__v_int)(id)));
 			if (types__semantic_types_equal(candidate, t)) {
@@ -593064,7 +593233,7 @@ __inline void types__TypeInterner__remember_canonical_identity(types__TypeIntern
 	if ((entry->typ)->typ == 3) {
 		return;
 	}
-	size_t _t1__vmsvc13409 = (size_t)(	(size_t)(entry->typ)); u64 _t2__vmsvc13410 = (u64)(4); __v_int slot = (__v_int)(((_t2__vmsvc13410 >= (sizeof(size_t) * 8) ? (size_t)0 : (size_t)(_t1__vmsvc13409 >> _t2__vmsvc13410))) & (types__canonical_identity_cache_slots - 1));
+	size_t _t1__vmsvc13412 = (size_t)(	(size_t)(entry->typ)); u64 _t2__vmsvc13413 = (u64)(4); __v_int slot = (__v_int)(((_t2__vmsvc13413 >= (sizeof(size_t) * 8) ? (size_t)0 : (size_t)(_t1__vmsvc13412 >> _t2__vmsvc13413))) & (types__canonical_identity_cache_slots - 1));
 	{
 		atomic_store_ptr(&i->identities[slot], entry);
 	}
@@ -593309,7 +593478,7 @@ __inline u32 types__Type__source_type_id(types__Type* t) {
 }
 
 bool types__VisibleMutationCache__broaden_storage_query_entry(types__VisibleMutationCache* cache, string key, __v_int entry_idx, u64 guard_id) {
-	string __map_key_0__vmsvc13411 = key; Array __map_zero_1__vmsvc13412 = array_new(sizeof(types__StorageQueryResult), 0, 0); Array entries = (*(Array*)(map__get(&cache->storage_query_results, &__map_key_0__vmsvc13411, &__map_zero_1__vmsvc13412)));
+	string __map_key_0__vmsvc13414 = key; Array __map_zero_1__vmsvc13415 = array_new(sizeof(types__StorageQueryResult), 0, 0); Array entries = (*(Array*)(map__get(&cache->storage_query_results, &__map_key_0__vmsvc13414, &__map_zero_1__vmsvc13415)));
 	if ((entry_idx < 0) || (entry_idx >= entries.len)) {
 		return false;
 	}
@@ -593324,7 +593493,7 @@ bool types__VisibleMutationCache__broaden_storage_query_entry(types__VisibleMuta
 }
 
 bool types__VisibleMutationCache__broaden_storage_query_entry_to_guards(types__VisibleMutationCache* cache, string key, __v_int entry_idx, map guards) {
-	string __map_key_0__vmsvc13413 = key; Array __map_zero_1__vmsvc13414 = array_new(sizeof(types__StorageQueryResult), 0, 0); Array entries = (*(Array*)(map__get(&cache->storage_query_results, &__map_key_0__vmsvc13413, &__map_zero_1__vmsvc13414)));
+	string __map_key_0__vmsvc13416 = key; Array __map_zero_1__vmsvc13417 = array_new(sizeof(types__StorageQueryResult), 0, 0); Array entries = (*(Array*)(map__get(&cache->storage_query_results, &__map_key_0__vmsvc13416, &__map_zero_1__vmsvc13417)));
 	if ((entry_idx < 0) || (entry_idx >= entries.len)) {
 		return false;
 	}
@@ -593674,7 +593843,7 @@ void types__append_array_receiver_method_candidates(Array* names, types__Array t
 		__v_int __for_idx_0 = 0;
 		for (; __for_idx_0 < elem_types.len; __for_idx_0++) {
 			string elem_type = *(string*)(array_get(elem_types, __for_idx_0));
-			string __v3_internal_symbol_join_0__vmsvc13415[4]; __v3_internal_symbol_join_0__vmsvc13415[0] = _str_2009; __v3_internal_symbol_join_0__vmsvc13415[1] = elem_type; __v3_internal_symbol_join_0__vmsvc13415[2] = _str_2; __v3_internal_symbol_join_0__vmsvc13415[3] = method; types__push_receiver_method_candidate(names, (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13415)));
+			string __v3_internal_symbol_join_0__vmsvc13418[4]; __v3_internal_symbol_join_0__vmsvc13418[0] = _str_2009; __v3_internal_symbol_join_0__vmsvc13418[1] = elem_type; __v3_internal_symbol_join_0__vmsvc13418[2] = _str_2; __v3_internal_symbol_join_0__vmsvc13418[3] = method; types__push_receiver_method_candidate(names, (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13418)));
 		}
 	}
 	Array module_names = types__receiver_type_module_names(&(types__Type[]){*t.elem_type}[0]);
@@ -593689,7 +593858,7 @@ void types__append_array_receiver_method_candidates(Array* names, types__Array t
 				__v_int __for_idx_2 = 0;
 				for (; __for_idx_2 < elem_types.len; __for_idx_2++) {
 					string elem_type = *(string*)(array_get(elem_types, __for_idx_2));
-					string __v3_internal_symbol_join_1__vmsvc13416[5]; __v3_internal_symbol_join_1__vmsvc13416[0] = mod_name; __v3_internal_symbol_join_1__vmsvc13416[1] = _str_5234; __v3_internal_symbol_join_1__vmsvc13416[2] = elem_type; __v3_internal_symbol_join_1__vmsvc13416[3] = _str_2; __v3_internal_symbol_join_1__vmsvc13416[4] = method; types__push_receiver_method_candidate(names, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13416)));
+					string __v3_internal_symbol_join_1__vmsvc13419[5]; __v3_internal_symbol_join_1__vmsvc13419[0] = mod_name; __v3_internal_symbol_join_1__vmsvc13419[1] = _str_5234; __v3_internal_symbol_join_1__vmsvc13419[2] = elem_type; __v3_internal_symbol_join_1__vmsvc13419[3] = _str_2; __v3_internal_symbol_join_1__vmsvc13419[4] = method; types__push_receiver_method_candidate(names, (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13419)));
 				}
 			}
 		}
@@ -593711,7 +593880,7 @@ void types__append_map_receiver_method_candidates(Array* names, types__Map t, st
 				__v_int __for_idx_1 = 0;
 				for (; __for_idx_1 < value_types.len; __for_idx_1++) {
 					string value_type = *(string*)(array_get(value_types, __for_idx_1));
-					string __v3_internal_symbol_join_0__vmsvc13417[4]; __v3_internal_symbol_join_0__vmsvc13417[0] = _str_5200; __v3_internal_symbol_join_0__vmsvc13417[1] = key_type; __v3_internal_symbol_join_0__vmsvc13417[2] = _str_177; __v3_internal_symbol_join_0__vmsvc13417[3] = value_type; types__push_receiver_method_candidate(&map_types, (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13417)));
+					string __v3_internal_symbol_join_0__vmsvc13420[4]; __v3_internal_symbol_join_0__vmsvc13420[0] = _str_5200; __v3_internal_symbol_join_0__vmsvc13420[1] = key_type; __v3_internal_symbol_join_0__vmsvc13420[2] = _str_177; __v3_internal_symbol_join_0__vmsvc13420[3] = value_type; types__push_receiver_method_candidate(&map_types, (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13420)));
 				}
 			}
 		}
@@ -593720,7 +593889,7 @@ void types__append_map_receiver_method_candidates(Array* names, types__Map t, st
 		__v_int __for_idx_2 = 0;
 		for (; __for_idx_2 < map_types.len; __for_idx_2++) {
 			string map_type = *(string*)(array_get(map_types, __for_idx_2));
-			string __v3_internal_symbol_join_1__vmsvc13418[3]; __v3_internal_symbol_join_1__vmsvc13418[0] = map_type; __v3_internal_symbol_join_1__vmsvc13418[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13418[2] = method; types__push_receiver_method_candidate(names, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13418)));
+			string __v3_internal_symbol_join_1__vmsvc13421[3]; __v3_internal_symbol_join_1__vmsvc13421[0] = map_type; __v3_internal_symbol_join_1__vmsvc13421[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13421[2] = method; types__push_receiver_method_candidate(names, (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13421)));
 		}
 	}
 	Array module_names = array_new(	sizeof(string), 0, 0);
@@ -593751,7 +593920,7 @@ void types__append_map_receiver_method_candidates(Array* names, types__Map t, st
 				__v_int __for_idx_8 = 0;
 				for (; __for_idx_8 < map_types.len; __for_idx_8++) {
 					string map_type = *(string*)(array_get(map_types, __for_idx_8));
-					string __v3_internal_symbol_join_2__vmsvc13419[5]; __v3_internal_symbol_join_2__vmsvc13419[0] = mod_name; __v3_internal_symbol_join_2__vmsvc13419[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13419[2] = map_type; __v3_internal_symbol_join_2__vmsvc13419[3] = _str_2; __v3_internal_symbol_join_2__vmsvc13419[4] = method; types__push_receiver_method_candidate(names, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13419)));
+					string __v3_internal_symbol_join_2__vmsvc13422[5]; __v3_internal_symbol_join_2__vmsvc13422[0] = mod_name; __v3_internal_symbol_join_2__vmsvc13422[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13422[2] = map_type; __v3_internal_symbol_join_2__vmsvc13422[3] = _str_2; __v3_internal_symbol_join_2__vmsvc13422[4] = method; types__push_receiver_method_candidate(names, (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13422)));
 				}
 			}
 		}
@@ -593939,7 +594108,7 @@ bool types__ascii_name_has_upper(string name) {
 }
 
 string types__asm_goto_lock_scope_error(string target) {
-	string __v3_internal_symbol_join_0__vmsvc13420[3]; __v3_internal_symbol_join_0__vmsvc13420[0] = _str_7691; __v3_internal_symbol_join_0__vmsvc13420[1] = target; __v3_internal_symbol_join_0__vmsvc13420[2] = _str_7692; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13420));
+	string __v3_internal_symbol_join_0__vmsvc13423[3]; __v3_internal_symbol_join_0__vmsvc13423[0] = _str_7691; __v3_internal_symbol_join_0__vmsvc13423[1] = target; __v3_internal_symbol_join_0__vmsvc13423[2] = _str_7692; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13423));
 }
 
 bool types__asm_goto_lock_scopes_equal(Array a, Array b) {
@@ -594384,7 +594553,7 @@ Array types__attribute_warning_heads(string source) {
 				continue;
 			}
 			if (after_dot && ((kind == token__Token__name) || (kind == token__Token__key_pub))) {
-				string __v3_internal_symbol_join_0__vmsvc13421[3]; __v3_internal_symbol_join_0__vmsvc13421[0] = name; __v3_internal_symbol_join_0__vmsvc13421[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13421[2] = lexer.lit; name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13421));
+				string __v3_internal_symbol_join_0__vmsvc13424[3]; __v3_internal_symbol_join_0__vmsvc13424[0] = name; __v3_internal_symbol_join_0__vmsvc13424[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13424[2] = lexer.lit; name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13424));
 				after_dot = false;
 				continue;
 			}
@@ -594723,7 +594892,7 @@ __v_option_types__Type types__c_abi_alias_c_base_type(types__Type* t) {
 	if (((*t)).typ == 23) {
 		return types__c_abi_alias_c_base_type(&(types__Type[]){*(*t).types__Alias.AliasDataRef->base_type}[0]);
 	}
-	int cond__vmsvc13423; cond__vmsvc13423 = !!((((*t)).typ == 19)); if (cond__vmsvc13423) { int __in_lhs_0__vmsvc13422 = flat__source_type_query(types__Struct__source_type_id((*t).types__Struct)); cond__vmsvc13423 = !!(((__in_lhs_0__vmsvc13422 & 8192) != 0)); } if (cond__vmsvc13423) {
+	int cond__vmsvc13426; cond__vmsvc13426 = !!((((*t)).typ == 19)); if (cond__vmsvc13426) { int __in_lhs_0__vmsvc13425 = flat__source_type_query(types__Struct__source_type_id((*t).types__Struct)); cond__vmsvc13426 = !!(((__in_lhs_0__vmsvc13425 & 8192) != 0)); } if (cond__vmsvc13426) {
 		return (__v_option_types__Type){.ok = true, .value = (*t)};
 	}
 	return (__v_option_types__Type){.ok = false};
@@ -594790,7 +594959,7 @@ bool types__c_fn_decl_abi_types_compatible(u32 a, u32 b) {
 	if ((a == b) || (((a == flat__source_type_int) || (a == flat__source_type_i32)) && ((b == flat__source_type_int) || (b == flat__source_type_i32)))) {
 		return true;
 	}
-	int cond__vmsvc13425; cond__vmsvc13425 = !!((a == types__c_fn_abi_void_pointer_type)); if (cond__vmsvc13425) { int __in_lhs_0__vmsvc13424 = flat__source_type_query(b); cond__vmsvc13425 = !!(((__in_lhs_0__vmsvc13424 & 2048) != 0)); } int cond__vmsvc13428; cond__vmsvc13428 = !!((cond__vmsvc13425)); if (!cond__vmsvc13428) { int cond__vmsvc13427; cond__vmsvc13427 = !!((b == types__c_fn_abi_void_pointer_type)); if (cond__vmsvc13427) { int __in_lhs_1__vmsvc13426 = flat__source_type_query(a); cond__vmsvc13427 = !!(((__in_lhs_1__vmsvc13426 & 2048) != 0)); } cond__vmsvc13428 = !!((cond__vmsvc13427)); } return cond__vmsvc13428;
+	int cond__vmsvc13428; cond__vmsvc13428 = !!((a == types__c_fn_abi_void_pointer_type)); if (cond__vmsvc13428) { int __in_lhs_0__vmsvc13427 = flat__source_type_query(b); cond__vmsvc13428 = !!(((__in_lhs_0__vmsvc13427 & 2048) != 0)); } int cond__vmsvc13431; cond__vmsvc13431 = !!((cond__vmsvc13428)); if (!cond__vmsvc13431) { int cond__vmsvc13430; cond__vmsvc13430 = !!((b == types__c_fn_abi_void_pointer_type)); if (cond__vmsvc13430) { int __in_lhs_1__vmsvc13429 = flat__source_type_query(a); cond__vmsvc13430 = !!(((__in_lhs_1__vmsvc13429 & 2048) != 0)); } cond__vmsvc13431 = !!((cond__vmsvc13430)); } return cond__vmsvc13431;
 }
 
 bool types__c_fn_decl_param_prefix_compatible(Array a, Array b, __v_int count) {
@@ -594851,7 +595020,7 @@ bool types__c_fn_fixed_param_is_compatible_with_variadic(u32 type_id) {
 }
 
 string types__c_fn_module_signature_key(string module_name, string fn_name) {
-	string __v3_internal_symbol_join_0__vmsvc13429[3]; __v3_internal_symbol_join_0__vmsvc13429[0] = module_name; __v3_internal_symbol_join_0__vmsvc13429[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13429[2] = fn_name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13429));
+	string __v3_internal_symbol_join_0__vmsvc13432[3]; __v3_internal_symbol_join_0__vmsvc13432[0] = module_name; __v3_internal_symbol_join_0__vmsvc13432[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13432[2] = fn_name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13432));
 }
 
 bool types__c_int_selector_name(string name) {
@@ -595315,14 +595484,14 @@ __v_int types__call_explicit_arg_count(flat__Node node) {
 
 __inline bool types__call_owner_has_qualified_suffix_id(u32 name_id, u32 suffix_id) {
 	int __in_lhs_0 = flat__source_type_shape(name_id);
-	int cond__vmsvc13433; cond__vmsvc13433 = !!(((__in_lhs_0 & 1) != 0)); if (cond__vmsvc13433) { u32 __contains_needle_2__vmsvc13430 = suffix_id; Array __in_arr_1__vmsvc13431 = flat__SourceTypeSyntax__qualifier_suffixes(flat__source_type_syntax(name_id)); bool __contains_3__vmsvc13432 = false; {
+	int cond__vmsvc13436; cond__vmsvc13436 = !!(((__in_lhs_0 & 1) != 0)); if (cond__vmsvc13436) { u32 __contains_needle_2__vmsvc13433 = suffix_id; Array __in_arr_1__vmsvc13434 = flat__SourceTypeSyntax__qualifier_suffixes(flat__source_type_syntax(name_id)); bool __contains_3__vmsvc13435 = false; {
 		__v_int __contains_idx_4 = 0;
-		for (; __contains_idx_4 < __in_arr_1__vmsvc13431.len; __contains_idx_4++) {
-			if (*(u32*)(array_get(__in_arr_1__vmsvc13431, __contains_idx_4)) == __contains_needle_2__vmsvc13430) {
-				__contains_3__vmsvc13432 = true;
+		for (; __contains_idx_4 < __in_arr_1__vmsvc13434.len; __contains_idx_4++) {
+			if (*(u32*)(array_get(__in_arr_1__vmsvc13434, __contains_idx_4)) == __contains_needle_2__vmsvc13433) {
+				__contains_3__vmsvc13435 = true;
 			}
 		}
-	} cond__vmsvc13433 = !!((__contains_3__vmsvc13432)); } return cond__vmsvc13433;
+	} cond__vmsvc13436 = !!((__contains_3__vmsvc13435)); } return cond__vmsvc13436;
 }
 
 bool types__call_param_is_shared(types__CallInfo info, __v_int param_idx) {
@@ -595546,14 +595715,14 @@ void* types__check_chunk_thread(void* arg) {
 		if (!string__eq(os__getenv(_str_7486), _str_34)) {
 			__if_val_0 = types__scoped_check_worker_batches;
 		} else {
-			__v_int _t1__vmsvc13434 = (__v_int)(types__scoped_check_worker_batches); __v_int _t2__vmsvc13435 = (__v_int)(12); if (_t2__vmsvc13435 == 0) v_panic(_S("division by zero")); __if_val_0 = ((__v_int)(_t1__vmsvc13434 / _t2__vmsvc13435));
+			__v_int _t1__vmsvc13437 = (__v_int)(types__scoped_check_worker_batches); __v_int _t2__vmsvc13438 = (__v_int)(12); if (_t2__vmsvc13438 == 0) v_panic(_S("division by zero")); __if_val_0 = ((__v_int)(_t1__vmsvc13437 / _t2__vmsvc13438));
 		}
 	}
 	__v_int batch_limit = __if_val_0;
 	w->reuse_check_batch_scope = a->scope_enabled;
 	if (a->dynamic_items != NULL) {
 		Array* chunks = (Array*)(a->dynamic_items);
-		__v_int _t3__vmsvc13436 = (__v_int)(batch_limit); __v_int _t4__vmsvc13437 = (__v_int)(types__dynamic_check_chunks_per_job); if (_t4__vmsvc13437 == 0) v_panic(_S("division by zero")); __v_int dynamic_batch_limit = int_max(1, ((__v_int)(_t3__vmsvc13436 / _t4__vmsvc13437)));
+		__v_int _t3__vmsvc13439 = (__v_int)(batch_limit); __v_int _t4__vmsvc13440 = (__v_int)(types__dynamic_check_chunks_per_job); if (_t4__vmsvc13440 == 0) v_panic(_S("division by zero")); __v_int dynamic_batch_limit = int_max(1, ((__v_int)(_t3__vmsvc13439 / _t4__vmsvc13440)));
 		for (;;) {
 			__v_int __chan_val_1 = 0;
 			sync__Channel* __chan_src_3 = (sync__Channel*)(a->chunk_queue);
@@ -595587,7 +595756,7 @@ void* types__check_chunk_thread(void* arg) {
 		__if_val_4 = a->processed.len;
 	}
 	__v_int item_count = __if_val_4;
-	string __v3_internal_symbol_join_4__vmsvc13438[7]; __v3_internal_symbol_join_4__vmsvc13438[0] = _str_7487; __v3_internal_symbol_join_4__vmsvc13438[1] = v3_string_pad(int__str(a->v_index), 2, 0); __v3_internal_symbol_join_4__vmsvc13438[2] = _str_186; __v3_internal_symbol_join_4__vmsvc13438[3] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(cksw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_4__vmsvc13438[4] = _str_7488; __v3_internal_symbol_join_4__vmsvc13438[5] = int__str(item_count); __v3_internal_symbol_join_4__vmsvc13438[6] = _str_28; types__TypeChecker__timing_profile(w, (string_plus_many(7, __v3_internal_symbol_join_4__vmsvc13438)));
+	string __v3_internal_symbol_join_4__vmsvc13441[7]; __v3_internal_symbol_join_4__vmsvc13441[0] = _str_7487; __v3_internal_symbol_join_4__vmsvc13441[1] = v3_string_pad(int__str(a->v_index), 2, 0); __v3_internal_symbol_join_4__vmsvc13441[2] = _str_186; __v3_internal_symbol_join_4__vmsvc13441[3] = v3_string_pad(v3_f64_fixed((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(cksw)))) / 1000.0, 2), 7, 0); __v3_internal_symbol_join_4__vmsvc13441[4] = _str_7488; __v3_internal_symbol_join_4__vmsvc13441[5] = int__str(item_count); __v3_internal_symbol_join_4__vmsvc13441[6] = _str_28; types__TypeChecker__timing_profile(w, (string_plus_many(7, __v3_internal_symbol_join_4__vmsvc13441)));
 	return NULL;
 }
 
@@ -595732,7 +595901,7 @@ string types__checker_qualified_fn_name(string mod, string name) {
 	if (string__eq(mod, _str_34) || string__eq(mod, _str_179) || string__eq(mod, _str_1218)) {
 		return name;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13439[3]; __v3_internal_symbol_join_0__vmsvc13439[0] = mod; __v3_internal_symbol_join_0__vmsvc13439[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13439[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13439));
+	string __v3_internal_symbol_join_0__vmsvc13442[3]; __v3_internal_symbol_join_0__vmsvc13442[0] = mod; __v3_internal_symbol_join_0__vmsvc13442[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13442[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13442));
 }
 
 bool types__checker_serial_only(void) {
@@ -597619,7 +597788,7 @@ __v_int types__comptime_condition_matching_paren(string s, __v_int start) {
 }
 
 __v_int types__comptime_condition_name_end(string cond, __v_int i) {
-	int cond__vmsvc13443; cond__vmsvc13443 = !!(!(u8__is_letter(string__at(cond, i)) || (string__at(cond, i) == '_'))); if (!cond__vmsvc13443) { int cond__vmsvc13442; cond__vmsvc13442 = !!((i > 0)); if (cond__vmsvc13442) { int cond__vmsvc13441; cond__vmsvc13441 = !!(u8__is_alnum(string__at(cond, i - 1))); if (!cond__vmsvc13441) { u8 __in_lhs_0__vmsvc13440 = string__at(cond, i - 1); cond__vmsvc13441 = !!(((__in_lhs_0__vmsvc13440 == '_') || (__in_lhs_0__vmsvc13440 == '.') || (__in_lhs_0__vmsvc13440 == '$'))); } cond__vmsvc13442 = !!((cond__vmsvc13441)); } cond__vmsvc13443 = !!((cond__vmsvc13442)); } if (cond__vmsvc13443) {
+	int cond__vmsvc13446; cond__vmsvc13446 = !!(!(u8__is_letter(string__at(cond, i)) || (string__at(cond, i) == '_'))); if (!cond__vmsvc13446) { int cond__vmsvc13445; cond__vmsvc13445 = !!((i > 0)); if (cond__vmsvc13445) { int cond__vmsvc13444; cond__vmsvc13444 = !!(u8__is_alnum(string__at(cond, i - 1))); if (!cond__vmsvc13444) { u8 __in_lhs_0__vmsvc13443 = string__at(cond, i - 1); cond__vmsvc13444 = !!(((__in_lhs_0__vmsvc13443 == '_') || (__in_lhs_0__vmsvc13443 == '.') || (__in_lhs_0__vmsvc13443 == '$'))); } cond__vmsvc13445 = !!((cond__vmsvc13444)); } cond__vmsvc13446 = !!((cond__vmsvc13445)); } if (cond__vmsvc13446) {
 		return i;
 	}
 	__v_int end = i;
@@ -597640,7 +597809,7 @@ bool types__comptime_condition_names(string cond, string name) {
 			return false;
 		}
 		__v_int idx = __or_val_1;
-		int cond__vmsvc13446; cond__vmsvc13446 = !!((idx == 0)); if (!cond__vmsvc13446) { int cond__vmsvc13445; cond__vmsvc13445 = !!(u8__is_alnum(string__at(cond, idx - 1))); if (!cond__vmsvc13445) { u8 __in_lhs_2__vmsvc13444 = string__at(cond, idx - 1); cond__vmsvc13445 = !!(((__in_lhs_2__vmsvc13444 == '_') || (__in_lhs_2__vmsvc13444 == '.') || (__in_lhs_2__vmsvc13444 == '$'))); } cond__vmsvc13446 = !!(!(cond__vmsvc13445)); } bool before_ok = cond__vmsvc13446;
+		int cond__vmsvc13449; cond__vmsvc13449 = !!((idx == 0)); if (!cond__vmsvc13449) { int cond__vmsvc13448; cond__vmsvc13448 = !!(u8__is_alnum(string__at(cond, idx - 1))); if (!cond__vmsvc13448) { u8 __in_lhs_2__vmsvc13447 = string__at(cond, idx - 1); cond__vmsvc13448 = !!(((__in_lhs_2__vmsvc13447 == '_') || (__in_lhs_2__vmsvc13447 == '.') || (__in_lhs_2__vmsvc13447 == '$'))); } cond__vmsvc13449 = !!(!(cond__vmsvc13448)); } bool before_ok = cond__vmsvc13449;
 		__v_int end = idx + name.len;
 		bool after_ok = (end >= cond.len) || !(u8__is_alnum(string__at(cond, end)) || (string__at(cond, end) == '_'));
 		if (before_ok && after_ok) {
@@ -597669,7 +597838,7 @@ string types__comptime_condition_on_type_params(string cond, map tested) {
 		if (__map_ptr_1 != NULL) {
 			u32 param = *(u32*)(__map_ptr_1);
 			if (types__comptime_test_at(cond, end)) {
-				string __v3_internal_symbol_join_0__vmsvc13447[3]; __v3_internal_symbol_join_0__vmsvc13447[0] = result; __v3_internal_symbol_join_0__vmsvc13447[1] = string__substr(				cond, 				copied, 				i); __v3_internal_symbol_join_0__vmsvc13447[2] = flat__source_type_name(param); result = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13447));
+				string __v3_internal_symbol_join_0__vmsvc13450[3]; __v3_internal_symbol_join_0__vmsvc13450[0] = result; __v3_internal_symbol_join_0__vmsvc13450[1] = string__substr(				cond, 				copied, 				i); __v3_internal_symbol_join_0__vmsvc13450[2] = flat__source_type_name(param); result = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13450));
 				copied = end;
 			}
 		}
@@ -597775,14 +597944,14 @@ Array types__comptime_condition_tested_names(string cond) {
 			continue;
 		}
 		string name = string__substr(		cond, 		i, 		end);
-		int cond__vmsvc13449; cond__vmsvc13449 = !!(types__comptime_test_at(cond, end)); if (cond__vmsvc13449) { bool __contains_0__vmsvc13448 = false; {
+		int cond__vmsvc13452; cond__vmsvc13452 = !!(types__comptime_test_at(cond, end)); if (cond__vmsvc13452) { bool __contains_0__vmsvc13451 = false; {
 			__v_int __contains_idx_1 = 0;
 			for (; __contains_idx_1 < names.len; __contains_idx_1++) {
 				if (string__eq(*(string*)(array_get(names, __contains_idx_1)), name)) {
-					__contains_0__vmsvc13448 = true;
+					__contains_0__vmsvc13451 = true;
 				}
 			}
-		} cond__vmsvc13449 = !!((!__contains_0__vmsvc13448)); } if (cond__vmsvc13449) {
+		} cond__vmsvc13452 = !!((!__contains_0__vmsvc13451)); } if (cond__vmsvc13452) {
 			string __arr_val_2 = name;
 			array_push(&names, &__arr_val_2);
 		}
@@ -597866,15 +598035,15 @@ i64 types__comptime_enum_integer_cast(i64 value, u32 typ_id) {
 i64 types__comptime_enum_integer_division(i64 left, i64 right, u32 typ_id, bool remainder) {
 	if ((typ_id == flat__source_type_u64) || (typ_id == flat__source_type_uint)) {
 		if (remainder) {
-			u64 _t1__vmsvc13450 = (u64)((u64)(left)); u64 _t2__vmsvc13451 = (u64)((u64)(right)); if (_t2__vmsvc13451 == 0) v_panic(_S("modulo by zero")); return (i64)(((u64)(_t1__vmsvc13450 % _t2__vmsvc13451)));
+			u64 _t1__vmsvc13453 = (u64)((u64)(left)); u64 _t2__vmsvc13454 = (u64)((u64)(right)); if (_t2__vmsvc13454 == 0) v_panic(_S("modulo by zero")); return (i64)(((u64)(_t1__vmsvc13453 % _t2__vmsvc13454)));
 		} else {
-			u64 _t3__vmsvc13452 = (u64)((u64)(left)); u64 _t4__vmsvc13453 = (u64)((u64)(right)); if (_t4__vmsvc13453 == 0) v_panic(_S("division by zero")); return (i64)(((u64)(_t3__vmsvc13452 / _t4__vmsvc13453)));
+			u64 _t3__vmsvc13455 = (u64)((u64)(left)); u64 _t4__vmsvc13456 = (u64)((u64)(right)); if (_t4__vmsvc13456 == 0) v_panic(_S("division by zero")); return (i64)(((u64)(_t3__vmsvc13455 / _t4__vmsvc13456)));
 		}
 	}
 	if (remainder) {
-		i64 _t5__vmsvc13454 = (i64)(left); i64 _t6__vmsvc13455 = (i64)(right); if (_t6__vmsvc13455 == 0) v_panic(_S("modulo by zero")); return ((i64)(_t5__vmsvc13454 % _t6__vmsvc13455));
+		i64 _t5__vmsvc13457 = (i64)(left); i64 _t6__vmsvc13458 = (i64)(right); if (_t6__vmsvc13458 == 0) v_panic(_S("modulo by zero")); return ((i64)(_t5__vmsvc13457 % _t6__vmsvc13458));
 	} else {
-		i64 _t7__vmsvc13456 = (i64)(left); i64 _t8__vmsvc13457 = (i64)(right); if (_t8__vmsvc13457 == 0) v_panic(_S("division by zero")); return ((i64)(_t7__vmsvc13456 / _t8__vmsvc13457));
+		i64 _t7__vmsvc13459 = (i64)(left); i64 _t8__vmsvc13460 = (i64)(right); if (_t8__vmsvc13460 == 0) v_panic(_S("division by zero")); return ((i64)(_t7__vmsvc13459 / _t8__vmsvc13460));
 	}
 }
 
@@ -598001,7 +598170,7 @@ __v_option_string types__comptime_positive_test(string test, string name) {
 			}
 			string after = string__substr(			rest, 			op.len, (			rest).len);
 			if ((after.len > 0) && ((string__at(after, 0) == ' ') || (string__at(after, 0) == '\t') || (string__eq(op, _str_6848) && (string__at(after, 0) == '[')))) {
-				string __v3_internal_symbol_join_0__vmsvc13458[5]; __v3_internal_symbol_join_0__vmsvc13458[0] = name; __v3_internal_symbol_join_0__vmsvc13458[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13458[2] = string__substr(				op, 				1, (				op).len); __v3_internal_symbol_join_0__vmsvc13458[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13458[4] = string__trim_space(after); return (__v_option_string){.ok = true, .value = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13458))};
+				string __v3_internal_symbol_join_0__vmsvc13461[5]; __v3_internal_symbol_join_0__vmsvc13461[0] = name; __v3_internal_symbol_join_0__vmsvc13461[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13461[2] = string__substr(				op, 				1, (				op).len); __v3_internal_symbol_join_0__vmsvc13461[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13461[4] = string__trim_space(after); return (__v_option_string){.ok = true, .value = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13461))};
 			}
 		}
 	}
@@ -598081,7 +598250,7 @@ bool types__comptime_static_decl_name_matches(u32 decl_id, __v_int decl_len, str
 	if (string__eq(cur_mod, _str_34) || string__eq(cur_mod, _str_179) || string__eq(cur_mod, _str_1218) || (((cur_mod.len + 1) + name.len) != decl_len)) {
 		return false;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13459[3]; __v3_internal_symbol_join_0__vmsvc13459[0] = cur_mod; __v3_internal_symbol_join_0__vmsvc13459[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13459[2] = name; __v_option_u32 __or_opt_2 = flat__source_type_existing_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13459)));
+	string __v3_internal_symbol_join_0__vmsvc13462[3]; __v3_internal_symbol_join_0__vmsvc13462[0] = cur_mod; __v3_internal_symbol_join_0__vmsvc13462[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13462[2] = name; __v_option_u32 __or_opt_2 = flat__source_type_existing_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13462)));
 	u32 __or_val_3 = {0};
 	if (__or_opt_2.ok) {
 		__or_val_3 = __or_opt_2.value;
@@ -598265,7 +598434,7 @@ string types__comptime_static_reflected_field_name(string name, u32 raw_id, bool
 		core_id = types__trimmed_source_type_id(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(core_id)));
 	}
 	int __in_lhs_1 = flat__source_type_shape(core_id);
-	int cond__vmsvc13461; cond__vmsvc13461 = !!(((__in_lhs_1 & 256) != 0)); if (!cond__vmsvc13461) { int __in_lhs_2__vmsvc13460 = flat__source_type_shape(core_id); cond__vmsvc13461 = !!(((__in_lhs_2__vmsvc13460 & 131072) != 0)); } if (cond__vmsvc13461) {
+	int cond__vmsvc13464; cond__vmsvc13464 = !!(((__in_lhs_1 & 256) != 0)); if (!cond__vmsvc13464) { int __in_lhs_2__vmsvc13463 = flat__source_type_shape(core_id); cond__vmsvc13464 = !!(((__in_lhs_2__vmsvc13463 & 131072) != 0)); } if (cond__vmsvc13464) {
 		core_id = types__trimmed_source_type_id(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(core_id)));
 	}
 	core_id = flat__SourceTypeSyntax__pointer_raw_base(flat__source_type_syntax(core_id));
@@ -598344,7 +598513,7 @@ Array types__comptime_static_source_line_offsets(string path) {
 		return __new_array_noscan(0, 0, sizeof(__v_int));
 	}
 	string source = __or_val_1;
-	__v_int _t1__vmsvc13462 = (__v_int)(source.len); __v_int _t2__vmsvc13463 = (__v_int)(40); if (_t2__vmsvc13463 == 0) v_panic(_S("division by zero")); Array offsets = __new_array_noscan(0, (((__v_int)(_t1__vmsvc13462 / _t2__vmsvc13463))) + 1, sizeof(__v_int));
+	__v_int _t1__vmsvc13465 = (__v_int)(source.len); __v_int _t2__vmsvc13466 = (__v_int)(40); if (_t2__vmsvc13466 == 0) v_panic(_S("division by zero")); Array offsets = __new_array_noscan(0, (((__v_int)(_t1__vmsvc13465 / _t2__vmsvc13466))) + 1, sizeof(__v_int));
 	__v_int __arr_val_2 = 0;
 	{ Array* __v3_internal_symbol_scalar_push_base_2 = &offsets; __v_int __v3_internal_symbol_scalar_push_value_2 = __arr_val_2; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
 	{
@@ -598368,7 +598537,7 @@ string types__comptime_static_source_location(string path, __v_int encoded_offse
 	__v_int lo = 0;
 	__v_int hi = line_offsets.len;
 	while (lo < hi) {
-		__v_int _t1__vmsvc13464 = (__v_int)((lo + hi)); __v_int _t2__vmsvc13465 = (__v_int)(2); if (_t2__vmsvc13465 == 0) v_panic(_S("division by zero")); __v_int mid = ((__v_int)(_t1__vmsvc13464 / _t2__vmsvc13465));
+		__v_int _t1__vmsvc13467 = (__v_int)((lo + hi)); __v_int _t2__vmsvc13468 = (__v_int)(2); if (_t2__vmsvc13468 == 0) v_panic(_S("division by zero")); __v_int mid = ((__v_int)(_t1__vmsvc13467 / _t2__vmsvc13468));
 		if ((*(__v_int*)array_get(line_offsets, mid)) <= offset) {
 			lo = mid + 1;
 		} else {
@@ -598387,9 +598556,9 @@ string types__comptime_static_source_location(string path, __v_int encoded_offse
 		multi_return_string___v_int __multi_ret_1 = token__File__logical_line(file, line_index + 1);
 		string logical_file = __multi_ret_1.arg0;
 		__v_int logical_line = __multi_ret_1.arg1;
-		string __v3_internal_symbol_join_2__vmsvc13466[5]; __v3_internal_symbol_join_2__vmsvc13466[0] = logical_file; __v3_internal_symbol_join_2__vmsvc13466[1] = _str_92; __v3_internal_symbol_join_2__vmsvc13466[2] = int__str(logical_line); __v3_internal_symbol_join_2__vmsvc13466[3] = _str_92; __v3_internal_symbol_join_2__vmsvc13466[4] = int__str(column); return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13466));
+		string __v3_internal_symbol_join_2__vmsvc13469[5]; __v3_internal_symbol_join_2__vmsvc13469[0] = logical_file; __v3_internal_symbol_join_2__vmsvc13469[1] = _str_92; __v3_internal_symbol_join_2__vmsvc13469[2] = int__str(logical_line); __v3_internal_symbol_join_2__vmsvc13469[3] = _str_92; __v3_internal_symbol_join_2__vmsvc13469[4] = int__str(column); return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13469));
 	}
-	string __v3_internal_symbol_join_3__vmsvc13467[5]; __v3_internal_symbol_join_3__vmsvc13467[0] = path; __v3_internal_symbol_join_3__vmsvc13467[1] = _str_92; __v3_internal_symbol_join_3__vmsvc13467[2] = int__str(line_index + 1); __v3_internal_symbol_join_3__vmsvc13467[3] = _str_92; __v3_internal_symbol_join_3__vmsvc13467[4] = int__str(column); return (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13467));
+	string __v3_internal_symbol_join_3__vmsvc13470[5]; __v3_internal_symbol_join_3__vmsvc13470[0] = path; __v3_internal_symbol_join_3__vmsvc13470[1] = _str_92; __v3_internal_symbol_join_3__vmsvc13470[2] = int__str(line_index + 1); __v3_internal_symbol_join_3__vmsvc13470[3] = _str_92; __v3_internal_symbol_join_3__vmsvc13470[4] = int__str(column); return (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13470));
 }
 
 u32 types__comptime_static_source_type_name(types__Type* typ) {
@@ -598440,7 +598609,7 @@ string types__comptime_static_subst_method_param_cond(string cond, string var_na
 		__v_int __for_idx_1 = 0;
 		for (; __for_idx_1 < 2; __for_idx_1++) {
 			string collection = __in_lhs_0[v_fixed_index(__for_idx_1, 2)];
-			string __v3_internal_symbol_join_0__vmsvc13468[4]; __v3_internal_symbol_join_0__vmsvc13468[0] = var_name; __v3_internal_symbol_join_0__vmsvc13468[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13468[2] = collection; __v3_internal_symbol_join_0__vmsvc13468[3] = _str_176; string prefix = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13468));
+			string __v3_internal_symbol_join_0__vmsvc13471[4]; __v3_internal_symbol_join_0__vmsvc13471[0] = var_name; __v3_internal_symbol_join_0__vmsvc13471[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13471[2] = collection; __v3_internal_symbol_join_0__vmsvc13471[3] = _str_176; string prefix = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13471));
 			__v_int offset = 0;
 			while (offset < result.len) {
 				if ((string__at(result, offset) == '\'') || (string__at(result, offset) == '"')) {
@@ -598502,7 +598671,7 @@ string types__comptime_static_subst_method_param_cond(string cond, string var_na
 					}
 				}
 				string replacement = __if_val_3;
-				string __v3_internal_symbol_join_1__vmsvc13469[3]; __v3_internal_symbol_join_1__vmsvc13469[0] = string__substr(				result, 0, 				start); __v3_internal_symbol_join_1__vmsvc13469[1] = replacement; __v3_internal_symbol_join_1__vmsvc13469[2] = string__substr(				result, 				member_end, (				result).len); result = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13469));
+				string __v3_internal_symbol_join_1__vmsvc13472[3]; __v3_internal_symbol_join_1__vmsvc13472[0] = string__substr(				result, 0, 				start); __v3_internal_symbol_join_1__vmsvc13472[1] = replacement; __v3_internal_symbol_join_1__vmsvc13472[2] = string__substr(				result, 				member_end, (				result).len); result = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13472));
 				offset = start + replacement.len;
 			}
 		}
@@ -598515,7 +598684,7 @@ string types__comptime_static_subst_value_cond(string cond, string var_name, typ
 	if (item.has_value && !item.value_from_c) {
 		c = string__replace(c, string__plus(var_name, _str_6573), i64__str(item.value));
 	}
-	string __v3_internal_symbol_join_0__vmsvc13470[3]; __v3_internal_symbol_join_0__vmsvc13470[0] = _str_917; __v3_internal_symbol_join_0__vmsvc13470[1] = item.name; __v3_internal_symbol_join_0__vmsvc13470[2] = _str_917; c = string__replace(c, string__plus(var_name, _str_6199), (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13470)));
+	string __v3_internal_symbol_join_0__vmsvc13473[3]; __v3_internal_symbol_join_0__vmsvc13473[0] = _str_917; __v3_internal_symbol_join_0__vmsvc13473[1] = item.name; __v3_internal_symbol_join_0__vmsvc13473[2] = _str_917; c = string__replace(c, string__plus(var_name, _str_6199), (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13473)));
 	c = types__comptime_static_replace_bare_ident(c, var_name, _str_6158);
 	return c;
 }
@@ -598704,7 +598873,7 @@ bool types__comptime_test_at(string cond, __v_int at) {
 	if ((i < cond.len) && (string__at(cond, i) == '!')) {
 		i++;
 	}
-	int cond__vmsvc13472; cond__vmsvc13472 = !!(((i + 2) >= cond.len) || (string__at(cond, i) != 'i')); if (!cond__vmsvc13472) { u8 __in_lhs_0__vmsvc13471 = string__at(cond, i + 1); cond__vmsvc13472 = !!((!((__in_lhs_0__vmsvc13471 == 's') || (__in_lhs_0__vmsvc13471 == 'n')))); } if (cond__vmsvc13472) {
+	int cond__vmsvc13475; cond__vmsvc13475 = !!(((i + 2) >= cond.len) || (string__at(cond, i) != 'i')); if (!cond__vmsvc13475) { u8 __in_lhs_0__vmsvc13474 = string__at(cond, i + 1); cond__vmsvc13475 = !!((!((__in_lhs_0__vmsvc13474 == 's') || (__in_lhs_0__vmsvc13474 == 'n')))); } if (cond__vmsvc13475) {
 		return false;
 	}
 	u8 __in_lhs_1 = string__at(cond, i + 2);
@@ -598833,8 +599002,8 @@ void types__const_selector_bloom_add(Array* bits, u32 mask, string name) {
 	u32 h = types__const_selector_hash(name);
 	u32 b1 = h & mask;
 	u32 b2 = ((u32)(((u32)(	(h * 0x9e3779b1))) >> (8))) & mask;
-	{ Array* __v3_internal_symbol_array_store_base_0 = bits; int __v3_internal_symbol_array_store_index_0 = (u32)(((u32)(	b1)) >> (6)); u64 __v3_internal_symbol_array_store_value_0 = (*((u64*)((__v3_internal_symbol_array_store_base_0)->data) + (__v3_internal_symbol_array_store_index_0))); u64 _t2__vmsvc13473 = (u64)(	(u64)(1)); u64 _t3__vmsvc13474 = (u64)((b1 & 63)); __v3_internal_symbol_array_store_value_0 |= ((_t3__vmsvc13474 >= 64 ? (u64)0 : (u64)(_t2__vmsvc13473 << _t3__vmsvc13474))); (*((u64*)((__v3_internal_symbol_array_store_base_0)->data) + (__v3_internal_symbol_array_store_index_0))) = __v3_internal_symbol_array_store_value_0; }
-	{ Array* __v3_internal_symbol_array_store_base_3 = bits; int __v3_internal_symbol_array_store_index_3 = (u32)(((u32)(	b2)) >> (6)); u64 __v3_internal_symbol_array_store_value_3 = (*((u64*)((__v3_internal_symbol_array_store_base_3)->data) + (__v3_internal_symbol_array_store_index_3))); u64 _t5__vmsvc13475 = (u64)(	(u64)(1)); u64 _t6__vmsvc13476 = (u64)((b2 & 63)); __v3_internal_symbol_array_store_value_3 |= ((_t6__vmsvc13476 >= 64 ? (u64)0 : (u64)(_t5__vmsvc13475 << _t6__vmsvc13476))); (*((u64*)((__v3_internal_symbol_array_store_base_3)->data) + (__v3_internal_symbol_array_store_index_3))) = __v3_internal_symbol_array_store_value_3; }
+	{ Array* __v3_internal_symbol_array_store_base_0 = bits; int __v3_internal_symbol_array_store_index_0 = (u32)(((u32)(	b1)) >> (6)); u64 __v3_internal_symbol_array_store_value_0 = (*((u64*)((__v3_internal_symbol_array_store_base_0)->data) + (__v3_internal_symbol_array_store_index_0))); u64 _t2__vmsvc13476 = (u64)(	(u64)(1)); u64 _t3__vmsvc13477 = (u64)((b1 & 63)); __v3_internal_symbol_array_store_value_0 |= ((_t3__vmsvc13477 >= 64 ? (u64)0 : (u64)(_t2__vmsvc13476 << _t3__vmsvc13477))); (*((u64*)((__v3_internal_symbol_array_store_base_0)->data) + (__v3_internal_symbol_array_store_index_0))) = __v3_internal_symbol_array_store_value_0; }
+	{ Array* __v3_internal_symbol_array_store_base_3 = bits; int __v3_internal_symbol_array_store_index_3 = (u32)(((u32)(	b2)) >> (6)); u64 __v3_internal_symbol_array_store_value_3 = (*((u64*)((__v3_internal_symbol_array_store_base_3)->data) + (__v3_internal_symbol_array_store_index_3))); u64 _t5__vmsvc13478 = (u64)(	(u64)(1)); u64 _t6__vmsvc13479 = (u64)((b2 & 63)); __v3_internal_symbol_array_store_value_3 |= ((_t6__vmsvc13479 >= 64 ? (u64)0 : (u64)(_t5__vmsvc13478 << _t6__vmsvc13479))); (*((u64*)((__v3_internal_symbol_array_store_base_3)->data) + (__v3_internal_symbol_array_store_index_3))) = __v3_internal_symbol_array_store_value_3; }
 }
 
 __inline u32 types__const_selector_hash(string name) {
@@ -598850,14 +599019,14 @@ __inline u32 types__const_selector_hash(string name) {
 
 string types__constraint_need(types__GenericConstraint constraint, string display) {
 	if (constraint.is_interface) {
-		string __v3_internal_symbol_join_0__vmsvc13477[3]; __v3_internal_symbol_join_0__vmsvc13477[0] = _str_7368; __v3_internal_symbol_join_0__vmsvc13477[1] = display; __v3_internal_symbol_join_0__vmsvc13477[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13477));
+		string __v3_internal_symbol_join_0__vmsvc13480[3]; __v3_internal_symbol_join_0__vmsvc13480[0] = _str_7368; __v3_internal_symbol_join_0__vmsvc13480[1] = display; __v3_internal_symbol_join_0__vmsvc13480[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13480));
 	}
-	string __v3_internal_symbol_join_1__vmsvc13478[3]; __v3_internal_symbol_join_1__vmsvc13478[0] = _str_7369; __v3_internal_symbol_join_1__vmsvc13478[1] = display; __v3_internal_symbol_join_1__vmsvc13478[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13478));
+	string __v3_internal_symbol_join_1__vmsvc13481[3]; __v3_internal_symbol_join_1__vmsvc13481[0] = _str_7369; __v3_internal_symbol_join_1__vmsvc13481[1] = display; __v3_internal_symbol_join_1__vmsvc13481[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13481));
 }
 
 string types__constraint_runtime_type_test_reason(types__GenericConstraint constraint) {
 	if (constraint.is_interface) {
-		string __v3_internal_symbol_join_0__vmsvc13479[3]; __v3_internal_symbol_join_0__vmsvc13479[0] = _str_7393; __v3_internal_symbol_join_0__vmsvc13479[1] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_0__vmsvc13479[2] = _str_7394; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13479));
+		string __v3_internal_symbol_join_0__vmsvc13482[3]; __v3_internal_symbol_join_0__vmsvc13482[0] = _str_7393; __v3_internal_symbol_join_0__vmsvc13482[1] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_0__vmsvc13482[2] = _str_7394; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13482));
 	}
 	{
 		__v_int __for_idx_0 = 0;
@@ -598865,7 +599034,7 @@ string types__constraint_runtime_type_test_reason(types__GenericConstraint const
 			types__Type typ = *(types__Type*)(array_get(constraint.types, __for_idx_0));
 			types__Type* clean = types__unalias_type(&typ);
 			if (!((clean)->typ == 22) && !((clean)->typ == 20)) {
-				string __v3_internal_symbol_join_1__vmsvc13480[5]; __v3_internal_symbol_join_1__vmsvc13480[0] = _str_41; __v3_internal_symbol_join_1__vmsvc13480[1] = string__all_after_last(types__Type__name(&typ), _str_2); __v3_internal_symbol_join_1__vmsvc13480[2] = _str_7377; __v3_internal_symbol_join_1__vmsvc13480[3] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_1__vmsvc13480[4] = _str_7395; return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13480));
+				string __v3_internal_symbol_join_1__vmsvc13483[5]; __v3_internal_symbol_join_1__vmsvc13483[0] = _str_41; __v3_internal_symbol_join_1__vmsvc13483[1] = string__all_after_last(types__Type__name(&typ), _str_2); __v3_internal_symbol_join_1__vmsvc13483[2] = _str_7377; __v3_internal_symbol_join_1__vmsvc13483[3] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_1__vmsvc13483[4] = _str_7395; return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13483));
 			}
 		}
 	}
@@ -598874,7 +599043,7 @@ string types__constraint_runtime_type_test_reason(types__GenericConstraint const
 		for (; __for_idx_1 < constraint.types.len; __for_idx_1++) {
 			types__Type typ = *(types__Type*)(array_get(constraint.types, __for_idx_1));
 			if ((types__unalias_type(&typ))->typ == 20) {
-				string __v3_internal_symbol_join_2__vmsvc13481[5]; __v3_internal_symbol_join_2__vmsvc13481[0] = _str_7393; __v3_internal_symbol_join_2__vmsvc13481[1] = string__all_after_last(types__Type__name(&typ), _str_2); __v3_internal_symbol_join_2__vmsvc13481[2] = _str_7377; __v3_internal_symbol_join_2__vmsvc13481[3] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_2__vmsvc13481[4] = _str_7396; return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13481));
+				string __v3_internal_symbol_join_2__vmsvc13484[5]; __v3_internal_symbol_join_2__vmsvc13484[0] = _str_7393; __v3_internal_symbol_join_2__vmsvc13484[1] = string__all_after_last(types__Type__name(&typ), _str_2); __v3_internal_symbol_join_2__vmsvc13484[2] = _str_7377; __v3_internal_symbol_join_2__vmsvc13484[3] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_2__vmsvc13484[4] = _str_7396; return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13484));
 			}
 		}
 	}
@@ -598945,7 +599114,7 @@ __v_option_multi_return_string_string_int types__container_layout_error_parts(st
 }
 
 __inline bool types__context_independent_type(u32 source_id) {
-	int cond__vmsvc13483; cond__vmsvc13483 = !!((source_id == 0)); if (!cond__vmsvc13483) { int __in_lhs_0__vmsvc13482 = flat__source_type_shape(source_id); cond__vmsvc13483 = !!(((__in_lhs_0__vmsvc13482 & 536870912) != 0)); } return cond__vmsvc13483;
+	int cond__vmsvc13486; cond__vmsvc13486 = !!((source_id == 0)); if (!cond__vmsvc13486) { int __in_lhs_0__vmsvc13485 = flat__source_type_shape(source_id); cond__vmsvc13486 = !!(((__in_lhs_0__vmsvc13485 & 536870912) != 0)); } return cond__vmsvc13486;
 }
 
 __v_option_types__Type types__contextual_payload_type(types__Type* typ) {
@@ -599043,15 +599212,15 @@ __v_option_string types__decimal_magnitude_of_base(string magnitude, __v_int rad
 				__v_int i = 0;
 				for (; i < out_len; i++) {
 					__v_int scaled = ((__v_int)((*(u8*)array_get(out, i))) * radix) + carry;
-					{ Array* __v3_internal_symbol_scalar_store_base_1 = &out; int __v3_internal_symbol_scalar_store_index_1 = i; __v_int _t3__vmsvc13484 = (__v_int)(scaled); __v_int _t4__vmsvc13485 = (__v_int)(10); if (_t4__vmsvc13485 == 0) v_panic(_S("modulo by zero")); u8 __v3_internal_symbol_scalar_store_value_1 = (u8)(((__v_int)(_t3__vmsvc13484 % _t4__vmsvc13485))); if (__v3_internal_symbol_scalar_store_index_1 >= 0 && __v3_internal_symbol_scalar_store_index_1 < __v3_internal_symbol_scalar_store_base_1->len) { ((u8*)__v3_internal_symbol_scalar_store_base_1->data)[__v3_internal_symbol_scalar_store_index_1] = __v3_internal_symbol_scalar_store_value_1; } else { array__set(__v3_internal_symbol_scalar_store_base_1, __v3_internal_symbol_scalar_store_index_1, &__v3_internal_symbol_scalar_store_value_1); } }
-					__v_int _t5__vmsvc13486 = (__v_int)(scaled); __v_int _t6__vmsvc13487 = (__v_int)(10); if (_t6__vmsvc13487 == 0) v_panic(_S("division by zero")); carry = ((__v_int)(_t5__vmsvc13486 / _t6__vmsvc13487));
+					{ Array* __v3_internal_symbol_scalar_store_base_1 = &out; int __v3_internal_symbol_scalar_store_index_1 = i; __v_int _t3__vmsvc13487 = (__v_int)(scaled); __v_int _t4__vmsvc13488 = (__v_int)(10); if (_t4__vmsvc13488 == 0) v_panic(_S("modulo by zero")); u8 __v3_internal_symbol_scalar_store_value_1 = (u8)(((__v_int)(_t3__vmsvc13487 % _t4__vmsvc13488))); if (__v3_internal_symbol_scalar_store_index_1 >= 0 && __v3_internal_symbol_scalar_store_index_1 < __v3_internal_symbol_scalar_store_base_1->len) { ((u8*)__v3_internal_symbol_scalar_store_base_1->data)[__v3_internal_symbol_scalar_store_index_1] = __v3_internal_symbol_scalar_store_value_1; } else { array__set(__v3_internal_symbol_scalar_store_base_1, __v3_internal_symbol_scalar_store_index_1, &__v3_internal_symbol_scalar_store_value_1); } }
+					__v_int _t5__vmsvc13489 = (__v_int)(scaled); __v_int _t6__vmsvc13490 = (__v_int)(10); if (_t6__vmsvc13490 == 0) v_panic(_S("division by zero")); carry = ((__v_int)(_t5__vmsvc13489 / _t6__vmsvc13490));
 				}
 			}
 			while (carry > 0) {
 				if (out_len >= out.len) {
 					return (__v_option_string){.ok = false};
 				}
-				{ Array* __v3_internal_symbol_scalar_store_base_6 = &out; int __v3_internal_symbol_scalar_store_index_6 = out_len; __v_int _t8__vmsvc13488 = (__v_int)(carry); __v_int _t9__vmsvc13489 = (__v_int)(10); if (_t9__vmsvc13489 == 0) v_panic(_S("modulo by zero")); u8 __v3_internal_symbol_scalar_store_value_6 = (u8)(((__v_int)(_t8__vmsvc13488 % _t9__vmsvc13489))); if (__v3_internal_symbol_scalar_store_index_6 >= 0 && __v3_internal_symbol_scalar_store_index_6 < __v3_internal_symbol_scalar_store_base_6->len) { ((u8*)__v3_internal_symbol_scalar_store_base_6->data)[__v3_internal_symbol_scalar_store_index_6] = __v3_internal_symbol_scalar_store_value_6; } else { array__set(__v3_internal_symbol_scalar_store_base_6, __v3_internal_symbol_scalar_store_index_6, &__v3_internal_symbol_scalar_store_value_6); } }
+				{ Array* __v3_internal_symbol_scalar_store_base_6 = &out; int __v3_internal_symbol_scalar_store_index_6 = out_len; __v_int _t8__vmsvc13491 = (__v_int)(carry); __v_int _t9__vmsvc13492 = (__v_int)(10); if (_t9__vmsvc13492 == 0) v_panic(_S("modulo by zero")); u8 __v3_internal_symbol_scalar_store_value_6 = (u8)(((__v_int)(_t8__vmsvc13491 % _t9__vmsvc13492))); if (__v3_internal_symbol_scalar_store_index_6 >= 0 && __v3_internal_symbol_scalar_store_index_6 < __v3_internal_symbol_scalar_store_base_6->len) { ((u8*)__v3_internal_symbol_scalar_store_base_6->data)[__v3_internal_symbol_scalar_store_index_6] = __v3_internal_symbol_scalar_store_value_6; } else { array__set(__v3_internal_symbol_scalar_store_base_6, __v3_internal_symbol_scalar_store_index_6, &__v3_internal_symbol_scalar_store_value_6); } }
 				carry /= 10;
 				out_len++;
 			}
@@ -599243,7 +599412,7 @@ __v_option_string types__defer_result_index_error_message(types__Type* ret, __v_
 			return (__v_option_string){.ok = true, .value = _str_8357};
 		}
 		if (idx >= ret->types__MultiReturn.MultiReturnDataRef->types.len) {
-			string __v3_internal_symbol_join_0__vmsvc13490[5]; __v3_internal_symbol_join_0__vmsvc13490[0] = _str_8358; __v3_internal_symbol_join_0__vmsvc13490[1] = int__str(idx); __v3_internal_symbol_join_0__vmsvc13490[2] = _str_8359; __v3_internal_symbol_join_0__vmsvc13490[3] = int__str(ret->types__MultiReturn.MultiReturnDataRef->types.len); __v3_internal_symbol_join_0__vmsvc13490[4] = _str_8360; return (__v_option_string){.ok = true, .value = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13490))};
+			string __v3_internal_symbol_join_0__vmsvc13493[5]; __v3_internal_symbol_join_0__vmsvc13493[0] = _str_8358; __v3_internal_symbol_join_0__vmsvc13493[1] = int__str(idx); __v3_internal_symbol_join_0__vmsvc13493[2] = _str_8359; __v3_internal_symbol_join_0__vmsvc13493[3] = int__str(ret->types__MultiReturn.MultiReturnDataRef->types.len); __v3_internal_symbol_join_0__vmsvc13493[4] = _str_8360; return (__v_option_string){.ok = true, .value = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13493))};
 		}
 		return (__v_option_string){.ok = false};
 	}
@@ -599261,7 +599430,7 @@ string types__deprecated_struct_display_name(string file_name, string module_nam
 		__v_int relative = __if_guard_0.value;
 		string dir = string__replace(os__dir(string__substr(		normalized, 		relative + 6, (		normalized).len)), _str_374, _str_2);
 		if ((dir.len > 0) && !string__eq(dir, _str_2)) {
-			string __v3_internal_symbol_join_0__vmsvc13491[3]; __v3_internal_symbol_join_0__vmsvc13491[0] = dir; __v3_internal_symbol_join_0__vmsvc13491[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13491[2] = struct_name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13491));
+			string __v3_internal_symbol_join_0__vmsvc13494[3]; __v3_internal_symbol_join_0__vmsvc13494[0] = dir; __v3_internal_symbol_join_0__vmsvc13494[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13494[2] = struct_name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13494));
 		}
 	}
 	return types__qualify_decl_name_in_module(struct_name, module_name);
@@ -599379,14 +599548,14 @@ bool types__embedded_name_matches(string field_name, string type_name) {
 }
 
 bool types__embedded_type_name_matches(u32 field_name_id, u32 type_name_id) {
-	int cond__vmsvc13495; cond__vmsvc13495 = !!((field_name_id == type_name_id)); if (!cond__vmsvc13495) { u32 __contains_needle_1__vmsvc13492 = field_name_id; Array __in_arr_0__vmsvc13493 = flat__SourceTypeSyntax__qualifier_suffixes(flat__source_type_syntax(type_name_id)); bool __contains_2__vmsvc13494 = false; {
+	int cond__vmsvc13498; cond__vmsvc13498 = !!((field_name_id == type_name_id)); if (!cond__vmsvc13498) { u32 __contains_needle_1__vmsvc13495 = field_name_id; Array __in_arr_0__vmsvc13496 = flat__SourceTypeSyntax__qualifier_suffixes(flat__source_type_syntax(type_name_id)); bool __contains_2__vmsvc13497 = false; {
 		__v_int __contains_idx_3 = 0;
-		for (; __contains_idx_3 < __in_arr_0__vmsvc13493.len; __contains_idx_3++) {
-			if (*(u32*)(array_get(__in_arr_0__vmsvc13493, __contains_idx_3)) == __contains_needle_1__vmsvc13492) {
-				__contains_2__vmsvc13494 = true;
+		for (; __contains_idx_3 < __in_arr_0__vmsvc13496.len; __contains_idx_3++) {
+			if (*(u32*)(array_get(__in_arr_0__vmsvc13496, __contains_idx_3)) == __contains_needle_1__vmsvc13495) {
+				__contains_2__vmsvc13497 = true;
 			}
 		}
-	} cond__vmsvc13495 = !!((__contains_2__vmsvc13494)); } return cond__vmsvc13495;
+	} cond__vmsvc13498 = !!((__contains_2__vmsvc13497)); } return cond__vmsvc13498;
 }
 
 Array types__empty_call_info_memo(void) {
@@ -599430,7 +599599,7 @@ bool types__enum_backing_literal_becomes_max(string literal, types__EnumBackingV
 		__if_val_1 = (u64)(builtin__max_i64);
 	} else {
 		if (bounds.bits > 0) {
-			u64 _t1__vmsvc13496 = (u64)(			(u64)(1)); u64 _t2__vmsvc13497 = (u64)((bounds.bits - 1)); __if_val_1 = ((_t2__vmsvc13497 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13496 << _t2__vmsvc13497))) - 1;
+			u64 _t1__vmsvc13499 = (u64)(			(u64)(1)); u64 _t2__vmsvc13500 = (u64)((bounds.bits - 1)); __if_val_1 = ((_t2__vmsvc13500 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13499 << _t2__vmsvc13500))) - 1;
 		} else {
 			__if_val_1 = (u64)(0);
 		}
@@ -599475,7 +599644,7 @@ bool types__enum_backing_literal_overflows(string literal, types__EnumBackingVal
 		__if_val_1 = (u64)(((u64)(		(u64)(1))) << (63));
 	} else {
 		if (bounds.bits > 0) {
-			u64 _t1__vmsvc13498 = (u64)(			(u64)(1)); u64 _t2__vmsvc13499 = (u64)((bounds.bits - 1)); __if_val_1 = (_t2__vmsvc13499 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13498 << _t2__vmsvc13499));
+			u64 _t1__vmsvc13501 = (u64)(			(u64)(1)); u64 _t2__vmsvc13502 = (u64)((bounds.bits - 1)); __if_val_1 = (_t2__vmsvc13502 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13501 << _t2__vmsvc13502));
 		} else {
 			__if_val_1 = (u64)(0);
 		}
@@ -599486,7 +599655,7 @@ bool types__enum_backing_literal_overflows(string literal, types__EnumBackingVal
 		__if_val_2 = (u64)(builtin__max_i64);
 	} else {
 		if (bounds.bits > 0) {
-			u64 _t3__vmsvc13500 = (u64)(			(u64)(1)); u64 _t4__vmsvc13501 = (u64)((bounds.bits - 1)); __if_val_2 = ((_t4__vmsvc13501 >= 64 ? (u64)0 : (u64)(_t3__vmsvc13500 << _t4__vmsvc13501))) - 1;
+			u64 _t3__vmsvc13503 = (u64)(			(u64)(1)); u64 _t4__vmsvc13504 = (u64)((bounds.bits - 1)); __if_val_2 = ((_t4__vmsvc13504 >= 64 ? (u64)0 : (u64)(_t3__vmsvc13503 << _t4__vmsvc13504))) - 1;
 		} else {
 			__if_val_2 = (u64)(0);
 		}
@@ -599552,7 +599721,7 @@ u64 types__enum_backing_unsigned_max(__v_int bits) {
 	if (bits <= 0) {
 		return 0;
 	}
-	u64 _t1__vmsvc13502 = (u64)(	(u64)(1)); u64 _t2__vmsvc13503 = (u64)(bits); return ((_t2__vmsvc13503 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13502 << _t2__vmsvc13503))) - 1;
+	u64 _t1__vmsvc13505 = (u64)(	(u64)(1)); u64 _t2__vmsvc13506 = (u64)(bits); return ((_t2__vmsvc13506 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13505 << _t2__vmsvc13506))) - 1;
 }
 
 __v_option_types__EnumBackingValueBounds types__enum_backing_value_bounds(types__Type* typ) {
@@ -599675,7 +599844,7 @@ string types__export_natural_c_symbol(string module_name, string name) {
 		return _str_3122;
 	}
 	if (!string__eq(module_name, _str_34) && !string__eq(module_name, _str_179) && !string__eq(module_name, _str_1218)) {
-		string __v3_internal_symbol_join_0__vmsvc13504[3]; __v3_internal_symbol_join_0__vmsvc13504[0] = module_name; __v3_internal_symbol_join_0__vmsvc13504[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13504[2] = name; return naming__c_name((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13504)));
+		string __v3_internal_symbol_join_0__vmsvc13507[3]; __v3_internal_symbol_join_0__vmsvc13507[0] = module_name; __v3_internal_symbol_join_0__vmsvc13507[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13507[2] = name; return naming__c_name((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13507)));
 	}
 	if (string__eq(name, _str_2118)) {
 		return _str_3122;
@@ -599697,7 +599866,7 @@ string types__export_qualified_fn_name(string module_name, string name) {
 	if (string__eq(module_name, _str_34) || string__eq(module_name, _str_179) || string__eq(module_name, _str_1218)) {
 		return name;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13505[3]; __v3_internal_symbol_join_0__vmsvc13505[0] = module_name; __v3_internal_symbol_join_0__vmsvc13505[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13505[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13505));
+	string __v3_internal_symbol_join_0__vmsvc13508[3]; __v3_internal_symbol_join_0__vmsvc13508[0] = module_name; __v3_internal_symbol_join_0__vmsvc13508[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13508[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13508));
 }
 
 bool types__expr_key_overlaps(string candidate, string key) {
@@ -599732,7 +599901,7 @@ void types__extend_stable_type_indexes_ref(map* indexes, Array type_names) {
 		for (; __for_idx_0 < type_names.len; __for_idx_0++) {
 			u32 raw_name_id = *(u32*)(array_get(type_names, __for_idx_0));
 			u32 name_id = types__trimmed_source_type_id(raw_name_id);
-			int cond__vmsvc13507; cond__vmsvc13507 = !!((name_id != 0)); if (cond__vmsvc13507) { u32 __map_key_1__vmsvc13506 = name_id; cond__vmsvc13507 = !!((!map__exists(indexes, &__map_key_1__vmsvc13506))); } if (cond__vmsvc13507) {
+			int cond__vmsvc13510; cond__vmsvc13510 = !!((name_id != 0)); if (cond__vmsvc13510) { u32 __map_key_1__vmsvc13509 = name_id; cond__vmsvc13510 = !!((!map__exists(indexes, &__map_key_1__vmsvc13509))); } if (cond__vmsvc13510) {
 				u32 __arr_val_2 = raw_name_id;
 				{ Array* __v3_internal_symbol_scalar_push_base_0 = &names; u32 __v3_internal_symbol_scalar_push_value_0 = __arr_val_2; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
 			}
@@ -599880,11 +600049,11 @@ __v_option_u32 types__field_init_struct_param_name(types__CallInfo info, __v_int
 }
 
 string types__file_import_key(string file, string alias) {
-	string __v3_internal_symbol_join_0__vmsvc13508[3]; __v3_internal_symbol_join_0__vmsvc13508[0] = file; __v3_internal_symbol_join_0__vmsvc13508[1] = _str_0; __v3_internal_symbol_join_0__vmsvc13508[2] = alias; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13508));
+	string __v3_internal_symbol_join_0__vmsvc13511[3]; __v3_internal_symbol_join_0__vmsvc13511[0] = file; __v3_internal_symbol_join_0__vmsvc13511[1] = _str_0; __v3_internal_symbol_join_0__vmsvc13511[2] = alias; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13511));
 }
 
 bool types__file_index_usable(flat__FlatAst* a) {
-	int cond__vmsvc13511; cond__vmsvc13511 = !!((a->file_node_ids.len > 0)); if (cond__vmsvc13511) { __v_int _t1__vmsvc13509 = (__v_int)(a->file_node_ids.len); __v_int _t2__vmsvc13510 = (__v_int)(2); if (_t2__vmsvc13510 == 0) v_panic(_S("modulo by zero")); cond__vmsvc13511 = !!(((((__v_int)(_t1__vmsvc13509 % _t2__vmsvc13510))) == 0)); } return cond__vmsvc13511 && !a->file_index_incomplete && string__eq(os__getenv(_str_4027), _str_34);
+	int cond__vmsvc13514; cond__vmsvc13514 = !!((a->file_node_ids.len > 0)); if (cond__vmsvc13514) { __v_int _t1__vmsvc13512 = (__v_int)(a->file_node_ids.len); __v_int _t2__vmsvc13513 = (__v_int)(2); if (_t2__vmsvc13513 == 0) v_panic(_S("modulo by zero")); cond__vmsvc13514 = !!(((((__v_int)(_t1__vmsvc13512 % _t2__vmsvc13513))) == 0)); } return cond__vmsvc13514 && !a->file_index_incomplete && string__eq(os__getenv(_str_4027), _str_34);
 }
 
 __v_int types__find_matching_bracket(string s, __v_int start) {
@@ -600414,7 +600583,7 @@ string types__fold_type_param_expansions(string msg, map constraints) {
 		__v_int i = 0;
 		for (; i < parts.len; i++) {
 			string part = *(string*)(array_get(parts, i));
-			__v_int _t3__vmsvc13512 = (__v_int)(i); __v_int _t4__vmsvc13513 = (__v_int)(2); if (_t4__vmsvc13513 == 0) v_panic(_S("modulo by zero")); if ((((__v_int)(_t3__vmsvc13512 % _t4__vmsvc13513))) == 0) {
+			__v_int _t3__vmsvc13515 = (__v_int)(i); __v_int _t4__vmsvc13516 = (__v_int)(2); if (_t4__vmsvc13516 == 0) v_panic(_S("modulo by zero")); if ((((__v_int)(_t3__vmsvc13515 % _t4__vmsvc13516))) == 0) {
 				string __arr_val_4 = part;
 				array_push(&out, &__arr_val_4);
 				continue;
@@ -600504,14 +600673,14 @@ void types__free_type_query_scope_entries(map* entries) {
 }
 
 bool types__fresh_collection_builtin(string resolved_name, string decl_module) {
-	int cond__vmsvc13515; cond__vmsvc13515 = !!(string__eq(decl_module, _str_1218)); if (cond__vmsvc13515) { bool __contains_0__vmsvc13514 = false; {
+	int cond__vmsvc13518; cond__vmsvc13518 = !!(string__eq(decl_module, _str_1218)); if (cond__vmsvc13518) { bool __contains_0__vmsvc13517 = false; {
 		__v_int __contains_idx_1 = 0;
 		for (; __contains_idx_1 < 9; __contains_idx_1++) {
 			if (string__eq(types__fresh_collection_builtins[v_fixed_index(__contains_idx_1, 9)], resolved_name)) {
-				__contains_0__vmsvc13514 = true;
+				__contains_0__vmsvc13517 = true;
 			}
 		}
-	} cond__vmsvc13515 = !!((__contains_0__vmsvc13514)); } return cond__vmsvc13515;
+	} cond__vmsvc13518 = !!((__contains_0__vmsvc13517)); } return cond__vmsvc13518;
 }
 
 bool types__generated_name_is_c_temporary_name(string name) {
@@ -600698,7 +600867,7 @@ u32 types__generic_param_letter_mask(u32 param) {
 	if (!types__source_type_is_bare_generic_param(param)) {
 		return 0;
 	}
-	u32 _t1__vmsvc13516 = (u32)(	(u32)(1)); u64 _t2__vmsvc13517 = (u64)((u32)(string__at(flat__source_type_name(param), 0) - 'A')); return (_t2__vmsvc13517 >= 32 ? (u32)0 : (u32)(_t1__vmsvc13516 << _t2__vmsvc13517));
+	u32 _t1__vmsvc13519 = (u32)(	(u32)(1)); u64 _t2__vmsvc13520 = (u64)((u32)(string__at(flat__source_type_name(param), 0) - 'A')); return (_t2__vmsvc13520 >= 32 ? (u32)0 : (u32)(_t1__vmsvc13519 << _t2__vmsvc13520));
 }
 
 bool types__generic_param_set_has_name(map params, string name) {
@@ -600740,7 +600909,7 @@ __v_option_string types__generic_placeholder_from_unknown(types__Unknown typ) {
 
 types__Type types__generic_placeholder_type(u32 name_id) {
 	string name = flat__source_type_name(name_id);
-	string __v3_internal_symbol_join_0__vmsvc13518[3]; __v3_internal_symbol_join_0__vmsvc13518[0] = _str_5598; __v3_internal_symbol_join_0__vmsvc13518[1] = name; __v3_internal_symbol_join_0__vmsvc13518[2] = _str_41; string __struct_field_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13518));
+	string __v3_internal_symbol_join_0__vmsvc13521[3]; __v3_internal_symbol_join_0__vmsvc13521[0] = _str_5598; __v3_internal_symbol_join_0__vmsvc13521[1] = name; __v3_internal_symbol_join_0__vmsvc13521[2] = _str_41; string __struct_field_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13521));
 	u32 __if_val_1 = {0};
 	if (types__is_bare_generic_param(name)) {
 		__if_val_1 = name_id;
@@ -600758,7 +600927,7 @@ bool types__generic_pointer_value_mismatch(u32 lhs, u32 rhs) {
 	u32 left_id = types__trimmed_source_type_id(lhs);
 	u32 right_id = types__trimmed_source_type_id(rhs);
 	int __in_lhs_0 = flat__source_type_shape(left_id);
-	int cond__vmsvc13520; cond__vmsvc13520 = !!((((__in_lhs_0 & 128) != 0) && (types__trimmed_source_type_id(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(left_id))) == right_id))); if (!cond__vmsvc13520) { int __in_lhs_1__vmsvc13519 = flat__source_type_shape(right_id); cond__vmsvc13520 = !!(((((__in_lhs_1__vmsvc13519 & 128) != 0) && (left_id == types__trimmed_source_type_id(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(right_id))))))); } return cond__vmsvc13520;
+	int cond__vmsvc13523; cond__vmsvc13523 = !!((((__in_lhs_0 & 128) != 0) && (types__trimmed_source_type_id(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(left_id))) == right_id))); if (!cond__vmsvc13523) { int __in_lhs_1__vmsvc13522 = flat__source_type_shape(right_id); cond__vmsvc13523 = !!(((((__in_lhs_1__vmsvc13522 & 128) != 0) && (left_id == types__trimmed_source_type_id(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(right_id))))))); } return cond__vmsvc13523;
 }
 
 bool types__generic_semantic_type_has_placeholder(types__Type* typ) {
@@ -600819,7 +600988,7 @@ string types__generic_type_arg_short_for_signature(u32 type_arg_id) {
 		if (flat__SourceTypeSyntax__bracket_closed(syntax) && (flat__SourceTypeSyntax__bracket_base(syntax) != 0)) {
 			string key = types__generic_type_arg_short_for_signature(flat__SourceTypeSyntax__bracket_inner(syntax));
 			string value = types__generic_type_arg_short_for_signature(flat__SourceTypeSyntax__bracket_base(syntax));
-			string __v3_internal_symbol_join_0__vmsvc13521[4]; __v3_internal_symbol_join_0__vmsvc13521[0] = _str_5181; __v3_internal_symbol_join_0__vmsvc13521[1] = key; __v3_internal_symbol_join_0__vmsvc13521[2] = _str_106; __v3_internal_symbol_join_0__vmsvc13521[3] = value; return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13521));
+			string __v3_internal_symbol_join_0__vmsvc13524[4]; __v3_internal_symbol_join_0__vmsvc13524[0] = _str_5181; __v3_internal_symbol_join_0__vmsvc13524[1] = key; __v3_internal_symbol_join_0__vmsvc13524[2] = _str_106; __v3_internal_symbol_join_0__vmsvc13524[3] = value; return (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13524));
 		}
 	}
 	if ((shape & 16384) != 0) {
@@ -600915,7 +601084,7 @@ __inline bool types__has_written_nested_option_result_type(flat__Node* node) {
 		return ((node->kind != flat__NodeKind__interface_field) || string__contains(node->value, _str_176)) && (types__nested_option_result_marker(node->value) >= 0);
 	}
 	u32 value_id = node->source_value;
-	int cond__vmsvc13524; cond__vmsvc13524 = !!((value_id == 0)); if (!cond__vmsvc13524) { int cond__vmsvc13523; cond__vmsvc13523 = !!((node->kind == flat__NodeKind__interface_field)); if (cond__vmsvc13523) { int __in_lhs_0__vmsvc13522 = flat__source_type_shape(value_id); cond__vmsvc13523 = !!((!((__in_lhs_0__vmsvc13522 & 2) != 0))); } cond__vmsvc13524 = !!((cond__vmsvc13523)); } if (cond__vmsvc13524) {
+	int cond__vmsvc13527; cond__vmsvc13527 = !!((value_id == 0)); if (!cond__vmsvc13527) { int cond__vmsvc13526; cond__vmsvc13526 = !!((node->kind == flat__NodeKind__interface_field)); if (cond__vmsvc13526) { int __in_lhs_0__vmsvc13525 = flat__source_type_shape(value_id); cond__vmsvc13526 = !!((!((__in_lhs_0__vmsvc13525 & 2) != 0))); } cond__vmsvc13527 = !!((cond__vmsvc13526)); } if (cond__vmsvc13527) {
 		return false;
 	}
 	return flat__SourceTypeSyntax__nested_option_result_marker(flat__source_type_syntax(value_id)) >= 0;
@@ -600959,7 +601128,7 @@ bool types__if_branch_type_needs_context(types__Type* typ) {
 bool types__implicit_integer_to_float_compatible(types__Type* actual, types__Type* expected) {
 	types__Type* clean_actual = types__unalias_type(actual);
 	types__Type* clean_expected = types__unalias_type(expected);
-	int cond__vmsvc13526; cond__vmsvc13526 = !!(types__Type__is_integer(clean_actual)); if (cond__vmsvc13526) { u32 __in_lhs_0__vmsvc13525 = types__Type__source_type_id(clean_actual); cond__vmsvc13526 = !!((!((__in_lhs_0__vmsvc13525 == flat__source_type_i64) || (__in_lhs_0__vmsvc13525 == flat__source_type_u64)))); } return cond__vmsvc13526 && types__Type__is_float(clean_expected);
+	int cond__vmsvc13529; cond__vmsvc13529 = !!(types__Type__is_integer(clean_actual)); if (cond__vmsvc13529) { u32 __in_lhs_0__vmsvc13528 = types__Type__source_type_id(clean_actual); cond__vmsvc13529 = !!((!((__in_lhs_0__vmsvc13528 == flat__source_type_i64) || (__in_lhs_0__vmsvc13528 == flat__source_type_u64)))); } return cond__vmsvc13529 && types__Type__is_float(clean_expected);
 }
 
 Array types__implicit_str_builtin_type_names(void) {
@@ -601090,7 +601259,7 @@ __v_option_u64 types__incremental_hex(string text, __v_int start, __v_int end) {
 }
 
 string types__incremental_instance_line(types__TypeError err) {
-	string __v3_internal_symbol_join_0__vmsvc13527[19]; __v3_internal_symbol_join_0__vmsvc13527[0] = int__str((__v_int)(err.kind)); __v3_internal_symbol_join_0__vmsvc13527[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13527[2] = err.file; __v3_internal_symbol_join_0__vmsvc13527[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13527[4] = i32__str(err.pos.id); __v3_internal_symbol_join_0__vmsvc13527[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13527[6] = i32__str(err.pos.offset); __v3_internal_symbol_join_0__vmsvc13527[7] = _str_72; __v3_internal_symbol_join_0__vmsvc13527[8] = i32__str(err.pos.end); __v3_internal_symbol_join_0__vmsvc13527[9] = _str_92; __v3_internal_symbol_join_0__vmsvc13527[10] = strconv__format_uint((u16)(err.pos.meta), 10); __v3_internal_symbol_join_0__vmsvc13527[11] = _str_1; __v3_internal_symbol_join_0__vmsvc13527[12] = int__str(err.diagnostic_order); __v3_internal_symbol_join_0__vmsvc13527[13] = _str_1; __v3_internal_symbol_join_0__vmsvc13527[14] = err.severity; __v3_internal_symbol_join_0__vmsvc13527[15] = _str_1; __v3_internal_symbol_join_0__vmsvc13527[16] = err.msg; __v3_internal_symbol_join_0__vmsvc13527[17] = _str_1; __v3_internal_symbol_join_0__vmsvc13527[18] = Array_string__str(err.details); return (string_plus_many(19, __v3_internal_symbol_join_0__vmsvc13527));
+	string __v3_internal_symbol_join_0__vmsvc13530[19]; __v3_internal_symbol_join_0__vmsvc13530[0] = int__str((__v_int)(err.kind)); __v3_internal_symbol_join_0__vmsvc13530[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13530[2] = err.file; __v3_internal_symbol_join_0__vmsvc13530[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13530[4] = i32__str(err.pos.id); __v3_internal_symbol_join_0__vmsvc13530[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13530[6] = i32__str(err.pos.offset); __v3_internal_symbol_join_0__vmsvc13530[7] = _str_72; __v3_internal_symbol_join_0__vmsvc13530[8] = i32__str(err.pos.end); __v3_internal_symbol_join_0__vmsvc13530[9] = _str_92; __v3_internal_symbol_join_0__vmsvc13530[10] = strconv__format_uint((u16)(err.pos.meta), 10); __v3_internal_symbol_join_0__vmsvc13530[11] = _str_1; __v3_internal_symbol_join_0__vmsvc13530[12] = int__str(err.diagnostic_order); __v3_internal_symbol_join_0__vmsvc13530[13] = _str_1; __v3_internal_symbol_join_0__vmsvc13530[14] = err.severity; __v3_internal_symbol_join_0__vmsvc13530[15] = _str_1; __v3_internal_symbol_join_0__vmsvc13530[16] = err.msg; __v3_internal_symbol_join_0__vmsvc13530[17] = _str_1; __v3_internal_symbol_join_0__vmsvc13530[18] = Array_string__str(err.details); return (string_plus_many(19, __v3_internal_symbol_join_0__vmsvc13530));
 }
 
 __v_int types__incremental_int(string text, __v_int start, __v_int end) {
@@ -601189,18 +601358,18 @@ bool types__incremental_names_generic_fn(string name, map generic_fns) {
 	if (name.len == 0) {
 		return false;
 	}
-	int cond__vmsvc13529; cond__vmsvc13529 = !!(string__contains(name, _str_176)); if (!cond__vmsvc13529) { string __map_key_0__vmsvc13528 = name; cond__vmsvc13529 = !!((map__exists(&generic_fns, &__map_key_0__vmsvc13528))); } if (cond__vmsvc13529) {
+	int cond__vmsvc13532; cond__vmsvc13532 = !!(string__contains(name, _str_176)); if (!cond__vmsvc13532) { string __map_key_0__vmsvc13531 = name; cond__vmsvc13532 = !!((map__exists(&generic_fns, &__map_key_0__vmsvc13531))); } if (cond__vmsvc13532) {
 		return true;
 	}
 	__v_int dot = string__last_index_u8(name, '.');
-	int cond__vmsvc13531; cond__vmsvc13531 = !!((dot >= 0)); if (cond__vmsvc13531) { string __map_key_1__vmsvc13530 = string__substr(	name, 	dot + 1, (	name).len); cond__vmsvc13531 = !!((map__exists(&generic_fns, &__map_key_1__vmsvc13530))); } return cond__vmsvc13531;
+	int cond__vmsvc13534; cond__vmsvc13534 = !!((dot >= 0)); if (cond__vmsvc13534) { string __map_key_1__vmsvc13533 = string__substr(	name, 	dot + 1, (	name).len); cond__vmsvc13534 = !!((map__exists(&generic_fns, &__map_key_1__vmsvc13533))); } return cond__vmsvc13534;
 }
 
 __v_int types__incremental_next_start(Array starts, __v_int start, __v_int end) {
 	__v_int lo = 0;
 	__v_int hi = starts.len;
 	while (lo < hi) {
-		__v_int _t1__vmsvc13532 = (__v_int)((lo + hi)); __v_int _t2__vmsvc13533 = (__v_int)(2); if (_t2__vmsvc13533 == 0) v_panic(_S("division by zero")); __v_int mid = ((__v_int)(_t1__vmsvc13532 / _t2__vmsvc13533));
+		__v_int _t1__vmsvc13535 = (__v_int)((lo + hi)); __v_int _t2__vmsvc13536 = (__v_int)(2); if (_t2__vmsvc13536 == 0) v_panic(_S("division by zero")); __v_int mid = ((__v_int)(_t1__vmsvc13535 / _t2__vmsvc13536));
 		if ((*(__v_int*)array_get(starts, mid)) <= start) {
 			lo = mid + 1;
 		} else {
@@ -601261,7 +601430,7 @@ string types__incremental_unescape(string s) {
 }
 
 string types__incremental_verify_line(__v_int list, types__TypeError err) {
-	string __v3_internal_symbol_join_0__vmsvc13534[13]; __v3_internal_symbol_join_0__vmsvc13534[0] = int__str(list); __v3_internal_symbol_join_0__vmsvc13534[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13534[2] = int__str((__v_int)(err.node)); __v3_internal_symbol_join_0__vmsvc13534[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13534[4] = i32__str(err.pos.offset); __v3_internal_symbol_join_0__vmsvc13534[5] = _str_72; __v3_internal_symbol_join_0__vmsvc13534[6] = i32__str(err.pos.end); __v3_internal_symbol_join_0__vmsvc13534[7] = _str_1; __v3_internal_symbol_join_0__vmsvc13534[8] = err.severity; __v3_internal_symbol_join_0__vmsvc13534[9] = _str_1; __v3_internal_symbol_join_0__vmsvc13534[10] = err.msg; __v3_internal_symbol_join_0__vmsvc13534[11] = _str_1; __v3_internal_symbol_join_0__vmsvc13534[12] = Array_string__str(err.details); return (string_plus_many(13, __v3_internal_symbol_join_0__vmsvc13534));
+	string __v3_internal_symbol_join_0__vmsvc13537[13]; __v3_internal_symbol_join_0__vmsvc13537[0] = int__str(list); __v3_internal_symbol_join_0__vmsvc13537[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13537[2] = int__str((__v_int)(err.node)); __v3_internal_symbol_join_0__vmsvc13537[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13537[4] = i32__str(err.pos.offset); __v3_internal_symbol_join_0__vmsvc13537[5] = _str_72; __v3_internal_symbol_join_0__vmsvc13537[6] = i32__str(err.pos.end); __v3_internal_symbol_join_0__vmsvc13537[7] = _str_1; __v3_internal_symbol_join_0__vmsvc13537[8] = err.severity; __v3_internal_symbol_join_0__vmsvc13537[9] = _str_1; __v3_internal_symbol_join_0__vmsvc13537[10] = err.msg; __v3_internal_symbol_join_0__vmsvc13537[11] = _str_1; __v3_internal_symbol_join_0__vmsvc13537[12] = Array_string__str(err.details); return (string_plus_many(13, __v3_internal_symbol_join_0__vmsvc13537));
 }
 
 bool types__incremental_word_at(string s, __v_int at, string word) {
@@ -601316,8 +601485,8 @@ void types__incremental_write_node(Array* b, flat__Node* node, __v_int children)
 					string param = *(string*)(array_get(params, i));
 					strings__Builder__write_string(b, param);
 					strings__Builder__write_u8(b, 1);
-					int cond__vmsvc13537; cond__vmsvc13537 = !!(debugger_layout && (i > 0)); if (cond__vmsvc13537) { __v_int _t1__vmsvc13535 = (__v_int)(i); __v_int _t2__vmsvc13536 = (__v_int)(2); if (_t2__vmsvc13536 == 0) v_panic(_S("modulo by zero")); cond__vmsvc13537 = !!(((((__v_int)(_t1__vmsvc13535 % _t2__vmsvc13536))) == 1)); } if (cond__vmsvc13537) {
-						__v_int _t3__vmsvc13538 = (__v_int)((i - 1)); __v_int _t4__vmsvc13539 = (__v_int)(2); if (_t4__vmsvc13539 == 0) v_panic(_S("division by zero")); strings__Builder__write_string(b, flat__source_type_name((*(u32*)array_get(debugger_types, ((__v_int)(_t3__vmsvc13538 / _t4__vmsvc13539))))));
+					int cond__vmsvc13540; cond__vmsvc13540 = !!(debugger_layout && (i > 0)); if (cond__vmsvc13540) { __v_int _t1__vmsvc13538 = (__v_int)(i); __v_int _t2__vmsvc13539 = (__v_int)(2); if (_t2__vmsvc13539 == 0) v_panic(_S("modulo by zero")); cond__vmsvc13540 = !!(((((__v_int)(_t1__vmsvc13538 % _t2__vmsvc13539))) == 1)); } if (cond__vmsvc13540) {
+						__v_int _t3__vmsvc13541 = (__v_int)((i - 1)); __v_int _t4__vmsvc13542 = (__v_int)(2); if (_t4__vmsvc13542 == 0) v_panic(_S("division by zero")); strings__Builder__write_string(b, flat__source_type_name((*(u32*)array_get(debugger_types, ((__v_int)(_t3__vmsvc13541 / _t4__vmsvc13542))))));
 						strings__Builder__write_u8(b, 1);
 					}
 				}
@@ -601461,7 +601630,7 @@ __v_option_types__Type types__inferred_contextual_if_type(types__Type* a, types_
 
 __inline bool types__inferred_type_source(u32 source_id) {
 	int __in_lhs_0 = flat__source_type_shape(source_id);
-	int cond__vmsvc13541; cond__vmsvc13541 = !!(((__in_lhs_0 & 16) != 0)); if (cond__vmsvc13541) { int __in_lhs_1__vmsvc13540 = flat__source_type_query(source_id); cond__vmsvc13541 = !!(((__in_lhs_1__vmsvc13540 & 16777216) != 0)); } return cond__vmsvc13541;
+	int cond__vmsvc13544; cond__vmsvc13544 = !!(((__in_lhs_0 & 16) != 0)); if (cond__vmsvc13544) { int __in_lhs_1__vmsvc13543 = flat__source_type_query(source_id); cond__vmsvc13544 = !!(((__in_lhs_1__vmsvc13543 & 16777216) != 0)); } return cond__vmsvc13544;
 }
 
 __v_option_types__Type types__infix_integer_promotion_type(types__Type* lhs, types__Type* rhs) {
@@ -601657,15 +601826,15 @@ __v_option___v_int types__inline_asm_comment_end(string source, __v_int start, _
 }
 
 bool types__inline_asm_directional_numeric_label(string word) {
-	int cond__vmsvc13544; cond__vmsvc13544 = !!((word.len > 1) && ((string__at(word, 0) == 'b') || (string__at(word, 0) == 'f'))); if (cond__vmsvc13544) { Array __all_source_0__vmsvc13542 = string__bytes(string__substr(	word, 	1, (	word).len)); bool __all_1__vmsvc13543 = true; {
+	int cond__vmsvc13547; cond__vmsvc13547 = !!((word.len > 1) && ((string__at(word, 0) == 'b') || (string__at(word, 0) == 'f'))); if (cond__vmsvc13547) { Array __all_source_0__vmsvc13545 = string__bytes(string__substr(	word, 	1, (	word).len)); bool __all_1__vmsvc13546 = true; {
 		__v_int __all_idx_2 = 0;
-		for (; __all_idx_2 < __all_source_0__vmsvc13542.len; __all_idx_2++) {
-			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13542, __all_idx_2));
+		for (; __all_idx_2 < __all_source_0__vmsvc13545.len; __all_idx_2++) {
+			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13545, __all_idx_2));
 			if (!(u8__is_digit(__all_it_3))) {
-				__all_1__vmsvc13543 = false;
+				__all_1__vmsvc13546 = false;
 			}
 		}
-	} cond__vmsvc13544 = !!((__all_1__vmsvc13543)); } return cond__vmsvc13544;
+	} cond__vmsvc13547 = !!((__all_1__vmsvc13546)); } return cond__vmsvc13547;
 }
 
 bool types__inline_asm_enum_decl_is_named(string name, u32 short_name_id) {
@@ -601763,7 +601932,7 @@ __v_option___v_int types__inline_asm_index_of(string block, __v_int start, __v_i
 }
 
 __v_option_string types__inline_asm_intel_arg_alias(types__InlineAsmIntelArg arg, map aliases) {
-	int cond__vmsvc13546; cond__vmsvc13546 = !!(!arg.is_address); if (cond__vmsvc13546) { string __map_key_0__vmsvc13545 = arg.text; cond__vmsvc13546 = !!((map__exists(&aliases, &__map_key_0__vmsvc13545))); } if (cond__vmsvc13546) {
+	int cond__vmsvc13549; cond__vmsvc13549 = !!(!arg.is_address); if (cond__vmsvc13549) { string __map_key_0__vmsvc13548 = arg.text; cond__vmsvc13549 = !!((map__exists(&aliases, &__map_key_0__vmsvc13548))); } if (cond__vmsvc13549) {
 		return (__v_option_string){.ok = true, .value = arg.text};
 	}
 	return (__v_option_string){.ok = false};
@@ -601802,7 +601971,7 @@ u8 types__inline_asm_intel_condition_flags(string instruction) {
 		}
 	}
 	string condition = __if_val_0;
-	int cond__vmsvc13548; cond__vmsvc13548 = !!((condition.len > 1)); if (cond__vmsvc13548) { u8 __in_lhs_1__vmsvc13547 = string__at(condition, condition.len - 1); cond__vmsvc13548 = !!(((__in_lhs_1__vmsvc13547 == 'b') || (__in_lhs_1__vmsvc13547 == 'w') || (__in_lhs_1__vmsvc13547 == 'l') || (__in_lhs_1__vmsvc13547 == 'q'))); } int cond__vmsvc13550; cond__vmsvc13550 = !!(cond__vmsvc13548); if (cond__vmsvc13550) { string __in_lhs_2__vmsvc13549 = string__substr(	condition, 0, 	condition.len - 1); cond__vmsvc13550 = !!((string__eq(__in_lhs_2__vmsvc13549, _str_348) || string__eq(__in_lhs_2__vmsvc13549, _str_6335) || string__eq(__in_lhs_2__vmsvc13549, _str_347) || string__eq(__in_lhs_2__vmsvc13549, _str_6336) || string__eq(__in_lhs_2__vmsvc13549, _str_3) || string__eq(__in_lhs_2__vmsvc13549, _str_345) || string__eq(__in_lhs_2__vmsvc13549, _str_4407) || string__eq(__in_lhs_2__vmsvc13549, _str_6264) || string__eq(__in_lhs_2__vmsvc13549, _str_4747) || string__eq(__in_lhs_2__vmsvc13549, _str_6267) || string__eq(__in_lhs_2__vmsvc13549, _str_6337) || string__eq(__in_lhs_2__vmsvc13549, _str_6338) || string__eq(__in_lhs_2__vmsvc13549, _str_6339) || string__eq(__in_lhs_2__vmsvc13549, _str_6340) || string__eq(__in_lhs_2__vmsvc13549, _str_6341) || string__eq(__in_lhs_2__vmsvc13549, _str_6256) || string__eq(__in_lhs_2__vmsvc13549, _str_6342) || string__eq(__in_lhs_2__vmsvc13549, _str_6343) || string__eq(__in_lhs_2__vmsvc13549, _str_6344) || string__eq(__in_lhs_2__vmsvc13549, _str_6345) || string__eq(__in_lhs_2__vmsvc13549, _str_6346) || string__eq(__in_lhs_2__vmsvc13549, _str_6347) || string__eq(__in_lhs_2__vmsvc13549, _str_1416) || string__eq(__in_lhs_2__vmsvc13549, _str_6348) || string__eq(__in_lhs_2__vmsvc13549, _str_4556) || string__eq(__in_lhs_2__vmsvc13549, _str_129) || string__eq(__in_lhs_2__vmsvc13549, _str_6349) || string__eq(__in_lhs_2__vmsvc13549, _str_6350) || string__eq(__in_lhs_2__vmsvc13549, _str_128) || string__eq(__in_lhs_2__vmsvc13549, _str_1949))); } if (cond__vmsvc13550) {
+	int cond__vmsvc13551; cond__vmsvc13551 = !!((condition.len > 1)); if (cond__vmsvc13551) { u8 __in_lhs_1__vmsvc13550 = string__at(condition, condition.len - 1); cond__vmsvc13551 = !!(((__in_lhs_1__vmsvc13550 == 'b') || (__in_lhs_1__vmsvc13550 == 'w') || (__in_lhs_1__vmsvc13550 == 'l') || (__in_lhs_1__vmsvc13550 == 'q'))); } int cond__vmsvc13553; cond__vmsvc13553 = !!(cond__vmsvc13551); if (cond__vmsvc13553) { string __in_lhs_2__vmsvc13552 = string__substr(	condition, 0, 	condition.len - 1); cond__vmsvc13553 = !!((string__eq(__in_lhs_2__vmsvc13552, _str_348) || string__eq(__in_lhs_2__vmsvc13552, _str_6335) || string__eq(__in_lhs_2__vmsvc13552, _str_347) || string__eq(__in_lhs_2__vmsvc13552, _str_6336) || string__eq(__in_lhs_2__vmsvc13552, _str_3) || string__eq(__in_lhs_2__vmsvc13552, _str_345) || string__eq(__in_lhs_2__vmsvc13552, _str_4407) || string__eq(__in_lhs_2__vmsvc13552, _str_6264) || string__eq(__in_lhs_2__vmsvc13552, _str_4747) || string__eq(__in_lhs_2__vmsvc13552, _str_6267) || string__eq(__in_lhs_2__vmsvc13552, _str_6337) || string__eq(__in_lhs_2__vmsvc13552, _str_6338) || string__eq(__in_lhs_2__vmsvc13552, _str_6339) || string__eq(__in_lhs_2__vmsvc13552, _str_6340) || string__eq(__in_lhs_2__vmsvc13552, _str_6341) || string__eq(__in_lhs_2__vmsvc13552, _str_6256) || string__eq(__in_lhs_2__vmsvc13552, _str_6342) || string__eq(__in_lhs_2__vmsvc13552, _str_6343) || string__eq(__in_lhs_2__vmsvc13552, _str_6344) || string__eq(__in_lhs_2__vmsvc13552, _str_6345) || string__eq(__in_lhs_2__vmsvc13552, _str_6346) || string__eq(__in_lhs_2__vmsvc13552, _str_6347) || string__eq(__in_lhs_2__vmsvc13552, _str_1416) || string__eq(__in_lhs_2__vmsvc13552, _str_6348) || string__eq(__in_lhs_2__vmsvc13552, _str_4556) || string__eq(__in_lhs_2__vmsvc13552, _str_129) || string__eq(__in_lhs_2__vmsvc13552, _str_6349) || string__eq(__in_lhs_2__vmsvc13552, _str_6350) || string__eq(__in_lhs_2__vmsvc13552, _str_128) || string__eq(__in_lhs_2__vmsvc13552, _str_1949))); } if (cond__vmsvc13553) {
 		condition = string__substr(		condition, 0, 		condition.len - 1);
 	}
 	if (string__eq(condition, _str_347) || string__eq(condition, _str_3) || string__eq(condition, _str_6338) || string__eq(condition, _str_6335) || string__eq(condition, _str_6339) || string__eq(condition, _str_6341)) {
@@ -602038,14 +602207,14 @@ bool types__inline_asm_intel_mnemonic_is_one_of(string name, Array mnemonics) {
 	if (__contains_0) {
 		return true;
 	}
-	int cond__vmsvc13552; cond__vmsvc13552 = !!((name.len > 1)); if (cond__vmsvc13552) { u8 __in_lhs_2__vmsvc13551 = string__at(name, name.len - 1); cond__vmsvc13552 = !!(((__in_lhs_2__vmsvc13551 == 'b') || (__in_lhs_2__vmsvc13551 == 'w') || (__in_lhs_2__vmsvc13551 == 'l') || (__in_lhs_2__vmsvc13551 == 'q'))); } int cond__vmsvc13555; cond__vmsvc13555 = !!(cond__vmsvc13552); if (cond__vmsvc13555) { string __contains_needle_3__vmsvc13553 = string__substr(	name, 0, 	name.len - 1); bool __contains_4__vmsvc13554 = false; {
+	int cond__vmsvc13555; cond__vmsvc13555 = !!((name.len > 1)); if (cond__vmsvc13555) { u8 __in_lhs_2__vmsvc13554 = string__at(name, name.len - 1); cond__vmsvc13555 = !!(((__in_lhs_2__vmsvc13554 == 'b') || (__in_lhs_2__vmsvc13554 == 'w') || (__in_lhs_2__vmsvc13554 == 'l') || (__in_lhs_2__vmsvc13554 == 'q'))); } int cond__vmsvc13558; cond__vmsvc13558 = !!(cond__vmsvc13555); if (cond__vmsvc13558) { string __contains_needle_3__vmsvc13556 = string__substr(	name, 0, 	name.len - 1); bool __contains_4__vmsvc13557 = false; {
 		__v_int __contains_idx_5 = 0;
 		for (; __contains_idx_5 < mnemonics.len; __contains_idx_5++) {
-			if (string__eq(*(string*)(array_get(mnemonics, __contains_idx_5)), __contains_needle_3__vmsvc13553)) {
-				__contains_4__vmsvc13554 = true;
+			if (string__eq(*(string*)(array_get(mnemonics, __contains_idx_5)), __contains_needle_3__vmsvc13556)) {
+				__contains_4__vmsvc13557 = true;
 			}
 		}
-	} cond__vmsvc13555 = !!((__contains_4__vmsvc13554)); } return cond__vmsvc13555;
+	} cond__vmsvc13558 = !!((__contains_4__vmsvc13557)); } return cond__vmsvc13558;
 }
 
 string types__inline_asm_intel_normalized_instruction_name(string instruction) {
@@ -602170,7 +602339,7 @@ Array types__inline_asm_intel_parse_instructions(string block, types__InlineAsmR
 			if (string__eq(lower_name, _str_6220) || string__eq(lower_name, _str_6298) || string__eq(lower_name, _str_6299) || string__eq(lower_name, _str_6300) || string__starts_with(lower_name, _str_6301) || string__starts_with(lower_name, _str_6302) || string__starts_with(lower_name, _str_6303)) {
 				__v_int second_end = types__inline_asm_skip_mnemonic(block, (types__InlineAsmRange){.start = args_start, .end = end});
 				if (second_end > args_start) {
-					string __v3_internal_symbol_join_0__vmsvc13556[3]; __v3_internal_symbol_join_0__vmsvc13556[0] = name; __v3_internal_symbol_join_0__vmsvc13556[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13556[2] = string__substr(					block, 					args_start, 					second_end); name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13556));
+					string __v3_internal_symbol_join_0__vmsvc13559[3]; __v3_internal_symbol_join_0__vmsvc13559[0] = name; __v3_internal_symbol_join_0__vmsvc13559[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13559[2] = string__substr(					block, 					args_start, 					second_end); name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13559));
 					args_start = types__inline_asm_skip_blanks(block, second_end, end);
 				}
 			}
@@ -602219,9 +602388,9 @@ __v_int types__inline_asm_intel_static_shift_count(types__InlineAsmIntelInstruct
 			types__InlineAsmIntelArg destination = (*(types__InlineAsmIntelArg*)array_get(instruction.args, 0));
 			if (!destination.is_address) {
 				__v_int register_width = types__inline_asm_intel_register_width(destination.text);
-				{ int taken__vmsvc13557 = 0; if (register_width > 0) { taken__vmsvc13557 = 1; {
+				{ int taken__vmsvc13560 = 0; if (register_width > 0) { taken__vmsvc13560 = 1; {
 					operand_width = register_width;
-				} } if (!taken__vmsvc13557) { int cond__vmsvc13559; cond__vmsvc13559 = !!((name.len > 1)); if (cond__vmsvc13559) { u8 __in_lhs_0__vmsvc13558 = string__at(name, name.len - 1); cond__vmsvc13559 = !!(((__in_lhs_0__vmsvc13558 == 'b') || (__in_lhs_0__vmsvc13558 == 'w') || (__in_lhs_0__vmsvc13558 == 'l') || (__in_lhs_0__vmsvc13558 == 'q'))); } if (cond__vmsvc13559) { taken__vmsvc13557 = 1; {
+				} } if (!taken__vmsvc13560) { int cond__vmsvc13562; cond__vmsvc13562 = !!((name.len > 1)); if (cond__vmsvc13562) { u8 __in_lhs_0__vmsvc13561 = string__at(name, name.len - 1); cond__vmsvc13562 = !!(((__in_lhs_0__vmsvc13561 == 'b') || (__in_lhs_0__vmsvc13561 == 'w') || (__in_lhs_0__vmsvc13561 == 'l') || (__in_lhs_0__vmsvc13561 == 'q'))); } if (cond__vmsvc13562) { taken__vmsvc13560 = 1; {
 					__v_int __match_val_1 = 0;
 					u8 __match_tmp_2 = string__at(name, name.len - 1);
 					if (__match_tmp_2 == 'b') {
@@ -602446,14 +602615,14 @@ __v_option___v_int types__inline_asm_matching_paren(string block, __v_int v_open
 }
 
 bool types__inline_asm_operand_is_keyword(string word, string arch, bool is_intel) {
-	int cond__vmsvc13561; cond__vmsvc13561 = !!(is_intel); if (cond__vmsvc13561) { bool __contains_0__vmsvc13560 = false; {
+	int cond__vmsvc13564; cond__vmsvc13564 = !!(is_intel); if (cond__vmsvc13564) { bool __contains_0__vmsvc13563 = false; {
 		__v_int __contains_idx_1 = 0;
 		for (; __contains_idx_1 < 21; __contains_idx_1++) {
 			if (string__eq(types__inline_asm_intel_operand_keywords[v_fixed_index(__contains_idx_1, 21)], word)) {
-				__contains_0__vmsvc13560 = true;
+				__contains_0__vmsvc13563 = true;
 			}
 		}
-	} cond__vmsvc13561 = !!((__contains_0__vmsvc13560)); } if (cond__vmsvc13561) {
+	} cond__vmsvc13564 = !!((__contains_0__vmsvc13563)); } if (cond__vmsvc13564) {
 		return true;
 	}
 	if (!(string__eq(arch, _str_240) || string__eq(arch, _str_1116))) {
@@ -602814,7 +602983,7 @@ Array types__inline_asm_raw_parse_instructions(types__InlineAsmRawTemplate* t, A
 					second_end++;
 				}
 				prefix = string__substr(				t->text, 				args_start, 				second_end);
-				string __v3_internal_symbol_join_0__vmsvc13562[3]; __v3_internal_symbol_join_0__vmsvc13562[0] = mnemonic; __v3_internal_symbol_join_0__vmsvc13562[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13562[2] = prefix; mnemonic = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13562));
+				string __v3_internal_symbol_join_0__vmsvc13565[3]; __v3_internal_symbol_join_0__vmsvc13565[0] = mnemonic; __v3_internal_symbol_join_0__vmsvc13565[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13565[2] = prefix; mnemonic = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13565));
 				mnemonic_end = second_end;
 				args_start = types__inline_asm_raw_skip_blanks(t->text, second_end, end);
 			}
@@ -602843,7 +603012,7 @@ Array types__inline_asm_raw_parse_operands(string text, __v_int start, __v_int e
 				i = types__inline_asm_raw_skip_literal(text, i, end);
 				continue;
 			}
-			int cond__vmsvc13564; cond__vmsvc13564 = !!((c == '%') && ((i + 1) < end)); if (cond__vmsvc13564) { u8 __in_lhs_0__vmsvc13563 = string__at(text, i + 1); cond__vmsvc13564 = !!(((__in_lhs_0__vmsvc13563 == '{') || (__in_lhs_0__vmsvc13563 == '}') || (__in_lhs_0__vmsvc13563 == '|'))); } if (cond__vmsvc13564) {
+			int cond__vmsvc13567; cond__vmsvc13567 = !!((c == '%') && ((i + 1) < end)); if (cond__vmsvc13567) { u8 __in_lhs_0__vmsvc13566 = string__at(text, i + 1); cond__vmsvc13567 = !!(((__in_lhs_0__vmsvc13566 == '{') || (__in_lhs_0__vmsvc13566 == '}') || (__in_lhs_0__vmsvc13566 == '|'))); } if (cond__vmsvc13567) {
 				{
 					u8 __match_tmp_1 = string__at(text, i + 1);
 					if (__match_tmp_1 == '{') {
@@ -603127,9 +603296,9 @@ bool types__integer_literal_loses_bits(string literal, __v_int bits) {
 		return false;
 	}
 	if (is_negative) {
-		u64 _t1__vmsvc13565 = (u64)(		(u64)(1)); u64 _t2__vmsvc13566 = (u64)((bits - 1)); return value > ((_t2__vmsvc13566 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13565 << _t2__vmsvc13566)));
+		u64 _t1__vmsvc13568 = (u64)(		(u64)(1)); u64 _t2__vmsvc13569 = (u64)((bits - 1)); return value > ((_t2__vmsvc13569 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13568 << _t2__vmsvc13569)));
 	}
-	u64 _t3__vmsvc13567 = (u64)(	(u64)(1)); u64 _t4__vmsvc13568 = (u64)(bits); return value > (((_t4__vmsvc13568 >= 64 ? (u64)0 : (u64)(_t3__vmsvc13567 << _t4__vmsvc13568))) - 1);
+	u64 _t3__vmsvc13570 = (u64)(	(u64)(1)); u64 _t4__vmsvc13571 = (u64)(bits); return value > (((_t4__vmsvc13571 >= 64 ? (u64)0 : (u64)(_t3__vmsvc13570 << _t4__vmsvc13571))) - 1);
 }
 
 bool types__integer_literal_outside_range(string literal, types__IntegerTypeRange type_range) {
@@ -603160,7 +603329,7 @@ bool types__integer_literal_outside_range(string literal, types__IntegerTypeRang
 	if (type_range.bits >= 64) {
 		__if_val_1 = (u64)(((u64)(		(u64)(1))) << (63));
 	} else {
-		u64 _t1__vmsvc13569 = (u64)(		(u64)(1)); u64 _t2__vmsvc13570 = (u64)((type_range.bits - 1)); __if_val_1 = (_t2__vmsvc13570 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13569 << _t2__vmsvc13570));
+		u64 _t1__vmsvc13572 = (u64)(		(u64)(1)); u64 _t2__vmsvc13573 = (u64)((type_range.bits - 1)); __if_val_1 = (_t2__vmsvc13573 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13572 << _t2__vmsvc13573));
 	}
 	u64 minimum_magnitude = __if_val_1;
 	u64 maximum = minimum_magnitude - 1;
@@ -603345,7 +603514,7 @@ bool types__interface_implements_interface_guarded(types__TypeChecker* tc, u32 a
 			if (__or_opt_6.ok) {
 				__or_val_7 = __or_opt_6.value;
 			} else {
-				string __v3_internal_symbol_join_0__vmsvc13571[3]; __v3_internal_symbol_join_0__vmsvc13571[0] = flat__source_type_name(actual); __v3_internal_symbol_join_0__vmsvc13571[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13571[2] = method; __or_val_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13571));
+				string __v3_internal_symbol_join_0__vmsvc13574[3]; __v3_internal_symbol_join_0__vmsvc13574[0] = flat__source_type_name(actual); __v3_internal_symbol_join_0__vmsvc13574[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13574[2] = method; __or_val_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13574));
 			}
 			string actual_key = __or_val_7;
 			__v_option_string __or_opt_8 = types__TypeChecker__interface_method_signature_key(tc, expected, method);
@@ -603353,7 +603522,7 @@ bool types__interface_implements_interface_guarded(types__TypeChecker* tc, u32 a
 			if (__or_opt_8.ok) {
 				__or_val_9 = __or_opt_8.value;
 			} else {
-				string __v3_internal_symbol_join_1__vmsvc13572[3]; __v3_internal_symbol_join_1__vmsvc13572[0] = flat__source_type_name(expected); __v3_internal_symbol_join_1__vmsvc13572[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13572[2] = method; __or_val_9 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13572));
+				string __v3_internal_symbol_join_1__vmsvc13575[3]; __v3_internal_symbol_join_1__vmsvc13575[0] = flat__source_type_name(expected); __v3_internal_symbol_join_1__vmsvc13575[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13575[2] = method; __or_val_9 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13575));
 			}
 			string expected_key = __or_val_9;
 			string __map_key_10 = actual_key;
@@ -603506,15 +603675,15 @@ bool types__is_attribute_numbered_suffix(string base, string name) {
 		return false;
 	}
 	string suffix = string__substr(	name, 	base.len + 1, (	name).len);
-	int cond__vmsvc13575; cond__vmsvc13575 = !!((suffix.len > 0)); if (cond__vmsvc13575) { Array __all_source_0__vmsvc13573 = string__bytes(suffix); bool __all_1__vmsvc13574 = true; {
+	int cond__vmsvc13578; cond__vmsvc13578 = !!((suffix.len > 0)); if (cond__vmsvc13578) { Array __all_source_0__vmsvc13576 = string__bytes(suffix); bool __all_1__vmsvc13577 = true; {
 		__v_int __all_idx_2 = 0;
-		for (; __all_idx_2 < __all_source_0__vmsvc13573.len; __all_idx_2++) {
-			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13573, __all_idx_2));
+		for (; __all_idx_2 < __all_source_0__vmsvc13576.len; __all_idx_2++) {
+			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13576, __all_idx_2));
 			if (!(u8__is_digit(__all_it_3))) {
-				__all_1__vmsvc13574 = false;
+				__all_1__vmsvc13577 = false;
 			}
 		}
-	} cond__vmsvc13575 = !!((__all_1__vmsvc13574)); } return cond__vmsvc13575;
+	} cond__vmsvc13578 = !!((__all_1__vmsvc13577)); } return cond__vmsvc13578;
 }
 
 bool types__is_attribute_target_name(string name) {
@@ -603626,7 +603795,7 @@ bool types__is_c_backend_test_file(string path) {
 }
 
 bool types__is_c_char_type(types__Type* typ) {
-	int cond__vmsvc13578; cond__vmsvc13578 = !!((((*typ)).typ == 5)); if (!cond__vmsvc13578) { int cond__vmsvc13577; cond__vmsvc13577 = !!((((*typ)).typ == 3)); if (cond__vmsvc13577) { u32 __in_lhs_0__vmsvc13576 = types__Type__source_type_id(&(*typ)); cond__vmsvc13577 = !!(((__in_lhs_0__vmsvc13576 == flat__source_type_i8) || (__in_lhs_0__vmsvc13576 == flat__source_type_u8))); } cond__vmsvc13578 = !!((cond__vmsvc13577)); } return cond__vmsvc13578;
+	int cond__vmsvc13581; cond__vmsvc13581 = !!((((*typ)).typ == 5)); if (!cond__vmsvc13581) { int cond__vmsvc13580; cond__vmsvc13580 = !!((((*typ)).typ == 3)); if (cond__vmsvc13580) { u32 __in_lhs_0__vmsvc13579 = types__Type__source_type_id(&(*typ)); cond__vmsvc13580 = !!(((__in_lhs_0__vmsvc13579 == flat__source_type_i8) || (__in_lhs_0__vmsvc13579 == flat__source_type_u8))); } cond__vmsvc13581 = !!((cond__vmsvc13580)); } return cond__vmsvc13581;
 }
 
 bool types__is_concrete_call_arg_error(types__TypeError err) {
@@ -604005,22 +604174,22 @@ string types__library_fn_body_key(string module_name, string name) {
 		__if_val_0 = _str_179;
 	}
 	string module_key = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc13579[3]; __v3_internal_symbol_join_0__vmsvc13579[0] = module_key; __v3_internal_symbol_join_0__vmsvc13579[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13579[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13579));
+	string __v3_internal_symbol_join_0__vmsvc13582[3]; __v3_internal_symbol_join_0__vmsvc13582[0] = module_key; __v3_internal_symbol_join_0__vmsvc13582[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13582[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13582));
 }
 
 bool types__library_fn_is_used(map used, string module, string name) {
 	string qualified = types__checker_qualified_fn_name(module, name);
 	string __map_key_0 = name;
 	bool __map_zero_1 = false;
-	int cond__vmsvc13582; cond__vmsvc13582 = !!(*(bool*)(map__get(&used, &__map_key_0, &__map_zero_1))); if (!cond__vmsvc13582) { string __map_key_2__vmsvc13580 = qualified; bool __map_zero_3__vmsvc13581 = false; cond__vmsvc13582 = !!((*(bool*)(map__get(&used, &__map_key_2__vmsvc13580, &__map_zero_3__vmsvc13581)))); } if (cond__vmsvc13582) {
+	int cond__vmsvc13585; cond__vmsvc13585 = !!(*(bool*)(map__get(&used, &__map_key_0, &__map_zero_1))); if (!cond__vmsvc13585) { string __map_key_2__vmsvc13583 = qualified; bool __map_zero_3__vmsvc13584 = false; cond__vmsvc13585 = !!((*(bool*)(map__get(&used, &__map_key_2__vmsvc13583, &__map_zero_3__vmsvc13584)))); } if (cond__vmsvc13585) {
 		return true;
 	}
 	string c_name = naming__c_name(name);
-	int cond__vmsvc13585; cond__vmsvc13585 = !!(!string__eq(c_name, name)); if (cond__vmsvc13585) { string __map_key_4__vmsvc13583 = c_name; bool __map_zero_5__vmsvc13584 = false; cond__vmsvc13585 = !!((*(bool*)(map__get(&used, &__map_key_4__vmsvc13583, &__map_zero_5__vmsvc13584)))); } if (cond__vmsvc13585) {
+	int cond__vmsvc13588; cond__vmsvc13588 = !!(!string__eq(c_name, name)); if (cond__vmsvc13588) { string __map_key_4__vmsvc13586 = c_name; bool __map_zero_5__vmsvc13587 = false; cond__vmsvc13588 = !!((*(bool*)(map__get(&used, &__map_key_4__vmsvc13586, &__map_zero_5__vmsvc13587)))); } if (cond__vmsvc13588) {
 		return true;
 	}
 	string c_qualified = naming__c_name(qualified);
-	int cond__vmsvc13588; cond__vmsvc13588 = !!(!string__eq(c_qualified, qualified) && !string__eq(c_qualified, c_name)); if (cond__vmsvc13588) { string __map_key_6__vmsvc13586 = c_qualified; bool __map_zero_7__vmsvc13587 = false; cond__vmsvc13588 = !!((*(bool*)(map__get(&used, &__map_key_6__vmsvc13586, &__map_zero_7__vmsvc13587)))); } return cond__vmsvc13588;
+	int cond__vmsvc13591; cond__vmsvc13591 = !!(!string__eq(c_qualified, qualified) && !string__eq(c_qualified, c_name)); if (cond__vmsvc13591) { string __map_key_6__vmsvc13589 = c_qualified; bool __map_zero_7__vmsvc13590 = false; cond__vmsvc13591 = !!((*(bool*)(map__get(&used, &__map_key_6__vmsvc13589, &__map_zero_7__vmsvc13590)))); } return cond__vmsvc13591;
 }
 
 bool types__library_fn_name_is_identifier(string name) {
@@ -604932,7 +605101,7 @@ __inline u32 types__name_bloom_bit(string name) {
 		return 0;
 	}
 	u32 h = ((u32)(name.len) * 0x9e3779b1) ^ ((u32)((name).str[0]) * 0x85ebca6b);
-	__v_int _t1__vmsvc13589 = (__v_int)(name.len); __v_int _t2__vmsvc13590 = (__v_int)(2); if (_t2__vmsvc13590 == 0) v_panic(_S("division by zero")); h ^= ((u32)((name).str[name.len - 1]) * 0xc2b2ae35) ^ ((u32)((name).str[((__v_int)(_t1__vmsvc13589 / _t2__vmsvc13590))]) * 0x27d4eb2f);
+	__v_int _t1__vmsvc13592 = (__v_int)(name.len); __v_int _t2__vmsvc13593 = (__v_int)(2); if (_t2__vmsvc13593 == 0) v_panic(_S("division by zero")); h ^= ((u32)((name).str[name.len - 1]) * 0xc2b2ae35) ^ ((u32)((name).str[((__v_int)(_t1__vmsvc13592 / _t2__vmsvc13593))]) * 0x27d4eb2f);
 	return (h ^ ((u32)(((u32)(	h)) >> (15)))) & 4095;
 }
 
@@ -604971,7 +605140,7 @@ bool types__named_type_implements_interface_guarded(types__TypeChecker* tc, u32 
 			if (__or_opt_6.ok) {
 				__or_val_7 = __or_opt_6.value;
 			} else {
-				string __v3_internal_symbol_join_0__vmsvc13591[3]; __v3_internal_symbol_join_0__vmsvc13591[0] = flat__source_type_name(iface_name_id); __v3_internal_symbol_join_0__vmsvc13591[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13591[2] = method; __or_val_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13591));
+				string __v3_internal_symbol_join_0__vmsvc13594[3]; __v3_internal_symbol_join_0__vmsvc13594[0] = flat__source_type_name(iface_name_id); __v3_internal_symbol_join_0__vmsvc13594[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13594[2] = method; __or_val_7 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13594));
 			}
 			string expected_key = __or_val_7;
 			if ((concrete_name_id == flat__source_type_char) && string__eq(method, _str_4004) && types__TypeChecker__interface_method_is_str_requirement(tc, expected_key)) {
@@ -605033,7 +605202,7 @@ bool types__named_type_implements_interface_guarded(types__TypeChecker* tc, u32 
 string types__named_variant_init_display(u32 variant_id) {
 	flat__SourceTypeSyntax* syntax = flat__source_type_syntax(variant_id);
 	u32 owner_name = flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(flat__SourceTypeSyntax__named_variant_owner(syntax)));
-	string __v3_internal_symbol_join_0__vmsvc13592[3]; __v3_internal_symbol_join_0__vmsvc13592[0] = flat__source_type_name(owner_name); __v3_internal_symbol_join_0__vmsvc13592[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13592[2] = flat__source_type_name(flat__SourceTypeSyntax__named_variant_name(syntax)); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13592));
+	string __v3_internal_symbol_join_0__vmsvc13595[3]; __v3_internal_symbol_join_0__vmsvc13595[0] = flat__source_type_name(owner_name); __v3_internal_symbol_join_0__vmsvc13595[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13595[2] = flat__source_type_name(flat__SourceTypeSyntax__named_variant_name(syntax)); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13595));
 }
 
 __v_option_i32 types__named_variant_pattern_binding(flat__FlatAst* a, flat__Node* cond) {
@@ -605085,7 +605254,7 @@ __v_int types__nested_option_result_marker(string text) {
 	{
 		__v_int i = 0;
 		for (; (i + 1) < text.len; i++) {
-			int cond__vmsvc13594; cond__vmsvc13594 = !!(((string__at(text, i) == '?') || (string__at(text, i) == '!'))); if (cond__vmsvc13594) { u8 __in_lhs_0__vmsvc13593 = string__at(text, i + 1); cond__vmsvc13594 = !!(((__in_lhs_0__vmsvc13593 == '?') || (__in_lhs_0__vmsvc13593 == '!'))); } if (cond__vmsvc13594) {
+			int cond__vmsvc13597; cond__vmsvc13597 = !!(((string__at(text, i) == '?') || (string__at(text, i) == '!'))); if (cond__vmsvc13597) { u8 __in_lhs_0__vmsvc13596 = string__at(text, i + 1); cond__vmsvc13597 = !!(((__in_lhs_0__vmsvc13596 == '?') || (__in_lhs_0__vmsvc13596 == '!'))); } if (cond__vmsvc13597) {
 				return i;
 			}
 		}
@@ -605261,7 +605430,7 @@ bool types__noalloc_foreign(flat__Node node) {
 }
 
 string types__noalloc_position_key(flat__Node node) {
-	string __v3_internal_symbol_join_0__vmsvc13595[5]; __v3_internal_symbol_join_0__vmsvc13595[0] = i32__str(node.pos.id); __v3_internal_symbol_join_0__vmsvc13595[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13595[2] = i32__str(node.pos.offset); __v3_internal_symbol_join_0__vmsvc13595[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13595[4] = i32__str(node.pos.end); return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13595));
+	string __v3_internal_symbol_join_0__vmsvc13598[5]; __v3_internal_symbol_join_0__vmsvc13598[0] = i32__str(node.pos.id); __v3_internal_symbol_join_0__vmsvc13598[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13598[2] = i32__str(node.pos.offset); __v3_internal_symbol_join_0__vmsvc13598[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13598[4] = i32__str(node.pos.end); return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13598));
 }
 
 __v_int types__node_kind_id(flat__Node node) {
@@ -605291,7 +605460,7 @@ u32 types__normalize_fn_type_param_type(u32 type_id) {
 }
 
 string types__notice_repeat_key(int kind, string msg, token__Pos pos) {
-	string __v3_internal_symbol_join_0__vmsvc13596[11]; __v3_internal_symbol_join_0__vmsvc13596[0] = int__str((__v_int)(kind)); __v3_internal_symbol_join_0__vmsvc13596[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13596[2] = i32__str(pos.id); __v3_internal_symbol_join_0__vmsvc13596[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13596[4] = i32__str(pos.offset); __v3_internal_symbol_join_0__vmsvc13596[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13596[6] = i32__str(pos.end); __v3_internal_symbol_join_0__vmsvc13596[7] = _str_92; __v3_internal_symbol_join_0__vmsvc13596[8] = strconv__format_uint((u16)(pos.meta), 10); __v3_internal_symbol_join_0__vmsvc13596[9] = _str_92; __v3_internal_symbol_join_0__vmsvc13596[10] = msg; return (string_plus_many(11, __v3_internal_symbol_join_0__vmsvc13596));
+	string __v3_internal_symbol_join_0__vmsvc13599[11]; __v3_internal_symbol_join_0__vmsvc13599[0] = int__str((__v_int)(kind)); __v3_internal_symbol_join_0__vmsvc13599[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13599[2] = i32__str(pos.id); __v3_internal_symbol_join_0__vmsvc13599[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13599[4] = i32__str(pos.offset); __v3_internal_symbol_join_0__vmsvc13599[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13599[6] = i32__str(pos.end); __v3_internal_symbol_join_0__vmsvc13599[7] = _str_92; __v3_internal_symbol_join_0__vmsvc13599[8] = strconv__format_uint((u16)(pos.meta), 10); __v3_internal_symbol_join_0__vmsvc13599[9] = _str_92; __v3_internal_symbol_join_0__vmsvc13599[10] = msg; return (string_plus_many(11, __v3_internal_symbol_join_0__vmsvc13599));
 }
 
 __v_int types__number_storage_class(types__Type* typ) {
@@ -605537,9 +605706,9 @@ bool types__orm_field_is_skipped(flat__Node field) {
 
 string types__os_raw_io_unsupported_type_message(string path, string type_name) {
 	if (string__eq(path, _str_34)) {
-		string __v3_internal_symbol_join_0__vmsvc13597[3]; __v3_internal_symbol_join_0__vmsvc13597[0] = _str_7873; __v3_internal_symbol_join_0__vmsvc13597[1] = type_name; __v3_internal_symbol_join_0__vmsvc13597[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13597));
+		string __v3_internal_symbol_join_0__vmsvc13600[3]; __v3_internal_symbol_join_0__vmsvc13600[0] = _str_7873; __v3_internal_symbol_join_0__vmsvc13600[1] = type_name; __v3_internal_symbol_join_0__vmsvc13600[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13600));
 	}
-	string __v3_internal_symbol_join_1__vmsvc13598[5]; __v3_internal_symbol_join_1__vmsvc13598[0] = _str_7874; __v3_internal_symbol_join_1__vmsvc13598[1] = path; __v3_internal_symbol_join_1__vmsvc13598[2] = _str_7875; __v3_internal_symbol_join_1__vmsvc13598[3] = type_name; __v3_internal_symbol_join_1__vmsvc13598[4] = _str_41; return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13598));
+	string __v3_internal_symbol_join_1__vmsvc13601[5]; __v3_internal_symbol_join_1__vmsvc13601[0] = _str_7874; __v3_internal_symbol_join_1__vmsvc13601[1] = path; __v3_internal_symbol_join_1__vmsvc13601[2] = _str_7875; __v3_internal_symbol_join_1__vmsvc13601[3] = type_name; __v3_internal_symbol_join_1__vmsvc13601[4] = _str_41; return (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13601));
 }
 
 __inline string types__owner_name_view(string name) {
@@ -605694,7 +605863,7 @@ __v_int types__parallel_check_jobs_for_cost(__v_int n_jobs, Array items) {
 			total_cost += item.cost;
 		}
 	}
-	i64 _t1__vmsvc13599 = (i64)(total_cost); i64 _t2__vmsvc13600 = (i64)(types__min_parallel_check_job_cost); if (_t2__vmsvc13600 == 0) v_panic(_S("division by zero")); i64 by_cost = ((i64)(_t1__vmsvc13599 / _t2__vmsvc13600));
+	i64 _t1__vmsvc13602 = (i64)(total_cost); i64 _t2__vmsvc13603 = (i64)(types__min_parallel_check_job_cost); if (_t2__vmsvc13603 == 0) v_panic(_S("division by zero")); i64 by_cost = ((i64)(_t1__vmsvc13602 / _t2__vmsvc13603));
 	if (by_cost < (i64)(n_jobs)) {
 		return int_max((__v_int)(by_cost), 1);
 	} else {
@@ -605722,11 +605891,11 @@ bool types__param_source_type_is_shared(u32 source_id) {
 }
 
 __inline u64 types__parse_type_cache_context_hash(types__TypeCache* cache, string file, string module_name, Array generic_params, bool resolution) {
-	int cond__vmsvc13602; cond__vmsvc13602 = !!(cache->parse_context_valid && (cache->parse_context_resolution == resolution) && types__parse_type_cache_string_matches(cache->parse_context_file, file) && types__parse_type_cache_string_matches(cache->parse_context_module, module_name)); if (cond__vmsvc13602) { bool __if_val_0__vmsvc13601 = {0}; if (generic_params.len == 0) {
-		__if_val_0__vmsvc13601 = cache->parse_context_generics.len == 0;
+	int cond__vmsvc13605; cond__vmsvc13605 = !!(cache->parse_context_valid && (cache->parse_context_resolution == resolution) && types__parse_type_cache_string_matches(cache->parse_context_file, file) && types__parse_type_cache_string_matches(cache->parse_context_module, module_name)); if (cond__vmsvc13605) { bool __if_val_0__vmsvc13604 = {0}; if (generic_params.len == 0) {
+		__if_val_0__vmsvc13604 = cache->parse_context_generics.len == 0;
 	} else {
-		__if_val_0__vmsvc13601 = types__parse_type_cache_ids_match(cache->parse_context_generics, generic_params);
-	} cond__vmsvc13602 = !!(((__if_val_0__vmsvc13601))); } if (cond__vmsvc13602) {
+		__if_val_0__vmsvc13604 = types__parse_type_cache_ids_match(cache->parse_context_generics, generic_params);
+	} cond__vmsvc13605 = !!(((__if_val_0__vmsvc13604))); } if (cond__vmsvc13605) {
 		return cache->parse_context_hash;
 	}
 	return types__parse_type_cache_context_hash_miss(cache, file, module_name, generic_params, resolution);
@@ -606196,11 +606365,11 @@ bool types__postfix_operator_closes_group(string source, __v_int end) {
 	__v_int i = end;
 	while (i < source.len) {
 		u8 c = string__at(source, i);
-		{ int taken__vmsvc13603 = 0; if ((c == ' ') || (c == '\t') || (c == '\n') || (c == '\r')) { taken__vmsvc13603 = 1; {
+		{ int taken__vmsvc13606 = 0; if ((c == ' ') || (c == '\t') || (c == '\n') || (c == '\r')) { taken__vmsvc13606 = 1; {
 			i++;
-		} } if (!taken__vmsvc13603) { int cond__vmsvc13605; cond__vmsvc13605 = !!((c == '/') && ((i + 1) < source.len)); if (cond__vmsvc13605) { u8 __in_lhs_0__vmsvc13604 = string__at(source, i + 1); cond__vmsvc13605 = !!(((__in_lhs_0__vmsvc13604 == '/') || (__in_lhs_0__vmsvc13604 == '*'))); } if (cond__vmsvc13605) { taken__vmsvc13603 = 1; {
+		} } if (!taken__vmsvc13606) { int cond__vmsvc13608; cond__vmsvc13608 = !!((c == '/') && ((i + 1) < source.len)); if (cond__vmsvc13608) { u8 __in_lhs_0__vmsvc13607 = string__at(source, i + 1); cond__vmsvc13608 = !!(((__in_lhs_0__vmsvc13607 == '/') || (__in_lhs_0__vmsvc13607 == '*'))); } if (cond__vmsvc13608) { taken__vmsvc13606 = 1; {
 			i = types__skip_non_code_at(source, i);
-		} } } if (!taken__vmsvc13603) {
+		} } } if (!taken__vmsvc13606) {
 			return (c == ')') || (c == ']');
 		} }
 	}
@@ -606278,7 +606447,7 @@ string types__prepared_collect_conflict(flat__FlatAst* a, types__PreparedCollect
 		}
 		Array prepared_markers = __map_val_6;
 		if (types__precedes_any(markers, prepared_markers, position)) {
-			string __v3_internal_symbol_join_1__vmsvc13606[3]; __v3_internal_symbol_join_1__vmsvc13606[0] = _str_7695; __v3_internal_symbol_join_1__vmsvc13606[1] = key; __v3_internal_symbol_join_1__vmsvc13606[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13606));
+			string __v3_internal_symbol_join_1__vmsvc13609[3]; __v3_internal_symbol_join_1__vmsvc13609[0] = _str_7695; __v3_internal_symbol_join_1__vmsvc13609[1] = key; __v3_internal_symbol_join_1__vmsvc13609[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13609));
 		}
 	}
 	for (int __mi_2 = 0; __mi_2 < (	added.modules).data->key_values.len; __mi_2++) {
@@ -606288,7 +606457,7 @@ string types__prepared_collect_conflict(flat__FlatAst* a, types__PreparedCollect
 		bool _ = *(bool*)((	added.modules).data->key_values.values + __mi_2 * (	added.modules).data->key_values.value_bytes);
 		string __map_key_7 = name;
 		if (map__exists(&prepared->modules, &__map_key_7)) {
-			string __v3_internal_symbol_join_3__vmsvc13607[3]; __v3_internal_symbol_join_3__vmsvc13607[0] = _str_7696; __v3_internal_symbol_join_3__vmsvc13607[1] = name; __v3_internal_symbol_join_3__vmsvc13607[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13607));
+			string __v3_internal_symbol_join_3__vmsvc13610[3]; __v3_internal_symbol_join_3__vmsvc13610[0] = _str_7696; __v3_internal_symbol_join_3__vmsvc13610[1] = name; __v3_internal_symbol_join_3__vmsvc13610[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13610));
 		}
 	}
 	for (int __mi_4 = 0; __mi_4 < (	added.selective_imports).data->key_values.len; __mi_4++) {
@@ -606298,7 +606467,7 @@ string types__prepared_collect_conflict(flat__FlatAst* a, types__PreparedCollect
 		bool _ = *(bool*)((	added.selective_imports).data->key_values.values + __mi_4 * (	added.selective_imports).data->key_values.value_bytes);
 		string __map_key_8 = path;
 		if (map__exists(&prepared->modules, &__map_key_8)) {
-			string __v3_internal_symbol_join_5__vmsvc13608[3]; __v3_internal_symbol_join_5__vmsvc13608[0] = _str_7697; __v3_internal_symbol_join_5__vmsvc13608[1] = path; __v3_internal_symbol_join_5__vmsvc13608[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13608));
+			string __v3_internal_symbol_join_5__vmsvc13611[3]; __v3_internal_symbol_join_5__vmsvc13611[0] = _str_7697; __v3_internal_symbol_join_5__vmsvc13611[1] = path; __v3_internal_symbol_join_5__vmsvc13611[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13611));
 		}
 	}
 	for (int __mi_6 = 0; __mi_6 < (	added.aliases).data->key_values.len; __mi_6++) {
@@ -606323,8 +606492,8 @@ string types__prepared_collect_conflict(flat__FlatAst* a, types__PreparedCollect
 					__v_int __for_idx_15 = 0;
 					for (; __for_idx_15 < prepared_uses.len; __for_idx_15++) {
 						types__AliasUse prepared_use = *(types__AliasUse*)(array_get(prepared_uses, __for_idx_15));
-						int cond__vmsvc13613; cond__vmsvc13613 = !!(!string__eq(prepared_use.path, used.path)); if (cond__vmsvc13613) { Array __arr_lit_16__vmsvc13609 = __new_array_noscan(0, 1, sizeof(__v_int)); __v_int __arr_val_17__vmsvc13610 = used.marker; { Array* __v3_internal_symbol_scalar_push_base_7 = &__arr_lit_16__vmsvc13609; __v_int __v3_internal_symbol_scalar_push_value_7 = __arr_val_17__vmsvc13610; if (__v3_internal_symbol_scalar_push_base_7->len >= 0 && __v3_internal_symbol_scalar_push_base_7->len < __v3_internal_symbol_scalar_push_base_7->cap && !(__v3_internal_symbol_scalar_push_base_7->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_7->data)[__v3_internal_symbol_scalar_push_base_7->len] = __v3_internal_symbol_scalar_push_value_7; __v3_internal_symbol_scalar_push_base_7->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_7, &__v3_internal_symbol_scalar_push_value_7); } } Array __arr_lit_18__vmsvc13611 = __new_array_noscan(0, 1, sizeof(__v_int)); __v_int __arr_val_19__vmsvc13612 = prepared_use.marker; { Array* __v3_internal_symbol_scalar_push_base_8 = &__arr_lit_18__vmsvc13611; __v_int __v3_internal_symbol_scalar_push_value_8 = __arr_val_19__vmsvc13612; if (__v3_internal_symbol_scalar_push_base_8->len >= 0 && __v3_internal_symbol_scalar_push_base_8->len < __v3_internal_symbol_scalar_push_base_8->cap && !(__v3_internal_symbol_scalar_push_base_8->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_8->data)[__v3_internal_symbol_scalar_push_base_8->len] = __v3_internal_symbol_scalar_push_value_8; __v3_internal_symbol_scalar_push_base_8->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_8, &__v3_internal_symbol_scalar_push_value_8); } } cond__vmsvc13613 = !!((types__precedes_any(__arr_lit_16__vmsvc13609, __arr_lit_18__vmsvc13611, position))); } if (cond__vmsvc13613) {
-							string __v3_internal_symbol_join_9__vmsvc13614[3]; __v3_internal_symbol_join_9__vmsvc13614[0] = _str_7698; __v3_internal_symbol_join_9__vmsvc13614[1] = alias; __v3_internal_symbol_join_9__vmsvc13614[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc13614));
+						int cond__vmsvc13616; cond__vmsvc13616 = !!(!string__eq(prepared_use.path, used.path)); if (cond__vmsvc13616) { Array __arr_lit_16__vmsvc13612 = __new_array_noscan(0, 1, sizeof(__v_int)); __v_int __arr_val_17__vmsvc13613 = used.marker; { Array* __v3_internal_symbol_scalar_push_base_7 = &__arr_lit_16__vmsvc13612; __v_int __v3_internal_symbol_scalar_push_value_7 = __arr_val_17__vmsvc13613; if (__v3_internal_symbol_scalar_push_base_7->len >= 0 && __v3_internal_symbol_scalar_push_base_7->len < __v3_internal_symbol_scalar_push_base_7->cap && !(__v3_internal_symbol_scalar_push_base_7->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_7->data)[__v3_internal_symbol_scalar_push_base_7->len] = __v3_internal_symbol_scalar_push_value_7; __v3_internal_symbol_scalar_push_base_7->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_7, &__v3_internal_symbol_scalar_push_value_7); } } Array __arr_lit_18__vmsvc13614 = __new_array_noscan(0, 1, sizeof(__v_int)); __v_int __arr_val_19__vmsvc13615 = prepared_use.marker; { Array* __v3_internal_symbol_scalar_push_base_8 = &__arr_lit_18__vmsvc13614; __v_int __v3_internal_symbol_scalar_push_value_8 = __arr_val_19__vmsvc13615; if (__v3_internal_symbol_scalar_push_base_8->len >= 0 && __v3_internal_symbol_scalar_push_base_8->len < __v3_internal_symbol_scalar_push_base_8->cap && !(__v3_internal_symbol_scalar_push_base_8->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_8->data)[__v3_internal_symbol_scalar_push_base_8->len] = __v3_internal_symbol_scalar_push_value_8; __v3_internal_symbol_scalar_push_base_8->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_8, &__v3_internal_symbol_scalar_push_value_8); } } cond__vmsvc13616 = !!((types__precedes_any(__arr_lit_16__vmsvc13612, __arr_lit_18__vmsvc13614, position))); } if (cond__vmsvc13616) {
+							string __v3_internal_symbol_join_9__vmsvc13617[3]; __v3_internal_symbol_join_9__vmsvc13617[0] = _str_7698; __v3_internal_symbol_join_9__vmsvc13617[1] = alias; __v3_internal_symbol_join_9__vmsvc13617[2] = _str_41; return (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc13617));
 						}
 					}
 				}
@@ -606655,42 +606824,42 @@ void types__push_diagnostic_type_name(Array* names, string name) {
 		}
 	}
 	string display_name = __if_val_0;
-	int cond__vmsvc13618; cond__vmsvc13618 = !!((display_name.len > 0)); if (cond__vmsvc13618) { string __contains_needle_2__vmsvc13615 = display_name; Array __in_arr_1__vmsvc13616 = *names; bool __contains_3__vmsvc13617 = false; {
+	int cond__vmsvc13621; cond__vmsvc13621 = !!((display_name.len > 0)); if (cond__vmsvc13621) { string __contains_needle_2__vmsvc13618 = display_name; Array __in_arr_1__vmsvc13619 = *names; bool __contains_3__vmsvc13620 = false; {
 		__v_int __contains_idx_4 = 0;
-		for (; __contains_idx_4 < __in_arr_1__vmsvc13616.len; __contains_idx_4++) {
-			if (string__eq(*(string*)(array_get(__in_arr_1__vmsvc13616, __contains_idx_4)), __contains_needle_2__vmsvc13615)) {
-				__contains_3__vmsvc13617 = true;
+		for (; __contains_idx_4 < __in_arr_1__vmsvc13619.len; __contains_idx_4++) {
+			if (string__eq(*(string*)(array_get(__in_arr_1__vmsvc13619, __contains_idx_4)), __contains_needle_2__vmsvc13618)) {
+				__contains_3__vmsvc13620 = true;
 			}
 		}
-	} cond__vmsvc13618 = !!((!__contains_3__vmsvc13617)); } if (cond__vmsvc13618) {
+	} cond__vmsvc13621 = !!((!__contains_3__vmsvc13620)); } if (cond__vmsvc13621) {
 		string __arr_val_5 = display_name;
 		array_push(names, &__arr_val_5);
 	}
 }
 
 void types__push_generic_method_base_candidate(Array* candidates, u32 candidate) {
-	int cond__vmsvc13622; cond__vmsvc13622 = !!((candidate != 0)); if (cond__vmsvc13622) { u32 __contains_needle_1__vmsvc13619 = candidate; Array __in_arr_0__vmsvc13620 = *candidates; bool __contains_2__vmsvc13621 = false; {
+	int cond__vmsvc13625; cond__vmsvc13625 = !!((candidate != 0)); if (cond__vmsvc13625) { u32 __contains_needle_1__vmsvc13622 = candidate; Array __in_arr_0__vmsvc13623 = *candidates; bool __contains_2__vmsvc13624 = false; {
 		__v_int __contains_idx_3 = 0;
-		for (; __contains_idx_3 < __in_arr_0__vmsvc13620.len; __contains_idx_3++) {
-			if (*(u32*)(array_get(__in_arr_0__vmsvc13620, __contains_idx_3)) == __contains_needle_1__vmsvc13619) {
-				__contains_2__vmsvc13621 = true;
+		for (; __contains_idx_3 < __in_arr_0__vmsvc13623.len; __contains_idx_3++) {
+			if (*(u32*)(array_get(__in_arr_0__vmsvc13623, __contains_idx_3)) == __contains_needle_1__vmsvc13622) {
+				__contains_2__vmsvc13624 = true;
 			}
 		}
-	} cond__vmsvc13622 = !!((!__contains_2__vmsvc13621)); } if (cond__vmsvc13622) {
+	} cond__vmsvc13625 = !!((!__contains_2__vmsvc13624)); } if (cond__vmsvc13625) {
 		u32 __arr_val_4 = candidate;
 		{ Array* __v3_internal_symbol_scalar_push_base_0 = candidates; u32 __v3_internal_symbol_scalar_push_value_0 = __arr_val_4; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
 	}
 }
 
 void types__push_receiver_method_candidate(Array* names, string name) {
-	int cond__vmsvc13626; cond__vmsvc13626 = !!(!string__eq(name, _str_34)); if (cond__vmsvc13626) { string __contains_needle_1__vmsvc13623 = name; Array __in_arr_0__vmsvc13624 = *names; bool __contains_2__vmsvc13625 = false; {
+	int cond__vmsvc13629; cond__vmsvc13629 = !!(!string__eq(name, _str_34)); if (cond__vmsvc13629) { string __contains_needle_1__vmsvc13626 = name; Array __in_arr_0__vmsvc13627 = *names; bool __contains_2__vmsvc13628 = false; {
 		__v_int __contains_idx_3 = 0;
-		for (; __contains_idx_3 < __in_arr_0__vmsvc13624.len; __contains_idx_3++) {
-			if (string__eq(*(string*)(array_get(__in_arr_0__vmsvc13624, __contains_idx_3)), __contains_needle_1__vmsvc13623)) {
-				__contains_2__vmsvc13625 = true;
+		for (; __contains_idx_3 < __in_arr_0__vmsvc13627.len; __contains_idx_3++) {
+			if (string__eq(*(string*)(array_get(__in_arr_0__vmsvc13627, __contains_idx_3)), __contains_needle_1__vmsvc13626)) {
+				__contains_2__vmsvc13628 = true;
 			}
 		}
-	} cond__vmsvc13626 = !!((!__contains_2__vmsvc13625)); } if (cond__vmsvc13626) {
+	} cond__vmsvc13629 = !!((!__contains_2__vmsvc13628)); } if (cond__vmsvc13629) {
 		string __arr_val_4 = types__keep_string(name);
 		array_push(names, &__arr_val_4);
 	}
@@ -606698,14 +606867,14 @@ void types__push_receiver_method_candidate(Array* names, string name) {
 
 void types__push_type_name_candidate_id(Array* candidates, u32 name_id) {
 	u32 clean_id = types__trimmed_source_type_id(name_id);
-	int cond__vmsvc13630; cond__vmsvc13630 = !!((clean_id != 0)); if (cond__vmsvc13630) { u32 __contains_needle_1__vmsvc13627 = clean_id; Array __in_arr_0__vmsvc13628 = *candidates; bool __contains_2__vmsvc13629 = false; {
+	int cond__vmsvc13633; cond__vmsvc13633 = !!((clean_id != 0)); if (cond__vmsvc13633) { u32 __contains_needle_1__vmsvc13630 = clean_id; Array __in_arr_0__vmsvc13631 = *candidates; bool __contains_2__vmsvc13632 = false; {
 		__v_int __contains_idx_3 = 0;
-		for (; __contains_idx_3 < __in_arr_0__vmsvc13628.len; __contains_idx_3++) {
-			if (*(u32*)(array_get(__in_arr_0__vmsvc13628, __contains_idx_3)) == __contains_needle_1__vmsvc13627) {
-				__contains_2__vmsvc13629 = true;
+		for (; __contains_idx_3 < __in_arr_0__vmsvc13631.len; __contains_idx_3++) {
+			if (*(u32*)(array_get(__in_arr_0__vmsvc13631, __contains_idx_3)) == __contains_needle_1__vmsvc13630) {
+				__contains_2__vmsvc13632 = true;
 			}
 		}
-	} cond__vmsvc13630 = !!((!__contains_2__vmsvc13629)); } if (cond__vmsvc13630) {
+	} cond__vmsvc13633 = !!((!__contains_2__vmsvc13632)); } if (cond__vmsvc13633) {
 		u32 __arr_val_4 = clean_id;
 		{ Array* __v3_internal_symbol_scalar_push_base_0 = candidates; u32 __v3_internal_symbol_scalar_push_value_0 = __arr_val_4; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
 	}
@@ -606715,7 +606884,7 @@ string types__qualify_decl_name_in_module(string name, string module_name) {
 	if (string__eq(module_name, _str_34) || string__eq(module_name, _str_179) || string__eq(module_name, _str_1218) || string__starts_with(name, string__plus(module_name, _str_2)) || string__starts_with(name, _str_2688) || string__starts_with(name, _str_5188)) {
 		return name;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13631[3]; __v3_internal_symbol_join_0__vmsvc13631[0] = module_name; __v3_internal_symbol_join_0__vmsvc13631[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13631[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13631));
+	string __v3_internal_symbol_join_0__vmsvc13634[3]; __v3_internal_symbol_join_0__vmsvc13634[0] = module_name; __v3_internal_symbol_join_0__vmsvc13634[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13634[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13634));
 }
 
 __v_option_u32 types__qualify_decl_name_in_module_existing_id(u32 name_id, string module_name) {
@@ -606730,7 +606899,7 @@ __v_option_u32 types__qualify_decl_name_in_module_existing_id(u32 name_id, strin
 	if (string__starts_with(name, string__plus(module_name, _str_2))) {
 		return (__v_option_u32){.ok = true, .value = name_id};
 	}
-	string __v3_internal_symbol_join_0__vmsvc13632[3]; __v3_internal_symbol_join_0__vmsvc13632[0] = module_name; __v3_internal_symbol_join_0__vmsvc13632[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13632[2] = name; return flat__source_type_existing_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13632)));
+	string __v3_internal_symbol_join_0__vmsvc13635[3]; __v3_internal_symbol_join_0__vmsvc13635[0] = module_name; __v3_internal_symbol_join_0__vmsvc13635[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13635[2] = name; return flat__source_type_existing_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13635)));
 	return (__v_option_u32){.ok = true};
 }
 
@@ -606775,7 +606944,7 @@ bool types__receiver_is_fixed_array(types__Type* t) {
 }
 
 u32 types__receiver_leaf_type_name(u32 name, bool shorten_modules) {
-	int cond__vmsvc13634; cond__vmsvc13634 = !!(shorten_modules); if (cond__vmsvc13634) { int __in_lhs_0__vmsvc13633 = flat__source_type_shape(name); cond__vmsvc13634 = !!(((__in_lhs_0__vmsvc13633 & 1) != 0)); } if (cond__vmsvc13634) {
+	int cond__vmsvc13637; cond__vmsvc13637 = !!(shorten_modules); if (cond__vmsvc13637) { int __in_lhs_0__vmsvc13636 = flat__source_type_shape(name); cond__vmsvc13637 = !!(((__in_lhs_0__vmsvc13636 & 1) != 0)); } if (cond__vmsvc13637) {
 		return flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(name));
 	}
 	return name;
@@ -606793,16 +606962,16 @@ Array types__receiver_method_name_candidates(types__Type* t, string method, stri
 		}
 		string type_text = flat__source_type_name(type_name);
 		Array __arr_lit_0 = array_new(		sizeof(string), 0, 2);
-		string __v3_internal_symbol_join_0__vmsvc13635[3]; __v3_internal_symbol_join_0__vmsvc13635[0] = type_text; __v3_internal_symbol_join_0__vmsvc13635[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13635[2] = method; string __arr_val_1 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13635));
+		string __v3_internal_symbol_join_0__vmsvc13638[3]; __v3_internal_symbol_join_0__vmsvc13638[0] = type_text; __v3_internal_symbol_join_0__vmsvc13638[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13638[2] = method; string __arr_val_1 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13638));
 		array_push(&__arr_lit_0, &__arr_val_1);
-		string __v3_internal_symbol_join_1__vmsvc13636[3]; __v3_internal_symbol_join_1__vmsvc13636[0] = type_text; __v3_internal_symbol_join_1__vmsvc13636[1] = _str_5829; __v3_internal_symbol_join_1__vmsvc13636[2] = method; string __arr_val_2 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13636));
+		string __v3_internal_symbol_join_1__vmsvc13639[3]; __v3_internal_symbol_join_1__vmsvc13639[0] = type_text; __v3_internal_symbol_join_1__vmsvc13639[1] = _str_5829; __v3_internal_symbol_join_1__vmsvc13639[2] = method; string __arr_val_2 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13639));
 		array_push(&__arr_lit_0, &__arr_val_2);
 		return __arr_lit_0;
 	}
 	Array names = array_new(	sizeof(string), 0, 0);
 	if (type_name != 0) {
-		string __v3_internal_symbol_join_2__vmsvc13637[3]; __v3_internal_symbol_join_2__vmsvc13637[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_2__vmsvc13637[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13637[2] = method; types__push_receiver_method_candidate(&names, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13637)));
-		string __v3_internal_symbol_join_3__vmsvc13638[3]; __v3_internal_symbol_join_3__vmsvc13638[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_3__vmsvc13638[1] = _str_5829; __v3_internal_symbol_join_3__vmsvc13638[2] = method; types__push_receiver_method_candidate(&names, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13638)));
+		string __v3_internal_symbol_join_2__vmsvc13640[3]; __v3_internal_symbol_join_2__vmsvc13640[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_2__vmsvc13640[1] = _str_2; __v3_internal_symbol_join_2__vmsvc13640[2] = method; types__push_receiver_method_candidate(&names, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13640)));
+		string __v3_internal_symbol_join_3__vmsvc13641[3]; __v3_internal_symbol_join_3__vmsvc13641[0] = flat__source_type_name(type_name); __v3_internal_symbol_join_3__vmsvc13641[1] = _str_5829; __v3_internal_symbol_join_3__vmsvc13641[2] = method; types__push_receiver_method_candidate(&names, (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13641)));
 	}
 	if ((clean).typ == 11) {
 		types__append_array_receiver_method_candidates(&names, clean.types__Array, method, module_name);
@@ -606835,7 +607004,7 @@ string types__receiver_method_part(string receiver) {
 }
 
 string types__receiver_type_arg_mismatch_message(string method, string param, string receiver_text, string expected, string given) {
-	string __v3_internal_symbol_join_0__vmsvc13639[13]; __v3_internal_symbol_join_0__vmsvc13639[0] = _str_41; __v3_internal_symbol_join_0__vmsvc13639[1] = method; __v3_internal_symbol_join_0__vmsvc13639[2] = _str_7969; __v3_internal_symbol_join_0__vmsvc13639[3] = param; __v3_internal_symbol_join_0__vmsvc13639[4] = _str_7970; __v3_internal_symbol_join_0__vmsvc13639[5] = receiver_text; __v3_internal_symbol_join_0__vmsvc13639[6] = _str_7220; __v3_internal_symbol_join_0__vmsvc13639[7] = param; __v3_internal_symbol_join_0__vmsvc13639[8] = _str_7971; __v3_internal_symbol_join_0__vmsvc13639[9] = expected; __v3_internal_symbol_join_0__vmsvc13639[10] = _str_6191; __v3_internal_symbol_join_0__vmsvc13639[11] = given; __v3_internal_symbol_join_0__vmsvc13639[12] = _str_41; return (string_plus_many(13, __v3_internal_symbol_join_0__vmsvc13639));
+	string __v3_internal_symbol_join_0__vmsvc13642[13]; __v3_internal_symbol_join_0__vmsvc13642[0] = _str_41; __v3_internal_symbol_join_0__vmsvc13642[1] = method; __v3_internal_symbol_join_0__vmsvc13642[2] = _str_7969; __v3_internal_symbol_join_0__vmsvc13642[3] = param; __v3_internal_symbol_join_0__vmsvc13642[4] = _str_7970; __v3_internal_symbol_join_0__vmsvc13642[5] = receiver_text; __v3_internal_symbol_join_0__vmsvc13642[6] = _str_7220; __v3_internal_symbol_join_0__vmsvc13642[7] = param; __v3_internal_symbol_join_0__vmsvc13642[8] = _str_7971; __v3_internal_symbol_join_0__vmsvc13642[9] = expected; __v3_internal_symbol_join_0__vmsvc13642[10] = _str_6191; __v3_internal_symbol_join_0__vmsvc13642[11] = given; __v3_internal_symbol_join_0__vmsvc13642[12] = _str_41; return (string_plus_many(13, __v3_internal_symbol_join_0__vmsvc13642));
 }
 
 Array types__receiver_type_module_names(types__Type* t) {
@@ -606934,14 +607103,14 @@ Array types__receiver_type_name_variants(types__Type* t) {
 string types__recursive_alias_container(u32 name_id, u32 type_id) {
 	u32 clean_id = types__trimmed_source_type_id(type_id);
 	flat__SourceTypeSyntax* syntax = flat__source_type_syntax(clean_id);
-	int cond__vmsvc13643; cond__vmsvc13643 = !!((name_id == 0)); if (!cond__vmsvc13643) { u32 __contains_needle_1__vmsvc13640 = name_id; Array __in_arr_0__vmsvc13641 = flat__SourceTypeSyntax__symbols(syntax); bool __contains_2__vmsvc13642 = false; {
+	int cond__vmsvc13646; cond__vmsvc13646 = !!((name_id == 0)); if (!cond__vmsvc13646) { u32 __contains_needle_1__vmsvc13643 = name_id; Array __in_arr_0__vmsvc13644 = flat__SourceTypeSyntax__symbols(syntax); bool __contains_2__vmsvc13645 = false; {
 		__v_int __contains_idx_3 = 0;
-		for (; __contains_idx_3 < __in_arr_0__vmsvc13641.len; __contains_idx_3++) {
-			if (*(u32*)(array_get(__in_arr_0__vmsvc13641, __contains_idx_3)) == __contains_needle_1__vmsvc13640) {
-				__contains_2__vmsvc13642 = true;
+		for (; __contains_idx_3 < __in_arr_0__vmsvc13644.len; __contains_idx_3++) {
+			if (*(u32*)(array_get(__in_arr_0__vmsvc13644, __contains_idx_3)) == __contains_needle_1__vmsvc13643) {
+				__contains_2__vmsvc13645 = true;
 			}
 		}
-	} cond__vmsvc13643 = !!((!__contains_2__vmsvc13642)); } if (cond__vmsvc13643) {
+	} cond__vmsvc13646 = !!((!__contains_2__vmsvc13645)); } if (cond__vmsvc13646) {
 		return _str_34;
 	}
 	int shape = flat__source_type_shape(clean_id);
@@ -606970,14 +607139,14 @@ string types__recursive_alias_container(u32 name_id, u32 type_id) {
 			return _str_5636;
 		}
 		u32 value_id = flat__SourceTypeSyntax__bracket_base(syntax);
-		int cond__vmsvc13647; cond__vmsvc13647 = !!((value_id != 0) && !flat__SourceTypeSyntax__function_space_prefix(flat__source_type_syntax(value_id))); if (cond__vmsvc13647) { u32 __contains_needle_9__vmsvc13644 = name_id; Array __in_arr_8__vmsvc13645 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(value_id)); bool __contains_10__vmsvc13646 = false; {
+		int cond__vmsvc13650; cond__vmsvc13650 = !!((value_id != 0) && !flat__SourceTypeSyntax__function_space_prefix(flat__source_type_syntax(value_id))); if (cond__vmsvc13650) { u32 __contains_needle_9__vmsvc13647 = name_id; Array __in_arr_8__vmsvc13648 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(value_id)); bool __contains_10__vmsvc13649 = false; {
 			__v_int __contains_idx_11 = 0;
-			for (; __contains_idx_11 < __in_arr_8__vmsvc13645.len; __contains_idx_11++) {
-				if (*(u32*)(array_get(__in_arr_8__vmsvc13645, __contains_idx_11)) == __contains_needle_9__vmsvc13644) {
-					__contains_10__vmsvc13646 = true;
+			for (; __contains_idx_11 < __in_arr_8__vmsvc13648.len; __contains_idx_11++) {
+				if (*(u32*)(array_get(__in_arr_8__vmsvc13648, __contains_idx_11)) == __contains_needle_9__vmsvc13647) {
+					__contains_10__vmsvc13649 = true;
 				}
 			}
-		} cond__vmsvc13647 = !!((__contains_10__vmsvc13646)); } if (cond__vmsvc13647) {
+		} cond__vmsvc13650 = !!((__contains_10__vmsvc13649)); } if (cond__vmsvc13650) {
 			return _str_5637;
 		}
 	}
@@ -607131,7 +607300,7 @@ void types__remember_type_query_scope_entry(map* entries, types__SourceTypeQuery
 }
 
 string types__removed_json_module_message(string file) {
-	string __v3_internal_symbol_join_0__vmsvc13648[5]; __v3_internal_symbol_join_0__vmsvc13648[0] = _str_5677; string __v3_internal_symbol_join_1__vmsvc13649[3]; __v3_internal_symbol_join_1__vmsvc13649[0] = _str_5678; __v3_internal_symbol_join_1__vmsvc13649[1] = file; __v3_internal_symbol_join_1__vmsvc13649[2] = _str_5679; __v3_internal_symbol_join_0__vmsvc13648[1] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13649)); __v3_internal_symbol_join_0__vmsvc13648[2] = _str_5680; __v3_internal_symbol_join_0__vmsvc13648[3] = _str_5681; __v3_internal_symbol_join_0__vmsvc13648[4] = _str_5682; return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13648));
+	string __v3_internal_symbol_join_0__vmsvc13651[5]; __v3_internal_symbol_join_0__vmsvc13651[0] = _str_5677; string __v3_internal_symbol_join_1__vmsvc13652[3]; __v3_internal_symbol_join_1__vmsvc13652[0] = _str_5678; __v3_internal_symbol_join_1__vmsvc13652[1] = file; __v3_internal_symbol_join_1__vmsvc13652[2] = _str_5679; __v3_internal_symbol_join_0__vmsvc13651[1] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13652)); __v3_internal_symbol_join_0__vmsvc13651[2] = _str_5680; __v3_internal_symbol_join_0__vmsvc13651[3] = _str_5681; __v3_internal_symbol_join_0__vmsvc13651[4] = _str_5682; return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13651));
 }
 
 void types__reserve_bool_cache(Array* values, __v_int n) {
@@ -607309,22 +607478,22 @@ string types__scope_binding_storage_key(types__Scope* scope, __v_int lifetime, _
 	{
 		return types__scope_binding_storage_key_text((u64)((void*)(scope)), lifetime, v_index);
 	}
-	string __v3_internal_symbol_join_0__vmsvc13650[7]; __v3_internal_symbol_join_0__vmsvc13650[0] = ptr_str((void*)(scope)); __v3_internal_symbol_join_0__vmsvc13650[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13650[2] = int__str(lifetime); __v3_internal_symbol_join_0__vmsvc13650[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13650[4] = int__str(v_index); __v3_internal_symbol_join_0__vmsvc13650[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13650[6] = int__str(generation); return (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13650));
+	string __v3_internal_symbol_join_0__vmsvc13653[7]; __v3_internal_symbol_join_0__vmsvc13653[0] = ptr_str((void*)(scope)); __v3_internal_symbol_join_0__vmsvc13653[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13653[2] = int__str(lifetime); __v3_internal_symbol_join_0__vmsvc13653[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13653[4] = int__str(v_index); __v3_internal_symbol_join_0__vmsvc13653[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13653[6] = int__str(generation); return (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13653));
 }
 
 string types__scope_binding_storage_key_text(u64 ptr, __v_int lifetime, __v_int v_index) {
 	if ((lifetime < 0) || (v_index < 0)) {
-		string __v3_internal_symbol_join_0__vmsvc13651[5]; __v3_internal_symbol_join_0__vmsvc13651[0] = ptr_str((void*)(ptr)); __v3_internal_symbol_join_0__vmsvc13651[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13651[2] = int__str(lifetime); __v3_internal_symbol_join_0__vmsvc13651[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13651[4] = int__str(v_index); return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13651));
+		string __v3_internal_symbol_join_0__vmsvc13654[5]; __v3_internal_symbol_join_0__vmsvc13654[0] = ptr_str((void*)(ptr)); __v3_internal_symbol_join_0__vmsvc13654[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13654[2] = int__str(lifetime); __v3_internal_symbol_join_0__vmsvc13654[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13654[4] = int__str(v_index); return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13654));
 	}
 	u8 buf[64];
 	memmove(buf, (u8[64]){0}, sizeof(buf));
 	__v_int n = 0;
 	__v_int shift = 60;
-	for (;;) { int cond__vmsvc13654; cond__vmsvc13654 = !!((shift > 0)); if (cond__vmsvc13654) { u64 _t2__vmsvc13652 = (u64)(	ptr); u64 _t3__vmsvc13653 = (u64)((u64)(shift)); cond__vmsvc13654 = !!(((((_t3__vmsvc13653 >= 64 ? (u64)0 : (u64)(_t2__vmsvc13652 >> _t3__vmsvc13653))) & 0xf) == 0)); } if (!(cond__vmsvc13654)) break; {
+	for (;;) { int cond__vmsvc13657; cond__vmsvc13657 = !!((shift > 0)); if (cond__vmsvc13657) { u64 _t2__vmsvc13655 = (u64)(	ptr); u64 _t3__vmsvc13656 = (u64)((u64)(shift)); cond__vmsvc13657 = !!(((((_t3__vmsvc13656 >= 64 ? (u64)0 : (u64)(_t2__vmsvc13655 >> _t3__vmsvc13656))) & 0xf) == 0)); } if (!(cond__vmsvc13657)) break; {
 		shift -= 4;
 	} }
 	while (shift >= 0) {
-		u64 _t4__vmsvc13655 = (u64)(		ptr); u64 _t5__vmsvc13656 = (u64)((u64)(shift)); u8 digit = (u8)(((_t5__vmsvc13656 >= 64 ? (u64)0 : (u64)(_t4__vmsvc13655 >> _t5__vmsvc13656))) & 0xf);
+		u64 _t4__vmsvc13658 = (u64)(		ptr); u64 _t5__vmsvc13659 = (u64)((u64)(shift)); u8 digit = (u8)(((_t5__vmsvc13659 >= 64 ? (u64)0 : (u64)(_t4__vmsvc13658 >> _t5__vmsvc13659))) & 0xf);
 		u8 __if_val_0 = {0};
 		if (digit < 10) {
 			__if_val_0 = '0' + digit;
@@ -607360,7 +607529,7 @@ __inline u64 types__scope_name_bit(string name) {
 	if (name.len == 0) {
 		return (u64)(1);
 	}
-	u64 _t1__vmsvc13657 = (u64)(	(u64)(1)); u64 _t2__vmsvc13658 = (u64)((((((u32)(string__at(name, 0)) * 33) + ((u32)(string__at(name, name.len - 1)) * 7)) + (u32)(name.len)) & 63)); return (_t2__vmsvc13658 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13657 << _t2__vmsvc13658));
+	u64 _t1__vmsvc13660 = (u64)(	(u64)(1)); u64 _t2__vmsvc13661 = (u64)((((((u32)(string__at(name, 0)) * 33) + ((u32)(string__at(name, name.len - 1)) * 7)) + (u32)(name.len)) & 63)); return (_t2__vmsvc13661 >= 64 ? (u64)0 : (u64)(_t1__vmsvc13660 << _t2__vmsvc13661));
 }
 
 u64 types__scope_type_key(string file, string mod_name, u32 name_id) {
@@ -607371,7 +607540,7 @@ u64 types__scope_type_key(string file, string mod_name, u32 name_id) {
 		__if_val_0 = mod_name;
 	}
 	string norm_mod = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc13659[3]; __v3_internal_symbol_join_0__vmsvc13659[0] = file; __v3_internal_symbol_join_0__vmsvc13659[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13659[2] = norm_mod; u32 context_id = flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13659)));
+	string __v3_internal_symbol_join_0__vmsvc13662[3]; __v3_internal_symbol_join_0__vmsvc13662[0] = file; __v3_internal_symbol_join_0__vmsvc13662[1] = _str_2809; __v3_internal_symbol_join_0__vmsvc13662[2] = norm_mod; u32 context_id = flat__source_type_id((string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13662)));
 	return ((u64)(((u64)(	(u64)(context_id))) << (32))) | (u64)(name_id);
 }
 
@@ -607388,7 +607557,7 @@ u32 types__scope_unqualified_type_name(u32 name_id) {
 
 __v_int types__scoped_check_batch_count(__v_int n_items, i64 total_cost, __v_int batch_limit) {
 	__v_int n = int_min(n_items, batch_limit);
-	i64 _t1__vmsvc13660 = (i64)(total_cost); i64 _t2__vmsvc13661 = (i64)(types__min_scoped_check_batch_cost); if (_t2__vmsvc13661 == 0) v_panic(_S("division by zero")); i64 by_cost = ((i64)(_t1__vmsvc13660 / _t2__vmsvc13661));
+	i64 _t1__vmsvc13663 = (i64)(total_cost); i64 _t2__vmsvc13664 = (i64)(types__min_scoped_check_batch_cost); if (_t2__vmsvc13664 == 0) v_panic(_S("division by zero")); i64 by_cost = ((i64)(_t1__vmsvc13663 / _t2__vmsvc13664));
 	if (by_cost < (i64)(n)) {
 		n = (__v_int)(by_cost);
 	}
@@ -608038,7 +608207,7 @@ void types__sort_generic_param_ids(Array* ids) {
 }
 
 types__SourceTypeQueryKey types__source_error_embed_entry_key(u32 target_id, string file, string module_key) {
-	string __v3_internal_symbol_join_0__vmsvc13662[3]; __v3_internal_symbol_join_0__vmsvc13662[0] = file; __v3_internal_symbol_join_0__vmsvc13662[1] = _str_0; __v3_internal_symbol_join_0__vmsvc13662[2] = module_key; return (types__SourceTypeQueryKey){.owner_id = target_id, .scope = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13662))};
+	string __v3_internal_symbol_join_0__vmsvc13665[3]; __v3_internal_symbol_join_0__vmsvc13665[0] = file; __v3_internal_symbol_join_0__vmsvc13665[1] = _str_0; __v3_internal_symbol_join_0__vmsvc13665[2] = module_key; return (types__SourceTypeQueryKey){.owner_id = target_id, .scope = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13665))};
 }
 
 types__SourceTypeQueryKey types__source_error_embed_lookup_key(u32 concrete_name_id, string file, string mod_name) {
@@ -608079,7 +608248,7 @@ bool types__source_field_decl_is_embed(flat__Node field, u32 field_type_id) {
 		return false;
 	}
 	u32 field_name_id = flat__Node__source_value_id(field);
-	int cond__vmsvc13664; cond__vmsvc13664 = !!((field_name_id == field_type_id)); if (!cond__vmsvc13664) { int __in_lhs_0__vmsvc13663 = flat__source_type_shape(field_type_id); cond__vmsvc13664 = !!(((((__in_lhs_0__vmsvc13663 & 1) != 0) && (field_name_id == flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(field_type_id)))))); } return cond__vmsvc13664;
+	int cond__vmsvc13667; cond__vmsvc13667 = !!((field_name_id == field_type_id)); if (!cond__vmsvc13667) { int __in_lhs_0__vmsvc13666 = flat__source_type_shape(field_type_id); cond__vmsvc13667 = !!(((((__in_lhs_0__vmsvc13666 & 1) != 0) && (field_name_id == flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(field_type_id)))))); } return cond__vmsvc13667;
 }
 
 bool types__source_field_decl_is_mut(flat__Node field) {
@@ -608140,15 +608309,15 @@ bool types__source_line_has_multiple_module_imports(string raw_line) {
 }
 
 bool types__source_name_is_numbered_string_symbol(string name) {
-	int cond__vmsvc13667; cond__vmsvc13667 = !!((name.len > 5) && string__starts_with(name, _str_2639)); if (cond__vmsvc13667) { Array __all_source_0__vmsvc13665 = string__bytes(string__substr(	name, 	5, (	name).len)); bool __all_1__vmsvc13666 = true; {
+	int cond__vmsvc13670; cond__vmsvc13670 = !!((name.len > 5) && string__starts_with(name, _str_2639)); if (cond__vmsvc13670) { Array __all_source_0__vmsvc13668 = string__bytes(string__substr(	name, 	5, (	name).len)); bool __all_1__vmsvc13669 = true; {
 		__v_int __all_idx_2 = 0;
-		for (; __all_idx_2 < __all_source_0__vmsvc13665.len; __all_idx_2++) {
-			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13665, __all_idx_2));
+		for (; __all_idx_2 < __all_source_0__vmsvc13668.len; __all_idx_2++) {
+			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13668, __all_idx_2));
 			if (!((__all_it_3 >= '0') && (__all_it_3 <= '9'))) {
-				__all_1__vmsvc13666 = false;
+				__all_1__vmsvc13669 = false;
 			}
 		}
-	} cond__vmsvc13667 = !!((__all_1__vmsvc13666)); } return cond__vmsvc13667;
+	} cond__vmsvc13670 = !!((__all_1__vmsvc13669)); } return cond__vmsvc13670;
 }
 
 multi_return_string_bool types__source_override_stem(string file) {
@@ -608173,7 +608342,7 @@ bool types__source_text_is_bare_generic(string text) {
 	while ((start < end) && ((string__at(text, start) == ' ') || (string__at(text, start) == '\n') || (string__at(text, start) == '\t') || (string__at(text, start) == '\v') || (string__at(text, start) == '\f') || (string__at(text, start) == '\r'))) {
 		start++;
 	}
-	for (;;) { int cond__vmsvc13669; cond__vmsvc13669 = !!((end > start)); if (cond__vmsvc13669) { u8 __in_lhs_0__vmsvc13668 = string__at(text, end - 1); cond__vmsvc13669 = !!(((__in_lhs_0__vmsvc13668 == ' ') || (__in_lhs_0__vmsvc13668 == '\n') || (__in_lhs_0__vmsvc13668 == '\t') || (__in_lhs_0__vmsvc13668 == '\v') || (__in_lhs_0__vmsvc13668 == '\f') || (__in_lhs_0__vmsvc13668 == '\r'))); } if (!(cond__vmsvc13669)) break; {
+	for (;;) { int cond__vmsvc13672; cond__vmsvc13672 = !!((end > start)); if (cond__vmsvc13672) { u8 __in_lhs_0__vmsvc13671 = string__at(text, end - 1); cond__vmsvc13672 = !!(((__in_lhs_0__vmsvc13671 == ' ') || (__in_lhs_0__vmsvc13671 == '\n') || (__in_lhs_0__vmsvc13671 == '\t') || (__in_lhs_0__vmsvc13671 == '\v') || (__in_lhs_0__vmsvc13671 == '\f') || (__in_lhs_0__vmsvc13671 == '\r'))); } if (!(cond__vmsvc13672)) break; {
 		end--;
 	} }
 	return ((end - start) == 1) && (string__at(text, start) >= 'A') && (string__at(text, start) <= 'Z');
@@ -608208,7 +608377,7 @@ bool types__source_type_is_shared_array(u32 type_id) {
 		clean_id = types__trimmed_source_type_id(flat__SourceTypeSyntax__pointer_raw_base(flat__source_type_syntax(clean_id)));
 	}
 	int __in_lhs_1 = flat__source_type_shape(clean_id);
-	int cond__vmsvc13671; cond__vmsvc13671 = !!(((__in_lhs_1 & 2048) != 0)); if (cond__vmsvc13671) { int __in_lhs_2__vmsvc13670 = flat__source_type_shape(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(clean_id))); cond__vmsvc13671 = !!(((__in_lhs_2__vmsvc13670 & 256) != 0)); } return cond__vmsvc13671;
+	int cond__vmsvc13674; cond__vmsvc13674 = !!(((__in_lhs_1 & 2048) != 0)); if (cond__vmsvc13674) { int __in_lhs_2__vmsvc13673 = flat__source_type_shape(flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(clean_id))); cond__vmsvc13674 = !!(((__in_lhs_2__vmsvc13673 & 256) != 0)); } return cond__vmsvc13674;
 }
 
 __inline bool types__source_words_contain_name(Array words, string name) {
@@ -608258,7 +608427,7 @@ Array types__split_check_items(Array items, __v_int n) {
 				total += (i64)(it.cost) + 1;
 			}
 		}
-		{ Array* __v3_internal_symbol_scalar_store_base_1 = &loads; int __v3_internal_symbol_scalar_store_index_1 = 0; i64 _t3__vmsvc13672 = (i64)(-total * types__check_master_bias_pct); i64 _t4__vmsvc13673 = (i64)((i64)(100 * n)); if (_t4__vmsvc13673 == 0) v_panic(_S("division by zero")); i64 __v3_internal_symbol_scalar_store_value_1 = ((i64)(_t3__vmsvc13672 / _t4__vmsvc13673)); if (__v3_internal_symbol_scalar_store_index_1 >= 0 && __v3_internal_symbol_scalar_store_index_1 < __v3_internal_symbol_scalar_store_base_1->len) { ((i64*)__v3_internal_symbol_scalar_store_base_1->data)[__v3_internal_symbol_scalar_store_index_1] = __v3_internal_symbol_scalar_store_value_1; } else { array__set(__v3_internal_symbol_scalar_store_base_1, __v3_internal_symbol_scalar_store_index_1, &__v3_internal_symbol_scalar_store_value_1); } }
+		{ Array* __v3_internal_symbol_scalar_store_base_1 = &loads; int __v3_internal_symbol_scalar_store_index_1 = 0; i64 _t3__vmsvc13675 = (i64)(-total * types__check_master_bias_pct); i64 _t4__vmsvc13676 = (i64)((i64)(100 * n)); if (_t4__vmsvc13676 == 0) v_panic(_S("division by zero")); i64 __v3_internal_symbol_scalar_store_value_1 = ((i64)(_t3__vmsvc13675 / _t4__vmsvc13676)); if (__v3_internal_symbol_scalar_store_index_1 >= 0 && __v3_internal_symbol_scalar_store_index_1 < __v3_internal_symbol_scalar_store_base_1->len) { ((i64*)__v3_internal_symbol_scalar_store_base_1->data)[__v3_internal_symbol_scalar_store_index_1] = __v3_internal_symbol_scalar_store_value_1; } else { array__set(__v3_internal_symbol_scalar_store_base_1, __v3_internal_symbol_scalar_store_index_1, &__v3_internal_symbol_scalar_store_value_1); } }
 	}
 	Array ranked = __new_array_noscan(0, items.len, sizeof(types__CheckItemRank));
 	{
@@ -608626,7 +608795,7 @@ __v_option_multi_return_string___v_int types__sql_checker_table_type_token_from(
 	string table_name = (*(string*)array_get(tokens, start));
 	__v_int next_idx = start + 1;
 	if (((next_idx + 1) < tokens.len) && string__eq((*(string*)array_get(tokens, next_idx)), _str_2)) {
-		string __v3_internal_symbol_join_0__vmsvc13674[3]; __v3_internal_symbol_join_0__vmsvc13674[0] = table_name; __v3_internal_symbol_join_0__vmsvc13674[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13674[2] = (*(string*)array_get(tokens, next_idx + 1)); table_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13674));
+		string __v3_internal_symbol_join_0__vmsvc13677[3]; __v3_internal_symbol_join_0__vmsvc13677[0] = table_name; __v3_internal_symbol_join_0__vmsvc13677[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13677[2] = (*(string*)array_get(tokens, next_idx + 1)); table_name = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13677));
 		next_idx += 2;
 	}
 	if ((next_idx >= tokens.len) || !string__eq((*(string*)array_get(tokens, next_idx)), _str_176)) {
@@ -608707,7 +608876,7 @@ types__SqlOrmFieldTypeInfo types__sql_orm_field_type_info(u32 raw_type) {
 	u32 clean_id = types__trimmed_source_type_id(raw_type);
 	while (true) {
 		int __in_lhs_0 = flat__source_type_shape(clean_id);
-		int cond__vmsvc13676; cond__vmsvc13676 = !!(((__in_lhs_0 & 64) != 0)); if (!cond__vmsvc13676) { int __in_lhs_1__vmsvc13675 = flat__source_type_shape(clean_id); cond__vmsvc13676 = !!(((__in_lhs_1__vmsvc13675 & 128) != 0)); } if (!(cond__vmsvc13676)) {
+		int cond__vmsvc13679; cond__vmsvc13679 = !!(((__in_lhs_0 & 64) != 0)); if (!cond__vmsvc13679) { int __in_lhs_1__vmsvc13678 = flat__source_type_shape(clean_id); cond__vmsvc13679 = !!(((__in_lhs_1__vmsvc13678 & 128) != 0)); } if (!(cond__vmsvc13679)) {
 			break;
 		} else {
 		}
@@ -608766,7 +608935,7 @@ __v_option_string types__sql_orm_receiver_storage_key(Array tokens, __v_int star
 			return (__v_option_string){.ok = false};
 		}
 		string base = __or_val_3;
-		string __v3_internal_symbol_join_0__vmsvc13677[3]; __v3_internal_symbol_join_0__vmsvc13677[0] = base; __v3_internal_symbol_join_0__vmsvc13677[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13677[2] = (*(string*)array_get(tokens, end - 1)); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13677))};
+		string __v3_internal_symbol_join_0__vmsvc13680[3]; __v3_internal_symbol_join_0__vmsvc13680[0] = base; __v3_internal_symbol_join_0__vmsvc13680[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13680[2] = (*(string*)array_get(tokens, end - 1)); return (__v_option_string){.ok = true, .value = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13680))};
 	}
 	return (__v_option_string){.ok = false};
 	return (__v_option_string){.ok = true};
@@ -608789,14 +608958,14 @@ Array types__sql_orm_table_names(Array tokens) {
 			}
 			multi_return_string___v_int __multi_ret_0 = __or_val_2;
 			string name = __multi_ret_0.arg0;
-			int cond__vmsvc13679; cond__vmsvc13679 = !!(types__should_check_named_type(name)); if (cond__vmsvc13679) { bool __contains_3__vmsvc13678 = false; {
+			int cond__vmsvc13682; cond__vmsvc13682 = !!(types__should_check_named_type(name)); if (cond__vmsvc13682) { bool __contains_3__vmsvc13681 = false; {
 				__v_int __contains_idx_4 = 0;
 				for (; __contains_idx_4 < names.len; __contains_idx_4++) {
 					if (string__eq(*(string*)(array_get(names, __contains_idx_4)), name)) {
-						__contains_3__vmsvc13678 = true;
+						__contains_3__vmsvc13681 = true;
 					}
 				}
-			} cond__vmsvc13679 = !!((!__contains_3__vmsvc13678)); } if (cond__vmsvc13679) {
+			} cond__vmsvc13682 = !!((!__contains_3__vmsvc13681)); } if (cond__vmsvc13682) {
 				string __arr_val_5 = name;
 				array_push(&names, &__arr_val_5);
 			}
@@ -608867,7 +609036,7 @@ bool types__sql_text_contains_qualified_import(string text, string alias) {
 		}
 		string __if_val_0 = {0};
 		if (after_dot) {
-			string __v3_internal_symbol_join_0__vmsvc13680[3]; __v3_internal_symbol_join_0__vmsvc13680[0] = qualified; __v3_internal_symbol_join_0__vmsvc13680[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13680[2] = lexer.lit; __if_val_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13680));
+			string __v3_internal_symbol_join_0__vmsvc13683[3]; __v3_internal_symbol_join_0__vmsvc13683[0] = qualified; __v3_internal_symbol_join_0__vmsvc13683[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13683[2] = lexer.lit; __if_val_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13683));
 		} else {
 			__if_val_0 = lexer.lit;
 		}
@@ -609247,7 +609416,7 @@ bool types__storage_param_sources_equal(map left, map right) {
 		name = string__clone(name);
 		Array params = *(Array*)((	left).data->key_values.values + __mi_0 * (	left).data->key_values.value_bytes);
 		string __map_key_0 = name;
-		int cond__vmsvc13683; cond__vmsvc13683 = !!(!map__exists(&right, &__map_key_0)); if (!cond__vmsvc13683) { string __map_key_1__vmsvc13681 = name; Array __map_zero_2__vmsvc13682 = __new_array_noscan(0, 0, sizeof(__v_int)); cond__vmsvc13683 = !!((params.len != (*(Array*)(map__get(&right, &__map_key_1__vmsvc13681, &__map_zero_2__vmsvc13682))).len)); } if (cond__vmsvc13683) {
+		int cond__vmsvc13686; cond__vmsvc13686 = !!(!map__exists(&right, &__map_key_0)); if (!cond__vmsvc13686) { string __map_key_1__vmsvc13684 = name; Array __map_zero_2__vmsvc13685 = __new_array_noscan(0, 0, sizeof(__v_int)); cond__vmsvc13686 = !!((params.len != (*(Array*)(map__get(&right, &__map_key_1__vmsvc13684, &__map_zero_2__vmsvc13685))).len)); } if (cond__vmsvc13686) {
 			return false;
 		}
 		{
@@ -609759,7 +609928,7 @@ bool types__string_interp_format_uses_ident(string format, string name) {
 }
 
 string types__strings_builder_binding_key(__v_int fn_index, string name) {
-	string __v3_internal_symbol_join_0__vmsvc13684[3]; __v3_internal_symbol_join_0__vmsvc13684[0] = int__str(fn_index); __v3_internal_symbol_join_0__vmsvc13684[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13684[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13684));
+	string __v3_internal_symbol_join_0__vmsvc13687[3]; __v3_internal_symbol_join_0__vmsvc13687[0] = int__str(fn_index); __v3_internal_symbol_join_0__vmsvc13687[1] = _str_8; __v3_internal_symbol_join_0__vmsvc13687[2] = name; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13687));
 }
 
 u32 types__strip_generic_args_id(u32 name_id) {
@@ -610378,12 +610547,12 @@ bool types__translated_integer_is_unsigned(types__Type* typ) {
 
 bool types__translated_integer_type(types__Type* typ) {
 	types__Type* clean = types__unalias_type(typ);
-	int cond__vmsvc13686; cond__vmsvc13686 = !!(types__Type__is_integer(clean) || ((clean)->typ == 5) || ((clean)->typ == 21)); if (!cond__vmsvc13686) { types__Type __in_lhs_0__vmsvc13685 = *clean; cond__vmsvc13686 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_0__vmsvc13685}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } return cond__vmsvc13686;
+	int cond__vmsvc13689; cond__vmsvc13689 = !!(types__Type__is_integer(clean) || ((clean)->typ == 5) || ((clean)->typ == 21)); if (!cond__vmsvc13689) { types__Type __in_lhs_0__vmsvc13688 = *clean; cond__vmsvc13689 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_0__vmsvc13688}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } return cond__vmsvc13689;
 }
 
 bool types__translated_numeric_type(types__Type* typ) {
 	types__Type* clean = types__unalias_type(typ);
-	int cond__vmsvc13688; cond__vmsvc13688 = !!(types__Type__is_integer(clean) || types__Type__is_float(clean) || ((clean)->typ == 5) || ((clean)->typ == 21)); if (!cond__vmsvc13688) { types__Type __in_lhs_0__vmsvc13687 = *clean; cond__vmsvc13688 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_0__vmsvc13687}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } return cond__vmsvc13688;
+	int cond__vmsvc13691; cond__vmsvc13691 = !!(types__Type__is_integer(clean) || types__Type__is_float(clean) || ((clean)->typ == 5) || ((clean)->typ == 21)); if (!cond__vmsvc13691) { types__Type __in_lhs_0__vmsvc13690 = *clean; cond__vmsvc13691 = !!((__v3_internal_symbol_op_types__Type__eq(&(types__Type[]){__in_lhs_0__vmsvc13690}[0], &(types__Type[]){(types__Type){.typ = 3, .types__Primitive = types__bool_}}[0]))); } return cond__vmsvc13691;
 }
 
 __inline u32 types__trimmed_source_type_id(u32 id) {
@@ -610538,7 +610707,7 @@ bool types__type_contains_unknown_nested(types__Type* typ) {
 }
 
 string types__type_error_key(types__TypeError err) {
-	string __v3_internal_symbol_join_0__vmsvc13689[7]; __v3_internal_symbol_join_0__vmsvc13689[0] = i32__str(err.pos.id); __v3_internal_symbol_join_0__vmsvc13689[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13689[2] = i32__str(err.pos.offset); __v3_internal_symbol_join_0__vmsvc13689[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13689[4] = i32__str(err.pos.end); __v3_internal_symbol_join_0__vmsvc13689[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13689[6] = err.msg; return (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13689));
+	string __v3_internal_symbol_join_0__vmsvc13692[7]; __v3_internal_symbol_join_0__vmsvc13692[0] = i32__str(err.pos.id); __v3_internal_symbol_join_0__vmsvc13692[1] = _str_92; __v3_internal_symbol_join_0__vmsvc13692[2] = i32__str(err.pos.offset); __v3_internal_symbol_join_0__vmsvc13692[3] = _str_92; __v3_internal_symbol_join_0__vmsvc13692[4] = i32__str(err.pos.end); __v3_internal_symbol_join_0__vmsvc13692[5] = _str_92; __v3_internal_symbol_join_0__vmsvc13692[6] = err.msg; return (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13692));
 }
 
 bool types__type_errors_equal(types__TypeError a, types__TypeError b) {
@@ -610622,14 +610791,14 @@ bool types__type_id_contains_qualified_import(u32 type_id, u32 alias_id) {
 }
 
 bool types__type_id_contains_symbol(u32 type_id, u32 name_id) {
-	int cond__vmsvc13693; cond__vmsvc13693 = !!((name_id != 0)); if (cond__vmsvc13693) { u32 __contains_needle_1__vmsvc13690 = name_id; Array __in_arr_0__vmsvc13691 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(type_id)); bool __contains_2__vmsvc13692 = false; {
+	int cond__vmsvc13696; cond__vmsvc13696 = !!((name_id != 0)); if (cond__vmsvc13696) { u32 __contains_needle_1__vmsvc13693 = name_id; Array __in_arr_0__vmsvc13694 = flat__SourceTypeSyntax__symbols(flat__source_type_syntax(type_id)); bool __contains_2__vmsvc13695 = false; {
 		__v_int __contains_idx_3 = 0;
-		for (; __contains_idx_3 < __in_arr_0__vmsvc13691.len; __contains_idx_3++) {
-			if (*(u32*)(array_get(__in_arr_0__vmsvc13691, __contains_idx_3)) == __contains_needle_1__vmsvc13690) {
-				__contains_2__vmsvc13692 = true;
+		for (; __contains_idx_3 < __in_arr_0__vmsvc13694.len; __contains_idx_3++) {
+			if (*(u32*)(array_get(__in_arr_0__vmsvc13694, __contains_idx_3)) == __contains_needle_1__vmsvc13693) {
+				__contains_2__vmsvc13695 = true;
 			}
 		}
-	} cond__vmsvc13693 = !!((__contains_2__vmsvc13692)); } return cond__vmsvc13693;
+	} cond__vmsvc13696 = !!((__contains_2__vmsvc13695)); } return cond__vmsvc13696;
 }
 
 bool types__type_id_mentions_any_generic_param(u32 typ, Array params) {
@@ -610817,7 +610986,7 @@ bool types__type_name_collides_with_main(u32 candidate_id, u32 name_id) {
 		return false;
 	}
 	flat__SourceTypeSyntax* syntax = flat__source_type_syntax(candidate_id);
-	int cond__vmsvc13695; cond__vmsvc13695 = !!((flat__SourceTypeSyntax__unqualified(syntax) == name_id)); if (cond__vmsvc13695) { u32 __in_lhs_1__vmsvc13694 = flat__SourceTypeSyntax__qualifier(syntax); cond__vmsvc13695 = !!((!((__in_lhs_1__vmsvc13694 == (u32)(0)) || (__in_lhs_1__vmsvc13694 == types__checker_source_main_module) || (__in_lhs_1__vmsvc13694 == types__checker_source_builtin)))); } return cond__vmsvc13695;
+	int cond__vmsvc13698; cond__vmsvc13698 = !!((flat__SourceTypeSyntax__unqualified(syntax) == name_id)); if (cond__vmsvc13698) { u32 __in_lhs_1__vmsvc13697 = flat__SourceTypeSyntax__qualifier(syntax); cond__vmsvc13698 = !!((!((__in_lhs_1__vmsvc13697 == (u32)(0)) || (__in_lhs_1__vmsvc13697 == types__checker_source_main_module) || (__in_lhs_1__vmsvc13697 == types__checker_source_builtin)))); } return cond__vmsvc13698;
 }
 
 string types__type_names_text(Array names, string word) {
@@ -610827,17 +610996,17 @@ string types__type_names_text(Array names, string word) {
 		__v_int __for_idx_1 = 0;
 		for (; __for_idx_1 < __in_lhs_0.len; __for_idx_1++) {
 			u32 name = *(u32*)(array_get(__in_lhs_0, __for_idx_1));
-			string __v3_internal_symbol_join_0__vmsvc13696[3]; __v3_internal_symbol_join_0__vmsvc13696[0] = _str_41; __v3_internal_symbol_join_0__vmsvc13696[1] = flat__source_type_name(flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(name))); __v3_internal_symbol_join_0__vmsvc13696[2] = _str_41; string __arr_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13696));
+			string __v3_internal_symbol_join_0__vmsvc13699[3]; __v3_internal_symbol_join_0__vmsvc13699[0] = _str_41; __v3_internal_symbol_join_0__vmsvc13699[1] = flat__source_type_name(flat__SourceTypeSyntax__unqualified(flat__source_type_syntax(name))); __v3_internal_symbol_join_0__vmsvc13699[2] = _str_41; string __arr_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13699));
 			array_push(&shown, &__arr_val_2);
 		}
 	}
 	if (names.len > 3) {
-		string __v3_internal_symbol_join_1__vmsvc13697[6]; __v3_internal_symbol_join_1__vmsvc13697[0] = Array_string__join(shown, _str_25); __v3_internal_symbol_join_1__vmsvc13697[1] = _str_1; __v3_internal_symbol_join_1__vmsvc13697[2] = word; __v3_internal_symbol_join_1__vmsvc13697[3] = _str_1; __v3_internal_symbol_join_1__vmsvc13697[4] = int__str(names.len - 3); __v3_internal_symbol_join_1__vmsvc13697[5] = _str_7358; return (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13697));
+		string __v3_internal_symbol_join_1__vmsvc13700[6]; __v3_internal_symbol_join_1__vmsvc13700[0] = Array_string__join(shown, _str_25); __v3_internal_symbol_join_1__vmsvc13700[1] = _str_1; __v3_internal_symbol_join_1__vmsvc13700[2] = word; __v3_internal_symbol_join_1__vmsvc13700[3] = _str_1; __v3_internal_symbol_join_1__vmsvc13700[4] = int__str(names.len - 3); __v3_internal_symbol_join_1__vmsvc13700[5] = _str_7358; return (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13700));
 	}
 	if (shown.len == 1) {
 		return (*(string*)array_get(shown, 0));
 	}
-	string __v3_internal_symbol_join_2__vmsvc13698[5]; __v3_internal_symbol_join_2__vmsvc13698[0] = Array_string__join(array__slice_ni(	shown, 0, 	-1), _str_25); __v3_internal_symbol_join_2__vmsvc13698[1] = _str_1; __v3_internal_symbol_join_2__vmsvc13698[2] = word; __v3_internal_symbol_join_2__vmsvc13698[3] = _str_1; __v3_internal_symbol_join_2__vmsvc13698[4] = *(string*)array__last(shown); return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13698));
+	string __v3_internal_symbol_join_2__vmsvc13701[5]; __v3_internal_symbol_join_2__vmsvc13701[0] = Array_string__join(array__slice_ni(	shown, 0, 	-1), _str_25); __v3_internal_symbol_join_2__vmsvc13701[1] = _str_1; __v3_internal_symbol_join_2__vmsvc13701[2] = word; __v3_internal_symbol_join_2__vmsvc13701[3] = _str_1; __v3_internal_symbol_join_2__vmsvc13701[4] = *(string*)array__last(shown); return (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13701));
 }
 
 string types__type_owner_module(string name) {
@@ -610970,7 +611139,7 @@ string types__type_param_occurrence_reason(map types, map texts, map constraints
 			}
 			Array implementers = __filter_10;
 			if ((implementers.len == 0) || (implementers.len < taken.len)) {
-				string __v3_internal_symbol_join_2__vmsvc13699[5]; __v3_internal_symbol_join_2__vmsvc13699[0] = _str_41; __v3_internal_symbol_join_2__vmsvc13699[1] = name; __v3_internal_symbol_join_2__vmsvc13699[2] = _str_7350; __v3_internal_symbol_join_2__vmsvc13699[3] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_2__vmsvc13699[4] = _str_41; string __arr_val_13 = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13699));
+				string __v3_internal_symbol_join_2__vmsvc13702[5]; __v3_internal_symbol_join_2__vmsvc13702[0] = _str_41; __v3_internal_symbol_join_2__vmsvc13702[1] = name; __v3_internal_symbol_join_2__vmsvc13702[2] = _str_7350; __v3_internal_symbol_join_2__vmsvc13702[3] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_2__vmsvc13702[4] = _str_41; string __arr_val_13 = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13702));
 				array_push(&parts, &__arr_val_13);
 			} else {
 				string __if_val_14 = {0};
@@ -610980,7 +611149,7 @@ string types__type_param_occurrence_reason(map types, map texts, map constraints
 					__if_val_14 = _str_7351;
 				}
 				string verb = __if_val_14;
-				string __v3_internal_symbol_join_3__vmsvc13700[9]; __v3_internal_symbol_join_3__vmsvc13700[0] = _str_7352; __v3_internal_symbol_join_3__vmsvc13700[1] = name; __v3_internal_symbol_join_3__vmsvc13700[2] = _str_6330; __v3_internal_symbol_join_3__vmsvc13700[3] = types__type_names_text(implementers, _str_6369); __v3_internal_symbol_join_3__vmsvc13700[4] = _str_7353; __v3_internal_symbol_join_3__vmsvc13700[5] = verb; __v3_internal_symbol_join_3__vmsvc13700[6] = _str_5597; __v3_internal_symbol_join_3__vmsvc13700[7] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_3__vmsvc13700[8] = _str_41; string __arr_val_15 = (string_plus_many(9, __v3_internal_symbol_join_3__vmsvc13700));
+				string __v3_internal_symbol_join_3__vmsvc13703[9]; __v3_internal_symbol_join_3__vmsvc13703[0] = _str_7352; __v3_internal_symbol_join_3__vmsvc13703[1] = name; __v3_internal_symbol_join_3__vmsvc13703[2] = _str_6330; __v3_internal_symbol_join_3__vmsvc13703[3] = types__type_names_text(implementers, _str_6369); __v3_internal_symbol_join_3__vmsvc13703[4] = _str_7353; __v3_internal_symbol_join_3__vmsvc13703[5] = verb; __v3_internal_symbol_join_3__vmsvc13703[6] = _str_5597; __v3_internal_symbol_join_3__vmsvc13703[7] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_3__vmsvc13703[8] = _str_41; string __arr_val_15 = (string_plus_many(9, __v3_internal_symbol_join_3__vmsvc13703));
 				array_push(&parts, &__arr_val_15);
 			}
 			continue;
@@ -611009,7 +611178,7 @@ string types__type_param_occurrence_reason(map types, map texts, map constraints
 		if ((missing.len > 0) && (missing.len < taken.len)) {
 			string __if_val_22 = {0};
 			if (missing.len == 1) {
-				string __v3_internal_symbol_join_5__vmsvc13701[3]; __v3_internal_symbol_join_5__vmsvc13701[0] = _str_7354; __v3_internal_symbol_join_5__vmsvc13701[1] = flat__source_type_name(flat__SourceTypeSyntax__unqualified(flat__source_type_syntax((*(u32*)array_get(missing, 0))))); __v3_internal_symbol_join_5__vmsvc13701[2] = _str_41; __if_val_22 = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13701));
+				string __v3_internal_symbol_join_5__vmsvc13704[3]; __v3_internal_symbol_join_5__vmsvc13704[0] = _str_7354; __v3_internal_symbol_join_5__vmsvc13704[1] = flat__source_type_name(flat__SourceTypeSyntax__unqualified(flat__source_type_syntax((*(u32*)array_get(missing, 0))))); __v3_internal_symbol_join_5__vmsvc13704[2] = _str_41; __if_val_22 = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13704));
 			} else {
 				__if_val_22 = string__plus(_str_7355, types__type_names_text(missing, _str_6368));
 			}
@@ -611018,7 +611187,7 @@ string types__type_param_occurrence_reason(map types, map texts, map constraints
 			__if_val_21 = types__type_names_text(taken, _str_6369);
 		}
 		string what = __if_val_21;
-		string __v3_internal_symbol_join_6__vmsvc13702[7]; __v3_internal_symbol_join_6__vmsvc13702[0] = _str_7352; __v3_internal_symbol_join_6__vmsvc13702[1] = name; __v3_internal_symbol_join_6__vmsvc13702[2] = _str_6330; __v3_internal_symbol_join_6__vmsvc13702[3] = what; __v3_internal_symbol_join_6__vmsvc13702[4] = _str_7356; __v3_internal_symbol_join_6__vmsvc13702[5] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_6__vmsvc13702[6] = _str_41; string __arr_val_23 = (string_plus_many(7, __v3_internal_symbol_join_6__vmsvc13702));
+		string __v3_internal_symbol_join_6__vmsvc13705[7]; __v3_internal_symbol_join_6__vmsvc13705[0] = _str_7352; __v3_internal_symbol_join_6__vmsvc13705[1] = name; __v3_internal_symbol_join_6__vmsvc13705[2] = _str_6330; __v3_internal_symbol_join_6__vmsvc13705[3] = what; __v3_internal_symbol_join_6__vmsvc13705[4] = _str_7356; __v3_internal_symbol_join_6__vmsvc13705[5] = types__GenericConstraint__name_text(&constraint); __v3_internal_symbol_join_6__vmsvc13705[6] = _str_41; string __arr_val_23 = (string_plus_many(7, __v3_internal_symbol_join_6__vmsvc13705));
 		array_push(&parts, &__arr_val_23);
 	}
 	return Array_string__join(parts, _str_7357);
@@ -611473,7 +611642,7 @@ types__Type types__unknown_type(string reason) {
 }
 
 types__Type types__unknown_type_quoting(string reason, string name) {
-	string __v3_internal_symbol_join_0__vmsvc13703[4]; __v3_internal_symbol_join_0__vmsvc13703[0] = reason; __v3_internal_symbol_join_0__vmsvc13703[1] = _str_5597; __v3_internal_symbol_join_0__vmsvc13703[2] = name; __v3_internal_symbol_join_0__vmsvc13703[3] = _str_41; string __struct_field_0 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13703));
+	string __v3_internal_symbol_join_0__vmsvc13706[4]; __v3_internal_symbol_join_0__vmsvc13706[0] = reason; __v3_internal_symbol_join_0__vmsvc13706[1] = _str_5597; __v3_internal_symbol_join_0__vmsvc13706[2] = name; __v3_internal_symbol_join_0__vmsvc13706[3] = _str_41; string __struct_field_0 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13706));
 	u32 __if_val_1 = {0};
 	if (types__is_bare_generic_param(name)) {
 		__if_val_1 = flat__source_type_id(name);
@@ -611488,7 +611657,7 @@ types__Type types__unknown_type_quoting(string reason, string name) {
 
 types__Type types__unknown_type_quoting_id(string reason, u32 name_id) {
 	string name = flat__source_type_name(name_id);
-	string __v3_internal_symbol_join_0__vmsvc13704[4]; __v3_internal_symbol_join_0__vmsvc13704[0] = reason; __v3_internal_symbol_join_0__vmsvc13704[1] = _str_5597; __v3_internal_symbol_join_0__vmsvc13704[2] = name; __v3_internal_symbol_join_0__vmsvc13704[3] = _str_41; string __struct_field_0 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13704));
+	string __v3_internal_symbol_join_0__vmsvc13707[4]; __v3_internal_symbol_join_0__vmsvc13707[0] = reason; __v3_internal_symbol_join_0__vmsvc13707[1] = _str_5597; __v3_internal_symbol_join_0__vmsvc13707[2] = name; __v3_internal_symbol_join_0__vmsvc13707[3] = _str_41; string __struct_field_0 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13707));
 	u32 __if_val_1 = {0};
 	if (types__is_bare_generic_param(name)) {
 		__if_val_1 = name_id;
@@ -611876,12 +612045,12 @@ string types__vls_details_json(Array details) {
 		__v_int __map_idx_2 = 0;
 		for (; __map_idx_2 < details.len; __map_idx_2++) {
 			types__VlsDetail __map_it_0 = *(types__VlsDetail*)(array_get(details, __map_idx_2));
-			string __v3_internal_symbol_join_0__vmsvc13705[9]; __v3_internal_symbol_join_0__vmsvc13705[0] = _str_668; __v3_internal_symbol_join_0__vmsvc13705[1] = int__str(__map_it_0.kind); __v3_internal_symbol_join_0__vmsvc13705[2] = _str_8487; __v3_internal_symbol_join_0__vmsvc13705[3] = types__vls_json_escape(__map_it_0.label); __v3_internal_symbol_join_0__vmsvc13705[4] = _str_8488; __v3_internal_symbol_join_0__vmsvc13705[5] = types__vls_json_escape(__map_it_0.detail); __v3_internal_symbol_join_0__vmsvc13705[6] = _str_8489; __v3_internal_symbol_join_0__vmsvc13705[7] = types__vls_json_escape(__map_it_0.declaration); __v3_internal_symbol_join_0__vmsvc13705[8] = _str_8490; string __map_val_3 = (string_plus_many(9, __v3_internal_symbol_join_0__vmsvc13705));
+			string __v3_internal_symbol_join_0__vmsvc13708[9]; __v3_internal_symbol_join_0__vmsvc13708[0] = _str_668; __v3_internal_symbol_join_0__vmsvc13708[1] = int__str(__map_it_0.kind); __v3_internal_symbol_join_0__vmsvc13708[2] = _str_8487; __v3_internal_symbol_join_0__vmsvc13708[3] = types__vls_json_escape(__map_it_0.label); __v3_internal_symbol_join_0__vmsvc13708[4] = _str_8488; __v3_internal_symbol_join_0__vmsvc13708[5] = types__vls_json_escape(__map_it_0.detail); __v3_internal_symbol_join_0__vmsvc13708[6] = _str_8489; __v3_internal_symbol_join_0__vmsvc13708[7] = types__vls_json_escape(__map_it_0.declaration); __v3_internal_symbol_join_0__vmsvc13708[8] = _str_8490; string __map_val_3 = (string_plus_many(9, __v3_internal_symbol_join_0__vmsvc13708));
 			array_push(&__map_1, &__map_val_3);
 		}
 	}
 	Array items = __map_1;
-	string __v3_internal_symbol_join_1__vmsvc13706[3]; __v3_internal_symbol_join_1__vmsvc13706[0] = _str_8491; __v3_internal_symbol_join_1__vmsvc13706[1] = Array_string__join(items, _str_1101); __v3_internal_symbol_join_1__vmsvc13706[2] = _str_8492; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13706));
+	string __v3_internal_symbol_join_1__vmsvc13709[3]; __v3_internal_symbol_join_1__vmsvc13709[0] = _str_8491; __v3_internal_symbol_join_1__vmsvc13709[1] = Array_string__join(items, _str_1101); __v3_internal_symbol_join_1__vmsvc13709[2] = _str_8492; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13709));
 }
 
 bool types__vls_embeds_its_type(string source, __v_int name_end) {
@@ -611950,7 +612119,7 @@ string types__vls_hover_json(string declaration, string doc) {
 		array_push(&lines, &__arr_val_1);
 	}
 	string value = string__replace(string__replace(string__replace(Array_string__join(lines, _str_0), _str_373, _str_685), _str_363, _str_684), _str_0, _str_688);
-	string __v3_internal_symbol_join_0__vmsvc13707[3]; __v3_internal_symbol_join_0__vmsvc13707[0] = _str_8518; __v3_internal_symbol_join_0__vmsvc13707[1] = value; __v3_internal_symbol_join_0__vmsvc13707[2] = _str_8519; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13707));
+	string __v3_internal_symbol_join_0__vmsvc13710[3]; __v3_internal_symbol_join_0__vmsvc13710[0] = _str_8518; __v3_internal_symbol_join_0__vmsvc13710[1] = value; __v3_internal_symbol_join_0__vmsvc13710[2] = _str_8519; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13710));
 }
 
 __v_option___v_int types__vls_index_between(string source, string needle, __v_int from, __v_int to) {
@@ -612092,7 +612261,7 @@ bool types__vls_offset_is_code(string source, __v_int offset) {
 
 bool types__vls_open_type_holds(types__Type* typ, map params) {
 	if ((typ)->typ == 2) {
-		int cond__vmsvc13709; cond__vmsvc13709 = !!((typ->types__Unknown.UnknownDataRef->placeholder != 0)); if (cond__vmsvc13709) { u32 __map_key_0__vmsvc13708 = typ->types__Unknown.UnknownDataRef->placeholder; cond__vmsvc13709 = !!((map__exists(&params, &__map_key_0__vmsvc13708))); } return cond__vmsvc13709;
+		int cond__vmsvc13712; cond__vmsvc13712 = !!((typ->types__Unknown.UnknownDataRef->placeholder != 0)); if (cond__vmsvc13712) { u32 __map_key_0__vmsvc13711 = typ->types__Unknown.UnknownDataRef->placeholder; cond__vmsvc13712 = !!((map__exists(&params, &__map_key_0__vmsvc13711))); } return cond__vmsvc13712;
 	} else if ((typ)->typ == 1) {
 		return false;
 	} else if ((typ)->typ == 11) {
@@ -612179,7 +612348,7 @@ string types__vls_strip_main_module(string name) {
 }
 
 string types__vls_twin_key(flat__Node node) {
-	string __v3_internal_symbol_join_0__vmsvc13710[7]; __v3_internal_symbol_join_0__vmsvc13710[0] = int__str((__v_int)(node.kind)); __v3_internal_symbol_join_0__vmsvc13710[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13710[2] = i32__str(node.pos.offset); __v3_internal_symbol_join_0__vmsvc13710[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13710[4] = i32__str(node.pos.end); __v3_internal_symbol_join_0__vmsvc13710[5] = _str_1; __v3_internal_symbol_join_0__vmsvc13710[6] = flat__Node__value_text(node); return (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13710));
+	string __v3_internal_symbol_join_0__vmsvc13713[7]; __v3_internal_symbol_join_0__vmsvc13713[0] = int__str((__v_int)(node.kind)); __v3_internal_symbol_join_0__vmsvc13713[1] = _str_1; __v3_internal_symbol_join_0__vmsvc13713[2] = i32__str(node.pos.offset); __v3_internal_symbol_join_0__vmsvc13713[3] = _str_1; __v3_internal_symbol_join_0__vmsvc13713[4] = i32__str(node.pos.end); __v3_internal_symbol_join_0__vmsvc13713[5] = _str_1; __v3_internal_symbol_join_0__vmsvc13713[6] = flat__Node__value_text(node); return (string_plus_many(7, __v3_internal_symbol_join_0__vmsvc13713));
 }
 
 types__VlsInlayHint types__vls_type_label_hint(__v_int offset, string label) {
@@ -612218,7 +612387,7 @@ Array types__vls_type_words_at(string source, __v_int offset) {
 		__v_option_string __if_guard_3 = types__vls_word_at(source, start - 1);
 		if (__if_guard_3.ok) {
 			string before = __if_guard_3.value;
-			string __v3_internal_symbol_join_0__vmsvc13711[3]; __v3_internal_symbol_join_0__vmsvc13711[0] = before; __v3_internal_symbol_join_0__vmsvc13711[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13711[2] = word; string __arr_val_4 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13711));
+			string __v3_internal_symbol_join_0__vmsvc13714[3]; __v3_internal_symbol_join_0__vmsvc13714[0] = before; __v3_internal_symbol_join_0__vmsvc13714[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13714[2] = word; string __arr_val_4 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13714));
 			array_push(&words, &__arr_val_4);
 		}
 	}
@@ -612226,7 +612395,7 @@ Array types__vls_type_words_at(string source, __v_int offset) {
 		__v_option_string __if_guard_5 = types__vls_word_at(source, end + 1);
 		if (__if_guard_5.ok) {
 			string after = __if_guard_5.value;
-			string __v3_internal_symbol_join_1__vmsvc13712[3]; __v3_internal_symbol_join_1__vmsvc13712[0] = word; __v3_internal_symbol_join_1__vmsvc13712[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13712[2] = after; string __arr_val_6 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13712));
+			string __v3_internal_symbol_join_1__vmsvc13715[3]; __v3_internal_symbol_join_1__vmsvc13715[0] = word; __v3_internal_symbol_join_1__vmsvc13715[1] = _str_2; __v3_internal_symbol_join_1__vmsvc13715[2] = after; string __arr_val_6 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13715));
 			array_push(&words, &__arr_val_6);
 		}
 	}
@@ -612318,12 +612487,12 @@ __v_option_types__FnType types__wrapped_fn_type_from_type(types__Type* typ) {
 }
 
 void types__write_incremental_entry(Array* b, types__IncrementalEntry entry) {
-	string __v3_internal_symbol_join_0__vmsvc13713[12]; __v3_internal_symbol_join_0__vmsvc13713[0] = _str_8454; __v3_internal_symbol_join_0__vmsvc13713[1] = entry.key; __v3_internal_symbol_join_0__vmsvc13713[2] = _str_2031; __v3_internal_symbol_join_0__vmsvc13713[3] = u64__hex(entry.hash); __v3_internal_symbol_join_0__vmsvc13713[4] = _str_2031; __v3_internal_symbol_join_0__vmsvc13713[5] = int__str(entry.length); __v3_internal_symbol_join_0__vmsvc13713[6] = _str_2031; __v3_internal_symbol_join_0__vmsvc13713[7] = int__str(entry.range_len); __v3_internal_symbol_join_0__vmsvc13713[8] = _str_2031; __v3_internal_symbol_join_0__vmsvc13713[9] = int__str((__v_int)(entry.reusable)); __v3_internal_symbol_join_0__vmsvc13713[10] = _str_2031; __v3_internal_symbol_join_0__vmsvc13713[11] = int__str((__v_int)(entry.generic)); strings__Builder__writeln(b, (string_plus_many(12, __v3_internal_symbol_join_0__vmsvc13713)));
+	string __v3_internal_symbol_join_0__vmsvc13716[12]; __v3_internal_symbol_join_0__vmsvc13716[0] = _str_8454; __v3_internal_symbol_join_0__vmsvc13716[1] = entry.key; __v3_internal_symbol_join_0__vmsvc13716[2] = _str_2031; __v3_internal_symbol_join_0__vmsvc13716[3] = u64__hex(entry.hash); __v3_internal_symbol_join_0__vmsvc13716[4] = _str_2031; __v3_internal_symbol_join_0__vmsvc13716[5] = int__str(entry.length); __v3_internal_symbol_join_0__vmsvc13716[6] = _str_2031; __v3_internal_symbol_join_0__vmsvc13716[7] = int__str(entry.range_len); __v3_internal_symbol_join_0__vmsvc13716[8] = _str_2031; __v3_internal_symbol_join_0__vmsvc13716[9] = int__str((__v_int)(entry.reusable)); __v3_internal_symbol_join_0__vmsvc13716[10] = _str_2031; __v3_internal_symbol_join_0__vmsvc13716[11] = int__str((__v_int)(entry.generic)); strings__Builder__writeln(b, (string_plus_many(12, __v3_internal_symbol_join_0__vmsvc13716)));
 	{
 		__v_int __for_idx_0 = 0;
 		for (; __for_idx_0 < entry.details.diagnostics.len; __for_idx_0++) {
 			types__IncrementalDiagnostic d = *(types__IncrementalDiagnostic*)(array_get(entry.details.diagnostics, __for_idx_0));
-			string __v3_internal_symbol_join_1__vmsvc13714[22]; __v3_internal_symbol_join_1__vmsvc13714[0] = _str_8455; __v3_internal_symbol_join_1__vmsvc13714[1] = int__str(d.list); __v3_internal_symbol_join_1__vmsvc13714[2] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[3] = int__str(d.kind); __v3_internal_symbol_join_1__vmsvc13714[4] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[5] = int__str(d.back); __v3_internal_symbol_join_1__vmsvc13714[6] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[7] = int__str(d.offset); __v3_internal_symbol_join_1__vmsvc13714[8] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[9] = int__str(d.end); __v3_internal_symbol_join_1__vmsvc13714[10] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[11] = strconv__format_uint((u16)(d.meta), 10); __v3_internal_symbol_join_1__vmsvc13714[12] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[13] = int__str(d.order); __v3_internal_symbol_join_1__vmsvc13714[14] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[15] = types__incremental_escape(d.severity); __v3_internal_symbol_join_1__vmsvc13714[16] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[17] = types__incremental_escape(d.msg); __v3_internal_symbol_join_1__vmsvc13714[18] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[19] = types__incremental_escape(d.fn_qname); __v3_internal_symbol_join_1__vmsvc13714[20] = _str_2031; __v3_internal_symbol_join_1__vmsvc13714[21] = int__str(d.details.len); strings__Builder__write_string(b, (string_plus_many(22, __v3_internal_symbol_join_1__vmsvc13714)));
+			string __v3_internal_symbol_join_1__vmsvc13717[22]; __v3_internal_symbol_join_1__vmsvc13717[0] = _str_8455; __v3_internal_symbol_join_1__vmsvc13717[1] = int__str(d.list); __v3_internal_symbol_join_1__vmsvc13717[2] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[3] = int__str(d.kind); __v3_internal_symbol_join_1__vmsvc13717[4] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[5] = int__str(d.back); __v3_internal_symbol_join_1__vmsvc13717[6] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[7] = int__str(d.offset); __v3_internal_symbol_join_1__vmsvc13717[8] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[9] = int__str(d.end); __v3_internal_symbol_join_1__vmsvc13717[10] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[11] = strconv__format_uint((u16)(d.meta), 10); __v3_internal_symbol_join_1__vmsvc13717[12] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[13] = int__str(d.order); __v3_internal_symbol_join_1__vmsvc13717[14] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[15] = types__incremental_escape(d.severity); __v3_internal_symbol_join_1__vmsvc13717[16] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[17] = types__incremental_escape(d.msg); __v3_internal_symbol_join_1__vmsvc13717[18] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[19] = types__incremental_escape(d.fn_qname); __v3_internal_symbol_join_1__vmsvc13717[20] = _str_2031; __v3_internal_symbol_join_1__vmsvc13717[21] = int__str(d.details.len); strings__Builder__write_string(b, (string_plus_many(22, __v3_internal_symbol_join_1__vmsvc13717)));
 			{
 				__v_int __for_idx_1 = 0;
 				for (; __for_idx_1 < d.details.len; __for_idx_1++) {
@@ -612339,20 +612508,20 @@ void types__write_incremental_entry(Array* b, types__IncrementalEntry entry) {
 		__v_int __for_idx_2 = 0;
 		for (; __for_idx_2 < entry.details.calls.len; __for_idx_2++) {
 			types__IncrementalName call = *(types__IncrementalName*)(array_get(entry.details.calls, __for_idx_2));
-			string __v3_internal_symbol_join_2__vmsvc13715[4]; __v3_internal_symbol_join_2__vmsvc13715[0] = _str_8456; __v3_internal_symbol_join_2__vmsvc13715[1] = int__str(call.back); __v3_internal_symbol_join_2__vmsvc13715[2] = _str_2031; __v3_internal_symbol_join_2__vmsvc13715[3] = types__incremental_escape(call.name); strings__Builder__writeln(b, (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13715)));
+			string __v3_internal_symbol_join_2__vmsvc13718[4]; __v3_internal_symbol_join_2__vmsvc13718[0] = _str_8456; __v3_internal_symbol_join_2__vmsvc13718[1] = int__str(call.back); __v3_internal_symbol_join_2__vmsvc13718[2] = _str_2031; __v3_internal_symbol_join_2__vmsvc13718[3] = types__incremental_escape(call.name); strings__Builder__writeln(b, (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13718)));
 		}
 	}
 	{
 		__v_int __for_idx_3 = 0;
 		for (; __for_idx_3 < entry.details.fn_values.len; __for_idx_3++) {
 			types__IncrementalName value = *(types__IncrementalName*)(array_get(entry.details.fn_values, __for_idx_3));
-			string __v3_internal_symbol_join_3__vmsvc13716[4]; __v3_internal_symbol_join_3__vmsvc13716[0] = _str_8457; __v3_internal_symbol_join_3__vmsvc13716[1] = int__str(value.back); __v3_internal_symbol_join_3__vmsvc13716[2] = _str_2031; __v3_internal_symbol_join_3__vmsvc13716[3] = types__incremental_escape(value.name); strings__Builder__writeln(b, (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13716)));
+			string __v3_internal_symbol_join_3__vmsvc13719[4]; __v3_internal_symbol_join_3__vmsvc13719[0] = _str_8457; __v3_internal_symbol_join_3__vmsvc13719[1] = int__str(value.back); __v3_internal_symbol_join_3__vmsvc13719[2] = _str_2031; __v3_internal_symbol_join_3__vmsvc13719[3] = types__incremental_escape(value.name); strings__Builder__writeln(b, (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13719)));
 		}
 	}
 }
 
 void types__write_incremental_instance_error(Array* b, string key, types__IncrementalDiagnostic d) {
-	string __v3_internal_symbol_join_0__vmsvc13717[18]; __v3_internal_symbol_join_0__vmsvc13717[0] = _str_8458; __v3_internal_symbol_join_0__vmsvc13717[1] = key; __v3_internal_symbol_join_0__vmsvc13717[2] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[3] = int__str(d.kind); __v3_internal_symbol_join_0__vmsvc13717[4] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[5] = int__str(d.offset); __v3_internal_symbol_join_0__vmsvc13717[6] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[7] = int__str(d.end); __v3_internal_symbol_join_0__vmsvc13717[8] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[9] = strconv__format_uint((u16)(d.meta), 10); __v3_internal_symbol_join_0__vmsvc13717[10] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[11] = int__str(d.order); __v3_internal_symbol_join_0__vmsvc13717[12] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[13] = types__incremental_escape(d.severity); __v3_internal_symbol_join_0__vmsvc13717[14] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[15] = types__incremental_escape(d.msg); __v3_internal_symbol_join_0__vmsvc13717[16] = _str_2031; __v3_internal_symbol_join_0__vmsvc13717[17] = int__str(d.details.len); strings__Builder__write_string(b, (string_plus_many(18, __v3_internal_symbol_join_0__vmsvc13717)));
+	string __v3_internal_symbol_join_0__vmsvc13720[18]; __v3_internal_symbol_join_0__vmsvc13720[0] = _str_8458; __v3_internal_symbol_join_0__vmsvc13720[1] = key; __v3_internal_symbol_join_0__vmsvc13720[2] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[3] = int__str(d.kind); __v3_internal_symbol_join_0__vmsvc13720[4] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[5] = int__str(d.offset); __v3_internal_symbol_join_0__vmsvc13720[6] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[7] = int__str(d.end); __v3_internal_symbol_join_0__vmsvc13720[8] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[9] = strconv__format_uint((u16)(d.meta), 10); __v3_internal_symbol_join_0__vmsvc13720[10] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[11] = int__str(d.order); __v3_internal_symbol_join_0__vmsvc13720[12] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[13] = types__incremental_escape(d.severity); __v3_internal_symbol_join_0__vmsvc13720[14] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[15] = types__incremental_escape(d.msg); __v3_internal_symbol_join_0__vmsvc13720[16] = _str_2031; __v3_internal_symbol_join_0__vmsvc13720[17] = int__str(d.details.len); strings__Builder__write_string(b, (string_plus_many(18, __v3_internal_symbol_join_0__vmsvc13720)));
 	{
 		__v_int __for_idx_0 = 0;
 		for (; __for_idx_0 < d.details.len; __for_idx_0++) {
@@ -612387,7 +612556,7 @@ __v_int types__write_storage_key_decimal(u8* dst, __v_int value) {
 	__v_int count = 0;
 	__v_int rest = value;
 	for (;;) {
-		__v_int _t1__vmsvc13718 = (__v_int)(rest); __v_int _t2__vmsvc13719 = (__v_int)(10); if (_t2__vmsvc13719 == 0) v_panic(_S("modulo by zero")); digits[count] = (u8)('0' + (((__v_int)(_t1__vmsvc13718 % _t2__vmsvc13719))));
+		__v_int _t1__vmsvc13721 = (__v_int)(rest); __v_int _t2__vmsvc13722 = (__v_int)(10); if (_t2__vmsvc13722 == 0) v_panic(_S("modulo by zero")); digits[count] = (u8)('0' + (((__v_int)(_t1__vmsvc13721 % _t2__vmsvc13722))));
 		count++;
 		rest /= 10;
 		if (rest == 0) {
@@ -612419,15 +612588,15 @@ Array types__written_type_ids(flat__Node node) {
 		return type_ids;
 	}
 	u32 value_id = flat__Node__source_value_id(node);
-	int cond__vmsvc13721; cond__vmsvc13721 = !!((node.kind == flat__NodeKind__ident)); if (cond__vmsvc13721) { int __in_lhs_1__vmsvc13720 = flat__source_type_shape(value_id); cond__vmsvc13721 = !!(((__in_lhs_1__vmsvc13720 & 2) != 0)); } if (cond__vmsvc13721 && (node.pos.end > 0)) {
+	int cond__vmsvc13724; cond__vmsvc13724 = !!((node.kind == flat__NodeKind__ident)); if (cond__vmsvc13724) { int __in_lhs_1__vmsvc13723 = flat__source_type_shape(value_id); cond__vmsvc13724 = !!(((__in_lhs_1__vmsvc13723 & 2) != 0)); } if (cond__vmsvc13724 && (node.pos.end > 0)) {
 		u32 __arr_val_2 = value_id;
 		{ Array* __v3_internal_symbol_scalar_push_base_1 = &type_ids; u32 __v3_internal_symbol_scalar_push_value_1 = __arr_val_2; if (__v3_internal_symbol_scalar_push_base_1->len >= 0 && __v3_internal_symbol_scalar_push_base_1->len < __v3_internal_symbol_scalar_push_base_1->cap && !(__v3_internal_symbol_scalar_push_base_1->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_1->data)[__v3_internal_symbol_scalar_push_base_1->len] = __v3_internal_symbol_scalar_push_value_1; __v3_internal_symbol_scalar_push_base_1->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_1, &__v3_internal_symbol_scalar_push_value_1); } }
 	}
-	int cond__vmsvc13723; cond__vmsvc13723 = !!((node.kind == flat__NodeKind__interface_field) && (node.op != flat__Op__dot) && (node.typ == 0) && (node.value.len > 0)); if (cond__vmsvc13723) { int __in_lhs_3__vmsvc13722 = flat__source_type_shape(value_id); cond__vmsvc13723 = !!(((__in_lhs_3__vmsvc13722 & 2) != 0)); } if (cond__vmsvc13723) {
+	int cond__vmsvc13726; cond__vmsvc13726 = !!((node.kind == flat__NodeKind__interface_field) && (node.op != flat__Op__dot) && (node.typ == 0) && (node.value.len > 0)); if (cond__vmsvc13726) { int __in_lhs_3__vmsvc13725 = flat__source_type_shape(value_id); cond__vmsvc13726 = !!(((__in_lhs_3__vmsvc13725 & 2) != 0)); } if (cond__vmsvc13726) {
 		u32 __arr_val_4 = value_id;
 		{ Array* __v3_internal_symbol_scalar_push_base_2 = &type_ids; u32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_4; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
 	}
-	int cond__vmsvc13726; cond__vmsvc13726 = !!((node.kind == flat__NodeKind__map_init) || (node.kind == flat__NodeKind__cast_expr) || (node.kind == flat__NodeKind__is_expr) || (node.kind == flat__NodeKind__as_expr) || (node.kind == flat__NodeKind__array_init) || (((node.kind == flat__NodeKind__sizeof_expr) || (node.kind == flat__NodeKind__typeof_expr)) && (node.children_count == 0))); if (!cond__vmsvc13726) { int cond__vmsvc13725; cond__vmsvc13725 = !!((node.kind == flat__NodeKind__struct_init)); if (cond__vmsvc13725) { int __in_lhs_5__vmsvc13724 = flat__source_type_shape(value_id); cond__vmsvc13725 = !!(((__in_lhs_5__vmsvc13724 & 262144) != 0)); } cond__vmsvc13726 = !!((cond__vmsvc13725)); } if ((cond__vmsvc13726) && (value_id != 0)) {
+	int cond__vmsvc13729; cond__vmsvc13729 = !!((node.kind == flat__NodeKind__map_init) || (node.kind == flat__NodeKind__cast_expr) || (node.kind == flat__NodeKind__is_expr) || (node.kind == flat__NodeKind__as_expr) || (node.kind == flat__NodeKind__array_init) || (((node.kind == flat__NodeKind__sizeof_expr) || (node.kind == flat__NodeKind__typeof_expr)) && (node.children_count == 0))); if (!cond__vmsvc13729) { int cond__vmsvc13728; cond__vmsvc13728 = !!((node.kind == flat__NodeKind__struct_init)); if (cond__vmsvc13728) { int __in_lhs_5__vmsvc13727 = flat__source_type_shape(value_id); cond__vmsvc13728 = !!(((__in_lhs_5__vmsvc13727 & 262144) != 0)); } cond__vmsvc13729 = !!((cond__vmsvc13728)); } if ((cond__vmsvc13729) && (value_id != 0)) {
 		u32 __arr_val_6 = value_id;
 		{ Array* __v3_internal_symbol_scalar_push_base_3 = &type_ids; u32 __v3_internal_symbol_scalar_push_value_3 = __arr_val_6; if (__v3_internal_symbol_scalar_push_base_3->len >= 0 && __v3_internal_symbol_scalar_push_base_3->len < __v3_internal_symbol_scalar_push_base_3->cap && !(__v3_internal_symbol_scalar_push_base_3->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_3->data)[__v3_internal_symbol_scalar_push_base_3->len] = __v3_internal_symbol_scalar_push_value_3; __v3_internal_symbol_scalar_push_base_3->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_3, &__v3_internal_symbol_scalar_push_value_3); } }
 	}
@@ -612447,8 +612616,8 @@ string u128__str(u128 nn) {
 	__v_int v_index = buf.len;
 	while (__v_u128_ne(n, __v_u128_from_u64((u64)(0)))) {
 		v_index--;
-		{ Array* __v3_internal_symbol_scalar_store_base_0 = &buf; int __v3_internal_symbol_scalar_store_index_0 = v_index; u128 _t2__vmsvc13727 = n; u128 _t3__vmsvc13728 = __v_u128_from_u64((u64)(10)); if (__v_u128_is_zero(_t3__vmsvc13728)) v_panic(_S("modulo by zero")); u8 __v3_internal_symbol_scalar_store_value_0 = (u8)(48) + (u8)__v_u128_to_u64((__v_u128_rem(_t2__vmsvc13727, _t3__vmsvc13728))); if (__v3_internal_symbol_scalar_store_index_0 >= 0 && __v3_internal_symbol_scalar_store_index_0 < __v3_internal_symbol_scalar_store_base_0->len) { ((u8*)__v3_internal_symbol_scalar_store_base_0->data)[__v3_internal_symbol_scalar_store_index_0] = __v3_internal_symbol_scalar_store_value_0; } else { array__set(__v3_internal_symbol_scalar_store_base_0, __v3_internal_symbol_scalar_store_index_0, &__v3_internal_symbol_scalar_store_value_0); } }
-		u128 _t4__vmsvc13729 = n; u128 _t5__vmsvc13730 = __v_u128_from_u64((u64)(10)); if (__v_u128_is_zero(_t5__vmsvc13730)) v_panic(_S("division by zero")); n = (__v_u128_div(_t4__vmsvc13729, _t5__vmsvc13730));
+		{ Array* __v3_internal_symbol_scalar_store_base_0 = &buf; int __v3_internal_symbol_scalar_store_index_0 = v_index; u128 _t2__vmsvc13730 = n; u128 _t3__vmsvc13731 = __v_u128_from_u64((u64)(10)); if (__v_u128_is_zero(_t3__vmsvc13731)) v_panic(_S("modulo by zero")); u8 __v3_internal_symbol_scalar_store_value_0 = (u8)(48) + (u8)__v_u128_to_u64((__v_u128_rem(_t2__vmsvc13730, _t3__vmsvc13731))); if (__v3_internal_symbol_scalar_store_index_0 >= 0 && __v3_internal_symbol_scalar_store_index_0 < __v3_internal_symbol_scalar_store_base_0->len) { ((u8*)__v3_internal_symbol_scalar_store_base_0->data)[__v3_internal_symbol_scalar_store_index_0] = __v3_internal_symbol_scalar_store_value_0; } else { array__set(__v3_internal_symbol_scalar_store_base_0, __v3_internal_symbol_scalar_store_index_0, &__v3_internal_symbol_scalar_store_value_0); } }
+		u128 _t4__vmsvc13732 = n; u128 _t5__vmsvc13733 = __v_u128_from_u64((u64)(10)); if (__v_u128_is_zero(_t5__vmsvc13733)) v_panic(_S("division by zero")); n = (__v_u128_div(_t4__vmsvc13732, _t5__vmsvc13733));
 	}
 	return Array_u8__bytestr(array_slice(	buf, 	v_index, (	buf).len));
 }
@@ -612461,7 +612630,7 @@ string u128__str_base(u128 nn, __v_int base) {
 	Array digits = __new_array_noscan(0, 0, sizeof(u8));
 	u128 value = nn;
 	while (__v_u128_gt(value, __v_u128_from_u64((u64)(0)))) {
-		u128 _t1__vmsvc13731 = value; u128 _t2__vmsvc13732 = divisor; if (__v_u128_is_zero(_t2__vmsvc13732)) v_panic(_S("modulo by zero")); u8 digit = (u8)__v_u128_to_u64((__v_u128_rem(_t1__vmsvc13731, _t2__vmsvc13732)));
+		u128 _t1__vmsvc13734 = value; u128 _t2__vmsvc13735 = divisor; if (__v_u128_is_zero(_t2__vmsvc13735)) v_panic(_S("modulo by zero")); u8 digit = (u8)__v_u128_to_u64((__v_u128_rem(_t1__vmsvc13734, _t2__vmsvc13735)));
 		u8 __if_val_0 = {0};
 		if (digit < 10) {
 			__if_val_0 = '0' + digit;
@@ -612470,7 +612639,7 @@ string u128__str_base(u128 nn, __v_int base) {
 		}
 		u8 __arr_val_1 = __if_val_0;
 		{ Array* __v3_internal_symbol_scalar_push_base_2 = &digits; u8 __v3_internal_symbol_scalar_push_value_2 = __arr_val_1; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((u8*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
-		u128 _t4__vmsvc13733 = value; u128 _t5__vmsvc13734 = divisor; if (__v_u128_is_zero(_t5__vmsvc13734)) v_panic(_S("division by zero")); value = (__v_u128_div(_t4__vmsvc13733, _t5__vmsvc13734));
+		u128 _t4__vmsvc13736 = value; u128 _t5__vmsvc13737 = divisor; if (__v_u128_is_zero(_t5__vmsvc13737)) v_panic(_S("division by zero")); value = (__v_u128_div(_t4__vmsvc13736, _t5__vmsvc13737));
 	}
 	Array out = __new_array_noscan(digits.len, 0, sizeof(u8));
 	{
@@ -612503,8 +612672,8 @@ __inline string u32__str(u32 nn) {
 		(buf)[v_index] = 0;
 		v_index--;
 		while (n > 0) {
-			u32 _t1__vmsvc13735 = (u32)(n); u32 _t2__vmsvc13736 = (u32)((u32)(100)); if (_t2__vmsvc13736 == 0) v_panic(_S("division by zero")); u32 n1 = ((u32)(_t1__vmsvc13735 / _t2__vmsvc13736));
-			u32 _t3__vmsvc13737 = (u32)(			(n - (n1 * (u32)(100)))); u64 _t4__vmsvc13738 = (u64)((u32)(1)); d = ((_t4__vmsvc13738 >= 32 ? (u32)0 : (u32)(_t3__vmsvc13737 << _t4__vmsvc13738)));
+			u32 _t1__vmsvc13738 = (u32)(n); u32 _t2__vmsvc13739 = (u32)((u32)(100)); if (_t2__vmsvc13739 == 0) v_panic(_S("division by zero")); u32 n1 = ((u32)(_t1__vmsvc13738 / _t2__vmsvc13739));
+			u32 _t3__vmsvc13740 = (u32)(			(n - (n1 * (u32)(100)))); u64 _t4__vmsvc13741 = (u64)((u32)(1)); d = ((_t4__vmsvc13741 >= 32 ? (u32)0 : (u32)(_t3__vmsvc13740 << _t4__vmsvc13741)));
 			n = n1;
 			(buf)[v_index] = (builtin__digit_pairs).str[(__v_int)(d)];
 			v_index--;
@@ -612546,7 +612715,7 @@ __inline string u64__str(u64 nn) {
 		(buf)[v_index] = 0;
 		v_index--;
 		while (n > 0) {
-			u64 _t1__vmsvc13739 = (u64)(n); u64 _t2__vmsvc13740 = (u64)(100); if (_t2__vmsvc13740 == 0) v_panic(_S("division by zero")); u64 n1 = ((u64)(_t1__vmsvc13739 / _t2__vmsvc13740));
+			u64 _t1__vmsvc13742 = (u64)(n); u64 _t2__vmsvc13743 = (u64)(100); if (_t2__vmsvc13743 == 0) v_panic(_S("division by zero")); u64 n1 = ((u64)(_t1__vmsvc13742 / _t2__vmsvc13743));
 			d = ((u64)(((u64)(			(n - (n1 * 100)))) << (1)));
 			n = n1;
 			(buf)[v_index] = (builtin__digit_pairs).str[(__v_int)(d)];
@@ -612702,7 +612871,7 @@ __v_option_string unbuildable_tool_failure(main__ToolCacheEntry entry) {
 }
 
 string unique_cache_path_token(__v_int attempt) {
-	string __v3_internal_symbol_join_0__vmsvc13741[5]; __v3_internal_symbol_join_0__vmsvc13741[0] = int__str(os__getpid()); __v3_internal_symbol_join_0__vmsvc13741[1] = _str_72; __v3_internal_symbol_join_0__vmsvc13741[2] = i64__str(time__Time__unix_nano(time__now())); __v3_internal_symbol_join_0__vmsvc13741[3] = _str_72; __v3_internal_symbol_join_0__vmsvc13741[4] = int__str(attempt); return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13741));
+	string __v3_internal_symbol_join_0__vmsvc13744[5]; __v3_internal_symbol_join_0__vmsvc13744[0] = int__str(os__getpid()); __v3_internal_symbol_join_0__vmsvc13744[1] = _str_72; __v3_internal_symbol_join_0__vmsvc13744[2] = i64__str(time__Time__unix_nano(time__now())); __v3_internal_symbol_join_0__vmsvc13744[3] = _str_72; __v3_internal_symbol_join_0__vmsvc13744[4] = int__str(attempt); return (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13744));
 }
 
 Array unresolved_import_modules(string details) {
@@ -612837,7 +613006,7 @@ string utf32_to_str_no_malloc(u32 code, u8** buf) {
 }
 
 __v_int utf8_char_len(u8 b) {
-	u32 _t1__vmsvc13742 = (u32)(	(u32)(0xe5000000)); u64 _t2__vmsvc13743 = (u64)((((u8)(((u8)(	b)) >> (3))) & 0x1e)); return (__v_int)((((_t2__vmsvc13743 >= 32 ? (u32)0 : (u32)(_t1__vmsvc13742 >> _t2__vmsvc13743))) & 3) + 1);
+	u32 _t1__vmsvc13745 = (u32)(	(u32)(0xe5000000)); u64 _t2__vmsvc13746 = (u64)((((u8)(((u8)(	b)) >> (3))) & 0x1e)); return (__v_int)((((_t2__vmsvc13746 >= 32 ? (u32)0 : (u32)(_t1__vmsvc13745 >> _t2__vmsvc13746))) & 3) + 1);
 }
 
 multi_return_u32___v_int utf8_decode_rune(u8* _bytes, __v_int available_len) {
@@ -612982,7 +613151,7 @@ string util__Suggestion__say(util__Suggestion s, string message) {
 	if (s.known.len > 0) {
 		util__Possibility top = *(util__Possibility*)array__last(s.known);
 		if ((top.similarity > s.similarity_threshold) && !string__starts_with(top.value, _str_2009)) {
-			string __v3_internal_symbol_join_0__vmsvc13744[3]; __v3_internal_symbol_join_0__vmsvc13744[0] = _str_2010; __v3_internal_symbol_join_0__vmsvc13744[1] = util__highlight_suggestion(top.value); __v3_internal_symbol_join_0__vmsvc13744[2] = _str_2011; result = string__plus(result, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13744)));
+			string __v3_internal_symbol_join_0__vmsvc13747[3]; __v3_internal_symbol_join_0__vmsvc13747[0] = _str_2010; __v3_internal_symbol_join_0__vmsvc13747[1] = util__highlight_suggestion(top.value); __v3_internal_symbol_join_0__vmsvc13747[2] = _str_2011; result = string__plus(result, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13747)));
 			found = true;
 		}
 	}
@@ -612992,7 +613161,7 @@ string util__Suggestion__say(util__Suggestion s, string message) {
 			__v_int __map_idx_2 = 0;
 			for (; __map_idx_2 < s.known.len; __map_idx_2++) {
 				util__Possibility __map_it_0 = *(util__Possibility*)(array_get(s.known, __map_idx_2));
-				string __v3_internal_symbol_join_1__vmsvc13745[3]; __v3_internal_symbol_join_1__vmsvc13745[0] = _str_41; __v3_internal_symbol_join_1__vmsvc13745[1] = util__highlight_suggestion(__map_it_0.svalue); __v3_internal_symbol_join_1__vmsvc13745[2] = _str_41; string __map_val_3 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13745));
+				string __v3_internal_symbol_join_1__vmsvc13748[3]; __v3_internal_symbol_join_1__vmsvc13748[0] = _str_41; __v3_internal_symbol_join_1__vmsvc13748[1] = util__highlight_suggestion(__map_it_0.svalue); __v3_internal_symbol_join_1__vmsvc13748[2] = _str_41; string __map_val_3 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13748));
 				array_push(&__map_1, &__map_val_3);
 			}
 		}
@@ -613050,9 +613219,9 @@ string util__Suggestion__say(util__Suggestion s, string message) {
 		}
 		0;
 		if (values.len == 1) {
-			string __v3_internal_symbol_join_2__vmsvc13746[3]; __v3_internal_symbol_join_2__vmsvc13746[0] = _str_2012; __v3_internal_symbol_join_2__vmsvc13746[1] = (*(string*)array_get(values, 0)); __v3_internal_symbol_join_2__vmsvc13746[2] = _str_2; result = string__plus(result, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13746)));
+			string __v3_internal_symbol_join_2__vmsvc13749[3]; __v3_internal_symbol_join_2__vmsvc13749[0] = _str_2012; __v3_internal_symbol_join_2__vmsvc13749[1] = (*(string*)array_get(values, 0)); __v3_internal_symbol_join_2__vmsvc13749[2] = _str_2; result = string__plus(result, (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13749)));
 		} else if (values.len < 25) {
-			string __v3_internal_symbol_join_3__vmsvc13747[4]; __v3_internal_symbol_join_3__vmsvc13747[0] = result; string __v3_internal_symbol_join_4__vmsvc13748[3]; __v3_internal_symbol_join_4__vmsvc13748[0] = _str_2013; __v3_internal_symbol_join_4__vmsvc13748[1] = int__str(values.len); __v3_internal_symbol_join_4__vmsvc13748[2] = _str_2014; __v3_internal_symbol_join_3__vmsvc13747[1] = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13748)); __v3_internal_symbol_join_3__vmsvc13747[2] = Array_string__join(values, _str_25); __v3_internal_symbol_join_3__vmsvc13747[3] = _str_2; result = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13747));
+			string __v3_internal_symbol_join_3__vmsvc13750[4]; __v3_internal_symbol_join_3__vmsvc13750[0] = result; string __v3_internal_symbol_join_4__vmsvc13751[3]; __v3_internal_symbol_join_4__vmsvc13751[0] = _str_2013; __v3_internal_symbol_join_4__vmsvc13751[1] = int__str(values.len); __v3_internal_symbol_join_4__vmsvc13751[2] = _str_2014; __v3_internal_symbol_join_3__vmsvc13750[1] = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13751)); __v3_internal_symbol_join_3__vmsvc13750[2] = Array_string__join(values, _str_25); __v3_internal_symbol_join_3__vmsvc13750[3] = _str_2; result = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13750));
 		}
 	}
 	return result;
@@ -613131,9 +613300,9 @@ Array util__arm64_asm_register_names(void) {
 			array_push(&names, &__arr_val_2);
 			string __arr_val_3 = string__plus(_str_1944, int__str(i));
 			array_push(&names, &__arr_val_3);
-			string __v3_internal_symbol_join_0__vmsvc13749[3]; __v3_internal_symbol_join_0__vmsvc13749[0] = _str_1944; __v3_internal_symbol_join_0__vmsvc13749[1] = int__str(i); __v3_internal_symbol_join_0__vmsvc13749[2] = _str_1391; string __arr_val_4 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13749));
+			string __v3_internal_symbol_join_0__vmsvc13752[3]; __v3_internal_symbol_join_0__vmsvc13752[0] = _str_1944; __v3_internal_symbol_join_0__vmsvc13752[1] = int__str(i); __v3_internal_symbol_join_0__vmsvc13752[2] = _str_1391; string __arr_val_4 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13752));
 			array_push(&names, &__arr_val_4);
-			string __v3_internal_symbol_join_1__vmsvc13750[3]; __v3_internal_symbol_join_1__vmsvc13750[0] = _str_1944; __v3_internal_symbol_join_1__vmsvc13750[1] = int__str(i); __v3_internal_symbol_join_1__vmsvc13750[2] = _str_275; string __arr_val_5 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13750));
+			string __v3_internal_symbol_join_1__vmsvc13753[3]; __v3_internal_symbol_join_1__vmsvc13753[0] = _str_1944; __v3_internal_symbol_join_1__vmsvc13753[1] = int__str(i); __v3_internal_symbol_join_1__vmsvc13753[2] = _str_275; string __arr_val_5 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13753));
 			array_push(&names, &__arr_val_5);
 		}
 	}
@@ -613192,16 +613361,16 @@ __v_result_bool util__check_module_is_installed(string modulename, bool is_verbo
 	string vexe = pref__vexe_path();
 	if (os__exists(mod_v_file)) {
 		if (need_update) {
-			string __v3_internal_symbol_join_0__vmsvc13751[4]; __v3_internal_symbol_join_0__vmsvc13751[0] = os__quoted_path(vexe); __v3_internal_symbol_join_0__vmsvc13751[1] = _str_1960; __v3_internal_symbol_join_0__vmsvc13751[2] = modulename; __v3_internal_symbol_join_0__vmsvc13751[3] = _str_917; string update_cmd = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13751));
+			string __v3_internal_symbol_join_0__vmsvc13754[4]; __v3_internal_symbol_join_0__vmsvc13754[0] = os__quoted_path(vexe); __v3_internal_symbol_join_0__vmsvc13754[1] = _str_1960; __v3_internal_symbol_join_0__vmsvc13754[2] = modulename; __v3_internal_symbol_join_0__vmsvc13754[3] = _str_917; string update_cmd = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13754));
 			if (is_verbose) {
-				string __v3_internal_symbol_join_1__vmsvc13752[3]; __v3_internal_symbol_join_1__vmsvc13752[0] = _str_1961; __v3_internal_symbol_join_1__vmsvc13752[1] = update_cmd; __v3_internal_symbol_join_1__vmsvc13752[2] = _str_1962; eprintln((string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13752)));
+				string __v3_internal_symbol_join_1__vmsvc13755[3]; __v3_internal_symbol_join_1__vmsvc13755[0] = _str_1961; __v3_internal_symbol_join_1__vmsvc13755[1] = update_cmd; __v3_internal_symbol_join_1__vmsvc13755[2] = _str_1962; eprintln((string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13755)));
 			}
 			os__Result update_res = os__exec(new_array_from_c_array(3, 3, sizeof(string), (string[3]){vexe, _str_521, modulename}));
 			if (update_res.exit_code < 0) {
-				string __v3_internal_symbol_join_2__vmsvc13753[4]; __v3_internal_symbol_join_2__vmsvc13753[0] = _str_1963; __v3_internal_symbol_join_2__vmsvc13753[1] = update_cmd; __v3_internal_symbol_join_2__vmsvc13753[2] = _str_895; __v3_internal_symbol_join_2__vmsvc13753[3] = update_res.output; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13753)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_2__vmsvc13756[4]; __v3_internal_symbol_join_2__vmsvc13756[0] = _str_1963; __v3_internal_symbol_join_2__vmsvc13756[1] = update_cmd; __v3_internal_symbol_join_2__vmsvc13756[2] = _str_895; __v3_internal_symbol_join_2__vmsvc13756[3] = update_res.output; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13756)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 			if (update_res.exit_code != 0) {
-				string __v3_internal_symbol_join_3__vmsvc13754[5]; __v3_internal_symbol_join_3__vmsvc13754[0] = _str_1964; __v3_internal_symbol_join_3__vmsvc13754[1] = modulename; __v3_internal_symbol_join_3__vmsvc13754[2] = _str_1965; __v3_internal_symbol_join_3__vmsvc13754[3] = modulename; __v3_internal_symbol_join_3__vmsvc13754[4] = _str_1966; eprintln((string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13754)));
+				string __v3_internal_symbol_join_3__vmsvc13757[5]; __v3_internal_symbol_join_3__vmsvc13757[0] = _str_1964; __v3_internal_symbol_join_3__vmsvc13757[1] = modulename; __v3_internal_symbol_join_3__vmsvc13757[2] = _str_1965; __v3_internal_symbol_join_3__vmsvc13757[3] = modulename; __v3_internal_symbol_join_3__vmsvc13757[4] = _str_1966; eprintln((string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13757)));
 				if (is_verbose) {
 					eprintln(_str_1967);
 					eprintln(update_res.output);
@@ -613212,7 +613381,7 @@ __v_result_bool util__check_module_is_installed(string modulename, bool is_verbo
 		return (__v_result_bool){.ok = true, .value = true};
 	}
 	if (is_verbose) {
-		string __v3_internal_symbol_join_4__vmsvc13755[3]; __v3_internal_symbol_join_4__vmsvc13755[0] = _str_1968; __v3_internal_symbol_join_4__vmsvc13755[1] = murl; __v3_internal_symbol_join_4__vmsvc13755[2] = _str_1962; eprintln((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13755)));
+		string __v3_internal_symbol_join_4__vmsvc13758[3]; __v3_internal_symbol_join_4__vmsvc13758[0] = _str_1968; __v3_internal_symbol_join_4__vmsvc13758[1] = murl; __v3_internal_symbol_join_4__vmsvc13758[2] = _str_1962; eprintln((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13758)));
 	}
 	Array __arr_lit_0 = array_new(	sizeof(string), 0, 7);
 	string __arr_val_1 = vexe;
@@ -613234,7 +613403,7 @@ __v_result_bool util__check_module_is_installed(string modulename, bool is_verbo
 		return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = string__plus(_str_1971, cloning_res.output), .code = cloning_res.exit_code}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	if (!os__exists(mod_v_file)) {
-		string __v3_internal_symbol_join_5__vmsvc13756[3]; __v3_internal_symbol_join_5__vmsvc13756[0] = _str_1972; __v3_internal_symbol_join_5__vmsvc13756[1] = mod_v_file; __v3_internal_symbol_join_5__vmsvc13756[2] = _str_1973; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13756)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_5__vmsvc13759[3]; __v3_internal_symbol_join_5__vmsvc13759[0] = _str_1972; __v3_internal_symbol_join_5__vmsvc13759[1] = mod_v_file; __v3_internal_symbol_join_5__vmsvc13759[2] = _str_1973; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13759)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	if (is_verbose) {
 		eprintln(_str_1974);
@@ -613258,24 +613427,24 @@ __v_option_string util__closest_asm_register(string name, Array registers) {
 			}
 		}
 	}
-	int cond__vmsvc13759; cond__vmsvc13759 = !!((digit_start > 0)); if (cond__vmsvc13759) { Array __all_source_0__vmsvc13757 = string__bytes(string__substr(	name, 	digit_start, (	name).len)); bool __all_1__vmsvc13758 = true; {
+	int cond__vmsvc13762; cond__vmsvc13762 = !!((digit_start > 0)); if (cond__vmsvc13762) { Array __all_source_0__vmsvc13760 = string__bytes(string__substr(	name, 	digit_start, (	name).len)); bool __all_1__vmsvc13761 = true; {
 		__v_int __all_idx_2 = 0;
-		for (; __all_idx_2 < __all_source_0__vmsvc13757.len; __all_idx_2++) {
-			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13757, __all_idx_2));
+		for (; __all_idx_2 < __all_source_0__vmsvc13760.len; __all_idx_2++) {
+			u8 __all_it_3 = *(u8*)(array_get(__all_source_0__vmsvc13760, __all_idx_2));
 			if (!(u8__is_digit(__all_it_3))) {
-				__all_1__vmsvc13758 = false;
+				__all_1__vmsvc13761 = false;
 			}
 		}
-	} cond__vmsvc13759 = !!((__all_1__vmsvc13758)); } if (cond__vmsvc13759) {
+	} cond__vmsvc13762 = !!((__all_1__vmsvc13761)); } if (cond__vmsvc13762) {
 		string normalized = string__plus(string__substr(		name, 0, 		digit_start), int__str(string__int(string__substr(		name, 		digit_start, (		name).len))));
-		int cond__vmsvc13761; cond__vmsvc13761 = !!(!string__eq(normalized, name)); if (cond__vmsvc13761) { bool __contains_4__vmsvc13760 = false; {
+		int cond__vmsvc13764; cond__vmsvc13764 = !!(!string__eq(normalized, name)); if (cond__vmsvc13764) { bool __contains_4__vmsvc13763 = false; {
 			__v_int __contains_idx_5 = 0;
 			for (; __contains_idx_5 < registers.len; __contains_idx_5++) {
 				if (string__eq(*(string*)(array_get(registers, __contains_idx_5)), normalized)) {
-					__contains_4__vmsvc13760 = true;
+					__contains_4__vmsvc13763 = true;
 				}
 			}
-		} cond__vmsvc13761 = !!((__contains_4__vmsvc13760)); } if (cond__vmsvc13761) {
+		} cond__vmsvc13764 = !!((__contains_4__vmsvc13763)); } if (cond__vmsvc13764) {
 			return (__v_option_string){.ok = true, .value = normalized};
 		}
 	}
@@ -613409,7 +613578,7 @@ __v_option_util__ComptimeStringScalar util__comptime_string_repeat(string receiv
 		return (__v_option_util__ComptimeStringScalar){.ok = false};
 	}
 	__v_int count = __or_val_1;
-	int cond__vmsvc13764; cond__vmsvc13764 = !!((count > 0) && (receiver.len > 0)); if (cond__vmsvc13764) { __v_int _t1__vmsvc13762 = (__v_int)(util__comptime_string_fold_max_len); __v_int _t2__vmsvc13763 = (__v_int)(receiver.len); if (_t2__vmsvc13763 == 0) v_panic(_S("division by zero")); cond__vmsvc13764 = !!((count > (((__v_int)(_t1__vmsvc13762 / _t2__vmsvc13763))))); } if (cond__vmsvc13764) {
+	int cond__vmsvc13767; cond__vmsvc13767 = !!((count > 0) && (receiver.len > 0)); if (cond__vmsvc13767) { __v_int _t1__vmsvc13765 = (__v_int)(util__comptime_string_fold_max_len); __v_int _t2__vmsvc13766 = (__v_int)(receiver.len); if (_t2__vmsvc13766 == 0) v_panic(_S("division by zero")); cond__vmsvc13767 = !!((count > (((__v_int)(_t1__vmsvc13765 / _t2__vmsvc13766))))); } if (cond__vmsvc13767) {
 		return (__v_option_util__ComptimeStringScalar){.ok = false};
 	}
 	return (__v_option_util__ComptimeStringScalar){.ok = true, .value = (util__ComptimeStringScalar){.typ = flat__source_type_string, .value = string__repeat(receiver, count)}};
@@ -613538,7 +613707,7 @@ __v_result util__ensure_modules_for_tool_are_installed(string tool_name, string 
 			if (__if_guard_2.ok) {
 				string mod_dir = __if_guard_2.value;
 				if (is_verbose) {
-					string __v3_internal_symbol_join_0__vmsvc13765[4]; __v3_internal_symbol_join_0__vmsvc13765[0] = _str_1981; __v3_internal_symbol_join_0__vmsvc13765[1] = emodule; __v3_internal_symbol_join_0__vmsvc13765[2] = _str_1982; __v3_internal_symbol_join_0__vmsvc13765[3] = mod_dir; eprintln((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13765)));
+					string __v3_internal_symbol_join_0__vmsvc13768[4]; __v3_internal_symbol_join_0__vmsvc13768[0] = _str_1981; __v3_internal_symbol_join_0__vmsvc13768[1] = emodule; __v3_internal_symbol_join_0__vmsvc13768[2] = _str_1982; __v3_internal_symbol_join_0__vmsvc13768[3] = mod_dir; eprintln((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13768)));
 				}
 				continue;
 			}
@@ -613552,13 +613721,13 @@ __v_result util__ensure_modules_for_tool_are_installed(string tool_name, string 
 					__or_val_5 = __or_opt_4.value;
 				} else {
 					IError err = __or_opt_4.err;
-					string __v3_internal_symbol_join_1__vmsvc13766[6]; __v3_internal_symbol_join_1__vmsvc13766[0] = _str_1983; __v3_internal_symbol_join_1__vmsvc13766[1] = emodule; __v3_internal_symbol_join_1__vmsvc13766[2] = _str_1984; __v3_internal_symbol_join_1__vmsvc13766[3] = tool_name; __v3_internal_symbol_join_1__vmsvc13766[4] = _str_1985; __v3_internal_symbol_join_1__vmsvc13766[5] = IError__msg(&(err)); return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13766)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_1__vmsvc13769[6]; __v3_internal_symbol_join_1__vmsvc13769[0] = _str_1983; __v3_internal_symbol_join_1__vmsvc13769[1] = emodule; __v3_internal_symbol_join_1__vmsvc13769[2] = _str_1984; __v3_internal_symbol_join_1__vmsvc13769[3] = tool_name; __v3_internal_symbol_join_1__vmsvc13769[4] = _str_1985; __v3_internal_symbol_join_1__vmsvc13769[5] = IError__msg(&(err)); return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13769)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				bool installed = __or_val_5;
 				if (installed) {
 					continue;
 				}
-				string __v3_internal_symbol_join_2__vmsvc13767[9]; __v3_internal_symbol_join_2__vmsvc13767[0] = _str_1983; __v3_internal_symbol_join_2__vmsvc13767[1] = emodule; __v3_internal_symbol_join_2__vmsvc13767[2] = _str_1984; __v3_internal_symbol_join_2__vmsvc13767[3] = tool_name; __v3_internal_symbol_join_2__vmsvc13767[4] = _str_1985; __v3_internal_symbol_join_2__vmsvc13767[5] = install_error; __v3_internal_symbol_join_2__vmsvc13767[6] = _str_1986; __v3_internal_symbol_join_2__vmsvc13767[7] = emodule; __v3_internal_symbol_join_2__vmsvc13767[8] = _str_1987; return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(9, __v3_internal_symbol_join_2__vmsvc13767)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_2__vmsvc13770[9]; __v3_internal_symbol_join_2__vmsvc13770[0] = _str_1983; __v3_internal_symbol_join_2__vmsvc13770[1] = emodule; __v3_internal_symbol_join_2__vmsvc13770[2] = _str_1984; __v3_internal_symbol_join_2__vmsvc13770[3] = tool_name; __v3_internal_symbol_join_2__vmsvc13770[4] = _str_1985; __v3_internal_symbol_join_2__vmsvc13770[5] = install_error; __v3_internal_symbol_join_2__vmsvc13770[6] = _str_1986; __v3_internal_symbol_join_2__vmsvc13770[7] = emodule; __v3_internal_symbol_join_2__vmsvc13770[8] = _str_1987; return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(9, __v3_internal_symbol_join_2__vmsvc13770)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 		}
 	}
@@ -613576,7 +613745,7 @@ __v_result_string util__git_reference_root(string git_dir) {
 		__or_val_1 = __or_opt_0.value;
 	} else {
 		IError err = __or_opt_0.err;
-		string __v3_internal_symbol_join_0__vmsvc13768[3]; __v3_internal_symbol_join_0__vmsvc13768[0] = _str_1994; __v3_internal_symbol_join_0__vmsvc13768[1] = common_dir_file; __v3_internal_symbol_join_0__vmsvc13768[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13768)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc13771[3]; __v3_internal_symbol_join_0__vmsvc13771[0] = _str_1994; __v3_internal_symbol_join_0__vmsvc13771[1] = common_dir_file; __v3_internal_symbol_join_0__vmsvc13771[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13771)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	string common_dir = __or_val_1;
 	string configured = string__trim_space(common_dir);
@@ -613600,11 +613769,11 @@ __v_result_string util__githash(string path) {
 			__or_val_1 = __or_opt_0.value;
 		} else {
 			IError err = __or_opt_0.err;
-			string __v3_internal_symbol_join_0__vmsvc13769[3]; __v3_internal_symbol_join_0__vmsvc13769[0] = _str_1994; __v3_internal_symbol_join_0__vmsvc13769[1] = git_marker; __v3_internal_symbol_join_0__vmsvc13769[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13769)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_0__vmsvc13772[3]; __v3_internal_symbol_join_0__vmsvc13772[0] = _str_1994; __v3_internal_symbol_join_0__vmsvc13772[1] = git_marker; __v3_internal_symbol_join_0__vmsvc13772[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13772)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		string marker = __or_val_1;
 		if (!string__starts_with(marker, _str_1999)) {
-			string __v3_internal_symbol_join_1__vmsvc13770[3]; __v3_internal_symbol_join_1__vmsvc13770[0] = _str_2000; __v3_internal_symbol_join_1__vmsvc13770[1] = git_marker; __v3_internal_symbol_join_1__vmsvc13770[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13770)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_1__vmsvc13773[3]; __v3_internal_symbol_join_1__vmsvc13773[0] = _str_2000; __v3_internal_symbol_join_1__vmsvc13773[1] = git_marker; __v3_internal_symbol_join_1__vmsvc13773[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13773)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		string configured = string__trim_space(string__all_after(marker, _str_1999));
 		string __if_val_2 = {0};
@@ -613617,7 +613786,7 @@ __v_result_string util__githash(string path) {
 	}
 	string head_file = os__join_path_single(git_dir, _str_2001);
 	if (!os__exists(head_file)) {
-		string __v3_internal_symbol_join_2__vmsvc13771[3]; __v3_internal_symbol_join_2__vmsvc13771[0] = _str_2002; __v3_internal_symbol_join_2__vmsvc13771[1] = head_file; __v3_internal_symbol_join_2__vmsvc13771[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13771)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_2__vmsvc13774[3]; __v3_internal_symbol_join_2__vmsvc13774[0] = _str_2002; __v3_internal_symbol_join_2__vmsvc13774[1] = head_file; __v3_internal_symbol_join_2__vmsvc13774[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13774)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	__v_result_string __or_opt_3 = os__read_file(head_file);
 	string __or_val_4 = {0};
@@ -613625,7 +613794,7 @@ __v_result_string util__githash(string path) {
 		__or_val_4 = __or_opt_3.value;
 	} else {
 		IError err = __or_opt_3.err;
-		string __v3_internal_symbol_join_3__vmsvc13772[3]; __v3_internal_symbol_join_3__vmsvc13772[0] = _str_1994; __v3_internal_symbol_join_3__vmsvc13772[1] = head_file; __v3_internal_symbol_join_3__vmsvc13772[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13772)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_3__vmsvc13775[3]; __v3_internal_symbol_join_3__vmsvc13775[0] = _str_1994; __v3_internal_symbol_join_3__vmsvc13775[1] = head_file; __v3_internal_symbol_join_3__vmsvc13775[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_3__vmsvc13775)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	string hash = __or_val_4;
 	if (string__starts_with(hash, _str_2003)) {
@@ -613645,7 +613814,7 @@ __v_result_string util__githash(string path) {
 			}
 			string __map_key_7 = reference;
 			if (map__exists(&visited, &__map_key_7)) {
-				string __v3_internal_symbol_join_4__vmsvc13773[3]; __v3_internal_symbol_join_4__vmsvc13773[0] = _str_2005; __v3_internal_symbol_join_4__vmsvc13773[1] = reference; __v3_internal_symbol_join_4__vmsvc13773[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13773)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_4__vmsvc13776[3]; __v3_internal_symbol_join_4__vmsvc13776[0] = _str_2005; __v3_internal_symbol_join_4__vmsvc13776[1] = reference; __v3_internal_symbol_join_4__vmsvc13776[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13776)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 			string __map_key_8 = reference;
 			bool __map_val_9 = true;
@@ -613701,7 +613870,7 @@ __inline u32 util__key_part_hash(string s) {
 	}
 	u32 hash = (u32)(s.len);
 	hash = (hash * 16777619) ^ (u32)((s).str[0]);
-	__v_int _t1__vmsvc13774 = (__v_int)(s.len); __v_int _t2__vmsvc13775 = (__v_int)(2); if (_t2__vmsvc13775 == 0) v_panic(_S("division by zero")); hash = (hash * 16777619) ^ (u32)((s).str[((__v_int)(_t1__vmsvc13774 / _t2__vmsvc13775))]);
+	__v_int _t1__vmsvc13777 = (__v_int)(s.len); __v_int _t2__vmsvc13778 = (__v_int)(2); if (_t2__vmsvc13778 == 0) v_panic(_S("division by zero")); hash = (hash * 16777619) ^ (u32)((s).str[((__v_int)(_t1__vmsvc13777 / _t2__vmsvc13778))]);
 	hash = (hash * 16777619) ^ (u32)((s).str[s.len - 1]);
 	return hash;
 }
@@ -613866,7 +614035,7 @@ __v_result_string util__read_git_reference(string git_dir, string reference_root
 		__or_val_3 = __or_opt_2.value;
 	} else {
 		IError err = __or_opt_2.err;
-		string __v3_internal_symbol_join_0__vmsvc13776[3]; __v3_internal_symbol_join_0__vmsvc13776[0] = _str_1997; __v3_internal_symbol_join_0__vmsvc13776[1] = revision_path; __v3_internal_symbol_join_0__vmsvc13776[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13776)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc13779[3]; __v3_internal_symbol_join_0__vmsvc13779[0] = _str_1997; __v3_internal_symbol_join_0__vmsvc13779[1] = revision_path; __v3_internal_symbol_join_0__vmsvc13779[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13779)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	string packed_refs = __or_val_3;
 	Array __in_lhs_4 = string__split_into_lines(packed_refs);
@@ -613880,7 +614049,7 @@ __v_result_string util__read_git_reference(string git_dir, string reference_root
 			}
 		}
 	}
-	string __v3_internal_symbol_join_1__vmsvc13777[5]; __v3_internal_symbol_join_1__vmsvc13777[0] = _str_1998; __v3_internal_symbol_join_1__vmsvc13777[1] = reference; __v3_internal_symbol_join_1__vmsvc13777[2] = _str_583; __v3_internal_symbol_join_1__vmsvc13777[3] = packed_refs_file; __v3_internal_symbol_join_1__vmsvc13777[4] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13777)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+	string __v3_internal_symbol_join_1__vmsvc13780[5]; __v3_internal_symbol_join_1__vmsvc13780[0] = _str_1998; __v3_internal_symbol_join_1__vmsvc13780[1] = reference; __v3_internal_symbol_join_1__vmsvc13780[2] = _str_583; __v3_internal_symbol_join_1__vmsvc13780[3] = packed_refs_file; __v3_internal_symbol_join_1__vmsvc13780[4] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13780)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	return (__v_result_string){.ok = true};
 }
 
@@ -613938,7 +614107,7 @@ __v_result_string util__resolve_env_value(string str, bool check_for_presence) {
 	if (__or_opt_0.ok) {
 		__or_val_1 = __or_opt_0.value;
 	} else {
-		string __v3_internal_symbol_join_0__vmsvc13778[3]; __v3_internal_symbol_join_0__vmsvc13778[0] = _str_1851; __v3_internal_symbol_join_0__vmsvc13778[1] = env_ident; string __v3_internal_symbol_join_1__vmsvc13779[3]; __v3_internal_symbol_join_1__vmsvc13779[0] = _str_1852; __v3_internal_symbol_join_1__vmsvc13779[1] = str; __v3_internal_symbol_join_1__vmsvc13779[2] = _str_1853; __v3_internal_symbol_join_0__vmsvc13778[2] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13779)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13778)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc13781[3]; __v3_internal_symbol_join_0__vmsvc13781[0] = _str_1851; __v3_internal_symbol_join_0__vmsvc13781[1] = env_ident; string __v3_internal_symbol_join_1__vmsvc13782[3]; __v3_internal_symbol_join_1__vmsvc13782[0] = _str_1852; __v3_internal_symbol_join_1__vmsvc13782[1] = str; __v3_internal_symbol_join_1__vmsvc13782[2] = _str_1853; __v3_internal_symbol_join_0__vmsvc13781[2] = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13782)); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13781)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	__v_int at = __or_val_1;
 	u8 ch = (u8)('.');
@@ -613955,7 +614124,7 @@ __v_result_string util__resolve_env_value(string str, bool check_for_presence) {
 					if (ch == '$') {
 						return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = _str_1854, .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 					}
-					string __v3_internal_symbol_join_3__vmsvc13780[5]; __v3_internal_symbol_join_3__vmsvc13780[0] = _str_1855; __v3_internal_symbol_join_3__vmsvc13780[1] = str; __v3_internal_symbol_join_3__vmsvc13780[2] = _str_1856; __v3_internal_symbol_join_3__vmsvc13780[3] = rune__str((u32)(ch)); __v3_internal_symbol_join_3__vmsvc13780[4] = _str_363; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13780)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_3__vmsvc13783[5]; __v3_internal_symbol_join_3__vmsvc13783[0] = _str_1855; __v3_internal_symbol_join_3__vmsvc13783[1] = str; __v3_internal_symbol_join_3__vmsvc13783[2] = _str_1856; __v3_internal_symbol_join_3__vmsvc13783[3] = rune__str((u32)(ch)); __v3_internal_symbol_join_3__vmsvc13783[4] = _str_363; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13783)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 			}
 		}
@@ -613973,16 +614142,16 @@ __v_result_string util__resolve_env_value(string str, bool check_for_presence) {
 		if (__map_ptr_7 != NULL) {
 			__map_val_8 = *(string*)(__map_ptr_7);
 		} else {
-			string __v3_internal_symbol_join_4__vmsvc13781[3]; __v3_internal_symbol_join_4__vmsvc13781[0] = _str_1858; __v3_internal_symbol_join_4__vmsvc13781[1] = env_lit; __v3_internal_symbol_join_4__vmsvc13781[2] = _str_1859; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13781)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_4__vmsvc13784[3]; __v3_internal_symbol_join_4__vmsvc13784[0] = _str_1858; __v3_internal_symbol_join_4__vmsvc13784[1] = env_lit; __v3_internal_symbol_join_4__vmsvc13784[2] = _str_1859; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13784)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		env_value = __map_val_8;
 		if (string__eq(env_value, _str_34)) {
-			string __v3_internal_symbol_join_5__vmsvc13782[3]; __v3_internal_symbol_join_5__vmsvc13782[0] = _str_1858; __v3_internal_symbol_join_5__vmsvc13782[1] = env_lit; __v3_internal_symbol_join_5__vmsvc13782[2] = _str_1860; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13782)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_5__vmsvc13785[3]; __v3_internal_symbol_join_5__vmsvc13785[0] = _str_1858; __v3_internal_symbol_join_5__vmsvc13785[1] = env_lit; __v3_internal_symbol_join_5__vmsvc13785[2] = _str_1860; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13785)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 	} else {
 		env_value = os__getenv(env_lit);
 	}
-	string __v3_internal_symbol_join_6__vmsvc13783[4]; __v3_internal_symbol_join_6__vmsvc13783[0] = env_ident; __v3_internal_symbol_join_6__vmsvc13783[1] = env_lit; __v3_internal_symbol_join_6__vmsvc13783[2] = _str_917; __v3_internal_symbol_join_6__vmsvc13783[3] = _str_28; string rep = string__replace_once(str, (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc13783)), env_value);
+	string __v3_internal_symbol_join_6__vmsvc13786[4]; __v3_internal_symbol_join_6__vmsvc13786[0] = env_ident; __v3_internal_symbol_join_6__vmsvc13786[1] = env_lit; __v3_internal_symbol_join_6__vmsvc13786[2] = _str_917; __v3_internal_symbol_join_6__vmsvc13786[3] = _str_28; string rep = string__replace_once(str, (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc13786)), env_value);
 	if (string__contains(rep, env_ident)) {
 		return util__resolve_env_value(rep, check_for_presence);
 	}
@@ -613998,7 +614167,7 @@ string util__short_module_name(string name) {
 	if (values.len < 2) {
 		return name;
 	}
-	string __v3_internal_symbol_join_0__vmsvc13784[3]; __v3_internal_symbol_join_0__vmsvc13784[0] = (*(string*)array_get(values, values.len - 2)); __v3_internal_symbol_join_0__vmsvc13784[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13784[2] = *(string*)array__last(values); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13784));
+	string __v3_internal_symbol_join_0__vmsvc13787[3]; __v3_internal_symbol_join_0__vmsvc13787[0] = (*(string*)array_get(values, values.len - 2)); __v3_internal_symbol_join_0__vmsvc13787[1] = _str_2; __v3_internal_symbol_join_0__vmsvc13787[2] = *(string*)array__last(values); return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13787));
 }
 
 Array util__tokenize_c_flag(string value) {
@@ -614064,7 +614233,7 @@ __inline __v_int util__v_literal_parse_base(string value) {
 		__if_val_0 = 0;
 	}
 	__v_int start = __if_val_0;
-	int cond__vmsvc13786; cond__vmsvc13786 = !!(((value.len - start) >= 2) && (string__at(value, start) == '0')); if (cond__vmsvc13786) { u8 __in_lhs_1__vmsvc13785 = string__at(value, start + 1); cond__vmsvc13786 = !!(((__in_lhs_1__vmsvc13785 == 'b') || (__in_lhs_1__vmsvc13785 == 'B') || (__in_lhs_1__vmsvc13785 == 'o') || (__in_lhs_1__vmsvc13785 == 'O') || (__in_lhs_1__vmsvc13785 == 'x') || (__in_lhs_1__vmsvc13785 == 'X'))); } if (cond__vmsvc13786) {
+	int cond__vmsvc13789; cond__vmsvc13789 = !!(((value.len - start) >= 2) && (string__at(value, start) == '0')); if (cond__vmsvc13789) { u8 __in_lhs_1__vmsvc13788 = string__at(value, start + 1); cond__vmsvc13789 = !!(((__in_lhs_1__vmsvc13788 == 'b') || (__in_lhs_1__vmsvc13788 == 'B') || (__in_lhs_1__vmsvc13788 == 'o') || (__in_lhs_1__vmsvc13788 == 'O') || (__in_lhs_1__vmsvc13788 == 'x') || (__in_lhs_1__vmsvc13788 == 'X'))); } if (cond__vmsvc13789) {
 		return 0;
 	}
 	return 10;
@@ -614082,14 +614251,14 @@ __v_result_bool util__wait_for_concurrent_install(string mod_dir, i64 timeout, i
 		}
 		i64 idle_seconds = time__Time__unix(time__now()) - util__newest_change_in(mod_dir);
 		if ((double)((double)(idle_seconds)) >= time__Duration__seconds(stale_time)) {
-			string __v3_internal_symbol_join_0__vmsvc13787[6]; __v3_internal_symbol_join_0__vmsvc13787[0] = mod_dir; __v3_internal_symbol_join_0__vmsvc13787[1] = _str_1975; __v3_internal_symbol_join_0__vmsvc13787[2] = i64__str(idle_seconds); __v3_internal_symbol_join_0__vmsvc13787[3] = _str_1976; __v3_internal_symbol_join_0__vmsvc13787[4] = mod_dir; __v3_internal_symbol_join_0__vmsvc13787[5] = _str_1977; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_0__vmsvc13787)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_0__vmsvc13790[6]; __v3_internal_symbol_join_0__vmsvc13790[0] = mod_dir; __v3_internal_symbol_join_0__vmsvc13790[1] = _str_1975; __v3_internal_symbol_join_0__vmsvc13790[2] = i64__str(idle_seconds); __v3_internal_symbol_join_0__vmsvc13790[3] = _str_1976; __v3_internal_symbol_join_0__vmsvc13790[4] = mod_dir; __v3_internal_symbol_join_0__vmsvc13790[5] = _str_1977; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(6, __v3_internal_symbol_join_0__vmsvc13790)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		time__Time __op_lhs_0 = time__now();
 		if (__v3_internal_symbol_op_time__Time__lt(deadline, __op_lhs_0)) {
-			string __v3_internal_symbol_join_1__vmsvc13788[5]; __v3_internal_symbol_join_1__vmsvc13788[0] = _str_1978; __v3_internal_symbol_join_1__vmsvc13788[1] = mod_dir; __v3_internal_symbol_join_1__vmsvc13788[2] = _str_1979; u8 __v3_internal_symbol_join_1_float_3__vmsvc13789[312]; __v3_internal_symbol_join_1__vmsvc13788[3] = v3_f64_fixed_buf(time__Duration__seconds(timeout), 0, __v3_internal_symbol_join_1_float_3__vmsvc13789); __v3_internal_symbol_join_1__vmsvc13788[4] = _str_128; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13788)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_1__vmsvc13791[5]; __v3_internal_symbol_join_1__vmsvc13791[0] = _str_1978; __v3_internal_symbol_join_1__vmsvc13791[1] = mod_dir; __v3_internal_symbol_join_1__vmsvc13791[2] = _str_1979; u8 __v3_internal_symbol_join_1_float_3__vmsvc13792[312]; __v3_internal_symbol_join_1__vmsvc13791[3] = v3_f64_fixed_buf(time__Duration__seconds(timeout), 0, __v3_internal_symbol_join_1_float_3__vmsvc13792); __v3_internal_symbol_join_1__vmsvc13791[4] = _str_128; return (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13791)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		if (!announced) {
-			string __v3_internal_symbol_join_2__vmsvc13790[3]; __v3_internal_symbol_join_2__vmsvc13790[0] = _str_1980; __v3_internal_symbol_join_2__vmsvc13790[1] = mod_dir; __v3_internal_symbol_join_2__vmsvc13790[2] = _str_1962; eprintln((string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13790)));
+			string __v3_internal_symbol_join_2__vmsvc13793[3]; __v3_internal_symbol_join_2__vmsvc13793[0] = _str_1980; __v3_internal_symbol_join_2__vmsvc13793[1] = mod_dir; __v3_internal_symbol_join_2__vmsvc13793[2] = _str_1962; eprintln((string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13793)));
 			announced = true;
 		}
 		time__sleep(500 * time__millisecond);
@@ -614121,11 +614290,11 @@ Array util__x86_asm_register_names(void) {
 		for (; i < 32; i++) {
 			string __arr_val_3 = string__plus(_str_130, int__str(i));
 			array_push(&names, &__arr_val_3);
-			string __v3_internal_symbol_join_0__vmsvc13791[3]; __v3_internal_symbol_join_0__vmsvc13791[0] = _str_130; __v3_internal_symbol_join_0__vmsvc13791[1] = int__str(i); __v3_internal_symbol_join_0__vmsvc13791[2] = _str_347; string __arr_val_4 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13791));
+			string __v3_internal_symbol_join_0__vmsvc13794[3]; __v3_internal_symbol_join_0__vmsvc13794[0] = _str_130; __v3_internal_symbol_join_0__vmsvc13794[1] = int__str(i); __v3_internal_symbol_join_0__vmsvc13794[2] = _str_347; string __arr_val_4 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13794));
 			array_push(&names, &__arr_val_4);
-			string __v3_internal_symbol_join_1__vmsvc13792[3]; __v3_internal_symbol_join_1__vmsvc13792[0] = _str_130; __v3_internal_symbol_join_1__vmsvc13792[1] = int__str(i); __v3_internal_symbol_join_1__vmsvc13792[2] = _str_1444; string __arr_val_5 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13792));
+			string __v3_internal_symbol_join_1__vmsvc13795[3]; __v3_internal_symbol_join_1__vmsvc13795[0] = _str_130; __v3_internal_symbol_join_1__vmsvc13795[1] = int__str(i); __v3_internal_symbol_join_1__vmsvc13795[2] = _str_1444; string __arr_val_5 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13795));
 			array_push(&names, &__arr_val_5);
-			string __v3_internal_symbol_join_2__vmsvc13793[3]; __v3_internal_symbol_join_2__vmsvc13793[0] = _str_130; __v3_internal_symbol_join_2__vmsvc13793[1] = int__str(i); __v3_internal_symbol_join_2__vmsvc13793[2] = _str_344; string __arr_val_6 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13793));
+			string __v3_internal_symbol_join_2__vmsvc13796[3]; __v3_internal_symbol_join_2__vmsvc13796[0] = _str_130; __v3_internal_symbol_join_2__vmsvc13796[1] = int__str(i); __v3_internal_symbol_join_2__vmsvc13796[2] = _str_344; string __arr_val_6 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13796));
 			array_push(&names, &__arr_val_6);
 		}
 	}
@@ -614425,15 +614594,15 @@ Array v1_fallback_exit_notes(string payload, bool compiler_failure) {
 	string stopped_in = __if_val_1;
 	string __if_val_2 = {0};
 	if (compiler_failure) {
-		string __v3_internal_symbol_join_0__vmsvc13794[3]; __v3_internal_symbol_join_0__vmsvc13794[0] = _str_651; __v3_internal_symbol_join_0__vmsvc13794[1] = main__v_version; __v3_internal_symbol_join_0__vmsvc13794[2] = _str_652; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13794));
+		string __v3_internal_symbol_join_0__vmsvc13797[3]; __v3_internal_symbol_join_0__vmsvc13797[0] = _str_651; __v3_internal_symbol_join_0__vmsvc13797[1] = main__v_version; __v3_internal_symbol_join_0__vmsvc13797[2] = _str_652; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13797));
 	} else {
-		string __v3_internal_symbol_join_1__vmsvc13795[3]; __v3_internal_symbol_join_1__vmsvc13795[0] = _str_651; __v3_internal_symbol_join_1__vmsvc13795[1] = main__v_version; __v3_internal_symbol_join_1__vmsvc13795[2] = _str_653; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13795));
+		string __v3_internal_symbol_join_1__vmsvc13798[3]; __v3_internal_symbol_join_1__vmsvc13798[0] = _str_651; __v3_internal_symbol_join_1__vmsvc13798[1] = main__v_version; __v3_internal_symbol_join_1__vmsvc13798[2] = _str_653; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13798));
 	}
 	string fallback_note = __if_val_2;
 	Array __arr_lit_3 = array_new(	sizeof(string), 0, 2);
 	string __arr_val_4 = fallback_note;
 	array_push(&__arr_lit_3, &__arr_val_4);
-	string __v3_internal_symbol_join_2__vmsvc13796[3]; __v3_internal_symbol_join_2__vmsvc13796[0] = _str_654; __v3_internal_symbol_join_2__vmsvc13796[1] = stopped_in; __v3_internal_symbol_join_2__vmsvc13796[2] = _str_655; string __arr_val_5 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13796));
+	string __v3_internal_symbol_join_2__vmsvc13799[3]; __v3_internal_symbol_join_2__vmsvc13799[0] = _str_654; __v3_internal_symbol_join_2__vmsvc13799[1] = stopped_in; __v3_internal_symbol_join_2__vmsvc13799[2] = _str_655; string __arr_val_5 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13799));
 	array_push(&__arr_lit_3, &__arr_val_5);
 	return __arr_lit_3;
 }
@@ -614465,7 +614634,7 @@ bool v1_fallback_has_expected_version(string executable) {
 		return false;
 	}
 	os__Result result = os__exec(new_array_from_c_array(2, 2, sizeof(string), (string[2]){executable, _str_536}));
-	int cond__vmsvc13798; cond__vmsvc13798 = !!((result.exit_code == 0)); if (cond__vmsvc13798) { string __v3_internal_symbol_join_0__vmsvc13797[3]; __v3_internal_symbol_join_0__vmsvc13797[0] = _str_543; __v3_internal_symbol_join_0__vmsvc13797[1] = main__v_version; __v3_internal_symbol_join_0__vmsvc13797[2] = _str_1; cond__vmsvc13798 = !!(string__starts_with(result.output, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13797)))); } return cond__vmsvc13798;
+	int cond__vmsvc13801; cond__vmsvc13801 = !!((result.exit_code == 0)); if (cond__vmsvc13801) { string __v3_internal_symbol_join_0__vmsvc13800[3]; __v3_internal_symbol_join_0__vmsvc13800[0] = _str_543; __v3_internal_symbol_join_0__vmsvc13800[1] = main__v_version; __v3_internal_symbol_join_0__vmsvc13800[2] = _str_1; cond__vmsvc13801 = !!(string__starts_with(result.output, (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13800)))); } return cond__vmsvc13801;
 }
 
 bool v1_fallback_has_moved_modules(string root) {
@@ -614533,14 +614702,14 @@ __v_result_string v1_fallback_private_temp_cache_parent(string temp_root) {
 			__or_val_1 = __or_opt_0.value;
 		} else {
 			IError err = __or_opt_0.err;
-			string __v3_internal_symbol_join_0__vmsvc13799[4]; __v3_internal_symbol_join_0__vmsvc13799[0] = _str_710; __v3_internal_symbol_join_0__vmsvc13799[1] = temp_root; __v3_internal_symbol_join_0__vmsvc13799[2] = _str_279; __v3_internal_symbol_join_0__vmsvc13799[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13799)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_0__vmsvc13802[4]; __v3_internal_symbol_join_0__vmsvc13802[0] = _str_710; __v3_internal_symbol_join_0__vmsvc13802[1] = temp_root; __v3_internal_symbol_join_0__vmsvc13802[2] = _str_279; __v3_internal_symbol_join_0__vmsvc13802[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13802)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		os__Stat root_attributes = __or_val_1;
 		if (!v1_fallback_temp_root_owner_is_trusted(root_attributes.uid, (u32)(os__geteuid()))) {
-			string __v3_internal_symbol_join_1__vmsvc13800[3]; __v3_internal_symbol_join_1__vmsvc13800[0] = _str_711; __v3_internal_symbol_join_1__vmsvc13800[1] = temp_root; __v3_internal_symbol_join_1__vmsvc13800[2] = _str_712; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13800)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_1__vmsvc13803[3]; __v3_internal_symbol_join_1__vmsvc13803[0] = _str_711; __v3_internal_symbol_join_1__vmsvc13803[1] = temp_root; __v3_internal_symbol_join_1__vmsvc13803[2] = _str_712; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13803)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		if (((root_attributes.mode & 0022) != 0) && ((root_attributes.mode & os__s_isvtx) == 0)) {
-			string __v3_internal_symbol_join_2__vmsvc13801[3]; __v3_internal_symbol_join_2__vmsvc13801[0] = _str_711; __v3_internal_symbol_join_2__vmsvc13801[1] = temp_root; __v3_internal_symbol_join_2__vmsvc13801[2] = _str_713; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13801)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_2__vmsvc13804[3]; __v3_internal_symbol_join_2__vmsvc13804[0] = _str_711; __v3_internal_symbol_join_2__vmsvc13804[1] = temp_root; __v3_internal_symbol_join_2__vmsvc13804[2] = _str_713; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13804)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		string candidate = os__join_path_single(temp_root, string__plus(_str_714, int__str(os__geteuid())));
 		__v_result __or_opt_2 = os__mkdir(candidate, (os__MkdirParams){.mode = 0700});
@@ -614552,14 +614721,14 @@ __v_result_string v1_fallback_private_temp_cache_parent(string temp_root) {
 			__or_val_4 = __or_opt_3.value;
 		} else {
 			IError err = __or_opt_3.err;
-			string __v3_internal_symbol_join_3__vmsvc13802[4]; __v3_internal_symbol_join_3__vmsvc13802[0] = _str_715; __v3_internal_symbol_join_3__vmsvc13802[1] = candidate; __v3_internal_symbol_join_3__vmsvc13802[2] = _str_279; __v3_internal_symbol_join_3__vmsvc13802[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13802)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_3__vmsvc13805[4]; __v3_internal_symbol_join_3__vmsvc13805[0] = _str_715; __v3_internal_symbol_join_3__vmsvc13805[1] = candidate; __v3_internal_symbol_join_3__vmsvc13805[2] = _str_279; __v3_internal_symbol_join_3__vmsvc13805[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_3__vmsvc13805)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		os__Stat attributes = __or_val_4;
 		if (os__is_link(candidate) || (os__Stat__get_filetype(attributes) != os__FileType__directory)) {
-			string __v3_internal_symbol_join_4__vmsvc13803[3]; __v3_internal_symbol_join_4__vmsvc13803[0] = _str_716; __v3_internal_symbol_join_4__vmsvc13803[1] = candidate; __v3_internal_symbol_join_4__vmsvc13803[2] = _str_717; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13803)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_4__vmsvc13806[3]; __v3_internal_symbol_join_4__vmsvc13806[0] = _str_716; __v3_internal_symbol_join_4__vmsvc13806[1] = candidate; __v3_internal_symbol_join_4__vmsvc13806[2] = _str_717; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13806)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		if ((attributes.uid != (u32)(os__geteuid())) || (os__FileMode__bitmask(os__Stat__get_mode(attributes)) != 0700)) {
-			string __v3_internal_symbol_join_5__vmsvc13804[3]; __v3_internal_symbol_join_5__vmsvc13804[0] = _str_716; __v3_internal_symbol_join_5__vmsvc13804[1] = candidate; __v3_internal_symbol_join_5__vmsvc13804[2] = _str_718; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13804)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			string __v3_internal_symbol_join_5__vmsvc13807[3]; __v3_internal_symbol_join_5__vmsvc13807[0] = _str_716; __v3_internal_symbol_join_5__vmsvc13807[1] = candidate; __v3_internal_symbol_join_5__vmsvc13807[2] = _str_718; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13807)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		}
 		return (__v_result_string){.ok = true, .value = candidate};
 	}
@@ -614587,12 +614756,12 @@ __v_result_string v1_fallback_private_windows_temp_cache_parent(string temp_root
 				if (os__exists(candidate)) {
 					continue;
 				}
-				string __v3_internal_symbol_join_0__vmsvc13805[4]; __v3_internal_symbol_join_0__vmsvc13805[0] = _str_715; __v3_internal_symbol_join_0__vmsvc13805[1] = candidate; __v3_internal_symbol_join_0__vmsvc13805[2] = _str_279; __v3_internal_symbol_join_0__vmsvc13805[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13805)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_0__vmsvc13808[4]; __v3_internal_symbol_join_0__vmsvc13808[0] = _str_715; __v3_internal_symbol_join_0__vmsvc13808[1] = candidate; __v3_internal_symbol_join_0__vmsvc13808[2] = _str_279; __v3_internal_symbol_join_0__vmsvc13808[3] = IError__str(err); return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13808)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 			return (__v_result_string){.ok = true, .value = candidate};
 		}
 	}
-	string __v3_internal_symbol_join_1__vmsvc13806[3]; __v3_internal_symbol_join_1__vmsvc13806[0] = _str_761; __v3_internal_symbol_join_1__vmsvc13806[1] = temp_root; __v3_internal_symbol_join_1__vmsvc13806[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13806)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+	string __v3_internal_symbol_join_1__vmsvc13809[3]; __v3_internal_symbol_join_1__vmsvc13809[0] = _str_761; __v3_internal_symbol_join_1__vmsvc13809[1] = temp_root; __v3_internal_symbol_join_1__vmsvc13809[2] = _str_41; return (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13809)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	return (__v_result_string){.ok = true};
 }
 
@@ -614670,7 +614839,7 @@ string v3_c_error_diagnostics(main__RetryState state) {
 		__if_val_4 = _str_0;
 	}
 	string newline = __if_val_4;
-	string __v3_internal_symbol_join_0__vmsvc13807[3]; __v3_internal_symbol_join_0__vmsvc13807[0] = _str_745; __v3_internal_symbol_join_0__vmsvc13807[1] = output; __v3_internal_symbol_join_0__vmsvc13807[2] = newline; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13807));
+	string __v3_internal_symbol_join_0__vmsvc13810[3]; __v3_internal_symbol_join_0__vmsvc13810[0] = _str_745; __v3_internal_symbol_join_0__vmsvc13810[1] = output; __v3_internal_symbol_join_0__vmsvc13810[2] = newline; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13810));
 }
 
 string v3_diagnostics_output(string vexe, Array args) {
@@ -614774,7 +614943,7 @@ string v3_fallback_diagnostics(string vexe, Array args, main__RetryState state) 
 	}
 	string output = v3_diagnostics_output(vexe, args);
 	if (string__eq(output, _str_34)) {
-		string __v3_internal_symbol_join_0__vmsvc13808[3]; __v3_internal_symbol_join_0__vmsvc13808[0] = _str_742; __v3_internal_symbol_join_0__vmsvc13808[1] = kind; __v3_internal_symbol_join_0__vmsvc13808[2] = _str_743; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13808));
+		string __v3_internal_symbol_join_0__vmsvc13811[3]; __v3_internal_symbol_join_0__vmsvc13811[0] = _str_742; __v3_internal_symbol_join_0__vmsvc13811[1] = kind; __v3_internal_symbol_join_0__vmsvc13811[2] = _str_743; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13811));
 	}
 	string __if_val_2 = {0};
 	if (string__ends_with(output, _str_0)) {
@@ -614783,7 +614952,7 @@ string v3_fallback_diagnostics(string vexe, Array args, main__RetryState state) 
 		__if_val_2 = _str_0;
 	}
 	string newline = __if_val_2;
-	string __v3_internal_symbol_join_1__vmsvc13809[3]; __v3_internal_symbol_join_1__vmsvc13809[0] = _str_744; __v3_internal_symbol_join_1__vmsvc13809[1] = output; __v3_internal_symbol_join_1__vmsvc13809[2] = newline; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13809));
+	string __v3_internal_symbol_join_1__vmsvc13812[3]; __v3_internal_symbol_join_1__vmsvc13812[0] = _str_744; __v3_internal_symbol_join_1__vmsvc13812[1] = output; __v3_internal_symbol_join_1__vmsvc13812[2] = newline; return (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13812));
 }
 
 bool v3_fixture_expects_legacy_compiler_modules(Array args) {
@@ -614926,7 +615095,7 @@ void v__bench__Bench__metric_items(v__bench__Bench* b, string name, i64 value, s
 		}
 	}
 	Array short_items = __map_1;
-	string __v3_internal_symbol_join_0__vmsvc13810[4]; __v3_internal_symbol_join_0__vmsvc13810[0] = _str_287; __v3_internal_symbol_join_0__vmsvc13810[1] = items_label; __v3_internal_symbol_join_0__vmsvc13810[2] = _str_185; __v3_internal_symbol_join_0__vmsvc13810[3] = Array_string__join(short_items, _str_1); println((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13810)));
+	string __v3_internal_symbol_join_0__vmsvc13813[4]; __v3_internal_symbol_join_0__vmsvc13813[0] = _str_287; __v3_internal_symbol_join_0__vmsvc13813[1] = items_label; __v3_internal_symbol_join_0__vmsvc13813[2] = _str_185; __v3_internal_symbol_join_0__vmsvc13813[3] = Array_string__join(short_items, _str_1); println((string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13813)));
 }
 
 void v__bench__Bench__print_report(v__bench__Bench* b) {
@@ -614940,13 +615109,13 @@ void v__bench__Bench__print_report(v__bench__Bench* b) {
 		__v_option_u64 __if_guard_1 = v__bench__current_instruction_count();
 		if (__if_guard_1.ok) {
 			u64 count = __if_guard_1.value;
-			string __v3_internal_symbol_join_0__vmsvc13811[3]; __v3_internal_symbol_join_0__vmsvc13811[0] = _str_14522; __v3_internal_symbol_join_0__vmsvc13811[1] = v__bench__format_instructions(count); __v3_internal_symbol_join_0__vmsvc13811[2] = _str_14538; __if_val_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13811));
+			string __v3_internal_symbol_join_0__vmsvc13814[3]; __v3_internal_symbol_join_0__vmsvc13814[0] = _str_14522; __v3_internal_symbol_join_0__vmsvc13814[1] = v__bench__format_instructions(count); __v3_internal_symbol_join_0__vmsvc13814[2] = _str_14538; __if_val_0 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13814));
 		} else {
 			__if_val_0 = _str_14539;
 		}
 		total_instructions = __if_val_0;
 	}
-	string __v3_internal_symbol_join_1__vmsvc13812[6]; __v3_internal_symbol_join_1__vmsvc13812[0] = _str_186; __v3_internal_symbol_join_1__vmsvc13812[1] = v3_string_pad(_str_14540, -20, 0); __v3_internal_symbol_join_1__vmsvc13812[2] = _str_1; __v3_internal_symbol_join_1__vmsvc13812[3] = v3_string_pad(v3_f64_fixed(total_ms, 2), 8, 0); __v3_internal_symbol_join_1__vmsvc13812[4] = _str_3490; __v3_internal_symbol_join_1__vmsvc13812[5] = total_instructions; println((string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13812)));
+	string __v3_internal_symbol_join_1__vmsvc13815[6]; __v3_internal_symbol_join_1__vmsvc13815[0] = _str_186; __v3_internal_symbol_join_1__vmsvc13815[1] = v3_string_pad(_str_14540, -20, 0); __v3_internal_symbol_join_1__vmsvc13815[2] = _str_1; __v3_internal_symbol_join_1__vmsvc13815[3] = v3_string_pad(v3_f64_fixed(total_ms, 2), 8, 0); __v3_internal_symbol_join_1__vmsvc13815[4] = _str_3490; __v3_internal_symbol_join_1__vmsvc13815[5] = total_instructions; println((string_plus_many(6, __v3_internal_symbol_join_1__vmsvc13815)));
 	if (b->metrics.len > 0) {
 		println(_str_14541);
 		{
@@ -614991,7 +615160,7 @@ void v__bench__Bench__report_step(v__bench__Bench* b, string name, bool parallel
 	string __if_val_2 = {0};
 	if (has_stage_peak) {
 		double stage_peak_ram_mb = (double)((double)(stage_peak_ram_kb)) / 1024.0;
-		string __v3_internal_symbol_join_0__vmsvc13813[3]; __v3_internal_symbol_join_0__vmsvc13813[0] = _str_14522; __v3_internal_symbol_join_0__vmsvc13813[1] = v3_string_pad(v3_f64_fixed(stage_peak_ram_mb, 0), 6, 0); __v3_internal_symbol_join_0__vmsvc13813[2] = _str_14523; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13813));
+		string __v3_internal_symbol_join_0__vmsvc13816[3]; __v3_internal_symbol_join_0__vmsvc13816[0] = _str_14522; __v3_internal_symbol_join_0__vmsvc13816[1] = v3_string_pad(v3_f64_fixed(stage_peak_ram_mb, 0), 6, 0); __v3_internal_symbol_join_0__vmsvc13816[2] = _str_14523; __if_val_2 = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13816));
 	} else {
 		__if_val_2 = _str_34;
 	}
@@ -615000,13 +615169,13 @@ void v__bench__Bench__report_step(v__bench__Bench* b, string name, bool parallel
 	string __if_val_3 = {0};
 	if (allocations_enabled) {
 		double allocated_mb = (double)((double)(allocated_bytes)) / (1024.0 * 1024.0);
-		string __v3_internal_symbol_join_1__vmsvc13814[5]; __v3_internal_symbol_join_1__vmsvc13814[0] = _str_14522; __v3_internal_symbol_join_1__vmsvc13814[1] = u64__str(allocation_count); __v3_internal_symbol_join_1__vmsvc13814[2] = _str_14524; __v3_internal_symbol_join_1__vmsvc13814[3] = v3_string_pad(v3_f64_fixed(allocated_mb, 2), 8, 0); __v3_internal_symbol_join_1__vmsvc13814[4] = _str_14525; __if_val_3 = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13814));
+		string __v3_internal_symbol_join_1__vmsvc13817[5]; __v3_internal_symbol_join_1__vmsvc13817[0] = _str_14522; __v3_internal_symbol_join_1__vmsvc13817[1] = u64__str(allocation_count); __v3_internal_symbol_join_1__vmsvc13817[2] = _str_14524; __v3_internal_symbol_join_1__vmsvc13817[3] = v3_string_pad(v3_f64_fixed(allocated_mb, 2), 8, 0); __v3_internal_symbol_join_1__vmsvc13817[4] = _str_14525; __if_val_3 = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13817));
 	} else {
 		__if_val_3 = _str_34;
 	}
 	string allocation_suffix = __if_val_3;
 	if (!b->quiet) {
-		string __v3_internal_symbol_join_2__vmsvc13815[14]; __v3_internal_symbol_join_2__vmsvc13815[0] = _str_186; __v3_internal_symbol_join_2__vmsvc13815[1] = v3_string_pad(label, -20, 0); __v3_internal_symbol_join_2__vmsvc13815[2] = _str_1; __v3_internal_symbol_join_2__vmsvc13815[3] = v3_string_pad(v3_f64_fixed(ms, 2), 8, 0); __v3_internal_symbol_join_2__vmsvc13815[4] = _str_14526; __v3_internal_symbol_join_2__vmsvc13815[5] = v3_string_pad(v3_f64_fixed(ram_mb, 0), 6, 0); __v3_internal_symbol_join_2__vmsvc13815[6] = _str_14527; __v3_internal_symbol_join_2__vmsvc13815[7] = footprint_suffix; __v3_internal_symbol_join_2__vmsvc13815[8] = stage_peak_suffix; __v3_internal_symbol_join_2__vmsvc13815[9] = _str_14522; __v3_internal_symbol_join_2__vmsvc13815[10] = v3_string_pad(v3_f64_fixed(peak_ram_mb, 0), 6, 0); __v3_internal_symbol_join_2__vmsvc13815[11] = _str_14528; __v3_internal_symbol_join_2__vmsvc13815[12] = allocation_suffix; __v3_internal_symbol_join_2__vmsvc13815[13] = v__bench__instruction_suffix(instructions); println((string_plus_many(14, __v3_internal_symbol_join_2__vmsvc13815)));
+		string __v3_internal_symbol_join_2__vmsvc13818[14]; __v3_internal_symbol_join_2__vmsvc13818[0] = _str_186; __v3_internal_symbol_join_2__vmsvc13818[1] = v3_string_pad(label, -20, 0); __v3_internal_symbol_join_2__vmsvc13818[2] = _str_1; __v3_internal_symbol_join_2__vmsvc13818[3] = v3_string_pad(v3_f64_fixed(ms, 2), 8, 0); __v3_internal_symbol_join_2__vmsvc13818[4] = _str_14526; __v3_internal_symbol_join_2__vmsvc13818[5] = v3_string_pad(v3_f64_fixed(ram_mb, 0), 6, 0); __v3_internal_symbol_join_2__vmsvc13818[6] = _str_14527; __v3_internal_symbol_join_2__vmsvc13818[7] = footprint_suffix; __v3_internal_symbol_join_2__vmsvc13818[8] = stage_peak_suffix; __v3_internal_symbol_join_2__vmsvc13818[9] = _str_14522; __v3_internal_symbol_join_2__vmsvc13818[10] = v3_string_pad(v3_f64_fixed(peak_ram_mb, 0), 6, 0); __v3_internal_symbol_join_2__vmsvc13818[11] = _str_14528; __v3_internal_symbol_join_2__vmsvc13818[12] = allocation_suffix; __v3_internal_symbol_join_2__vmsvc13818[13] = v__bench__instruction_suffix(instructions); println((string_plus_many(14, __v3_internal_symbol_join_2__vmsvc13818)));
 	}
 	v__bench__Step __arr_val_4 = (v__bench__Step){.name = label, .time_us = elapsed_us, .ram_kb = ram_kb, .stage_peak_ram_kb = stage_peak_ram_kb, .peak_ram_kb = peak_ram_kb, .allocation_count = allocation_count, .allocated_bytes = allocated_bytes};
 	array_push(&b->steps, &__arr_val_4);
@@ -615022,7 +615191,7 @@ void v__bench__Bench__set_quiet(v__bench__Bench* b) {
 
 void v__bench__Bench__start_memory_monitor(v__bench__Bench* b) {
 	if ((b->memory_limit_kb > 0) || !b->quiet) {
-		v__bench__monitor_stage_memory_thread_args* _sa0__vmsvc13816 = (v__bench__monitor_stage_memory_thread_args*)__v_thread_alloc(sizeof(v__bench__monitor_stage_memory_thread_args)); _sa0__vmsvc13816->a0 = b->stage_memory; _sa0__vmsvc13816->a1 = 		b->memory_limit_kb; _sa0__vmsvc13816->a2 = 		b->memory_monitor_interval; b->memory_monitor_thread = (__v_thread_spawn(v__bench__monitor_stage_memory_args_thread_wrapper, (void*)_sa0__vmsvc13816, __v_thread_free));
+		v__bench__monitor_stage_memory_thread_args* _sa0__vmsvc13819 = (v__bench__monitor_stage_memory_thread_args*)__v_thread_alloc(sizeof(v__bench__monitor_stage_memory_thread_args)); _sa0__vmsvc13819->a0 = b->stage_memory; _sa0__vmsvc13819->a1 = 		b->memory_limit_kb; _sa0__vmsvc13819->a2 = 		b->memory_monitor_interval; b->memory_monitor_thread = (__v_thread_spawn(v__bench__monitor_stage_memory_args_thread_wrapper, (void*)_sa0__vmsvc13819, __v_thread_free));
 		b->memory_monitor_started = true;
 		__v_result __or_opt_0 = v__bench__register_stage_memory_monitor_exit(b->stage_memory, b->memory_monitor_thread);
 		if (!__or_opt_0.ok) {
@@ -615094,19 +615263,19 @@ void v__bench__Bench__step_parts(v__bench__Bench* b, Array parts) {
 			if (is_last || (total_us <= 0)) {
 				__if_val_1 = total_allocation_count - reported_allocation_count;
 			} else {
-				i64 _t1__vmsvc13817 = (i64)((i64)(total_allocation_count) * part.time_us); i64 _t2__vmsvc13818 = (i64)(total_us); if (_t2__vmsvc13818 == 0) v_panic(_S("division by zero")); __if_val_1 = (u64)(((i64)(_t1__vmsvc13817 / _t2__vmsvc13818)));
+				i64 _t1__vmsvc13820 = (i64)((i64)(total_allocation_count) * part.time_us); i64 _t2__vmsvc13821 = (i64)(total_us); if (_t2__vmsvc13821 == 0) v_panic(_S("division by zero")); __if_val_1 = (u64)(((i64)(_t1__vmsvc13820 / _t2__vmsvc13821)));
 			}
 			u64 allocation_count = __if_val_1;
 			u64 __if_val_2 = {0};
 			if (is_last || (total_us <= 0)) {
 				__if_val_2 = total_allocated_bytes - reported_allocated_bytes;
 			} else {
-				i64 _t3__vmsvc13819 = (i64)((i64)(total_allocated_bytes) * part.time_us); i64 _t4__vmsvc13820 = (i64)(total_us); if (_t4__vmsvc13820 == 0) v_panic(_S("division by zero")); __if_val_2 = (u64)(((i64)(_t3__vmsvc13819 / _t4__vmsvc13820)));
+				i64 _t3__vmsvc13822 = (i64)((i64)(total_allocated_bytes) * part.time_us); i64 _t4__vmsvc13823 = (i64)(total_us); if (_t4__vmsvc13823 == 0) v_panic(_S("division by zero")); __if_val_2 = (u64)(((i64)(_t3__vmsvc13822 / _t4__vmsvc13823)));
 			}
 			u64 allocated_bytes = __if_val_2;
 			string __if_val_3 = {0};
 			if (is_last && (instructions.len > 0)) {
-				string __v3_internal_symbol_join_4__vmsvc13821[4]; __v3_internal_symbol_join_4__vmsvc13821[0] = instructions; __v3_internal_symbol_join_4__vmsvc13821[1] = _str_1000; __v3_internal_symbol_join_4__vmsvc13821[2] = int__str(parts.len); __v3_internal_symbol_join_4__vmsvc13821[3] = _str_14519; __if_val_3 = (string_plus_many(4, __v3_internal_symbol_join_4__vmsvc13821));
+				string __v3_internal_symbol_join_4__vmsvc13824[4]; __v3_internal_symbol_join_4__vmsvc13824[0] = instructions; __v3_internal_symbol_join_4__vmsvc13824[1] = _str_1000; __v3_internal_symbol_join_4__vmsvc13824[2] = int__str(parts.len); __v3_internal_symbol_join_4__vmsvc13824[3] = _str_14519; __if_val_3 = (string_plus_many(4, __v3_internal_symbol_join_4__vmsvc13824));
 			} else {
 				__if_val_3 = _str_34;
 			}
@@ -615162,7 +615331,7 @@ i64 v__bench__current_rss_kb(void) {
 		return 0;
 	}
 	u64 bytes = __or_val_1;
-	u64 _t1__vmsvc13822 = (u64)(bytes); u64 _t2__vmsvc13823 = (u64)(1024); if (_t2__vmsvc13823 == 0) v_panic(_S("division by zero")); return (i64)(((u64)(_t1__vmsvc13822 / _t2__vmsvc13823)));
+	u64 _t1__vmsvc13825 = (u64)(bytes); u64 _t2__vmsvc13826 = (u64)(1024); if (_t2__vmsvc13826 == 0) v_panic(_S("division by zero")); return (i64)(((u64)(_t1__vmsvc13825 / _t2__vmsvc13826)));
 }
 
 void v__bench__deactivate_stage_memory_monitor_exit(v__bench__StageMemoryMonitor* state) {
@@ -615206,16 +615375,16 @@ string v__bench__memory_limit_error(i64 memory_kb, i64 limit_kb, string context,
 	if ((limit_kb <= 0) || (memory_kb < limit_kb)) {
 		return _str_34;
 	}
-	i64 _t1__vmsvc13824 = (i64)(memory_kb); i64 _t2__vmsvc13825 = (i64)(1024); if (_t2__vmsvc13825 == 0) v_panic(_S("division by zero")); i64 memory_mb = ((i64)(_t1__vmsvc13824 / _t2__vmsvc13825));
-	i64 _t3__vmsvc13826 = (i64)(limit_kb); i64 _t4__vmsvc13827 = (i64)(1024); if (_t4__vmsvc13827 == 0) v_panic(_S("division by zero")); i64 limit_mb = ((i64)(_t3__vmsvc13826 / _t4__vmsvc13827));
+	i64 _t1__vmsvc13827 = (i64)(memory_kb); i64 _t2__vmsvc13828 = (i64)(1024); if (_t2__vmsvc13828 == 0) v_panic(_S("division by zero")); i64 memory_mb = ((i64)(_t1__vmsvc13827 / _t2__vmsvc13828));
+	i64 _t3__vmsvc13829 = (i64)(limit_kb); i64 _t4__vmsvc13830 = (i64)(1024); if (_t4__vmsvc13830 == 0) v_panic(_S("division by zero")); i64 limit_mb = ((i64)(_t3__vmsvc13829 / _t4__vmsvc13830));
 	string __if_val_0 = {0};
-	i64 _t5__vmsvc13828 = (i64)(limit_mb); i64 _t6__vmsvc13829 = (i64)(1024); if (_t6__vmsvc13829 == 0) v_panic(_S("modulo by zero")); if ((((i64)(_t5__vmsvc13828 % _t6__vmsvc13829))) == 0) {
-		i64 _t7__vmsvc13830 = (i64)(limit_mb); i64 _t8__vmsvc13831 = (i64)(1024); if (_t8__vmsvc13831 == 0) v_panic(_S("division by zero")); __if_val_0 = string__plus(i64__str(((i64)(_t7__vmsvc13830 / _t8__vmsvc13831))), _str_14532);
+	i64 _t5__vmsvc13831 = (i64)(limit_mb); i64 _t6__vmsvc13832 = (i64)(1024); if (_t6__vmsvc13832 == 0) v_panic(_S("modulo by zero")); if ((((i64)(_t5__vmsvc13831 % _t6__vmsvc13832))) == 0) {
+		i64 _t7__vmsvc13833 = (i64)(limit_mb); i64 _t8__vmsvc13834 = (i64)(1024); if (_t8__vmsvc13834 == 0) v_panic(_S("division by zero")); __if_val_0 = string__plus(i64__str(((i64)(_t7__vmsvc13833 / _t8__vmsvc13834))), _str_14532);
 	} else {
 		__if_val_0 = string__plus(i64__str(limit_mb), _str_14533);
 	}
 	string limit_label = __if_val_0;
-	string __v3_internal_symbol_join_8__vmsvc13832[7]; __v3_internal_symbol_join_8__vmsvc13832[0] = _str_14534; __v3_internal_symbol_join_8__vmsvc13832[1] = i64__str(memory_mb); __v3_internal_symbol_join_8__vmsvc13832[2] = _str_14535; __v3_internal_symbol_join_8__vmsvc13832[3] = metric; __v3_internal_symbol_join_8__vmsvc13832[4] = _str_1; __v3_internal_symbol_join_8__vmsvc13832[5] = context; __v3_internal_symbol_join_8__vmsvc13832[6] = _str_1; string __v3_internal_symbol_join_9__vmsvc13833[3]; __v3_internal_symbol_join_9__vmsvc13833[0] = _str_14536; __v3_internal_symbol_join_9__vmsvc13833[1] = limit_label; __v3_internal_symbol_join_9__vmsvc13833[2] = _str_14537; return string__plus((string_plus_many(7, __v3_internal_symbol_join_8__vmsvc13832)), (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc13833)));
+	string __v3_internal_symbol_join_8__vmsvc13835[7]; __v3_internal_symbol_join_8__vmsvc13835[0] = _str_14534; __v3_internal_symbol_join_8__vmsvc13835[1] = i64__str(memory_mb); __v3_internal_symbol_join_8__vmsvc13835[2] = _str_14535; __v3_internal_symbol_join_8__vmsvc13835[3] = metric; __v3_internal_symbol_join_8__vmsvc13835[4] = _str_1; __v3_internal_symbol_join_8__vmsvc13835[5] = context; __v3_internal_symbol_join_8__vmsvc13835[6] = _str_1; string __v3_internal_symbol_join_9__vmsvc13836[3]; __v3_internal_symbol_join_9__vmsvc13836[0] = _str_14536; __v3_internal_symbol_join_9__vmsvc13836[1] = limit_label; __v3_internal_symbol_join_9__vmsvc13836[2] = _str_14537; return string__plus((string_plus_many(7, __v3_internal_symbol_join_8__vmsvc13835)), (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc13836)));
 }
 
 void v__bench__monitor_stage_memory(v__bench__StageMemoryMonitor* state, i64 limit_kb, i64 interval) {
@@ -615260,7 +615429,7 @@ string v__bench__physical_footprint_suffix(v__bench__LimitMemory memory) {
 		return _str_34;
 	}
 	double footprint_mb = (double)((double)(memory.kb)) / 1024.0;
-	string __v3_internal_symbol_join_0__vmsvc13834[3]; __v3_internal_symbol_join_0__vmsvc13834[0] = _str_14522; __v3_internal_symbol_join_0__vmsvc13834[1] = v3_string_pad(v3_f64_fixed(footprint_mb, 0), 6, 0); __v3_internal_symbol_join_0__vmsvc13834[2] = _str_14531; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13834));
+	string __v3_internal_symbol_join_0__vmsvc13837[3]; __v3_internal_symbol_join_0__vmsvc13837[0] = _str_14522; __v3_internal_symbol_join_0__vmsvc13837[1] = v3_string_pad(v3_f64_fixed(footprint_mb, 0), 6, 0); __v3_internal_symbol_join_0__vmsvc13837[2] = _str_14531; return (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13837));
 }
 
 void v__bench__print_metric(v__bench__Metric metric) {
@@ -615271,7 +615440,7 @@ void v__bench__print_metric(v__bench__Metric metric) {
 		__if_val_0 = _str_34;
 	}
 	string suffix = __if_val_0;
-	string __v3_internal_symbol_join_0__vmsvc13835[5]; __v3_internal_symbol_join_0__vmsvc13835[0] = _str_3448; __v3_internal_symbol_join_0__vmsvc13835[1] = v3_string_pad(metric.name, -28, 0); __v3_internal_symbol_join_0__vmsvc13835[2] = _str_1; __v3_internal_symbol_join_0__vmsvc13835[3] = i64__str(metric.value); __v3_internal_symbol_join_0__vmsvc13835[4] = suffix; println((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13835)));
+	string __v3_internal_symbol_join_0__vmsvc13838[5]; __v3_internal_symbol_join_0__vmsvc13838[0] = _str_3448; __v3_internal_symbol_join_0__vmsvc13838[1] = v3_string_pad(metric.name, -28, 0); __v3_internal_symbol_join_0__vmsvc13838[2] = _str_1; __v3_internal_symbol_join_0__vmsvc13838[3] = i64__str(metric.value); __v3_internal_symbol_join_0__vmsvc13838[4] = suffix; println((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13838)));
 }
 
 __v_result v__bench__register_stage_memory_monitor_exit(v__bench__StageMemoryMonitor* state, __v_thread worker) {
@@ -615319,7 +615488,7 @@ void v__bench__stop_stage_memory_monitor_thread(v__bench__StageMemoryMonitor* st
 	v__bench__StageMemoryMonitor* monitor = (v__bench__StageMemoryMonitor*)((void*)(state));
 	sync__Semaphore* wake = (sync__Semaphore*)((void*)(monitor->wake));
 	sync__Semaphore__post(wake);
-	__v_thread __twthread0__vmsvc13836 = worker; if (!__twthread0__vmsvc13836.handle) v_panic(_S("unable to join thread")); void* __twres0__vmsvc13837 = __v_thread_join(__twthread0__vmsvc13836); if (__twres0__vmsvc13837) __v_thread_free(__twres0__vmsvc13837); ((void)0);
+	__v_thread __twthread0__vmsvc13839 = worker; if (!__twthread0__vmsvc13839.handle) v_panic(_S("unable to join thread")); void* __twres0__vmsvc13840 = __v_thread_join(__twthread0__vmsvc13839); if (__twres0__vmsvc13840) __v_thread_free(__twres0__vmsvc13840); ((void)0);
 }
 
 void v__bench__stop_stage_memory_monitors_at_exit(void) {
@@ -615349,7 +615518,7 @@ VNORETURN void v_exit(__v_int code) {
 __inline __v_int v_fixed_index(__v_int i, __v_int len) {
 	{
 		if ((i < 0) || (i >= len)) {
-			string __v3_internal_symbol_join_0__vmsvc13838[5]; __v3_internal_symbol_join_0__vmsvc13838[0] = _str_196; __v3_internal_symbol_join_0__vmsvc13838[1] = i64__str((i64)(i)); __v3_internal_symbol_join_0__vmsvc13838[2] = _str_197; __v3_internal_symbol_join_0__vmsvc13838[3] = i64__str((i64)(len)); __v3_internal_symbol_join_0__vmsvc13838[4] = _str_28; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13838)));
+			string __v3_internal_symbol_join_0__vmsvc13841[5]; __v3_internal_symbol_join_0__vmsvc13841[0] = _str_196; __v3_internal_symbol_join_0__vmsvc13841[1] = i64__str((i64)(i)); __v3_internal_symbol_join_0__vmsvc13841[2] = _str_197; __v3_internal_symbol_join_0__vmsvc13841[3] = i64__str((i64)(len)); __v3_internal_symbol_join_0__vmsvc13841[4] = _str_28; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13841)));
 		}
 	}
 	return i;
@@ -615358,7 +615527,7 @@ __inline __v_int v_fixed_index(__v_int i, __v_int len) {
 __inline __v_int v_fixed_index_i64(i64 i, __v_int len) {
 	{
 		if ((i < 0) || (i >= (i64)(len))) {
-			string __v3_internal_symbol_join_0__vmsvc13839[5]; __v3_internal_symbol_join_0__vmsvc13839[0] = _str_196; __v3_internal_symbol_join_0__vmsvc13839[1] = i64__str(i); __v3_internal_symbol_join_0__vmsvc13839[2] = _str_197; __v3_internal_symbol_join_0__vmsvc13839[3] = i64__str((i64)(len)); __v3_internal_symbol_join_0__vmsvc13839[4] = _str_28; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13839)));
+			string __v3_internal_symbol_join_0__vmsvc13842[5]; __v3_internal_symbol_join_0__vmsvc13842[0] = _str_196; __v3_internal_symbol_join_0__vmsvc13842[1] = i64__str(i); __v3_internal_symbol_join_0__vmsvc13842[2] = _str_197; __v3_internal_symbol_join_0__vmsvc13842[3] = i64__str((i64)(len)); __v3_internal_symbol_join_0__vmsvc13842[4] = _str_28; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13842)));
 		}
 	}
 	return (__v_int)(i);
@@ -615371,7 +615540,7 @@ __inline __v_int v_fixed_index_ni(__v_int i, __v_int len) {
 __inline __v_int v_fixed_index_u64(u64 i, __v_int len) {
 	{
 		if (i >= (u64)(len)) {
-			string __v3_internal_symbol_join_0__vmsvc13840[5]; __v3_internal_symbol_join_0__vmsvc13840[0] = _str_196; __v3_internal_symbol_join_0__vmsvc13840[1] = u64__str(i); __v3_internal_symbol_join_0__vmsvc13840[2] = _str_197; __v3_internal_symbol_join_0__vmsvc13840[3] = i64__str((i64)(len)); __v3_internal_symbol_join_0__vmsvc13840[4] = _str_28; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13840)));
+			string __v3_internal_symbol_join_0__vmsvc13843[5]; __v3_internal_symbol_join_0__vmsvc13843[0] = _str_196; __v3_internal_symbol_join_0__vmsvc13843[1] = u64__str(i); __v3_internal_symbol_join_0__vmsvc13843[2] = _str_197; __v3_internal_symbol_join_0__vmsvc13843[3] = i64__str((i64)(len)); __v3_internal_symbol_join_0__vmsvc13843[4] = _str_28; v_panic((string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13843)));
 		}
 	}
 	return (__v_int)(i);
@@ -615594,7 +615763,7 @@ __inline u8* vmemory_align_up(u8* ptr, __v_int align) {
 	if ((alignment & (alignment - 1)) == 0) {
 		return (u8*)(((addr + alignment) - 1) & ~(alignment - 1));
 	}
-	u64 _t1__vmsvc13841 = (u64)(addr); u64 _t2__vmsvc13842 = (u64)(alignment); if (_t2__vmsvc13842 == 0) v_panic(_S("modulo by zero")); u64 offset = ((u64)(_t1__vmsvc13841 % _t2__vmsvc13842));
+	u64 _t1__vmsvc13844 = (u64)(addr); u64 _t2__vmsvc13845 = (u64)(alignment); if (_t2__vmsvc13845 == 0) v_panic(_S("modulo by zero")); u64 offset = ((u64)(_t1__vmsvc13844 % _t2__vmsvc13845));
 	if (offset == 0) {
 		return ptr;
 	}
@@ -615676,11 +615845,11 @@ __declspec(noinline) VMemoryBlock* vmemory_block_grow(VMemoryBlock* previous, __
 		VMemoryBlock* old_next = previous->next;
 		if (was_scope && (scope != 0)) {
 			VMemoryBlock* candidate = old_next;
-			for (;;) { int cond__vmsvc13844; cond__vmsvc13844 = !!((candidate != 0) && candidate->is_scope); if (cond__vmsvc13844) { bool __ptr_eq_0__vmsvc13843 = (void*)(candidate->scope) == (void*)(scope); if (!__ptr_eq_0__vmsvc13843 && ((void*)(candidate->scope) != NULL) && ((void*)(scope) != NULL)) {
+			for (;;) { int cond__vmsvc13847; cond__vmsvc13847 = !!((candidate != 0) && candidate->is_scope); if (cond__vmsvc13847) { bool __ptr_eq_0__vmsvc13846 = (void*)(candidate->scope) == (void*)(scope); if (!__ptr_eq_0__vmsvc13846 && ((void*)(candidate->scope) != NULL) && ((void*)(scope) != NULL)) {
 				VPreallocScope __eq_lhs_1 = *candidate->scope;
 				VPreallocScope __eq_rhs_2 = *scope;
-				__ptr_eq_0__vmsvc13843 = (__eq_lhs_1.previous == __eq_rhs_2.previous) && (__eq_lhs_1.first == __eq_rhs_2.first) && (__eq_lhs_1.saved_next == __eq_rhs_2.saved_next) && (__eq_lhs_1.min_address == __eq_rhs_2.min_address) && (__eq_lhs_1.max_address == __eq_rhs_2.max_address) && (__eq_lhs_1.ranges == __eq_rhs_2.ranges) && (__eq_lhs_1.ranges_len == __eq_rhs_2.ranges_len) && (__eq_lhs_1.ranges_cap == __eq_rhs_2.ranges_cap) && (__eq_lhs_1.refs == __eq_rhs_2.refs) && (__eq_lhs_1.free_requested == __eq_rhs_2.free_requested) && (__eq_lhs_1.abandoned == __eq_rhs_2.abandoned) && (__eq_lhs_1.finalized == __eq_rhs_2.finalized);
-			} cond__vmsvc13844 = !!((__ptr_eq_0__vmsvc13843)); } if (!(cond__vmsvc13844)) break; {
+				__ptr_eq_0__vmsvc13846 = (__eq_lhs_1.previous == __eq_rhs_2.previous) && (__eq_lhs_1.first == __eq_rhs_2.first) && (__eq_lhs_1.saved_next == __eq_rhs_2.saved_next) && (__eq_lhs_1.min_address == __eq_rhs_2.min_address) && (__eq_lhs_1.max_address == __eq_rhs_2.max_address) && (__eq_lhs_1.ranges == __eq_rhs_2.ranges) && (__eq_lhs_1.ranges_len == __eq_rhs_2.ranges_len) && (__eq_lhs_1.ranges_cap == __eq_rhs_2.ranges_cap) && (__eq_lhs_1.refs == __eq_rhs_2.refs) && (__eq_lhs_1.free_requested == __eq_rhs_2.free_requested) && (__eq_lhs_1.abandoned == __eq_rhs_2.abandoned) && (__eq_lhs_1.finalized == __eq_rhs_2.finalized);
+			} cond__vmsvc13847 = !!((__ptr_eq_0__vmsvc13846)); } if (!(cond__vmsvc13847)) break; {
 				u8* aligned = vmemory_align_up(candidate->current, align);
 				if (((i64)(candidate->stop) - (i64)(aligned)) >= n) {
 					g_memory_block = candidate;
@@ -615702,11 +615871,11 @@ __declspec(noinline) VMemoryBlock* vmemory_block_grow(VMemoryBlock* previous, __
 		VMemoryBlock* mb = vmemory_block_new_sized(previous, n, align, min_block_size);
 		mb->is_scope = was_scope;
 		mb->scope = scope;
-		int cond__vmsvc13846; cond__vmsvc13846 = !!((old_next != 0) && was_scope && old_next->is_scope); if (cond__vmsvc13846) { bool __ptr_eq_4__vmsvc13845 = (void*)(old_next->scope) == (void*)(scope); if (!__ptr_eq_4__vmsvc13845 && ((void*)(old_next->scope) != NULL) && ((void*)(scope) != NULL)) {
+		int cond__vmsvc13849; cond__vmsvc13849 = !!((old_next != 0) && was_scope && old_next->is_scope); if (cond__vmsvc13849) { bool __ptr_eq_4__vmsvc13848 = (void*)(old_next->scope) == (void*)(scope); if (!__ptr_eq_4__vmsvc13848 && ((void*)(old_next->scope) != NULL) && ((void*)(scope) != NULL)) {
 			VPreallocScope __eq_lhs_5 = *old_next->scope;
 			VPreallocScope __eq_rhs_6 = *scope;
-			__ptr_eq_4__vmsvc13845 = (__eq_lhs_5.previous == __eq_rhs_6.previous) && (__eq_lhs_5.first == __eq_rhs_6.first) && (__eq_lhs_5.saved_next == __eq_rhs_6.saved_next) && (__eq_lhs_5.min_address == __eq_rhs_6.min_address) && (__eq_lhs_5.max_address == __eq_rhs_6.max_address) && (__eq_lhs_5.ranges == __eq_rhs_6.ranges) && (__eq_lhs_5.ranges_len == __eq_rhs_6.ranges_len) && (__eq_lhs_5.ranges_cap == __eq_rhs_6.ranges_cap) && (__eq_lhs_5.refs == __eq_rhs_6.refs) && (__eq_lhs_5.free_requested == __eq_rhs_6.free_requested) && (__eq_lhs_5.abandoned == __eq_rhs_6.abandoned) && (__eq_lhs_5.finalized == __eq_rhs_6.finalized);
-		} cond__vmsvc13846 = !!((__ptr_eq_4__vmsvc13845)); } if (cond__vmsvc13846) {
+			__ptr_eq_4__vmsvc13848 = (__eq_lhs_5.previous == __eq_rhs_6.previous) && (__eq_lhs_5.first == __eq_rhs_6.first) && (__eq_lhs_5.saved_next == __eq_rhs_6.saved_next) && (__eq_lhs_5.min_address == __eq_rhs_6.min_address) && (__eq_lhs_5.max_address == __eq_rhs_6.max_address) && (__eq_lhs_5.ranges == __eq_rhs_6.ranges) && (__eq_lhs_5.ranges_len == __eq_rhs_6.ranges_len) && (__eq_lhs_5.ranges_cap == __eq_rhs_6.ranges_cap) && (__eq_lhs_5.refs == __eq_rhs_6.refs) && (__eq_lhs_5.free_requested == __eq_rhs_6.free_requested) && (__eq_lhs_5.abandoned == __eq_rhs_6.abandoned) && (__eq_lhs_5.finalized == __eq_rhs_6.finalized);
+		} cond__vmsvc13849 = !!((__ptr_eq_4__vmsvc13848)); } if (cond__vmsvc13849) {
 			mb->next = old_next;
 			old_next->previous = mb;
 		}
@@ -615785,10 +615954,10 @@ VMemoryBlock* vmemory_block_new_sized(VMemoryBlock* prev, __v_int at_least, __v_
 	__v_int __if_val_2 = {0};
 	if (align > 0) {
 		__v_int __if_val_3 = {0};
-		__v_int _t1__vmsvc13847 = (__v_int)(base_block_size); __v_int _t2__vmsvc13848 = (__v_int)(align); if (_t2__vmsvc13848 == 0) v_panic(_S("modulo by zero")); if ((((__v_int)(_t1__vmsvc13847 % _t2__vmsvc13848))) == 0) {
+		__v_int _t1__vmsvc13850 = (__v_int)(base_block_size); __v_int _t2__vmsvc13851 = (__v_int)(align); if (_t2__vmsvc13851 == 0) v_panic(_S("modulo by zero")); if ((((__v_int)(_t1__vmsvc13850 % _t2__vmsvc13851))) == 0) {
 			__if_val_3 = base_block_size;
 		} else {
-			__v_int _t3__vmsvc13849 = (__v_int)(base_block_size); __v_int _t4__vmsvc13850 = (__v_int)(align); if (_t4__vmsvc13850 == 0) v_panic(_S("modulo by zero")); __if_val_3 = (base_block_size + align) - (((__v_int)(_t3__vmsvc13849 % _t4__vmsvc13850)));
+			__v_int _t3__vmsvc13852 = (__v_int)(base_block_size); __v_int _t4__vmsvc13853 = (__v_int)(align); if (_t4__vmsvc13853 == 0) v_panic(_S("modulo by zero")); __if_val_3 = (base_block_size + align) - (((__v_int)(_t3__vmsvc13852 % _t4__vmsvc13853)));
 		}
 		__if_val_2 = __if_val_3;
 	} else {
@@ -615903,7 +616072,7 @@ __v_result_vmod__Manifest vmod__Parser__parse(vmod__Parser* p) {
 	Array tokens = p->scanner.tokens;
 	vmod__Manifest mn = (vmod__Manifest){.repo_branch = _str_5, .name = _str_34, .base_url = _str_34, .description = _str_34, .version = _str_34, .license = _str_34, .repo_url = _str_34, .author = _str_34, .dependencies = array_new(sizeof(string), 0, 0), .unknown = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string), .catalog = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string), .workspaces = array_new(sizeof(string), 0, 0)};
 	if (((*(vmod__Token*)array_get(tokens, 0))).typ != vmod__TokenKind__module_keyword) {
-		string __v3_internal_symbol_join_0__vmsvc13851[3]; __v3_internal_symbol_join_0__vmsvc13851[0] = vmod__err_label; __v3_internal_symbol_join_0__vmsvc13851[1] = _str_2042; __v3_internal_symbol_join_0__vmsvc13851[2] = int__str(((*(vmod__Token*)array_get(tokens, 0))).line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13851)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc13854[3]; __v3_internal_symbol_join_0__vmsvc13854[0] = vmod__err_label; __v3_internal_symbol_join_0__vmsvc13854[1] = _str_2042; __v3_internal_symbol_join_0__vmsvc13854[2] = int__str(((*(vmod__Token*)array_get(tokens, 0))).line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13854)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	__v_int i = 1;
 	while (i < tokens.len) {
@@ -615913,7 +616082,7 @@ __v_result_vmod__Manifest vmod__Parser__parse(vmod__Parser* p) {
 			if (__match_tmp_0 == vmod__TokenKind__lcbr) {
 				int __in_lhs_1 = ((*(vmod__Token*)array_get(tokens, i + 1))).typ;
 				if (!((__in_lhs_1 == vmod__TokenKind__field_key) || (__in_lhs_1 == vmod__TokenKind__rcbr))) {
-					string __v3_internal_symbol_join_1__vmsvc13852[3]; __v3_internal_symbol_join_1__vmsvc13852[0] = vmod__err_label; __v3_internal_symbol_join_1__vmsvc13852[1] = _str_2043; __v3_internal_symbol_join_1__vmsvc13852[2] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13852)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_1__vmsvc13855[3]; __v3_internal_symbol_join_1__vmsvc13855[0] = vmod__err_label; __v3_internal_symbol_join_1__vmsvc13855[1] = _str_2043; __v3_internal_symbol_join_1__vmsvc13855[2] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13855)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				i++;
 				continue;
@@ -615922,11 +616091,11 @@ __v_result_vmod__Manifest vmod__Parser__parse(vmod__Parser* p) {
 			} else if (__match_tmp_0 == vmod__TokenKind__field_key) {
 				string field_name = string__trim_right(tok.val, _str_92);
 				if ((i + 1) >= tokens.len) {
-					string __v3_internal_symbol_join_2__vmsvc13853[4]; __v3_internal_symbol_join_2__vmsvc13853[0] = vmod__err_label; __v3_internal_symbol_join_2__vmsvc13853[1] = _str_2044; __v3_internal_symbol_join_2__vmsvc13853[2] = field_name; __v3_internal_symbol_join_2__vmsvc13853[3] = _str_363; return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13853)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_2__vmsvc13856[4]; __v3_internal_symbol_join_2__vmsvc13856[0] = vmod__err_label; __v3_internal_symbol_join_2__vmsvc13856[1] = _str_2044; __v3_internal_symbol_join_2__vmsvc13856[2] = field_name; __v3_internal_symbol_join_2__vmsvc13856[3] = _str_363; return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc13856)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				int __in_lhs_2 = ((*(vmod__Token*)array_get(tokens, i + 1))).typ;
 				if (!((__in_lhs_2 == vmod__TokenKind__str) || (__in_lhs_2 == vmod__TokenKind__labr)) && !(string__eq(field_name, _str_2045) && (((*(vmod__Token*)array_get(tokens, i + 1))).typ == vmod__TokenKind__lcbr))) {
-					string __v3_internal_symbol_join_3__vmsvc13854[5]; __v3_internal_symbol_join_3__vmsvc13854[0] = vmod__err_label; __v3_internal_symbol_join_3__vmsvc13854[1] = _str_2046; __v3_internal_symbol_join_3__vmsvc13854[2] = field_name; __v3_internal_symbol_join_3__vmsvc13854[3] = _str_2047; __v3_internal_symbol_join_3__vmsvc13854[4] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13854)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_3__vmsvc13857[5]; __v3_internal_symbol_join_3__vmsvc13857[0] = vmod__err_label; __v3_internal_symbol_join_3__vmsvc13857[1] = _str_2046; __v3_internal_symbol_join_3__vmsvc13857[2] = field_name; __v3_internal_symbol_join_3__vmsvc13857[3] = _str_2047; __v3_internal_symbol_join_3__vmsvc13857[4] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13857)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				string field_value = ((*(vmod__Token*)array_get(tokens, i + 1))).val;
 				if (string__eq(field_name, _str_881)) {
@@ -615961,7 +616130,7 @@ __v_result_vmod__Manifest vmod__Parser__parse(vmod__Parser* p) {
 					continue;
 				} else if (string__eq(field_name, _str_2045)) {
 					if (((*(vmod__Token*)array_get(tokens, i + 1))).typ != vmod__TokenKind__lcbr) {
-						string __v3_internal_symbol_join_4__vmsvc13855[3]; __v3_internal_symbol_join_4__vmsvc13855[0] = vmod__err_label; __v3_internal_symbol_join_4__vmsvc13855[1] = _str_2055; __v3_internal_symbol_join_4__vmsvc13855[2] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13855)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+						string __v3_internal_symbol_join_4__vmsvc13858[3]; __v3_internal_symbol_join_4__vmsvc13858[0] = vmod__err_label; __v3_internal_symbol_join_4__vmsvc13858[1] = _str_2055; __v3_internal_symbol_join_4__vmsvc13858[2] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13858)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 					}
 					map catalog = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 					__v_int j = i + 2;
@@ -615974,13 +616143,13 @@ __v_result_vmod__Manifest vmod__Parser__parse(vmod__Parser* p) {
 							key = ((*(vmod__Token*)array_get(tokens, j))).val;
 							j += 2;
 						} else {
-							string __v3_internal_symbol_join_5__vmsvc13856[3]; __v3_internal_symbol_join_5__vmsvc13856[0] = vmod__err_label; __v3_internal_symbol_join_5__vmsvc13856[1] = _str_2056; __v3_internal_symbol_join_5__vmsvc13856[2] = int__str(((*(vmod__Token*)array_get(tokens, j))).line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13856)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+							string __v3_internal_symbol_join_5__vmsvc13859[3]; __v3_internal_symbol_join_5__vmsvc13859[0] = vmod__err_label; __v3_internal_symbol_join_5__vmsvc13859[1] = _str_2056; __v3_internal_symbol_join_5__vmsvc13859[2] = int__str(((*(vmod__Token*)array_get(tokens, j))).line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_5__vmsvc13859)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 						}
-						int cond__vmsvc13858; cond__vmsvc13858 = !!(string__eq(key, _str_34)); if (!cond__vmsvc13858) { string __map_key_6__vmsvc13857 = key; cond__vmsvc13858 = !!((map__exists(&catalog, &__map_key_6__vmsvc13857))); } if (cond__vmsvc13858) {
-							string __v3_internal_symbol_join_6__vmsvc13859[4]; __v3_internal_symbol_join_6__vmsvc13859[0] = vmod__err_label; __v3_internal_symbol_join_6__vmsvc13859[1] = _str_2057; __v3_internal_symbol_join_6__vmsvc13859[2] = key; __v3_internal_symbol_join_6__vmsvc13859[3] = _str_363; return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc13859)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+						int cond__vmsvc13861; cond__vmsvc13861 = !!(string__eq(key, _str_34)); if (!cond__vmsvc13861) { string __map_key_6__vmsvc13860 = key; cond__vmsvc13861 = !!((map__exists(&catalog, &__map_key_6__vmsvc13860))); } if (cond__vmsvc13861) {
+							string __v3_internal_symbol_join_6__vmsvc13862[4]; __v3_internal_symbol_join_6__vmsvc13862[0] = vmod__err_label; __v3_internal_symbol_join_6__vmsvc13862[1] = _str_2057; __v3_internal_symbol_join_6__vmsvc13862[2] = key; __v3_internal_symbol_join_6__vmsvc13862[3] = _str_363; return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_6__vmsvc13862)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 						}
 						if ((j >= tokens.len) || (((*(vmod__Token*)array_get(tokens, j))).typ != vmod__TokenKind__str)) {
-							string __v3_internal_symbol_join_7__vmsvc13860[4]; __v3_internal_symbol_join_7__vmsvc13860[0] = vmod__err_label; __v3_internal_symbol_join_7__vmsvc13860[1] = _str_2058; __v3_internal_symbol_join_7__vmsvc13860[2] = key; __v3_internal_symbol_join_7__vmsvc13860[3] = _str_2059; return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_7__vmsvc13860)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+							string __v3_internal_symbol_join_7__vmsvc13863[4]; __v3_internal_symbol_join_7__vmsvc13863[0] = vmod__err_label; __v3_internal_symbol_join_7__vmsvc13863[1] = _str_2058; __v3_internal_symbol_join_7__vmsvc13863[2] = key; __v3_internal_symbol_join_7__vmsvc13863[3] = _str_2059; return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_7__vmsvc13863)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 						}
 						string __map_key_7 = key;
 						string __map_val_8 = ((*(vmod__Token*)array_get(tokens, j))).val;
@@ -616040,12 +616209,12 @@ __v_result_vmod__Manifest vmod__Parser__parse(vmod__Parser* p) {
 			} else if (__match_tmp_0 == vmod__TokenKind__comma) {
 				int __in_lhs_19 = ((*(vmod__Token*)array_get(tokens, i - 1))).typ;
 				if (!((__in_lhs_19 == vmod__TokenKind__str) || (__in_lhs_19 == vmod__TokenKind__rabr) || (__in_lhs_19 == vmod__TokenKind__rcbr)) || (((*(vmod__Token*)array_get(tokens, i + 1))).typ != vmod__TokenKind__field_key)) {
-					string __v3_internal_symbol_join_8__vmsvc13861[3]; __v3_internal_symbol_join_8__vmsvc13861[0] = vmod__err_label; __v3_internal_symbol_join_8__vmsvc13861[1] = _str_2063; __v3_internal_symbol_join_8__vmsvc13861[2] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc13861)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_8__vmsvc13864[3]; __v3_internal_symbol_join_8__vmsvc13864[0] = vmod__err_label; __v3_internal_symbol_join_8__vmsvc13864[1] = _str_2063; __v3_internal_symbol_join_8__vmsvc13864[2] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_8__vmsvc13864)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				i++;
 				continue;
 			} else {
-				string __v3_internal_symbol_join_9__vmsvc13862[5]; __v3_internal_symbol_join_9__vmsvc13862[0] = vmod__err_label; __v3_internal_symbol_join_9__vmsvc13862[1] = _str_2038; __v3_internal_symbol_join_9__vmsvc13862[2] = tok.val; __v3_internal_symbol_join_9__vmsvc13862[3] = _str_2039; __v3_internal_symbol_join_9__vmsvc13862[4] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_9__vmsvc13862)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_9__vmsvc13865[5]; __v3_internal_symbol_join_9__vmsvc13865[0] = vmod__err_label; __v3_internal_symbol_join_9__vmsvc13865[1] = _str_2038; __v3_internal_symbol_join_9__vmsvc13865[2] = tok.val; __v3_internal_symbol_join_9__vmsvc13865[3] = _str_2039; __v3_internal_symbol_join_9__vmsvc13865[4] = int__str(tok.line); return (__v_result_vmod__Manifest){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_9__vmsvc13865)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 		}
 	}
@@ -616175,7 +616344,7 @@ __v_result_multi_return_Array___v_int vmod__get_array_content(Array tokens, __v_
 	Array vals = array_new(	sizeof(string), 0, 0);
 	__v_int idx = st_idx;
 	if (((*(vmod__Token*)array_get(tokens, idx))).typ != vmod__TokenKind__labr) {
-		string __v3_internal_symbol_join_0__vmsvc13863[3]; __v3_internal_symbol_join_0__vmsvc13863[0] = vmod__err_label; __v3_internal_symbol_join_0__vmsvc13863[1] = _str_2037; __v3_internal_symbol_join_0__vmsvc13863[2] = int__str(((*(vmod__Token*)array_get(tokens, idx))).line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13863)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		string __v3_internal_symbol_join_0__vmsvc13866[3]; __v3_internal_symbol_join_0__vmsvc13866[0] = vmod__err_label; __v3_internal_symbol_join_0__vmsvc13866[1] = _str_2037; __v3_internal_symbol_join_0__vmsvc13866[2] = int__str(((*(vmod__Token*)array_get(tokens, idx))).line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc13866)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 	}
 	idx++;
 	for (;;) {
@@ -616184,7 +616353,7 @@ __v_result_multi_return_Array___v_int vmod__get_array_content(Array tokens, __v_
 			int __match_tmp_0 = tok.typ;
 			if ((__match_tmp_0 == vmod__TokenKind__str) || (__match_tmp_0 == vmod__TokenKind__ident) || (__match_tmp_0 == vmod__TokenKind__field_key)) {
 				if ((tok.typ != vmod__TokenKind__str) && !allow_legacy_dependencies) {
-					string __v3_internal_symbol_join_1__vmsvc13864[5]; __v3_internal_symbol_join_1__vmsvc13864[0] = vmod__err_label; __v3_internal_symbol_join_1__vmsvc13864[1] = _str_2038; __v3_internal_symbol_join_1__vmsvc13864[2] = tok.val; __v3_internal_symbol_join_1__vmsvc13864[3] = _str_2039; __v3_internal_symbol_join_1__vmsvc13864[4] = int__str(tok.line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13864)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_1__vmsvc13867[5]; __v3_internal_symbol_join_1__vmsvc13867[0] = vmod__err_label; __v3_internal_symbol_join_1__vmsvc13867[1] = _str_2038; __v3_internal_symbol_join_1__vmsvc13867[2] = tok.val; __v3_internal_symbol_join_1__vmsvc13867[3] = _str_2039; __v3_internal_symbol_join_1__vmsvc13867[4] = int__str(tok.line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13867)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				string value = tok.val;
 				idx++;
@@ -616195,14 +616364,14 @@ __v_result_multi_return_Array___v_int vmod__get_array_content(Array tokens, __v_
 						idx++;
 					}
 					if (!((((*(vmod__Token*)array_get(tokens, idx))).typ == vmod__TokenKind__str) || (((*(vmod__Token*)array_get(tokens, idx))).typ == vmod__TokenKind__number))) {
-						string __v3_internal_symbol_join_2__vmsvc13865[5]; __v3_internal_symbol_join_2__vmsvc13865[0] = vmod__err_label; __v3_internal_symbol_join_2__vmsvc13865[1] = _str_2038; __v3_internal_symbol_join_2__vmsvc13865[2] = ((*(vmod__Token*)array_get(tokens, idx))).val; __v3_internal_symbol_join_2__vmsvc13865[3] = _str_2039; __v3_internal_symbol_join_2__vmsvc13865[4] = int__str(((*(vmod__Token*)array_get(tokens, idx))).line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13865)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+						string __v3_internal_symbol_join_2__vmsvc13868[5]; __v3_internal_symbol_join_2__vmsvc13868[0] = vmod__err_label; __v3_internal_symbol_join_2__vmsvc13868[1] = _str_2038; __v3_internal_symbol_join_2__vmsvc13868[2] = ((*(vmod__Token*)array_get(tokens, idx))).val; __v3_internal_symbol_join_2__vmsvc13868[3] = _str_2039; __v3_internal_symbol_join_2__vmsvc13868[4] = int__str(((*(vmod__Token*)array_get(tokens, idx))).line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13868)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 					}
 					idx++;
 				}
 				string __arr_val_1 = value;
 				array_push(&vals, &__arr_val_1);
 				if (!((((*(vmod__Token*)array_get(tokens, idx))).typ == vmod__TokenKind__comma) || (((*(vmod__Token*)array_get(tokens, idx))).typ == vmod__TokenKind__rabr))) {
-					string __v3_internal_symbol_join_3__vmsvc13866[5]; __v3_internal_symbol_join_3__vmsvc13866[0] = vmod__err_label; __v3_internal_symbol_join_3__vmsvc13866[1] = _str_2040; __v3_internal_symbol_join_3__vmsvc13866[2] = ((*(vmod__Token*)array_get(tokens, idx))).val; __v3_internal_symbol_join_3__vmsvc13866[3] = _str_2039; __v3_internal_symbol_join_3__vmsvc13866[4] = int__str(tok.line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13866)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+					string __v3_internal_symbol_join_3__vmsvc13869[5]; __v3_internal_symbol_join_3__vmsvc13869[0] = vmod__err_label; __v3_internal_symbol_join_3__vmsvc13869[1] = _str_2040; __v3_internal_symbol_join_3__vmsvc13869[2] = ((*(vmod__Token*)array_get(tokens, idx))).val; __v3_internal_symbol_join_3__vmsvc13869[3] = _str_2039; __v3_internal_symbol_join_3__vmsvc13869[4] = int__str(tok.line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13869)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 				}
 				if (((*(vmod__Token*)array_get(tokens, idx))).typ == vmod__TokenKind__comma) {
 					idx++;
@@ -616211,7 +616380,7 @@ __v_result_multi_return_Array___v_int vmod__get_array_content(Array tokens, __v_
 				idx++;
 				break;
 			} else {
-				string __v3_internal_symbol_join_4__vmsvc13867[5]; __v3_internal_symbol_join_4__vmsvc13867[0] = vmod__err_label; __v3_internal_symbol_join_4__vmsvc13867[1] = _str_2038; __v3_internal_symbol_join_4__vmsvc13867[2] = tok.val; __v3_internal_symbol_join_4__vmsvc13867[3] = _str_2039; __v3_internal_symbol_join_4__vmsvc13867[4] = int__str(tok.line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc13867)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+				string __v3_internal_symbol_join_4__vmsvc13870[5]; __v3_internal_symbol_join_4__vmsvc13870[0] = vmod__err_label; __v3_internal_symbol_join_4__vmsvc13870[1] = _str_2038; __v3_internal_symbol_join_4__vmsvc13870[2] = tok.val; __v3_internal_symbol_join_4__vmsvc13870[3] = _str_2039; __v3_internal_symbol_join_4__vmsvc13870[4] = int__str(tok.line); return (__v_result_multi_return_Array___v_int){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc13870)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 		}
 	}
@@ -616414,7 +616583,7 @@ __v_option_string windows_binary_file_identity(string path) {
 	}
 	u64 creation = ((u64)(((u64)(	(u64)(information.creation_time_high))) << (32))) | (u64)(information.creation_time_low);
 	u64 size = ((u64)(((u64)(	(u64)(information.file_size_high))) << (32))) | (u64)(information.file_size_low);
-	string __v3_internal_symbol_join_3__vmsvc13868[7]; __v3_internal_symbol_join_3__vmsvc13868[0] = strconv__format_uint((u32)(information.volume_serial_number), 10); __v3_internal_symbol_join_3__vmsvc13868[1] = _str_92; __v3_internal_symbol_join_3__vmsvc13868[2] = u64__str(v_index); __v3_internal_symbol_join_3__vmsvc13868[3] = _str_92; __v3_internal_symbol_join_3__vmsvc13868[4] = u64__str(creation); __v3_internal_symbol_join_3__vmsvc13868[5] = _str_92; __v3_internal_symbol_join_3__vmsvc13868[6] = u64__str(size); __v_option_string _t5 = (__v_option_string){.ok = true, .value = 	(string_plus_many(7, __v3_internal_symbol_join_3__vmsvc13868))};
+	string __v3_internal_symbol_join_3__vmsvc13871[7]; __v3_internal_symbol_join_3__vmsvc13871[0] = strconv__format_uint((u32)(information.volume_serial_number), 10); __v3_internal_symbol_join_3__vmsvc13871[1] = _str_92; __v3_internal_symbol_join_3__vmsvc13871[2] = u64__str(v_index); __v3_internal_symbol_join_3__vmsvc13871[3] = _str_92; __v3_internal_symbol_join_3__vmsvc13871[4] = u64__str(creation); __v3_internal_symbol_join_3__vmsvc13871[5] = _str_92; __v3_internal_symbol_join_3__vmsvc13871[6] = u64__str(size); __v_option_string _t5 = (__v_option_string){.ok = true, .value = 	(string_plus_many(7, __v3_internal_symbol_join_3__vmsvc13871))};
 	{
 		v_toolcache_close_handle(handle);
 	}
@@ -616438,10 +616607,10 @@ __v_option_string windows_binary_file_identity(string path) {
 void wipe_cache_directory(string path, string label, bool recreate, main__WipeCacheOptions opts, Array* lines) {
 	if (opts.dry_run) {
 		if (os__is_link(path)) {
-			string __v3_internal_symbol_join_0__vmsvc13869[5]; __v3_internal_symbol_join_0__vmsvc13869[0] = _str_426; __v3_internal_symbol_join_0__vmsvc13869[1] = label; __v3_internal_symbol_join_0__vmsvc13869[2] = _str_427; __v3_internal_symbol_join_0__vmsvc13869[3] = path; __v3_internal_symbol_join_0__vmsvc13869[4] = _str_428; string __arr_val_0 = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13869));
+			string __v3_internal_symbol_join_0__vmsvc13872[5]; __v3_internal_symbol_join_0__vmsvc13872[0] = _str_426; __v3_internal_symbol_join_0__vmsvc13872[1] = label; __v3_internal_symbol_join_0__vmsvc13872[2] = _str_427; __v3_internal_symbol_join_0__vmsvc13872[3] = path; __v3_internal_symbol_join_0__vmsvc13872[4] = _str_428; string __arr_val_0 = (string_plus_many(5, __v3_internal_symbol_join_0__vmsvc13872));
 			array_push(lines, &__arr_val_0);
 		} else if (os__is_dir(path)) {
-			string __v3_internal_symbol_join_1__vmsvc13870[5]; __v3_internal_symbol_join_1__vmsvc13870[0] = _str_426; __v3_internal_symbol_join_1__vmsvc13870[1] = label; __v3_internal_symbol_join_1__vmsvc13870[2] = _str_427; __v3_internal_symbol_join_1__vmsvc13870[3] = path; __v3_internal_symbol_join_1__vmsvc13870[4] = _str_2; string __arr_val_1 = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13870));
+			string __v3_internal_symbol_join_1__vmsvc13873[5]; __v3_internal_symbol_join_1__vmsvc13873[0] = _str_426; __v3_internal_symbol_join_1__vmsvc13873[1] = label; __v3_internal_symbol_join_1__vmsvc13873[2] = _str_427; __v3_internal_symbol_join_1__vmsvc13873[3] = path; __v3_internal_symbol_join_1__vmsvc13873[4] = _str_2; string __arr_val_1 = (string_plus_many(5, __v3_internal_symbol_join_1__vmsvc13873));
 			array_push(lines, &__arr_val_1);
 			if (opts.verbose) {
 				__v_result_Array __or_opt_2 = os__ls(path);
@@ -616515,10 +616684,10 @@ void wipe_cache_directory(string path, string label, bool recreate, main__WipeCa
 				}
 			}
 		} else if (os__exists(path)) {
-			string __v3_internal_symbol_join_2__vmsvc13871[5]; __v3_internal_symbol_join_2__vmsvc13871[0] = _str_426; __v3_internal_symbol_join_2__vmsvc13871[1] = label; __v3_internal_symbol_join_2__vmsvc13871[2] = _str_427; __v3_internal_symbol_join_2__vmsvc13871[3] = path; __v3_internal_symbol_join_2__vmsvc13871[4] = _str_2; string __arr_val_18 = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13871));
+			string __v3_internal_symbol_join_2__vmsvc13874[5]; __v3_internal_symbol_join_2__vmsvc13874[0] = _str_426; __v3_internal_symbol_join_2__vmsvc13874[1] = label; __v3_internal_symbol_join_2__vmsvc13874[2] = _str_427; __v3_internal_symbol_join_2__vmsvc13874[3] = path; __v3_internal_symbol_join_2__vmsvc13874[4] = _str_2; string __arr_val_18 = (string_plus_many(5, __v3_internal_symbol_join_2__vmsvc13874));
 			array_push(lines, &__arr_val_18);
 		} else {
-			string __v3_internal_symbol_join_3__vmsvc13872[5]; __v3_internal_symbol_join_3__vmsvc13872[0] = _str_426; __v3_internal_symbol_join_3__vmsvc13872[1] = label; __v3_internal_symbol_join_3__vmsvc13872[2] = _str_427; __v3_internal_symbol_join_3__vmsvc13872[3] = path; __v3_internal_symbol_join_3__vmsvc13872[4] = _str_430; string __arr_val_19 = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13872));
+			string __v3_internal_symbol_join_3__vmsvc13875[5]; __v3_internal_symbol_join_3__vmsvc13875[0] = _str_426; __v3_internal_symbol_join_3__vmsvc13875[1] = label; __v3_internal_symbol_join_3__vmsvc13875[2] = _str_427; __v3_internal_symbol_join_3__vmsvc13875[3] = path; __v3_internal_symbol_join_3__vmsvc13875[4] = _str_430; string __arr_val_19 = (string_plus_many(5, __v3_internal_symbol_join_3__vmsvc13875));
 			array_push(lines, &__arr_val_19);
 		}
 		return;
@@ -616611,7 +616780,7 @@ void wipe_cache_directory(string path, string label, bool recreate, main__WipeCa
 		if (!__or_opt_39.ok) {
 		}
 	} else if (opts.verbose) {
-		string __v3_internal_symbol_join_4__vmsvc13873[3]; __v3_internal_symbol_join_4__vmsvc13873[0] = _str_186; __v3_internal_symbol_join_4__vmsvc13873[1] = path; __v3_internal_symbol_join_4__vmsvc13873[2] = _str_433; string __arr_val_40 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13873));
+		string __v3_internal_symbol_join_4__vmsvc13876[3]; __v3_internal_symbol_join_4__vmsvc13876[0] = _str_186; __v3_internal_symbol_join_4__vmsvc13876[1] = path; __v3_internal_symbol_join_4__vmsvc13876[2] = _str_433; string __arr_val_40 = (string_plus_many(3, __v3_internal_symbol_join_4__vmsvc13876));
 		array_push(lines, &__arr_val_40);
 	}
 	if (recreate) {
@@ -616619,7 +616788,7 @@ void wipe_cache_directory(string path, string label, bool recreate, main__WipeCa
 		if (!__or_opt_41.ok) {
 		}
 	}
-	string __v3_internal_symbol_join_5__vmsvc13874[4]; __v3_internal_symbol_join_5__vmsvc13874[0] = label; __v3_internal_symbol_join_5__vmsvc13874[1] = _str_427; __v3_internal_symbol_join_5__vmsvc13874[2] = path; __v3_internal_symbol_join_5__vmsvc13874[3] = _str_434; string __arr_val_42 = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc13874));
+	string __v3_internal_symbol_join_5__vmsvc13877[4]; __v3_internal_symbol_join_5__vmsvc13877[0] = label; __v3_internal_symbol_join_5__vmsvc13877[1] = _str_427; __v3_internal_symbol_join_5__vmsvc13877[2] = path; __v3_internal_symbol_join_5__vmsvc13877[3] = _str_434; string __arr_val_42 = (string_plus_many(4, __v3_internal_symbol_join_5__vmsvc13877));
 	array_push(lines, &__arr_val_42);
 }
 
@@ -616661,7 +616830,7 @@ Array wipe_caches(main__WipeCacheOptions opts) {
 					wiped_any_tool_cache = true;
 					wipe_cache_directory(target, label, false, opts, &tool_lines);
 				} else if (opts.verbose) {
-					string __v3_internal_symbol_join_0__vmsvc13875[4]; __v3_internal_symbol_join_0__vmsvc13875[0] = label; __v3_internal_symbol_join_0__vmsvc13875[1] = _str_427; __v3_internal_symbol_join_0__vmsvc13875[2] = target; __v3_internal_symbol_join_0__vmsvc13875[3] = _str_441; string __arr_val_7 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13875));
+					string __v3_internal_symbol_join_0__vmsvc13878[4]; __v3_internal_symbol_join_0__vmsvc13878[0] = label; __v3_internal_symbol_join_0__vmsvc13878[1] = _str_427; __v3_internal_symbol_join_0__vmsvc13878[2] = target; __v3_internal_symbol_join_0__vmsvc13878[3] = _str_441; string __arr_val_7 = (string_plus_many(4, __v3_internal_symbol_join_0__vmsvc13878));
 					array_push(&tool_lines, &__arr_val_7);
 				}
 			}
@@ -616771,10 +616940,10 @@ Array wipe_caches(main__WipeCacheOptions opts) {
 					}
 				}
 			} else if (opts.dry_run) {
-				string __v3_internal_symbol_join_1__vmsvc13876[3]; __v3_internal_symbol_join_1__vmsvc13876[0] = _str_447; __v3_internal_symbol_join_1__vmsvc13876[1] = vtmp_path; __v3_internal_symbol_join_1__vmsvc13876[2] = _str_448; string __arr_val_27 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13876));
+				string __v3_internal_symbol_join_1__vmsvc13879[3]; __v3_internal_symbol_join_1__vmsvc13879[0] = _str_447; __v3_internal_symbol_join_1__vmsvc13879[1] = vtmp_path; __v3_internal_symbol_join_1__vmsvc13879[2] = _str_448; string __arr_val_27 = (string_plus_many(3, __v3_internal_symbol_join_1__vmsvc13879));
 				array_push(&lines, &__arr_val_27);
 			} else {
-				string __v3_internal_symbol_join_2__vmsvc13877[3]; __v3_internal_symbol_join_2__vmsvc13877[0] = _str_449; __v3_internal_symbol_join_2__vmsvc13877[1] = vtmp_path; __v3_internal_symbol_join_2__vmsvc13877[2] = _str_450; string __arr_val_28 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13877));
+				string __v3_internal_symbol_join_2__vmsvc13880[3]; __v3_internal_symbol_join_2__vmsvc13880[0] = _str_449; __v3_internal_symbol_join_2__vmsvc13880[1] = vtmp_path; __v3_internal_symbol_join_2__vmsvc13880[2] = _str_450; string __arr_val_28 = (string_plus_many(3, __v3_internal_symbol_join_2__vmsvc13880));
 				array_push(&lines, &__arr_val_28);
 			}
 		}
@@ -616920,7 +617089,7 @@ bool workers__Pool__run(workers__Pool* p, Array tasks) {
 		}
 	}
 	while ((completed < submitted) && !p->caller_steals) {
-		workers__Completion _t7__vmsvc13878 = (workers__Completion){0}; sync__Channel__pop(done, &_t7__vmsvc13878); workers__Completion completion = (_t7__vmsvc13878);
+		workers__Completion _t7__vmsvc13881 = (workers__Completion){0}; sync__Channel__pop(done, &_t7__vmsvc13881); workers__Completion completion = (_t7__vmsvc13881);
 		workers__BatchStats__record_completion(&batch, completion);
 		completed++;
 	}
@@ -616972,7 +617141,7 @@ workers__Stats workers__Pool__stats(workers__Pool* p) {
 	u64 capacity_ns = elapsed_ns * p->launched_thread_count;
 	u64 __if_val_1 = {0};
 	if (capacity_ns > 0) {
-		u64 _t1__vmsvc13879 = (u64)(counters.worker_run_ns * 1000000); u64 _t2__vmsvc13880 = (u64)(capacity_ns); if (_t2__vmsvc13880 == 0) v_panic(_S("division by zero")); __if_val_1 = ((u64)(_t1__vmsvc13879 / _t2__vmsvc13880));
+		u64 _t1__vmsvc13882 = (u64)(counters.worker_run_ns * 1000000); u64 _t2__vmsvc13883 = (u64)(capacity_ns); if (_t2__vmsvc13883 == 0) v_panic(_S("division by zero")); __if_val_1 = ((u64)(_t1__vmsvc13882 / _t2__vmsvc13883));
 	} else {
 		__if_val_1 = 0;
 	}
@@ -617078,7 +617247,7 @@ void* workers__pool_worker(void* arg) {
 	workers__name_worker_thread();
 	workers__Pool* pool = (workers__Pool*)(arg);
 	for (;;) {
-		workers__Task _t1__vmsvc13881 = (workers__Task){0}; sync__Channel__pop(pool->jobs, &_t1__vmsvc13881); workers__Task task = (_t1__vmsvc13881);
+		workers__Task _t1__vmsvc13884 = (workers__Task){0}; sync__Channel__pop(pool->jobs, &_t1__vmsvc13884); workers__Task task = (_t1__vmsvc13884);
 		if (task.stop) {
 			break;
 		}
