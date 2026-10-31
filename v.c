@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "64d8ba5e10820751bc55273d143e633375b4941a"
+#define V_COMMIT_HASH "e210b8679605356c62362f6b9cf226234d9f1c7c"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -11366,16 +11366,16 @@ typedef string Array_fixed_string_16[16];
 typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_64[64];
 typedef i32 Array_fixed_i32_16[16];
-typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
 typedef string Array_fixed_string_13[13];
 typedef string Array_fixed_string_25[25];
+typedef string Array_fixed_string_2[2];
+typedef string Array_fixed_string_15[15];
 typedef string Array_fixed_string_14[14];
 typedef Array Array_fixed_Array_2[2];
-typedef string Array_fixed_string_26[26];
 typedef u32 Array_fixed_u32_8[8];
 typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_15[15];
+typedef string Array_fixed_string_26[26];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -37503,7 +37503,6 @@ bool types__is_type_symbol_byte(u8 ch);
 bool types__is_unresolved_name_type(types__Type* typ);
 bool types__is_v_test_fn_name(string name);
 bool types__is_valid_export_c_name(string name);
-bool types__is_veb_run_at_call_name(string name);
 bool types__is_visibility_error(string msg);
 bool types__is_voidptr_type(types__Type* t);
 __v_option_types__Type types__iterator_for_in_elem_type_from_next_return(types__Type* ret);
@@ -38445,7 +38444,7 @@ _SL(_str_193, "at_exit failed", 14);
 _SL(_str_194, "fixed array index out of range (index: ", 39);
 _SL(_str_195, ", len: ", 7);
 _SL(_str_196, "slice index out of range for int: ", 34);
-_SL(_str_197, "64d8ba5", 7);
+_SL(_str_197, "e210b86", 7);
 _SL(_str_198, " unknown", 8);
 _SL(_str_199, "-0.0", 4);
 _SL(_str_200, "0.0", 3);
@@ -531244,9 +531243,6 @@ __v_option_string types__TypeChecker__generic_call_base_name(types__TypeChecker*
 			}
 			string mod_name = __or_val_5;
 			string full_name = ({ string __v3_internal_symbol_join_0[3]; __v3_internal_symbol_join_0[0] = mod_name; __v3_internal_symbol_join_0[1] = _str_2; __v3_internal_symbol_join_0[2] = base_node.value; string_plus_many(3, __v3_internal_symbol_join_0); });
-			if (types__is_veb_run_at_call_name(full_name)) {
-				return (__v_option_string){.ok = true, .value = full_name};
-			}
 			string __map_key_6 = full_name;
 			if (map__exists(&tc->fn_ret_types, &__map_key_6)) {
 				return (__v_option_string){.ok = true, .value = full_name};
@@ -534262,8 +534258,8 @@ bool types__TypeChecker__if_chain_option_head_accepts(types__TypeChecker* tc, i3
 	}
 	i32 head_id = id;
 	{
-		__v_int __discard_829746590774759415_805886_805887 = 0;
-		for (; __discard_829746590774759415_805886_805887 < 1024; __discard_829746590774759415_805886_805887++) {
+		__v_int __discard_829746590774759415_805559_805560 = 0;
+		for (; __discard_829746590774759415_805559_805560 < 1024; __discard_829746590774759415_805559_805560++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, head_id);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				break;
@@ -571767,9 +571763,6 @@ __v_option_types__CallInfo types__TypeChecker__resolve_generic_call_info(types__
 		return (__v_option_types__CallInfo){.ok = false};
 	}
 	string call_name = __or_val_14;
-	if (types__is_veb_run_at_call_name(call_name)) {
-		return (__v_option_types__CallInfo){.ok = true, .value = (types__CallInfo){.name = call_name, .params = array_new(		sizeof(types__Type), 0, 0), .return_type = (types__Type){.typ = 18, .types__ResultType = (types__ResultType){.base_type = types__empty_type}}, .params_known = false, .shared_params = __new_array_noscan(0, 0, sizeof(bool))}};
-	}
 	string __map_key_16 = call_name;
 	if (!map__exists(&tc->fn_ret_types, &__map_key_16)) {
 		return (__v_option_types__CallInfo){.ok = false};
@@ -582735,7 +582728,7 @@ bool types__TypeChecker__storage_lvalue_is_rooted_at_param_alias(types__TypeChec
 	} else {
 		return false;
 	}
-	string __discard_829746590774759415_453833_453834 = __or_val_1;
+	string __discard_829746590774759415_453506_453507 = __or_val_1;
 	return true;
 }
 
@@ -609845,10 +609838,6 @@ bool types__is_valid_export_c_name(string name) {
 		}
 	}
 	return true;
-}
-
-bool types__is_veb_run_at_call_name(string name) {
-	return string__eq(name, _str_1994);
 }
 
 bool types__is_visibility_error(string msg) {
