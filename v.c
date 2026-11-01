@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "3b9528cad72083e11e13bad3756726fbbd8ef16f"
+#define V_COMMIT_HASH "798238c3bfc9c97c8e0b2ef6abe7c3cc4579e255"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -10781,16 +10781,16 @@ typedef string Array_fixed_string_16[16];
 typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_64[64];
 typedef i32 Array_fixed_i32_16[16];
-typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_25[25];
-typedef u32 Array_fixed_u32_8[8];
+typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_13[13];
-typedef string Array_fixed_string_14[14];
-typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_25[25];
+typedef Array Array_fixed_Array_3[3];
 typedef string Array_fixed_string_15[15];
 typedef string Array_fixed_string_26[26];
-typedef Array Array_fixed_Array_3[3];
+typedef string Array_fixed_string_14[14];
+typedef Array Array_fixed_Array_2[2];
+typedef u32 Array_fixed_u32_8[8];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -21185,7 +21185,7 @@ i32 unsetenv(char*);
 #else
 i64 v3_bench_peak_rss_kb(void);
 #endif
-int v3_linux_memory_file(char* name);
+int v3_linux_memory_file(const char* const_name);
 int v3_linux_name_worker(void);
 int v3_linux_parent_death_signal(int signal_number);
 int v3_pthread_create(pthread_t* worker, size_t stack_size, _fn_ptr_9bcc88d8c65f1860 start_routine, void* arg);
@@ -35858,6 +35858,7 @@ token__Pos types__TypeChecker__struct_init_head_pos(types__TypeChecker* tc, flat
 bool types__TypeChecker__struct_init_is_interface_return(types__TypeChecker* tc, i32 id);
 bool types__TypeChecker__struct_init_is_synthetic_embed_file(types__TypeChecker* tc, i32 id);
 token__Pos types__TypeChecker__struct_init_pointer_field_pos(types__TypeChecker* tc, flat__Node field);
+__v_option_u32 types__TypeChecker__struct_init_private_type_id(types__TypeChecker* tc, types__Type* typ, types__Struct base);
 token__Pos types__TypeChecker__struct_init_unsafe_nil_type_mismatch_pos(types__TypeChecker* tc, flat__Node field, i32 value_id);
 token__Pos types__TypeChecker__struct_init_unsafe_nil_value_pos(types__TypeChecker* tc, i32 value_id);
 string types__TypeChecker__struct_literal_unknown_field_message(types__TypeChecker* tc, string struct_name, string field_name, Array fields);
@@ -37704,7 +37705,7 @@ _SL(_str_193, "at_exit failed", 14);
 _SL(_str_194, "fixed array index out of range (index: ", 39);
 _SL(_str_195, ", len: ", 7);
 _SL(_str_196, "slice index out of range for int: ", 34);
-_SL(_str_197, "3b9528c", 7);
+_SL(_str_197, "798238c", 7);
 _SL(_str_198, " unknown", 8);
 _SL(_str_199, "-0.0", 4);
 _SL(_str_200, "0.0", 3);
@@ -182288,8 +182289,8 @@ __v_int diagserver__exit_code_of(__v_int status) {
 __v_option___v_int diagserver__exit_code_within(__v_int pid, __v_int ms) {
 	__v_int __in_lhs_0 = ms * 4;
 	{
-		__v_int __discard_4888716304631468107_18534_18535 = 0;
-		for (; __discard_4888716304631468107_18534_18535 < __in_lhs_0; __discard_4888716304631468107_18534_18535++) {
+		__v_int __discard_4888716304631468107_18540_18541 = 0;
+		for (; __discard_4888716304631468107_18540_18541 < __in_lhs_0; __discard_4888716304631468107_18540_18541++) {
 			__v_int status = 0;
 			__v_int got = ({ __v_int* _cabi_out_addr_0 = &status; int _cabi_out_val_0 = (int)(*_cabi_out_addr_0); __v_int _cabi_out_ret_1 = waitpid(pid, &_cabi_out_val_0, WNOHANG); *_cabi_out_addr_0 = _cabi_out_val_0; _cabi_out_ret_1; });
 			if (got == pid) {
@@ -458731,8 +458732,8 @@ Array types__TypeChecker__alias_target_type_names(types__TypeChecker* tc, u32 na
 	Array result = __new_array_noscan(0, 0, sizeof(u32));
 	u32 cur = name_id;
 	{
-		__v_int __discard_18429473170254815075_622626_622627 = 0;
-		for (; __discard_18429473170254815075_622626_622627 < 16; __discard_18429473170254815075_622626_622627++) {
+		__v_int __discard_18429473170254815075_623837_623838 = 0;
+		for (; __discard_18429473170254815075_623837_623838 < 16; __discard_18429473170254815075_623837_623838++) {
 			__v_option_u32 __or_opt_0 = types__TypeChecker__alias_target_type_text(tc, cur);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -458799,8 +458800,8 @@ __v_option_u32 types__TypeChecker__alias_target_type_text(types__TypeChecker* tc
 bool types__TypeChecker__alias_type_is_shared(types__TypeChecker* tc, types__Alias alias) {
 	u32 name_id = types__Alias__source_type_id(alias);
 	{
-		__v_int __discard_18429473170254815075_424441_424442 = 0;
-		for (; __discard_18429473170254815075_424441_424442 < 16; __discard_18429473170254815075_424441_424442++) {
+		__v_int __discard_18429473170254815075_425652_425653 = 0;
+		for (; __discard_18429473170254815075_425652_425653 < 16; __discard_18429473170254815075_425652_425653++) {
 			__v_option_u32 __or_opt_0 = flat__SourceTypeBindings__type_id(&tc->type_aliases, name_id);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -465374,8 +465375,8 @@ string types__TypeChecker__c_type_uncached(types__TypeChecker* tc, types__Type* 
 		}
 		types__Type cur = *t;
 		{
-			__v_int __discard_18429473170254815075_797489_797490 = 0;
-			for (; __discard_18429473170254815075_797489_797490 < 1000; __discard_18429473170254815075_797489_797490++) {
+			__v_int __discard_18429473170254815075_798700_798701 = 0;
+			for (; __discard_18429473170254815075_798700_798701 < 1000; __discard_18429473170254815075_798700_798701++) {
 				if ((cur).typ == 23) {
 					cur = *cur.types__Alias.AliasDataRef->base_type;
 				} else {
@@ -467851,8 +467852,8 @@ string types__TypeChecker__canonical_c_type(types__TypeChecker* tc, u32 id, type
 __v_option_u32 types__TypeChecker__canonical_fn_alias_type_text_id(types__TypeChecker* tc, u32 name_id) {
 	u32 target_id = types__trimmed_source_type_id(name_id);
 	{
-		__v_int __discard_18429473170254815075_215621_215622 = 0;
-		for (; __discard_18429473170254815075_215621_215622 < 8; __discard_18429473170254815075_215621_215622++) {
+		__v_int __discard_18429473170254815075_216832_216833 = 0;
+		for (; __discard_18429473170254815075_216832_216833 < 8; __discard_18429473170254815075_216832_216833++) {
 			flat__SourceTypeSyntax* syntax = flat__source_type_syntax(target_id);
 			u32 __if_val_0 = {0};
 			if (flat__SourceTypeSyntax__application_valid(syntax)) {
@@ -499585,62 +499586,70 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 		if ((init_type_id != types__checker_tail_source_struct) && ({u32 __map_key_41 = init_type_id;
 		bool __map_zero_42 = false;
 		!*(bool*)(map__get(&tc->a->contextual_anon_struct_types, &__map_key_41, &__map_zero_42));})) {
-			__v_option_types__DeclarationVisibility __if_guard_43 = types__TypeChecker__private_type_declaration(tc, types__Struct__source_type_id(init_struct));
+			__v_option_u32 __if_guard_43 = types__TypeChecker__struct_init_private_type_id(tc, &(types__Type[]){init_type}[0], init_struct);
 			if (__if_guard_43.ok) {
+				u32 visibility_type_id = __if_guard_43.value;
 				string __if_val_44 = {0};
-				if (tc->cur_module.len > 0) {
-					__if_val_44 = tc->cur_module;
+				if (visibility_type_id == types__Struct__source_type_id(init_struct)) {
+					__if_val_44 = types__Struct__name(init_struct);
 				} else {
-					__if_val_44 = _str_179;
+					__if_val_44 = flat__source_type_name(visibility_type_id);
 				}
-				string inside_module = __if_val_44;
-				types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, ({ string __v3_internal_symbol_join_19[7]; __v3_internal_symbol_join_19[0] = _str_7440; __v3_internal_symbol_join_19[1] = types__Struct__name(init_struct); __v3_internal_symbol_join_19[2] = _str_6888; __v3_internal_symbol_join_19[3] = string__all_before_last(types__Struct__name(init_struct), _str_2); __v3_internal_symbol_join_19[4] = _str_7540; __v3_internal_symbol_join_19[5] = inside_module; __v3_internal_symbol_join_19[6] = _str_41; string_plus_many(7, __v3_internal_symbol_join_19); }), id, node.pos);
-				types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, ({ string __v3_internal_symbol_join_20[3]; __v3_internal_symbol_join_20[0] = _str_5316; __v3_internal_symbol_join_20[1] = types__Struct__name(init_struct); __v3_internal_symbol_join_20[2] = _str_3524; string_plus_many(3, __v3_internal_symbol_join_20); }), id, node.pos);
+				string private_name = __if_val_44;
+				string __if_val_45 = {0};
+				if (tc->cur_module.len > 0) {
+					__if_val_45 = tc->cur_module;
+				} else {
+					__if_val_45 = _str_179;
+				}
+				string inside_module = __if_val_45;
+				types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, ({ string __v3_internal_symbol_join_19[7]; __v3_internal_symbol_join_19[0] = _str_7440; __v3_internal_symbol_join_19[1] = private_name; __v3_internal_symbol_join_19[2] = _str_6888; __v3_internal_symbol_join_19[3] = string__all_before_last(private_name, _str_2); __v3_internal_symbol_join_19[4] = _str_7540; __v3_internal_symbol_join_19[5] = inside_module; __v3_internal_symbol_join_19[6] = _str_41; string_plus_many(7, __v3_internal_symbol_join_19); }), id, node.pos);
+				types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, ({ string __v3_internal_symbol_join_20[3]; __v3_internal_symbol_join_20[0] = _str_5316; __v3_internal_symbol_join_20[1] = private_name; __v3_internal_symbol_join_20[2] = _str_3524; string_plus_many(3, __v3_internal_symbol_join_20); }), id, node.pos);
 			}
 		}
-		string __map_key_45 = types__Struct__name(init_struct);
-		void* __map_ptr_46 = map__get_check(&tc->deprecated_symbols, &__map_key_45);
-		if (__map_ptr_46 != NULL) {
-			types__DeprecationInfo deprecation = *(types__DeprecationInfo*)(__map_ptr_46);
+		string __map_key_46 = types__Struct__name(init_struct);
+		void* __map_ptr_47 = map__get_check(&tc->deprecated_symbols, &__map_key_46);
+		if (__map_ptr_47 != NULL) {
+			types__DeprecationInfo deprecation = *(types__DeprecationInfo*)(__map_ptr_47);
 			types__TypeChecker__record_deprecation(tc, id, _str_4795, deprecation, types__TypeChecker__struct_init_deprecation_pos(tc, node));
 		}
 		if (!((init_type).typ == 23)) {
-			__v_option_types__Type __if_guard_47 = types__TypeChecker__infer_generic_struct_init_type(tc, node);
-			if (__if_guard_47.ok) {
-				types__Type inferred_type = __if_guard_47.value;
+			__v_option_types__Type __if_guard_48 = types__TypeChecker__infer_generic_struct_init_type(tc, node);
+			if (__if_guard_48.ok) {
+				types__Type inferred_type = __if_guard_48.value;
 				types__TypeChecker__remember_expr_type(tc, id, &(types__Type[]){inferred_type}[0]);
 				flat__SourceTypeSyntax* inferred_syntax = flat__source_type_syntax(types__Type__source_type_id(&inferred_type));
 				types__TypeChecker__check_generic_type_constraints(tc, id, node.pos, flat__SourceTypeSyntax__application_base(inferred_syntax), flat__SourceTypeSyntax__application_args(inferred_syntax), (types__TypeParamScope){.names = __new_array_noscan(0, 0, sizeof(u32)), .constraints = new_map(sizeof(u32), sizeof(types__GenericConstraint), map_hash_int_4, map_eq_int_4, map_clone_int_4, map_free_nop)});
 			} else {
-				__v_option_u32 __if_guard_48 = types__TypeChecker__bare_generic_decl_type_name_id(tc, init_type_id);
-				if (__if_guard_48.ok) {
-					u32 generic_name_id = __if_guard_48.value;
-					u32 __map_key_51 = generic_name_id;
-					void* __map_ptr_52 = map__get_check(&tc->struct_generic_params, &__map_key_51);
-					Array __map_val_53 = {0};
-					if (__map_ptr_52 != NULL) {
-						__map_val_53 = *(Array*)(__map_ptr_52);
+				__v_option_u32 __if_guard_49 = types__TypeChecker__bare_generic_decl_type_name_id(tc, init_type_id);
+				if (__if_guard_49.ok) {
+					u32 generic_name_id = __if_guard_49.value;
+					u32 __map_key_52 = generic_name_id;
+					void* __map_ptr_53 = map__get_check(&tc->struct_generic_params, &__map_key_52);
+					Array __map_val_54 = {0};
+					if (__map_ptr_53 != NULL) {
+						__map_val_54 = *(Array*)(__map_ptr_53);
 					} else {
-						u32 __map_key_56 = types__TypeChecker__qualify_type_name(tc, generic_name_id);
-						void* __map_ptr_57 = map__get_check(&tc->struct_generic_params, &__map_key_56);
-						Array __map_val_58 = {0};
-						if (__map_ptr_57 != NULL) {
-							__map_val_58 = *(Array*)(__map_ptr_57);
+						u32 __map_key_57 = types__TypeChecker__qualify_type_name(tc, generic_name_id);
+						void* __map_ptr_58 = map__get_check(&tc->struct_generic_params, &__map_key_57);
+						Array __map_val_59 = {0};
+						if (__map_ptr_58 != NULL) {
+							__map_val_59 = *(Array*)(__map_ptr_58);
 						} else {
-							__map_val_58 = __new_array_noscan(0, 0, sizeof(u32));
+							__map_val_59 = __new_array_noscan(0, 0, sizeof(u32));
 						}
-						__map_val_53 = __map_val_58;
+						__map_val_54 = __map_val_59;
 					}
-					Array params = __map_val_53;
+					Array params = __map_val_54;
 					if ((params.len > 0) && !types__TypeChecker__struct_init_has_related_bare_generic_return_error(tc, id, generic_name_id)) {
 						map inferred = types__TypeChecker__infer_generic_struct_init_param_texts(tc, node, generic_name_id, params);
 						u32 missing_param = (*(u32*)array_get(params, 0));
 						{
-							__v_int __for_idx_59 = 0;
-							for (; __for_idx_59 < params.len; __for_idx_59++) {
-								u32 param = *(u32*)(array_get(params, __for_idx_59));
-								u32 __map_key_60 = param;
-								if (!map__exists(&inferred, &__map_key_60)) {
+							__v_int __for_idx_60 = 0;
+							for (; __for_idx_60 < params.len; __for_idx_60++) {
+								u32 param = *(u32*)(array_get(params, __for_idx_60));
+								u32 __map_key_61 = param;
+								if (!map__exists(&inferred, &__map_key_61)) {
 									missing_param = param;
 									break;
 								}
@@ -499672,18 +499681,18 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 			}
 		}
 		if ((positional_fields > 0) && (named_fields == 0) && (positional_fields != fields.len)) {
-			string __if_val_61 = {0};
+			string __if_val_62 = {0};
 			if (positional_fields < fields.len) {
-				__if_val_61 = _str_7779;
+				__if_val_62 = _str_7779;
 			} else {
-				__if_val_61 = _str_7780;
+				__if_val_62 = _str_7780;
 			}
-			string amount = __if_val_61;
+			string amount = __if_val_62;
 			types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, ({ string __v3_internal_symbol_join_22[9]; __v3_internal_symbol_join_22[0] = _str_7781; __v3_internal_symbol_join_22[1] = amount; __v3_internal_symbol_join_22[2] = _str_7782; __v3_internal_symbol_join_22[3] = string__all_after_last(init_type_text, _str_2); __v3_internal_symbol_join_22[4] = _str_7783; __v3_internal_symbol_join_22[5] = int__str(fields.len); __v3_internal_symbol_join_22[6] = _str_5569; __v3_internal_symbol_join_22[7] = int__str(positional_fields); __v3_internal_symbol_join_22[8] = _str_28; string_plus_many(9, __v3_internal_symbol_join_22); }), id, node.pos);
 		}
-		__v_option_string __if_guard_62 = types__TypeChecker__generic_struct_field_unknown_type_message(tc, init_name_id);
-		if (__if_guard_62.ok) {
-			string unknown_message = __if_guard_62.value;
+		__v_option_string __if_guard_63 = types__TypeChecker__generic_struct_field_unknown_type_message(tc, init_name_id);
+		if (__if_guard_63.ok) {
+			string unknown_message = __if_guard_63.value;
 			types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_type, unknown_message, id, types__TypeChecker__struct_init_head_pos(tc, node));
 		}
 		map supplied_fields = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
@@ -499695,13 +499704,13 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 					continue;
 				}
 				if (field->value.len > 0) {
-					string __map_key_63 = field->value;
-					bool __map_val_64 = true;
-					map__set(&supplied_fields, &__map_key_63, &__map_val_64);
+					string __map_key_64 = field->value;
+					bool __map_val_65 = true;
+					map__set(&supplied_fields, &__map_key_64, &__map_val_65);
 				} else if (i < fields.len) {
-					string __map_key_65 = ((*(types__StructField*)array_get(fields, i))).name;
-					bool __map_val_66 = true;
-					map__set(&supplied_fields, &__map_key_65, &__map_val_66);
+					string __map_key_66 = ((*(types__StructField*)array_get(fields, i))).name;
+					bool __map_val_67 = true;
+					map__set(&supplied_fields, &__map_key_66, &__map_val_67);
 				}
 			}
 		}
@@ -499711,43 +499720,43 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 			for (; i < node.children_count; i++) {
 				i32 raw_spread_id = flat__FlatAst__child(tc->a, &node, i);
 				flat__Node* spread = flat__FlatAst__child_node(tc->a, &node, i);
-				i32 __if_val_67 = {0};
+				i32 __if_val_68 = {0};
 				if ((spread->kind == flat__NodeKind__prefix) && string__eq(spread->value, _str_3497) && (spread->children_count > 0)) {
-					__if_val_67 = flat__FlatAst__child(tc->a, spread, 0);
+					__if_val_68 = flat__FlatAst__child(tc->a, spread, 0);
 				} else {
 					if ((node.kind == flat__NodeKind__assoc) && (i == 0)) {
-						__if_val_67 = raw_spread_id;
+						__if_val_68 = raw_spread_id;
 					} else {
 						continue;
 					}
 				}
-				i32 spread_id = __if_val_67;
+				i32 spread_id = __if_val_68;
 				types__Type spread_type = types__TypeChecker__resolve_type(tc, spread_id);
-				__v_option_types__Struct __or_opt_68 = types__struct_type_from_type(&(types__Type[]){types__unwrap_pointer(&spread_type)}[0]);
-				types__Struct __or_val_69 = {0};
-				if (__or_opt_68.ok) {
-					__or_val_69 = __or_opt_68.value;
+				__v_option_types__Struct __or_opt_69 = types__struct_type_from_type(&(types__Type[]){types__unwrap_pointer(&spread_type)}[0]);
+				types__Struct __or_val_70 = {0};
+				if (__or_opt_69.ok) {
+					__or_val_70 = __or_opt_69.value;
 				} else {
 					types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, ({ string __v3_internal_symbol_join_23[3]; __v3_internal_symbol_join_23[0] = _str_7784; __v3_internal_symbol_join_23[1] = types__Type__name(&spread_type); __v3_internal_symbol_join_23[2] = _str_41; string_plus_many(3, __v3_internal_symbol_join_23); }), spread_id, (flat__FlatAst__node(tc->a, spread_id))->pos);
 					continue;
 				}
-				types__Struct spread_struct = __or_val_69;
+				types__Struct spread_struct = __or_val_70;
 				Array spread_fields = types__TypeChecker__struct_fields_for_init(tc, types__Struct__source_type_id(spread_struct));
 				bool compatible = true;
 				{
-					__v_int __for_idx_70 = 0;
-					for (; __for_idx_70 < fields.len; __for_idx_70++) {
-						types__StructField target_field = *(types__StructField*)(array_get(fields, __for_idx_70));
-						string __map_key_71 = target_field.name;
-						bool __map_zero_72 = false;
-						if (*(bool*)(map__get(&supplied_fields, &__map_key_71, &__map_zero_72)) || types__TypeChecker__struct_spread_embed_fully_supplied(tc, init_name_id, target_field, supplied_fields, __new_array_noscan(0, 0, sizeof(u32)))) {
+					__v_int __for_idx_71 = 0;
+					for (; __for_idx_71 < fields.len; __for_idx_71++) {
+						types__StructField target_field = *(types__StructField*)(array_get(fields, __for_idx_71));
+						string __map_key_72 = target_field.name;
+						bool __map_zero_73 = false;
+						if (*(bool*)(map__get(&supplied_fields, &__map_key_72, &__map_zero_73)) || types__TypeChecker__struct_spread_embed_fully_supplied(tc, init_name_id, target_field, supplied_fields, __new_array_noscan(0, 0, sizeof(u32)))) {
 							continue;
 						}
 						bool found = false;
 						{
-							__v_int __for_idx_73 = 0;
-							for (; __for_idx_73 < spread_fields.len; __for_idx_73++) {
-								types__StructField source_field = *(types__StructField*)(array_get(spread_fields, __for_idx_73));
+							__v_int __for_idx_74 = 0;
+							for (; __for_idx_74 < spread_fields.len; __for_idx_74++) {
+								types__StructField source_field = *(types__StructField*)(array_get(spread_fields, __for_idx_74));
 								if (string__eq(source_field.name, target_field.name) && types__TypeChecker__type_compatible(tc, &source_field.typ, &target_field.typ) && types__TypeChecker__type_compatible(tc, &target_field.typ, &source_field.typ)) {
 									found = true;
 									break;
@@ -499764,70 +499773,70 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 					types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, ({ string __v3_internal_symbol_join_24[5]; __v3_internal_symbol_join_24[0] = _str_7440; __v3_internal_symbol_join_24[1] = string__all_after_last(types__Struct__name(spread_struct), _str_2); __v3_internal_symbol_join_24[2] = _str_7785; __v3_internal_symbol_join_24[3] = string__all_after_last(types__Struct__name(init_struct), _str_2); __v3_internal_symbol_join_24[4] = _str_41; string_plus_many(5, __v3_internal_symbol_join_24); }), spread_id, (flat__FlatAst__node(tc->a, spread_id))->pos);
 				}
 				{
-					__v_int __for_idx_74 = 0;
-					for (; __for_idx_74 < spread_fields.len; __for_idx_74++) {
-						types__StructField source_field = *(types__StructField*)(array_get(spread_fields, __for_idx_74));
-						string __map_key_75 = source_field.name;
-						bool __map_val_76 = true;
-						map__set(&supplied_fields, &__map_key_75, &__map_val_76);
+					__v_int __for_idx_75 = 0;
+					for (; __for_idx_75 < spread_fields.len; __for_idx_75++) {
+						types__StructField source_field = *(types__StructField*)(array_get(spread_fields, __for_idx_75));
+						string __map_key_76 = source_field.name;
+						bool __map_val_77 = true;
+						map__set(&supplied_fields, &__map_key_76, &__map_val_77);
 					}
 				}
 			}
 		}
 		{
-			__v_int __for_idx_77 = 0;
-			for (; __for_idx_77 < fields.len; __for_idx_77++) {
-				types__StructField field = *(types__StructField*)(array_get(fields, __for_idx_77));
-				string __map_key_78 = field.name;
-				bool __map_zero_79 = false;
-				if (*(bool*)(map__get(&supplied_fields, &__map_key_78, &__map_zero_79)) || field.has_default || ((field.typ).typ == 17)) {
+			__v_int __for_idx_78 = 0;
+			for (; __for_idx_78 < fields.len; __for_idx_78++) {
+				types__StructField field = *(types__StructField*)(array_get(fields, __for_idx_78));
+				string __map_key_79 = field.name;
+				bool __map_zero_80 = false;
+				if (*(bool*)(map__get(&supplied_fields, &__map_key_79, &__map_zero_80)) || field.has_default || ((field.typ).typ == 17)) {
 					continue;
 				}
-				__v_option_types__Type __or_opt_80 = types__TypeChecker__expected_context_for_expr(tc, id);
-				types__Type __or_val_81 = {0};
-				if (__or_opt_80.ok) {
-					__or_val_81 = __or_opt_80.value;
+				__v_option_types__Type __or_opt_81 = types__TypeChecker__expected_context_for_expr(tc, id);
+				types__Type __or_val_82 = {0};
+				if (__or_opt_81.ok) {
+					__or_val_82 = __or_opt_81.value;
 				} else {
-					__or_val_81 = types__builtin_void_type;
+					__or_val_82 = types__builtin_void_type;
 				}
-				types__Type context_type = __or_val_81;
+				types__Type context_type = __or_val_82;
 				bool context_expects_interface = (types__unalias_and_unwrap_pointer_type(&context_type)).typ == 20;
 				if (((types__unalias_type(&field.typ))->typ == 20) && !context_expects_interface && !types__TypeChecker__struct_init_is_interface_return(tc, id)) {
 					types__TypeChecker__record_notice_at(tc, types__TypeErrorKind__assignment_mismatch, ({ string __v3_internal_symbol_join_25[5]; __v3_internal_symbol_join_25[0] = _str_7786; __v3_internal_symbol_join_25[1] = types__Struct__name(init_struct); __v3_internal_symbol_join_25[2] = _str_2; __v3_internal_symbol_join_25[3] = field.name; __v3_internal_symbol_join_25[4] = _str_3522; string_plus_many(5, __v3_internal_symbol_join_25); }), id, types__TypeChecker__struct_init_head_pos(tc, node));
 				}
 			}
 		}
-		Array __in_lhs_82 = types__TypeChecker__missing_required_struct_fields(tc, init_name_id, supplied_fields, __new_array_noscan(0, 0, sizeof(u32)));
+		Array __in_lhs_83 = types__TypeChecker__missing_required_struct_fields(tc, init_name_id, supplied_fields, __new_array_noscan(0, 0, sizeof(u32)));
 		{
-			__v_int __for_idx_83 = 0;
-			for (; __for_idx_83 < __in_lhs_82.len; __for_idx_83++) {
-				string missing = *(string*)(array_get(__in_lhs_82, __for_idx_83));
+			__v_int __for_idx_84 = 0;
+			for (; __for_idx_84 < __in_lhs_83.len; __for_idx_84++) {
+				string missing = *(string*)(array_get(__in_lhs_83, __for_idx_84));
 				types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, ({ string __v3_internal_symbol_join_26[3]; __v3_internal_symbol_join_26[0] = _str_5574; __v3_internal_symbol_join_26[1] = missing; __v3_internal_symbol_join_26[2] = _str_3522; string_plus_many(3, __v3_internal_symbol_join_26); }), id, types__TypeChecker__struct_init_head_pos(tc, node));
 			}
 		}
 		map seen_missing_references = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-		int __in_lhs_84 = flat__source_type_shape(init_type_id);
-		if (!((__in_lhs_84 & 2) != 0) && !types__TypeChecker__node_is_in_translated_file(tc, id)) {
-			Array __in_lhs_85 = types__TypeChecker__missing_reference_struct_fields(tc, init_name_id, supplied_fields, __new_array_noscan(0, 0, sizeof(u32)));
+		int __in_lhs_85 = flat__source_type_shape(init_type_id);
+		if (!((__in_lhs_85 & 2) != 0) && !types__TypeChecker__node_is_in_translated_file(tc, id)) {
+			Array __in_lhs_86 = types__TypeChecker__missing_reference_struct_fields(tc, init_name_id, supplied_fields, __new_array_noscan(0, 0, sizeof(u32)));
 			{
 				__v_int diagnostic_index = 0;
-				for (; diagnostic_index < __in_lhs_85.len; diagnostic_index++) {
-					types__MissingReferenceField missing = *(types__MissingReferenceField*)(array_get(__in_lhs_85, diagnostic_index));
-					string __map_key_86 = missing.path;
-					bool __map_zero_87 = false;
-					if (*(bool*)(map__get(&seen_missing_references, &__map_key_86, &__map_zero_87))) {
+				for (; diagnostic_index < __in_lhs_86.len; diagnostic_index++) {
+					types__MissingReferenceField missing = *(types__MissingReferenceField*)(array_get(__in_lhs_86, diagnostic_index));
+					string __map_key_87 = missing.path;
+					bool __map_zero_88 = false;
+					if (*(bool*)(map__get(&seen_missing_references, &__map_key_87, &__map_zero_88))) {
 						continue;
 					}
-					string __map_key_88 = missing.path;
-					bool __map_val_89 = true;
-					map__set(&seen_missing_references, &__map_key_88, &__map_val_89);
-					string __if_val_90 = {0};
+					string __map_key_89 = missing.path;
+					bool __map_val_90 = true;
+					map__set(&seen_missing_references, &__map_key_89, &__map_val_90);
+					string __if_val_91 = {0};
 					if (missing.has_part) {
-						__if_val_90 = ({ string __v3_internal_symbol_join_27[5]; __v3_internal_symbol_join_27[0] = _str_6548; __v3_internal_symbol_join_27[1] = missing.path; __v3_internal_symbol_join_27[2] = _str_6549; __v3_internal_symbol_join_27[3] = types__MissingReferenceField__owner_text(&missing); __v3_internal_symbol_join_27[4] = _str_345; string_plus_many(5, __v3_internal_symbol_join_27); });
+						__if_val_91 = ({ string __v3_internal_symbol_join_27[5]; __v3_internal_symbol_join_27[0] = _str_6548; __v3_internal_symbol_join_27[1] = missing.path; __v3_internal_symbol_join_27[2] = _str_6549; __v3_internal_symbol_join_27[3] = types__MissingReferenceField__owner_text(&missing); __v3_internal_symbol_join_27[4] = _str_345; string_plus_many(5, __v3_internal_symbol_join_27); });
 					} else {
-						__if_val_90 = ({ string __v3_internal_symbol_join_28[3]; __v3_internal_symbol_join_28[0] = _str_6548; __v3_internal_symbol_join_28[1] = missing.path; __v3_internal_symbol_join_28[2] = _str_3522; string_plus_many(3, __v3_internal_symbol_join_28); });
+						__if_val_91 = ({ string __v3_internal_symbol_join_28[3]; __v3_internal_symbol_join_28[0] = _str_6548; __v3_internal_symbol_join_28[1] = missing.path; __v3_internal_symbol_join_28[2] = _str_3522; string_plus_many(3, __v3_internal_symbol_join_28); });
 					}
-					string message = __if_val_90;
+					string message = __if_val_91;
 					types__TypeChecker__record_ordered_error_at(tc, types__TypeErrorKind__assignment_mismatch, message, id, types__TypeChecker__struct_init_head_pos(tc, node), diagnostic_index + 1);
 				}
 			}
@@ -499841,40 +499850,40 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 					types__TypeChecker__check_node(tc, field_id);
 					continue;
 				}
-				string __map_key_91 = ({ string __v3_internal_symbol_join_29[3]; __v3_internal_symbol_join_29[0] = init_name; __v3_internal_symbol_join_29[1] = _str_2; __v3_internal_symbol_join_29[2] = field.value; string_plus_many(3, __v3_internal_symbol_join_29); });
-				void* __map_ptr_92 = map__get_check(&tc->deprecated_symbols, &__map_key_91);
-				if (__map_ptr_92 != NULL) {
-					types__DeprecationInfo deprecation = *(types__DeprecationInfo*)(__map_ptr_92);
+				string __map_key_92 = ({ string __v3_internal_symbol_join_29[3]; __v3_internal_symbol_join_29[0] = init_name; __v3_internal_symbol_join_29[1] = _str_2; __v3_internal_symbol_join_29[2] = field.value; string_plus_many(3, __v3_internal_symbol_join_29); });
+				void* __map_ptr_93 = map__get_check(&tc->deprecated_symbols, &__map_key_92);
+				if (__map_ptr_93 != NULL) {
+					types__DeprecationInfo deprecation = *(types__DeprecationInfo*)(__map_ptr_93);
 					types__TypeChecker__record_deprecation(tc, field_id, _str_5483, deprecation, types__TypeChecker__struct_init_field_deprecation_pos(tc, field));
 				}
 				i32 value_id = flat__FlatAst__child(tc->a, &field, 0);
 				types__Type expected = types__builtin_void_type;
 				if (field.value.len > 0) {
 					bool found = false;
-					__v_option_types__Type __if_guard_93 = types__TypeChecker__struct_field_type(tc, init_name_id, field.value);
-					if (__if_guard_93.ok) {
-						types__Type typ = __if_guard_93.value;
+					__v_option_types__Type __if_guard_94 = types__TypeChecker__struct_field_type(tc, init_name_id, field.value);
+					if (__if_guard_94.ok) {
+						types__Type typ = __if_guard_94.value;
 						expected = typ;
 						found = true;
 					}
 					if (found && (tc->unsafe_depth == 0) && !is_synthetic_embed_file && !(types__TypeChecker__resolve_selective_import_type_symbol_id(tc, init_type_id)).ok) {
-						u32 __if_val_94 = {0};
-						int __in_lhs_95 = flat__source_type_shape(init_name_id);
-						if ((__in_lhs_95 & 8192) != 0) {
-							__if_val_94 = init_name_id;
+						u32 __if_val_95 = {0};
+						int __in_lhs_96 = flat__source_type_shape(init_name_id);
+						if ((__in_lhs_96 & 8192) != 0) {
+							__if_val_95 = init_name_id;
 						} else {
-							__if_val_94 = flat__SourceTypeSyntax__generic_base(flat__source_type_syntax(init_name_id));
+							__if_val_95 = flat__SourceTypeSyntax__generic_base(flat__source_type_syntax(init_name_id));
 						}
-						u32 owner_base_id = __if_val_94;
-						u32 __map_key_98 = owner_base_id;
-						void* __map_ptr_99 = map__get_check(&tc->struct_modules, &__map_key_98);
-						string __map_val_100 = {0};
-						if (__map_ptr_99 != NULL) {
-							__map_val_100 = *(string*)(__map_ptr_99);
+						u32 owner_base_id = __if_val_95;
+						u32 __map_key_99 = owner_base_id;
+						void* __map_ptr_100 = map__get_check(&tc->struct_modules, &__map_key_99);
+						string __map_val_101 = {0};
+						if (__map_ptr_100 != NULL) {
+							__map_val_101 = *(string*)(__map_ptr_100);
 						} else {
-							__map_val_100 = _str_34;
+							__map_val_101 = _str_34;
 						}
-						string decl_mod = __map_val_100;
+						string decl_mod = __map_val_101;
 						bool same_main_module = (string__eq(decl_mod, _str_34) || string__eq(decl_mod, _str_179)) && (string__eq(tc->cur_module, _str_34) || string__eq(tc->cur_module, _str_179));
 						if ((decl_mod.len > 0) && !string__eq(decl_mod, tc->cur_module) && !same_main_module) {
 							if (types__TypeChecker__is_synthesized_anon_struct(tc, init_name_id) && !types__TypeChecker__anonymous_struct_is_inline_parameter_type(tc, init_name_id)) {
@@ -499882,14 +499891,14 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 									types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_field, ({ string __v3_internal_symbol_join_30[5]; __v3_internal_symbol_join_30[0] = _str_6887; __v3_internal_symbol_join_30[1] = field.value; __v3_internal_symbol_join_30[2] = _str_7787; __v3_internal_symbol_join_30[3] = types__TypeChecker__diagnostic_module_display_name(tc, decl_mod); __v3_internal_symbol_join_30[4] = _str_41; string_plus_many(5, __v3_internal_symbol_join_30); }), field_id, types__TypeChecker__struct_init_field_deprecation_pos(tc, field));
 								}
 							} else if (!types__is_anonymous_struct_id(init_name_id)) {
-								__v_option_bool __or_opt_101 = types__TypeChecker__visible_mutation_struct_field_is_public(tc, init_name_id, field.value, decl_mod);
-								bool __or_val_102 = {0};
-								if (__or_opt_101.ok) {
-									__or_val_102 = __or_opt_101.value;
+								__v_option_bool __or_opt_102 = types__TypeChecker__visible_mutation_struct_field_is_public(tc, init_name_id, field.value, decl_mod);
+								bool __or_val_103 = {0};
+								if (__or_opt_102.ok) {
+									__or_val_103 = __or_opt_102.value;
 								} else {
-									__or_val_102 = true;
+									__or_val_103 = true;
 								}
-								bool is_public = __or_val_102;
+								bool is_public = __or_val_103;
 								if (!is_public) {
 									types__TypeChecker__record_error_at(tc, types__TypeErrorKind__unknown_field, ({ string __v3_internal_symbol_join_31[5]; __v3_internal_symbol_join_31[0] = _str_6887; __v3_internal_symbol_join_31[1] = field.value; __v3_internal_symbol_join_31[2] = _str_6259; __v3_internal_symbol_join_31[3] = init_type_text; __v3_internal_symbol_join_31[4] = _str_41; string_plus_many(5, __v3_internal_symbol_join_31); }), field_id, types__TypeChecker__struct_init_field_deprecation_pos(tc, field));
 								}
@@ -499908,13 +499917,13 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 					continue;
 				}
 				bool field_is_mut = types__struct_init_field_is_mut(fields, field, i);
-				types__Type __if_val_103 = {0};
+				types__Type __if_val_104 = {0};
 				if (!((expected).typ == 1)) {
-					__if_val_103 = types__TypeChecker__resolve_type(tc, value_id);
+					__if_val_104 = types__TypeChecker__resolve_type(tc, value_id);
 				} else {
-					__if_val_103 = types__builtin_void_type;
+					__if_val_104 = types__builtin_void_type;
 				}
-				types__Type source_actual = __if_val_103;
+				types__Type source_actual = __if_val_104;
 				if (!((expected).typ == 15) && types__TypeChecker__type_has_declaration_attribute(tc, &expected, _str_5523)) {
 					types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, _str_5600, value_id, (flat__FlatAst__node(tc->a, value_id))->pos);
 				}
@@ -499926,13 +499935,13 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 				}
 				types__TypeChecker__reject_stored_or_returned_capturing_fn_literal(tc, value_id);
 				if (!((expected).typ == 1)) {
-					token__Pos __if_val_104 = {0};
+					token__Pos __if_val_105 = {0};
 					if (field.value.len > 0) {
-						__if_val_104 = types__TypeChecker__struct_init_field_deprecation_pos(tc, field);
+						__if_val_105 = types__TypeChecker__struct_init_field_deprecation_pos(tc, field);
 					} else {
-						__if_val_104 = ((*(flat__Node*)array_get(tc->a->nodes, (__v_int)(value_id)))).pos;
+						__if_val_105 = ((*(flat__Node*)array_get(tc->a->nodes, (__v_int)(value_id)))).pos;
 					}
-					token__Pos warning_pos = __if_val_104;
+					token__Pos warning_pos = __if_val_105;
 					if (!types__TypeChecker__node_is_in_translated_file(tc, value_id)) {
 						types__TypeChecker__warn_if_integer_literal_outside_known_type_range(tc, value_id, &(types__Type[]){expected}[0], warning_pos);
 					}
@@ -499943,16 +499952,16 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 				if (!types__TypeChecker__node_is_in_translated_file(tc, value_id) && types__type_is_unsigned_integer(&expected) && types__TypeChecker__expr_is_negative_integer_literal(tc, value_id)) {
 					types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, _str_5616, value_id, value_node->pos);
 				}
-				if ((tc->unsafe_depth == 0) && ({string __map_key_105 = tc->cur_file;
-				bool __map_zero_106 = false;
-				!*(bool*)(map__get(&tc->translated_files, &__map_key_105, &__map_zero_106));}) && !flat__SourceTypeSyntax__c_qualified(flat__source_type_syntax(init_name_id)) && ((types__unalias_type(&expected))->typ == 15) && (value_node->kind == flat__NodeKind__int_literal) && string__eq(value_node->value, _str_56) && (types__Type__source_type_id(&expected) != flat__source_type_voidptr)) {
-					token__Pos __if_val_107 = {0};
+				if ((tc->unsafe_depth == 0) && ({string __map_key_106 = tc->cur_file;
+				bool __map_zero_107 = false;
+				!*(bool*)(map__get(&tc->translated_files, &__map_key_106, &__map_zero_107));}) && !flat__SourceTypeSyntax__c_qualified(flat__source_type_syntax(init_name_id)) && ((types__unalias_type(&expected))->typ == 15) && (value_node->kind == flat__NodeKind__int_literal) && string__eq(value_node->value, _str_56) && (types__Type__source_type_id(&expected) != flat__source_type_voidptr)) {
+					token__Pos __if_val_108 = {0};
 					if (field.value.len > 0) {
-						__if_val_107 = types__TypeChecker__struct_init_field_value_pos(tc, field, value_id);
+						__if_val_108 = types__TypeChecker__struct_init_field_value_pos(tc, field, value_id);
 					} else {
-						__if_val_107 = value_node->pos;
+						__if_val_108 = value_node->pos;
 					}
-					token__Pos pos = __if_val_107;
+					token__Pos pos = __if_val_108;
 					types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, _str_7790, field_id, pos);
 				} else if (!flat__SourceTypeSyntax__c_qualified(flat__source_type_syntax(init_name_id))) {
 					types__TypeChecker__record_null_constant_reference_error(tc, types__TypeErrorKind__assignment_mismatch, value_id, &(types__Type[]){expected}[0]);
@@ -499967,18 +499976,18 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 					types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, _str_7792, value_id, value_node->pos);
 				}
 				if ((tc->unsafe_depth == 0) && field_is_mut && (tc->mut_binding_value_id >= 0) && types__TypeChecker__expr_is_value_tail_of(tc, (i32)(tc->mut_binding_value_id), id)) {
-					__v_option_i32 __if_guard_108 = types__TypeChecker__addressed_ident(tc, value_id);
-					if (__if_guard_108.ok) {
-						i32 addressed_id = __if_guard_108.value;
+					__v_option_i32 __if_guard_109 = types__TypeChecker__addressed_ident(tc, value_id);
+					if (__if_guard_109.ok) {
+						i32 addressed_id = __if_guard_109.value;
 						flat__Node* addressed = flat__FlatAst__node(tc->a, addressed_id);
-						__v_option_types__Type __or_opt_109 = types__TypeChecker__non_file_scope_type(tc, addressed->value);
-						types__Type __or_val_110 = {0};
-						if (__or_opt_109.ok) {
-							__or_val_110 = __or_opt_109.value;
+						__v_option_types__Type __or_opt_110 = types__TypeChecker__non_file_scope_type(tc, addressed->value);
+						types__Type __or_val_111 = {0};
+						if (__or_opt_110.ok) {
+							__or_val_111 = __or_opt_110.value;
 						} else {
-							__or_val_110 = (types__Type){.typ = 2, .types__Unknown = (types__Unknown){.UnknownDataRef = types__empty_unknown_data}};
+							__or_val_111 = (types__Type){.typ = 2, .types__Unknown = (types__Unknown){.UnknownDataRef = types__empty_unknown_data}};
 						}
-						types__Type addressed_type = __or_val_110;
+						types__Type addressed_type = __or_val_111;
 						if (!types__TypeChecker__ident_is_mutable_lvalue(tc, addressed->value) && !((types__unalias_type(&addressed_type))->typ == 15)) {
 							types__TypeChecker__record_error_at(tc, types__TypeErrorKind__assignment_mismatch, ({ string __v3_internal_symbol_join_33[3]; __v3_internal_symbol_join_33[0] = _str_41; __v3_internal_symbol_join_33[1] = addressed->value; __v3_internal_symbol_join_33[2] = _str_6793; string_plus_many(3, __v3_internal_symbol_join_33); }), addressed_id, addressed->pos);
 						}
@@ -499987,9 +499996,9 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 				if (!((expected).typ == 1)) {
 					types__Type actual = types__TypeChecker__resolve_expr(tc, value_id, &(types__Type[]){expected}[0]);
 					if (value_node->kind == flat__NodeKind__call) {
-						__v_option_types__CallInfo __if_guard_111 = types__TypeChecker__resolve_call_info(tc, value_id, *value_node);
-						if (__if_guard_111.ok) {
-							types__CallInfo info = __if_guard_111.value;
+						__v_option_types__CallInfo __if_guard_112 = types__TypeChecker__resolve_call_info(tc, value_id, *value_node);
+						if (__if_guard_112.ok) {
+							types__CallInfo info = __if_guard_112.value;
 							types__CallInfo call_info = types__TypeChecker__specialized_plain_generic_call_info(tc, *value_node, info);
 							if (!types__type_contains_unknown(&call_info.return_type) && !((call_info.return_type).typ == 1) && !types__generic_semantic_type_has_placeholder(&call_info.return_type) && !types__TypeChecker__type_text_has_generic_placeholder(tc, types__Type__source_type_id(&call_info.return_type))) {
 								actual = call_info.return_type;
@@ -499997,9 +500006,9 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 						}
 					}
 					if (!types__TypeChecker__expr_compatible(tc, value_id, &actual, &expected)) {
-						__v_option_types__Type __if_guard_112 = types__TypeChecker__mut_param_expr_base(tc, value_id, &(types__Type[]){actual}[0]);
-						if (__if_guard_112.ok) {
-							types__Type semantic_mut_param = __if_guard_112.value;
+						__v_option_types__Type __if_guard_113 = types__TypeChecker__mut_param_expr_base(tc, value_id, &(types__Type[]){actual}[0]);
+						if (__if_guard_113.ok) {
+							types__Type semantic_mut_param = __if_guard_113.value;
 							actual = semantic_mut_param;
 						}
 					}
@@ -500040,25 +500049,25 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 						continue;
 					}
 					if ((clean_expected)->typ == 16) {
-						__v_option_multi_return_u32_u32 __or_opt_114 = types__TypeChecker__struct_field_diagnostic_fn_type(tc, init_name_id, field.value, i);
-						multi_return_u32_u32 __or_val_115 = {0};
-						if (__or_opt_114.ok) {
-							__or_val_115 = __or_opt_114.value;
+						__v_option_multi_return_u32_u32 __or_opt_115 = types__TypeChecker__struct_field_diagnostic_fn_type(tc, init_name_id, field.value, i);
+						multi_return_u32_u32 __or_val_116 = {0};
+						if (__or_opt_115.ok) {
+							__or_val_116 = __or_opt_115.value;
 						} else {
-							__or_val_115.arg0 = (u32)(0);
-							__or_val_115.arg1 = (u32)(0);
+							__or_val_116.arg0 = (u32)(0);
+							__or_val_116.arg1 = (u32)(0);
 						}
-						multi_return_u32_u32 __multi_ret_113 = __or_val_115;
-						u32 expected_fn_id = __multi_ret_113.arg0;
-						u32 expected_alias_id = __multi_ret_113.arg1;
-						__v_option_u32 __or_opt_116 = types__TypeChecker__expr_diagnostic_fn_type(tc, value_id);
-						u32 __or_val_117 = {0};
-						if (__or_opt_116.ok) {
-							__or_val_117 = __or_opt_116.value;
+						multi_return_u32_u32 __multi_ret_114 = __or_val_116;
+						u32 expected_fn_id = __multi_ret_114.arg0;
+						u32 expected_alias_id = __multi_ret_114.arg1;
+						__v_option_u32 __or_opt_117 = types__TypeChecker__expr_diagnostic_fn_type(tc, value_id);
+						u32 __or_val_118 = {0};
+						if (__or_opt_117.ok) {
+							__or_val_118 = __or_opt_117.value;
 						} else {
-							__or_val_117 = (u32)(0);
+							__or_val_118 = (u32)(0);
 						}
-						u32 actual_fn_id = __or_val_117;
+						u32 actual_fn_id = __or_val_118;
 						if ((expected_fn_id != 0) && (actual_fn_id != 0) && (expected_fn_id != actual_fn_id) && (!__v3_array_eq_string(types__fn_diagnostic_parameter_modes_id(expected_fn_id), types__fn_diagnostic_parameter_modes_id(actual_fn_id)) || !types__TypeChecker__fn_types_match_ignoring_module_qualification(tc, clean_expected->types__FnType, clean_actual)) && !types__TypeChecker__method_value_matches_voidptr_callback(tc, value_id, &actual, &expected) && !types__TypeChecker__fn_callback_adapter_compatible(tc, &source_actual, clean_expected)) {
 							Array details = types__TypeChecker__fn_assignment_mismatch_details(tc, expected_fn_id, expected_alias_id, actual_fn_id, value_id);
 							string message = ({ string __v3_internal_symbol_join_38[7]; __v3_internal_symbol_join_38[0] = _str_7051; __v3_internal_symbol_join_38[1] = field.value; __v3_internal_symbol_join_38[2] = _str_5611; __v3_internal_symbol_join_38[3] = flat__source_type_name(expected_fn_id); __v3_internal_symbol_join_38[4] = _str_5730; __v3_internal_symbol_join_38[5] = flat__source_type_name(actual_fn_id); __v3_internal_symbol_join_38[6] = _str_41; string_plus_many(7, __v3_internal_symbol_join_38); });
@@ -500091,21 +500100,21 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 					} else if (((clean_expected)->typ == 20) && !types__TypeChecker__type_implements_interface(tc, &(types__Type[]){actual}[0], clean_expected->types__Interface) && types__TypeChecker__record_interface_implementation_error(tc, types__TypeErrorKind__assignment_mismatch, &(types__Type[]){actual}[0], clean_expected->types__Interface, field_id, types__TypeChecker__struct_init_field_value_pos(tc, field, value_id))) {
 						continue;
 					} else if (pointer_to_value_fixed_array || types__TypeChecker__distinct_alias_primitive_mismatch(tc, &source_actual, &expected) || (((clean_expected)->typ == 14) && ((clean_actual)->typ == 14) && (types__Type__source_type_id(clean_expected) != types__Type__source_type_id(clean_actual))) || (!types__TypeChecker__expr_compatible(tc, value_id, &actual, &expected) && !types__TypeChecker__method_value_matches_voidptr_callback(tc, value_id, &actual, &expected) && !types__TypeChecker__pointer_value_compatible(tc, &actual, &expected))) {
-						types__Type __if_val_118 = {0};
+						types__Type __if_val_119 = {0};
 						if (types__TypeChecker__distinct_alias_primitive_mismatch(tc, &source_actual, &expected)) {
-							__if_val_118 = source_actual;
+							__if_val_119 = source_actual;
 						} else {
-							__if_val_118 = actual;
+							__if_val_119 = actual;
 						}
-						types__Type diagnostic_actual = __if_val_118;
+						types__Type diagnostic_actual = __if_val_119;
 						string actual_name = types__TypeChecker__diagnostic_expr_type_name(tc, value_id, &diagnostic_actual);
-						token__Pos __if_val_119 = {0};
+						token__Pos __if_val_120 = {0};
 						if (pointer_to_value_fixed_array) {
-							__if_val_119 = types__TypeChecker__struct_init_pointer_field_pos(tc, field);
+							__if_val_120 = types__TypeChecker__struct_init_pointer_field_pos(tc, field);
 						} else {
-							__if_val_119 = types__TypeChecker__struct_init_field_value_pos(tc, field, value_id);
+							__if_val_120 = types__TypeChecker__struct_init_field_value_pos(tc, field, value_id);
 						}
-						token__Pos field_pos = __if_val_119;
+						token__Pos field_pos = __if_val_120;
 						if (((clean_expected)->typ == 15) && !((clean_actual)->typ == 15)) {
 							if (types__Type__source_type_id(&expected) == flat__source_type_voidptr) {
 								if ((clean_actual)->typ == 19) {
@@ -500134,31 +500143,31 @@ void types__TypeChecker__check_struct_init(types__TypeChecker* tc, i32 id, flat_
 	}
 	if (((clean_init_type)->typ == 22) && (node.children_count == 0) && !types__TypeChecker__node_is_in_translated_file(tc, id)) {
 		u32 base = types__TypeChecker__sum_base_name(tc, types__SumType__source_type_id(clean_init_type->types__SumType));
-		__v_option_Array __or_opt_120 = flat__SourceTypeListBindings__type_ids(&tc->sum_types, base);
-		Array __or_val_121 = {0};
-		if (__or_opt_120.ok) {
-			__or_val_121 = __or_opt_120.value;
+		__v_option_Array __or_opt_121 = flat__SourceTypeListBindings__type_ids(&tc->sum_types, base);
+		Array __or_val_122 = {0};
+		if (__or_opt_121.ok) {
+			__or_val_122 = __or_opt_121.value;
 		} else {
-			__or_val_121 = __new_array_noscan(0, 0, sizeof(u32));
+			__or_val_122 = __new_array_noscan(0, 0, sizeof(u32));
 		}
-		Array variants = __or_val_121;
+		Array variants = __or_val_122;
 		if (variants.len > 0) {
 			u32 first_variant_source_id = types__TypeChecker__concrete_sum_variant_name(tc, types__SumType__source_type_id(clean_init_type->types__SumType), (*(u32*)array_get(variants, 0)));
-			__v_option_types__Struct __if_guard_122 = types__struct_type_from_type(&(types__Type[]){*types__unalias_type(types__TypeChecker__parse_type(tc, first_variant_source_id))}[0]);
-			if (__if_guard_122.ok) {
-				types__Struct first_struct = __if_guard_122.value;
-				Array __in_lhs_123 = types__TypeChecker__missing_reference_struct_fields(tc, types__Struct__source_type_id(first_struct), new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), __new_array_noscan(0, 0, sizeof(u32)));
+			__v_option_types__Struct __if_guard_123 = types__struct_type_from_type(&(types__Type[]){*types__unalias_type(types__TypeChecker__parse_type(tc, first_variant_source_id))}[0]);
+			if (__if_guard_123.ok) {
+				types__Struct first_struct = __if_guard_123.value;
+				Array __in_lhs_124 = types__TypeChecker__missing_reference_struct_fields(tc, types__Struct__source_type_id(first_struct), new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), __new_array_noscan(0, 0, sizeof(u32)));
 				{
 					__v_int diagnostic_index = 0;
-					for (; diagnostic_index < __in_lhs_123.len; diagnostic_index++) {
-						types__MissingReferenceField missing = *(types__MissingReferenceField*)(array_get(__in_lhs_123, diagnostic_index));
-						string __if_val_124 = {0};
+					for (; diagnostic_index < __in_lhs_124.len; diagnostic_index++) {
+						types__MissingReferenceField missing = *(types__MissingReferenceField*)(array_get(__in_lhs_124, diagnostic_index));
+						string __if_val_125 = {0};
 						if (missing.has_part) {
-							__if_val_124 = ({ string __v3_internal_symbol_join_47[5]; __v3_internal_symbol_join_47[0] = _str_6548; __v3_internal_symbol_join_47[1] = missing.path; __v3_internal_symbol_join_47[2] = _str_6549; __v3_internal_symbol_join_47[3] = types__MissingReferenceField__owner_text(&missing); __v3_internal_symbol_join_47[4] = _str_345; string_plus_many(5, __v3_internal_symbol_join_47); });
+							__if_val_125 = ({ string __v3_internal_symbol_join_47[5]; __v3_internal_symbol_join_47[0] = _str_6548; __v3_internal_symbol_join_47[1] = missing.path; __v3_internal_symbol_join_47[2] = _str_6549; __v3_internal_symbol_join_47[3] = types__MissingReferenceField__owner_text(&missing); __v3_internal_symbol_join_47[4] = _str_345; string_plus_many(5, __v3_internal_symbol_join_47); });
 						} else {
-							__if_val_124 = ({ string __v3_internal_symbol_join_48[3]; __v3_internal_symbol_join_48[0] = _str_6548; __v3_internal_symbol_join_48[1] = missing.path; __v3_internal_symbol_join_48[2] = _str_3522; string_plus_many(3, __v3_internal_symbol_join_48); });
+							__if_val_125 = ({ string __v3_internal_symbol_join_48[3]; __v3_internal_symbol_join_48[0] = _str_6548; __v3_internal_symbol_join_48[1] = missing.path; __v3_internal_symbol_join_48[2] = _str_3522; string_plus_many(3, __v3_internal_symbol_join_48); });
 						}
-						string message = __if_val_124;
+						string message = __if_val_125;
 						types__TypeChecker__record_ordered_error_at(tc, types__TypeErrorKind__assignment_mismatch, message, id, types__TypeChecker__struct_init_head_pos(tc, node), diagnostic_index + 1);
 					}
 				}
@@ -528369,8 +528378,8 @@ u32 types__TypeChecker__generic_struct_method_alias_target(types__TypeChecker* t
 	memmove(seen, (u32[16]){0}, sizeof(seen));
 	__v_int seen_len = 0;
 	{
-		__v_int __discard_18429473170254815075_810057_810058 = 0;
-		for (; __discard_18429473170254815075_810057_810058 < 16; __discard_18429473170254815075_810057_810058++) {
+		__v_int __discard_18429473170254815075_811268_811269 = 0;
+		for (; __discard_18429473170254815075_811268_811269 < 16; __discard_18429473170254815075_811268_811269++) {
 			bool cycle = false;
 			{
 				__v_int i = 0;
@@ -529105,8 +529114,8 @@ bool types__TypeChecker__ident_is_integer_literal_range_var(types__TypeChecker* 
 	}
 	i32 current = id;
 	{
-		__v_int __discard_18429473170254815075_848867_848868 = 0;
-		for (; __discard_18429473170254815075_848867_848868 < 128; __discard_18429473170254815075_848867_848868++) {
+		__v_int __discard_18429473170254815075_850078_850079 = 0;
+		for (; __discard_18429473170254815075_850078_850079 < 128; __discard_18429473170254815075_850078_850079++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, current);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				return false;
@@ -529156,8 +529165,8 @@ bool types__TypeChecker__ident_is_multi_pattern_match_subject(types__TypeChecker
 	}
 	i32 current = id;
 	{
-		__v_int __discard_18429473170254815075_293372_293373 = 0;
-		for (; __discard_18429473170254815075_293372_293373 < 32; __discard_18429473170254815075_293372_293373++) {
+		__v_int __discard_18429473170254815075_294583_294584 = 0;
+		for (; __discard_18429473170254815075_294583_294584 < 32; __discard_18429473170254815075_294583_294584++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, current);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				return false;
@@ -555669,8 +555678,8 @@ void types__TypeChecker__record_enclosing_dump_void(types__TypeChecker* tc, i32 
 void types__TypeChecker__record_enclosing_print_void(types__TypeChecker* tc, i32 id) {
 	i32 current = id;
 	{
-		__v_int __discard_18429473170254815075_296712_296713 = 0;
-		for (; __discard_18429473170254815075_296712_296713 < 4; __discard_18429473170254815075_296712_296713++) {
+		__v_int __discard_18429473170254815075_297923_297924 = 0;
+		for (; __discard_18429473170254815075_297923_297924 < 4; __discard_18429473170254815075_297923_297924++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, current);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				return;
@@ -566669,8 +566678,8 @@ void types__TypeChecker__resolve_cross_comptime_branch(types__TypeChecker* tc, i
 __v_option_u32 types__TypeChecker__resolve_enum_alias_target(types__TypeChecker* tc, u32 name_id) {
 	u32 cur = name_id;
 	{
-		__v_int __discard_18429473170254815075_402253_402254 = 0;
-		for (; __discard_18429473170254815075_402253_402254 < 16; __discard_18429473170254815075_402253_402254++) {
+		__v_int __discard_18429473170254815075_403464_403465 = 0;
+		for (; __discard_18429473170254815075_403464_403465 < 16; __discard_18429473170254815075_403464_403465++) {
 			__v_option_u32 __or_opt_0 = types__TypeChecker__alias_target_type_text(tc, cur);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -580087,6 +580096,57 @@ token__Pos types__TypeChecker__struct_init_pointer_field_pos(types__TypeChecker*
 	return pos;
 }
 
+__v_option_u32 types__TypeChecker__struct_init_private_type_id(types__TypeChecker* tc, types__Type* typ, types__Struct base) {
+	if (!(((*typ)).typ == 23) || !flat__SourceTypeSyntax__c_qualified(flat__source_type_syntax(types__Struct__source_type_id(base)))) {
+		__v_option_types__DeclarationVisibility __if_guard_0 = types__TypeChecker__private_type_declaration(tc, types__Struct__source_type_id(base));
+		if (__if_guard_0.ok) {
+			return (__v_option_u32){.ok = true, .value = types__Struct__source_type_id(base)};
+		}
+		return (__v_option_u32){.ok = false};
+	}
+	string saved_module = tc->cur_module;
+	types__Type current = (*typ);
+	while ((current).typ == 23) {
+		u32 alias_id = types__Alias__source_type_id(current.types__Alias);
+		string __map_key_1 = types__Alias__name(current.types__Alias);
+		if (!map__exists(&tc->declaration_visibility, &__map_key_1)) {
+			alias_id = types__strip_generic_args_id(alias_id);
+		}
+		__v_option_types__DeclarationVisibility __if_guard_2 = types__TypeChecker__private_type_declaration(tc, alias_id);
+		if (__if_guard_2.ok) {
+			__v_option_u32 _t1 = (__v_option_u32){.ok = true, .value = 			alias_id};
+			{
+				tc->cur_module = saved_module;
+			}
+			return _t1;
+		}
+		string __map_key_3 = flat__source_type_name(alias_id);
+		void* __map_ptr_4 = map__get_check(&tc->declaration_visibility, &__map_key_3);
+		if (__map_ptr_4 != NULL) {
+			types__DeclarationVisibility visibility = *(types__DeclarationVisibility*)(__map_ptr_4);
+			tc->cur_module = visibility.module_name;
+		}
+		current = *current.types__Alias.AliasDataRef->base_type;
+	}
+	__v_option_types__DeclarationVisibility __if_guard_5 = types__TypeChecker__private_type_declaration(tc, types__Struct__source_type_id(base));
+	if (__if_guard_5.ok) {
+		__v_option_u32 _t2 = (__v_option_u32){.ok = true, .value = 		types__Struct__source_type_id(base)};
+		{
+			tc->cur_module = saved_module;
+		}
+		return _t2;
+	}
+	__v_option_u32 _t3 = (__v_option_u32){.ok = false};
+	{
+		tc->cur_module = saved_module;
+	}
+	return _t3;
+	{
+		tc->cur_module = saved_module;
+	}
+	return (__v_option_u32){.ok = true};
+}
+
 token__Pos types__TypeChecker__struct_init_unsafe_nil_type_mismatch_pos(types__TypeChecker* tc, flat__Node field, i32 value_id) {
 	flat__Node* value = flat__FlatAst__node(tc->a, value_id);
 	token__Pos field_name_pos = types__TypeChecker__struct_init_field_deprecation_pos(tc, field);
@@ -580814,8 +580874,8 @@ bool types__TypeChecker__subtree_writes_key_before(types__TypeChecker* tc, i32 r
 		return false;
 	}
 	{
-		__v_int __discard_18429473170254815075_640316_640317 = 0;
-		for (; __discard_18429473170254815075_640316_640317 < 128; __discard_18429473170254815075_640316_640317++) {
+		__v_int __discard_18429473170254815075_641527_641528 = 0;
+		for (; __discard_18429473170254815075_641527_641528 < 128; __discard_18429473170254815075_641527_641528++) {
 			i32 parent_id = types__TypeChecker__direct_parent_id(tc, child);
 			if (!types__TypeChecker__valid_node_id(tc, parent_id)) {
 				return false;
