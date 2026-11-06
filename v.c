@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "67011350d000d86c3fc2a925b505c590dbfdea88"
+#define V_COMMIT_HASH "4e0cc6baa8941a259260305d7ccab3e0927b73aa"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -13058,6 +13058,7 @@ struct flat__SourceTypeFlattenedReceiverEntry {
 struct flat__SourceTypeIndex {
 	u32* slots;
 	u32 capacity;
+	flat__SourceTypeIndex* previous;
 };
 
 struct flat__SourceTypeLexicalEntry {
@@ -13383,7 +13384,6 @@ typedef flat__SourceTypeSyntaxSpan Array_fixed_flat__SourceTypeSyntaxSpan_40[40]
 struct flat__SourceTypeTable {
 	void* chunks[16384];
 	u32 count;
-	flat__SourceTypeIndex* v_index;
 };
 
 struct flat__SourceTypeUnderscoreEntry {
@@ -22159,6 +22159,7 @@ void* flat__g_source_type_encoded_prefixes[4096] = {0};
 void* flat__g_source_type_predicates[4096] = {0};
 flat__SourceTypeTable* flat__g_source_types;
 u32 flat__g_source_types_lock;
+flat__SourceTypeIndex* flat__g_source_type_index;
 void* flat__g_source_type_recent_entries[131072] = {0};
 void* flat__g_source_type_read_entries[4096] = {0};
 u64* flat__g_source_type_flags;
@@ -27127,8 +27128,8 @@ u64 flat__source_type_flags_word(int shape, int query);
 bool flat__source_type_has_qualified_prefix(u32 id, u32 prefix);
 u32 flat__source_type_id(string text);
 u32 flat__source_type_id_uncached(string text);
-flat__SourceTypeIndex* flat__source_type_index_load(flat__SourceTypeTable* table);
-void flat__source_type_index_publish(flat__SourceTypeTable* table, flat__SourceTypeIndex* v_index);
+flat__SourceTypeIndex* flat__source_type_index_load(void);
+void flat__source_type_index_publish(flat__SourceTypeIndex* v_index);
 bool flat__source_type_legacy_generic_param_matches(u32 actual, u32 parameter);
 void flat__source_type_lock(void);
 string flat__source_type_name(u32 id);
@@ -38163,7 +38164,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "6701135", 7);
+_SL(_str_199, "4e0cc6b", 7);
 _SL(_str_200, " unknown", 8);
 _SL(_str_201, "-0.0", 4);
 _SL(_str_202, "0.0", 3);
@@ -226614,6 +226615,9 @@ u8* embed_file__join_chunks(embed_file__EmbedFileChunk* chunks, __v_int len) {
 			offset += n;
 			chunk++;
 		}
+		if (offset < len) {
+			vmemset((void*)(buffer + offset), 0, len - offset);
+		}
 		return buffer;
 	}
 }
@@ -231608,7 +231612,7 @@ inline Array flat__SourceTypeSyntax__written_applications(flat__SourceTypeSyntax
 }
 
 void flat__SourceTypeTable__grow(flat__SourceTypeTable* table) {
-	flat__SourceTypeIndex* previous = flat__source_type_index_load(table);
+	flat__SourceTypeIndex* previous = flat__source_type_index_load();
 	u32 __if_val_0 = {0};
 	if (isnil((void*)(previous))) {
 		__if_val_0 = (u32)(2048);
@@ -231634,14 +231638,14 @@ void flat__SourceTypeTable__grow(flat__SourceTypeTable* table) {
 			}
 		}
 	}
-	flat__SourceTypeIndex* v_index = (flat__SourceTypeIndex*)(flat__node_payload_alloc_zeroed(sizeof(flat__SourceTypeIndex)));
+	flat__SourceTypeIndex* v_index = (flat__SourceTypeIndex*)(calloc(1, sizeof(flat__SourceTypeIndex)));
 	if (isnil((void*)(v_index))) {
 		v_panic(_str_4858);
 	}
 	{
-		*v_index = (flat__SourceTypeIndex){.slots = slots, .capacity = capacity};
+		*v_index = (flat__SourceTypeIndex){.slots = slots, .capacity = capacity, .previous = previous};
 	}
-	flat__source_type_index_publish(table, v_index);
+	flat__source_type_index_publish(v_index);
 }
 
 void flat__TextProbeCache__reset(flat__TextProbeCache* c) {
@@ -232895,7 +232899,7 @@ inline __v_option_u32 flat__source_type_existing_id(string text) {
 	if (isnil((void*)(table))) {
 		return (__v_option_u32){.ok = false};
 	}
-	u32 id = flat__source_type_find(table, flat__source_type_index_load(table), text, (u32)(hash__sum64_string(text, 0)));
+	u32 id = flat__source_type_find(table, flat__source_type_index_load(), text, (u32)(hash__sum64_string(text, 0)));
 	if (id == 0) {
 		return (__v_option_u32){.ok = false};
 	}
@@ -233079,7 +233083,7 @@ u32 flat__source_type_id_uncached(string text) {
 	u32 hashed = (u32)(hash__sum64_string(text, 0));
 	flat__SourceTypeTable* table = flat__source_type_table_load();
 	if (!isnil((void*)(table))) {
-		u32 id = flat__source_type_find(table, flat__source_type_index_load(table), text, hashed);
+		u32 id = flat__source_type_find(table, flat__source_type_index_load(), text, hashed);
 		if (id != 0) {
 			return id;
 		}
@@ -233097,10 +233101,10 @@ u32 flat__source_type_id_uncached(string text) {
 		flat__source_type_flags_table_create();
 		flat__source_type_table_publish(table);
 	}
-	flat__SourceTypeIndex* v_index = flat__source_type_index_load(table);
+	flat__SourceTypeIndex* v_index = flat__source_type_index_load();
 	if (isnil((void*)(v_index)) || (((table->count + 1) * 4) >= (v_index->capacity * 3))) {
 		flat__SourceTypeTable__grow(table);
-		v_index = flat__source_type_index_load(table);
+		v_index = flat__source_type_index_load();
 	}
 	u32 slot = hashed & (v_index->capacity - 1);
 	for (;;) {
@@ -233158,26 +233162,26 @@ u32 flat__source_type_id_uncached(string text) {
 	}
 }
 
-inline flat__SourceTypeIndex* flat__source_type_index_load(flat__SourceTypeTable* table) {
+inline flat__SourceTypeIndex* flat__source_type_index_load(void) {
 	#if defined(TARGET_IS_32BIT)
 	{
-		return (flat__SourceTypeIndex*)((void*)(atomic_load_u32((void*)(&table->v_index))));
+		return (flat__SourceTypeIndex*)((void*)(atomic_load_u32((void*)(&flat__g_source_type_index))));
 	}
 	#else
 	{
-		return (flat__SourceTypeIndex*)((void*)(atomic_load_u64((void*)(&table->v_index))));
+		return (flat__SourceTypeIndex*)((void*)(atomic_load_u64((void*)(&flat__g_source_type_index))));
 	}
 	#endif
 }
 
-void flat__source_type_index_publish(flat__SourceTypeTable* table, flat__SourceTypeIndex* v_index) {
+void flat__source_type_index_publish(flat__SourceTypeIndex* v_index) {
 	#if defined(TARGET_IS_32BIT)
 	{
-		atomic_store_u32((void*)(&table->v_index), (u32)((void*)(v_index)));
+		atomic_store_u32((void*)(&flat__g_source_type_index), (u32)((void*)(v_index)));
 	}
 	#else
 	{
-		atomic_store_u64((void*)(&table->v_index), (u64)((void*)(v_index)));
+		atomic_store_u64((void*)(&flat__g_source_type_index), (u64)((void*)(v_index)));
 	}
 	#endif
 }
