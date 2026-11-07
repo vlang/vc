@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "94ec2002b798d16ca3d728b334bcb3bfb2eae807"
+#define V_COMMIT_HASH "b865fb7359d57a4081e9c3e1cc4a63d9c002c6c5"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -7135,10 +7135,10 @@ typedef string Array_fixed_string_8[8];
 typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_15[15];
 typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_25[25];
 typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
 typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_25[25];
 typedef u32 Array_fixed_u32_8[8];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 {
 	__v_int mode;
@@ -22328,6 +22328,7 @@ void driver__promote_scoped_signatures(types__TypeChecker* tc, map original_name
 void driver__promote_scoped_type_metadata(types__TypeChecker* tc);
 string driver__prune_cache_only_function_prototypes(string source, map* cache_used_fns, string program_generated_support, types__TypeChecker* tc, driver__V3ModuleCacheState* state);
 string driver__prune_cached_native_function_prototypes(string source, driver__V3ModuleCacheState* state, Array module_names);
+string driver__prune_cached_program_wrappers(string prefix, string body);
 string driver__prune_foreign_program_wrappers(string declarations, string body);
 driver__V3PrunedDeclarations driver__prune_unreferenced_cached_functions(flat__FlatAst* a, Array keep, Array keep_in_modules, Array keep_patterns);
 __v_result_bool driver__publish_native_c_object(string temporary, string destination);
@@ -34447,7 +34448,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "94ec200", 7);
+_SL(_str_201, "b865fb7", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -66584,7 +66585,7 @@ __inline multi_return_u64_u64 bits__div_64(u64 hi, u64 lo, u64 v_y1) {
 	}
 	u64 quo = (u64)(0);
 	u64 rem = (u64)(0);
-	#if defined(_MSC_VER)
+	#if (defined(_MSC_VER) && (!defined(__clang__)))
 	{
 		quo = _udiv128(hi, lo, y, &rem);
 		return (multi_return_u64_u64){quo, rem};
@@ -79735,8 +79736,8 @@ Array c__FlatGen__const_emission_order(c__FlatGen* g) {
 		}
 	}
 	{
-		__v_int __discard_17027569468710905096_1001717_1001718 = 0;
-		for (; __discard_17027569468710905096_1001717_1001718 < 20; __discard_17027569468710905096_1001717_1001718++) {
+		__v_int __discard_17027569468710905096_1001804_1001805 = 0;
+		for (; __discard_17027569468710905096_1001804_1001805 < 20; __discard_17027569468710905096_1001804_1001805++) {
 			if (deferred.len == 0) {
 				break;
 			}
@@ -125918,8 +125919,8 @@ __v_option_string c__FlatGen__global_name_for_ident(c__FlatGen* g, string name) 
 __v_option_string c__FlatGen__global_scalar_static_initializer(c__FlatGen* g, i32 id, types__Type* typ) {
 	i32 value_id = id;
 	{
-		__v_int __discard_17027569468710905096_916978_916979 = 0;
-		for (; __discard_17027569468710905096_916978_916979 < 3; __discard_17027569468710905096_916978_916979++) {
+		__v_int __discard_17027569468710905096_917065_917066 = 0;
+		for (; __discard_17027569468710905096_917065_917066 < 3; __discard_17027569468710905096_917065_917066++) {
 			if (((__v_int)(value_id) < 0) || ((__v_int)(value_id) >= g->a->nodes.len)) {
 				break;
 			}
@@ -127082,6 +127083,7 @@ void c__FlatGen__headerless_libc_preamble(c__FlatGen* g) {
 	c__FlatGen__writeln(g, _str_9919);
 	c__FlatGen__writeln(g, _str_9920);
 	c__FlatGen__writeln(g, _str_2347);
+	c__FlatGen__writeln(g, _str_9537);
 	if (g->target_libc_headers) {
 		c__FlatGen__headerless_execinfo_declarations(g);
 		if (g->needs_thread_runtime) {
@@ -127096,7 +127098,6 @@ void c__FlatGen__headerless_libc_preamble(c__FlatGen* g) {
 	c__FlatGen__writeln(g, _str_9922);
 	c__FlatGen__writeln(g, _str_2347);
 	c__FlatGen__writeln(g, _str_9923);
-	c__FlatGen__writeln(g, _str_9537);
 	c__FlatGen__writeln(g, _str_9924);
 	c__FlatGen__writeln(g, _str_9925);
 	c__FlatGen__writeln(g, _str_2347);
@@ -159550,8 +159551,8 @@ void c__FlatGen__write_implicit_veb_ctx_param(c__FlatGen* g) {
 
 __inline void c__FlatGen__write_indent(c__FlatGen* g) {
 	{
-		__v_int __discard_17027569468710905096_1040896_1040897 = 0;
-		for (; __discard_17027569468710905096_1040896_1040897 < g->indent; __discard_17027569468710905096_1040896_1040897++) {
+		__v_int __discard_17027569468710905096_1040983_1040984 = 0;
+		for (; __discard_17027569468710905096_1040983_1040984 < g->indent; __discard_17027569468710905096_1040983_1040984++) {
 			strings__Builder__write_u8(&g->sb, '\t');
 		}
 	}
@@ -191204,8 +191205,8 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 				bool dropped = false;
 				__v_int __in_lhs_16 = declared + 1;
 				{
-					__v_int __discard_15215236722831141574_855908_855909 = 0;
-					for (; __discard_15215236722831141574_855908_855909 < __in_lhs_16; __discard_15215236722831141574_855908_855909++) {
+					__v_int __discard_15215236722831141574_856872_856873 = 0;
+					for (; __discard_15215236722831141574_856872_856873 < __in_lhs_16; __discard_15215236722831141574_856872_856873++) {
 						bool changed = false;
 						array__clear(&untyped);
 						{
@@ -191427,8 +191428,8 @@ Array driver__implicit_multi_value_types(u32 raw_id, driver__ImplicitFieldScanIn
 u32 driver__implicit_normalize_type(u32 raw_id, driver__ImplicitFieldScanIndex v_index) {
 	u32 typ_id = driver__implicit_trimmed_type_id(raw_id);
 	{
-		__v_int __discard_15215236722831141574_874483_874484 = 0;
-		for (; __discard_15215236722831141574_874483_874484 < 12; __discard_15215236722831141574_874483_874484++) {
+		__v_int __discard_15215236722831141574_875447_875448 = 0;
+		for (; __discard_15215236722831141574_875447_875448 < 12; __discard_15215236722831141574_875447_875448++) {
 			bool changed = false;
 			{
 				__v_int __for_idx_0 = 0;
@@ -195437,8 +195438,8 @@ __v_option_string driver__nearest_vroot_for_path(string path) {
 		dir = os__dir(dir);
 	}
 	{
-		__v_int __discard_15215236722831141574_768342_768343 = 0;
-		for (; __discard_15215236722831141574_768342_768343 < 8; __discard_15215236722831141574_768342_768343++) {
+		__v_int __discard_15215236722831141574_769306_769307 = 0;
+		for (; __discard_15215236722831141574_769306_769307 < 8; __discard_15215236722831141574_769306_769307++) {
 			if (driver__is_valid_vroot(dir)) {
 				return (__v_option_string){.ok = true, .value = dir};
 			}
@@ -196484,6 +196485,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 	}
 	string program_support = __map_val_34;
 	string __v3_internal_symbol_join_0__vmsvc4554[3]; __v3_internal_symbol_join_0__vmsvc4554[0] = program_specializations; __v3_internal_symbol_join_0__vmsvc4554[1] = program_support; __v3_internal_symbol_join_0__vmsvc4554[2] = main_body; string program_generated_support = (string_plus_many(3, __v3_internal_symbol_join_0__vmsvc4554));
+	string program_prefix = driver__prune_cached_program_wrappers(split->prefix, program_generated_support);
 	driver__V3TccDylibBindings native_bindings = (driver__V3TccDylibBindings){.owner = _str_34};
 	if (state->native_bridge) {
 		map functions = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
@@ -196502,7 +196504,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 		}
 		native_bindings = driver__v3_tcc_dylib_function_bindings(functions);
 	}
-	string raw_main_prefix = driver__v3_cached_c_unit_source(driver__prune_cache_only_function_prototypes(driver__prune_cached_native_function_prototypes(driver__cache_source_without_cached_native_inputs(split->prefix, state, true), state, new_array_from_c_array(1, 1, sizeof(string), (string[1]){_str_181})), cache_used_fns, program_generated_support, tc, state), true);
+	string raw_main_prefix = driver__v3_cached_c_unit_source(driver__prune_cache_only_function_prototypes(driver__prune_cached_native_function_prototypes(driver__cache_source_without_cached_native_inputs(program_prefix, state, true), state, new_array_from_c_array(1, 1, sizeof(string), (string[1]){_str_181})), cache_used_fns, program_generated_support, tc, state), true);
 	string __if_val_45 = {0};
 	if (state->native_bridge) {
 		__if_val_45 = string__plus(_str_3706, raw_main_prefix);
@@ -196519,7 +196521,7 @@ __v_result_driver__V3PreparedModuleCache driver__prepare_v3_module_cache(string 
 		string __v3_internal_symbol_join_3__vmsvc4565[3]; __v3_internal_symbol_join_3__vmsvc4565[0] = main_prefix; __v3_internal_symbol_join_3__vmsvc4565[1] = program_specializations; __v3_internal_symbol_join_3__vmsvc4565[2] = program_support; dylib_prefix = modulecache__prune_unreferenced_static_string_definitions((string_plus_many(3, __v3_internal_symbol_join_3__vmsvc4565)));
 	}
 	if (!state->objects_only && !state->no_program_declarations) {
-		string __v3_internal_symbol_join_4__vmsvc4566[3]; __v3_internal_symbol_join_4__vmsvc4566[0] = split->prefix; __v3_internal_symbol_join_4__vmsvc4566[1] = program_specializations; __v3_internal_symbol_join_4__vmsvc4566[2] = program_support; main_declarations = driver__v3_cached_c_unit_source(driver__prune_cache_only_function_prototypes(driver__cache_source_without_cached_native_inputs(modulecache__declaration_header((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4566))), state, false), cache_used_fns, program_generated_support, tc, state), false);
+		string __v3_internal_symbol_join_4__vmsvc4566[3]; __v3_internal_symbol_join_4__vmsvc4566[0] = program_prefix; __v3_internal_symbol_join_4__vmsvc4566[1] = program_specializations; __v3_internal_symbol_join_4__vmsvc4566[2] = program_support; main_declarations = driver__v3_cached_c_unit_source(driver__prune_cache_only_function_prototypes(driver__cache_source_without_cached_native_inputs(modulecache__declaration_header((string_plus_many(3, __v3_internal_symbol_join_4__vmsvc4566))), state, false), cache_used_fns, program_generated_support, tc, state), false);
 		if (state->native_bridge) {
 			dylib_prefix = string__plus(dylib_prefix, native_bindings.owner);
 		}
@@ -197686,6 +197688,35 @@ string driver__prune_cached_native_function_prototypes(string source, driver__V3
 		i++;
 	}
 	return strings__Builder__str(out);
+}
+
+string driver__prune_cached_program_wrappers(string prefix, string body) {
+	if (!string__contains(prefix, driver__v3_program_wrappers_begin)) {
+		return prefix;
+	}
+	Array __esc_0 = strings__new_builder(prefix.len + body.len);
+	Array* roots = (Array*)(memdup(&__esc_0, sizeof(Array)));
+	strings__Builder__writeln(roots, body);
+	bool in_wrappers = false;
+	Array __in_lhs_1 = string__split_into_lines(prefix);
+	{
+		__v_int __for_idx_2 = 0;
+		for (; __for_idx_2 < __in_lhs_1.len; __for_idx_2++) {
+			string line = *(string*)(array_get(__in_lhs_1, __for_idx_2));
+			if (string__eq(line, driver__v3_program_wrappers_begin)) {
+				in_wrappers = true;
+				continue;
+			}
+			if (string__eq(line, driver__v3_program_wrappers_end)) {
+				in_wrappers = false;
+				continue;
+			}
+			if (!in_wrappers) {
+				strings__Builder__writeln(roots, line);
+			}
+		}
+	}
+	return driver__prune_foreign_program_wrappers(prefix, strings__Builder__str(roots));
 }
 
 string driver__prune_foreign_program_wrappers(string declarations, string body) {
@@ -266243,24 +266274,16 @@ string os__executable(void) {
 				}
 				return _t9;
 			}
-			#if defined(__sun)
-			{
-			}
-			#endif
-			#if defined(__HAIKU__)
-			{
-			}
-			#endif
-			string _t10 = 			os__executable_fallback();
-			for (int executable_defer_0_count_i = 0; executable_defer_0_count_i < executable_defer_0_count; executable_defer_0_count_i++) {
-				{
-					v_free(pbuf);
-				}
-			}
-			return _t10;
 		}
 		#endif
 	}
+	string _t10 = 	os__executable_fallback();
+	for (int executable_defer_0_count_i = 0; executable_defer_0_count_i < executable_defer_0_count; executable_defer_0_count_i++) {
+		{
+			v_free(pbuf);
+		}
+	}
+	return _t10;
 	for (int executable_defer_0_count_i = 0; executable_defer_0_count_i < executable_defer_0_count; executable_defer_0_count_i++) {
 		{
 			v_free(pbuf);
