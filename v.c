@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "a90bc305e51830bcaabb814552b14bc0f5b6d500"
+#define V_COMMIT_HASH "e957563bb31e6a37b3a24d6156d3f125b4894df3"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -6286,7 +6286,9 @@ V_OS_EXECUTE_SCOPE int v_os_exec_capture_input_start(char *const argv[], int *ch
 #ifdef __cplusplus
 extern "C"
 #endif
-int v_os_process_pipe_cloexec(int fds[2]) {
+// Standalone V3 object builds may embed this helper in multiple objects.
+// Weak ELF linkage keeps those objects linkable while retaining the pipe2 ABI.
+__attribute__((weak)) int v_os_process_pipe_cloexec(int fds[2]) {
 	return pipe2(fds, O_CLOEXEC);
 }
 #endif
@@ -38621,7 +38623,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "a90bc30", 7);
+_SL(_str_199, "e957563", 7);
 _SL(_str_200, " unknown", 8);
 _SL(_str_201, "-0.0", 4);
 _SL(_str_202, "0.0", 3);
@@ -142994,7 +142996,7 @@ void c__FlatGen__portable_native_runtime_helpers(c__FlatGen* g) {
 	c__FlatGen__writeln(g, _str_9339);
 	embed_file__EmbedFileData __addr_6 = (embed_file__EmbedFileData){.path = _str_9340, .apath = _str_9341, .len = 714, .uncompressed = (u8*)"#ifndef V3_BENCH_PEAK_RSS_H\012#define V3_BENCH_PEAK_RSS_H\012\012#ifndef V_PEAK_RSS_SCOPE\012#define V_PEAK_RSS_SCOPE static inline\012#endif\012\012// The result type. A translation unit that also declares the function through a\012// 64-bit typedef of its own names that typedef here: `long long` and `int64_t`\012// are different types wherever `int64_t` is `long`.\012#ifndef V_PEAK_RSS_INT\012#define V_PEAK_RSS_INT long long\012#endif\012\012#include <sys/resource.h>\012\012V_PEAK_RSS_SCOPE V_PEAK_RSS_INT v3_bench_peak_rss_kb(void) {\012\011struct rusage usage;\012\011if (getrusage(RUSAGE_SELF, &usage) != 0) {\012\011\011return -1;\012\011}\012#if defined(__APPLE__)\012\011return (V_PEAK_RSS_INT) usage.ru_maxrss / 1024;\012#else\012\011return (V_PEAK_RSS_INT) usage.ru_maxrss;\012#endif\012}\012\012#endif\012", .compressed = NULL, .compression_type = _str_34};
 	c__FlatGen__write(g, embed_file__EmbedFileData__to_string(&__addr_6));
-	embed_file__EmbedFileData __addr_7 = (embed_file__EmbedFileData){.path = _str_9342, .apath = _str_9343, .len = 528, .uncompressed = (u8*)"#if defined(__linux__) && !defined(_GNU_SOURCE)\012#define _GNU_SOURCE\012#endif\012#include <errno.h>\012#include <fcntl.h>\012#include <stddef.h>\012#include <sys/types.h>\012#include <unistd.h>\012#define V_OS_EXECUTE_SCOPE\012#include \"execute_capture_nix.h\"\012\012#if defined(__linux__)\012// Use the SDK's pipe2 declaration here rather than redeclaring its array\012// parameter in generated C. Creation and CLOEXEC must be one operation.\012#ifdef __cplusplus\012extern \"C\"\012#endif\012int v_os_process_pipe_cloexec(int fds[2]) {\012\011return pipe2(fds, O_CLOEXEC);\012}\012#endif\012", .compressed = NULL, .compression_type = _str_34};
+	embed_file__EmbedFileData __addr_7 = (embed_file__EmbedFileData){.path = _str_9342, .apath = _str_9343, .len = 704, .uncompressed = (u8*)"#if defined(__linux__) && !defined(_GNU_SOURCE)\012#define _GNU_SOURCE\012#endif\012#include <errno.h>\012#include <fcntl.h>\012#include <stddef.h>\012#include <sys/types.h>\012#include <unistd.h>\012#define V_OS_EXECUTE_SCOPE\012#include \"execute_capture_nix.h\"\012\012#if defined(__linux__)\012// Use the SDK's pipe2 declaration here rather than redeclaring its array\012// parameter in generated C. Creation and CLOEXEC must be one operation.\012#ifdef __cplusplus\012extern \"C\"\012#endif\012// Standalone V3 object builds may embed this helper in multiple objects.\012// Weak ELF linkage keeps those objects linkable while retaining the pipe2 ABI.\012__attribute__((weak)) int v_os_process_pipe_cloexec(int fds[2]) {\012\011return pipe2(fds, O_CLOEXEC);\012}\012#endif\012", .compressed = NULL, .compression_type = _str_34};
 	string capture_source = embed_file__EmbedFileData__to_string(&__addr_7);
 	embed_file__EmbedFileData __addr_8 = (embed_file__EmbedFileData){.path = _str_8429, .apath = _str_8430, .len = 10266, .uncompressed = (u8*)_v_embed_blob_10266_35a9be5f98a5749a, .compressed = NULL, .compression_type = _str_34};
 	string capture_header = embed_file__EmbedFileData__to_string(&__addr_8);
