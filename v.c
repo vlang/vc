@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "e957563bb31e6a37b3a24d6156d3f125b4894df3"
+#define V_COMMIT_HASH "b0ceb9bc14d5c6bdb23a8201931838f80297a0d5"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -10981,14 +10981,14 @@ typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_25[25];
-typedef string Array_fixed_string_15[15];
 typedef u32 Array_fixed_u32_8[8];
 typedef string Array_fixed_string_13[13];
+typedef string Array_fixed_string_25[25];
 typedef string Array_fixed_string_26[26];
+typedef string Array_fixed_string_15[15];
+typedef Array Array_fixed_Array_3[3];
 typedef string Array_fixed_string_14[14];
 typedef Array Array_fixed_Array_2[2];
-typedef Array Array_fixed_Array_3[3];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -38623,7 +38623,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "e957563", 7);
+_SL(_str_199, "b0ceb9b", 7);
 _SL(_str_200, " unknown", 8);
 _SL(_str_201, "-0.0", 4);
 _SL(_str_202, "0.0", 3);
@@ -68534,7 +68534,7 @@ inline __v_int bits__trailing_zeros_32(u32 x) {
 	#if defined(_MSC_VER)
 	{
 		__v_int pos = 0;
-		u8 __discard_17894463774164302562_2764_2765 = ({ __v_int* _cabi_out_addr_0 = &pos; int _cabi_out_val_0 = (int)(*_cabi_out_addr_0); u8 _cabi_out_ret_1 = _BitScanForward(&_cabi_out_val_0, x); *_cabi_out_addr_0 = _cabi_out_val_0; _cabi_out_ret_1; });
+		u8 __discard_17894463774164302562_3774_3775 = ({ __v_int* _cabi_out_addr_0 = &pos; int _cabi_out_val_0 = (int)(*_cabi_out_addr_0); u8 _cabi_out_ret_1 = _BitScanForward(&_cabi_out_val_0, x); *_cabi_out_addr_0 = _cabi_out_val_0; _cabi_out_ret_1; });
 		return pos;
 	}
 	#else
@@ -68563,7 +68563,7 @@ inline __v_int bits__trailing_zeros_64(u64 x) {
 	#if defined(_MSC_VER)
 	{
 		__v_int pos = 0;
-		u8 __discard_17894463774164302562_3104_3105 = ({ __v_int* _cabi_out_addr_0 = &pos; int _cabi_out_val_0 = (int)(*_cabi_out_addr_0); u8 _cabi_out_ret_1 = _BitScanForward64(&_cabi_out_val_0, x); *_cabi_out_addr_0 = _cabi_out_val_0; _cabi_out_ret_1; });
+		u8 __discard_17894463774164302562_4114_4115 = ({ __v_int* _cabi_out_addr_0 = &pos; int _cabi_out_val_0 = (int)(*_cabi_out_addr_0); u8 _cabi_out_ret_1 = _BitScanForward64(&_cabi_out_val_0, x); *_cabi_out_addr_0 = _cabi_out_val_0; _cabi_out_ret_1; });
 		return pos;
 	}
 	#else
@@ -140777,65 +140777,104 @@ void c__FlatGen__optional_typedefs(c__FlatGen* g) {
 	c__FlatGen__collect_optional_typedefs(g);
 	c__FlatGen__collect_selected_declaration_signature_types(g);
 	c__FlatGen__optional_pointer_struct_forward_decls(g);
+	map declared_structs = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
+	Array __in_lhs_0 = c__FlatGen__c_struct_decl_names(g);
+	{
+		__v_int __for_idx_1 = 0;
+		for (; __for_idx_1 < __in_lhs_0.len; __for_idx_1++) {
+			string name = *(string*)(array_get(__in_lhs_0, __for_idx_1));
+			string __map_key_2 = c__FlatGen__struct_cname(g, name);
+			bool __map_val_3 = true;
+			map__set(&declared_structs, &__map_key_2, &__map_val_3);
+		}
+	}
+	Array generic_struct_prefixes = array_new(	sizeof(string), 0, 0);
+	for (int __mi_0 = 0; __mi_0 < (	g->tc->struct_generic_params).data->key_values.len; __mi_0++) {
+		if ((	g->tc->struct_generic_params).data->key_values.all_deleted && (	g->tc->struct_generic_params).data->key_values.all_deleted[__mi_0]) continue;
+		u32 id = *(u32*)((	g->tc->struct_generic_params).data->key_values.keys + __mi_0 * (	g->tc->struct_generic_params).data->key_values.key_bytes);
+		Array params = *(Array*)((	g->tc->struct_generic_params).data->key_values.values + __mi_0 * (	g->tc->struct_generic_params).data->key_values.value_bytes);
+		if (params.len > 0) {
+			string __arr_val_4 = string__plus(c__FlatGen__struct_cname(g, flat__source_type_name(id)), _str_108);
+			array_push(&generic_struct_prefixes, &__arr_val_4);
+		}
+	}
 	bool wrote = false;
 	Array names = flat__TypeTextBindings__keys(&g->needed_optional_types);
 	{
-		__v_int __sort_n_0 = names.len;
-		Array __sort_buf_1 = array_new(		sizeof(string), __sort_n_0, __sort_n_0);
-		Array __sort_src_2 = names;
-		Array __sort_dst_3 = __sort_buf_1;
+		__v_int __sort_n_5 = names.len;
+		Array __sort_buf_6 = array_new(		sizeof(string), __sort_n_5, __sort_n_5);
+		Array __sort_src_7 = names;
+		Array __sort_dst_8 = __sort_buf_6;
 		{
-			__v_int __sort_w_5 = 1;
-			for (; __sort_w_5 < __sort_n_0; __sort_w_5 = (__v_int)(((__v_int)(			__sort_w_5)) << (1))) {
+			__v_int __sort_w_10 = 1;
+			for (; __sort_w_10 < __sort_n_5; __sort_w_10 = (__v_int)(((__v_int)(			__sort_w_10)) << (1))) {
 				{
-					__v_int __sort_lo_6 = 0;
-					for (; __sort_lo_6 < __sort_n_0; ) {
-						__v_int __sort_mid_7 = __sort_lo_6 + __sort_w_5;
-						if (__sort_mid_7 > __sort_n_0) {
-							__sort_mid_7 = __sort_n_0;
+					__v_int __sort_lo_11 = 0;
+					for (; __sort_lo_11 < __sort_n_5; ) {
+						__v_int __sort_mid_12 = __sort_lo_11 + __sort_w_10;
+						if (__sort_mid_12 > __sort_n_5) {
+							__sort_mid_12 = __sort_n_5;
 						}
-						__v_int __sort_hi_8 = __sort_mid_7 + __sort_w_5;
-						if (__sort_hi_8 > __sort_n_0) {
-							__sort_hi_8 = __sort_n_0;
+						__v_int __sort_hi_13 = __sort_mid_12 + __sort_w_10;
+						if (__sort_hi_13 > __sort_n_5) {
+							__sort_hi_13 = __sort_n_5;
 						}
-						__v_int __sort_i_9 = __sort_lo_6;
-						__v_int __sort_j_10 = __sort_mid_7;
-						__v_int __sort_k_11 = __sort_lo_6;
-						for (; (__sort_i_9 < __sort_mid_7) && (__sort_j_10 < __sort_hi_8); __sort_k_11++) {
-							if (string__lt((*((string*)((__sort_src_2).data) + (__sort_j_10))), (*((string*)((__sort_src_2).data) + (__sort_i_9))))) {
-								array_sort_move(__sort_dst_3.data, __sort_k_11, __sort_src_2.data, __sort_j_10, 1, sizeof(string));
-								__sort_j_10 = __sort_j_10 + 1;
+						__v_int __sort_i_14 = __sort_lo_11;
+						__v_int __sort_j_15 = __sort_mid_12;
+						__v_int __sort_k_16 = __sort_lo_11;
+						for (; (__sort_i_14 < __sort_mid_12) && (__sort_j_15 < __sort_hi_13); __sort_k_16++) {
+							if (string__lt((*((string*)((__sort_src_7).data) + (__sort_j_15))), (*((string*)((__sort_src_7).data) + (__sort_i_14))))) {
+								array_sort_move(__sort_dst_8.data, __sort_k_16, __sort_src_7.data, __sort_j_15, 1, sizeof(string));
+								__sort_j_15 = __sort_j_15 + 1;
 							} else {
-								array_sort_move(__sort_dst_3.data, __sort_k_11, __sort_src_2.data, __sort_i_9, 1, sizeof(string));
-								__sort_i_9 = __sort_i_9 + 1;
+								array_sort_move(__sort_dst_8.data, __sort_k_16, __sort_src_7.data, __sort_i_14, 1, sizeof(string));
+								__sort_i_14 = __sort_i_14 + 1;
 							}
 						}
-						if (__sort_i_9 < __sort_mid_7) {
-							array_sort_move(__sort_dst_3.data, __sort_k_11, __sort_src_2.data, __sort_i_9, __sort_mid_7 - __sort_i_9, sizeof(string));
+						if (__sort_i_14 < __sort_mid_12) {
+							array_sort_move(__sort_dst_8.data, __sort_k_16, __sort_src_7.data, __sort_i_14, __sort_mid_12 - __sort_i_14, sizeof(string));
 						} else {
-							if (__sort_j_10 < __sort_hi_8) {
-								array_sort_move(__sort_dst_3.data, __sort_k_11, __sort_src_2.data, __sort_j_10, __sort_hi_8 - __sort_j_10, sizeof(string));
+							if (__sort_j_15 < __sort_hi_13) {
+								array_sort_move(__sort_dst_8.data, __sort_k_16, __sort_src_7.data, __sort_j_15, __sort_hi_13 - __sort_j_15, sizeof(string));
 							}
 						}
-						__sort_lo_6 = __sort_hi_8;
+						__sort_lo_11 = __sort_hi_13;
 					}
 				}
-				Array __sort_swap_4 = __sort_src_2;
-				__sort_src_2 = __sort_dst_3;
-				__sort_dst_3 = __sort_swap_4;
+				Array __sort_swap_9 = __sort_src_7;
+				__sort_src_7 = __sort_dst_8;
+				__sort_dst_8 = __sort_swap_9;
 			}
 		}
-		if (__sort_src_2.data != names.data) {
-			array_sort_move(names.data, 0, __sort_src_2.data, 0, __sort_n_0, sizeof(string));
+		if (__sort_src_7.data != names.data) {
+			array_sort_move(names.data, 0, __sort_src_7.data, 0, __sort_n_5, sizeof(string));
 		}
-		array__free(&__sort_buf_1);
+		array__free(&__sort_buf_6);
 	}
 	0;
 	{
-		__v_int __for_idx_12 = 0;
-		for (; __for_idx_12 < names.len; __for_idx_12++) {
-			string opt_name = *(string*)(array_get(names, __for_idx_12));
+		__v_int __for_idx_17 = 0;
+		for (; __for_idx_17 < names.len; __for_idx_17++) {
+			string opt_name = *(string*)(array_get(names, __for_idx_17));
 			string val_type = flat__source_type_name(flat__TypeTextBindings__value_id(&g->needed_optional_types, opt_name));
+			bool unused_generic_payload = false;
+			if (!string__ends_with(val_type, _str_1051) && ({string __map_key_18 = val_type;
+			bool __map_zero_19 = false;
+			!*(bool*)(map__get(&declared_structs, &__map_key_18, &__map_zero_19));}) && !c__FlatGen__cached_support_has_c_type(g, val_type) && !c__FlatGen__is_known_sum_c_type(g, val_type)) {
+				{
+					__v_int __for_idx_20 = 0;
+					for (; __for_idx_20 < generic_struct_prefixes.len; __for_idx_20++) {
+						string prefix = *(string*)(array_get(generic_struct_prefixes, __for_idx_20));
+						if (string__starts_with(val_type, prefix) || string__contains(val_type, string__plus(_str_177, prefix))) {
+							unused_generic_payload = true;
+							break;
+						}
+					}
+				}
+			}
+			if (unused_generic_payload) {
+				continue;
+			}
 			if (c__FlatGen__emit_optional_typedef(g, opt_name, val_type)) {
 				wrote = true;
 			}
@@ -331002,8 +331041,8 @@ i32 transform__Transformer__clone_generic_node_from(transform__Transformer* t, f
 	Array argument_types_source_ids = transform__Transformer__generic_clone_call_param_types(t, node, args_ids, return_context_id);
 	__v_int scratch_start = t->generic_clone_children.len;
 	{
-		__v_int __discard_9368830737125468988_448295_448296 = 0;
-		for (; __discard_9368830737125468988_448295_448296 < node.children_count; __discard_9368830737125468988_448295_448296++) {
+		__v_int __discard_9368830737125468988_448865_448866 = 0;
+		for (; __discard_9368830737125468988_448865_448866 < node.children_count; __discard_9368830737125468988_448865_448866++) {
 			i32 __arr_val_24 = flat__empty_node;
 			{ Array* __v3_internal_symbol_scalar_push_base_2 = &t->generic_clone_children; i32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_24; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((i32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
 		}
@@ -331035,8 +331074,8 @@ i32 transform__Transformer__clone_generic_node_from(transform__Transformer* t, f
 			u32 child_context_source_id = transform__Transformer__generic_clone_child_return_context(t, node, i, return_context_id, array__clone(&argument_types_source_ids));
 			i32 child = transform__Transformer__clone_generic_node_with_return_context(t, flat__FlatAst__child(t->a, &node, i), args_ids, child_context_source_id);
 			{
-				__v_int __discard_9368830737125468988_449677_449678 = 0;
-				for (; __discard_9368830737125468988_449677_449678 < match_smartcasts; __discard_9368830737125468988_449677_449678++) {
+				__v_int __discard_9368830737125468988_450247_450248 = 0;
+				for (; __discard_9368830737125468988_450247_450248 < match_smartcasts; __discard_9368830737125468988_450247_450248++) {
 					transform__Transformer__pop_smartcast(t);
 				}
 			}
@@ -334396,6 +334435,20 @@ void transform__Transformer__collect_generic_struct_spec_from_type(transform__Tr
 		transform__Transformer__collect_generic_struct_spec_from_type(t, flat__SourceTypeSyntax__raw_base(syntax), module_name, file_name, decls, specs);
 		return;
 	}
+	if (((shape & 1048576) != 0) || ((shape & 2097152) != 0)) {
+		if (flat__SourceTypeSyntax__function_closed(syntax)) {
+			Array __in_lhs_1 = flat__SourceTypeSyntax__function_params(syntax);
+			{
+				__v_int __for_idx_2 = 0;
+				for (; __for_idx_2 < __in_lhs_1.len; __for_idx_2++) {
+					u32 param = *(u32*)(array_get(__in_lhs_1, __for_idx_2));
+					transform__Transformer__collect_generic_struct_spec_from_type(t, flat__SourceTypeSyntax__legacy_parameter_mut_type(flat__source_type_syntax(param)), module_name, file_name, decls, specs);
+				}
+			}
+			transform__Transformer__collect_generic_struct_spec_from_type(t, flat__SourceTypeSyntax__function_result(syntax), module_name, file_name, decls, specs);
+		}
+		return;
+	}
 	if ((shape & 4096) != 0) {
 		if (flat__SourceTypeSyntax__bracket_closed(syntax)) {
 			transform__Transformer__collect_generic_struct_spec_from_type(t, flat__SourceTypeSyntax__bracket_raw_inner(syntax), module_name, file_name, decls, specs);
@@ -334413,41 +334466,41 @@ void transform__Transformer__collect_generic_struct_spec_from_type(transform__Tr
 		if (!flat__SourceTypeSyntax__underscored(syntax)) {
 			return;
 		}
-		__v_option_Array __or_opt_1 = transform__Transformer__recorded_type_specialization_args(t, clean_id);
-		Array __or_val_2 = {0};
-		if (__or_opt_1.ok) {
-			__or_val_2 = __or_opt_1.value;
-		} else {
-			return;
-		}
-		Array args_source_ids = __or_val_2;
-		__v_option_u32 __or_opt_3 = transform__Transformer__generic_struct_spec_base_from_flattened_type(t, clean_id, args_source_ids, module_name, file_name, decls);
-		u32 __or_val_4 = {0};
+		__v_option_Array __or_opt_3 = transform__Transformer__recorded_type_specialization_args(t, clean_id);
+		Array __or_val_4 = {0};
 		if (__or_opt_3.ok) {
 			__or_val_4 = __or_opt_3.value;
 		} else {
 			return;
 		}
-		u32 spec_base = __or_val_4;
+		Array args_source_ids = __or_val_4;
+		__v_option_u32 __or_opt_5 = transform__Transformer__generic_struct_spec_base_from_flattened_type(t, clean_id, args_source_ids, module_name, file_name, decls);
+		u32 __or_val_6 = {0};
+		if (__or_opt_5.ok) {
+			__or_val_6 = __or_opt_5.value;
+		} else {
+			return;
+		}
+		u32 spec_base = __or_val_6;
 		Array scoped_args_source_ids = transform__Transformer__generic_struct_args_in_scope(t, args_source_ids, module_name, file_name);
 		u32 spec_base_id = spec_base;
 		Array parts = __new_array_noscan(0, scoped_args_source_ids.len + 1, sizeof(u32));
-		u32 __arr_val_5 = spec_base_id;
-		{ Array* __v3_internal_symbol_scalar_push_base_0 = &parts; u32 __v3_internal_symbol_scalar_push_value_0 = __arr_val_5; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
+		u32 __arr_val_7 = spec_base_id;
+		{ Array* __v3_internal_symbol_scalar_push_base_0 = &parts; u32 __v3_internal_symbol_scalar_push_value_0 = __arr_val_7; if (__v3_internal_symbol_scalar_push_base_0->len >= 0 && __v3_internal_symbol_scalar_push_base_0->len < __v3_internal_symbol_scalar_push_base_0->cap && !(__v3_internal_symbol_scalar_push_base_0->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_0->data)[__v3_internal_symbol_scalar_push_base_0->len] = __v3_internal_symbol_scalar_push_value_0; __v3_internal_symbol_scalar_push_base_0->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_0, &__v3_internal_symbol_scalar_push_value_0); } }
 		array__push_many(&parts, scoped_args_source_ids.data, scoped_args_source_ids.len);
-		u32 __map_key_6 = flat__source_type_composition(flat__SourceTypeComposition__generic, parts);
-		u32 __map_val_7 = spec_base_id;
-		map__set(specs, &__map_key_6, &__map_val_7);
-		string __if_val_8 = {0};
-		u32 __map_key_9 = spec_base;
-		void* __map_ptr_10 = map__get_check(&decls, &__map_key_9);
-		if (__map_ptr_10 != NULL) {
-			transform__GenericStructDecl decl = *(transform__GenericStructDecl*)(__map_ptr_10);
-			__if_val_8 = decl.module;
+		u32 __map_key_8 = flat__source_type_composition(flat__SourceTypeComposition__generic, parts);
+		u32 __map_val_9 = spec_base_id;
+		map__set(specs, &__map_key_8, &__map_val_9);
+		string __if_val_10 = {0};
+		u32 __map_key_11 = spec_base;
+		void* __map_ptr_12 = map__get_check(&decls, &__map_key_11);
+		if (__map_ptr_12 != NULL) {
+			transform__GenericStructDecl decl = *(transform__GenericStructDecl*)(__map_ptr_12);
+			__if_val_10 = decl.module;
 		} else {
-			__if_val_8 = module_name;
+			__if_val_10 = module_name;
 		}
-		string spec_module = __if_val_8;
+		string spec_module = __if_val_10;
 		transform__Transformer__record_generic_specialization_args_in_module(t, flat__source_type_name(spec_base), spec_module, scoped_args_source_ids);
 		return;
 	}
@@ -334457,9 +334510,9 @@ void transform__Transformer__collect_generic_struct_spec_from_type(transform__Tr
 	u32 base_id = flat__SourceTypeSyntax__generic_app_base(syntax);
 	Array args_source_ids = transform__Transformer__canonical_generic_specialization_args(t, flat__SourceTypeSyntax__generic_app_args(syntax));
 	{
-		__v_int __for_idx_11 = 0;
-		for (; __for_idx_11 < args_source_ids.len; __for_idx_11++) {
-			u32 arg_source_id = *(u32*)(array_get(args_source_ids, __for_idx_11));
+		__v_int __for_idx_13 = 0;
+		for (; __for_idx_13 < args_source_ids.len; __for_idx_13++) {
+			u32 arg_source_id = *(u32*)(array_get(args_source_ids, __for_idx_13));
 			transform__Transformer__collect_generic_struct_spec_from_type(t, arg_source_id, module_name, file_name, decls, specs);
 		}
 	}
@@ -334467,27 +334520,27 @@ void transform__Transformer__collect_generic_struct_spec_from_type(transform__Tr
 		return;
 	}
 	u32 alias_name_id = transform__Transformer__generic_qualified_alias_name(t, base_id, module_name);
-	__v_option_u32 __if_guard_12 = flat__SourceTypeBindings__type_id(&t->tc->type_aliases, alias_name_id);
-	if (__if_guard_12.ok) {
-		u32 target_source_id = __if_guard_12.value;
-		u32 __map_key_15 = alias_name_id;
-		void* __map_ptr_16 = map__get_check(&t->tc->type_alias_generic_params, &__map_key_15);
-		Array __map_val_17 = {0};
-		if (__map_ptr_16 != NULL) {
-			__map_val_17 = *(Array*)(__map_ptr_16);
+	__v_option_u32 __if_guard_14 = flat__SourceTypeBindings__type_id(&t->tc->type_aliases, alias_name_id);
+	if (__if_guard_14.ok) {
+		u32 target_source_id = __if_guard_14.value;
+		u32 __map_key_17 = alias_name_id;
+		void* __map_ptr_18 = map__get_check(&t->tc->type_alias_generic_params, &__map_key_17);
+		Array __map_val_19 = {0};
+		if (__map_ptr_18 != NULL) {
+			__map_val_19 = *(Array*)(__map_ptr_18);
 		} else {
-			__map_val_17 = __new_array_noscan(0, 0, sizeof(u32));
+			__map_val_19 = __new_array_noscan(0, 0, sizeof(u32));
 		}
-		Array params = types__generic_param_texts(__map_val_17);
+		Array params = types__generic_param_texts(__map_val_19);
 		if (params.len == args_source_ids.len) {
-			string __if_val_18 = {0};
-			int __in_lhs_19 = flat__source_type_shape(alias_name_id);
-			if ((__in_lhs_19 & 1) != 0) {
-				__if_val_18 = flat__source_type_name(flat__SourceTypeSyntax__qualifier(flat__source_type_syntax(alias_name_id)));
+			string __if_val_20 = {0};
+			int __in_lhs_21 = flat__source_type_shape(alias_name_id);
+			if ((__in_lhs_21 & 1) != 0) {
+				__if_val_20 = flat__source_type_name(flat__SourceTypeSyntax__qualifier(flat__source_type_syntax(alias_name_id)));
 			} else {
-				__if_val_18 = module_name;
+				__if_val_20 = module_name;
 			}
-			string alias_module = __if_val_18;
+			string alias_module = __if_val_20;
 			u32 expanded = transform__substitute_generic_type_text_with_params(target_source_id, args_source_ids, params);
 			u32 normalized_source_id = transform__Transformer__normalize_type_in_module(t, expanded, alias_module);
 			if (normalized_source_id != clean_id) {
@@ -334496,33 +334549,33 @@ void transform__Transformer__collect_generic_struct_spec_from_type(transform__Tr
 			}
 		}
 	}
-	__v_option_u32 __or_opt_20 = transform__Transformer__generic_struct_spec_base_name(t, base_id, module_name, file_name, decls);
-	u32 __or_val_21 = {0};
-	if (__or_opt_20.ok) {
-		__or_val_21 = __or_opt_20.value;
+	__v_option_u32 __or_opt_22 = transform__Transformer__generic_struct_spec_base_name(t, base_id, module_name, file_name, decls);
+	u32 __or_val_23 = {0};
+	if (__or_opt_22.ok) {
+		__or_val_23 = __or_opt_22.value;
 	} else {
 		return;
 	}
-	u32 spec_base = __or_val_21;
+	u32 spec_base = __or_val_23;
 	Array scoped_args_source_ids = transform__Transformer__generic_struct_args_in_scope(t, args_source_ids, module_name, file_name);
 	u32 spec_base_id = spec_base;
 	Array parts = __new_array_noscan(0, scoped_args_source_ids.len + 1, sizeof(u32));
-	u32 __arr_val_22 = spec_base_id;
-	{ Array* __v3_internal_symbol_scalar_push_base_1 = &parts; u32 __v3_internal_symbol_scalar_push_value_1 = __arr_val_22; if (__v3_internal_symbol_scalar_push_base_1->len >= 0 && __v3_internal_symbol_scalar_push_base_1->len < __v3_internal_symbol_scalar_push_base_1->cap && !(__v3_internal_symbol_scalar_push_base_1->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_1->data)[__v3_internal_symbol_scalar_push_base_1->len] = __v3_internal_symbol_scalar_push_value_1; __v3_internal_symbol_scalar_push_base_1->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_1, &__v3_internal_symbol_scalar_push_value_1); } }
+	u32 __arr_val_24 = spec_base_id;
+	{ Array* __v3_internal_symbol_scalar_push_base_1 = &parts; u32 __v3_internal_symbol_scalar_push_value_1 = __arr_val_24; if (__v3_internal_symbol_scalar_push_base_1->len >= 0 && __v3_internal_symbol_scalar_push_base_1->len < __v3_internal_symbol_scalar_push_base_1->cap && !(__v3_internal_symbol_scalar_push_base_1->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_1->data)[__v3_internal_symbol_scalar_push_base_1->len] = __v3_internal_symbol_scalar_push_value_1; __v3_internal_symbol_scalar_push_base_1->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_1, &__v3_internal_symbol_scalar_push_value_1); } }
 	array__push_many(&parts, scoped_args_source_ids.data, scoped_args_source_ids.len);
-	u32 __map_key_23 = flat__source_type_composition(flat__SourceTypeComposition__generic, parts);
-	u32 __map_val_24 = spec_base_id;
-	map__set(specs, &__map_key_23, &__map_val_24);
-	string __if_val_25 = {0};
-	u32 __map_key_26 = spec_base;
-	void* __map_ptr_27 = map__get_check(&decls, &__map_key_26);
-	if (__map_ptr_27 != NULL) {
-		transform__GenericStructDecl decl = *(transform__GenericStructDecl*)(__map_ptr_27);
-		__if_val_25 = decl.module;
+	u32 __map_key_25 = flat__source_type_composition(flat__SourceTypeComposition__generic, parts);
+	u32 __map_val_26 = spec_base_id;
+	map__set(specs, &__map_key_25, &__map_val_26);
+	string __if_val_27 = {0};
+	u32 __map_key_28 = spec_base;
+	void* __map_ptr_29 = map__get_check(&decls, &__map_key_28);
+	if (__map_ptr_29 != NULL) {
+		transform__GenericStructDecl decl = *(transform__GenericStructDecl*)(__map_ptr_29);
+		__if_val_27 = decl.module;
 	} else {
-		__if_val_25 = module_name;
+		__if_val_27 = module_name;
 	}
-	string spec_module = __if_val_25;
+	string spec_module = __if_val_27;
 	transform__Transformer__record_generic_specialization_args_in_module(t, flat__source_type_name(spec_base), spec_module, scoped_args_source_ids);
 }
 
@@ -390961,8 +391014,8 @@ __v_int transform__Transformer__node_context_owner(transform__Transformer* t, __
 	__v_int cursor = idx;
 	__v_int __in_lhs_0 = (__v_int)(((__v_int)(	1)) << (16));
 	{
-		__v_int __discard_9368830737125468988_167538_167539 = 0;
-		for (; __discard_9368830737125468988_167538_167539 < __in_lhs_0; __discard_9368830737125468988_167538_167539++) {
+		__v_int __discard_9368830737125468988_168108_168109 = 0;
+		for (; __discard_9368830737125468988_168108_168109 < __in_lhs_0; __discard_9368830737125468988_168108_168109++) {
 			if ((cursor < 0) || (cursor >= t->source_parent_ids.len)) {
 				break;
 			}
