@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "841595141fbb045527fd0ac986e8b6cb8aee5bcb"
+#define V_COMMIT_HASH "7d4bed6de9ac2bd8ad381e2aebd2d827d6f7afbe"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -7216,12 +7216,12 @@ typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
-typedef Array Array_fixed_Array_2[2];
 typedef string Array_fixed_string_25[25];
-typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_15[15];
+typedef string Array_fixed_string_14[14];
+typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_26[26];
 typedef u32 Array_fixed_u32_8[8];
 typedef Array Array_fixed_Array_3[3];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 {
@@ -34888,7 +34888,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "8415951", 7);
+_SL(_str_201, "7d4bed6", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -242989,8 +242989,8 @@ __v_option_string markused__CallCollector__collection_alias_receiver_method_name
 	string owner = cur_module;
 	Array aliases = __new_array_noscan(0, 0, sizeof(u32));
 	{
-		__v_int __discard_6165468023465583894_379349_379350 = 0;
-		for (; __discard_6165468023465583894_379349_379350 < 16; __discard_6165468023465583894_379349_379350++) {
+		__v_int __discard_6165468023465583894_379565_379566 = 0;
+		for (; __discard_6165468023465583894_379565_379566 < 16; __discard_6165468023465583894_379565_379566++) {
 			u32 __if_val_0 = {0};
 			int __in_lhs_1 = flat__source_type_shape(current);
 			if ((__in_lhs_1 & 1) != 0) {
@@ -245387,8 +245387,8 @@ bool markused__CallCollector__selector_is_enum_value(markused__CallCollector* c,
 			u32 candidate = *(u32*)(array_get(candidates, __for_idx_2));
 			u32 enum_name = candidate;
 			{
-				__v_int __discard_6165468023465583894_359370_359371 = 0;
-				for (; __discard_6165468023465583894_359370_359371 < 16; __discard_6165468023465583894_359370_359371++) {
+				__v_int __discard_6165468023465583894_359586_359587 = 0;
+				for (; __discard_6165468023465583894_359586_359587 < 16; __discard_6165468023465583894_359586_359587++) {
 					u32 __map_key_3 = enum_name;
 					void* __map_ptr_4 = map__get_check(&c->tc->enum_fields, &__map_key_3);
 					if (__map_ptr_4 != NULL) {
@@ -247396,9 +247396,21 @@ u32 markused__array_init_element_type_text(flat__Node* node) {
 }
 
 markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, types__TypeChecker* tc, bool cache_mode, map cache_modules) {
+	Array __any_source_0 = map__keys(&tc->file_modules);
+	bool __any_1 = false;
+	{
+		__v_int __any_idx_2 = 0;
+		for (; __any_idx_2 < __any_source_0.len; __any_idx_2++) {
+			string __any_it_3 = *(string*)(array_get(__any_source_0, __any_idx_2));
+			if (string__ends_with(__any_it_3, _str_2112)) {
+				__any_1 = true;
+			}
+		}
+	}
+	bool has_cached_headers = __any_1;
 	markused__MarkusedDeclScan result = (markused__MarkusedDeclScan){.fn_decls = new_map(sizeof(string), sizeof(markused__FnDeclInfo), map_hash_string, map_eq_string, map_clone_string, map_free_string), .fn_decl_lists = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string), .struct_decls = new_map(sizeof(u32), sizeof(markused__StructDeclInfo), map_hash_int_4, map_eq_int_4, map_clone_int_4, map_free_nop), .const_decls = new_map(sizeof(string), sizeof(markused__ConstDeclInfo), map_hash_string, map_eq_string, map_clone_string, map_free_string), .fn_name_suffixes = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), .const_name_suffixes = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), .suffix_map = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string), .import_contexts = array_new(	sizeof(map), 0, 256), .body_ids = __new_array_noscan(0, 8192, sizeof(__v_int)), .body_modules = array_new(	sizeof(string), 0, 8192), .body_import_contexts = __new_array_noscan(0, 8192, sizeof(__v_int)), .convergence_index_complete = true, .cache_roots = array_new(sizeof(string), 0, 0), .cached_header_enum_str_roots = __new_array_noscan(0, 0, sizeof(u32)), .c_interface_roots = array_new(sizeof(string), 0, 0), .marked_roots = array_new(sizeof(string), 0, 0)};
-	map __arr_val_0 = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-	array_push(&result.import_contexts, &__arr_val_0);
+	map __arr_val_4 = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
+	array_push(&result.import_contexts, &__arr_val_4);
 	map__reserve(&result.fn_decls, (u32)(tc->fn_ret_types.data->count));
 	map__reserve(&result.fn_decl_lists, (u32)(tc->fn_ret_types.data->count));
 	map__reserve(&result.struct_decls, (u32)(tc->structs.data->count * 2));
@@ -247412,19 +247424,19 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 	__v_int cur_import_context = 0;
 	bool collect_body_metadata = true;
 	{
-		__v_int __for_idx_1 = 0;
-		for (; __for_idx_1 < tc->top_level_idx.len; __for_idx_1++) {
-			i32 node_idx = *(i32*)(array_get(tc->top_level_idx, __for_idx_1));
+		__v_int __for_idx_5 = 0;
+		for (; __for_idx_5 < tc->top_level_idx.len; __for_idx_5++) {
+			i32 node_idx = *(i32*)(array_get(tc->top_level_idx, __for_idx_5));
 			flat__Node node = (*(flat__Node*)array_get(a->nodes, node_idx));
 			if (node.kind == flat__NodeKind__file) {
 				cur_file = node.value;
 				cur_module = _str_34;
-				map __arr_val_2 = markused__markused_top_level_file_imports(a, node);
-				array_push(&result.import_contexts, &__arr_val_2);
+				map __arr_val_6 = markused__markused_top_level_file_imports(a, node);
+				array_push(&result.import_contexts, &__arr_val_6);
 				cur_import_context = result.import_contexts.len - 1;
-				string __map_key_3 = cur_file;
-				__v_int __map_val_4 = cur_import_context;
-				map__set(&import_context_by_file, &__map_key_3, &__map_val_4);
+				string __map_key_7 = cur_file;
+				__v_int __map_val_8 = cur_import_context;
+				map__set(&import_context_by_file, &__map_key_7, &__map_val_8);
 				continue;
 			}
 			if (node.kind == flat__NodeKind__module_decl) {
@@ -247433,56 +247445,56 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 			}
 			if (node.kind == flat__NodeKind__import_decl) {
 				if ((cur_import_context >= 0) && (cur_import_context < result.import_contexts.len)) {
-					string __map_key_5 = flat__Node__typ_text(&node);
-					string __map_val_6 = node.value;
-					map__set(&(*(map*)array_get(result.import_contexts, cur_import_context)), &__map_key_5, &__map_val_6);
+					string __map_key_9 = flat__Node__typ_text(&node);
+					string __map_val_10 = node.value;
+					map__set(&(*(map*)array_get(result.import_contexts, cur_import_context)), &__map_key_9, &__map_val_10);
 				}
 				continue;
 			}
-			string __if_val_7 = {0};
-			__v_int __map_key_8 = node.pos.id;
-			void* __map_ptr_9 = map__get_check(&a->source_files, &__map_key_8);
-			if (__map_ptr_9 != NULL) {
-				token__File* source_file = *(token__File**)(__map_ptr_9);
-				__if_val_7 = source_file->name;
-			} else {
-				__if_val_7 = cur_file;
-			}
-			string decl_file = __if_val_7;
-			string __map_key_12 = decl_file;
-			void* __map_ptr_13 = map__get_check(&tc->file_modules, &__map_key_12);
-			string __map_val_14 = {0};
+			string __if_val_11 = {0};
+			__v_int __map_key_12 = node.pos.id;
+			void* __map_ptr_13 = map__get_check(&a->source_files, &__map_key_12);
 			if (__map_ptr_13 != NULL) {
-				__map_val_14 = *(string*)(__map_ptr_13);
+				token__File* source_file = *(token__File**)(__map_ptr_13);
+				__if_val_11 = source_file->name;
 			} else {
-				__map_val_14 = cur_module;
+				__if_val_11 = cur_file;
 			}
-			string decl_module = __map_val_14;
-			string __map_key_17 = decl_file;
-			void* __map_ptr_18 = map__get_check(&import_context_by_file, &__map_key_17);
-			__v_int __map_val_19 = {0};
-			if (__map_ptr_18 != NULL) {
-				__map_val_19 = *(__v_int*)(__map_ptr_18);
+			string decl_file = __if_val_11;
+			string __map_key_16 = decl_file;
+			void* __map_ptr_17 = map__get_check(&tc->file_modules, &__map_key_16);
+			string __map_val_18 = {0};
+			if (__map_ptr_17 != NULL) {
+				__map_val_18 = *(string*)(__map_ptr_17);
 			} else {
-				__map_val_19 = cur_import_context;
+				__map_val_18 = cur_module;
 			}
-			__v_int decl_import_context = __map_val_19;
-			if ((node.kind == flat__NodeKind__enum_decl) && string__ends_with(decl_file, _str_2112)) {
-				u32 __arr_val_20 = markused__markused_qualify_source_type(decl_module, flat__Node__source_value_id(node));
-				{ Array* __v3_internal_symbol_scalar_push_base_2 = &result.cached_header_enum_str_roots; u32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_20; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
+			string decl_module = __map_val_18;
+			string __map_key_21 = decl_file;
+			void* __map_ptr_22 = map__get_check(&import_context_by_file, &__map_key_21);
+			__v_int __map_val_23 = {0};
+			if (__map_ptr_22 != NULL) {
+				__map_val_23 = *(__v_int*)(__map_ptr_22);
+			} else {
+				__map_val_23 = cur_import_context;
+			}
+			__v_int decl_import_context = __map_val_23;
+			if ((node.kind == flat__NodeKind__enum_decl) && has_cached_headers) {
+				u32 __arr_val_24 = markused__markused_qualify_source_type(decl_module, flat__Node__source_value_id(node));
+				{ Array* __v3_internal_symbol_scalar_push_base_2 = &result.cached_header_enum_str_roots; u32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_24; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
 			}
 			if (node.kind == flat__NodeKind__struct_decl) {
 				u32 name_id = flat__Node__source_value_id(node);
 				u32 full_name = markused__markused_qualify_source_type(decl_module, name_id);
 				markused__StructDeclInfo info = (markused__StructDeclInfo){.node_id = (i32)(node_idx), .module = decl_module, .import_context = decl_import_context};
-				u32 __map_key_21 = full_name;
-				markused__StructDeclInfo __map_val_22 = info;
-				map__set(&result.struct_decls, &__map_key_21, &__map_val_22);
-				u32 __map_key_23 = name_id;
-				if (!map__exists(&result.struct_decls, &__map_key_23)) {
-					u32 __map_key_24 = name_id;
-					markused__StructDeclInfo __map_val_25 = info;
-					map__set(&result.struct_decls, &__map_key_24, &__map_val_25);
+				u32 __map_key_25 = full_name;
+				markused__StructDeclInfo __map_val_26 = info;
+				map__set(&result.struct_decls, &__map_key_25, &__map_val_26);
+				u32 __map_key_27 = name_id;
+				if (!map__exists(&result.struct_decls, &__map_key_27)) {
+					u32 __map_key_28 = name_id;
+					markused__StructDeclInfo __map_val_29 = info;
+					map__set(&result.struct_decls, &__map_key_28, &__map_val_29);
 				}
 				continue;
 			}
@@ -247496,15 +247508,15 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 							continue;
 						}
 						markused__ConstDeclInfo info = (markused__ConstDeclInfo){.expr_id = flat__FlatAst__child(a, field, 0), .module = decl_module, .import_context = decl_import_context};
-						string __map_key_26 = field->value;
-						markused__ConstDeclInfo __map_val_27 = info;
-						map__set(&result.const_decls, &__map_key_26, &__map_val_27);
+						string __map_key_30 = field->value;
+						markused__ConstDeclInfo __map_val_31 = info;
+						map__set(&result.const_decls, &__map_key_30, &__map_val_31);
 						markused__add_candidate_suffix(&result.const_name_suffixes, field->value);
 						string full_name = markused__qualify_fn(decl_module, field->value);
 						if (!string__eq(full_name, field->value)) {
-							string __map_key_28 = full_name;
-							markused__ConstDeclInfo __map_val_29 = info;
-							map__set(&result.const_decls, &__map_key_28, &__map_val_29);
+							string __map_key_32 = full_name;
+							markused__ConstDeclInfo __map_val_33 = info;
+							map__set(&result.const_decls, &__map_key_32, &__map_val_33);
 							markused__add_candidate_suffix(&result.const_name_suffixes, full_name);
 						}
 					}
@@ -247513,43 +247525,43 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 			}
 			if ((node.kind == flat__NodeKind__fn_decl) || (node.kind == flat__NodeKind__c_fn_decl)) {
 				string decl_qname = markused__qualify_fn(decl_module, node.value);
-				string __map_key_32 = decl_qname;
-				void* __map_ptr_33 = map__get_check(&tc->fn_type_files, &__map_key_32);
-				string __map_val_34 = {0};
-				if (__map_ptr_33 != NULL) {
-					__map_val_34 = *(string*)(__map_ptr_33);
+				string __map_key_36 = decl_qname;
+				void* __map_ptr_37 = map__get_check(&tc->fn_type_files, &__map_key_36);
+				string __map_val_38 = {0};
+				if (__map_ptr_37 != NULL) {
+					__map_val_38 = *(string*)(__map_ptr_37);
 				} else {
-					__map_val_34 = decl_file;
+					__map_val_38 = decl_file;
 				}
-				string fn_decl_file = __map_val_34;
-				string __map_key_37 = decl_qname;
-				void* __map_ptr_38 = map__get_check(&tc->fn_type_modules, &__map_key_37);
-				string __map_val_39 = {0};
-				if (__map_ptr_38 != NULL) {
-					__map_val_39 = *(string*)(__map_ptr_38);
+				string fn_decl_file = __map_val_38;
+				string __map_key_41 = decl_qname;
+				void* __map_ptr_42 = map__get_check(&tc->fn_type_modules, &__map_key_41);
+				string __map_val_43 = {0};
+				if (__map_ptr_42 != NULL) {
+					__map_val_43 = *(string*)(__map_ptr_42);
 				} else {
-					__map_val_39 = decl_module;
+					__map_val_43 = decl_module;
 				}
-				string fn_decl_module = __map_val_39;
+				string fn_decl_module = __map_val_43;
 				if (!string__eq(fn_decl_module, decl_module)) {
 					result.convergence_index_complete = false;
 				}
-				string __map_key_42 = fn_decl_file;
-				void* __map_ptr_43 = map__get_check(&import_context_by_file, &__map_key_42);
-				__v_int __map_val_44 = {0};
-				if (__map_ptr_43 != NULL) {
-					__map_val_44 = *(__v_int*)(__map_ptr_43);
+				string __map_key_46 = fn_decl_file;
+				void* __map_ptr_47 = map__get_check(&import_context_by_file, &__map_key_46);
+				__v_int __map_val_48 = {0};
+				if (__map_ptr_47 != NULL) {
+					__map_val_48 = *(__v_int*)(__map_ptr_47);
 				} else {
-					__map_val_44 = decl_import_context;
+					__map_val_48 = decl_import_context;
 				}
-				__v_int fn_decl_import_context = __map_val_44;
+				__v_int fn_decl_import_context = __map_val_48;
 				if (collect_body_metadata) {
-					__v_int __arr_val_45 = node_idx;
-					{ Array* __v3_internal_symbol_scalar_push_base_3 = &result.body_ids; __v_int __v3_internal_symbol_scalar_push_value_3 = __arr_val_45; if (__v3_internal_symbol_scalar_push_base_3->len >= 0 && __v3_internal_symbol_scalar_push_base_3->len < __v3_internal_symbol_scalar_push_base_3->cap && !(__v3_internal_symbol_scalar_push_base_3->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_3->data)[__v3_internal_symbol_scalar_push_base_3->len] = __v3_internal_symbol_scalar_push_value_3; __v3_internal_symbol_scalar_push_base_3->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_3, &__v3_internal_symbol_scalar_push_value_3); } }
-					string __arr_val_46 = fn_decl_module;
-					array_push(&result.body_modules, &__arr_val_46);
-					__v_int __arr_val_47 = fn_decl_import_context;
-					{ Array* __v3_internal_symbol_scalar_push_base_4 = &result.body_import_contexts; __v_int __v3_internal_symbol_scalar_push_value_4 = __arr_val_47; if (__v3_internal_symbol_scalar_push_base_4->len >= 0 && __v3_internal_symbol_scalar_push_base_4->len < __v3_internal_symbol_scalar_push_base_4->cap && !(__v3_internal_symbol_scalar_push_base_4->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_4->data)[__v3_internal_symbol_scalar_push_base_4->len] = __v3_internal_symbol_scalar_push_value_4; __v3_internal_symbol_scalar_push_base_4->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_4, &__v3_internal_symbol_scalar_push_value_4); } }
+					__v_int __arr_val_49 = node_idx;
+					{ Array* __v3_internal_symbol_scalar_push_base_3 = &result.body_ids; __v_int __v3_internal_symbol_scalar_push_value_3 = __arr_val_49; if (__v3_internal_symbol_scalar_push_base_3->len >= 0 && __v3_internal_symbol_scalar_push_base_3->len < __v3_internal_symbol_scalar_push_base_3->cap && !(__v3_internal_symbol_scalar_push_base_3->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_3->data)[__v3_internal_symbol_scalar_push_base_3->len] = __v3_internal_symbol_scalar_push_value_3; __v3_internal_symbol_scalar_push_base_3->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_3, &__v3_internal_symbol_scalar_push_value_3); } }
+					string __arr_val_50 = fn_decl_module;
+					array_push(&result.body_modules, &__arr_val_50);
+					__v_int __arr_val_51 = fn_decl_import_context;
+					{ Array* __v3_internal_symbol_scalar_push_base_4 = &result.body_import_contexts; __v_int __v3_internal_symbol_scalar_push_value_4 = __arr_val_51; if (__v3_internal_symbol_scalar_push_base_4->len >= 0 && __v3_internal_symbol_scalar_push_base_4->len < __v3_internal_symbol_scalar_push_base_4->cap && !(__v3_internal_symbol_scalar_push_base_4->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_4->data)[__v3_internal_symbol_scalar_push_base_4->len] = __v3_internal_symbol_scalar_push_value_4; __v3_internal_symbol_scalar_push_base_4->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_4, &__v3_internal_symbol_scalar_push_value_4); } }
 				}
 				bool has_dot = string__index_u8(node.value, '.') >= 0;
 				bool can_suffix_match = !markused__markused_fn_decl_is_generic_template(node, a);
@@ -247576,13 +247588,13 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 				}
 				string qname = markused__qualify_fn(fn_decl_module, node.value);
 				if (markused__markused_fn_has_attribute(a, node_idx, _str_1548)) {
-					string __arr_val_48 = qname;
-					array_push(&result.marked_roots, &__arr_val_48);
+					string __arr_val_52 = qname;
+					array_push(&result.marked_roots, &__arr_val_52);
 				}
 				bool cached_header_body = string__ends_with(fn_decl_file, _str_2112) && !node.is_mut;
-				int cond__vmsvc5733; cond__vmsvc5733 = !!(cache_mode && (node.kind == flat__NodeKind__fn_decl) && ((flat__Node__generic_params(&node)).len == 0)); if (cond__vmsvc5733) { string __map_key_49__vmsvc5731 = fn_decl_module; bool __map_zero_50__vmsvc5732 = false; cond__vmsvc5733 = !!(((*(bool*)(map__get(&cache_modules, &__map_key_49__vmsvc5731, &__map_zero_50__vmsvc5732)) || cached_header_body))); } if (cond__vmsvc5733) {
-					string __arr_val_51 = qname;
-					array_push(&result.cache_roots, &__arr_val_51);
+				int cond__vmsvc5733; cond__vmsvc5733 = !!(cache_mode && (node.kind == flat__NodeKind__fn_decl) && ((flat__Node__generic_params(&node)).len == 0)); if (cond__vmsvc5733) { string __map_key_53__vmsvc5731 = fn_decl_module; bool __map_zero_54__vmsvc5732 = false; cond__vmsvc5733 = !!(((*(bool*)(map__get(&cache_modules, &__map_key_53__vmsvc5731, &__map_zero_54__vmsvc5732)) || cached_header_body))); } if (cond__vmsvc5733) {
+					string __arr_val_55 = qname;
+					array_push(&result.cache_roots, &__arr_val_55);
 				}
 				if (!string__eq(qname, node.value)) {
 					markused__add_fn_decl_info(&result.fn_decls, &result.fn_decl_lists, qname, info);
@@ -247612,16 +247624,16 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 					markused__add_suffix_candidate(&result.suffix_map, v_short, qname);
 				}
 				if (string__eq(fn_decl_module, _str_3) && string__ends_with(fn_decl_file, _str_11711)) {
-					string __arr_val_52 = node.value;
-					array_push(&result.c_interface_roots, &__arr_val_52);
+					string __arr_val_56 = node.value;
+					array_push(&result.c_interface_roots, &__arr_val_56);
 					if (!string__eq(qname, node.value)) {
-						string __arr_val_53 = qname;
-						array_push(&result.c_interface_roots, &__arr_val_53);
+						string __arr_val_57 = qname;
+						array_push(&result.c_interface_roots, &__arr_val_57);
 					}
 					string lowered_qname = markused__markused_c_name(qname);
 					if (!string__eq(lowered_qname, qname)) {
-						string __arr_val_54 = lowered_qname;
-						array_push(&result.c_interface_roots, &__arr_val_54);
+						string __arr_val_58 = lowered_qname;
+						array_push(&result.c_interface_roots, &__arr_val_58);
 					}
 				}
 			}
@@ -247631,9 +247643,21 @@ markused__MarkusedDeclScan markused__build_markused_decl_scan(flat__FlatAst* a, 
 }
 
 markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(flat__FlatAst* a, types__TypeChecker* tc) {
+	Array __any_source_0 = map__keys(&tc->file_modules);
+	bool __any_1 = false;
+	{
+		__v_int __any_idx_2 = 0;
+		for (; __any_idx_2 < __any_source_0.len; __any_idx_2++) {
+			string __any_it_3 = *(string*)(array_get(__any_source_0, __any_idx_2));
+			if (string__ends_with(__any_it_3, _str_2112)) {
+				__any_1 = true;
+			}
+		}
+	}
+	bool has_cached_headers = __any_1;
 	markused__PreparedMarkusedDecls* result = (markused__PreparedMarkusedDecls*)memdup(&(markused__PreparedMarkusedDecls){.fn_decls = new_map(sizeof(string), sizeof(markused__FnDeclInfo), map_hash_string, map_eq_string, map_clone_string, map_free_string), .fn_decl_lists = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string), .struct_decls = new_map(sizeof(u32), sizeof(markused__StructDeclInfo), map_hash_int_4, map_eq_int_4, map_clone_int_4, map_free_nop), .const_decls = new_map(sizeof(string), sizeof(markused__ConstDeclInfo), map_hash_string, map_eq_string, map_clone_string, map_free_string), .fn_name_suffixes = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), .const_name_suffixes = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), .suffix_map = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string), .import_contexts = array_new(	sizeof(map), 0, 256), .body_ids = __new_array_noscan(0, 8192, sizeof(__v_int)), .body_modules = array_new(	sizeof(string), 0, 8192), .body_import_contexts = __new_array_noscan(0, 8192, sizeof(__v_int)), .marked_roots = array_new(sizeof(string), 0, 0), .cached_header_enum_str_roots = __new_array_noscan(0, 0, sizeof(u32)), .c_interface_roots = array_new(sizeof(string), 0, 0), .auto_roots = array_new(sizeof(string), 0, 0)}, sizeof(markused__PreparedMarkusedDecls));
-	map __arr_val_0 = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
-	array_push(&result->import_contexts, &__arr_val_0);
+	map __arr_val_4 = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string);
+	array_push(&result->import_contexts, &__arr_val_4);
 	map__reserve(&result->fn_decls, (u32)(tc->fn_ret_types.data->count));
 	map__reserve(&result->fn_decl_lists, (u32)(tc->fn_ret_types.data->count));
 	map__reserve(&result->struct_decls, (u32)(tc->structs.data->count * 2));
@@ -247646,19 +247670,19 @@ markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(
 	string cur_module = _str_34;
 	__v_int cur_import_context = 0;
 	{
-		__v_int __for_idx_1 = 0;
-		for (; __for_idx_1 < tc->top_level_idx.len; __for_idx_1++) {
-			i32 node_idx = *(i32*)(array_get(tc->top_level_idx, __for_idx_1));
+		__v_int __for_idx_5 = 0;
+		for (; __for_idx_5 < tc->top_level_idx.len; __for_idx_5++) {
+			i32 node_idx = *(i32*)(array_get(tc->top_level_idx, __for_idx_5));
 			flat__Node node = (*(flat__Node*)array_get(a->nodes, node_idx));
 			if (node.kind == flat__NodeKind__file) {
 				cur_file = node.value;
 				cur_module = _str_34;
-				map __arr_val_2 = markused__markused_top_level_file_imports(a, node);
-				array_push(&result->import_contexts, &__arr_val_2);
+				map __arr_val_6 = markused__markused_top_level_file_imports(a, node);
+				array_push(&result->import_contexts, &__arr_val_6);
 				cur_import_context = result->import_contexts.len - 1;
-				string __map_key_3 = cur_file;
-				__v_int __map_val_4 = cur_import_context;
-				map__set(&import_context_by_file, &__map_key_3, &__map_val_4);
+				string __map_key_7 = cur_file;
+				__v_int __map_val_8 = cur_import_context;
+				map__set(&import_context_by_file, &__map_key_7, &__map_val_8);
 				continue;
 			}
 			if (node.kind == flat__NodeKind__module_decl) {
@@ -247667,56 +247691,56 @@ markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(
 			}
 			if (node.kind == flat__NodeKind__import_decl) {
 				if ((cur_import_context >= 0) && (cur_import_context < result->import_contexts.len)) {
-					string __map_key_5 = flat__Node__typ_text(&node);
-					string __map_val_6 = node.value;
-					map__set(&(*(map*)array_get(result->import_contexts, cur_import_context)), &__map_key_5, &__map_val_6);
+					string __map_key_9 = flat__Node__typ_text(&node);
+					string __map_val_10 = node.value;
+					map__set(&(*(map*)array_get(result->import_contexts, cur_import_context)), &__map_key_9, &__map_val_10);
 				}
 				continue;
 			}
-			string __if_val_7 = {0};
-			__v_int __map_key_8 = node.pos.id;
-			void* __map_ptr_9 = map__get_check(&a->source_files, &__map_key_8);
-			if (__map_ptr_9 != NULL) {
-				token__File* source_file = *(token__File**)(__map_ptr_9);
-				__if_val_7 = source_file->name;
-			} else {
-				__if_val_7 = cur_file;
-			}
-			string decl_file = __if_val_7;
-			string __map_key_12 = decl_file;
-			void* __map_ptr_13 = map__get_check(&tc->file_modules, &__map_key_12);
-			string __map_val_14 = {0};
+			string __if_val_11 = {0};
+			__v_int __map_key_12 = node.pos.id;
+			void* __map_ptr_13 = map__get_check(&a->source_files, &__map_key_12);
 			if (__map_ptr_13 != NULL) {
-				__map_val_14 = *(string*)(__map_ptr_13);
+				token__File* source_file = *(token__File**)(__map_ptr_13);
+				__if_val_11 = source_file->name;
 			} else {
-				__map_val_14 = cur_module;
+				__if_val_11 = cur_file;
 			}
-			string decl_module = __map_val_14;
-			string __map_key_17 = decl_file;
-			void* __map_ptr_18 = map__get_check(&import_context_by_file, &__map_key_17);
-			__v_int __map_val_19 = {0};
-			if (__map_ptr_18 != NULL) {
-				__map_val_19 = *(__v_int*)(__map_ptr_18);
+			string decl_file = __if_val_11;
+			string __map_key_16 = decl_file;
+			void* __map_ptr_17 = map__get_check(&tc->file_modules, &__map_key_16);
+			string __map_val_18 = {0};
+			if (__map_ptr_17 != NULL) {
+				__map_val_18 = *(string*)(__map_ptr_17);
 			} else {
-				__map_val_19 = cur_import_context;
+				__map_val_18 = cur_module;
 			}
-			__v_int decl_import_context = __map_val_19;
-			if ((node.kind == flat__NodeKind__enum_decl) && string__ends_with(decl_file, _str_2112)) {
-				u32 __arr_val_20 = markused__markused_qualify_source_type(decl_module, flat__Node__source_value_id(node));
-				{ Array* __v3_internal_symbol_scalar_push_base_2 = &result->cached_header_enum_str_roots; u32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_20; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
+			string decl_module = __map_val_18;
+			string __map_key_21 = decl_file;
+			void* __map_ptr_22 = map__get_check(&import_context_by_file, &__map_key_21);
+			__v_int __map_val_23 = {0};
+			if (__map_ptr_22 != NULL) {
+				__map_val_23 = *(__v_int*)(__map_ptr_22);
+			} else {
+				__map_val_23 = cur_import_context;
+			}
+			__v_int decl_import_context = __map_val_23;
+			if ((node.kind == flat__NodeKind__enum_decl) && has_cached_headers) {
+				u32 __arr_val_24 = markused__markused_qualify_source_type(decl_module, flat__Node__source_value_id(node));
+				{ Array* __v3_internal_symbol_scalar_push_base_2 = &result->cached_header_enum_str_roots; u32 __v3_internal_symbol_scalar_push_value_2 = __arr_val_24; if (__v3_internal_symbol_scalar_push_base_2->len >= 0 && __v3_internal_symbol_scalar_push_base_2->len < __v3_internal_symbol_scalar_push_base_2->cap && !(__v3_internal_symbol_scalar_push_base_2->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_2->data)[__v3_internal_symbol_scalar_push_base_2->len] = __v3_internal_symbol_scalar_push_value_2; __v3_internal_symbol_scalar_push_base_2->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_2, &__v3_internal_symbol_scalar_push_value_2); } }
 			}
 			if (node.kind == flat__NodeKind__struct_decl) {
 				u32 name_id = flat__Node__source_value_id(node);
 				u32 full_name = markused__markused_qualify_source_type(decl_module, name_id);
 				markused__StructDeclInfo info = (markused__StructDeclInfo){.node_id = (i32)(node_idx), .module = decl_module, .import_context = decl_import_context};
-				u32 __map_key_21 = full_name;
-				markused__StructDeclInfo __map_val_22 = info;
-				map__set(&result->struct_decls, &__map_key_21, &__map_val_22);
-				u32 __map_key_23 = name_id;
-				if (!map__exists(&result->struct_decls, &__map_key_23)) {
-					u32 __map_key_24 = name_id;
-					markused__StructDeclInfo __map_val_25 = info;
-					map__set(&result->struct_decls, &__map_key_24, &__map_val_25);
+				u32 __map_key_25 = full_name;
+				markused__StructDeclInfo __map_val_26 = info;
+				map__set(&result->struct_decls, &__map_key_25, &__map_val_26);
+				u32 __map_key_27 = name_id;
+				if (!map__exists(&result->struct_decls, &__map_key_27)) {
+					u32 __map_key_28 = name_id;
+					markused__StructDeclInfo __map_val_29 = info;
+					map__set(&result->struct_decls, &__map_key_28, &__map_val_29);
 				}
 				continue;
 			}
@@ -247730,15 +247754,15 @@ markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(
 							continue;
 						}
 						markused__ConstDeclInfo info = (markused__ConstDeclInfo){.expr_id = flat__FlatAst__child(a, field, 0), .module = decl_module, .import_context = decl_import_context};
-						string __map_key_26 = field->value;
-						markused__ConstDeclInfo __map_val_27 = info;
-						map__set(&result->const_decls, &__map_key_26, &__map_val_27);
+						string __map_key_30 = field->value;
+						markused__ConstDeclInfo __map_val_31 = info;
+						map__set(&result->const_decls, &__map_key_30, &__map_val_31);
 						markused__add_candidate_suffix(&result->const_name_suffixes, field->value);
 						string full_name = markused__qualify_fn(decl_module, field->value);
 						if (!string__eq(full_name, field->value)) {
-							string __map_key_28 = full_name;
-							markused__ConstDeclInfo __map_val_29 = info;
-							map__set(&result->const_decls, &__map_key_28, &__map_val_29);
+							string __map_key_32 = full_name;
+							markused__ConstDeclInfo __map_val_33 = info;
+							map__set(&result->const_decls, &__map_key_32, &__map_val_33);
 							markused__add_candidate_suffix(&result->const_name_suffixes, full_name);
 						}
 					}
@@ -247749,39 +247773,39 @@ markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(
 				continue;
 			}
 			string decl_qname = markused__qualify_fn(decl_module, node.value);
-			string __map_key_32 = decl_qname;
-			void* __map_ptr_33 = map__get_check(&tc->fn_type_files, &__map_key_32);
-			string __map_val_34 = {0};
-			if (__map_ptr_33 != NULL) {
-				__map_val_34 = *(string*)(__map_ptr_33);
+			string __map_key_36 = decl_qname;
+			void* __map_ptr_37 = map__get_check(&tc->fn_type_files, &__map_key_36);
+			string __map_val_38 = {0};
+			if (__map_ptr_37 != NULL) {
+				__map_val_38 = *(string*)(__map_ptr_37);
 			} else {
-				__map_val_34 = decl_file;
+				__map_val_38 = decl_file;
 			}
-			string fn_decl_file = __map_val_34;
-			string __map_key_37 = decl_qname;
-			void* __map_ptr_38 = map__get_check(&tc->fn_type_modules, &__map_key_37);
-			string __map_val_39 = {0};
-			if (__map_ptr_38 != NULL) {
-				__map_val_39 = *(string*)(__map_ptr_38);
+			string fn_decl_file = __map_val_38;
+			string __map_key_41 = decl_qname;
+			void* __map_ptr_42 = map__get_check(&tc->fn_type_modules, &__map_key_41);
+			string __map_val_43 = {0};
+			if (__map_ptr_42 != NULL) {
+				__map_val_43 = *(string*)(__map_ptr_42);
 			} else {
-				__map_val_39 = decl_module;
+				__map_val_43 = decl_module;
 			}
-			string fn_decl_module = __map_val_39;
-			string __map_key_42 = fn_decl_file;
-			void* __map_ptr_43 = map__get_check(&import_context_by_file, &__map_key_42);
-			__v_int __map_val_44 = {0};
-			if (__map_ptr_43 != NULL) {
-				__map_val_44 = *(__v_int*)(__map_ptr_43);
+			string fn_decl_module = __map_val_43;
+			string __map_key_46 = fn_decl_file;
+			void* __map_ptr_47 = map__get_check(&import_context_by_file, &__map_key_46);
+			__v_int __map_val_48 = {0};
+			if (__map_ptr_47 != NULL) {
+				__map_val_48 = *(__v_int*)(__map_ptr_47);
 			} else {
-				__map_val_44 = decl_import_context;
+				__map_val_48 = decl_import_context;
 			}
-			__v_int fn_decl_import_context = __map_val_44;
-			__v_int __arr_val_45 = node_idx;
-			{ Array* __v3_internal_symbol_scalar_push_base_3 = &result->body_ids; __v_int __v3_internal_symbol_scalar_push_value_3 = __arr_val_45; if (__v3_internal_symbol_scalar_push_base_3->len >= 0 && __v3_internal_symbol_scalar_push_base_3->len < __v3_internal_symbol_scalar_push_base_3->cap && !(__v3_internal_symbol_scalar_push_base_3->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_3->data)[__v3_internal_symbol_scalar_push_base_3->len] = __v3_internal_symbol_scalar_push_value_3; __v3_internal_symbol_scalar_push_base_3->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_3, &__v3_internal_symbol_scalar_push_value_3); } }
-			string __arr_val_46 = fn_decl_module;
-			array_push(&result->body_modules, &__arr_val_46);
-			__v_int __arr_val_47 = fn_decl_import_context;
-			{ Array* __v3_internal_symbol_scalar_push_base_4 = &result->body_import_contexts; __v_int __v3_internal_symbol_scalar_push_value_4 = __arr_val_47; if (__v3_internal_symbol_scalar_push_base_4->len >= 0 && __v3_internal_symbol_scalar_push_base_4->len < __v3_internal_symbol_scalar_push_base_4->cap && !(__v3_internal_symbol_scalar_push_base_4->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_4->data)[__v3_internal_symbol_scalar_push_base_4->len] = __v3_internal_symbol_scalar_push_value_4; __v3_internal_symbol_scalar_push_base_4->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_4, &__v3_internal_symbol_scalar_push_value_4); } }
+			__v_int fn_decl_import_context = __map_val_48;
+			__v_int __arr_val_49 = node_idx;
+			{ Array* __v3_internal_symbol_scalar_push_base_3 = &result->body_ids; __v_int __v3_internal_symbol_scalar_push_value_3 = __arr_val_49; if (__v3_internal_symbol_scalar_push_base_3->len >= 0 && __v3_internal_symbol_scalar_push_base_3->len < __v3_internal_symbol_scalar_push_base_3->cap && !(__v3_internal_symbol_scalar_push_base_3->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_3->data)[__v3_internal_symbol_scalar_push_base_3->len] = __v3_internal_symbol_scalar_push_value_3; __v3_internal_symbol_scalar_push_base_3->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_3, &__v3_internal_symbol_scalar_push_value_3); } }
+			string __arr_val_50 = fn_decl_module;
+			array_push(&result->body_modules, &__arr_val_50);
+			__v_int __arr_val_51 = fn_decl_import_context;
+			{ Array* __v3_internal_symbol_scalar_push_base_4 = &result->body_import_contexts; __v_int __v3_internal_symbol_scalar_push_value_4 = __arr_val_51; if (__v3_internal_symbol_scalar_push_base_4->len >= 0 && __v3_internal_symbol_scalar_push_base_4->len < __v3_internal_symbol_scalar_push_base_4->cap && !(__v3_internal_symbol_scalar_push_base_4->flags & ArrayFlags__is_slice)) { ((__v_int*)__v3_internal_symbol_scalar_push_base_4->data)[__v3_internal_symbol_scalar_push_base_4->len] = __v3_internal_symbol_scalar_push_value_4; __v3_internal_symbol_scalar_push_base_4->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_4, &__v3_internal_symbol_scalar_push_value_4); } }
 			bool has_dot = string__index_u8(node.value, '.') >= 0;
 			bool can_suffix_match = !markused__markused_fn_decl_is_generic_template(node, a);
 			markused__FnDeclInfo info = (markused__FnDeclInfo){.node_id = (i32)(node_idx), .module = fn_decl_module, .import_context = fn_decl_import_context, .positional_params = markused__markused_positional_param_count(a, &node)};
@@ -247798,8 +247822,8 @@ markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(
 			}
 			string qname = markused__qualify_fn(fn_decl_module, node.value);
 			if (markused__markused_fn_has_attribute(a, node_idx, _str_1548)) {
-				string __arr_val_48 = qname;
-				array_push(&result->marked_roots, &__arr_val_48);
+				string __arr_val_52 = qname;
+				array_push(&result->marked_roots, &__arr_val_52);
 			}
 			if (!string__eq(qname, node.value)) {
 				markused__add_fn_decl_info(&result->fn_decls, &result->fn_decl_lists, qname, info);
@@ -247825,16 +247849,16 @@ markused__PreparedMarkusedDecls* markused__build_prepared_markused_declarations(
 				markused__add_suffix_candidate(&result->suffix_map, string__all_after_last(qname, _str_2), qname);
 			}
 			if (string__eq(fn_decl_module, _str_3) && string__ends_with(fn_decl_file, _str_11711)) {
-				string __arr_val_49 = node.value;
-				array_push(&result->c_interface_roots, &__arr_val_49);
+				string __arr_val_53 = node.value;
+				array_push(&result->c_interface_roots, &__arr_val_53);
 				if (!string__eq(qname, node.value)) {
-					string __arr_val_50 = qname;
-					array_push(&result->c_interface_roots, &__arr_val_50);
+					string __arr_val_54 = qname;
+					array_push(&result->c_interface_roots, &__arr_val_54);
 				}
 				string lowered_qname = markused__markused_c_name(qname);
 				if (!string__eq(lowered_qname, qname)) {
-					string __arr_val_51 = lowered_qname;
-					array_push(&result->c_interface_roots, &__arr_val_51);
+					string __arr_val_55 = lowered_qname;
+					array_push(&result->c_interface_roots, &__arr_val_55);
 				}
 			}
 		}
@@ -248185,8 +248209,8 @@ void markused__enqueue_implicit_global_container_roots(flat__FlatAst* a, types__
 					}
 					types__Type* typ = types__TypeChecker__parse_type(tc, field->typ);
 					{
-						__v_int __discard_6165468023465583894_87294_87295 = 0;
-						for (; __discard_6165468023465583894_87294_87295 < 32; __discard_6165468023465583894_87294_87295++) {
+						__v_int __discard_6165468023465583894_87447_87448 = 0;
+						for (; __discard_6165468023465583894_87447_87448 < 32; __discard_6165468023465583894_87447_87448++) {
 							if ((typ)->typ == 23) {
 								typ = typ->types__Alias.AliasDataRef->base_type;
 								continue;
@@ -253296,8 +253320,8 @@ bool markused__markused_type_is_string_like(types__Type* typ) {
 bool markused__markused_type_lowers_to_map_str(types__Type* typ0) {
 	types__Type typ = (*typ0);
 	{
-		__v_int __discard_6165468023465583894_155337_155338 = 0;
-		for (; __discard_6165468023465583894_155337_155338 < 8; __discard_6165468023465583894_155337_155338++) {
+		__v_int __discard_6165468023465583894_155553_155554 = 0;
+		for (; __discard_6165468023465583894_155553_155554 < 8; __discard_6165468023465583894_155553_155554++) {
 			if ((typ).typ == 23) {
 				typ = *typ.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -254077,8 +254101,8 @@ string markused__test_file_module_name(flat__FlatAst* a, flat__Node file_node) {
 bool markused__type_needs_zero_map(types__Type* typ) {
 	types__Type clean = (*typ);
 	{
-		__v_int __discard_6165468023465583894_198662_198663 = 0;
-		for (; __discard_6165468023465583894_198662_198663 < 8; __discard_6165468023465583894_198662_198663++) {
+		__v_int __discard_6165468023465583894_198878_198879 = 0;
+		for (; __discard_6165468023465583894_198878_198879 < 8; __discard_6165468023465583894_198878_198879++) {
 			if ((clean).typ == 23) {
 				clean = *clean.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -254176,8 +254200,8 @@ u32 markused__value_struct_default_type_name(types__Type* typ) {
 u32 markused__zero_value_struct_type_name(types__Type* typ) {
 	types__Type clean = (*typ);
 	{
-		__v_int __discard_6165468023465583894_395033_395034 = 0;
-		for (; __discard_6165468023465583894_395033_395034 < 8; __discard_6165468023465583894_395033_395034++) {
+		__v_int __discard_6165468023465583894_395249_395250 = 0;
+		for (; __discard_6165468023465583894_395249_395250 < 8; __discard_6165468023465583894_395249_395250++) {
 			if ((clean).typ == 23) {
 				clean = *clean.types__Alias.AliasDataRef->base_type;
 				continue;
