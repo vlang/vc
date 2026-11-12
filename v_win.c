@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "0be608f43748adc3309cccd116032fa82cd097f7"
+#define V_COMMIT_HASH "5909f830104bd6cda35ea74b870e55349c2f2603"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -11,8 +11,8 @@
 #endif
 // V comptime_definitions:
 // V compile time defines by -d or -define flags:
-//     All custom defines      : no_backtrace,cross,parallel,prealloc,skip_fastc,skip_arm64,skip_amd64,skip_wasm,skip_ssa,skip_eval,v3_c_extern_declarations,no_segfault_handler
-//     Turned ON custom defines: no_backtrace,cross,parallel,prealloc,skip_fastc,skip_arm64,skip_amd64,skip_wasm,skip_ssa,skip_eval,v3_c_extern_declarations,no_segfault_handler
+//     All custom defines      : no_backtrace,cross,parallel,prealloc,skip_fastc,skip_arm64,skip_amd64,skip_x64,skip_wasm,skip_ssa,skip_eval,v3_c_extern_declarations,no_segfault_handler
+//     Turned ON custom defines: no_backtrace,cross,parallel,prealloc,skip_fastc,skip_arm64,skip_amd64,skip_x64,skip_wasm,skip_ssa,skip_eval,v3_c_extern_declarations,no_segfault_handler
 #define CUSTOM_DEFINE_no_backtrace
 #define CUSTOM_DEFINE_cross
 #define CUSTOM_DEFINE_parallel
@@ -20,6 +20,7 @@
 #define CUSTOM_DEFINE_skip_fastc
 #define CUSTOM_DEFINE_skip_arm64
 #define CUSTOM_DEFINE_skip_amd64
+#define CUSTOM_DEFINE_skip_x64
 #define CUSTOM_DEFINE_skip_wasm
 #define CUSTOM_DEFINE_skip_ssa
 #define CUSTOM_DEFINE_skip_eval
@@ -7212,9 +7213,9 @@ typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
 typedef Array Array_fixed_Array_2[2];
 typedef string Array_fixed_string_15[15];
+typedef u32 Array_fixed_u32_8[8];
 typedef string Array_fixed_string_26[26];
 typedef Array Array_fixed_Array_3[3];
-typedef u32 Array_fixed_u32_8[8];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -34865,7 +34866,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "0be608f", 7);
+_SL(_str_201, "5909f83", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -37175,8 +37176,8 @@ _SL(_str_2506, "v3_stdout_", 10);
 _SL(_str_2507, "skip_fastc", 10);
 _SL(_str_2508, "skip_arm64", 10);
 _SL(_str_2509, "skip_amd64", 10);
-_SL(_str_2510, "skip_wasm", 9);
-_SL(_str_2511, "skip_x64", 8);
+_SL(_str_2510, "skip_x64", 8);
+_SL(_str_2511, "skip_wasm", 9);
 _SL(_str_2512, "skip_ssa", 8);
 _SL(_str_2513, "skip_eval", 9);
 _SL(_str_2514, "fastc_selfhost", 14);
@@ -192156,8 +192157,8 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 				bool dropped = false;
 				__v_int __in_lhs_16 = declared + 1;
 				{
-					__v_int __discard_15215236722831141574_869469_869470 = 0;
-					for (; __discard_15215236722831141574_869469_869470 < __in_lhs_16; __discard_15215236722831141574_869469_869470++) {
+					__v_int __discard_15215236722831141574_869639_869640 = 0;
+					for (; __discard_15215236722831141574_869639_869640 < __in_lhs_16; __discard_15215236722831141574_869639_869640++) {
 						bool changed = false;
 						array__clear(&untyped);
 						{
@@ -192373,8 +192374,8 @@ Array driver__implicit_multi_value_types(u32 raw_id, driver__ImplicitFieldScanIn
 u32 driver__implicit_normalize_type(u32 raw_id, driver__ImplicitFieldScanIndex v_index) {
 	u32 typ_id = driver__implicit_trimmed_type_id(raw_id);
 	{
-		__v_int __discard_15215236722831141574_888044_888045 = 0;
-		for (; __discard_15215236722831141574_888044_888045 < 12; __discard_15215236722831141574_888044_888045++) {
+		__v_int __discard_15215236722831141574_888214_888215 = 0;
+		for (; __discard_15215236722831141574_888214_888215 < 12; __discard_15215236722831141574_888214_888215++) {
 			bool changed = false;
 			{
 				__v_int __for_idx_0 = 0;
@@ -196390,8 +196391,8 @@ __v_option_string driver__nearest_vroot_for_path(string path) {
 		dir = os__dir(dir);
 	}
 	{
-		__v_int __discard_15215236722831141574_781863_781864 = 0;
-		for (; __discard_15215236722831141574_781863_781864 < 8; __discard_15215236722831141574_781863_781864++) {
+		__v_int __discard_15215236722831141574_782033_782034 = 0;
+		for (; __discard_15215236722831141574_782033_782034 < 8; __discard_15215236722831141574_782033_782034++) {
 			if (driver__is_valid_vroot(dir)) {
 				return (__v_option_string){.ok = true, .value = dir};
 			}
@@ -203342,11 +203343,11 @@ void driver__run(Array args) {
 		array_push(&user_defines, &__arr_val_147);
 	}
 	if (!include_amd64) {
-		string __arr_val_148 = _str_2509;
-		array_push(&user_defines, &__arr_val_148);
+		Array __push_many_148 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_2509, _str_2510});
+		array__push_many(&user_defines, __push_many_148.data, __push_many_148.len);
 	}
 	if (!include_wasm) {
-		string __arr_val_149 = _str_2510;
+		string __arr_val_149 = _str_2511;
 		array_push(&user_defines, &__arr_val_149);
 	}
 	bool __contains_150 = false;
@@ -203368,14 +203369,14 @@ void driver__run(Array args) {
 	} int cond__vmsvc4757; cond__vmsvc4757 = !!(__contains_152__vmsvc4755); if (!cond__vmsvc4757) { bool __contains_154__vmsvc4756 = false; {
 		__v_int __contains_idx_155 = 0;
 		for (; __contains_idx_155 < user_defines.len; __contains_idx_155++) {
-			if (string__eq(*(string*)(array_get(user_defines, __contains_idx_155)), _str_2511)) {
+			if (string__eq(*(string*)(array_get(user_defines, __contains_idx_155)), _str_2510)) {
 				__contains_154__vmsvc4756 = true;
 			}
 		}
 	} cond__vmsvc4757 = !!((__contains_154__vmsvc4756)); } cond__vmsvc4758 = !!(((cond__vmsvc4757))); } int cond__vmsvc4760; cond__vmsvc4760 = !!(cond__vmsvc4758); if (cond__vmsvc4760) { bool __contains_156__vmsvc4759 = false; {
 		__v_int __contains_idx_157 = 0;
 		for (; __contains_idx_157 < user_defines.len; __contains_idx_157++) {
-			if (string__eq(*(string*)(array_get(user_defines, __contains_idx_157)), _str_2510)) {
+			if (string__eq(*(string*)(array_get(user_defines, __contains_idx_157)), _str_2511)) {
 				__contains_156__vmsvc4759 = true;
 			}
 		}
@@ -210756,7 +210757,7 @@ map driver__skipped_backend_modules(pref__Preferences* prefs) {
 	int cond__vmsvc4962; cond__vmsvc4962 = !!(__contains_10); if (!cond__vmsvc4962) { bool __contains_12__vmsvc4961 = false; {
 		__v_int __contains_idx_13 = 0;
 		for (; __contains_idx_13 < prefs->user_defines.len; __contains_idx_13++) {
-			if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_13)), _str_2511)) {
+			if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_13)), _str_2510)) {
 				__contains_12__vmsvc4961 = true;
 			}
 		}
@@ -210769,7 +210770,7 @@ map driver__skipped_backend_modules(pref__Preferences* prefs) {
 	{
 		__v_int __contains_idx_17 = 0;
 		for (; __contains_idx_17 < prefs->user_defines.len; __contains_idx_17++) {
-			if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_17)), _str_2510)) {
+			if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_17)), _str_2511)) {
 				__contains_16 = true;
 			}
 		}
