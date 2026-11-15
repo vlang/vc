@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "82175a2790eeedae1889d46033fb41ba148a5581"
+#define V_COMMIT_HASH "b39869bd2b73f2c15fce01c8b1d12a8b10f50dee"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -35142,7 +35142,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "82175a2", 7);
+_SL(_str_201, "b39869b", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -323760,8 +323760,8 @@ i32 transform__Transformer__build_match_chain(transform__Transformer* t, i32 mat
 	}
 	Array new_body = transform__Transformer__transform_scope_stmts(t, body_ids);
 	{
-		__v_int __discard_11266420260042425778_1200772_1200773 = 0;
-		for (; __discard_11266420260042425778_1200772_1200773 < sc_pushed; __discard_11266420260042425778_1200772_1200773++) {
+		__v_int __discard_11266420260042425778_1200847_1200848 = 0;
+		for (; __discard_11266420260042425778_1200847_1200848 < sc_pushed; __discard_11266420260042425778_1200847_1200848++) {
 			transform__Transformer__pop_smartcast(t);
 		}
 	}
@@ -323925,8 +323925,8 @@ i32 transform__Transformer__build_match_type_branch_chain(transform__Transformer
 	t->array_dsl_multitype_depth -= (__v_int)(n_conds > 1);
 	t->inplace_rewrite_holds--;
 	{
-		__v_int __discard_11266420260042425778_1212094_1212095 = 0;
-		for (; __discard_11266420260042425778_1212094_1212095 < sc_pushed; __discard_11266420260042425778_1212094_1212095++) {
+		__v_int __discard_11266420260042425778_1212169_1212170 = 0;
+		for (; __discard_11266420260042425778_1212169_1212170 < sc_pushed; __discard_11266420260042425778_1212169_1212170++) {
 			transform__Transformer__pop_smartcast(t);
 		}
 	}
@@ -323989,8 +323989,8 @@ i32 transform__Transformer__build_match_value_chain(transform__Transformer* t, i
 	i32 raw_body = transform__Transformer__make_block(t, body_ids);
 	i32 body_block = transform__Transformer__if_value_branch_block(t, raw_body, target_name, target_type_id);
 	{
-		__v_int __discard_11266420260042425778_1205302_1205303 = 0;
-		for (; __discard_11266420260042425778_1205302_1205303 < sc_pushed; __discard_11266420260042425778_1205302_1205303++) {
+		__v_int __discard_11266420260042425778_1205377_1205378 = 0;
+		for (; __discard_11266420260042425778_1205377_1205378 < sc_pushed; __discard_11266420260042425778_1205377_1205378++) {
 			transform__Transformer__pop_smartcast(t);
 		}
 	}
@@ -324141,8 +324141,8 @@ i32 transform__Transformer__build_match_value_type_branch_chain(transform__Trans
 	t->array_dsl_multitype_depth -= (__v_int)(n_conds > 1);
 	t->inplace_rewrite_holds--;
 	{
-		__v_int __discard_11266420260042425778_1209208_1209209 = 0;
-		for (; __discard_11266420260042425778_1209208_1209209 < sc_pushed; __discard_11266420260042425778_1209208_1209209++) {
+		__v_int __discard_11266420260042425778_1209283_1209284 = 0;
+		for (; __discard_11266420260042425778_1209283_1209284 < sc_pushed; __discard_11266420260042425778_1209283_1209284++) {
 			transform__Transformer__pop_smartcast(t);
 		}
 	}
@@ -331762,8 +331762,8 @@ i32 transform__Transformer__coerce_transformed_expr_to_type(transform__Transform
 				i32 current = expr;
 				u32 current_type = expr_type_id;
 				{
-					__v_int __discard_11266420260042425778_735804_735805 = actual_depth;
-					for (; __discard_11266420260042425778_735804_735805 < target_depth; __discard_11266420260042425778_735804_735805++) {
+					__v_int __discard_11266420260042425778_735879_735880 = actual_depth;
+					for (; __discard_11266420260042425778_735879_735880 < target_depth; __discard_11266420260042425778_735879_735880++) {
 						string tmp_name = transform__Transformer__new_temp(t, _str_15914);
 						i32 __arr_val_8 = transform__Transformer__make_decl_assign_typed(t, tmp_name, current, current_type);
 						{ Array* __v3_internal_symbol_scalar_push_base_1 = &t->pending_stmts; i32 __v3_internal_symbol_scalar_push_value_1 = __arr_val_8; if (__v3_internal_symbol_scalar_push_base_1->len >= 0 && __v3_internal_symbol_scalar_push_base_1->len < __v3_internal_symbol_scalar_push_base_1->cap && !(__v3_internal_symbol_scalar_push_base_1->flags & ArrayFlags__is_slice)) { ((i32*)__v3_internal_symbol_scalar_push_base_1->data)[__v3_internal_symbol_scalar_push_base_1->len] = __v3_internal_symbol_scalar_push_value_1; __v3_internal_symbol_scalar_push_base_1->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_1, &__v3_internal_symbol_scalar_push_value_1); } }
@@ -347646,8 +347646,8 @@ bool transform__Transformer__escape_pointer_ident_is_stack_backed(transform__Tra
 	string current = name;
 	__v_int __in_lhs_0 = ptr_aliases.data->count + 1;
 	{
-		__v_int __discard_11266420260042425778_492735_492736 = 0;
-		for (; __discard_11266420260042425778_492735_492736 < __in_lhs_0; __discard_11266420260042425778_492735_492736++) {
+		__v_int __discard_11266420260042425778_492810_492811 = 0;
+		for (; __discard_11266420260042425778_492810_492811 < __in_lhs_0; __discard_11266420260042425778_492810_492811++) {
 			string __map_key_1 = current;
 			if (map__exists(&amp_ptrs, &__map_key_1)) {
 				return true;
@@ -350064,8 +350064,8 @@ bool transform__Transformer__expr_is_char_const(transform__Transformer* t, i32 i
 bool transform__Transformer__expr_is_in_option_none_branch(transform__Transformer* t, i32 id, string key) {
 	__v_int current = (__v_int)(id);
 	{
-		__v_int __discard_11266420260042425778_647363_647364 = 0;
-		for (; __discard_11266420260042425778_647363_647364 < 128; __discard_11266420260042425778_647363_647364++) {
+		__v_int __discard_11266420260042425778_647438_647439 = 0;
+		for (; __discard_11266420260042425778_647438_647439 < 128; __discard_11266420260042425778_647438_647439++) {
 			__v_int parent_id = transform__Transformer__source_parent_id(t, current);
 			if ((parent_id < 0) || (parent_id >= t->a->nodes.len)) {
 				return false;
@@ -368745,8 +368745,8 @@ __v_option_transform__LocalBindingFlags transform__Transformer__local_binding_fl
 	__v_int cursor = (__v_int)(before);
 	bool found_fn_scope = false;
 	{
-		__v_int __discard_11266420260042425778_835216_835217 = 0;
-		for (; __discard_11266420260042425778_835216_835217 < t->a->nodes.len; __discard_11266420260042425778_835216_835217++) {
+		__v_int __discard_11266420260042425778_835291_835292 = 0;
+		for (; __discard_11266420260042425778_835291_835292 < t->a->nodes.len; __discard_11266420260042425778_835291_835292++) {
 			__v_int parent_id = transform__Transformer__source_parent_id(t, cursor);
 			if (parent_id < 0) {
 				break;
@@ -384244,7 +384244,7 @@ __v_option_i32 transform__Transformer__match_branch_multi_return_expr(transform_
 	} else {
 		return (__v_option_i32){.ok = false};
 	}
-	Array __discard_11266420260042425778_813632_813633 = __or_val_1;
+	Array __discard_11266420260042425778_813707_813708 = __or_val_1;
 	return (__v_option_i32){.ok = true, .value = expr_id};
 	return (__v_option_i32){.ok = true};
 }
@@ -384712,8 +384712,8 @@ Array transform__Transformer__match_holding_fns(transform__Transformer* t) {
 			__v_int cursor = idx;
 			__v_int __in_lhs_1 = (__v_int)(((__v_int)(			1)) << (16));
 			{
-				__v_int __discard_11266420260042425778_1194869_1194870 = 0;
-				for (; __discard_11266420260042425778_1194869_1194870 < __in_lhs_1; __discard_11266420260042425778_1194869_1194870++) {
+				__v_int __discard_11266420260042425778_1194944_1194945 = 0;
+				for (; __discard_11266420260042425778_1194944_1194945 < __in_lhs_1; __discard_11266420260042425778_1194944_1194945++) {
 					cursor = (__v_int)((*((i32*)((t->source_parent_ids).data) + (cursor))));
 					if ((cursor < 0) || (cursor >= covered)) {
 						break;
@@ -388045,7 +388045,7 @@ __v_option_i32 transform__Transformer__multi_if_branch_multi_return_expr(transfo
 	} else {
 		return (__v_option_i32){.ok = false};
 	}
-	Array __discard_11266420260042425778_819508_819509 = __or_val_1;
+	Array __discard_11266420260042425778_819583_819584 = __or_val_1;
 	return (__v_option_i32){.ok = true, .value = expr_id};
 	return (__v_option_i32){.ok = true};
 }
@@ -396166,8 +396166,8 @@ u32 transform__Transformer__raw_decl_type_for_rhs(transform__Transformer* t, i32
 				u32 qualified = qname;
 				__v_int __in_lhs_2 = flat__SourceTypeSyntax__pointer_depth(syntax);
 				{
-					__v_int __discard_11266420260042425778_1151983_1151984 = 0;
-					for (; __discard_11266420260042425778_1151983_1151984 < __in_lhs_2; __discard_11266420260042425778_1151983_1151984++) {
+					__v_int __discard_11266420260042425778_1152058_1152059 = 0;
+					for (; __discard_11266420260042425778_1152058_1152059 < __in_lhs_2; __discard_11266420260042425778_1152058_1152059++) {
 						qualified = flat__source_type_composition_one(flat__SourceTypeComposition__pointer, qualified);
 					}
 				}
@@ -422228,8 +422228,8 @@ __v_option_i32 transform__Transformer__transform_array_value_for_type(transform_
 	int expected_shape = flat__source_type_shape(expected_type_id);
 	if (!((expected_shape & 2048) != 0)) {
 		{
-			__v_int __discard_11266420260042425778_716665_716666 = 0;
-			for (; __discard_11266420260042425778_716665_716666 < 8; __discard_11266420260042425778_716665_716666++) {
+			__v_int __discard_11266420260042425778_716740_716741 = 0;
+			for (; __discard_11266420260042425778_716740_716741 < 8; __discard_11266420260042425778_716740_716741++) {
 				u32 next = transform__Transformer__normalize_type_alias(t, expected_type_id);
 				if (next == expected_type_id) {
 					return (__v_option_i32){.ok = false};
@@ -436847,7 +436847,7 @@ i32 transform__Transformer__transform_struct_init(transform__Transformer* t, i32
 			} else {
 				return transform__Transformer__transform_struct_fields(t, id, node);
 			}
-			transform__StructInfo __discard_11266420260042425778_950274_950275 = __or_val_6;
+			transform__StructInfo __discard_11266420260042425778_950349_950350 = __or_val_6;
 			if (node.children_count == 0) {
 				return transform__Transformer__make_optional_none(t, optional_target_source_id);
 			}
@@ -451531,8 +451531,8 @@ Array transform__escape_alias_sources(string name, map amp_sources, map ptr_alia
 	map seen = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	__v_int __in_lhs_3 = ptr_aliases.data->count + 1;
 	{
-		__v_int __discard_11266420260042425778_420275_420276 = 0;
-		for (; __discard_11266420260042425778_420275_420276 < __in_lhs_3; __discard_11266420260042425778_420275_420276++) {
+		__v_int __discard_11266420260042425778_420350_420351 = 0;
+		for (; __discard_11266420260042425778_420350_420351 < __in_lhs_3; __discard_11266420260042425778_420350_420351++) {
 			int cond__vmsvc11565; cond__vmsvc11565 = !!((current.len == 0)); if (!cond__vmsvc11565) { string __map_key_4__vmsvc11563 = current; bool __map_zero_5__vmsvc11564 = false; cond__vmsvc11565 = !!((*(bool*)(map__get(&seen, &__map_key_4__vmsvc11563, &__map_zero_5__vmsvc11564)))); } if (cond__vmsvc11565) {
 				break;
 			}
@@ -524571,8 +524571,8 @@ __v_option_types__Type types__TypeChecker__enclosing_array_dsl_ident_type(types_
 __v_option_i32 types__TypeChecker__enclosing_body_statement(types__TypeChecker* tc, i32 id, __v_int fn_idx) {
 	i32 current = id;
 	{
-		__v_int __discard_10306662449664955586_40586_40587 = 0;
-		for (; __discard_10306662449664955586_40586_40587 < 4096; __discard_10306662449664955586_40586_40587++) {
+		__v_int __discard_10306662449664955586_40707_40708 = 0;
+		for (; __discard_10306662449664955586_40707_40708 < 4096; __discard_10306662449664955586_40707_40708++) {
 			if (!types__TypeChecker__valid_node_id(tc, current) || ((__v_int)(current) == fn_idx)) {
 				return (__v_option_i32){.ok = false};
 			}
@@ -589950,23 +589950,24 @@ map types__TypeChecker__type_param_branch_classes(types__TypeChecker* tc, flat__
 							__v_int i = 0;
 							for (; i < option_names.len; i++) {
 								u32 option_name = *(u32*)(array_get(option_names, i));
-								string __if_val_19 = {0};
-								bool __any_20 = false;
+								bool matches = false;
 								{
-									__v_int __any_idx_21 = 0;
-									for (; __any_idx_21 < met.len; __any_idx_21++) {
-										types__Type __any_it_22 = *(types__Type*)(array_get(met, __any_idx_21));
-										if (types__Type__source_type_id(&__any_it_22) == option_name) {
-											__any_20 = true;
+									__v_int __for_idx_19 = 0;
+									for (; __for_idx_19 < met.len; __for_idx_19++) {
+										types__Type candidate = *(types__Type*)(array_get(met, __for_idx_19));
+										if (types__Type__source_type_id(&candidate) == option_name) {
+											matches = true;
+											break;
 										}
 									}
 								}
-								if (__any_20) {
-									__if_val_19 = _str_230;
+								string __if_val_20 = {0};
+								if (matches) {
+									__if_val_20 = _str_230;
 								} else {
-									__if_val_19 = _str_56;
+									__if_val_20 = _str_56;
 								}
-								{ Array* _a3 = &marks; int _i3 = i; array__set(_a3, _i3, &(string[]){string__plus(*(string*)array_get(*_a3, _i3), __if_val_19)}); }
+								{ Array* _a3 = &marks; int _i3 = i; array__set(_a3, _i3, &(string[]){string__plus(*(string*)array_get(*_a3, _i3), __if_val_20)}); }
 							}
 						}
 					}
@@ -589979,24 +589980,24 @@ map types__TypeChecker__type_param_branch_classes(types__TypeChecker* tc, flat__
 			__v_int i = 0;
 			for (; i < options.len; i++) {
 				u32 option = *(u32*)(array_get(options, i));
-				string __map_key_23 = (*(string*)array_get(marks, i));
-				void* __map_ptr_24 = map__get_check(&group_of, &__map_key_23);
-				if (__map_ptr_24 != NULL) {
-					__v_int at = *(__v_int*)(__map_ptr_24);
-					u32 __arr_val_25 = option;
-					{ Array* __v3_internal_symbol_scalar_push_base_4 = &(*(Array*)array_get(groups, at)); u32 __v3_internal_symbol_scalar_push_value_4 = __arr_val_25; if (__v3_internal_symbol_scalar_push_base_4->len >= 0 && __v3_internal_symbol_scalar_push_base_4->len < __v3_internal_symbol_scalar_push_base_4->cap && !(__v3_internal_symbol_scalar_push_base_4->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_4->data)[__v3_internal_symbol_scalar_push_base_4->len] = __v3_internal_symbol_scalar_push_value_4; __v3_internal_symbol_scalar_push_base_4->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_4, &__v3_internal_symbol_scalar_push_value_4); } }
+				string __map_key_21 = (*(string*)array_get(marks, i));
+				void* __map_ptr_22 = map__get_check(&group_of, &__map_key_21);
+				if (__map_ptr_22 != NULL) {
+					__v_int at = *(__v_int*)(__map_ptr_22);
+					u32 __arr_val_23 = option;
+					{ Array* __v3_internal_symbol_scalar_push_base_4 = &(*(Array*)array_get(groups, at)); u32 __v3_internal_symbol_scalar_push_value_4 = __arr_val_23; if (__v3_internal_symbol_scalar_push_base_4->len >= 0 && __v3_internal_symbol_scalar_push_base_4->len < __v3_internal_symbol_scalar_push_base_4->cap && !(__v3_internal_symbol_scalar_push_base_4->flags & ArrayFlags__is_slice)) { ((u32*)__v3_internal_symbol_scalar_push_base_4->data)[__v3_internal_symbol_scalar_push_base_4->len] = __v3_internal_symbol_scalar_push_value_4; __v3_internal_symbol_scalar_push_base_4->len++; } else { array_push(__v3_internal_symbol_scalar_push_base_4, &__v3_internal_symbol_scalar_push_value_4); } }
 				} else {
-					string __map_key_26 = (*(string*)array_get(marks, i));
-					__v_int __map_val_27 = groups.len;
-					map__set(&group_of, &__map_key_26, &__map_val_27);
-					Array __arr_val_28 = new_array_from_c_array_noscan(1, 1, sizeof(u32), (u32[1]){option});
-					array_push(&groups, &__arr_val_28);
+					string __map_key_24 = (*(string*)array_get(marks, i));
+					__v_int __map_val_25 = groups.len;
+					map__set(&group_of, &__map_key_24, &__map_val_25);
+					Array __arr_val_26 = new_array_from_c_array_noscan(1, 1, sizeof(u32), (u32[1]){option});
+					array_push(&groups, &__arr_val_26);
 				}
 			}
 		}
-		u32 __map_key_29 = name;
-		Array __map_val_30 = groups;
-		map__set(&classes, &__map_key_29, &__map_val_30);
+		u32 __map_key_27 = name;
+		Array __map_val_28 = groups;
+		map__set(&classes, &__map_key_27, &__map_val_28);
 	}
 	return classes;
 }
@@ -590030,8 +590031,8 @@ map types__TypeChecker__type_param_dependent_names(types__TypeChecker* tc, flat_
 		}
 	}
 	{
-		__v_int __discard_10306662449664955586_37455_37456 = 0;
-		for (; __discard_10306662449664955586_37455_37456 < 64; __discard_10306662449664955586_37455_37456++) {
+		__v_int __discard_10306662449664955586_37576_37577 = 0;
+		for (; __discard_10306662449664955586_37576_37577 < 64; __discard_10306662449664955586_37576_37577++) {
 			bool changed = false;
 			Array stack = array__clone(&roots);
 			while (stack.len > 0) {
@@ -607906,8 +607907,8 @@ string types__fold_type_param_expansions(string msg, map constraints) {
 			string text = part;
 			__v_int steps = 0;
 			{
-				__v_int __discard_10306662449664955586_34785_34786 = 0;
-				for (; __discard_10306662449664955586_34785_34786 < 32; __discard_10306662449664955586_34785_34786++) {
+				__v_int __discard_10306662449664955586_34906_34907 = 0;
+				for (; __discard_10306662449664955586_34906_34907 < 32; __discard_10306662449664955586_34906_34907++) {
 					bool changed = false;
 					for (int __mi_4 = 0; __mi_4 < (					folds).data->key_values.len; __mi_4++) {
 						if ((					folds).data->key_values.all_deleted && (					folds).data->key_values.all_deleted[__mi_4]) continue;
