@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "ad284379ed3aebe12800b1034215e7ccdf00f404"
+#define V_COMMIT_HASH "4b7c685e9e3a61bdb024e37517be56b9280105af"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -11178,13 +11178,13 @@ typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
+typedef string Array_fixed_string_25[25];
+typedef string Array_fixed_string_15[15];
 typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
 typedef Array Array_fixed_Array_2[2];
-typedef string Array_fixed_string_15[15];
 typedef u32 Array_fixed_u32_8[8];
 typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_25[25];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -39082,7 +39082,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "ad28437", 7);
+_SL(_str_199, "4b7c685", 7);
 _SL(_str_200, " unknown", 8);
 _SL(_str_201, "-0.0", 4);
 _SL(_str_202, "0.0", 3);
@@ -525765,50 +525765,52 @@ __v_option_Array types__TypeChecker__constraint_condition_term_types(types__Type
 				return (__v_option_Array){.ok = false};
 			}
 			u32 type_id = types__Type__source_type_id(&t);
-			bool __any_9 = false;
+			bool matched = false;
 			{
-				__v_int __any_idx_10 = 0;
-				for (; __any_idx_10 < named.len; __any_idx_10++) {
-					types__Type __any_it_11 = *(types__Type*)(array_get(named, __any_idx_10));
-					if (types__Type__source_type_id(&__any_it_11) == type_id) {
-						__any_9 = true;
+				__v_int __for_idx_9 = 0;
+				for (; __for_idx_9 < named.len; __for_idx_9++) {
+					types__Type n = *(types__Type*)(array_get(named, __for_idx_9));
+					if (types__Type__source_type_id(&n) == type_id) {
+						matched = true;
+						break;
 					}
 				}
 			}
-			bool matched = __any_9 || ({bool __any_12 = false;
-			{
-				__v_int __any_idx_13 = 0;
-				for (; __any_idx_13 < groups.len; __any_idx_13++) {
-					string __any_it_14 = *(string*)(array_get(groups, __any_idx_13));
-					if (types__TypeChecker__type_in_comptime_group(tc, &(types__Type[]){t}[0], __any_it_14)) {
-						__any_12 = true;
+			if (!matched) {
+				{
+					__v_int __for_idx_10 = 0;
+					for (; __for_idx_10 < groups.len; __for_idx_10++) {
+						string group = *(string*)(array_get(groups, __for_idx_10));
+						if (types__TypeChecker__type_in_comptime_group(tc, &(types__Type[]){t}[0], group)) {
+							matched = true;
+							break;
+						}
 					}
 				}
 			}
-			__any_12;});
 			if (matched == positive) {
-				types__Type __arr_val_15 = t;
-				array_push(&result, &__arr_val_15);
+				types__Type __arr_val_11 = t;
+				array_push(&result, &__arr_val_11);
 			}
 			if (family && positive) {
 				{
-					__v_int __for_idx_16 = 0;
-					for (; __for_idx_16 < named.len; __for_idx_16++) {
-						types__Type n = *(types__Type*)(array_get(named, __for_idx_16));
+					__v_int __for_idx_12 = 0;
+					for (; __for_idx_12 < named.len; __for_idx_12++) {
+						types__Type n = *(types__Type*)(array_get(named, __for_idx_12));
 						u32 named_type_id = types__Type__source_type_id(&n);
-						if ((named_type_id != type_id) && types__TypeChecker__constraint_family_holds(tc, constraint, &(types__Type[]){t}[0], &(types__Type[]){n}[0]) && ({bool __any_17 = false;
+						if ((named_type_id != type_id) && types__TypeChecker__constraint_family_holds(tc, constraint, &(types__Type[]){t}[0], &(types__Type[]){n}[0]) && ({bool __any_13 = false;
 						{
-							__v_int __any_idx_18 = 0;
-							for (; __any_idx_18 < result.len; __any_idx_18++) {
-								types__Type __any_it_19 = *(types__Type*)(array_get(result, __any_idx_18));
-								if (types__Type__source_type_id(&__any_it_19) == named_type_id) {
-									__any_17 = true;
+							__v_int __any_idx_14 = 0;
+							for (; __any_idx_14 < result.len; __any_idx_14++) {
+								types__Type __any_it_15 = *(types__Type*)(array_get(result, __any_idx_14));
+								if (types__Type__source_type_id(&__any_it_15) == named_type_id) {
+									__any_13 = true;
 								}
 							}
 						}
-						!__any_17;})) {
-							types__Type __arr_val_20 = n;
-							array_push(&result, &__arr_val_20);
+						!__any_13;})) {
+							types__Type __arr_val_16 = n;
+							array_push(&result, &__arr_val_16);
 						}
 					}
 				}
