@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "986bf429cdbbbfb4ae82d32792f1cdbfeb8feaf2"
+#define V_COMMIT_HASH "428c5c81533a9e4f85acabc53a9cc0373b7d6f1f"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -39102,7 +39102,7 @@ _SL(_str_195, "at_exit failed", 14);
 _SL(_str_196, "fixed array index out of range (index: ", 39);
 _SL(_str_197, ", len: ", 7);
 _SL(_str_198, "slice index out of range for int: ", 34);
-_SL(_str_199, "986bf42", 7);
+_SL(_str_199, "428c5c8", 7);
 _SL(_str_200, " unknown", 8);
 _SL(_str_201, "-0.0", 4);
 _SL(_str_202, "0.0", 3);
