@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "955384bce83f72523b69425cc1007242658fee71"
+#define V_COMMIT_HASH "e85e785e034bf570113bb46ec6aaea85e628aa4e"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -11185,14 +11185,14 @@ typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_25[25];
+typedef string Array_fixed_string_26[26];
+typedef string Array_fixed_string_15[15];
 typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
 typedef Array Array_fixed_Array_2[2];
 typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_26[26];
+typedef string Array_fixed_string_25[25];
 typedef u32 Array_fixed_u32_8[8];
-typedef string Array_fixed_string_15[15];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -28453,6 +28453,7 @@ bool markused__is_trivial_literal_output_program(flat__FlatAst* a, map diagnosti
 bool markused__is_user_test_file_node(flat__FlatAst* a, __v_int file_idx, flat__Node file_node, map test_files);
 multi_return_map_bool markused__mark_all_used_with_generic_usage(flat__FlatAst* a, types__TypeChecker* tc, Array test_files);
 multi_return_map_bool markused__mark_used_checking_library_bodies(flat__FlatAst* a, types__TypeChecker* tc, bool parallel);
+multi_return_map_bool markused__mark_used_checking_library_bodies_full_runtime(flat__FlatAst* a, types__TypeChecker* tc, bool parallel);
 multi_return_map_bool markused__mark_used_for_cache_with_generic_usage(flat__FlatAst* a, types__TypeChecker* tc, Array test_files, map source_modules);
 map markused__mark_used_for_cache_without_generic_detection(flat__FlatAst* a, types__TypeChecker* tc, Array test_files, map source_modules);
 multi_return_map_bool markused__mark_used_for_native_tests_with_generic_usage(flat__FlatAst* a, types__TypeChecker* tc, Array test_files);
@@ -39117,7 +39118,7 @@ _SL(_str_201, "at_exit failed", 14);
 _SL(_str_202, "fixed array index out of range (index: ", 39);
 _SL(_str_203, ", len: ", 7);
 _SL(_str_204, "slice index out of range for int: ", 34);
-_SL(_str_205, "955384b", 7);
+_SL(_str_205, "e85e785", 7);
 _SL(_str_206, " unknown", 8);
 _SL(_str_207, "-0.0", 4);
 _SL(_str_208, "0.0", 3);
@@ -71165,8 +71166,8 @@ void c__FlatGen__add_native_source_context_wrapper(c__FlatGen* g, string source_
 	array_push(&wrapper_lines, &__arr_val_0);
 	__v_int __in_lhs_1 = c__c_native_source_context_depth(directives);
 	{
-		__v_int __discard_17027569468710905096_375723_375724 = 0;
-		for (; __discard_17027569468710905096_375723_375724 < __in_lhs_1; __discard_17027569468710905096_375723_375724++) {
+		__v_int __discard_17027569468710905096_376306_376307 = 0;
+		for (; __discard_17027569468710905096_376306_376307 < __in_lhs_1; __discard_17027569468710905096_376306_376307++) {
 			string __arr_val_2 = _str_1457;
 			array_push(&wrapper_lines, &__arr_val_2);
 		}
@@ -82644,8 +82645,8 @@ Array c__FlatGen__const_emission_order(c__FlatGen* g) {
 		}
 	}
 	{
-		__v_int __discard_17027569468710905096_1015215_1015216 = 0;
-		for (; __discard_17027569468710905096_1015215_1015216 < 20; __discard_17027569468710905096_1015215_1015216++) {
+		__v_int __discard_17027569468710905096_1015798_1015799 = 0;
+		for (; __discard_17027569468710905096_1015798_1015799 < 20; __discard_17027569468710905096_1015798_1015799++) {
 			if (deferred.len == 0) {
 				break;
 			}
@@ -88576,8 +88577,8 @@ bool c__FlatGen__emit_preserved_c_directive_at(c__FlatGen* g, Array directives, 
 	}
 	__v_int __in_lhs_6 = c__c_lifted_include_context_depth(prefix);
 	{
-		__v_int __discard_17027569468710905096_401581_401582 = 0;
-		for (; __discard_17027569468710905096_401581_401582 < __in_lhs_6; __discard_17027569468710905096_401581_401582++) {
+		__v_int __discard_17027569468710905096_402164_402165 = 0;
+		for (; __discard_17027569468710905096_402164_402165 < __in_lhs_6; __discard_17027569468710905096_402164_402165++) {
 			c__FlatGen__writeln(g, _str_1457);
 		}
 	}
@@ -91287,8 +91288,8 @@ __v_option_string c__FlatGen__enum_receiver_method_name(c__FlatGen* g, types__En
 __v_option_u32 c__FlatGen__enum_selector_alias_target(c__FlatGen* g, u32 name_id) {
 	u32 cur = name_id;
 	{
-		__v_int __discard_17027569468710905096_447501_447502 = 0;
-		for (; __discard_17027569468710905096_447501_447502 < 16; __discard_17027569468710905096_447501_447502++) {
+		__v_int __discard_17027569468710905096_448084_448085 = 0;
+		for (; __discard_17027569468710905096_448084_448085 < 16; __discard_17027569468710905096_448084_448085++) {
 			__v_option_u32 __or_opt_0 = flat__SourceTypeBindings__type_id(&g->tc->type_aliases, cur);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -94900,8 +94901,8 @@ Array c__FlatGen__fixed_storage_node_scan_bounds(c__FlatGen* g, __v_int max_jobs
 c__FixedStorageRefFileContext c__FlatGen__fixed_storage_ref_file_context(c__FlatGen* g, __v_int pos_id) {
 	__v_int file_id = pos_id;
 	{
-		__v_int __discard_17027569468710905096_545943_545944 = 0;
-		for (; __discard_17027569468710905096_545943_545944 < 8; __discard_17027569468710905096_545943_545944++) {
+		__v_int __discard_17027569468710905096_546526_546527 = 0;
+		for (; __discard_17027569468710905096_546526_546527 < 8; __discard_17027569468710905096_546526_546527++) {
 			__v_int __map_key_2 = file_id;
 			void* __map_ptr_3 = map__get_check(&g->a->template_call_sites, &__map_key_2);
 			token__Pos __map_val_4 = {0};
@@ -112296,15 +112297,15 @@ void c__FlatGen__gen_interpolation_part_assignments(c__FlatGen* g, Array parts, 
 
 void c__FlatGen__gen_is_expr_subject(c__FlatGen* g, i32 expr_id, __v_int extra_deref) {
 	{
-		__v_int __discard_17027569468710905096_502148_502149 = 0;
-		for (; __discard_17027569468710905096_502148_502149 < extra_deref; __discard_17027569468710905096_502148_502149++) {
+		__v_int __discard_17027569468710905096_502731_502732 = 0;
+		for (; __discard_17027569468710905096_502731_502732 < extra_deref; __discard_17027569468710905096_502731_502732++) {
 			c__FlatGen__write(g, _str_5033);
 		}
 	}
 	c__FlatGen__gen_expr(g, expr_id);
 	{
-		__v_int __discard_17027569468710905096_502217_502218 = 0;
-		for (; __discard_17027569468710905096_502217_502218 < extra_deref; __discard_17027569468710905096_502217_502218++) {
+		__v_int __discard_17027569468710905096_502800_502801 = 0;
+		for (; __discard_17027569468710905096_502800_502801 < extra_deref; __discard_17027569468710905096_502800_502801++) {
 			c__FlatGen__write(g, _str_28);
 		}
 	}
@@ -129637,8 +129638,8 @@ __v_option_string c__FlatGen__global_name_for_ident(c__FlatGen* g, string name) 
 __v_option_string c__FlatGen__global_scalar_static_initializer(c__FlatGen* g, i32 id, types__Type* typ) {
 	i32 value_id = id;
 	{
-		__v_int __discard_17027569468710905096_930624_930625 = 0;
-		for (; __discard_17027569468710905096_930624_930625 < 3; __discard_17027569468710905096_930624_930625++) {
+		__v_int __discard_17027569468710905096_931207_931208 = 0;
+		for (; __discard_17027569468710905096_931207_931208 < 3; __discard_17027569468710905096_931207_931208++) {
 			if (((__v_int)(value_id) < 0) || ((__v_int)(value_id) >= g->a->nodes.len)) {
 				break;
 			}
@@ -164099,8 +164100,8 @@ void c__FlatGen__write_implicit_veb_ctx_param(c__FlatGen* g) {
 
 inline void c__FlatGen__write_indent(c__FlatGen* g) {
 	{
-		__v_int __discard_17027569468710905096_1054639_1054640 = 0;
-		for (; __discard_17027569468710905096_1054639_1054640 < g->indent; __discard_17027569468710905096_1054639_1054640++) {
+		__v_int __discard_17027569468710905096_1055222_1055223 = 0;
+		for (; __discard_17027569468710905096_1055222_1055223 < g->indent; __discard_17027569468710905096_1055222_1055223++) {
 			strings__Builder__write_u8(&g->sb, '\t');
 		}
 	}
@@ -169112,8 +169113,8 @@ multi_return_bool_bool c__c_header_objective_c_macro_value_state(string name, ma
 	string current = name;
 	map seen = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	{
-		__v_int __discard_17027569468710905096_297257_297258 = 0;
-		for (; __discard_17027569468710905096_297257_297258 < 64; __discard_17027569468710905096_297257_297258++) {
+		__v_int __discard_17027569468710905096_297840_297841 = 0;
+		for (; __discard_17027569468710905096_297840_297841 < 64; __discard_17027569468710905096_297840_297841++) {
 			string __map_key_0 = current;
 			bool __map_zero_1 = false;
 			if (*(bool*)(map__get(&seen, &__map_key_0, &__map_zero_1))) {
@@ -169692,8 +169693,8 @@ string c__c_header_text_without_identifier(string text, string name) {
 			__v_int __slice_end_4 = token_start;
 			strings__Builder__write_string_borrowed(__slice_builder_1, string__substr_borrowed(__slice_source_2, __slice_start_3, __slice_end_4));
 			{
-				__v_int __discard_17027569468710905096_305386_305387 = token_start;
-				for (; __discard_17027569468710905096_305386_305387 < i; __discard_17027569468710905096_305386_305387++) {
+				__v_int __discard_17027569468710905096_305969_305970 = token_start;
+				for (; __discard_17027569468710905096_305969_305970 < i; __discard_17027569468710905096_305969_305970++) {
 					strings__Builder__write_u8(result, ' ');
 				}
 			}
@@ -173139,6 +173140,14 @@ c__CacheNativeSourceContexts c__cache_native_source_contexts(flat__FlatAst* a, s
 	map imports = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	string cur_file = _str_34;
 	string cur_module = _str_181;
+	string __if_val_1 = {0};
+	if (vroot.len > 0) {
+		__if_val_1 = string__plus(string__replace(os__join_path_single(os__join_path_single(vroot, _str_376), _str_1205), _str_384, _str_197), _str_197);
+	} else {
+		__if_val_1 = _str_34;
+	}
+	string builtin_dir = __if_val_1;
+	bool in_builtin_dir = false;
 	{
 		__v_int node_idx = 0;
 		for (; node_idx < a->nodes.len; node_idx++) {
@@ -173146,6 +173155,10 @@ c__CacheNativeSourceContexts c__cache_native_source_contexts(flat__FlatAst* a, s
 			if (node.kind == flat__NodeKind__file) {
 				cur_file = node.value;
 				cur_module = _str_181;
+				in_builtin_dir = (builtin_dir.len > 0) && string__starts_with(string__replace(cur_file, _str_384, _str_197), builtin_dir);
+				continue;
+			}
+			if (in_builtin_dir) {
 				continue;
 			}
 			if (node.kind == flat__NodeKind__module_decl) {
@@ -173153,26 +173166,26 @@ c__CacheNativeSourceContexts c__cache_native_source_contexts(flat__FlatAst* a, s
 				continue;
 			}
 			if (node.kind == flat__NodeKind__import_decl) {
-				if ((node.value.len > 0) && ({string __contains_needle_4 = node.value;
-				string __map_key_1 = cur_module;
-				Array __map_zero_2 = array_new(sizeof(string), 0, 0);
-				Array __in_arr_3 = *(Array*)(map__get(&imports, &__map_key_1, &__map_zero_2));
-				bool __contains_5 = false;
+				if ((node.value.len > 0) && ({string __contains_needle_5 = node.value;
+				string __map_key_2 = cur_module;
+				Array __map_zero_3 = array_new(sizeof(string), 0, 0);
+				Array __in_arr_4 = *(Array*)(map__get(&imports, &__map_key_2, &__map_zero_3));
+				bool __contains_6 = false;
 				{
-					__v_int __contains_idx_6 = 0;
-					for (; __contains_idx_6 < __in_arr_3.len; __contains_idx_6++) {
-						if (string__eq(*(string*)(array_get(__in_arr_3, __contains_idx_6)), __contains_needle_4)) {
-							__contains_5 = true;
+					__v_int __contains_idx_7 = 0;
+					for (; __contains_idx_7 < __in_arr_4.len; __contains_idx_7++) {
+						if (string__eq(*(string*)(array_get(__in_arr_4, __contains_idx_7)), __contains_needle_5)) {
+							__contains_6 = true;
 						}
 					}
 				}
-				!__contains_5;})) {
-					string __map_key_7 = cur_module;
-					Array __map_zero_9 = array_new(sizeof(string), 0, 0);
-					Array __map_val_8 = *(Array*)(map__get(&imports, &__map_key_7, &__map_zero_9));
-					string __arr_val_10 = node.value;
-					array_push(&__map_val_8, &__arr_val_10);
-					map__set(&imports, &__map_key_7, &__map_val_8);
+				!__contains_6;})) {
+					string __map_key_8 = cur_module;
+					Array __map_zero_10 = array_new(sizeof(string), 0, 0);
+					Array __map_val_9 = *(Array*)(map__get(&imports, &__map_key_8, &__map_zero_10));
+					string __arr_val_11 = node.value;
+					array_push(&__map_val_9, &__arr_val_11);
+					map__set(&imports, &__map_key_8, &__map_val_9);
 				}
 				continue;
 			}
@@ -173196,12 +173209,12 @@ c__CacheNativeSourceContexts c__cache_native_source_contexts(flat__FlatAst* a, s
 				}
 			}
 			if (text.len > 0) {
-				string __map_key_11 = cur_module;
-				Array __map_zero_13 = array_new(sizeof(c__CacheNativeSourceDirective), 0, 0);
-				Array __map_val_12 = *(Array*)(map__get(&directives, &__map_key_11, &__map_zero_13));
-				c__CacheNativeSourceDirective __arr_val_14 = (c__CacheNativeSourceDirective){.node_idx = node_idx, .text = text, .native_source = native_source};
-				array_push(&__map_val_12, &__arr_val_14);
-				map__set(&directives, &__map_key_11, &__map_val_12);
+				string __map_key_12 = cur_module;
+				Array __map_zero_14 = array_new(sizeof(c__CacheNativeSourceDirective), 0, 0);
+				Array __map_val_13 = *(Array*)(map__get(&directives, &__map_key_12, &__map_zero_14));
+				c__CacheNativeSourceDirective __arr_val_15 = (c__CacheNativeSourceDirective){.node_idx = node_idx, .text = text, .native_source = native_source};
+				array_push(&__map_val_13, &__arr_val_15);
+				map__set(&directives, &__map_key_12, &__map_val_13);
 			}
 		}
 	}
@@ -173974,8 +173987,8 @@ __v_int c__cgen_type_pointer_depth(types__Type* t) {
 	types__Type cur = (*t);
 	__v_int depth = 0;
 	{
-		__v_int __discard_17027569468710905096_501493_501494 = 0;
-		for (; __discard_17027569468710905096_501493_501494 < 32; __discard_17027569468710905096_501493_501494++) {
+		__v_int __discard_17027569468710905096_502076_502077 = 0;
+		for (; __discard_17027569468710905096_502076_502077 < 32; __discard_17027569468710905096_502076_502077++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -174066,8 +174079,8 @@ types__Type* c__cgen_unalias_type(types__Type* typ) {
 types__Type c__cgen_unalias_unwrap_all_pointers(types__Type* t) {
 	types__Type cur = (*t);
 	{
-		__v_int __discard_17027569468710905096_501761_501762 = 0;
-		for (; __discard_17027569468710905096_501761_501762 < 32; __discard_17027569468710905096_501761_501762++) {
+		__v_int __discard_17027569468710905096_502344_502345 = 0;
+		for (; __discard_17027569468710905096_502344_502345 < 32; __discard_17027569468710905096_502344_502345++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -195234,7 +195247,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 	}
 	driver__V3ModuleCacheState__print_module_cache_notice(state, module_name);
 	string unique = tempname__unique_token();
-	string tmp_dir = ({ string __v3_internal_symbol_join_0[3]; __v3_internal_symbol_join_0[0] = entry.c_source; __v3_internal_symbol_join_0[1] = _str_1385; __v3_internal_symbol_join_0[2] = unique; string_plus_many(3, __v3_internal_symbol_join_0); });
+	string tmp_dir = os__join_path_single(os__dir(entry.c_source), string__plus(_str_1385, unique));
 	__v_result __or_opt_6 = os__mkdir_all(tmp_dir, (os__MkdirParams){.mode = 0777});
 	if (!__or_opt_6.ok) {
 		return (__v_result_bool){.ok = false, .err = __or_opt_6.err};
@@ -195242,7 +195255,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 	string tmp_source = os__join_path_single(tmp_dir, os__file_name(entry.c_source));
 	__v_result __or_opt_9 = os__write_file(tmp_source, c_source);
 	if (!__or_opt_9.ok) {
-		__v_result_bool _t2 = (__v_result_bool){.ok = false, .err = __or_opt_9.err};
+		__v_result_bool _t1 = (__v_result_bool){.ok = false, .err = __or_opt_9.err};
 		{
 			if (string__eq(os__getenv(_str_1652), _str_34)) {
 				__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -195254,7 +195267,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 				}
 			}
 		}
-		return _t2;
+		return _t1;
 	}
 	Array flags = driver__c_object_compile_flags(module_flags);
 	Array __filter_10 = array_new(	sizeof(string), 0, flags.len);
@@ -195268,7 +195281,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 		}
 	}
 	flags = __filter_10;
-	string tmp_object = ({ string __v3_internal_symbol_join_2[3]; __v3_internal_symbol_join_2[0] = entry.object; __v3_internal_symbol_join_2[1] = _str_1385; __v3_internal_symbol_join_2[2] = unique; string_plus_many(3, __v3_internal_symbol_join_2); });
+	string tmp_object = ({ string __v3_internal_symbol_join_1[3]; __v3_internal_symbol_join_1[0] = entry.object; __v3_internal_symbol_join_1[1] = _str_1385; __v3_internal_symbol_join_1[2] = unique; string_plus_many(3, __v3_internal_symbol_join_1); });
 	Array args = array__clone(&compiler->args);
 	if (objective_c) {
 		Array __push_many_13 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_1381, _str_1382});
@@ -195285,7 +195298,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 		__v_result __or_opt_16 = os__rm(tmp_object);
 		if (!__or_opt_16.ok) {
 		}
-		__v_result_bool _t5 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = ({ string __v3_internal_symbol_join_3[4]; __v3_internal_symbol_join_3[0] = _str_2353; __v3_internal_symbol_join_3[1] = entry.object; __v3_internal_symbol_join_3[2] = _str_1659; __v3_internal_symbol_join_3[3] = result.output; string_plus_many(4, __v3_internal_symbol_join_3); }), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+		__v_result_bool _t4 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = ({ string __v3_internal_symbol_join_2[4]; __v3_internal_symbol_join_2[0] = _str_2353; __v3_internal_symbol_join_2[1] = entry.object; __v3_internal_symbol_join_2[2] = _str_1659; __v3_internal_symbol_join_2[3] = result.output; string_plus_many(4, __v3_internal_symbol_join_2); }), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		{
 			if (string__eq(os__getenv(_str_1652), _str_34)) {
 				__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -195297,7 +195310,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 				}
 			}
 		}
-		return _t5;
+		return _t4;
 	}
 	__v_result __or_opt_17 = os__mv(tmp_object, entry.object, (os__MvParams){.overwrite = true});
 	if (!__or_opt_17.ok) {
@@ -195306,7 +195319,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 		if (!__or_opt_18.ok) {
 		}
 		if (!os__is_file(entry.object)) {
-			__v_result_bool _t7 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = ({ string __v3_internal_symbol_join_5[4]; __v3_internal_symbol_join_5[0] = _str_3112; __v3_internal_symbol_join_5[1] = entry.object; __v3_internal_symbol_join_5[2] = _str_443; __v3_internal_symbol_join_5[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_5); }), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			__v_result_bool _t6 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = ({ string __v3_internal_symbol_join_4[4]; __v3_internal_symbol_join_4[0] = _str_3112; __v3_internal_symbol_join_4[1] = entry.object; __v3_internal_symbol_join_4[2] = _str_443; __v3_internal_symbol_join_4[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_4); }), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				if (string__eq(os__getenv(_str_1652), _str_34)) {
 					__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -195318,14 +195331,14 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 					}
 				}
 			}
-			return _t7;
+			return _t6;
 		}
 	}
 	__v_result __or_opt_19 = os__mv(tmp_source, entry.c_source, (os__MvParams){.overwrite = true});
 	if (!__or_opt_19.ok) {
 		IError err = __or_opt_19.err;
 		if (!os__is_file(entry.c_source)) {
-			__v_result_bool _t9 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = ({ string __v3_internal_symbol_join_7[4]; __v3_internal_symbol_join_7[0] = _str_3113; __v3_internal_symbol_join_7[1] = entry.c_source; __v3_internal_symbol_join_7[2] = _str_443; __v3_internal_symbol_join_7[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_7); }), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
+			__v_result_bool _t8 = (__v_result_bool){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = ({ string __v3_internal_symbol_join_6[4]; __v3_internal_symbol_join_6[0] = _str_3113; __v3_internal_symbol_join_6[1] = entry.c_source; __v3_internal_symbol_join_6[2] = _str_443; __v3_internal_symbol_join_6[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_6); }), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 			{
 				if (string__eq(os__getenv(_str_1652), _str_34)) {
 					__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -195337,11 +195350,11 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 					}
 				}
 			}
-			return _t9;
+			return _t8;
 		}
 	}
 	driver__v3_publish_shared_module_object(pooled, entry);
-	__v_result_bool _t10 = (__v_result_bool){.ok = true, .value = 	true};
+	__v_result_bool _t9 = (__v_result_bool){.ok = true, .value = 	true};
 	{
 		if (string__eq(os__getenv(_str_1652), _str_34)) {
 			__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -195353,7 +195366,7 @@ __v_result_bool driver__compile_v3_cached_object(driver__V3CachedObjectCompiler 
 			}
 		}
 	}
-	return _t10;
+	return _t9;
 	{
 		if (string__eq(os__getenv(_str_1652), _str_34)) {
 			__v_result __or_opt_7 = os__rmdir_all(tmp_dir);
@@ -198640,8 +198653,8 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 				bool dropped = false;
 				__v_int __in_lhs_16 = declared + 1;
 				{
-					__v_int __discard_15215236722831141574_884524_884525 = 0;
-					for (; __discard_15215236722831141574_884524_884525 < __in_lhs_16; __discard_15215236722831141574_884524_884525++) {
+					__v_int __discard_15215236722831141574_885276_885277 = 0;
+					for (; __discard_15215236722831141574_885276_885277 < __in_lhs_16; __discard_15215236722831141574_885276_885277++) {
 						bool changed = false;
 						array__clear(&untyped);
 						{
@@ -198860,8 +198873,8 @@ Array driver__implicit_multi_value_types(u32 raw_id, driver__ImplicitFieldScanIn
 u32 driver__implicit_normalize_type(u32 raw_id, driver__ImplicitFieldScanIndex v_index) {
 	u32 typ_id = driver__implicit_trimmed_type_id(raw_id);
 	{
-		__v_int __discard_15215236722831141574_903099_903100 = 0;
-		for (; __discard_15215236722831141574_903099_903100 < 12; __discard_15215236722831141574_903099_903100++) {
+		__v_int __discard_15215236722831141574_903851_903852 = 0;
+		for (; __discard_15215236722831141574_903851_903852 < 12; __discard_15215236722831141574_903851_903852++) {
 			bool changed = false;
 			{
 				__v_int __for_idx_0 = 0;
@@ -203322,8 +203335,8 @@ __v_option_string driver__nearest_vroot_for_path(string path) {
 		dir = os__dir(dir);
 	}
 	{
-		__v_int __discard_15215236722831141574_796061_796062 = 0;
-		for (; __discard_15215236722831141574_796061_796062 < 8; __discard_15215236722831141574_796061_796062++) {
+		__v_int __discard_15215236722831141574_796813_796814 = 0;
+		for (; __discard_15215236722831141574_796813_796814 < 8; __discard_15215236722831141574_796813_796814++) {
 			if (driver__is_valid_vroot(dir)) {
 				return (__v_option_string){.ok = true, .value = dir};
 			}
@@ -213357,6 +213370,7 @@ void driver__run(Array args) {
 			eprintln(({ string __v3_internal_symbol_join_59[3]; __v3_internal_symbol_join_59[0] = _str_2777; u8 __v3_internal_symbol_join_59_number_1[314]; __v3_internal_symbol_join_59[1] = v3_numeric_pad_buf(v3_f64_fixed_buf((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(mu_stage_sw)))) / 1000.0, 2, __v3_internal_symbol_join_59_number_1), 7, 0, __v3_internal_symbol_join_59_number_1, 314); __v3_internal_symbol_join_59[2] = _str_2724; string_plus_many(3, __v3_internal_symbol_join_59); }));
 			time__StopWatch__restart(&mu_stage_sw);
 		}
+		bool debug_literal_full_runtime = (is_debug || (coverage_dir.len > 0)) && markused__is_trivial_literal_output_program(a, pre_tc->diagnostic_files);
 		if (no_skip_unused) {
 			if (string__eq(backend, _str_3)) {
 				kept_code_uses_recover = modulecache__declarations_use_recover(a, markused_tc);
@@ -213396,22 +213410,26 @@ void driver__run(Array args) {
 				used_fns = markused__mark_used_without_generic_detection(a, markused_tc);
 			}
 			uses_generics = false;
-		} else if (library_body_frontiers) {
-			multi_return_map_bool __multi_ret_642 = markused__mark_used_checking_library_bodies(a, pre_tc, check_may_be_parallel);
+		} else if (library_body_frontiers && debug_literal_full_runtime) {
+			multi_return_map_bool __multi_ret_642 = markused__mark_used_checking_library_bodies_full_runtime(a, pre_tc, check_may_be_parallel);
 			used_fns = __multi_ret_642.arg0;
 			uses_generics = __multi_ret_642.arg1;
-		} else if (string__eq(effective_c_compiler, _str_1256) || ((string__eq(target.os, _str_890) || string__eq(target.os, _str_888)) && markused__is_trivial_literal_output_program(a, pre_tc->diagnostic_files))) {
-			multi_return_map_bool __multi_ret_643 = markused__mark_used_with_generic_usage_full_runtime(a, markused_tc);
+		} else if (library_body_frontiers) {
+			multi_return_map_bool __multi_ret_643 = markused__mark_used_checking_library_bodies(a, pre_tc, check_may_be_parallel);
 			used_fns = __multi_ret_643.arg0;
 			uses_generics = __multi_ret_643.arg1;
-		} else if (!isnil((void*)(markused_decls))) {
-			multi_return_map_bool __multi_ret_644 = markused__mark_used_with_generic_usage_cached(a, markused_tc, markused_decls);
+		} else if (string__eq(effective_c_compiler, _str_1256) || debug_literal_full_runtime || ((string__eq(target.os, _str_890) || string__eq(target.os, _str_888)) && markused__is_trivial_literal_output_program(a, pre_tc->diagnostic_files))) {
+			multi_return_map_bool __multi_ret_644 = markused__mark_used_with_generic_usage_full_runtime(a, markused_tc);
 			used_fns = __multi_ret_644.arg0;
 			uses_generics = __multi_ret_644.arg1;
-		} else {
-			multi_return_map_bool __multi_ret_645 = markused__mark_used_with_generic_usage(a, markused_tc);
+		} else if (!isnil((void*)(markused_decls))) {
+			multi_return_map_bool __multi_ret_645 = markused__mark_used_with_generic_usage_cached(a, markused_tc, markused_decls);
 			used_fns = __multi_ret_645.arg0;
 			uses_generics = __multi_ret_645.arg1;
+		} else {
+			multi_return_map_bool __multi_ret_646 = markused__mark_used_with_generic_usage(a, markused_tc);
+			used_fns = __multi_ret_646.arg0;
+			uses_generics = __multi_ret_646.arg1;
 		}
 		if (library_body_frontiers && (pre_tc->errors.len > 0)) {
 			driver__print_type_diagnostics(a, pre_tc->notices, pre_tc->errors, is_checker_fixture, fatal_errors, check_only, message_limit, skip_notices);
@@ -213428,9 +213446,9 @@ void driver__run(Array args) {
 				used_fns = markused__mark_used_for_cache_without_generic_detection(a, markused_tc, test_files, cache_state->source_body_modules);
 			} else {
 				bool cache_uses_generics = false;
-				multi_return_map_bool __multi_ret_646 = markused__mark_used_for_cache_with_generic_usage(a, markused_tc, test_files, cache_state->source_body_modules);
-				used_fns = __multi_ret_646.arg0;
-				cache_uses_generics = __multi_ret_646.arg1;
+				multi_return_map_bool __multi_ret_647 = markused__mark_used_for_cache_with_generic_usage(a, markused_tc, test_files, cache_state->source_body_modules);
+				used_fns = __multi_ret_647.arg0;
+				cache_uses_generics = __multi_ret_647.arg1;
 				uses_generics = uses_generics || cache_uses_generics;
 			}
 		}
@@ -213456,9 +213474,9 @@ void driver__run(Array args) {
 					driver__print_type_diagnostics(a, pre_tc->notices, pre_tc->errors, is_checker_fixture, fatal_errors, check_only, message_limit, skip_notices);
 					v_exit(1);
 				}
-				multi_return_map_bool __multi_ret_647 = driver__v3_mark_used_for_program(a, pre_tc, scope_prealloc_markused, string__eq(effective_c_compiler, _str_1256), prefs->verbose, markused_decls);
-				used_fns = __multi_ret_647.arg0;
-				uses_generics = __multi_ret_647.arg1;
+				multi_return_map_bool __multi_ret_648 = driver__v3_mark_used_for_program(a, pre_tc, scope_prealloc_markused, string__eq(effective_c_compiler, _str_1256) || debug_literal_full_runtime, prefs->verbose, markused_decls);
+				used_fns = __multi_ret_648.arg0;
+				uses_generics = __multi_ret_648.arg1;
 			}
 		}
 		if (!isnil((void*)(markused_decls))) {
@@ -213471,13 +213489,13 @@ void driver__run(Array args) {
 			eprintln(({ string __v3_internal_symbol_join_61[3]; __v3_internal_symbol_join_61[0] = _str_2781; u8 __v3_internal_symbol_join_61_number_1[314]; __v3_internal_symbol_join_61[1] = v3_numeric_pad_buf(v3_f64_fixed_buf((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(mu_stage_sw)))) / 1000.0, 2, __v3_internal_symbol_join_61_number_1), 7, 0, __v3_internal_symbol_join_61_number_1, 314); __v3_internal_symbol_join_61[2] = _str_2724; string_plus_many(3, __v3_internal_symbol_join_61); }));
 			time__StopWatch__restart(&mu_stage_sw);
 		}
-		transform__PreparedSelfhostTransform* __if_val_648 = {0};
+		transform__PreparedSelfhostTransform* __if_val_649 = {0};
 		if (prepare_transform_overlap) {
-			__if_val_648 = ({ __v_thread __twthread62 = (*(__v_thread*)array_get(prepared_transform_threads, 0)); if (!__twthread62.handle) v_panic(_S("unable to join thread")); void* __twres62 = __v_thread_join(__twthread62); transform__PreparedSelfhostTransform* __twval62; if (__twres62) { __twval62 = *((transform__PreparedSelfhostTransform**)__twres62); __v_thread_free(__twres62); } else { memset(&__twval62, 0, sizeof(__twval62)); } __twval62; });
+			__if_val_649 = ({ __v_thread __twthread62 = (*(__v_thread*)array_get(prepared_transform_threads, 0)); if (!__twthread62.handle) v_panic(_S("unable to join thread")); void* __twres62 = __v_thread_join(__twthread62); transform__PreparedSelfhostTransform* __twval62; if (__twres62) { __twval62 = *((transform__PreparedSelfhostTransform**)__twres62); __v_thread_free(__twres62); } else { memset(&__twval62, 0, sizeof(__twval62)); } __twval62; });
 		} else {
-			__if_val_648 = transform__prepare_selfhost_transform(a, pre_tc, false);
+			__if_val_649 = transform__prepare_selfhost_transform(a, pre_tc, false);
 		}
-		transform__PreparedSelfhostTransform* prepared_transform = __if_val_648;
+		transform__PreparedSelfhostTransform* prepared_transform = __if_val_649;
 		if (verbose) {
 			eprintln(({ string __v3_internal_symbol_join_63[3]; __v3_internal_symbol_join_63[0] = _str_2782; u8 __v3_internal_symbol_join_63_number_1[314]; __v3_internal_symbol_join_63[1] = v3_numeric_pad_buf(v3_f64_fixed_buf((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(mu_stage_sw)))) / 1000.0, 2, __v3_internal_symbol_join_63_number_1), 7, 0, __v3_internal_symbol_join_63_number_1, 314); __v3_internal_symbol_join_63[2] = _str_2724; string_plus_many(3, __v3_internal_symbol_join_63); }));
 		}
@@ -213498,17 +213516,17 @@ void driver__run(Array args) {
 		if (pre_tc->notices.len > 0) {
 			bool checker_sql_warnings_only = is_checker_fixture && driver__ast_contains_sql_expr(a);
 			if (cache_state->manager.enabled) {
-				Array __push_many_649 = driver__cache_v3_type_diagnostics(a, pre_tc->notices);
-				array__push_many(&cached_checker_diagnostics, __push_many_649.data, __push_many_649.len);
+				Array __push_many_650 = driver__cache_v3_type_diagnostics(a, pre_tc->notices);
+				array__push_many(&cached_checker_diagnostics, __push_many_650.data, __push_many_650.len);
 			}
 			if (!checker_notices_already_printed) {
 				driver__print_type_diagnostics(a, pre_tc->notices, array_new(				sizeof(types__TypeError), 0, 0), is_checker_fixture, fatal_errors, check_only, message_limit, skip_notices);
 				checker_notices_printed = true;
 			}
 			{
-				__v_int __for_idx_650 = 0;
-				for (; __for_idx_650 < pre_tc->notices.len; __for_idx_650++) {
-					types__TypeError notice = *(types__TypeError*)(array_get(pre_tc->notices, __for_idx_650));
+				__v_int __for_idx_651 = 0;
+				for (; __for_idx_651 < pre_tc->notices.len; __for_idx_651++) {
+					types__TypeError notice = *(types__TypeError*)(array_get(pre_tc->notices, __for_idx_651));
 					if (skip_notices && (string__eq(notice.severity, _str_34) || string__eq(notice.severity, _str_2671))) {
 						continue;
 					}
@@ -213528,9 +213546,9 @@ void driver__run(Array args) {
 			driver__release_unused_diagnostic_scope(&pre_tc->errors, &pre_tc->notices, unused_diag_scope);
 		}
 		if (string__eq(backend, _str_241)) {
-			__v_option_string __if_guard_651 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
-			if (__if_guard_651.ok) {
-				string msg = __if_guard_651.value;
+			__v_option_string __if_guard_652 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
+			if (__if_guard_652.ok) {
+				string msg = __if_guard_652.value;
 				eprintln(msg);
 				v_exit(1);
 			}
@@ -213562,29 +213580,29 @@ void driver__run(Array args) {
 		}
 		map transform_used_fns = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 		__v_int pre_transform_node_count = a->nodes.len;
-		if (driver__ownership_checker_compiled() && (ownership_mode || ({bool __contains_652 = false;
+		if (driver__ownership_checker_compiled() && (ownership_mode || ({bool __contains_653 = false;
 		{
-			__v_int __contains_idx_653 = 0;
-			for (; __contains_idx_653 < prefs->user_defines.len; __contains_idx_653++) {
-				if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_653)), _str_250)) {
-					__contains_652 = true;
+			__v_int __contains_idx_654 = 0;
+			for (; __contains_idx_654 < prefs->user_defines.len; __contains_idx_654++) {
+				if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_654)), _str_250)) {
+					__contains_653 = true;
 				}
 			}
 		}
-		__contains_652;}))) {
+		__contains_653;}))) {
 			types__TypeChecker__prepare_callback_param_flows(pre_tc, used_fns);
 		}
 		if (incremental_cache_hit) {
 			transform_used_fns = driver__clone_string_bool_map(incremental_changed_names);
-			string __map_key_654 = _str_181;
-			bool __map_val_655 = true;
-			map__set(&transform_used_fns, &__map_key_654, &__map_val_655);
+			string __map_key_655 = _str_181;
+			bool __map_val_656 = true;
+			map__set(&transform_used_fns, &__map_key_655, &__map_val_656);
 		}
 		if (incremental_cache_hit) {
-			multi_return_map_Array_Array __multi_ret_656 = transform__transform_selected_functions(a, pre_tc, incremental_changed_names);
-			transform_used_fns = __multi_ret_656.arg0;
-			transform_errors = __multi_ret_656.arg1;
-			incremental_synthesized_helpers = __multi_ret_656.arg2;
+			multi_return_map_Array_Array __multi_ret_657 = transform__transform_selected_functions(a, pre_tc, incremental_changed_names);
+			transform_used_fns = __multi_ret_657.arg0;
+			transform_errors = __multi_ret_657.arg1;
+			incremental_synthesized_helpers = __multi_ret_657.arg2;
 			transform_texts_canonical = true;
 		} else if (scope_prealloc_transform) {
 			if (verbose) {
@@ -213637,22 +213655,22 @@ void driver__run(Array args) {
 			bool retain_scope_without_regions = building_v && current_parallel_transform && (string__eq(backend, _str_3) || string__eq(backend, _str_236)) && !cache_state->manager.enabled && (cmd_v_build || driver__input_is_v3_compiler_entry(input_file) || !string__eq(os__getenv(_str_2796), _str_34));
 			if (prepare_transform_overlap) {
 				transform__PreparedSelfhostTransform__set_keeps_scope_without_regions(prepared_transform, retain_scope_without_regions);
-				multi_return_map_bool_Array_Array_Array __multi_ret_657 = transform__transform_prepared_selfhost_owned(prepared_transform, a, pre_tc, used_fns, transform_scope);
-				transform_used_fns = __multi_ret_657.arg0;
-				transform_was_parallel = __multi_ret_657.arg1;
-				transform_errors = __multi_ret_657.arg2;
-				scoped_owned_base_nodes = __multi_ret_657.arg3;
-				retained_transform_regions = __multi_ret_657.arg4;
-				retained_transform_prepare_scope = transform__PreparedSelfhostTransform__take_scope(prepared_transform);
-				retained_transform_prescan_scopes = transform__PreparedSelfhostTransform__take_prescan_scopes(prepared_transform);
-			} else {
-				bool use_parallel_transform = current_parallel_transform && (a->nodes.len < driver__scoped_serial_user_transform_node_threshold);
-				multi_return_map_bool_Array_Array_Array __multi_ret_658 = transform__transform_with_used_opt_config_scoped_workers_checked_owned(a, pre_tc, used_fns, use_parallel_transform, skip_transform_generics, true, building_v || trivial_literal_output, transform_scope);
+				multi_return_map_bool_Array_Array_Array __multi_ret_658 = transform__transform_prepared_selfhost_owned(prepared_transform, a, pre_tc, used_fns, transform_scope);
 				transform_used_fns = __multi_ret_658.arg0;
 				transform_was_parallel = __multi_ret_658.arg1;
 				transform_errors = __multi_ret_658.arg2;
 				scoped_owned_base_nodes = __multi_ret_658.arg3;
 				retained_transform_regions = __multi_ret_658.arg4;
+				retained_transform_prepare_scope = transform__PreparedSelfhostTransform__take_scope(prepared_transform);
+				retained_transform_prescan_scopes = transform__PreparedSelfhostTransform__take_prescan_scopes(prepared_transform);
+			} else {
+				bool use_parallel_transform = current_parallel_transform && (a->nodes.len < driver__scoped_serial_user_transform_node_threshold);
+				multi_return_map_bool_Array_Array_Array __multi_ret_659 = transform__transform_with_used_opt_config_scoped_workers_checked_owned(a, pre_tc, used_fns, use_parallel_transform, skip_transform_generics, true, building_v || trivial_literal_output, transform_scope);
+				transform_used_fns = __multi_ret_659.arg0;
+				transform_was_parallel = __multi_ret_659.arg1;
+				transform_errors = __multi_ret_659.arg2;
+				scoped_owned_base_nodes = __multi_ret_659.arg3;
+				retained_transform_regions = __multi_ret_659.arg4;
 			}
 			bool parse_cache_enabled = types__TypeChecker__type_cache_parse_enabled(pre_tc);
 			time__StopWatch post_sw = time__new_stopwatch((time__StopWatchOptions){.auto_start = true});
@@ -213660,8 +213678,8 @@ void driver__run(Array args) {
 			if ((retained_transform_prepare_scope != NULL) || (retained_transform_prescan_scopes.len > 0)) {
 				Array helper_scopes = array_new(				sizeof(void*), 0, retained_transform_prescan_scopes.len + 1);
 				if (retained_transform_prepare_scope != NULL) {
-					void* __arr_val_659 = retained_transform_prepare_scope;
-					array_push(&helper_scopes, &__arr_val_659);
+					void* __arr_val_660 = retained_transform_prepare_scope;
+					array_push(&helper_scopes, &__arr_val_660);
 				}
 				array__push_many(&helper_scopes, retained_transform_prescan_scopes.data, retained_transform_prescan_scopes.len);
 				retain_transform_helper_texts = retain_scope_without_regions && (retained_transform_regions.len == 0) && driver__transform_helper_scopes_fit_retention_budget(helper_scopes);
@@ -213689,9 +213707,9 @@ void driver__run(Array args) {
 					if (verbose) {
 						__v_int dirty_texts = 0;
 						{
-							__v_int __for_idx_660 = 0;
-							for (; __for_idx_660 < a->text_values.len; __for_idx_660++) {
-								string tv = *(string*)(array_get(a->text_values, __for_idx_660));
+							__v_int __for_idx_661 = 0;
+							for (; __for_idx_661 < a->text_values.len; __for_idx_661++) {
+								string tv = *(string*)(array_get(a->text_values, __for_idx_661));
 								if ((tv.len > 0) && driver__scoped_value_owned(transform_scope, (void*)(tv.str))) {
 									dirty_texts++;
 								}
@@ -213738,9 +213756,9 @@ void driver__run(Array args) {
 							__v_int outer_new_end = ((*(transform__ScopedTransformRegion*)array_get(retained_transform_regions, 0))).new_start;
 							driver__promote_scoped_ast_nodes_flagged(a, base_transform_nodes, outer_new_end, scoped_owned_base_nodes, transform_scope, scoped_text_flags);
 							{
-								__v_int __for_idx_661 = 0;
-								for (; __for_idx_661 < retained_transform_regions.len; __for_idx_661++) {
-									transform__ScopedTransformRegion region = *(transform__ScopedTransformRegion*)(array_get(retained_transform_regions, __for_idx_661));
+								__v_int __for_idx_662 = 0;
+								for (; __for_idx_662 < retained_transform_regions.len; __for_idx_662++) {
+									transform__ScopedTransformRegion region = *(transform__ScopedTransformRegion*)(array_get(retained_transform_regions, __for_idx_662));
 									driver__canonicalize_scoped_transform_region_from_scope(a, region, transform_scope);
 								}
 							}
@@ -213810,10 +213828,10 @@ void driver__run(Array args) {
 									}
 								}
 							}
-							__v_int __map_key_662 = idx;
-							void* __map_ptr_663 = map__get_check(&pre_tc->sparse_resolved_fn_values, &__map_key_662);
-							if (__map_ptr_663 != NULL) {
-								string name = *(string*)(__map_ptr_663);
+							__v_int __map_key_663 = idx;
+							void* __map_ptr_664 = map__get_check(&pre_tc->sparse_resolved_fn_values, &__map_key_663);
+							if (__map_ptr_664 != NULL) {
+								string name = *(string*)(__map_ptr_664);
 								if (driver__scoped_value_owned(transform_scope, (void*)(name.str))) {
 									leaked_fv++;
 								}
@@ -213836,9 +213854,9 @@ void driver__run(Array args) {
 				}
 				driver__prealloc_scope_free_for_v3(transform_scope);
 				{
-					__v_int __for_idx_664 = 0;
-					for (; __for_idx_664 < transform_helper_scopes.len; __for_idx_664++) {
-						void* scope = *(void**)(array_get(transform_helper_scopes, __for_idx_664));
+					__v_int __for_idx_665 = 0;
+					for (; __for_idx_665 < transform_helper_scopes.len; __for_idx_665++) {
+						void* scope = *(void**)(array_get(transform_helper_scopes, __for_idx_665));
 						driver__prealloc_scope_free_for_v3(scope);
 					}
 				}
@@ -213853,9 +213871,9 @@ void driver__run(Array args) {
 						types__TypeChecker__rebind_ast(pre_tc, a);
 					}
 					{
-						__v_int __for_idx_665 = 0;
-						for (; __for_idx_665 < retained_transform_regions.len; __for_idx_665++) {
-							transform__ScopedTransformRegion region = *(transform__ScopedTransformRegion*)(array_get(retained_transform_regions, __for_idx_665));
+						__v_int __for_idx_666 = 0;
+						for (; __for_idx_666 < retained_transform_regions.len; __for_idx_666++) {
+							transform__ScopedTransformRegion region = *(transform__ScopedTransformRegion*)(array_get(retained_transform_regions, __for_idx_666));
 							if (skip_transform_generics) {
 								driver__canonicalize_scoped_transform_region(a, region);
 							} else {
@@ -213881,25 +213899,25 @@ void driver__run(Array args) {
 				eprintln(({ string __v3_internal_symbol_join_82[3]; __v3_internal_symbol_join_82[0] = _str_2825; u8 __v3_internal_symbol_join_82_number_1[314]; __v3_internal_symbol_join_82[1] = v3_numeric_pad_buf(v3_f64_fixed_buf((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(post_sw)))) / 1000.0, 2, __v3_internal_symbol_join_82_number_1), 7, 0, __v3_internal_symbol_join_82_number_1, 314); __v3_internal_symbol_join_82[2] = _str_2724; string_plus_many(3, __v3_internal_symbol_join_82); }));
 			}
 		} else {
-			multi_return_map_bool_Array __multi_ret_666 = transform__transform_with_used_opt_config_scoped_workers_checked(a, pre_tc, used_fns, current_parallel_transform, skip_transform_generics, false, building_v || trivial_literal_output);
-			transform_used_fns = __multi_ret_666.arg0;
-			transform_was_parallel = __multi_ret_666.arg1;
-			transform_errors = __multi_ret_666.arg2;
+			multi_return_map_bool_Array __multi_ret_667 = transform__transform_with_used_opt_config_scoped_workers_checked(a, pre_tc, used_fns, current_parallel_transform, skip_transform_generics, false, building_v || trivial_literal_output);
+			transform_used_fns = __multi_ret_667.arg0;
+			transform_was_parallel = __multi_ret_667.arg1;
+			transform_errors = __multi_ret_667.arg2;
 		}
 		if (!incremental_cache_hit) {
 			used_fns = map__move(&transform_used_fns);
 		} else {
 			incremental_stage_used_fns = driver__clone_string_bool_map(transform_used_fns);
 			{
-				__v_int __for_idx_667 = 0;
-				for (; __for_idx_667 < incremental_synthesized_helpers.len; __for_idx_667++) {
-					string name = *(string*)(array_get(incremental_synthesized_helpers, __for_idx_667));
-					string __map_key_668 = name;
-					bool __map_val_669 = true;
-					map__set(&incremental_stage_used_fns, &__map_key_668, &__map_val_669);
-					string __map_key_670 = name;
-					bool __map_val_671 = true;
-					map__set(&incremental_changed_names, &__map_key_670, &__map_val_671);
+				__v_int __for_idx_668 = 0;
+				for (; __for_idx_668 < incremental_synthesized_helpers.len; __for_idx_668++) {
+					string name = *(string*)(array_get(incremental_synthesized_helpers, __for_idx_668));
+					string __map_key_669 = name;
+					bool __map_val_670 = true;
+					map__set(&incremental_stage_used_fns, &__map_key_669, &__map_val_670);
+					string __map_key_671 = name;
+					bool __map_val_672 = true;
+					map__set(&incremental_changed_names, &__map_key_671, &__map_val_672);
 				}
 			}
 		}
@@ -213927,9 +213945,9 @@ void driver__run(Array args) {
 			driver__restart_v3_for_errors_of_pruned_build(&cache_state->manager, transform_errors, &pruned_declarations, checker_notices_printed);
 			if (errors__json_output()) {
 				{
-					__v_int __for_idx_672 = 0;
-					for (; __for_idx_672 < transform_errors.len; __for_idx_672++) {
-						string message = *(string*)(array_get(transform_errors, __for_idx_672));
+					__v_int __for_idx_673 = 0;
+					for (; __for_idx_673 < transform_errors.len; __for_idx_673++) {
+						string message = *(string*)(array_get(transform_errors, __for_idx_673));
 						eprintln(errors__json_message(_str_2670, message, array_new(						sizeof(string), 0, 0)));
 					}
 				}
@@ -213937,9 +213955,9 @@ void driver__run(Array args) {
 			}
 			eprintln(({ string __v3_internal_symbol_join_83[3]; __v3_internal_symbol_join_83[0] = _str_2827; u8 __v3_internal_symbol_join_83_number_1[66]; __v3_internal_symbol_join_83[1] = v3_i64_buf((i64)(transform_errors.len), 10, __v3_internal_symbol_join_83_number_1); __v3_internal_symbol_join_83[2] = _str_2828; string_plus_many(3, __v3_internal_symbol_join_83); }));
 			{
-				__v_int __for_idx_673 = 0;
-				for (; __for_idx_673 < transform_errors.len; __for_idx_673++) {
-					string message = *(string*)(array_get(transform_errors, __for_idx_673));
+				__v_int __for_idx_674 = 0;
+				for (; __for_idx_674 < transform_errors.len; __for_idx_674++) {
+					string message = *(string*)(array_get(transform_errors, __for_idx_674));
 					eprintln(message);
 				}
 			}
@@ -213975,24 +213993,24 @@ void driver__run(Array args) {
 				if (scope_prealloc_stages) {
 					types__TypeChecker__materialize_sparse_transform_node_caches(pre_tc, a->nodes.len, a->nodes.cap);
 				}
-				types__TypeChecker* __order_snapshot_674 = pre_tc;
-				map __if_val_675 = {0};
+				types__TypeChecker* __order_snapshot_675 = pre_tc;
+				map __if_val_676 = {0};
 				if (incremental_cache_hit) {
-					__if_val_675 = transform_used_fns;
+					__if_val_676 = transform_used_fns;
 				} else {
-					__if_val_675 = used_fns;
+					__if_val_676 = used_fns;
 				}
-				types__TypeChecker__annotate_types_with_used_missing_calls(__order_snapshot_674, __if_val_675, pre_transform_node_count);
+				types__TypeChecker__annotate_types_with_used_missing_calls(__order_snapshot_675, __if_val_676, pre_transform_node_count);
 			} else {
-				types__TypeChecker* __order_snapshot_676 = pre_tc;
-				flat__FlatAst* __order_snapshot_677 = a;
-				map __if_val_678 = {0};
+				types__TypeChecker* __order_snapshot_677 = pre_tc;
+				flat__FlatAst* __order_snapshot_678 = a;
+				map __if_val_679 = {0};
 				if (incremental_cache_hit) {
-					__if_val_678 = incremental_stage_used_fns;
+					__if_val_679 = incremental_stage_used_fns;
 				} else {
-					__if_val_678 = used_fns;
+					__if_val_679 = used_fns;
 				}
-				driver__restore_transformed_fn_value_types(__order_snapshot_676, __order_snapshot_677, __if_val_678);
+				driver__restore_transformed_fn_value_types(__order_snapshot_677, __order_snapshot_678, __if_val_679);
 				texts_canonical_after_annotation = transform_texts_canonical;
 			}
 		}
@@ -214010,9 +214028,9 @@ void driver__run(Array args) {
 			Array cached_notices = driver__restore_v3_type_diagnostics(a, cgen_cache_metadata.diagnostics);
 			driver__print_type_diagnostics(a, cached_notices, array_new(			sizeof(types__TypeError), 0, 0), is_checker_fixture, fatal_errors, check_only, message_limit, skip_notices);
 			{
-				__v_int __for_idx_679 = 0;
-				for (; __for_idx_679 < cached_notices.len; __for_idx_679++) {
-					types__TypeError notice = *(types__TypeError*)(array_get(cached_notices, __for_idx_679));
+				__v_int __for_idx_680 = 0;
+				for (; __for_idx_680 < cached_notices.len; __for_idx_680++) {
+					types__TypeError notice = *(types__TypeError*)(array_get(cached_notices, __for_idx_680));
 					if (skip_notices && (string__eq(notice.severity, _str_34) || string__eq(notice.severity, _str_2671))) {
 						continue;
 					}
@@ -214043,13 +214061,13 @@ void driver__run(Array args) {
 		map monomorph_used_fns = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 		Array monomorph_errors = array_new(		sizeof(string), 0, 0);
 		__v_int incremental_monomorph_node_start = a->nodes.len;
-		map __if_val_680 = {0};
+		map __if_val_681 = {0};
 		if (incremental_cache_hit) {
-			__if_val_680 = incremental_stage_used_fns;
+			__if_val_681 = incremental_stage_used_fns;
 		} else {
-			__if_val_680 = used_fns;
+			__if_val_681 = used_fns;
 		}
-		map monomorph_input_used = __if_val_680;
+		map monomorph_input_used = __if_val_681;
 		if (scope_prealloc_stages && !incremental_cache_hit) {
 			if (verbose) {
 				eprintln(({ string __v3_internal_symbol_join_84[9]; __v3_internal_symbol_join_84[0] = _str_2836; u8 __v3_internal_symbol_join_84_number_1[66]; __v3_internal_symbol_join_84[1] = v3_i64_buf((i64)(a->nodes.len), 10, __v3_internal_symbol_join_84_number_1); __v3_internal_symbol_join_84[2] = _str_197; u8 __v3_internal_symbol_join_84_number_3[66]; __v3_internal_symbol_join_84[3] = v3_i64_buf((i64)(a->nodes.cap), 10, __v3_internal_symbol_join_84_number_3); __v3_internal_symbol_join_84[4] = _str_2837; u8 __v3_internal_symbol_join_84_number_5[66]; __v3_internal_symbol_join_84[5] = v3_i64_buf((i64)(a->children.len), 10, __v3_internal_symbol_join_84_number_5); __v3_internal_symbol_join_84[6] = _str_197; u8 __v3_internal_symbol_join_84_number_7[66]; __v3_internal_symbol_join_84[7] = v3_i64_buf((i64)(a->children.cap), 10, __v3_internal_symbol_join_84_number_7); __v3_internal_symbol_join_84[8] = _str_2838; string_plus_many(9, __v3_internal_symbol_join_84); }));
@@ -214057,10 +214075,10 @@ void driver__run(Array args) {
 			__v_int base_monomorph_nodes = a->nodes.len;
 			__v_int base_specialized_fns = a->specialized_fn_nodes.data->count;
 			void* monomorph_scope = driver__prealloc_scope_begin_for_v3();
-			multi_return_map_Array_Array __multi_ret_681 = transform__monomorphize_with_used_checked_config_scoped_cached(a, pre_tc, monomorph_input_used, !current_no_parallel && driver__should_parallel_monomorphize(), monomorph_scope, cached_monomorph_specs, true);
-			monomorph_used_fns = __multi_ret_681.arg0;
-			monomorph_errors = __multi_ret_681.arg1;
-			generated_monomorph_specs = __multi_ret_681.arg2;
+			multi_return_map_Array_Array __multi_ret_682 = transform__monomorphize_with_used_checked_config_scoped_cached(a, pre_tc, monomorph_input_used, !current_no_parallel && driver__should_parallel_monomorphize(), monomorph_scope, cached_monomorph_specs, true);
+			monomorph_used_fns = __multi_ret_682.arg0;
+			monomorph_errors = __multi_ret_682.arg1;
+			generated_monomorph_specs = __multi_ret_682.arg2;
 			driver__prealloc_scope_leave_for_v3(monomorph_scope);
 			if (verbose) {
 				eprintln(({ string __v3_internal_symbol_join_85[9]; __v3_internal_symbol_join_85[0] = _str_2839; u8 __v3_internal_symbol_join_85_number_1[66]; __v3_internal_symbol_join_85[1] = v3_i64_buf((i64)(a->nodes.len), 10, __v3_internal_symbol_join_85_number_1); __v3_internal_symbol_join_85[2] = _str_197; u8 __v3_internal_symbol_join_85_number_3[66]; __v3_internal_symbol_join_85[3] = v3_i64_buf((i64)(a->nodes.cap), 10, __v3_internal_symbol_join_85_number_3); __v3_internal_symbol_join_85[4] = _str_2837; u8 __v3_internal_symbol_join_85_number_5[66]; __v3_internal_symbol_join_85[5] = v3_i64_buf((i64)(a->children.len), 10, __v3_internal_symbol_join_85_number_5); __v3_internal_symbol_join_85[6] = _str_197; u8 __v3_internal_symbol_join_85_number_7[66]; __v3_internal_symbol_join_85[7] = v3_i64_buf((i64)(a->children.cap), 10, __v3_internal_symbol_join_85_number_7); __v3_internal_symbol_join_85[8] = _str_2838; string_plus_many(9, __v3_internal_symbol_join_85); }));
@@ -214087,10 +214105,10 @@ void driver__run(Array args) {
 			types__TypeChecker__set_fresh_type_cache(pre_tc, true);
 			driver__prealloc_scope_free_for_v3(monomorph_scope);
 		} else {
-			multi_return_map_Array_Array __multi_ret_682 = transform__monomorphize_with_used_checked_config_scoped_cached(a, pre_tc, monomorph_input_used, !current_no_parallel && driver__should_parallel_monomorphize() && !incremental_cache_hit, (void*)(NULL), cached_monomorph_specs, true);
-			monomorph_used_fns = __multi_ret_682.arg0;
-			monomorph_errors = __multi_ret_682.arg1;
-			generated_monomorph_specs = __multi_ret_682.arg2;
+			multi_return_map_Array_Array __multi_ret_683 = transform__monomorphize_with_used_checked_config_scoped_cached(a, pre_tc, monomorph_input_used, !current_no_parallel && driver__should_parallel_monomorphize() && !incremental_cache_hit, (void*)(NULL), cached_monomorph_specs, true);
+			monomorph_used_fns = __multi_ret_683.arg0;
+			monomorph_errors = __multi_ret_683.arg1;
+			generated_monomorph_specs = __multi_ret_683.arg2;
 		}
 		texts_canonical_after_annotation = true;
 		transform_texts_canonical = true;
@@ -214099,12 +214117,12 @@ void driver__run(Array args) {
 			{
 				__v_int idx = incremental_monomorph_node_start;
 				for (; idx < a->nodes.len; idx++) {
-					__v_int __map_key_683 = idx;
-					bool __map_zero_684 = false;
-					if (*(bool*)(map__get(&a->specialized_fn_nodes, &__map_key_683, &__map_zero_684)) && (((*(flat__Node*)array_get(a->nodes, idx))).kind == flat__NodeKind__fn_decl)) {
-						string __map_key_685 = ((*(flat__Node*)array_get(a->nodes, idx))).value;
-						bool __map_val_686 = true;
-						map__set(&incremental_changed_names, &__map_key_685, &__map_val_686);
+					__v_int __map_key_684 = idx;
+					bool __map_zero_685 = false;
+					if (*(bool*)(map__get(&a->specialized_fn_nodes, &__map_key_684, &__map_zero_685)) && (((*(flat__Node*)array_get(a->nodes, idx))).kind == flat__NodeKind__fn_decl)) {
+						string __map_key_686 = ((*(flat__Node*)array_get(a->nodes, idx))).value;
+						bool __map_val_687 = true;
+						map__set(&incremental_changed_names, &__map_key_686, &__map_val_687);
 					}
 				}
 			}
@@ -214119,8 +214137,8 @@ void driver__run(Array args) {
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 			}
 			if (cache_state->manager.enabled) {
-				Array __push_many_687 = driver__cache_v3_type_diagnostics(a, pre_tc->notices);
-				array__push_many(&cached_checker_diagnostics, __push_many_687.data, __push_many_687.len);
+				Array __push_many_688 = driver__cache_v3_type_diagnostics(a, pre_tc->notices);
+				array__push_many(&cached_checker_diagnostics, __push_many_688.data, __push_many_688.len);
 			}
 			if (pre_tc->errors.len > 0) {
 				driver__restart_v3_for_checker_errors_of_pruned_build(&cache_state->manager, pre_tc->errors, &pruned_declarations, checker_notices_printed);
@@ -214136,9 +214154,9 @@ void driver__run(Array args) {
 				}
 			}
 			{
-				__v_int __for_idx_688 = 0;
-				for (; __for_idx_688 < pre_tc->notices.len; __for_idx_688++) {
-					types__TypeError notice = *(types__TypeError*)(array_get(pre_tc->notices, __for_idx_688));
+				__v_int __for_idx_689 = 0;
+				for (; __for_idx_689 < pre_tc->notices.len; __for_idx_689++) {
+					types__TypeError notice = *(types__TypeError*)(array_get(pre_tc->notices, __for_idx_689));
 					if (skip_notices && (string__eq(notice.severity, _str_34) || string__eq(notice.severity, _str_2671))) {
 						continue;
 					}
@@ -214160,24 +214178,24 @@ void driver__run(Array args) {
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 				v_exit(1);
 			}
-			bool __any_689 = false;
+			bool __any_690 = false;
 			{
-				__v_int __any_idx_690 = 0;
-				for (; __any_idx_690 < monomorph_errors.len; __any_idx_690++) {
-					string __any_it_691 = *(string*)(array_get(monomorph_errors, __any_idx_690));
-					if (string__contains(__any_it_691, _str_2840)) {
-						__any_689 = true;
+				__v_int __any_idx_691 = 0;
+				for (; __any_idx_691 < monomorph_errors.len; __any_idx_691++) {
+					string __any_it_692 = *(string*)(array_get(monomorph_errors, __any_idx_691));
+					if (string__contains(__any_it_692, _str_2840)) {
+						__any_690 = true;
 					}
 				}
 			}
-			if (__any_689) {
+			if (__any_690) {
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 			}
 			if (errors__json_output()) {
 				{
-					__v_int __for_idx_692 = 0;
-					for (; __for_idx_692 < monomorph_errors.len; __for_idx_692++) {
-						string message = *(string*)(array_get(monomorph_errors, __for_idx_692));
+					__v_int __for_idx_693 = 0;
+					for (; __for_idx_693 < monomorph_errors.len; __for_idx_693++) {
+						string message = *(string*)(array_get(monomorph_errors, __for_idx_693));
 						if (string__starts_with(message, _str_2841) || string__starts_with(message, _str_2842)) {
 							eprintln(message);
 						} else {
@@ -214189,9 +214207,9 @@ void driver__run(Array args) {
 			}
 			eprintln(({ string __v3_internal_symbol_join_86[3]; __v3_internal_symbol_join_86[0] = _str_2827; u8 __v3_internal_symbol_join_86_number_1[66]; __v3_internal_symbol_join_86[1] = v3_i64_buf((i64)(monomorph_errors.len), 10, __v3_internal_symbol_join_86_number_1); __v3_internal_symbol_join_86[2] = _str_2828; string_plus_many(3, __v3_internal_symbol_join_86); }));
 			{
-				__v_int __for_idx_693 = 0;
-				for (; __for_idx_693 < monomorph_errors.len; __for_idx_693++) {
-					string message = *(string*)(array_get(monomorph_errors, __for_idx_693));
+				__v_int __for_idx_694 = 0;
+				for (; __for_idx_694 < monomorph_errors.len; __for_idx_694++) {
+					string message = *(string*)(array_get(monomorph_errors, __for_idx_694));
 					eprintln(message);
 				}
 			}
@@ -214238,9 +214256,9 @@ void driver__run(Array args) {
 	time__StopWatch cg_pre_sw = time__new_stopwatch((time__StopWatchOptions){.auto_start = true});
 	driver__stage_macos_v3_compiler_error_fallback(macos_v3_fallback_file, _str_2848);
 	if (string__eq(backend, _str_241)) {
-		__v_option_string __if_guard_694 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
-		if (__if_guard_694.ok) {
-			string msg = __if_guard_694.value;
+		__v_option_string __if_guard_695 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
+		if (__if_guard_695.ok) {
+			string msg = __if_guard_695.value;
 			eprintln(msg);
 			v_exit(1);
 		}
@@ -214252,9 +214270,9 @@ void driver__run(Array args) {
 	}
 	__v_int newly_cached_module_count = 0;
 	if (string__eq(backend, _str_237)) {
-		__v_option_string __if_guard_695 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
-		if (__if_guard_695.ok) {
-			string msg = __if_guard_695.value;
+		__v_option_string __if_guard_696 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
+		if (__if_guard_696.ok) {
+			string msg = __if_guard_696.value;
 			eprintln(msg);
 			v_exit(1);
 		}
@@ -214264,31 +214282,31 @@ void driver__run(Array args) {
 			v_exit(1);
 		}
 	} else if (string__eq(backend, _str_236)) {
-		Array __if_val_696 = {0};
+		Array __if_val_697 = {0};
 		if (string__eq(target.os, _str_889) || string__eq(target.os, _str_887)) {
-			__if_val_696 = c__cache_directive_flags(a, prefs->vroot, prefs->target, prefs->compile_values);
+			__if_val_697 = c__cache_directive_flags(a, prefs->vroot, prefs->target, prefs->compile_values);
 		} else {
-			__if_val_696 = array_new(			sizeof(string), 0, 0);
+			__if_val_697 = array_new(			sizeof(string), 0, 0);
 		}
-		Array arm64_directive_flags = __if_val_696;
-		int __if_result_697 = 0;
-		string __if_result_698 = _str_34;
+		Array arm64_directive_flags = __if_val_697;
+		int __if_result_698 = 0;
+		string __if_result_699 = _str_34;
 		if (string__eq(target.os, _str_889) && !is_o) {
-			multi_return_int_string __multi_if_ret_699 = driver__arm64_link_mode(a, arm64_directive_flags, prefs->user_defines);
-			__if_result_697 = __multi_if_ret_699.arg0;
-			__if_result_698 = __multi_if_ret_699.arg1;
+			multi_return_int_string __multi_if_ret_700 = driver__arm64_link_mode(a, arm64_directive_flags, prefs->user_defines);
+			__if_result_698 = __multi_if_ret_700.arg0;
+			__if_result_699 = __multi_if_ret_700.arg1;
 		} else {
-			int __multi_if_700 = driver__Arm64LinkMode__internal;
-			string __multi_if_701 = _str_34;
-			__if_result_697 = __multi_if_700;
+			int __multi_if_701 = driver__Arm64LinkMode__internal;
+			string __multi_if_702 = _str_34;
 			__if_result_698 = __multi_if_701;
+			__if_result_699 = __multi_if_702;
 		}
-		int arm64_link_mode = __if_result_697;
-		string arm64_link_reason = __if_result_698;
+		int arm64_link_mode = __if_result_698;
+		string arm64_link_reason = __if_result_699;
 		if ((arm64_link_mode == driver__Arm64LinkMode__internal) && !is_o) {
-			__v_option_string __if_guard_702 = driver__unsupported_arm64_c_source_error(a);
-			if (__if_guard_702.ok) {
-				string msg = __if_guard_702.value;
+			__v_option_string __if_guard_703 = driver__unsupported_arm64_c_source_error(a);
+			if (__if_guard_703.ok) {
+				string msg = __if_guard_703.value;
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 				eprintln(msg);
 				v_exit(1);
@@ -214303,47 +214321,47 @@ void driver__run(Array args) {
 		Array arm64_link_preparation = array_new(		sizeof(__v_thread), 0, 0);
 		Array arm64_unknown_c_constants = array_new(		sizeof(string), 0, 0);
 		if ((arm64_link_mode == driver__Arm64LinkMode__external) || (arm64_unknown_c_constants.len > 0)) {
-			__v_result_driver__Arm64CSide __or_opt_703 = driver__arm64_c_side((driver__Arm64CSideOptions){.no_cache = no_cache, .a = a, .prefs = prefs, .user_c_flags = user_c_flags, .environment_cflags = environment_c_flags, .optimization_flags = driver__v3_prod_c_object_optimization_flags(is_prod, no_prod_options, false, parallel_cc, false), .c_compiler = c_compiler, .compiler_explicit = c_compiler_explicit});
-			driver__Arm64CSide __or_val_704 = {0};
-			if (__or_opt_703.ok) {
-				__or_val_704 = __or_opt_703.value;
+			__v_result_driver__Arm64CSide __or_opt_704 = driver__arm64_c_side((driver__Arm64CSideOptions){.no_cache = no_cache, .a = a, .prefs = prefs, .user_c_flags = user_c_flags, .environment_cflags = environment_c_flags, .optimization_flags = driver__v3_prod_c_object_optimization_flags(is_prod, no_prod_options, false, parallel_cc, false), .c_compiler = c_compiler, .compiler_explicit = c_compiler_explicit});
+			driver__Arm64CSide __or_val_705 = {0};
+			if (__or_opt_704.ok) {
+				__or_val_705 = __or_opt_704.value;
 			} else {
-				IError err = __or_opt_703.err;
+				IError err = __or_opt_704.err;
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 				eprintln(IError__msg(&(err)));
 				v_exit(1);
 			}
-			arm64_c_side_info = __or_val_704;
+			arm64_c_side_info = __or_val_705;
 			if (arm64_link_mode == driver__Arm64LinkMode__external) {
-				__v_thread __arr_val_705 = ({ driver__arm64_prepare_link_inputs_thread_args* _sa88 = (driver__arm64_prepare_link_inputs_thread_args*)__v_thread_alloc(sizeof(driver__arm64_prepare_link_inputs_thread_args)); _sa88->a0 = 				arm64_c_side_info; _sa88->a1 = 				arm64_link_inputs; __v_thread_spawn(driver__arm64_prepare_link_inputs_args_thread_wrapper, (void*)_sa88, __v_thread_free); });
-				array_push(&arm64_link_preparation, &__arr_val_705);
+				__v_thread __arr_val_706 = ({ driver__arm64_prepare_link_inputs_thread_args* _sa88 = (driver__arm64_prepare_link_inputs_thread_args*)__v_thread_alloc(sizeof(driver__arm64_prepare_link_inputs_thread_args)); _sa88->a0 = 				arm64_c_side_info; _sa88->a1 = 				arm64_link_inputs; __v_thread_spawn(driver__arm64_prepare_link_inputs_args_thread_wrapper, (void*)_sa88, __v_thread_free); });
+				array_push(&arm64_link_preparation, &__arr_val_706);
 			}
-			Array __if_val_706 = {0};
+			Array __if_val_707 = {0};
 			if (arm64_link_mode == driver__Arm64LinkMode__external) {
-				__if_val_706 = driver__arm64_c_function_decl_names(a);
+				__if_val_707 = driver__arm64_c_function_decl_names(a);
 			} else {
-				__if_val_706 = array_new(				sizeof(string), 0, 0);
+				__if_val_707 = array_new(				sizeof(string), 0, 0);
 			}
-			Array __struct_field_707 = __if_val_706;
-			Array __if_val_708 = {0};
+			Array __struct_field_708 = __if_val_707;
+			Array __if_val_709 = {0};
 			if (arm64_link_mode == driver__Arm64LinkMode__external) {
-				__if_val_708 = driver__arm64_c_constant_names(a);
+				__if_val_709 = driver__arm64_c_constant_names(a);
 			} else {
-				__if_val_708 = arm64_unknown_c_constants;
+				__if_val_709 = arm64_unknown_c_constants;
 			}
-			Array __struct_field_709 = __if_val_708;
-			Array __if_val_710 = {0};
+			Array __struct_field_710 = __if_val_709;
+			Array __if_val_711 = {0};
 			if (arm64_link_mode == driver__Arm64LinkMode__external) {
-				__if_val_710 = driver__arm64_c_structs(a);
+				__if_val_711 = driver__arm64_c_structs(a);
 			} else {
-				__if_val_710 = array_new(				sizeof(driver__Arm64CStruct), 0, 0);
+				__if_val_711 = array_new(				sizeof(driver__Arm64CStruct), 0, 0);
 			}
-			arm64_c_probes = driver__arm64_probe_c_side((driver__Arm64CProbeRequest){.functions = __struct_field_707, .constants = __struct_field_709, .structs = __if_val_710}, arm64_c_side_info);
+			arm64_c_probes = driver__arm64_probe_c_side((driver__Arm64CProbeRequest){.functions = __struct_field_708, .constants = __struct_field_710, .structs = __if_val_711}, arm64_c_side_info);
 			v__bench__Bench__step(&b, _str_2854);
 		}
-		__v_option_string __if_guard_711 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
-		if (__if_guard_711.ok) {
-			string msg = __if_guard_711.value;
+		__v_option_string __if_guard_712 = driver__unsupported_backend_error(a, pre_tc, used_fns, backend);
+		if (__if_guard_712.ok) {
+			string msg = __if_guard_712.value;
 			driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 			eprintln(msg);
 			v_exit(1);
@@ -214354,9 +214372,9 @@ void driver__run(Array args) {
 			v_exit(1);
 		}
 	} else {
-		__v_option_string __if_guard_712 = c__manual_stdlib_c_headers_error();
-		if (__if_guard_712.ok) {
-			string msg = __if_guard_712.value;
+		__v_option_string __if_guard_713 = c__manual_stdlib_c_headers_error();
+		if (__if_guard_713.ok) {
+			string msg = __if_guard_713.value;
 			if (c__uses_manual_stdlib_c_headers(a, pre_tc, prefs, user_c_flags, is_o)) {
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 				eprintln(msg);
@@ -214364,9 +214382,9 @@ void driver__run(Array args) {
 			}
 		}
 		if (driver__c_compiler_rejects_gnu_asm(c_compiler) && !c_only && !output_cross_c) {
-			__v_option_string __if_guard_713 = driver__msvc_inline_asm_error(a, used_fns);
-			if (__if_guard_713.ok) {
-				string msg = __if_guard_713.value;
+			__v_option_string __if_guard_714 = driver__msvc_inline_asm_error(a, used_fns);
+			if (__if_guard_714.ok) {
+				string msg = __if_guard_714.value;
 				eprintln(msg);
 				v_exit(1);
 			}
@@ -214374,21 +214392,21 @@ void driver__run(Array args) {
 		if (scope_prealloc_cgen && !building_v && !cmd_v_build && (a->nodes.len >= driver__scoped_serial_user_cgen_node_threshold)) {
 			cache_no_parallel_cgen = true;
 		}
-		string __if_val_714 = {0};
+		string __if_val_715 = {0};
 		if (string__eq(effective_c_compiler, _str_1287)) {
-			__if_val_714 = driver__cxx_standard_flag(prefs->c99, no_std);
+			__if_val_715 = driver__cxx_standard_flag(prefs->c99, no_std);
 		} else {
-			__if_val_714 = driver__c_standard_flag(prefs->c99, no_std);
+			__if_val_715 = driver__c_standard_flag(prefs->c99, no_std);
 		}
-		string c_standard = __if_val_714;
+		string c_standard = __if_val_715;
 		Array embed_incbin_payloads = array_new(		sizeof(c__EmbedIncbinPayload), 0, 0);
 		string embed_incbin_assembler = _str_34;
 		if ((is_prod || prefs->output_cross_c) && driver__v3_embed_incbin_supported(pref__Preferences__normalized_target_os(prefs), host_os, effective_c_compiler, backend, c_only, is_o, macos_linux_cross_compile, reusable_c_output, prefs->user_defines)) {
 			Array candidates = c__embed_incbin_payloads(a, c__cache_program_file_set(a, user_files), cache_state->manager.enabled);
 			if (candidates.len > 0) {
-				__v_option_string __if_guard_715 = driver__v3_embed_incbin_assembler(c_compiler, effective_tcc, prefs->target, host_target);
-				if (__if_guard_715.ok) {
-					string assembler = __if_guard_715.value;
+				__v_option_string __if_guard_716 = driver__v3_embed_incbin_assembler(c_compiler, effective_tcc, prefs->target, host_target);
+				if (__if_guard_716.ok) {
+					string assembler = __if_guard_716.value;
 					embed_incbin_payloads = array__clone(&candidates);
 					embed_incbin_assembler = assembler;
 				}
@@ -214403,13 +214421,13 @@ void driver__run(Array args) {
 		if (!c_only) {
 			cc_dir = os__join_path_single(driver__v3_output_dir(bin_file), ({ string __v3_internal_symbol_join_89[4]; __v3_internal_symbol_join_89[0] = _str_2; __v3_internal_symbol_join_89[1] = os__base(bin_file); __v3_internal_symbol_join_89[2] = _str_195; __v3_internal_symbol_join_89[3] = tempname__unique_token(); string_plus_many(4, __v3_internal_symbol_join_89); }));
 			if (program_executable_output_dir.len == 0) {
-				multi_return_string_bool __multi_ret_716 = driver__v3_short_build_dir(cc_dir);
-				cc_dir = __multi_ret_716.arg0;
-				cc_dir_moved = __multi_ret_716.arg1;
+				multi_return_string_bool __multi_ret_717 = driver__v3_short_build_dir(cc_dir);
+				cc_dir = __multi_ret_717.arg0;
+				cc_dir_moved = __multi_ret_717.arg1;
 			}
-			__v_result __or_opt_717 = driver__v3_mkdir_all_shared(cc_dir);
-			if (!__or_opt_717.ok) {
-				IError err = __or_opt_717.err;
+			__v_result __or_opt_718 = driver__v3_mkdir_all_shared(cc_dir);
+			if (!__or_opt_718.ok) {
+				IError err = __or_opt_718.err;
 				eprintln(({ string __v3_internal_symbol_join_90[4]; __v3_internal_symbol_join_90[0] = _str_2857; __v3_internal_symbol_join_90[1] = cc_dir; __v3_internal_symbol_join_90[2] = _str_443; __v3_internal_symbol_join_90[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_90); }));
 				v_exit(1);
 			}
@@ -214418,75 +214436,75 @@ void driver__run(Array args) {
 		}
 		cache_state->c_build_dir = cc_dir;
 		string published_c_source = cc_src;
-		string __if_val_718 = {0};
+		string __if_val_719 = {0};
 		if (cache_state->manager.enabled) {
-			__if_val_718 = os__join_path_single(cc_dir, _str_2859);
+			__if_val_719 = os__join_path_single(cc_dir, _str_2859);
 		} else {
-			__if_val_718 = _str_34;
+			__if_val_719 = _str_34;
 		}
-		string cache_plan_file = __if_val_718;
+		string cache_plan_file = __if_val_719;
 		Array generated_c_flags = array__clone(&cgen_cache_metadata.flags);
 		bool windows_gui_entry_point = cgen_cache_metadata.windows_gui_entry_point;
 		string interface_impl_signature = cgen_cache_metadata.interface_impl_signature;
 		bool cgen_was_parallel = false;
 		bool generated_literal_output_only = false;
-		string __if_val_719 = {0};
+		string __if_val_720 = {0};
 		if (incremental_cache_restored) {
-			__v_result_string __or_opt_720 = os__read_file(incremental_tcc_declarations_path);
-			string __or_val_721 = {0};
-			if (__or_opt_720.ok) {
-				__or_val_721 = __or_opt_720.value;
+			__v_result_string __or_opt_721 = os__read_file(incremental_tcc_declarations_path);
+			string __or_val_722 = {0};
+			if (__or_opt_721.ok) {
+				__or_val_722 = __or_opt_721.value;
 			} else {
-				IError err = __or_opt_720.err;
+				IError err = __or_opt_721.err;
 				eprintln(({ string __v3_internal_symbol_join_91[4]; __v3_internal_symbol_join_91[0] = _str_2860; __v3_internal_symbol_join_91[1] = incremental_tcc_declarations_path; __v3_internal_symbol_join_91[2] = _str_443; __v3_internal_symbol_join_91[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_91); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			__if_val_719 = __or_val_721;
+			__if_val_720 = __or_val_722;
 		} else {
-			__if_val_719 = _str_34;
+			__if_val_720 = _str_34;
 		}
-		string incremental_c_declarations = __if_val_719;
-		string __if_val_722 = {0};
+		string incremental_c_declarations = __if_val_720;
+		string __if_val_723 = {0};
 		if (incremental_cache_hit) {
-			__if_val_722 = driver__incremental_c_cached_declarations(incremental_cached_body);
+			__if_val_723 = driver__incremental_c_cached_declarations(incremental_cached_body);
 		} else {
-			__if_val_722 = _str_34;
+			__if_val_723 = _str_34;
 		}
-		string incremental_cached_support = __if_val_722;
+		string incremental_cached_support = __if_val_723;
 		string incremental_known_declarations = ({ string __v3_internal_symbol_join_92[3]; __v3_internal_symbol_join_92[0] = incremental_c_declarations; __v3_internal_symbol_join_92[1] = _str_0; __v3_internal_symbol_join_92[2] = incremental_cached_support; string_plus_many(3, __v3_internal_symbol_join_92); });
-		bool __if_val_723 = {0};
+		bool __if_val_724 = {0};
 		if (generic_cache_hit && (generic_cache_entry.prefix.len > 0)) {
-			__v_result_string __or_opt_724 = os__read_file(generic_cache_entry.prefix);
-			string __or_val_725 = {0};
-			if (__or_opt_724.ok) {
-				__or_val_725 = __or_opt_724.value;
+			__v_result_string __or_opt_725 = os__read_file(generic_cache_entry.prefix);
+			string __or_val_726 = {0};
+			if (__or_opt_725.ok) {
+				__or_val_726 = __or_opt_725.value;
 			} else {
-				IError err = __or_opt_724.err;
+				IError err = __or_opt_725.err;
 				eprintln(({ string __v3_internal_symbol_join_93[4]; __v3_internal_symbol_join_93[0] = _str_2861; __v3_internal_symbol_join_93[1] = generic_cache_entry.prefix; __v3_internal_symbol_join_93[2] = _str_443; __v3_internal_symbol_join_93[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_93); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			string prefix = __or_val_725;
-			map __in_lhs_726 = modulecache__c_source_function_identifiers(prefix);
-			string __map_key_727 = _str_2862;
-			bool __map_zero_728 = false;
-			__if_val_723 = *(bool*)(map__get(&__in_lhs_726, &__map_key_727, &__map_zero_728));
+			string prefix = __or_val_726;
+			map __in_lhs_727 = modulecache__c_source_function_identifiers(prefix);
+			string __map_key_728 = _str_2862;
+			bool __map_zero_729 = false;
+			__if_val_724 = *(bool*)(map__get(&__in_lhs_727, &__map_key_728, &__map_zero_729));
 		} else {
-			__if_val_723 = false;
+			__if_val_724 = false;
 		}
-		bool cached_program_cleanup = __if_val_723;
-		map __if_val_729 = {0};
+		bool cached_program_cleanup = __if_val_724;
+		map __if_val_730 = {0};
 		if (incremental_cache_hit) {
-			__if_val_729 = incremental_stage_used_fns;
+			__if_val_730 = incremental_stage_used_fns;
 		} else {
-			__if_val_729 = used_fns;
+			__if_val_730 = used_fns;
 		}
-		map cgen_used_fns = __if_val_729;
+		map cgen_used_fns = __if_val_730;
 		if (cgen_cache_hit && !cgen_prepared_hit) {
-			__v_result __or_opt_730 = os__cp(cgen_cache_entry.source, cache_plan_file, (os__CopyParams){0});
-			if (!__or_opt_730.ok) {
-				IError err = __or_opt_730.err;
+			__v_result __or_opt_731 = os__cp(cgen_cache_entry.source, cache_plan_file, (os__CopyParams){0});
+			if (!__or_opt_731.ok) {
+				IError err = __or_opt_731.err;
 				eprintln(({ string __v3_internal_symbol_join_94[4]; __v3_internal_symbol_join_94[0] = _str_2863; __v3_internal_symbol_join_94[1] = cgen_cache_entry.source; __v3_internal_symbol_join_94[2] = _str_443; __v3_internal_symbol_join_94[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_94); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
@@ -214512,26 +214530,26 @@ void driver__run(Array args) {
 			types__TypeChecker__freeze_type_cache_for_forks(pre_tc);
 			types__TypeChecker__discard_type_cache_overlay_after_forks(pre_tc);
 			Array scoped_generated_c_flags = array_new(			sizeof(string), 0, 0);
-			string __if_val_731 = {0};
+			string __if_val_732 = {0};
 			if (cache_state->manager.enabled) {
-				__if_val_731 = cache_plan_file;
+				__if_val_732 = cache_plan_file;
 			} else {
-				__if_val_731 = cc_src;
+				__if_val_732 = cc_src;
 			}
-			string generated_path = __if_val_731;
-			c__FlatGen __esc_732 = __v3_internal_symbol_static_632e466c617447656e40737461746963406e6577();
-			c__FlatGen* g = (c__FlatGen*)(memdup(&__esc_732, sizeof(c__FlatGen)));
+			string generated_path = __if_val_732;
+			c__FlatGen __esc_733 = __v3_internal_symbol_static_632e466c617447656e40737461746963406e6577();
+			c__FlatGen* g = (c__FlatGen*)(memdup(&__esc_733, sizeof(c__FlatGen)));
 			c__FlatGen__set_initial_c_flags(g, user_c_flags);
 			c__FlatGen__set_cache_refresh_project_flags(g, refresh_project_flags);
 			c__FlatGen__set_c99_mode(g, prefs->c99);
-			c__FlatGen* __order_snapshot_733 = g;
-			string __if_val_734 = {0};
+			c__FlatGen* __order_snapshot_734 = g;
+			string __if_val_735 = {0};
 			if (tcc_dylib) {
-				__if_val_734 = effective_c_compiler;
+				__if_val_735 = effective_c_compiler;
 			} else {
-				__if_val_734 = prefs->ccompiler;
+				__if_val_735 = prefs->ccompiler;
 			}
-			c__FlatGen__set_ccompiler(__order_snapshot_733, __if_val_734);
+			c__FlatGen__set_ccompiler(__order_snapshot_734, __if_val_735);
 			if (tcc_dylib) {
 				c__FlatGen__set_tcc_program_unit(g, true);
 				c__FlatGen__set_native_function_aliases(g, map__values(&native_closure.functions));
@@ -214544,16 +214562,16 @@ void driver__run(Array args) {
 			c__FlatGen__set_check_casts(g, check_casts);
 			c__FlatGen__set_check_scope_vroot(g, prefs->vroot);
 			c__FlatGen__set_force_bounds_checking(g, prefs->force_bounds_checking);
-			bool __contains_735 = false;
+			bool __contains_736 = false;
 			{
-				__v_int __contains_idx_736 = 0;
-				for (; __contains_idx_736 < prefs->user_defines.len; __contains_idx_736++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_736)), _str_2516)) {
-						__contains_735 = true;
+				__v_int __contains_idx_737 = 0;
+				for (; __contains_idx_737 < prefs->user_defines.len; __contains_idx_737++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_737)), _str_2516)) {
+						__contains_736 = true;
 					}
 				}
 			}
-			c__FlatGen__set_prealloc(g, __contains_735);
+			c__FlatGen__set_prealloc(g, __contains_736);
 			c__FlatGen__set_skip_generics(g, skip_transform_generics);
 			c__FlatGen__set_skip_enum_autostr(g, trivial_literal_output);
 			c__FlatGen__set_compiler_vexe(g, prefs->vexe);
@@ -214570,16 +214588,16 @@ void driver__run(Array args) {
 			c__FlatGen__set_thread_stack_size(g, prefs->thread_stack_size);
 			c__FlatGen__set_show_test_stats(g, show_test_stats);
 			c__FlatGen__set_show_test_summary(g, is_test_command);
-			c__FlatGen__set_show_test_file_results(g, is_test_command && ({bool __contains_737 = false;
+			c__FlatGen__set_show_test_file_results(g, is_test_command && ({bool __contains_738 = false;
 			{
-				__v_int __contains_idx_738 = 0;
-				for (; __contains_idx_738 < prefs->user_defines.len; __contains_idx_738++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_738)), _str_2495)) {
-						__contains_737 = true;
+				__v_int __contains_idx_739 = 0;
+				for (; __contains_idx_739 < prefs->user_defines.len; __contains_idx_739++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_739)), _str_2495)) {
+						__contains_738 = true;
 					}
 				}
 			}
-			!__contains_737;}));
+			!__contains_738;}));
 			c__FlatGen__set_test_run_only(g, run_only);
 			c__FlatGen__set_print_fn_names(g, print_fn_names);
 			c__FlatGen__set_profile(g, profile_file, profile_no_inline, profile_fns);
@@ -214587,37 +214605,37 @@ void driver__run(Array args) {
 			c__FlatGen__set_shared(g, prefs->is_shared);
 			c__FlatGen__set_object_file_mode(g, is_o);
 			c__FlatGen__set_no_builtin(g, no_builtin);
-			bool __contains_739 = false;
+			bool __contains_740 = false;
 			{
-				__v_int __contains_idx_740 = 0;
-				for (; __contains_idx_740 < prefs->user_defines.len; __contains_idx_740++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_740)), _str_2864)) {
-						__contains_739 = true;
+				__v_int __contains_idx_741 = 0;
+				for (; __contains_idx_741 < prefs->user_defines.len; __contains_idx_741++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_741)), _str_2864)) {
+						__contains_740 = true;
 					}
 				}
 			}
-			c__FlatGen__set_suppress_main(g, __contains_739);
+			c__FlatGen__set_suppress_main(g, __contains_740);
 			c__FlatGen__set_coverage(g, coverage_dir, Array_string__join(args, _str_1));
 			c__FlatGen__set_compile_values(g, prefs->compile_values);
-			bool __contains_741 = false;
+			bool __contains_742 = false;
 			{
-				__v_int __contains_idx_742 = 0;
-				for (; __contains_idx_742 < prefs->user_defines.len; __contains_idx_742++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_742)), _str_2594)) {
-						__contains_741 = true;
+				__v_int __contains_idx_743 = 0;
+				for (; __contains_idx_743 < prefs->user_defines.len; __contains_idx_743++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_743)), _str_2594)) {
+						__contains_742 = true;
 					}
 				}
 			}
-			c__FlatGen__set_track_heap(g, __contains_741);
+			c__FlatGen__set_track_heap(g, __contains_742);
 			c__FlatGen__set_cache_split(g, cache_state->manager.enabled || use_parallel_c_compilation);
 			c__FlatGen__set_cache_stable_symbols(g, cache_state->manager.enabled);
 			if (no_skip_unused) {
 				c__FlatGen__set_program_uses_recover(g, kept_code_uses_recover);
 			}
 			if (cache_state->manager.enabled) {
-				string __map_key_743 = _str_1547;
-				bool __map_zero_744 = false;
-				c__FlatGen__set_program_uses_recover(g, *(bool*)(map__get(&program_used_fns, &__map_key_743, &__map_zero_744)) || cache_state->calls_recover);
+				string __map_key_744 = _str_1547;
+				bool __map_zero_745 = false;
+				c__FlatGen__set_program_uses_recover(g, *(bool*)(map__get(&program_used_fns, &__map_key_744, &__map_zero_745)) || cache_state->calls_recover);
 				c__FlatGen__set_cache_const_modules(g, map__keys(&cache_state->module_sources), map__keys(&cache_state->parsed_from_source));
 			}
 			c__FlatGen__set_parallel_cc(g, use_parallel_c_compilation);
@@ -214633,25 +214651,25 @@ void driver__run(Array args) {
 			if (verbose) {
 				eprintln(({ string __v3_internal_symbol_join_96[3]; __v3_internal_symbol_join_96[0] = _str_2865; u8 __v3_internal_symbol_join_96_number_1[314]; __v3_internal_symbol_join_96[1] = v3_numeric_pad_buf(v3_f64_fixed_buf((double)((double)(time__Duration__microseconds(time__StopWatch__elapsed(cg_pre_sw)))) / 1000.0, 2, __v3_internal_symbol_join_96_number_1), 7, 0, __v3_internal_symbol_join_96_number_1, 314); __v3_internal_symbol_join_96[2] = _str_2724; string_plus_many(3, __v3_internal_symbol_join_96); }));
 			}
-			__v_result __or_opt_745 = c__FlatGen__gen_to_file_with_used_test_options(g, generated_path, a, cgen_used_fns, pre_tc, cache_no_parallel_cgen || (test_files.len > 0), test_files);
-			if (!__or_opt_745.ok) {
-				IError err = __or_opt_745.err;
+			__v_result __or_opt_746 = c__FlatGen__gen_to_file_with_used_test_options(g, generated_path, a, cgen_used_fns, pre_tc, cache_no_parallel_cgen || (test_files.len > 0), test_files);
+			if (!__or_opt_746.ok) {
+				IError err = __or_opt_746.err;
 				eprintln(({ string __v3_internal_symbol_join_97[4]; __v3_internal_symbol_join_97[0] = _str_2866; __v3_internal_symbol_join_97[1] = generated_path; __v3_internal_symbol_join_97[2] = _str_443; __v3_internal_symbol_join_97[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_97); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
 			cgen_was_parallel = c__FlatGen__was_parallel(g);
 			generated_literal_output_only = c__FlatGen__generated_literal_output_only(g);
-			multi_return_Array_bool __multi_ret_746 = c__FlatGen__referenced_pruned_cache_functions(g);
-			Array pruned_function_refs = __multi_ret_746.arg0;
-			bool pruned_functions_checked = __multi_ret_746.arg1;
+			multi_return_Array_bool __multi_ret_747 = c__FlatGen__referenced_pruned_cache_functions(g);
+			Array pruned_function_refs = __multi_ret_747.arg0;
+			bool pruned_functions_checked = __multi_ret_747.arg1;
 			if ((pruned_function_refs.len > 0) || !pruned_functions_checked) {
 				driver__cleanup_c_build_dir(cc_dir);
 				driver__restart_v3_with_all_cached_declarations(&cache_state->manager, string__plus(_str_2867, Array_string__str(pruned_function_refs)), pruned_function_refs, checker_notices_printed);
 			}
-			__v_option_bool __if_guard_747 = c__FlatGen__generated_windows_gui_entry_point(g);
-			if (__if_guard_747.ok) {
-				bool generated_gui_entry_point = __if_guard_747.value;
+			__v_option_bool __if_guard_748 = c__FlatGen__generated_windows_gui_entry_point(g);
+			if (__if_guard_748.ok) {
+				bool generated_gui_entry_point = __if_guard_748.value;
 				windows_gui_entry_point = generated_gui_entry_point;
 			}
 			if (!incremental_cache_hit) {
@@ -214676,26 +214694,26 @@ void driver__run(Array args) {
 			}
 			driver__track_release_thread(({ driver__release_cgen_scopes_thread_args* _sa98 = (driver__release_cgen_scopes_thread_args*)__v_thread_alloc(sizeof(driver__release_cgen_scopes_thread_args)); _sa98->a0 = 			array__clone(&cgen_worker_scopes); _sa98->a1 = cgen_scope; __v_thread_spawn(driver__release_cgen_scopes_args_thread_wrapper, (void*)_sa98, __v_thread_free); }));
 		} else if (!cgen_cache_hit) {
-			string __if_val_748 = {0};
+			string __if_val_749 = {0};
 			if (cache_state->manager.enabled) {
-				__if_val_748 = cache_plan_file;
+				__if_val_749 = cache_plan_file;
 			} else {
-				__if_val_748 = cc_src;
+				__if_val_749 = cc_src;
 			}
-			string generated_path = __if_val_748;
-			c__FlatGen __esc_749 = __v3_internal_symbol_static_632e466c617447656e40737461746963406e6577();
-			c__FlatGen* g = (c__FlatGen*)(memdup(&__esc_749, sizeof(c__FlatGen)));
+			string generated_path = __if_val_749;
+			c__FlatGen __esc_750 = __v3_internal_symbol_static_632e466c617447656e40737461746963406e6577();
+			c__FlatGen* g = (c__FlatGen*)(memdup(&__esc_750, sizeof(c__FlatGen)));
 			c__FlatGen__set_initial_c_flags(g, user_c_flags);
 			c__FlatGen__set_cache_refresh_project_flags(g, refresh_project_flags);
 			c__FlatGen__set_c99_mode(g, prefs->c99);
-			c__FlatGen* __order_snapshot_750 = g;
-			string __if_val_751 = {0};
+			c__FlatGen* __order_snapshot_751 = g;
+			string __if_val_752 = {0};
 			if (tcc_dylib) {
-				__if_val_751 = effective_c_compiler;
+				__if_val_752 = effective_c_compiler;
 			} else {
-				__if_val_751 = prefs->ccompiler;
+				__if_val_752 = prefs->ccompiler;
 			}
-			c__FlatGen__set_ccompiler(__order_snapshot_750, __if_val_751);
+			c__FlatGen__set_ccompiler(__order_snapshot_751, __if_val_752);
 			if (tcc_dylib) {
 				c__FlatGen__set_tcc_program_unit(g, true);
 				c__FlatGen__set_native_function_aliases(g, map__values(&native_closure.functions));
@@ -214708,16 +214726,16 @@ void driver__run(Array args) {
 			c__FlatGen__set_check_casts(g, check_casts);
 			c__FlatGen__set_check_scope_vroot(g, prefs->vroot);
 			c__FlatGen__set_force_bounds_checking(g, prefs->force_bounds_checking);
-			bool __contains_752 = false;
+			bool __contains_753 = false;
 			{
-				__v_int __contains_idx_753 = 0;
-				for (; __contains_idx_753 < prefs->user_defines.len; __contains_idx_753++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_753)), _str_2516)) {
-						__contains_752 = true;
+				__v_int __contains_idx_754 = 0;
+				for (; __contains_idx_754 < prefs->user_defines.len; __contains_idx_754++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_754)), _str_2516)) {
+						__contains_753 = true;
 					}
 				}
 			}
-			c__FlatGen__set_prealloc(g, __contains_752);
+			c__FlatGen__set_prealloc(g, __contains_753);
 			c__FlatGen__set_skip_generics(g, skip_transform_generics);
 			c__FlatGen__set_skip_enum_autostr(g, trivial_literal_output);
 			c__FlatGen__set_compiler_vexe(g, prefs->vexe);
@@ -214734,16 +214752,16 @@ void driver__run(Array args) {
 			c__FlatGen__set_thread_stack_size(g, prefs->thread_stack_size);
 			c__FlatGen__set_show_test_stats(g, show_test_stats);
 			c__FlatGen__set_show_test_summary(g, is_test_command);
-			c__FlatGen__set_show_test_file_results(g, is_test_command && ({bool __contains_754 = false;
+			c__FlatGen__set_show_test_file_results(g, is_test_command && ({bool __contains_755 = false;
 			{
-				__v_int __contains_idx_755 = 0;
-				for (; __contains_idx_755 < prefs->user_defines.len; __contains_idx_755++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_755)), _str_2495)) {
-						__contains_754 = true;
+				__v_int __contains_idx_756 = 0;
+				for (; __contains_idx_756 < prefs->user_defines.len; __contains_idx_756++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_756)), _str_2495)) {
+						__contains_755 = true;
 					}
 				}
 			}
-			!__contains_754;}));
+			!__contains_755;}));
 			c__FlatGen__set_test_run_only(g, run_only);
 			c__FlatGen__set_print_fn_names(g, print_fn_names);
 			c__FlatGen__set_profile(g, profile_file, profile_no_inline, profile_fns);
@@ -214751,37 +214769,37 @@ void driver__run(Array args) {
 			c__FlatGen__set_shared(g, prefs->is_shared);
 			c__FlatGen__set_object_file_mode(g, is_o);
 			c__FlatGen__set_no_builtin(g, no_builtin);
-			bool __contains_756 = false;
+			bool __contains_757 = false;
 			{
-				__v_int __contains_idx_757 = 0;
-				for (; __contains_idx_757 < prefs->user_defines.len; __contains_idx_757++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_757)), _str_2864)) {
-						__contains_756 = true;
+				__v_int __contains_idx_758 = 0;
+				for (; __contains_idx_758 < prefs->user_defines.len; __contains_idx_758++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_758)), _str_2864)) {
+						__contains_757 = true;
 					}
 				}
 			}
-			c__FlatGen__set_suppress_main(g, __contains_756);
+			c__FlatGen__set_suppress_main(g, __contains_757);
 			c__FlatGen__set_coverage(g, coverage_dir, Array_string__join(args, _str_1));
 			c__FlatGen__set_compile_values(g, prefs->compile_values);
-			bool __contains_758 = false;
+			bool __contains_759 = false;
 			{
-				__v_int __contains_idx_759 = 0;
-				for (; __contains_idx_759 < prefs->user_defines.len; __contains_idx_759++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_759)), _str_2594)) {
-						__contains_758 = true;
+				__v_int __contains_idx_760 = 0;
+				for (; __contains_idx_760 < prefs->user_defines.len; __contains_idx_760++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_760)), _str_2594)) {
+						__contains_759 = true;
 					}
 				}
 			}
-			c__FlatGen__set_track_heap(g, __contains_758);
+			c__FlatGen__set_track_heap(g, __contains_759);
 			c__FlatGen__set_cache_split(g, cache_state->manager.enabled || use_parallel_c_compilation);
 			c__FlatGen__set_cache_stable_symbols(g, cache_state->manager.enabled);
 			if (no_skip_unused) {
 				c__FlatGen__set_program_uses_recover(g, kept_code_uses_recover);
 			}
 			if (cache_state->manager.enabled) {
-				string __map_key_760 = _str_1547;
-				bool __map_zero_761 = false;
-				c__FlatGen__set_program_uses_recover(g, *(bool*)(map__get(&program_used_fns, &__map_key_760, &__map_zero_761)) || cache_state->calls_recover);
+				string __map_key_761 = _str_1547;
+				bool __map_zero_762 = false;
+				c__FlatGen__set_program_uses_recover(g, *(bool*)(map__get(&program_used_fns, &__map_key_761, &__map_zero_762)) || cache_state->calls_recover);
 				c__FlatGen__set_cache_const_modules(g, map__keys(&cache_state->module_sources), map__keys(&cache_state->parsed_from_source));
 			}
 			c__FlatGen__set_parallel_cc(g, use_parallel_c_compilation);
@@ -214793,25 +214811,25 @@ void driver__run(Array args) {
 			c__FlatGen__set_incremental_fn_names(g, incremental_changed_names);
 			c__FlatGen__set_cached_support_declarations(g, incremental_known_declarations);
 			c__FlatGen__set_cached_program_cleanup(g, cached_program_cleanup);
-			__v_result __or_opt_762 = c__FlatGen__gen_to_file_with_used_test_options(g, generated_path, a, cgen_used_fns, pre_tc, cache_no_parallel_cgen, test_files);
-			if (!__or_opt_762.ok) {
-				IError err = __or_opt_762.err;
+			__v_result __or_opt_763 = c__FlatGen__gen_to_file_with_used_test_options(g, generated_path, a, cgen_used_fns, pre_tc, cache_no_parallel_cgen, test_files);
+			if (!__or_opt_763.ok) {
+				IError err = __or_opt_763.err;
 				eprintln(({ string __v3_internal_symbol_join_99[4]; __v3_internal_symbol_join_99[0] = _str_2866; __v3_internal_symbol_join_99[1] = generated_path; __v3_internal_symbol_join_99[2] = _str_443; __v3_internal_symbol_join_99[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_99); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
 			cgen_was_parallel = c__FlatGen__was_parallel(g);
 			generated_literal_output_only = c__FlatGen__generated_literal_output_only(g);
-			multi_return_Array_bool __multi_ret_763 = c__FlatGen__referenced_pruned_cache_functions(g);
-			Array pruned_function_refs = __multi_ret_763.arg0;
-			bool pruned_functions_checked = __multi_ret_763.arg1;
+			multi_return_Array_bool __multi_ret_764 = c__FlatGen__referenced_pruned_cache_functions(g);
+			Array pruned_function_refs = __multi_ret_764.arg0;
+			bool pruned_functions_checked = __multi_ret_764.arg1;
 			if ((pruned_function_refs.len > 0) || !pruned_functions_checked) {
 				driver__cleanup_c_build_dir(cc_dir);
 				driver__restart_v3_with_all_cached_declarations(&cache_state->manager, string__plus(_str_2867, Array_string__str(pruned_function_refs)), pruned_function_refs, checker_notices_printed);
 			}
-			__v_option_bool __if_guard_764 = c__FlatGen__generated_windows_gui_entry_point(g);
-			if (__if_guard_764.ok) {
-				bool generated_gui_entry_point = __if_guard_764.value;
+			__v_option_bool __if_guard_765 = c__FlatGen__generated_windows_gui_entry_point(g);
+			if (__if_guard_765.ok) {
+				bool generated_gui_entry_point = __if_guard_765.value;
 				windows_gui_entry_point = generated_gui_entry_point;
 			}
 			if (!incremental_cache_hit) {
@@ -214819,55 +214837,55 @@ void driver__run(Array args) {
 			}
 		}
 		if (incremental_cache_hit) {
-			string __if_val_765 = {0};
+			string __if_val_766 = {0};
 			if (cache_plan_file.len > 0) {
-				__if_val_765 = cache_plan_file;
+				__if_val_766 = cache_plan_file;
 			} else {
-				__if_val_765 = cc_src;
+				__if_val_766 = cc_src;
 			}
-			string incremental_source_path = __if_val_765;
-			__v_result_string __or_opt_766 = os__read_file(incremental_source_path);
-			string __or_val_767 = {0};
-			if (__or_opt_766.ok) {
-				__or_val_767 = __or_opt_766.value;
+			string incremental_source_path = __if_val_766;
+			__v_result_string __or_opt_767 = os__read_file(incremental_source_path);
+			string __or_val_768 = {0};
+			if (__or_opt_767.ok) {
+				__or_val_768 = __or_opt_767.value;
 			} else {
-				IError err = __or_opt_766.err;
+				IError err = __or_opt_767.err;
 				eprintln(({ string __v3_internal_symbol_join_100[4]; __v3_internal_symbol_join_100[0] = _str_2868; __v3_internal_symbol_join_100[1] = incremental_source_path; __v3_internal_symbol_join_100[2] = _str_443; __v3_internal_symbol_join_100[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_100); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			string changed_source = __or_val_767;
-			string __if_val_768 = {0};
+			string changed_source = __or_val_768;
+			string __if_val_769 = {0};
 			if (generic_cache_entry.prefix.len > 0) {
-				__v_result_string __or_opt_769 = os__read_file(generic_cache_entry.prefix);
-				string __or_val_770 = {0};
-				if (__or_opt_769.ok) {
-					__or_val_770 = __or_opt_769.value;
+				__v_result_string __or_opt_770 = os__read_file(generic_cache_entry.prefix);
+				string __or_val_771 = {0};
+				if (__or_opt_770.ok) {
+					__or_val_771 = __or_opt_770.value;
 				} else {
-					IError err = __or_opt_769.err;
+					IError err = __or_opt_770.err;
 					eprintln(({ string __v3_internal_symbol_join_101[4]; __v3_internal_symbol_join_101[0] = _str_2869; __v3_internal_symbol_join_101[1] = generic_cache_entry.prefix; __v3_internal_symbol_join_101[2] = _str_443; __v3_internal_symbol_join_101[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_101); }));
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				__if_val_768 = __or_val_770;
+				__if_val_769 = __or_val_771;
 			} else {
-				__if_val_768 = _str_34;
+				__if_val_769 = _str_34;
 			}
-			string cached_prefix = __if_val_768;
-			__v_option_string __or_opt_771 = driver__merge_incremental_program_body(incremental_cached_body, cached_prefix, changed_source, incremental_changed_keys);
-			string __or_val_772 = {0};
-			if (__or_opt_771.ok) {
-				__or_val_772 = __or_opt_771.value;
+			string cached_prefix = __if_val_769;
+			__v_option_string __or_opt_772 = driver__merge_incremental_program_body(incremental_cached_body, cached_prefix, changed_source, incremental_changed_keys);
+			string __or_val_773 = {0};
+			if (__or_opt_772.ok) {
+				__or_val_773 = __or_opt_772.value;
 			} else {
 				os__setenv(_str_2701, _str_224, true);
 				driver__restart_v3_after_cache_invalidation(cc_dir);
-				__or_val_772 = _str_34;
+				__or_val_773 = _str_34;
 			}
-			string merged_cached_source = __or_val_772;
+			string merged_cached_source = __or_val_773;
 			string merged_source = modulecache__materialize_cached_body_string_definitions(merged_cached_source);
-			__v_result __or_opt_773 = os__write_file(incremental_source_path, merged_source);
-			if (!__or_opt_773.ok) {
-				IError err = __or_opt_773.err;
+			__v_result __or_opt_774 = os__write_file(incremental_source_path, merged_source);
+			if (!__or_opt_774.ok) {
+				IError err = __or_opt_774.err;
 				eprintln(({ string __v3_internal_symbol_join_102[4]; __v3_internal_symbol_join_102[0] = _str_2870; __v3_internal_symbol_join_102[1] = incremental_source_path; __v3_internal_symbol_join_102[2] = _str_443; __v3_internal_symbol_join_102[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_102); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
@@ -214887,9 +214905,9 @@ void driver__run(Array args) {
 			v__bench__Bench__step_parallel(&b, _str_2641, cgen_was_parallel);
 		}
 		if (string__eq(effective_c_compiler, _str_1256) && !cache_state->manager.enabled) {
-			__v_result __or_opt_774 = driver__msvc_lower_c_file(cc_src);
-			if (!__or_opt_774.ok) {
-				IError err = __or_opt_774.err;
+			__v_result __or_opt_775 = driver__msvc_lower_c_file(cc_src);
+			if (!__or_opt_775.ok) {
+				IError err = __or_opt_775.err;
 				eprintln(string__plus(_str_2873, IError__msg(&(err))));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
@@ -214901,21 +214919,21 @@ void driver__run(Array args) {
 			msvc_saved_environment = driver__msvc_require_cl(c_compiler, host_os, prefs->target);
 		}
 		if (string__eq(effective_c_compiler, _str_1260) && string__eq(pref__Preferences__normalized_target_os(prefs), _str_890) && !c_only && !output_cross_c) {
-			__v_result_string __or_opt_775 = os__find_abs_path_of_executable(c_compiler);
-			string __or_val_776 = {0};
-			if (__or_opt_775.ok) {
-				__or_val_776 = __or_opt_775.value;
+			__v_result_string __or_opt_776 = os__find_abs_path_of_executable(c_compiler);
+			string __or_val_777 = {0};
+			if (__or_opt_776.ok) {
+				__or_val_777 = __or_opt_776.value;
 			} else {
-				IError err = __or_opt_775.err;
-				__or_val_776 = c_compiler;
+				IError err = __or_opt_776.err;
+				__or_val_777 = c_compiler;
 			}
-			string clang_path = __or_val_776;
+			string clang_path = __or_val_777;
 			string clang_triple = driver__v3_windows_prod_clang_triple(clang_path);
 			Array retarget_flags = array__clone(&environment_c_flags);
 			array__push_many(&retarget_flags, user_c_flags.data, user_c_flags.len);
-			__v_option_string __if_guard_777 = driver__v3_windows_clang_msvc_abi_error(c_compiler, effective_c_compiler, clang_triple, pref__Preferences__normalized_target_os(prefs), retarget_flags);
-			if (__if_guard_777.ok) {
-				string msg = __if_guard_777.value;
+			__v_option_string __if_guard_778 = driver__v3_windows_clang_msvc_abi_error(c_compiler, effective_c_compiler, clang_triple, pref__Preferences__normalized_target_os(prefs), retarget_flags);
+			if (__if_guard_778.ok) {
+				string msg = __if_guard_778.value;
 				driver__cleanup_c_build_dir(cc_dir);
 				eprintln(msg);
 				v_exit(1);
@@ -214924,66 +214942,66 @@ void driver__run(Array args) {
 		string pic_flag = driver__shared_pic_flag(is_shared || use_cached_dev_dylib, pref__Preferences__normalized_target_os(prefs));
 		string linux_cross_sysroot = _str_34;
 		if (macos_linux_cross_compile && !c_only) {
-			__v_result_string __or_opt_778 = driver__ensure_v3_linux_cross_sysroot();
-			string __or_val_779 = {0};
-			if (__or_opt_778.ok) {
-				__or_val_779 = __or_opt_778.value;
+			__v_result_string __or_opt_779 = driver__ensure_v3_linux_cross_sysroot();
+			string __or_val_780 = {0};
+			if (__or_opt_779.ok) {
+				__or_val_780 = __or_opt_779.value;
 			} else {
-				IError err = __or_opt_778.err;
+				IError err = __or_opt_779.err;
 				eprintln(IError__msg(&(err)));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			linux_cross_sysroot = __or_val_779;
+			linux_cross_sysroot = __or_val_780;
 		}
-		Array __if_val_780 = {0};
+		Array __if_val_781 = {0};
 		if (c_only) {
-			__if_val_780 = array_new(			sizeof(string), 0, 0);
+			__if_val_781 = array_new(			sizeof(string), 0, 0);
 		} else {
-			__v_result_Array __or_opt_781 = driver__c_compiler_target_args(prefs->target, c_compiler, c_compiler_explicit, linux_cross_sysroot);
-			Array __or_val_782 = {0};
-			if (__or_opt_781.ok) {
-				__or_val_782 = __or_opt_781.value;
+			__v_result_Array __or_opt_782 = driver__c_compiler_target_args(prefs->target, c_compiler, c_compiler_explicit, linux_cross_sysroot);
+			Array __or_val_783 = {0};
+			if (__or_opt_782.ok) {
+				__or_val_783 = __or_opt_782.value;
 			} else {
-				IError err = __or_opt_781.err;
+				IError err = __or_opt_782.err;
 				eprintln(IError__msg(&(err)));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			__if_val_780 = __or_val_782;
+			__if_val_781 = __or_val_783;
 		}
-		Array target_args = __if_val_780;
-		Array __if_val_783 = {0};
+		Array target_args = __if_val_781;
+		Array __if_val_784 = {0};
 		if (is_strict) {
-			__if_val_783 = new_array_from_c_array(7, 7, sizeof(string), (string[7]){_str_2875, _str_2876, _str_2877, _str_2878, _str_2879, _str_1805, _str_2880});
+			__if_val_784 = new_array_from_c_array(7, 7, sizeof(string), (string[7]){_str_2875, _str_2876, _str_2877, _str_2878, _str_2879, _str_1805, _str_2880});
 		} else {
-			__if_val_783 = new_array_from_c_array(1, 1, sizeof(string), (string[1]){_str_1377});
+			__if_val_784 = new_array_from_c_array(1, 1, sizeof(string), (string[1]){_str_1377});
 		}
-		Array warn_args = __if_val_783;
+		Array warn_args = __if_val_784;
 		if (string__eq(effective_c_compiler, _str_1287)) {
-			string __arr_val_784 = _str_2881;
-			array_push(&warn_args, &__arr_val_784);
+			string __arr_val_785 = _str_2881;
+			array_push(&warn_args, &__arr_val_785);
 		}
 		if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-			Array __push_many_785 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_2882, _str_2883});
-			array__push_many(&warn_args, __push_many_785.data, __push_many_785.len);
+			Array __push_many_786 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_2882, _str_2883});
+			array__push_many(&warn_args, __push_many_786.data, __push_many_786.len);
 		} else if (string__eq(effective_c_compiler, _str_1260)) {
-			string __arr_val_786 = _str_2882;
-			array_push(&warn_args, &__arr_val_786);
-		} else if (string__eq(effective_c_compiler, _str_4)) {
-			string __arr_val_787 = _str_2884;
+			string __arr_val_787 = _str_2882;
 			array_push(&warn_args, &__arr_val_787);
+		} else if (string__eq(effective_c_compiler, _str_4)) {
+			string __arr_val_788 = _str_2884;
+			array_push(&warn_args, &__arr_val_788);
 		}
 		string wrapv_flag = driver__c_wrapv_flag(pref__Preferences__normalized_target_os(prefs));
 		if (wrapv_flag.len > 0) {
-			string __arr_val_788 = wrapv_flag;
-			array_push(&warn_args, &__arr_val_788);
+			string __arr_val_789 = wrapv_flag;
+			array_push(&warn_args, &__arr_val_789);
 		}
 		if (string__eq(effective_c_compiler, _str_1260) && (!c_only || (generate_c_project.len > 0))) {
-			multi_return_string_string __multi_ret_789 = driver__c_object_compiler_identity(c_compiler, &c_object_cache_stats);
-			string compiler_version = __multi_ret_789.arg1;
-			Array __push_many_790 = driver__v3_clang_lifetime_flags(compiler_version);
-			array__push_many(&warn_args, __push_many_790.data, __push_many_790.len);
+			multi_return_string_string __multi_ret_790 = driver__c_object_compiler_identity(c_compiler, &c_object_cache_stats);
+			string compiler_version = __multi_ret_790.arg1;
+			Array __push_many_791 = driver__v3_clang_lifetime_flags(compiler_version);
+			array__push_many(&warn_args, __push_many_791.data, __push_many_791.len);
 		}
 		Array all_compile_c_flags = array__clone(&environment_c_flags);
 		array__push_many(&all_compile_c_flags, generated_c_flags.data, generated_c_flags.len);
@@ -214991,20 +215009,20 @@ void driver__run(Array args) {
 		bool large_prod_c_unit = !use_parallel_c_compilation && os__is_file(published_c_source) && driver__v3_is_large_prod_c_unit(os__file_size(published_c_source));
 		bool limit_large_unit_inlining = large_prod_c_unit && string__eq(effective_c_compiler, _str_1260);
 		bool link_uses_non_c_language = driver__c_link_flags_use_non_c_language(all_compile_c_flags);
-		string __if_val_791 = {0};
+		string __if_val_792 = {0};
 		if (link_uses_non_c_language) {
-			__if_val_791 = _str_34;
+			__if_val_792 = _str_34;
 		} else {
-			__if_val_791 = c_standard;
+			__if_val_792 = c_standard;
 		}
-		string link_c_standard = __if_val_791;
-		Array __if_val_792 = {0};
+		string link_c_standard = __if_val_792;
+		Array __if_val_793 = {0};
 		if (generate_c_project.len > 0) {
-			__if_val_792 = driver__v3_c_project_dependency_flags(generated_c_flags);
+			__if_val_793 = driver__v3_c_project_dependency_flags(generated_c_flags);
 		} else {
-			__if_val_792 = array__clone(&generated_c_flags);
+			__if_val_793 = array__clone(&generated_c_flags);
 		}
-		Array resolved_c_flags = __if_val_792;
+		Array resolved_c_flags = __if_val_793;
 		if (!c_only && !is_o) {
 			driver__v3_require_c_link_libraries(new_array_from_c_array(1, 1, sizeof(Array), (Array[1]){environment_c_flags}), macos_v3_fallback_file, cc_dir, string__eq(effective_c_compiler, _str_1256));
 		}
@@ -215012,13 +215030,13 @@ void driver__run(Array args) {
 			Array object_optimization_flags = driver__v3_shared_object_compile_flags(driver__v3_prod_c_object_optimization_flags(is_prod, no_prod_options, is_shared, parallel_cc, effective_tcc), pref__Preferences__normalized_target_os(prefs), is_shared, is_liveshared);
 			Array primary_object_compiler_flags = array_new(			sizeof(string), 0, 0);
 			if (effective_tcc) {
-				string __if_val_793 = {0};
+				string __if_val_794 = {0};
 				if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-					__if_val_793 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
+					__if_val_794 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
 				} else {
-					__if_val_793 = _str_34;
+					__if_val_794 = _str_34;
 				}
-				string object_tcc_sdk_root = __if_val_793;
+				string object_tcc_sdk_root = __if_val_794;
 				primary_object_compiler_flags = driver__v3_tcc_object_compile_flags(prefs->vroot, c_compiler, bundled_tcc, bundled_tcc_available, pref__Preferences__normalized_target_os(prefs), object_tcc_sdk_root);
 			}
 			if ((dump_c_flags.len > 0) && !string__eq(dump_c_flags, _str_72)) {
@@ -215028,24 +215046,24 @@ void driver__run(Array args) {
 				array__push_many(&early_dumped_flags, resolved_c_flags.data, resolved_c_flags.len);
 				driver__write_v3_c_flags_dump(dump_c_flags, early_dumped_flags, cc_dir);
 			}
-			__v_result_Array __or_opt_794 = driver__prepare_c_flags_for_link(generated_c_flags, environment_c_flags, primary_object_compiler_flags, object_optimization_flags, prefs->c99, no_std, pic_flag, target_args, prefs->target, c_compiler, use_implicit_tcc_semantics, cc_dir, &c_object_cache_stats);
-			Array __or_val_795 = {0};
-			if (__or_opt_794.ok) {
-				__or_val_795 = __or_opt_794.value;
+			__v_result_Array __or_opt_795 = driver__prepare_c_flags_for_link(generated_c_flags, environment_c_flags, primary_object_compiler_flags, object_optimization_flags, prefs->c99, no_std, pic_flag, target_args, prefs->target, c_compiler, use_implicit_tcc_semantics, cc_dir, &c_object_cache_stats);
+			Array __or_val_796 = {0};
+			if (__or_opt_795.ok) {
+				__or_val_796 = __or_opt_795.value;
 			} else {
-				IError err = __or_opt_794.err;
+				IError err = __or_opt_795.err;
 				string message = IError__msg(&(err));
 				if (retry_compilation && explicit_tcc) {
 					string fallback = driver__v3_platform_c_compiler_command(host_os);
-					string __if_val_796 = {0};
-					__v_option___v_int __if_guard_797 = string__index(message, _str_0);
-					if (__if_guard_797.ok) {
-						__v_int newline = __if_guard_797.value;
-						__if_val_796 = string__substr(						message, 						newline + 1, (						message).len);
+					string __if_val_797 = {0};
+					__v_option___v_int __if_guard_798 = string__index(message, _str_0);
+					if (__if_guard_798.ok) {
+						__v_int newline = __if_guard_798.value;
+						__if_val_797 = string__substr(						message, 						newline + 1, (						message).len);
 					} else {
-						__if_val_796 = message;
+						__if_val_797 = message;
 					}
-					string diagnostics = __if_val_796;
+					string diagnostics = __if_val_797;
 					eprintln(driver__v3_explicit_tcc_fallback_warning(fallback, diagnostics));
 					if (show_c_output && (diagnostics.len > 0)) {
 						eprintln(diagnostics);
@@ -215060,17 +215078,17 @@ void driver__run(Array args) {
 					return;
 				}
 				if (driver__v3_should_regenerate_after_implicit_tcc(retry_compilation, use_implicit_tcc_semantics, false, 0)) {
-					Array __order_snapshot_798 = args;
-					__v_int __order_snapshot_799 = c_compiler_arg_index;
-					string __order_snapshot_800 = cc_dir;
-					bool __order_snapshot_801 = silent;
-					string __if_val_802 = {0};
+					Array __order_snapshot_799 = args;
+					__v_int __order_snapshot_800 = c_compiler_arg_index;
+					string __order_snapshot_801 = cc_dir;
+					bool __order_snapshot_802 = silent;
+					string __if_val_803 = {0};
 					if (message.len > 0) {
-						__if_val_802 = message;
+						__if_val_803 = message;
 					} else {
-						__if_val_802 = _str_2885;
+						__if_val_803 = _str_2885;
 					}
-					driver__v3_regenerate_after_implicit_tcc(__order_snapshot_798, __order_snapshot_799, __order_snapshot_800, __order_snapshot_801, __if_val_802);
+					driver__v3_regenerate_after_implicit_tcc(__order_snapshot_799, __order_snapshot_800, __order_snapshot_801, __order_snapshot_802, __if_val_803);
 					{
 						flat__FlatAst__close_workers(a);
 					}
@@ -215089,61 +215107,61 @@ void driver__run(Array args) {
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			resolved_c_flags = __or_val_795;
+			resolved_c_flags = __or_val_796;
 			v__bench__Bench__step(&b, _str_2886);
 		}
 		resolved_c_flags = driver__v3_shared_object_compile_flags(resolved_c_flags, pref__Preferences__normalized_target_os(prefs), is_shared, is_liveshared);
 		if (effective_tcc && string__eq(pref__Preferences__normalized_target_os(prefs), _str_889) && !c_only && !is_o) {
-			Array __arr_lit_805 = array_new(			sizeof(string), 0, 0);
-			__v_result_driver__TccMacosLibgcPlan __or_opt_803 = driver__plan_tcc_macos_libgc_store(prefs->vroot, resolved_c_flags, __arr_lit_805);
-			driver__TccMacosLibgcPlan __or_val_804 = {0};
-			if (__or_opt_803.ok) {
-				__or_val_804 = __or_opt_803.value;
+			Array __arr_lit_806 = array_new(			sizeof(string), 0, 0);
+			__v_result_driver__TccMacosLibgcPlan __or_opt_804 = driver__plan_tcc_macos_libgc_store(prefs->vroot, resolved_c_flags, __arr_lit_806);
+			driver__TccMacosLibgcPlan __or_val_805 = {0};
+			if (__or_opt_804.ok) {
+				__or_val_805 = __or_opt_804.value;
 			} else {
-				IError err = __or_opt_803.err;
+				IError err = __or_opt_804.err;
 				eprintln(IError__msg(&(err)));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			driver__TccMacosLibgcPlan gc_plan = __or_val_804;
+			driver__TccMacosLibgcPlan gc_plan = __or_val_805;
 			if (gc_plan.required) {
-				Array __arr_lit_809 = array_new(				sizeof(string), 0, 0);
-				__v_result_multi_return_Array_Array __or_opt_807 = driver__materialize_and_rewrite_tcc_macos_libgc_flags(gc_plan, resolved_c_flags, __arr_lit_809);
-				multi_return_Array_Array __or_val_808 = {0};
-				if (__or_opt_807.ok) {
-					__or_val_808 = __or_opt_807.value;
+				Array __arr_lit_810 = array_new(				sizeof(string), 0, 0);
+				__v_result_multi_return_Array_Array __or_opt_808 = driver__materialize_and_rewrite_tcc_macos_libgc_flags(gc_plan, resolved_c_flags, __arr_lit_810);
+				multi_return_Array_Array __or_val_809 = {0};
+				if (__or_opt_808.ok) {
+					__or_val_809 = __or_opt_808.value;
 				} else {
-					IError err = __or_opt_807.err;
+					IError err = __or_opt_808.err;
 					eprintln(IError__msg(&(err)));
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				multi_return_Array_Array __multi_ret_806 = __or_val_808;
-				Array rewritten = __multi_ret_806.arg0;
+				multi_return_Array_Array __multi_ret_807 = __or_val_809;
+				Array rewritten = __multi_ret_807.arg0;
 				resolved_c_flags = array__clone(&rewritten);
 			}
 		}
-		Array __if_val_810 = {0};
+		Array __if_val_811 = {0};
 		if (tcc_dylib) {
-			__if_val_810 = driver__v3_tcc_dylib_native_flags(resolved_c_flags);
+			__if_val_811 = driver__v3_tcc_dylib_native_flags(resolved_c_flags);
 		} else {
-			__if_val_810 = resolved_c_flags;
+			__if_val_811 = resolved_c_flags;
 		}
-		Array cached_object_c_flags = driver__c_object_compile_flags(__if_val_810);
+		Array cached_object_c_flags = driver__c_object_compile_flags(__if_val_811);
 		if (tcc_dylib) {
 			{
-				__v_int __for_idx_811 = 0;
-				for (; __for_idx_811 < driver__v3_time_macro_names.len; __for_idx_811++) {
-					string macro_name = *(string*)(array_get(driver__v3_time_macro_names, __for_idx_811));
-					string __arr_val_812 = ({ string __v3_internal_symbol_join_104[3]; __v3_internal_symbol_join_104[0] = _str_1750; __v3_internal_symbol_join_104[1] = macro_name; __v3_internal_symbol_join_104[2] = _str_2887; string_plus_many(3, __v3_internal_symbol_join_104); });
-					array_push(&cached_object_c_flags, &__arr_val_812);
+				__v_int __for_idx_812 = 0;
+				for (; __for_idx_812 < driver__v3_time_macro_names.len; __for_idx_812++) {
+					string macro_name = *(string*)(array_get(driver__v3_time_macro_names, __for_idx_812));
+					string __arr_val_813 = ({ string __v3_internal_symbol_join_104[3]; __v3_internal_symbol_join_104[0] = _str_1750; __v3_internal_symbol_join_104[1] = macro_name; __v3_internal_symbol_join_104[2] = _str_2887; string_plus_many(3, __v3_internal_symbol_join_104); });
+					array_push(&cached_object_c_flags, &__arr_val_813);
 				}
 			}
 		}
 		if (!c_only && !is_o) {
-			__v_option_string __if_guard_813 = driver__v3_missing_bundled_gc_library(resolved_c_flags, prefs->vroot);
-			if (__if_guard_813.ok) {
-				string missing_gc = __if_guard_813.value;
+			__v_option_string __if_guard_814 = driver__v3_missing_bundled_gc_library(resolved_c_flags, prefs->vroot);
+			if (__if_guard_814.ok) {
+				string missing_gc = __if_guard_814.value;
 				driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 				eprintln(driver__v3_missing_gc_library_message(missing_gc));
 				driver__cleanup_c_build_dir(cc_dir);
@@ -215151,127 +215169,127 @@ void driver__run(Array args) {
 			}
 			driver__v3_require_c_link_libraries(new_array_from_c_array(2, 2, sizeof(Array), (Array[2]){resolved_c_flags, link_ld_flags}), macos_v3_fallback_file, cc_dir, string__eq(effective_c_compiler, _str_1256));
 		}
-		string __if_val_814 = {0};
+		string __if_val_815 = {0};
 		if (effective_tcc && string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-			__if_val_814 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
+			__if_val_815 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
 		} else {
-			__if_val_814 = _str_34;
+			__if_val_815 = _str_34;
 		}
-		string flag_plan_sdk_root = __if_val_814;
+		string flag_plan_sdk_root = __if_val_815;
 		Array shared_link_ld_flags = array__clone(&link_ld_flags);
 		if (is_shared && !is_liveshared && string__eq(pref__Preferences__normalized_target_os(prefs), _str_887) && !effective_tcc && (!c_only || (generate_c_project.len > 0)) && !driver__v3_has_linker_version_script(resolved_c_flags) && !driver__v3_has_linker_version_script(environment_c_flags) && !driver__v3_has_linker_version_script(link_ld_flags)) {
-			string __if_val_815 = {0};
+			string __if_val_816 = {0};
 			if (generate_c_project.len > 0) {
-				__if_val_815 = generate_c_project;
+				__if_val_816 = generate_c_project;
 			} else {
-				__if_val_815 = cc_dir;
+				__if_val_816 = cc_dir;
 			}
-			string exports_dir = __if_val_815;
+			string exports_dir = __if_val_816;
 			string exports_script = os__join_path_single(exports_dir, _str_2888);
-			__v_result __or_opt_816 = os__write_file(exports_script, driver__v3_shared_exports_version_script(a->export_fn_names, driver__v3_shared_exports_data_names(a)));
-			if (!__or_opt_816.ok) {
-				IError err = __or_opt_816.err;
+			__v_result __or_opt_817 = os__write_file(exports_script, driver__v3_shared_exports_version_script(a->export_fn_names, driver__v3_shared_exports_data_names(a)));
+			if (!__or_opt_817.ok) {
+				IError err = __or_opt_817.err;
 				eprintln(({ string __v3_internal_symbol_join_105[4]; __v3_internal_symbol_join_105[0] = _str_2889; __v3_internal_symbol_join_105[1] = exports_script; __v3_internal_symbol_join_105[2] = _str_443; __v3_internal_symbol_join_105[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_105); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			string __arr_val_817 = string__plus(_str_2890, exports_script);
-			array_push(&shared_link_ld_flags, &__arr_val_817);
+			string __arr_val_818 = string__plus(_str_2890, exports_script);
+			array_push(&shared_link_ld_flags, &__arr_val_818);
 		}
-		string __if_val_818 = {0};
+		string __if_val_819 = {0};
 		if (explicit_tcc && (string__eq(c_compiler, _str_1270) || string__eq(c_compiler, _str_1276)) && bundled_tcc_available) {
-			__if_val_818 = bundled_tcc;
+			__if_val_819 = bundled_tcc;
 		} else {
-			__if_val_818 = c_compiler;
+			__if_val_819 = c_compiler;
 		}
-		string planned_tcc_compiler = __if_val_818;
+		string planned_tcc_compiler = __if_val_819;
 		Array program_warn_args = array__clone(&warn_args);
-		if (effective_tcc && (pruned_declarations.count > 0) && ({bool __contains_819 = false;
+		if (effective_tcc && (pruned_declarations.count > 0) && ({bool __contains_820 = false;
 		{
-			__v_int __contains_idx_820 = 0;
-			for (; __contains_idx_820 < program_warn_args.len; __contains_idx_820++) {
-				if (string__eq(*(string*)(array_get(program_warn_args, __contains_idx_820)), _str_2877)) {
-					__contains_819 = true;
+			__v_int __contains_idx_821 = 0;
+			for (; __contains_idx_821 < program_warn_args.len; __contains_idx_821++) {
+				if (string__eq(*(string*)(array_get(program_warn_args, __contains_idx_821)), _str_2877)) {
+					__contains_820 = true;
 				}
 			}
 		}
-		!__contains_819;})) {
-			string __arr_val_821 = _str_2877;
-			array_push(&program_warn_args, &__arr_val_821);
+		!__contains_820;})) {
+			string __arr_val_822 = _str_2877;
+			array_push(&program_warn_args, &__arr_val_822);
 		}
-		bool __contains_822 = false;
+		bool __contains_823 = false;
 		{
-			__v_int __contains_idx_823 = 0;
-			for (; __contains_idx_823 < prefs->user_defines.len; __contains_idx_823++) {
-				if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_823)), _str_1288)) {
-					__contains_822 = true;
+			__v_int __contains_idx_824 = 0;
+			for (; __contains_idx_824 < prefs->user_defines.len; __contains_idx_824++) {
+				if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_824)), _str_1288)) {
+					__contains_823 = true;
 				}
 			}
 		}
-		bool __contains_824 = false;
+		bool __contains_825 = false;
 		{
-			__v_int __contains_idx_825 = 0;
-			for (; __contains_idx_825 < prefs->user_defines.len; __contains_idx_825++) {
-				if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_825)), _str_2362)) {
-					__contains_824 = true;
+			__v_int __contains_idx_826 = 0;
+			for (; __contains_idx_826 < prefs->user_defines.len; __contains_idx_826++) {
+				if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_826)), _str_2362)) {
+					__contains_825 = true;
 				}
 			}
 		}
-		driver__V3CCompilerFlagOptions c_flag_options = (driver__V3CCompilerFlagOptions){.environment_c_flags = environment_c_flags, .link_ld_flags = shared_link_ld_flags, .target_args = target_args, .link_c_standard = link_c_standard, .dependencies = resolved_c_flags, .warn_args = program_warn_args, .tcc_resources = (__v_option_driver__V3TccResourceFlags){.ok = true, .value = driver__v3_tcc_resource_flags_for_compiler(prefs->vroot, planned_tcc_compiler, bundled_tcc, bundled_tcc_available)}, .vroot = prefs->vroot, .target_os = pref__Preferences__normalized_target_os(prefs), .target_arch = pref__Preferences__normalized_target_arch(prefs), .c_compiler = effective_c_compiler, .subsystem = prefs->subsystem, .windows_gui_app = windows_gui_entry_point, .macos_sdk_root = flag_plan_sdk_root, .pic_flag = pic_flag, .is_prod = is_prod, .no_prod_options = no_prod_options, .is_shared = is_shared, .parallel_cc = parallel_cc, .large_c_unit = large_prod_c_unit, .limit_inlining = limit_large_unit_inlining, .is_tcc = effective_tcc, .is_c_debug = is_c_debug, .no_backtrace = __contains_822, .is_o = is_o, .is_liveshared = is_liveshared, .is_freestanding = __contains_824};
+		driver__V3CCompilerFlagOptions c_flag_options = (driver__V3CCompilerFlagOptions){.environment_c_flags = environment_c_flags, .link_ld_flags = shared_link_ld_flags, .target_args = target_args, .link_c_standard = link_c_standard, .dependencies = resolved_c_flags, .warn_args = program_warn_args, .tcc_resources = (__v_option_driver__V3TccResourceFlags){.ok = true, .value = driver__v3_tcc_resource_flags_for_compiler(prefs->vroot, planned_tcc_compiler, bundled_tcc, bundled_tcc_available)}, .vroot = prefs->vroot, .target_os = pref__Preferences__normalized_target_os(prefs), .target_arch = pref__Preferences__normalized_target_arch(prefs), .c_compiler = effective_c_compiler, .subsystem = prefs->subsystem, .windows_gui_app = windows_gui_entry_point, .macos_sdk_root = flag_plan_sdk_root, .pic_flag = pic_flag, .is_prod = is_prod, .no_prod_options = no_prod_options, .is_shared = is_shared, .parallel_cc = parallel_cc, .large_c_unit = large_prod_c_unit, .limit_inlining = limit_large_unit_inlining, .is_tcc = effective_tcc, .is_c_debug = is_c_debug, .no_backtrace = __contains_823, .is_o = is_o, .is_liveshared = is_liveshared, .is_freestanding = __contains_825};
 		driver__V3CCompilerFlagPlan c_flag_plan = driver__v3_c_compiler_flag_plan(c_flag_options);
-		driver__V3CCompilerFlagOptions __assoc_826 = c_flag_options;
-		__assoc_826.large_c_unit = true;
-		__assoc_826.limit_inlining = string__eq(effective_c_compiler, _str_1260);
-		driver__V3CCompilerFlagOptions large_c_flag_options = __assoc_826;
+		driver__V3CCompilerFlagOptions __assoc_827 = c_flag_options;
+		__assoc_827.large_c_unit = true;
+		__assoc_827.limit_inlining = string__eq(effective_c_compiler, _str_1260);
+		driver__V3CCompilerFlagOptions large_c_flag_options = __assoc_827;
 		driver__V3CCompilerFlagPlan large_c_flag_plan = driver__v3_c_compiler_flag_plan(large_c_flag_options);
 		Array native_support_inputs = array_new(		sizeof(string), 0, 0);
 		if (!string__eq(icon_path, _str_34) && !string__eq(os__user_os(), _str_890)) {
-			__v_result_string __or_opt_827 = driver__prepare_cross_windows_icon_resource(icon_path, cc_dir, c_compiler, verbose || show_cc);
-			string __or_val_828 = {0};
-			if (__or_opt_827.ok) {
-				__or_val_828 = __or_opt_827.value;
+			__v_result_string __or_opt_828 = driver__prepare_cross_windows_icon_resource(icon_path, cc_dir, c_compiler, verbose || show_cc);
+			string __or_val_829 = {0};
+			if (__or_opt_828.ok) {
+				__or_val_829 = __or_opt_828.value;
 			} else {
-				IError err = __or_opt_827.err;
+				IError err = __or_opt_828.err;
 				eprintln(IError__msg(&(err)));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			string icon_object = __or_val_828;
-			string __arr_val_829 = icon_object;
-			array_push(&native_support_inputs, &__arr_val_829);
+			string icon_object = __or_val_829;
+			string __arr_val_830 = icon_object;
+			array_push(&native_support_inputs, &__arr_val_830);
 		}
 		#if defined(_WIN32)
 		{
 			if (!string__eq(icon_path, _str_34)) {
-				Array __arr_lit_830 = array_new(				sizeof(string), 0, 0);
-				string icon_arch = driver__windows_icon_resource_arch(pref__Preferences__normalized_target_arch(prefs), c_compiler, driver__V3CCompilerFlagPlan__all_flags(&c_flag_plan, __arr_lit_830));
-				__v_result_string __or_opt_831 = driver__prepare_windows_icon_resource(icon_path, cc_dir, icon_arch, driver__c_compiler_is_msvc(c_compiler));
-				string __or_val_832 = {0};
-				if (__or_opt_831.ok) {
-					__or_val_832 = __or_opt_831.value;
+				Array __arr_lit_831 = array_new(				sizeof(string), 0, 0);
+				string icon_arch = driver__windows_icon_resource_arch(pref__Preferences__normalized_target_arch(prefs), c_compiler, driver__V3CCompilerFlagPlan__all_flags(&c_flag_plan, __arr_lit_831));
+				__v_result_string __or_opt_832 = driver__prepare_windows_icon_resource(icon_path, cc_dir, icon_arch, driver__c_compiler_is_msvc(c_compiler));
+				string __or_val_833 = {0};
+				if (__or_opt_832.ok) {
+					__or_val_833 = __or_opt_832.value;
 				} else {
-					IError err = __or_opt_831.err;
+					IError err = __or_opt_832.err;
 					eprintln(IError__msg(&(err)));
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				string icon_object = __or_val_832;
-				string __arr_val_833 = icon_object;
-				array_push(&native_support_inputs, &__arr_val_833);
+				string icon_object = __or_val_833;
+				string __arr_val_834 = icon_object;
+				array_push(&native_support_inputs, &__arr_val_834);
 			}
 		}
 		#endif
 		if (effective_tcc && !is_o && !generated_literal_output_only) {
-			string __if_val_834 = {0};
+			string __if_val_835 = {0};
 			if (generate_c_project.len > 0) {
-				__if_val_834 = driver__tcc_atomic_s_arg(prefs);
+				__if_val_835 = driver__tcc_atomic_s_arg(prefs);
 			} else {
-				__if_val_834 = driver__tcc_atomic_arg(prefs, c_compiler, c_flag_plan.tcc_includes);
+				__if_val_835 = driver__tcc_atomic_arg(prefs, c_compiler, c_flag_plan.tcc_includes);
 			}
-			string atomic_input = __if_val_834;
+			string atomic_input = __if_val_835;
 			if (atomic_input.len > 0) {
-				string __arr_val_835 = atomic_input;
-				array_push(&native_support_inputs, &__arr_val_835);
+				string __arr_val_836 = atomic_input;
+				array_push(&native_support_inputs, &__arr_val_836);
 			}
 		}
 		Array embed_incbin_objects = array_new(		sizeof(string), 0, 0);
@@ -215279,66 +215297,66 @@ void driver__run(Array args) {
 			Array assembly_flag_candidates = array__clone(&c_flag_plan.before_inputs);
 			array__push_many(&assembly_flag_candidates, c_flag_plan.after_inputs.data, c_flag_plan.after_inputs.len);
 			Array assembly_flags = driver__v3_embed_incbin_assembly_flags(assembly_flag_candidates);
-			__v_result_Array __or_opt_836 = driver__assemble_v3_embed_incbin_objects(embed_incbin_payloads, embed_incbin_assembler, assembly_flags, cc_dir, verbose || show_cc);
-			Array __or_val_837 = {0};
-			if (__or_opt_836.ok) {
-				__or_val_837 = __or_opt_836.value;
+			__v_result_Array __or_opt_837 = driver__assemble_v3_embed_incbin_objects(embed_incbin_payloads, embed_incbin_assembler, assembly_flags, cc_dir, verbose || show_cc);
+			Array __or_val_838 = {0};
+			if (__or_opt_837.ok) {
+				__or_val_838 = __or_opt_837.value;
 			} else {
-				IError err = __or_opt_836.err;
+				IError err = __or_opt_837.err;
 				eprintln(IError__msg(&(err)));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			embed_incbin_objects = __or_val_837;
+			embed_incbin_objects = __or_val_838;
 			array__push_many(&native_support_inputs, embed_incbin_objects.data, embed_incbin_objects.len);
 		}
 		if (dump_c_flags.len > 0) {
 			Array dump_support_flags = driver__v3_c_source_mode_flags(needs_objective_c);
 			array__push_many(&dump_support_flags, native_support_inputs.data, native_support_inputs.len);
-			Array __if_val_838 = {0};
+			Array __if_val_839 = {0};
 			if (effective_tcc) {
-				__if_val_838 = driver__v3_tcc_macos_framework_flags(driver__V3CCompilerFlagPlan__all_flags(&c_flag_plan, dump_support_flags), pref__Preferences__normalized_target_os(prefs), flag_plan_sdk_root);
+				__if_val_839 = driver__v3_tcc_macos_framework_flags(driver__V3CCompilerFlagPlan__all_flags(&c_flag_plan, dump_support_flags), pref__Preferences__normalized_target_os(prefs), flag_plan_sdk_root);
 			} else {
-				__if_val_838 = driver__V3CCompilerFlagPlan__all_flags(&c_flag_plan, dump_support_flags);
+				__if_val_839 = driver__V3CCompilerFlagPlan__all_flags(&c_flag_plan, dump_support_flags);
 			}
-			Array dumped_flags = __if_val_838;
+			Array dumped_flags = __if_val_839;
 			driver__write_v3_c_flags_dump(dump_c_flags, dumped_flags, cc_dir);
 		}
 		if (c_only) {
 			if (headerless_snapshot && (cross_libc_headers_output.len == 0) && string__eq(types__platform_int_c_spelling(), types__portable_int_c_type)) {
-				__v_result __or_opt_839 = driver__add_cross_libc_headers_variant(cc_src);
-				if (!__or_opt_839.ok) {
-					IError err = __or_opt_839.err;
+				__v_result __or_opt_840 = driver__add_cross_libc_headers_variant(cc_src);
+				if (!__or_opt_840.ok) {
+					IError err = __or_opt_840.err;
 					eprintln(IError__msg(&(err)));
-					__v_result __or_opt_840 = os__rm(cc_src);
-					if (!__or_opt_840.ok) {
+					__v_result __or_opt_841 = os__rm(cc_src);
+					if (!__or_opt_841.ok) {
 					}
 					v_exit(1);
 				}
 			}
 			v__bench__Bench__metric(&b, _str_2891, (i64)(os__file_size(cc_src)), _str_2892);
 			if (c_to_stdout) {
-				__v_result_string __or_opt_841 = os__read_file(cc_src);
-				string __or_val_842 = {0};
-				if (__or_opt_841.ok) {
-					__or_val_842 = __or_opt_841.value;
+				__v_result_string __or_opt_842 = os__read_file(cc_src);
+				string __or_val_843 = {0};
+				if (__or_opt_842.ok) {
+					__or_val_843 = __or_opt_842.value;
 				} else {
-					IError err = __or_opt_841.err;
+					IError err = __or_opt_842.err;
 					eprintln(({ string __v3_internal_symbol_join_106[4]; __v3_internal_symbol_join_106[0] = _str_2893; __v3_internal_symbol_join_106[1] = cc_src; __v3_internal_symbol_join_106[2] = _str_443; __v3_internal_symbol_join_106[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_106); }));
-					__v_result __or_opt_843 = os__rm(cc_src);
-					if (!__or_opt_843.ok) {
+					__v_result __or_opt_844 = os__rm(cc_src);
+					if (!__or_opt_844.ok) {
 					}
 					v_exit(1);
 				}
-				string source = __or_val_842;
+				string source = __or_val_843;
 				print(source);
-				__v_result __or_opt_844 = os__rm(cc_src);
-				if (!__or_opt_844.ok) {
+				__v_result __or_opt_845 = os__rm(cc_src);
+				if (!__or_opt_845.ok) {
 				}
 			} else if (generate_c_project.len > 0) {
-				__v_result __or_opt_845 = driver__write_v3_c_project(generate_c_project, cc_src, c_compiler, c_flag_plan, native_support_inputs, needs_objective_c);
-				if (!__or_opt_845.ok) {
-					IError err = __or_opt_845.err;
+				__v_result __or_opt_846 = driver__write_v3_c_project(generate_c_project, cc_src, c_compiler, c_flag_plan, native_support_inputs, needs_objective_c);
+				if (!__or_opt_846.ok) {
+					IError err = __or_opt_846.err;
 					eprintln(string__plus(_str_2894, IError__msg(&(err))));
 					v_exit(1);
 				}
@@ -215381,13 +215399,13 @@ void driver__run(Array args) {
 		string tcc_main_file = _str_34;
 		string cache_full_tcc_source = _str_34;
 		string retained_full_c_source = _str_34;
-		string __if_val_846 = {0};
+		string __if_val_847 = {0};
 		if (cgen_cache_hit) {
-			__if_val_846 = cgen_cache_entry.source;
+			__if_val_847 = cgen_cache_entry.source;
 		} else {
-			__if_val_846 = _str_34;
+			__if_val_847 = _str_34;
 		}
-		string cached_program_body_source = __if_val_846;
+		string cached_program_body_source = __if_val_847;
 		string refreshed_incremental_body = _str_34;
 		if (cache_with_tcc && cache_state->manager.enabled) {
 			if (needs_objective_c || link_uses_non_c_language || tcc_link_has_incompatible_objects || (target_args.len > 0) || !driver__v3_tcc_builds_c_debug(is_c_debug, host_os, target.os) || (dump_c_flags.len > 0)) {
@@ -215395,18 +215413,18 @@ void driver__run(Array args) {
 				driver__restart_v3_without_cache(cc_dir);
 			}
 			Array object_compiler_args = driver__v3_tcc_object_compile_flags(prefs->vroot, bundled_tcc, bundled_tcc, bundled_tcc_available, pref__Preferences__normalized_target_os(prefs), flag_plan_sdk_root);
-			bool __contains_847 = false;
+			bool __contains_848 = false;
 			{
-				__v_int __contains_idx_848 = 0;
-				for (; __contains_idx_848 < prefs->user_defines.len; __contains_idx_848++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_848)), _str_1288)) {
-						__contains_847 = true;
+				__v_int __contains_idx_849 = 0;
+				for (; __contains_idx_849 < prefs->user_defines.len; __contains_idx_849++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_849)), _str_1288)) {
+						__contains_848 = true;
 					}
 				}
 			}
-			if (!__contains_847 && driver__v3_tcc_backtrace_enabled(pref__Preferences__normalized_target_os(prefs), pref__Preferences__normalized_target_arch(prefs), is_shared)) {
-				string __arr_val_849 = _str_2064;
-				array_push(&object_compiler_args, &__arr_val_849);
+			if (!__contains_848 && driver__v3_tcc_backtrace_enabled(pref__Preferences__normalized_target_os(prefs), pref__Preferences__normalized_target_arch(prefs), is_shared)) {
+				string __arr_val_850 = _str_2064;
+				array_push(&object_compiler_args, &__arr_val_850);
 			}
 			cache_state->object_compiler = (driver__V3CachedObjectCompiler){.path = bundled_tcc, .args = object_compiler_args, .identity = cache_state->object_compiler.identity};
 			cache_state->objects_only = true;
@@ -215426,80 +215444,80 @@ void driver__run(Array args) {
 			if (cgen_prepared_hit) {
 				if ((generated_c_flags.len == 0) && !generic_cache_hit && !incremental_cache_hit && (p->parsed_v_header_files == 0) && os__is_file(cgen_cache_entry.source)) {
 					cache_full_tcc_source = os__join_path_single(cc_dir, _str_2897);
-					__v_result __or_opt_850 = os__cp(cgen_cache_entry.source, cache_full_tcc_source, (os__CopyParams){0});
-					if (!__or_opt_850.ok) {
-						IError err = __or_opt_850.err;
+					__v_result __or_opt_851 = os__cp(cgen_cache_entry.source, cache_full_tcc_source, (os__CopyParams){0});
+					if (!__or_opt_851.ok) {
+						IError err = __or_opt_851.err;
 						cache_full_tcc_source = _str_34;
 					}
 				}
 				if (retain_backend_c && os__is_file(cgen_cache_entry.source)) {
 					retained_full_c_source = os__join_path_single(cc_dir, _str_2898);
-					__v_result __or_opt_851 = os__cp(cgen_cache_entry.source, retained_full_c_source, (os__CopyParams){0});
-					if (!__or_opt_851.ok) {
-						IError err = __or_opt_851.err;
+					__v_result __or_opt_852 = os__cp(cgen_cache_entry.source, retained_full_c_source, (os__CopyParams){0});
+					if (!__or_opt_852.ok) {
+						IError err = __or_opt_852.err;
 						eprintln(({ string __v3_internal_symbol_join_109[4]; __v3_internal_symbol_join_109[0] = _str_2899; __v3_internal_symbol_join_109[1] = cgen_cache_entry.source; __v3_internal_symbol_join_109[2] = _str_443; __v3_internal_symbol_join_109[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_109); }));
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
 					}
 				}
-				__v_result_string __or_opt_852 = os__read_file(cgen_prepared_entry.prefix);
-				string __or_val_853 = {0};
-				if (__or_opt_852.ok) {
-					__or_val_853 = __or_opt_852.value;
+				__v_result_string __or_opt_853 = os__read_file(cgen_prepared_entry.prefix);
+				string __or_val_854 = {0};
+				if (__or_opt_853.ok) {
+					__or_val_854 = __or_opt_853.value;
 				} else {
-					IError err = __or_opt_852.err;
+					IError err = __or_opt_853.err;
 					eprintln(({ string __v3_internal_symbol_join_110[4]; __v3_internal_symbol_join_110[0] = _str_2861; __v3_internal_symbol_join_110[1] = cgen_prepared_entry.prefix; __v3_internal_symbol_join_110[2] = _str_443; __v3_internal_symbol_join_110[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_110); }));
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				string prefix_source = __or_val_853;
+				string prefix_source = __or_val_854;
 				string program_suffix = driver__v3_cached_object_program_signature_suffix(prefix_source);
 				compile_signature = string__plus(compile_signature, program_suffix);
-				__v_option_Array __or_opt_854 = modulecache__Manager__valid_cgen_prepared_objects(&cache_state->manager, cgen_cache_entry, compile_signature);
-				Array __or_val_855 = {0};
-				if (__or_opt_854.ok) {
-					__or_val_855 = __or_opt_854.value;
+				__v_option_Array __or_opt_855 = modulecache__Manager__valid_cgen_prepared_objects(&cache_state->manager, cgen_cache_entry, compile_signature);
+				Array __or_val_856 = {0};
+				if (__or_opt_855.ok) {
+					__or_val_856 = __or_opt_855.value;
 				} else {
-					driver__V3InterfaceScopes __ref_arg_856 = driver__parse_v3_interface_scopes(interface_impl_signature);
-					if (driver__resolve_flag_specific_cache_objects(cache_state, a, string__plus(object_flags_signature, program_suffix), &__ref_arg_856)) {
+					driver__V3InterfaceScopes __ref_arg_857 = driver__parse_v3_interface_scopes(interface_impl_signature);
+					if (driver__resolve_flag_specific_cache_objects(cache_state, a, string__plus(object_flags_signature, program_suffix), &__ref_arg_857)) {
 						driver__restart_v3_after_cache_invalidation(cc_dir);
 					}
 					Array resolved_objects = driver__cache_object_paths(cache_state->objects);
-					__v_result __or_opt_857 = modulecache__Manager__write_cgen_prepared_objects(&cache_state->manager, cgen_cache_entry, compile_signature, resolved_objects);
-					if (!__or_opt_857.ok) {
+					__v_result __or_opt_858 = modulecache__Manager__write_cgen_prepared_objects(&cache_state->manager, cgen_cache_entry, compile_signature, resolved_objects);
+					if (!__or_opt_858.ok) {
 					}
-					__or_val_855 = resolved_objects;
+					__or_val_856 = resolved_objects;
 				}
-				Array objects = __or_val_855;
+				Array objects = __or_val_856;
 				prepared_cache = (driver__V3PreparedModuleCache){.program_prefix_source = prefix_source, .objects = objects, .main_source = _str_34, .tcc_main_source = _str_34, .main_body = _str_34, .program_body_cache = _str_34, .program_declarations = _str_34, .tcc_program_declarations = _str_34};
 				published_c_source = cgen_prepared_entry.main;
 			} else {
-				__v_result_string __or_opt_858 = os__read_file(cache_plan_file);
-				string __or_val_859 = {0};
-				if (__or_opt_858.ok) {
-					__or_val_859 = __or_opt_858.value;
+				__v_result_string __or_opt_859 = os__read_file(cache_plan_file);
+				string __or_val_860 = {0};
+				if (__or_opt_859.ok) {
+					__or_val_860 = __or_opt_859.value;
 				} else {
-					IError err = __or_opt_858.err;
+					IError err = __or_opt_859.err;
 					eprintln(({ string __v3_internal_symbol_join_111[4]; __v3_internal_symbol_join_111[0] = _str_2900; __v3_internal_symbol_join_111[1] = cache_plan_file; __v3_internal_symbol_join_111[2] = _str_443; __v3_internal_symbol_join_111[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_111); }));
 					v_exit(1);
 				}
-				string generated_source = __or_val_859;
+				string generated_source = __or_val_860;
 				string object_compile_signature = compile_signature;
 				string generated_suffix = driver__v3_cached_object_program_signature_suffix(generated_source);
 				compile_signature = string__plus(compile_signature, generated_suffix);
 				if ((generated_c_flags.len == 0) && !generic_cache_hit && !incremental_cache_hit && (p->parsed_v_header_files == 0) && !cache_with_tcc) {
 					cache_full_tcc_source = os__join_path_single(cc_dir, _str_2897);
-					__v_result __or_opt_860 = os__write_file(cache_full_tcc_source, generated_source);
-					if (!__or_opt_860.ok) {
-						IError err = __or_opt_860.err;
+					__v_result __or_opt_861 = os__write_file(cache_full_tcc_source, generated_source);
+					if (!__or_opt_861.ok) {
+						IError err = __or_opt_861.err;
 						cache_full_tcc_source = _str_34;
 					}
 				}
 				if (retain_backend_c) {
 					retained_full_c_source = os__join_path_single(cc_dir, _str_2898);
-					__v_result __or_opt_861 = os__write_file(retained_full_c_source, generated_source);
-					if (!__or_opt_861.ok) {
-						IError err = __or_opt_861.err;
+					__v_result __or_opt_862 = os__write_file(retained_full_c_source, generated_source);
+					if (!__or_opt_862.ok) {
+						IError err = __or_opt_862.err;
 						eprintln(({ string __v3_internal_symbol_join_112[4]; __v3_internal_symbol_join_112[0] = _str_2901; __v3_internal_symbol_join_112[1] = retained_full_c_source; __v3_internal_symbol_join_112[2] = _str_443; __v3_internal_symbol_join_112[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_112); }));
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
@@ -215507,17 +215525,17 @@ void driver__run(Array args) {
 				}
 				if (generic_cache_hit) {
 					if (incremental_cache_restored) {
-						__v_result_string __or_opt_862 = os__read_file(generic_cache_entry.prefix);
-						string __or_val_863 = {0};
-						if (__or_opt_862.ok) {
-							__or_val_863 = __or_opt_862.value;
+						__v_result_string __or_opt_863 = os__read_file(generic_cache_entry.prefix);
+						string __or_val_864 = {0};
+						if (__or_opt_863.ok) {
+							__or_val_864 = __or_opt_863.value;
 						} else {
-							IError err = __or_opt_862.err;
+							IError err = __or_opt_863.err;
 							eprintln(({ string __v3_internal_symbol_join_113[4]; __v3_internal_symbol_join_113[0] = _str_2902; __v3_internal_symbol_join_113[1] = generic_cache_entry.prefix; __v3_internal_symbol_join_113[2] = _str_443; __v3_internal_symbol_join_113[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_113); }));
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
-						string cached_prefix = __or_val_863;
+						string cached_prefix = __or_val_864;
 						if (prefs->target_libc_headers && driver__target_libc_cached_prefix_needs_thread_refresh(cached_prefix, generated_source)) {
 							driver__trace_v3_cache_fallback(_str_2903);
 							os__setenv(driver__v3_internal_cache_force_source_env, _str_224, true);
@@ -215525,12 +215543,12 @@ void driver__run(Array args) {
 						}
 						string prefix_suffix = driver__v3_cached_object_program_signature_suffix(cached_prefix);
 						compile_signature = string__plus(object_compile_signature, prefix_suffix);
-						__v_result_driver__V3PreparedModuleCache __or_opt_864 = driver__prepare_v3_incremental_cached_body(cache_plan_file, incremental_prefix_path, incremental_tcc_declarations_path, cached_prefix, string__plus(object_flags_signature, prefix_suffix), interface_impl_signature, a, cache_state);
-						driver__V3PreparedModuleCache __or_val_865 = {0};
-						if (__or_opt_864.ok) {
-							__or_val_865 = __or_opt_864.value;
+						__v_result_driver__V3PreparedModuleCache __or_opt_865 = driver__prepare_v3_incremental_cached_body(cache_plan_file, incremental_prefix_path, incremental_tcc_declarations_path, cached_prefix, string__plus(object_flags_signature, prefix_suffix), interface_impl_signature, a, cache_state);
+						driver__V3PreparedModuleCache __or_val_866 = {0};
+						if (__or_opt_865.ok) {
+							__or_val_866 = __or_opt_865.value;
 						} else {
-							IError err = __or_opt_864.err;
+							IError err = __or_opt_865.err;
 							string message = IError__msg(&(err));
 							if (driver__request_macos_v3_c_error_fallback_from_message(macos_v3_fallback_file, macos_v3_c_error_dir, c_compiler, message, new_array_from_c_array(3, 3, sizeof(string), (string[3]){cache_plan_file, published_c_source, cc_src}), fallback_report_sources)) {
 								driver__cleanup_c_build_dir(cc_dir);
@@ -215540,55 +215558,55 @@ void driver__run(Array args) {
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
-						prepared_cache = __or_val_865;
+						prepared_cache = __or_val_866;
 						prefix_source_identity = cgen_cache_metadata.prefix_source_identity;
 					} else {
-						__v_result_string __or_opt_866 = os__read_file(generic_cache_entry.prefix);
-						string __or_val_867 = {0};
-						if (__or_opt_866.ok) {
-							__or_val_867 = __or_opt_866.value;
+						__v_result_string __or_opt_867 = os__read_file(generic_cache_entry.prefix);
+						string __or_val_868 = {0};
+						if (__or_opt_867.ok) {
+							__or_val_868 = __or_opt_867.value;
 						} else {
-							IError err = __or_opt_866.err;
+							IError err = __or_opt_867.err;
 							eprintln(({ string __v3_internal_symbol_join_114[4]; __v3_internal_symbol_join_114[0] = _str_2904; __v3_internal_symbol_join_114[1] = generic_cache_entry.prefix; __v3_internal_symbol_join_114[2] = _str_443; __v3_internal_symbol_join_114[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_114); }));
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
-						string cached_prefix = __or_val_867;
+						string cached_prefix = __or_val_868;
 						if (prefs->target_libc_headers && driver__target_libc_cached_prefix_needs_thread_refresh(cached_prefix, generated_source)) {
 							driver__trace_v3_cache_fallback(_str_2903);
 							os__setenv(driver__v3_internal_cache_force_source_env, _str_224, true);
 							driver__restart_v3_after_cache_invalidation(cc_dir);
 						}
-						__v_result_string __or_opt_868 = os__read_file(generic_cache_entry.declarations);
-						string __or_val_869 = {0};
-						if (__or_opt_868.ok) {
-							__or_val_869 = __or_opt_868.value;
+						__v_result_string __or_opt_869 = os__read_file(generic_cache_entry.declarations);
+						string __or_val_870 = {0};
+						if (__or_opt_869.ok) {
+							__or_val_870 = __or_opt_869.value;
 						} else {
-							IError err = __or_opt_868.err;
+							IError err = __or_opt_869.err;
 							eprintln(({ string __v3_internal_symbol_join_115[4]; __v3_internal_symbol_join_115[0] = _str_2905; __v3_internal_symbol_join_115[1] = generic_cache_entry.declarations; __v3_internal_symbol_join_115[2] = _str_443; __v3_internal_symbol_join_115[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_115); }));
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
-						string cached_declarations = __or_val_869;
-						__v_result_string __or_opt_870 = os__read_file(generic_cache_entry.body);
-						string __or_val_871 = {0};
-						if (__or_opt_870.ok) {
-							__or_val_871 = __or_opt_870.value;
+						string cached_declarations = __or_val_870;
+						__v_result_string __or_opt_871 = os__read_file(generic_cache_entry.body);
+						string __or_val_872 = {0};
+						if (__or_opt_871.ok) {
+							__or_val_872 = __or_opt_871.value;
 						} else {
-							IError err = __or_opt_870.err;
+							IError err = __or_opt_871.err;
 							eprintln(({ string __v3_internal_symbol_join_116[4]; __v3_internal_symbol_join_116[0] = _str_2906; __v3_internal_symbol_join_116[1] = generic_cache_entry.body; __v3_internal_symbol_join_116[2] = _str_443; __v3_internal_symbol_join_116[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_116); }));
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
-						string cached_body = __or_val_871;
+						string cached_body = __or_val_872;
 						string prefix_suffix = driver__v3_cached_object_program_signature_suffix(cached_prefix);
 						compile_signature = string__plus(object_compile_signature, prefix_suffix);
-						__v_result_driver__V3PreparedModuleCache __or_opt_872 = driver__prepare_v3_cached_generic_body(generated_source, cached_prefix, cached_declarations, cached_body, string__plus(object_flags_signature, prefix_suffix), interface_impl_signature, a, cache_state);
-						driver__V3PreparedModuleCache __or_val_873 = {0};
-						if (__or_opt_872.ok) {
-							__or_val_873 = __or_opt_872.value;
+						__v_result_driver__V3PreparedModuleCache __or_opt_873 = driver__prepare_v3_cached_generic_body(generated_source, cached_prefix, cached_declarations, cached_body, string__plus(object_flags_signature, prefix_suffix), interface_impl_signature, a, cache_state);
+						driver__V3PreparedModuleCache __or_val_874 = {0};
+						if (__or_opt_873.ok) {
+							__or_val_874 = __or_opt_873.value;
 						} else {
-							IError err = __or_opt_872.err;
+							IError err = __or_opt_873.err;
 							string message = IError__msg(&(err));
 							if (driver__request_macos_v3_c_error_fallback_from_message(macos_v3_fallback_file, macos_v3_c_error_dir, c_compiler, message, new_array_from_c_array(3, 3, sizeof(string), (string[3]){cache_plan_file, published_c_source, cc_src}), fallback_report_sources)) {
 								driver__cleanup_c_build_dir(cc_dir);
@@ -215598,15 +215616,15 @@ void driver__run(Array args) {
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
-						prepared_cache = __or_val_873;
+						prepared_cache = __or_val_874;
 					}
 				} else {
-					__v_result_driver__V3PreparedModuleCache __or_opt_874 = driver__prepare_v3_module_cache(generated_source, &cgen_used_fns, &program_used_fns, pre_tc, c_standard, opt_flag, pic_flag, warning_flags, cached_object_c_flags, needs_objective_c, interface_impl_signature, string__plus(object_flags_signature, generated_suffix), cache_prepare_scope, cache_state);
-					driver__V3PreparedModuleCache __or_val_875 = {0};
-					if (__or_opt_874.ok) {
-						__or_val_875 = __or_opt_874.value;
+					__v_result_driver__V3PreparedModuleCache __or_opt_875 = driver__prepare_v3_module_cache(generated_source, &cgen_used_fns, &program_used_fns, pre_tc, c_standard, opt_flag, pic_flag, warning_flags, cached_object_c_flags, needs_objective_c, interface_impl_signature, string__plus(object_flags_signature, generated_suffix), cache_prepare_scope, cache_state);
+					driver__V3PreparedModuleCache __or_val_876 = {0};
+					if (__or_opt_875.ok) {
+						__or_val_876 = __or_opt_875.value;
 					} else {
-						IError err = __or_opt_874.err;
+						IError err = __or_opt_875.err;
 						string message = IError__msg(&(err));
 						if (tcc_dylib && retry_compilation && !string__eq(os__getenv(_str_2450), _str_224)) {
 							driver__trace_v3_cache_fallback(string__plus(_str_2907, string__all_before(message, _str_0)));
@@ -215625,11 +215643,11 @@ void driver__run(Array args) {
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
 					}
-					prepared_cache = __or_val_875;
+					prepared_cache = __or_val_876;
 				}
-				__v_result __or_opt_876 = os__write_file(cc_src, prepared_cache.main_source);
-				if (!__or_opt_876.ok) {
-					IError err = __or_opt_876.err;
+				__v_result __or_opt_877 = os__write_file(cc_src, prepared_cache.main_source);
+				if (!__or_opt_877.ok) {
+					IError err = __or_opt_877.err;
 					eprintln(({ string __v3_internal_symbol_join_117[4]; __v3_internal_symbol_join_117[0] = _str_2909; __v3_internal_symbol_join_117[1] = cc_src; __v3_internal_symbol_join_117[2] = _str_443; __v3_internal_symbol_join_117[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_117); }));
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
@@ -215637,45 +215655,45 @@ void driver__run(Array args) {
 				if (prefix_source_identity.len == 0) {
 					prefix_source_identity = driver__v3_program_prefix_source_identity(prepared_cache.program_prefix_source, prepared_cache.objects);
 				}
-				driver__V3CgenCacheInput __if_val_877 = {0};
+				driver__V3CgenCacheInput __if_val_878 = {0};
 				if (program_cache_enabled) {
-					__if_val_877 = driver__v3_cgen_cache_input(a, cache_state, user_files, cache_c_flags, prefs->vroot);
+					__if_val_878 = driver__v3_cgen_cache_input(a, cache_state, user_files, cache_c_flags, prefs->vroot);
 				} else {
-					__if_val_877 = (driver__V3CgenCacheInput){.source_files = array_new(sizeof(string), 0, 0), .dependency_inputs = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string), .generation_signature = _str_34};
+					__if_val_878 = (driver__V3CgenCacheInput){.source_files = array_new(sizeof(string), 0, 0), .dependency_inputs = new_map(sizeof(string), sizeof(string), map_hash_string, map_eq_string, map_clone_string, map_free_string), .generation_signature = _str_34};
 				}
-				driver__V3CgenCacheInput published_cache_input = __if_val_877;
+				driver__V3CgenCacheInput published_cache_input = __if_val_878;
 				if (!cgen_cache_hit && program_cache_enabled) {
 					driver__V3CgenCacheInput published_cgen_cache_input = published_cache_input;
-					__v_result_modulecache__CgenEntry __or_opt_878 = modulecache__Manager__write_cgen(&cache_state->manager, published_cgen_cache_input.source_files, published_cgen_cache_input.generation_signature, published_cgen_cache_input.dependency_inputs, generated_source, driver__encode_v3_cgen_metadata(generated_c_flags, interface_impl_signature, prefix_source_identity, windows_gui_entry_point, cached_checker_diagnostics));
-					modulecache__CgenEntry __or_val_879 = {0};
-					if (__or_opt_878.ok) {
-						__or_val_879 = __or_opt_878.value;
+					__v_result_modulecache__CgenEntry __or_opt_879 = modulecache__Manager__write_cgen(&cache_state->manager, published_cgen_cache_input.source_files, published_cgen_cache_input.generation_signature, published_cgen_cache_input.dependency_inputs, generated_source, driver__encode_v3_cgen_metadata(generated_c_flags, interface_impl_signature, prefix_source_identity, windows_gui_entry_point, cached_checker_diagnostics));
+					modulecache__CgenEntry __or_val_880 = {0};
+					if (__or_opt_879.ok) {
+						__or_val_880 = __or_opt_879.value;
 					} else {
-						IError err = __or_opt_878.err;
-						__or_val_879 = (modulecache__CgenEntry){.source = _str_34, .metadata = _str_34, .stamp = _str_34, .prepared_main = _str_34, .prepared_tcc = _str_34, .prepared_prefix = _str_34, .prepared_objects = _str_34, .prepared_stamp = _str_34};
+						IError err = __or_opt_879.err;
+						__or_val_880 = (modulecache__CgenEntry){.source = _str_34, .metadata = _str_34, .stamp = _str_34, .prepared_main = _str_34, .prepared_tcc = _str_34, .prepared_prefix = _str_34, .prepared_objects = _str_34, .prepared_stamp = _str_34};
 					}
-					prepared_plan_entry = __or_val_879;
+					prepared_plan_entry = __or_val_880;
 				}
 				if (incremental_cache_restored && (prepared_plan_entry.source.len > 0)) {
-					__v_result_string __or_opt_880 = os__read_file(prepared_plan_entry.source);
-					string __or_val_881 = {0};
-					if (__or_opt_880.ok) {
-						__or_val_881 = __or_opt_880.value;
+					__v_result_string __or_opt_881 = os__read_file(prepared_plan_entry.source);
+					string __or_val_882 = {0};
+					if (__or_opt_881.ok) {
+						__or_val_882 = __or_opt_881.value;
 					} else {
-						IError err = __or_opt_880.err;
+						IError err = __or_opt_881.err;
 						eprintln(({ string __v3_internal_symbol_join_118[4]; __v3_internal_symbol_join_118[0] = _str_2910; __v3_internal_symbol_join_118[1] = prepared_plan_entry.source; __v3_internal_symbol_join_118[2] = _str_443; __v3_internal_symbol_join_118[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_118); }));
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
 					}
-					string stable_body_source = __or_val_881;
+					string stable_body_source = __or_val_882;
 					refreshed_incremental_body = stable_body_source;
 					string stable_main_source = driver__v3_incremental_program_main_source(prepared_cache.program_prefix_source, stable_body_source);
 					string stable_tcc_main_source = driver__v3_incremental_main_source(incremental_tcc_declarations_path, incremental_c_declarations, stable_body_source);
 					prepared_cache.main_source = stable_main_source;
 					prepared_cache.tcc_main_source = stable_tcc_main_source;
-					__v_result __or_opt_882 = os__write_file(cc_src, stable_main_source);
-					if (!__or_opt_882.ok) {
-						IError err = __or_opt_882.err;
+					__v_result __or_opt_883 = os__write_file(cc_src, stable_main_source);
+					if (!__or_opt_883.ok) {
+						IError err = __or_opt_883.err;
 						eprintln(({ string __v3_internal_symbol_join_119[4]; __v3_internal_symbol_join_119[0] = _str_2911; __v3_internal_symbol_join_119[1] = cc_src; __v3_internal_symbol_join_119[2] = _str_443; __v3_internal_symbol_join_119[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_119); }));
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
@@ -215683,60 +215701,60 @@ void driver__run(Array args) {
 				}
 				if (prepared_plan_entry.stamp.len > 0) {
 					cached_program_body_source = prepared_plan_entry.source;
-					__v_result __or_opt_883 = modulecache__Manager__write_cgen_prepared(&cache_state->manager, prepared_plan_entry, prepared_cache.main_source, prepared_cache.tcc_main_source, prepared_cache.program_prefix_source);
-					if (!__or_opt_883.ok) {
-					}
-					__v_result __or_opt_884 = modulecache__Manager__write_cgen_prepared_objects(&cache_state->manager, prepared_plan_entry, compile_signature, prepared_cache.objects);
+					__v_result __or_opt_884 = modulecache__Manager__write_cgen_prepared(&cache_state->manager, prepared_plan_entry, prepared_cache.main_source, prepared_cache.tcc_main_source, prepared_cache.program_prefix_source);
 					if (!__or_opt_884.ok) {
+					}
+					__v_result __or_opt_885 = modulecache__Manager__write_cgen_prepared_objects(&cache_state->manager, prepared_plan_entry, compile_signature, prepared_cache.objects);
+					if (!__or_opt_885.ok) {
 					}
 				}
 				if (!generic_cache_hit && (generic_cache_signature.len > 0) && (generated_monomorph_specs.len > 0)) {
 					driver__V3CgenCacheInput published_generic_input = published_cache_input;
-					__v_result_modulecache__GenericProgramEntry __or_opt_885 = modulecache__Manager__write_generic_program(&cache_state->manager, published_generic_input.source_files, generic_cache_signature, published_generic_input.generation_signature, published_generic_input.dependency_inputs, driver__encode_monomorph_cache_specs(generated_monomorph_specs), driver__encode_cached_used_fns(program_used_fns), prepared_cache.program_prefix_source, modulecache__prune_unreferenced_static_string_definitions(prepared_cache.program_declarations), prepared_cache.program_body_cache, driver__encode_cached_runtime_strings(generic_cache_runtime_strings), driver__encode_v3_cgen_metadata(generated_c_flags, interface_impl_signature, prefix_source_identity, windows_gui_entry_point, cached_checker_diagnostics));
-					if (!__or_opt_885.ok) {
+					__v_result_modulecache__GenericProgramEntry __or_opt_886 = modulecache__Manager__write_generic_program(&cache_state->manager, published_generic_input.source_files, generic_cache_signature, published_generic_input.generation_signature, published_generic_input.dependency_inputs, driver__encode_monomorph_cache_specs(generated_monomorph_specs), driver__encode_cached_used_fns(program_used_fns), prepared_cache.program_prefix_source, modulecache__prune_unreferenced_static_string_definitions(prepared_cache.program_declarations), prepared_cache.program_body_cache, driver__encode_cached_runtime_strings(generic_cache_runtime_strings), driver__encode_v3_cgen_metadata(generated_c_flags, interface_impl_signature, prefix_source_identity, windows_gui_entry_point, cached_checker_diagnostics));
+					if (!__or_opt_886.ok) {
 					}
 				}
 				if ((!generic_cache_hit || incremental_cache_hit) && (incremental_snapshot.declaration_signature.len > 0)) {
 					driver__V3CgenCacheInput published_incremental_input = published_cache_input;
-					string __if_val_886 = {0};
+					string __if_val_887 = {0};
 					if (incremental_cache_hit) {
-						__if_val_886 = refreshed_incremental_body;
+						__if_val_887 = refreshed_incremental_body;
 					} else {
-						__if_val_886 = prepared_cache.program_body_cache;
+						__if_val_887 = prepared_cache.program_body_cache;
 					}
-					string incremental_body = __if_val_886;
-					map __if_val_887 = {0};
+					string incremental_body = __if_val_887;
+					map __if_val_888 = {0};
 					if (incremental_cache_hit) {
-						__if_val_887 = cached_program_used_fns;
+						__if_val_888 = cached_program_used_fns;
 					} else {
-						__if_val_887 = program_used_fns;
+						__if_val_888 = program_used_fns;
 					}
-					map incremental_used = __if_val_887;
+					map incremental_used = __if_val_888;
 					Array incremental_specs = driver__merge_monomorph_cache_specs(cached_monomorph_specs, generated_monomorph_specs);
-					string __if_val_888 = {0};
+					string __if_val_889 = {0};
 					if (incremental_cache_hit) {
-						__v_result_string __or_opt_889 = os__read_file(generic_cache_entry.declarations);
-						string __or_val_890 = {0};
-						if (__or_opt_889.ok) {
-							__or_val_890 = __or_opt_889.value;
+						__v_result_string __or_opt_890 = os__read_file(generic_cache_entry.declarations);
+						string __or_val_891 = {0};
+						if (__or_opt_890.ok) {
+							__or_val_891 = __or_opt_890.value;
 						} else {
-							IError err = __or_opt_889.err;
-							__or_val_890 = _str_34;
+							IError err = __or_opt_890.err;
+							__or_val_891 = _str_34;
 						}
-						__if_val_888 = __or_val_890;
+						__if_val_889 = __or_val_891;
 					} else {
-						__if_val_888 = modulecache__prune_unreferenced_static_string_definitions(prepared_cache.program_declarations);
+						__if_val_889 = modulecache__prune_unreferenced_static_string_definitions(prepared_cache.program_declarations);
 					}
-					string incremental_declarations = __if_val_888;
-					string __if_val_891 = {0};
+					string incremental_declarations = __if_val_889;
+					string __if_val_892 = {0};
 					if (incremental_cache_hit) {
-						__if_val_891 = incremental_c_declarations;
+						__if_val_892 = incremental_c_declarations;
 					} else {
-						__if_val_891 = prepared_cache.tcc_program_declarations;
+						__if_val_892 = prepared_cache.tcc_program_declarations;
 					}
-					string incremental_tcc_declarations = __if_val_891;
-					__v_result_modulecache__IncrementalProgramEntry __or_opt_892 = modulecache__Manager__write_incremental_program(&cache_state->manager, published_incremental_input.source_files, incremental_snapshot.declaration_signature, published_incremental_input.generation_signature, published_incremental_input.dependency_inputs, driver__encode_incremental_manifest(incremental_snapshot), incremental_body, driver__encode_cached_used_fns(incremental_used), driver__encode_monomorph_cache_specs(incremental_specs), prepared_cache.program_prefix_source, incremental_declarations, incremental_tcc_declarations, prepared_cache.objects, driver__encode_v3_cgen_metadata(generated_c_flags, interface_impl_signature, prefix_source_identity, windows_gui_entry_point, cached_checker_diagnostics));
-					if (!__or_opt_892.ok) {
+					string incremental_tcc_declarations = __if_val_892;
+					__v_result_modulecache__IncrementalProgramEntry __or_opt_893 = modulecache__Manager__write_incremental_program(&cache_state->manager, published_incremental_input.source_files, incremental_snapshot.declaration_signature, published_incremental_input.generation_signature, published_incremental_input.dependency_inputs, driver__encode_incremental_manifest(incremental_snapshot), incremental_body, driver__encode_cached_used_fns(incremental_used), driver__encode_monomorph_cache_specs(incremental_specs), prepared_cache.program_prefix_source, incremental_declarations, incremental_tcc_declarations, prepared_cache.objects, driver__encode_v3_cgen_metadata(generated_c_flags, interface_impl_signature, prefix_source_identity, windows_gui_entry_point, cached_checker_diagnostics));
+					if (!__or_opt_893.ok) {
 					}
 				}
 			}
@@ -215753,62 +215771,62 @@ void driver__run(Array args) {
 			if (retained_full_c_source.len > 0) {
 				retained_full_c_source = string__clone(retained_full_c_source);
 			}
-			string __if_val_893 = {0};
+			string __if_val_894 = {0};
 			if (cgen_prepared_hit) {
-				__if_val_893 = _str_2912;
+				__if_val_894 = _str_2912;
 			} else {
-				__if_val_893 = _str_2913;
+				__if_val_894 = _str_2913;
 			}
-			v__bench__Bench__step(&b, __if_val_893);
+			v__bench__Bench__step(&b, __if_val_894);
 			cached_objects = driver__clone_string_list(prepared_cache.objects);
 			newly_cached_module_count = prepared_cache.newly_cached_modules;
 			Array project_flags = array__clone(&refresh_project_flags);
-			Array __in_lhs_894 = c__cache_project_flag_groups(a, prefs->vroot, prefs->target, prefs->compile_values, c__cache_program_file_set(a, user_files));
+			Array __in_lhs_895 = c__cache_project_flag_groups(a, prefs->vroot, prefs->target, prefs->compile_values, c__cache_program_file_set(a, user_files));
 			{
-				__v_int __for_idx_895 = 0;
-				for (; __for_idx_895 < __in_lhs_894.len; __for_idx_895++) {
-					cache_refresh__FlagGroup group = *(cache_refresh__FlagGroup*)(array_get(__in_lhs_894, __for_idx_895));
-					cache_refresh__FlagGroup __assoc_896 = group;
-					__assoc_896.flags = driver__c_object_compile_flags(group.flags);
-					__assoc_896.identity = Array_string__join(group.flags, _str_8);
-					cache_refresh__FlagGroup __arr_val_897 = __assoc_896;
-					array_push(&project_flags, &__arr_val_897);
+				__v_int __for_idx_896 = 0;
+				for (; __for_idx_896 < __in_lhs_895.len; __for_idx_896++) {
+					cache_refresh__FlagGroup group = *(cache_refresh__FlagGroup*)(array_get(__in_lhs_895, __for_idx_896));
+					cache_refresh__FlagGroup __assoc_897 = group;
+					__assoc_897.flags = driver__c_object_compile_flags(group.flags);
+					__assoc_897.identity = Array_string__join(group.flags, _str_8);
+					cache_refresh__FlagGroup __arr_val_898 = __assoc_897;
+					array_push(&project_flags, &__arr_val_898);
 				}
 			}
-			string __if_val_898 = {0};
+			string __if_val_899 = {0};
 			if (driver__v3_cache_refresh_needs_entry(interface_impl_signature, cache_state, prefs->vroot) && os__exists(input_file)) {
-				__if_val_898 = os__real_path(input_file);
+				__if_val_899 = os__real_path(input_file);
 			} else {
-				__if_val_898 = _str_34;
+				__if_val_899 = _str_34;
 			}
-			string refresh_entry = __if_val_898;
+			string refresh_entry = __if_val_899;
 			Array refresh_args = driver__v3_module_cache_refresh_args(args, c_compiler, prefs->module_search_paths, run_only);
 			if (!string__eq(refresh_entry, _str_34) && (file_list.len > 0)) {
-				Array __arr_lit_899 = array_new(				sizeof(string), 0, 2);
-				string __arr_val_900 = _str_1183;
-				array_push(&__arr_lit_899, &__arr_val_900);
-				Array __map_903 = array_new(				sizeof(string), 0, file_list.len);
+				Array __arr_lit_900 = array_new(				sizeof(string), 0, 2);
+				string __arr_val_901 = _str_1183;
+				array_push(&__arr_lit_900, &__arr_val_901);
+				Array __map_904 = array_new(				sizeof(string), 0, file_list.len);
 				{
-					__v_int __map_idx_904 = 0;
-					for (; __map_idx_904 < file_list.len; __map_idx_904++) {
-						string __map_it_902 = *(string*)(array_get(file_list, __map_idx_904));
-						string __map_val_905 = os__abs_path(__map_it_902);
-						array_push(&__map_903, &__map_val_905);
+					__v_int __map_idx_905 = 0;
+					for (; __map_idx_905 < file_list.len; __map_idx_905++) {
+						string __map_it_903 = *(string*)(array_get(file_list, __map_idx_905));
+						string __map_val_906 = os__abs_path(__map_it_903);
+						array_push(&__map_904, &__map_val_906);
 					}
 				}
-				string __arr_val_901 = Array_string__join(__map_903, _str_1092);
-				array_push(&__arr_lit_899, &__arr_val_901);
-				array__push_many(&refresh_args, __arr_lit_899.data, __arr_lit_899.len);
+				string __arr_val_902 = Array_string__join(__map_904, _str_1092);
+				array_push(&__arr_lit_900, &__arr_val_902);
+				array__push_many(&refresh_args, __arr_lit_900.data, __arr_lit_900.len);
 			}
-			__v_result __or_opt_906 = cache_refresh__record(cache_state->manager.dir, prefs->vroot, refresh_args, is_test_command || driver__is_v3_test_file(input_file, backend, target), cache_state->module_sources, project_flags, refresh_entry, show_test_stats);
-			if (!__or_opt_906.ok) {
-				IError err = __or_opt_906.err;
+			__v_result __or_opt_907 = cache_refresh__record(cache_state->manager.dir, prefs->vroot, refresh_args, is_test_command || driver__is_v3_test_file(input_file, backend, target), cache_state->module_sources, project_flags, refresh_entry, show_test_stats);
+			if (!__or_opt_907.ok) {
+				IError err = __or_opt_907.err;
 				driver__trace_v3_cache_fallback(string__plus(_str_2914, IError__str(err)));
 			}
 			if (string__eq(os__getenv(_str_2450), _str_224)) {
 				driver__prealloc_scope_free_for_v3(cache_prepare_scope);
-				__v_result __or_opt_907 = os__rm(cache_plan_file);
-				if (!__or_opt_907.ok) {
+				__v_result __or_opt_908 = os__rm(cache_plan_file);
+				if (!__or_opt_908.ok) {
 				}
 				driver__cleanup_c_build_dir(cc_dir);
 				{
@@ -215822,21 +215840,21 @@ void driver__run(Array args) {
 			if (use_cached_dev_dylib) {
 				tcc_main_file = os__join_path_single(cc_dir, _str_2915);
 				if (cgen_prepared_hit) {
-					__v_result __or_opt_908 = os__link(cgen_prepared_entry.tcc, tcc_main_file);
-					if (!__or_opt_908.ok) {
-						IError err = __or_opt_908.err;
-						__v_result __or_opt_909 = os__cp(cgen_prepared_entry.tcc, tcc_main_file, (os__CopyParams){0});
-						if (!__or_opt_909.ok) {
-							IError err = __or_opt_909.err;
+					__v_result __or_opt_909 = os__link(cgen_prepared_entry.tcc, tcc_main_file);
+					if (!__or_opt_909.ok) {
+						IError err = __or_opt_909.err;
+						__v_result __or_opt_910 = os__cp(cgen_prepared_entry.tcc, tcc_main_file, (os__CopyParams){0});
+						if (!__or_opt_910.ok) {
+							IError err = __or_opt_910.err;
 							eprintln(({ string __v3_internal_symbol_join_120[4]; __v3_internal_symbol_join_120[0] = _str_2916; __v3_internal_symbol_join_120[1] = cgen_prepared_entry.tcc; __v3_internal_symbol_join_120[2] = _str_443; __v3_internal_symbol_join_120[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_120); }));
 							driver__cleanup_c_build_dir(cc_dir);
 							v_exit(1);
 						}
 					}
 				} else {
-					__v_result __or_opt_910 = os__write_file(tcc_main_file, prepared_cache.tcc_main_source);
-					if (!__or_opt_910.ok) {
-						IError err = __or_opt_910.err;
+					__v_result __or_opt_911 = os__write_file(tcc_main_file, prepared_cache.tcc_main_source);
+					if (!__or_opt_911.ok) {
+						IError err = __or_opt_911.err;
 						eprintln(({ string __v3_internal_symbol_join_121[4]; __v3_internal_symbol_join_121[0] = _str_2917; __v3_internal_symbol_join_121[1] = tcc_main_file; __v3_internal_symbol_join_121[2] = _str_443; __v3_internal_symbol_join_121[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_121); }));
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
@@ -215845,12 +215863,12 @@ void driver__run(Array args) {
 				if (prefix_source_identity.len == 0) {
 					prefix_source_identity = driver__v3_program_prefix_source_identity(prepared_cache.program_prefix_source, prepared_cache.objects);
 				}
-				__v_result_string __or_opt_911 = driver__compile_v3_program_object(_str_2918, prepared_cache.program_prefix_source, prefix_source_identity, driver__v3_program_external_input_paths(cache_state), &cache_state->manager, c_standard, opt_flag, pic_flag, warning_flags, cached_object_c_flags, needs_objective_c, target_args, prefs->target, c_compiler, &c_object_cache_stats);
-				string __or_val_912 = {0};
-				if (__or_opt_911.ok) {
-					__or_val_912 = __or_opt_911.value;
+				__v_result_string __or_opt_912 = driver__compile_v3_program_object(_str_2918, prepared_cache.program_prefix_source, prefix_source_identity, driver__v3_program_external_input_paths(cache_state), &cache_state->manager, c_standard, opt_flag, pic_flag, warning_flags, cached_object_c_flags, needs_objective_c, target_args, prefs->target, c_compiler, &c_object_cache_stats);
+				string __or_val_913 = {0};
+				if (__or_opt_912.ok) {
+					__or_val_913 = __or_opt_912.value;
 				} else {
-					IError err = __or_opt_911.err;
+					IError err = __or_opt_912.err;
 					string message = IError__msg(&(err));
 					driver__restart_v3_without_restored_incremental_program(incremental_cache_restored, &cache_state->manager, (driver__v3_cgen_cache_input(a, cache_state, user_files, cache_c_flags, prefs->vroot)).source_files, cc_dir, _str_2919);
 					if (driver__request_macos_v3_c_error_fallback_from_message(macos_v3_fallback_file, macos_v3_c_error_dir, c_compiler, message, new_array_from_c_array(3, 3, sizeof(string), (string[3]){published_c_source, cache_plan_file, cc_src}), fallback_report_sources)) {
@@ -215861,13 +215879,13 @@ void driver__run(Array args) {
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				string prefix_object = __or_val_912;
-				__v_result_string __or_opt_913 = driver__compile_v3_dev_dylib(prefix_object, prepared_cache.objects, resolved_c_flags, &cache_state->manager, target_args, prefs->target, c_compiler, cc_dir, verbose || show_cc, &c_object_cache_stats);
-				string __or_val_914 = {0};
-				if (__or_opt_913.ok) {
-					__or_val_914 = __or_opt_913.value;
+				string prefix_object = __or_val_913;
+				__v_result_string __or_opt_914 = driver__compile_v3_dev_dylib(prefix_object, prepared_cache.objects, resolved_c_flags, &cache_state->manager, target_args, prefs->target, c_compiler, cc_dir, verbose || show_cc, &c_object_cache_stats);
+				string __or_val_915 = {0};
+				if (__or_opt_914.ok) {
+					__or_val_915 = __or_opt_914.value;
 				} else {
-					IError err = __or_opt_913.err;
+					IError err = __or_opt_914.err;
 					string message = IError__msg(&(err));
 					if (tcc_dylib && show_c_output && retry_compilation) {
 						eprintln(message);
@@ -215889,11 +215907,11 @@ void driver__run(Array args) {
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				cached_dev_dylib = __or_val_914;
+				cached_dev_dylib = __or_val_915;
 			}
 			driver__prealloc_scope_free_for_v3(cache_prepare_scope);
-			__v_result __or_opt_915 = os__rm(cache_plan_file);
-			if (!__or_opt_915.ok) {
+			__v_result __or_opt_916 = os__rm(cache_plan_file);
+			if (!__or_opt_916.ok) {
 			}
 		}
 		if (string__eq(os__getenv(_str_2450), _str_224)) {
@@ -215913,29 +215931,29 @@ void driver__run(Array args) {
 		if (retain_backend_c && !c_only) {
 			string retained_c = output_file;
 			string staged_c = ({ string __v3_internal_symbol_join_122[3]; __v3_internal_symbol_join_122[0] = retained_c; __v3_internal_symbol_join_122[1] = _str_2113; __v3_internal_symbol_join_122[2] = tempname__unique_token(); string_plus_many(3, __v3_internal_symbol_join_122); });
-			string __if_val_916 = {0};
+			string __if_val_917 = {0};
 			if (retained_full_c_source.len > 0) {
-				__if_val_916 = retained_full_c_source;
+				__if_val_917 = retained_full_c_source;
 			} else {
 				if (cache_full_tcc_source.len > 0) {
-					__if_val_916 = cache_full_tcc_source;
+					__if_val_917 = cache_full_tcc_source;
 				} else {
-					__if_val_916 = published_c_source;
+					__if_val_917 = published_c_source;
 				}
 			}
-			string retained_c_source = __if_val_916;
-			__v_result __or_opt_917 = os__cp(retained_c_source, staged_c, (os__CopyParams){0});
-			if (!__or_opt_917.ok) {
-				IError err = __or_opt_917.err;
+			string retained_c_source = __if_val_917;
+			__v_result __or_opt_918 = os__cp(retained_c_source, staged_c, (os__CopyParams){0});
+			if (!__or_opt_918.ok) {
+				IError err = __or_opt_918.err;
 				eprintln(({ string __v3_internal_symbol_join_123[4]; __v3_internal_symbol_join_123[0] = _str_2921; __v3_internal_symbol_join_123[1] = retained_c; __v3_internal_symbol_join_123[2] = _str_443; __v3_internal_symbol_join_123[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_123); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			__v_result __or_opt_918 = os__mv(staged_c, retained_c, (os__MvParams){.overwrite = true});
-			if (!__or_opt_918.ok) {
-				IError err = __or_opt_918.err;
-				__v_result __or_opt_919 = os__rm(staged_c);
-				if (!__or_opt_919.ok) {
+			__v_result __or_opt_919 = os__mv(staged_c, retained_c, (os__MvParams){.overwrite = true});
+			if (!__or_opt_919.ok) {
+				IError err = __or_opt_919.err;
+				__v_result __or_opt_920 = os__rm(staged_c);
+				if (!__or_opt_920.ok) {
 				}
 				eprintln(({ string __v3_internal_symbol_join_124[4]; __v3_internal_symbol_join_124[0] = _str_2922; __v3_internal_symbol_join_124[1] = retained_c; __v3_internal_symbol_join_124[2] = _str_443; __v3_internal_symbol_join_124[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_124); }));
 				driver__cleanup_c_build_dir(cc_dir);
@@ -215944,24 +215962,24 @@ void driver__run(Array args) {
 		}
 		string cached_program_main_object = _str_34;
 		if (use_macos_dev_program_cache && !use_cached_dev_dylib && !is_c_debug) {
-			__v_result_string __or_opt_920 = os__read_file(published_c_source);
-			string __or_val_921 = {0};
-			if (__or_opt_920.ok) {
-				__or_val_921 = __or_opt_920.value;
+			__v_result_string __or_opt_921 = os__read_file(published_c_source);
+			string __or_val_922 = {0};
+			if (__or_opt_921.ok) {
+				__or_val_922 = __or_opt_921.value;
 			} else {
-				IError err = __or_opt_920.err;
+				IError err = __or_opt_921.err;
 				eprintln(({ string __v3_internal_symbol_join_125[4]; __v3_internal_symbol_join_125[0] = _str_2923; __v3_internal_symbol_join_125[1] = published_c_source; __v3_internal_symbol_join_125[2] = _str_443; __v3_internal_symbol_join_125[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_125); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			string program_main_source = __or_val_921;
+			string program_main_source = __or_val_922;
 			string program_main_identity = modulecache__file_signature(published_c_source);
-			__v_result_string __or_opt_922 = driver__compile_v3_program_object(_str_181, program_main_source, program_main_identity, driver__v3_program_external_input_paths(cache_state), &cache_state->manager, c_standard, _str_34, pic_flag, Array_string__join(warn_args, _str_1), cached_object_c_flags, needs_objective_c, target_args, prefs->target, c_compiler, &c_object_cache_stats);
-			string __or_val_923 = {0};
-			if (__or_opt_922.ok) {
-				__or_val_923 = __or_opt_922.value;
+			__v_result_string __or_opt_923 = driver__compile_v3_program_object(_str_181, program_main_source, program_main_identity, driver__v3_program_external_input_paths(cache_state), &cache_state->manager, c_standard, _str_34, pic_flag, Array_string__join(warn_args, _str_1), cached_object_c_flags, needs_objective_c, target_args, prefs->target, c_compiler, &c_object_cache_stats);
+			string __or_val_924 = {0};
+			if (__or_opt_923.ok) {
+				__or_val_924 = __or_opt_923.value;
 			} else {
-				IError err = __or_opt_922.err;
+				IError err = __or_opt_923.err;
 				string message = IError__msg(&(err));
 				driver__restart_v3_without_restored_incremental_program(incremental_cache_restored, &cache_state->manager, (driver__v3_cgen_cache_input(a, cache_state, user_files, cache_c_flags, prefs->vroot)).source_files, cc_dir, _str_2924);
 				if (driver__request_macos_v3_c_error_fallback_from_message(macos_v3_fallback_file, macos_v3_c_error_dir, c_compiler, message, new_array_from_c_array(3, 3, sizeof(string), (string[3]){published_c_source, cache_plan_file, cc_src}), fallback_report_sources)) {
@@ -215972,24 +215990,24 @@ void driver__run(Array args) {
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			cached_program_main_object = __or_val_923;
+			cached_program_main_object = __or_val_924;
 			v__bench__Bench__step(&b, _str_2925);
 		}
 		if (keep_c) {
 			string keep_c_file = driver__keep_c_output_file(bin_file);
 			string staged_c = ({ string __v3_internal_symbol_join_126[3]; __v3_internal_symbol_join_126[0] = keep_c_file; __v3_internal_symbol_join_126[1] = _str_2113; __v3_internal_symbol_join_126[2] = tempname__unique_token(); string_plus_many(3, __v3_internal_symbol_join_126); });
-			__v_result __or_opt_924 = os__cp(published_c_source, staged_c, (os__CopyParams){0});
-			if (!__or_opt_924.ok) {
-				IError err = __or_opt_924.err;
+			__v_result __or_opt_925 = os__cp(published_c_source, staged_c, (os__CopyParams){0});
+			if (!__or_opt_925.ok) {
+				IError err = __or_opt_925.err;
 				eprintln(({ string __v3_internal_symbol_join_127[4]; __v3_internal_symbol_join_127[0] = _str_2921; __v3_internal_symbol_join_127[1] = keep_c_file; __v3_internal_symbol_join_127[2] = _str_443; __v3_internal_symbol_join_127[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_127); }));
 				driver__cleanup_c_build_dir(cc_dir);
 				v_exit(1);
 			}
-			__v_result __or_opt_925 = os__mv(staged_c, keep_c_file, (os__MvParams){.overwrite = true});
-			if (!__or_opt_925.ok) {
-				IError err = __or_opt_925.err;
-				__v_result __or_opt_926 = os__rm(staged_c);
-				if (!__or_opt_926.ok) {
+			__v_result __or_opt_926 = os__mv(staged_c, keep_c_file, (os__MvParams){.overwrite = true});
+			if (!__or_opt_926.ok) {
+				IError err = __or_opt_926.err;
+				__v_result __or_opt_927 = os__rm(staged_c);
+				if (!__or_opt_927.ok) {
 				}
 				eprintln(({ string __v3_internal_symbol_join_128[4]; __v3_internal_symbol_join_128[0] = _str_2922; __v3_internal_symbol_join_128[1] = keep_c_file; __v3_internal_symbol_join_128[2] = _str_443; __v3_internal_symbol_join_128[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_128); }));
 				driver__cleanup_c_build_dir(cc_dir);
@@ -216003,92 +216021,92 @@ void driver__run(Array args) {
 		driver__V3ProgramLinkInputs program_link_inputs = (driver__V3ProgramLinkInputs){.files = array_new(sizeof(string), 0, 0), .identities = array_new(sizeof(string), 0, 0), .missing = array_new(sizeof(string), 0, 0), .unknown = _str_34, .unknown_option = _str_34, .time_parts = array_new(sizeof(string), 0, 0), .time_question = _str_34};
 		if ((cached_dev_dylib.len > 0) && (tcc_main_file.len > 0) && (!link_uses_non_c_language || tcc_dylib) && driver__v3_tcc_builds_c_debug(is_c_debug, host_os, target.os) && (!string__eq(implicit_tcc, _str_34) || tcc_dylib)) {
 			tried_tcc = true;
-			string __if_val_927 = {0};
+			string __if_val_928 = {0};
 			if (tcc_dylib) {
-				__if_val_927 = bundled_tcc;
+				__if_val_928 = bundled_tcc;
 			} else {
-				__if_val_927 = implicit_tcc;
+				__if_val_928 = implicit_tcc;
 			}
-			string tcc_path = __if_val_927;
+			string tcc_path = __if_val_928;
 			driver__V3TccResourceFlags tcc_resources = driver__v3_tcc_resource_flags_for_compiler(prefs->vroot, tcc_path, bundled_tcc, bundled_tcc_available || tcc_dylib);
 			Array tcc_args = new_array_from_c_array(1, 1, sizeof(string), (string[1]){c_standard});
 			if (!string__eq(tcc_resources.base_arg, _str_34)) {
-				Array __arr_lit_928 = array_new(				sizeof(string), 0, 3);
-				string __arr_val_929 = tcc_resources.base_arg;
-				array_push(&__arr_lit_928, &__arr_val_929);
-				string __arr_val_930 = tcc_resources.include_arg;
-				array_push(&__arr_lit_928, &__arr_val_930);
-				string __arr_val_931 = tcc_resources.library_arg;
-				array_push(&__arr_lit_928, &__arr_val_931);
-				array__push_many(&tcc_args, __arr_lit_928.data, __arr_lit_928.len);
+				Array __arr_lit_929 = array_new(				sizeof(string), 0, 3);
+				string __arr_val_930 = tcc_resources.base_arg;
+				array_push(&__arr_lit_929, &__arr_val_930);
+				string __arr_val_931 = tcc_resources.include_arg;
+				array_push(&__arr_lit_929, &__arr_val_931);
+				string __arr_val_932 = tcc_resources.library_arg;
+				array_push(&__arr_lit_929, &__arr_val_932);
+				array__push_many(&tcc_args, __arr_lit_929.data, __arr_lit_929.len);
 			}
-			Array __push_many_932 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_1377, _str_2877});
-			array__push_many(&tcc_args, __push_many_932.data, __push_many_932.len);
-			string __if_val_933 = {0};
+			Array __push_many_933 = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_1377, _str_2877});
+			array__push_many(&tcc_args, __push_many_933.data, __push_many_933.len);
+			string __if_val_934 = {0};
 			if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-				__if_val_933 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
+				__if_val_934 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
 			} else {
-				__if_val_933 = _str_34;
+				__if_val_934 = _str_34;
 			}
-			string tcc_sdk_root = __if_val_933;
+			string tcc_sdk_root = __if_val_934;
 			if (!string__eq(tcc_resources.base_arg, _str_34)) {
-				Array __push_many_934 = driver__v3_tcc_host_system_flags(pref__Preferences__normalized_target_os(prefs), tcc_sdk_root);
-				array__push_many(&tcc_args, __push_many_934.data, __push_many_934.len);
+				Array __push_many_935 = driver__v3_tcc_host_system_flags(pref__Preferences__normalized_target_os(prefs), tcc_sdk_root);
+				array__push_many(&tcc_args, __push_many_935.data, __push_many_935.len);
 			}
-			bool __contains_935 = false;
+			bool __contains_936 = false;
 			{
-				__v_int __contains_idx_936 = 0;
-				for (; __contains_idx_936 < prefs->user_defines.len; __contains_idx_936++) {
-					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_936)), _str_1288)) {
-						__contains_935 = true;
+				__v_int __contains_idx_937 = 0;
+				for (; __contains_idx_937 < prefs->user_defines.len; __contains_idx_937++) {
+					if (string__eq(*(string*)(array_get(prefs->user_defines, __contains_idx_937)), _str_1288)) {
+						__contains_936 = true;
 					}
 				}
 			}
-			if (!__contains_935 && driver__v3_tcc_backtrace_enabled(pref__Preferences__normalized_target_os(prefs), pref__Preferences__normalized_target_arch(prefs), is_shared)) {
-				string __arr_val_937 = _str_2064;
-				array_push(&tcc_args, &__arr_val_937);
-			}
-			if (wrapv_flag.len > 0) {
-				string __arr_val_938 = wrapv_flag;
+			if (!__contains_936 && driver__v3_tcc_backtrace_enabled(pref__Preferences__normalized_target_os(prefs), pref__Preferences__normalized_target_arch(prefs), is_shared)) {
+				string __arr_val_938 = _str_2064;
 				array_push(&tcc_args, &__arr_val_938);
 			}
-			Array __push_many_939 = driver__v3_windows_executable_linker_flags(pref__Preferences__normalized_target_os(prefs), _str_1276, is_shared, is_o, prefs->subsystem, windows_gui_entry_point);
-			array__push_many(&tcc_args, __push_many_939.data, __push_many_939.len);
-			Array __push_many_940 = driver__tcc_cached_main_flags(resolved_c_flags);
-			array__push_many(&tcc_args, __push_many_940.data, __push_many_940.len);
-			if (tcc_dylib) {
-				string __map_key_941 = _str_2926;
-				Array __map_zero_942 = array_new(sizeof(string), 0, 0);
-				Array __push_many_943 = driver__v3_tcc_dylib_sdk_flags(cache_state->manager.dir, *(Array*)(map__get(&native_closure.inputs, &__map_key_941, &__map_zero_942)));
-				array__push_many(&tcc_args, __push_many_943.data, __push_many_943.len);
+			if (wrapv_flag.len > 0) {
+				string __arr_val_939 = wrapv_flag;
+				array_push(&tcc_args, &__arr_val_939);
 			}
-			Array __arr_lit_944 = array_new(			sizeof(string), 0, 3);
-			string __arr_val_945 = _str_188;
-			array_push(&__arr_lit_944, &__arr_val_945);
-			string __arr_val_946 = cc_output_name;
-			array_push(&__arr_lit_944, &__arr_val_946);
-			string __arr_val_947 = os__base(tcc_main_file);
-			array_push(&__arr_lit_944, &__arr_val_947);
-			array__push_many(&tcc_args, __arr_lit_944.data, __arr_lit_944.len);
+			Array __push_many_940 = driver__v3_windows_executable_linker_flags(pref__Preferences__normalized_target_os(prefs), _str_1276, is_shared, is_o, prefs->subsystem, windows_gui_entry_point);
+			array__push_many(&tcc_args, __push_many_940.data, __push_many_940.len);
+			Array __push_many_941 = driver__tcc_cached_main_flags(resolved_c_flags);
+			array__push_many(&tcc_args, __push_many_941.data, __push_many_941.len);
+			if (tcc_dylib) {
+				string __map_key_942 = _str_2926;
+				Array __map_zero_943 = array_new(sizeof(string), 0, 0);
+				Array __push_many_944 = driver__v3_tcc_dylib_sdk_flags(cache_state->manager.dir, *(Array*)(map__get(&native_closure.inputs, &__map_key_942, &__map_zero_943)));
+				array__push_many(&tcc_args, __push_many_944.data, __push_many_944.len);
+			}
+			Array __arr_lit_945 = array_new(			sizeof(string), 0, 3);
+			string __arr_val_946 = _str_188;
+			array_push(&__arr_lit_945, &__arr_val_946);
+			string __arr_val_947 = cc_output_name;
+			array_push(&__arr_lit_945, &__arr_val_947);
+			string __arr_val_948 = os__base(tcc_main_file);
+			array_push(&__arr_lit_945, &__arr_val_948);
+			array__push_many(&tcc_args, __arr_lit_945.data, __arr_lit_945.len);
 			if (!is_o) {
 				string atomic_s = driver__tcc_atomic_arg(prefs, tcc_path, tcc_resources.include_arg);
 				if (atomic_s.len > 0) {
-					string __arr_val_948 = atomic_s;
-					array_push(&tcc_args, &__arr_val_948);
+					string __arr_val_949 = atomic_s;
+					array_push(&tcc_args, &__arr_val_949);
 				}
 				array__push_many(&tcc_args, embed_incbin_objects.data, embed_incbin_objects.len);
-				Array __push_many_949 = driver__tcc_native_c_source_flags(resolved_c_flags);
-				array__push_many(&tcc_args, __push_many_949.data, __push_many_949.len);
-				string __arr_val_950 = cached_dev_dylib;
-				array_push(&tcc_args, &__arr_val_950);
-				Array __if_val_951 = {0};
+				Array __push_many_950 = driver__tcc_native_c_source_flags(resolved_c_flags);
+				array__push_many(&tcc_args, __push_many_950.data, __push_many_950.len);
+				string __arr_val_951 = cached_dev_dylib;
+				array_push(&tcc_args, &__arr_val_951);
+				Array __if_val_952 = {0};
 				if (tcc_dylib) {
-					__v_result_Array __or_opt_952 = driver__v3_tcc_dylib_program_dependencies(c_compiler, resolved_c_flags, tcc_main_file, c_standard);
-					Array __or_val_953 = {0};
-					if (__or_opt_952.ok) {
-						__or_val_953 = __or_opt_952.value;
+					__v_result_Array __or_opt_953 = driver__v3_tcc_dylib_program_dependencies(c_compiler, resolved_c_flags, tcc_main_file, c_standard);
+					Array __or_val_954 = {0};
+					if (__or_opt_953.ok) {
+						__or_val_954 = __or_opt_953.value;
 					} else {
-						IError err = __or_opt_952.err;
+						IError err = __or_opt_953.err;
 						if (retry_compilation) {
 							driver__restart_v3_without_cache(cc_dir);
 						}
@@ -216096,12 +216114,12 @@ void driver__run(Array args) {
 						driver__cleanup_c_build_dir(cc_dir);
 						v_exit(1);
 					}
-					Array dependencies = __or_val_953;
-					__if_val_951 = driver__v3_tcc_dylib_program_link_flags(resolved_c_flags, dependencies, tcc_sdk_root);
+					Array dependencies = __or_val_954;
+					__if_val_952 = driver__v3_tcc_dylib_program_link_flags(resolved_c_flags, dependencies, tcc_sdk_root);
 				} else {
-					__if_val_951 = driver__tcc_dynamic_link_flags(resolved_c_flags);
+					__if_val_952 = driver__tcc_dynamic_link_flags(resolved_c_flags);
 				}
-				array__push_many(&tcc_args, __if_val_951.data, __if_val_951.len);
+				array__push_many(&tcc_args, __if_val_952.data, __if_val_952.len);
 			}
 			driver__add_v3_default_linker_flags(&tcc_args, pref__Preferences__normalized_target_os(prefs), is_o);
 			if (!is_o) {
@@ -216109,46 +216127,46 @@ void driver__run(Array args) {
 			}
 			tcc_args = driver__v3_tcc_macos_framework_flags(tcc_args, pref__Preferences__normalized_target_os(prefs), tcc_sdk_root);
 			tcc_args = driver__v3_tcc_cpp_runtime_flags(tcc_args, prefs->target);
-			string __interp_part_955 = prefix_source_identity;
-			string __interp_part_956 = _str_0;
-			string __interp_part_957 = modulecache__file_signature(tcc_main_file);
-			string __interp_part_958 = _str_0;
-			string __if_val_954 = {0};
+			string __interp_part_956 = prefix_source_identity;
+			string __interp_part_957 = _str_0;
+			string __interp_part_958 = modulecache__file_signature(tcc_main_file);
+			string __interp_part_959 = _str_0;
+			string __if_val_955 = {0};
 			if (cached_program_body_source.len > 0) {
-				__if_val_954 = modulecache__file_signature(cached_program_body_source);
+				__if_val_955 = modulecache__file_signature(cached_program_body_source);
 			} else {
-				__if_val_954 = _str_34;
+				__if_val_955 = _str_34;
 			}
-			string __interp_part_959 = __if_val_954;
-			string program_source_identity = ({ string __v3_internal_symbol_join_129[5]; __v3_internal_symbol_join_129[0] = __interp_part_955; __v3_internal_symbol_join_129[1] = __interp_part_956; __v3_internal_symbol_join_129[2] = __interp_part_957; __v3_internal_symbol_join_129[3] = __interp_part_958; __v3_internal_symbol_join_129[4] = __interp_part_959; string_plus_many(5, __v3_internal_symbol_join_129); });
+			string __interp_part_960 = __if_val_955;
+			string program_source_identity = ({ string __v3_internal_symbol_join_129[5]; __v3_internal_symbol_join_129[0] = __interp_part_956; __v3_internal_symbol_join_129[1] = __interp_part_957; __v3_internal_symbol_join_129[2] = __interp_part_958; __v3_internal_symbol_join_129[3] = __interp_part_959; __v3_internal_symbol_join_129[4] = __interp_part_960; string_plus_many(5, __v3_internal_symbol_join_129); });
 			string tcc_cached_executable = driver__v3_cached_tcc_executable_path(&cache_state->manager, program_source_identity, c_object_cache_stats.link_plan_signature, tcc_path, tcc_resources.install_dir, tcc_args);
 			if (os__is_file(tcc_cached_executable)) {
-				__v_result __or_opt_960 = os__cp(tcc_cached_executable, cc_out, (os__CopyParams){0});
-				if (!__or_opt_960.ok) {
+				__v_result __or_opt_961 = os__cp(tcc_cached_executable, cc_out, (os__CopyParams){0});
+				if (!__or_opt_961.ok) {
 				}
 				tcc_cache_hit = os__is_file(cc_out);
 				used_tcc = tcc_cache_hit;
 			}
 			if (verbose || show_cc) {
-				string __interp_part_962 = _str_1733;
-				string __interp_part_963 = cmdexec__display(tcc_path, tcc_args);
-				string __if_val_961 = {0};
+				string __interp_part_963 = _str_1733;
+				string __interp_part_964 = cmdexec__display(tcc_path, tcc_args);
+				string __if_val_962 = {0};
 				if (tcc_cache_hit) {
-					__if_val_961 = _str_2029;
+					__if_val_962 = _str_2029;
 				} else {
-					__if_val_961 = _str_34;
+					__if_val_962 = _str_34;
 				}
-				string __interp_part_964 = __if_val_961;
-				println(({ string __v3_internal_symbol_join_130[3]; __v3_internal_symbol_join_130[0] = __interp_part_962; __v3_internal_symbol_join_130[1] = __interp_part_963; __v3_internal_symbol_join_130[2] = __interp_part_964; string_plus_many(3, __v3_internal_symbol_join_130); }));
+				string __interp_part_965 = __if_val_962;
+				println(({ string __v3_internal_symbol_join_130[3]; __v3_internal_symbol_join_130[0] = __interp_part_963; __v3_internal_symbol_join_130[1] = __interp_part_964; __v3_internal_symbol_join_130[2] = __interp_part_965; string_plus_many(3, __v3_internal_symbol_join_130); }));
 			}
 			if (!tcc_cache_hit) {
-				os__Result __if_val_965 = {0};
+				os__Result __if_val_966 = {0};
 				if (is_o) {
-					__if_val_965 = cmdexec__run_in(tcc_path, tcc_args, cc_dir);
+					__if_val_966 = cmdexec__run_in(tcc_path, tcc_args, cc_dir);
 				} else {
-					__if_val_965 = driver__run_v3_tcc_executable_link(tcc_path, tcc_args, cc_dir, cc_out);
+					__if_val_966 = driver__run_v3_tcc_executable_link(tcc_path, tcc_args, cc_dir, cc_out);
 				}
-				result = __if_val_965;
+				result = __if_val_966;
 				driver__show_v3_c_compiler_output(show_c_output, tcc_path, result);
 				if (result.exit_code == 0) {
 					used_tcc = true;
@@ -216169,32 +216187,32 @@ void driver__run(Array args) {
 		}
 		if (!tried_tcc && (!is_prod || cache_with_tcc) && !needs_objective_c && !link_uses_non_c_language && (!tcc_link_has_incompatible_objects || (cache_full_tcc_source.len > 0)) && (target_args.len == 0) && (!c_compiler_explicit || explicit_tcc) && (!cache_state->manager.enabled || (cache_full_tcc_source.len > 0) || cache_with_tcc) && driver__v3_tcc_builds_c_debug(is_c_debug, host_os, target.os) && (dump_c_flags.len == 0) && (explicit_tcc || !string__eq(implicit_tcc, _str_34))) {
 			tried_tcc = true;
-			string __if_val_966 = {0};
+			string __if_val_967 = {0};
 			if (explicit_tcc && (string__eq(c_compiler, _str_1270) || string__eq(c_compiler, _str_1276)) && bundled_tcc_available) {
-				__if_val_966 = bundled_tcc;
+				__if_val_967 = bundled_tcc;
 			} else {
 				if (explicit_tcc) {
-					__if_val_966 = c_compiler;
+					__if_val_967 = c_compiler;
 				} else {
-					__if_val_966 = implicit_tcc;
+					__if_val_967 = implicit_tcc;
 				}
 			}
-			string tcc_path = __if_val_966;
+			string tcc_path = __if_val_967;
 			driver__V3TccResourceFlags tcc_resources = driver__v3_tcc_resource_flags_for_compiler(prefs->vroot, tcc_path, bundled_tcc, bundled_tcc_available);
-			string __if_val_967 = {0};
-			if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-				__if_val_967 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
-			} else {
-				__if_val_967 = _str_34;
-			}
-			string tcc_sdk_root = __if_val_967;
 			string __if_val_968 = {0};
-			if (cache_full_tcc_source.len > 0) {
-				__if_val_968 = os__base(cache_full_tcc_source);
+			if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
+				__if_val_968 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
 			} else {
-				__if_val_968 = _str_2858;
+				__if_val_968 = _str_34;
 			}
-			string tcc_source = __if_val_968;
+			string tcc_sdk_root = __if_val_968;
+			string __if_val_969 = {0};
+			if (cache_full_tcc_source.len > 0) {
+				__if_val_969 = os__base(cache_full_tcc_source);
+			} else {
+				__if_val_969 = _str_2858;
+			}
+			string tcc_source = __if_val_969;
 			Array tcc_support_inputs = array_new(			sizeof(string), 0, 0);
 			if (cache_with_tcc && cache_state->manager.enabled) {
 				array__push_many(&tcc_support_inputs, cached_objects.data, cached_objects.len);
@@ -216209,58 +216227,58 @@ void driver__run(Array args) {
 				println(string__plus(_str_1733, cmdexec__display(tcc_path, tcc_args)));
 			}
 			if (program_executable_enabled && !is_shared && !is_o) {
-				Array __filter_969 = array_new(				sizeof(string), 0, tcc_args.len);
+				Array __filter_970 = array_new(				sizeof(string), 0, tcc_args.len);
 				{
-					__v_int __filter_idx_970 = 0;
-					for (; __filter_idx_970 < tcc_args.len; __filter_idx_970++) {
-						string __filter_it_971 = *(string*)(array_get(tcc_args, __filter_idx_970));
-						if (string__starts_with(string__trim_space(__filter_it_971), _str_2039)) {
-							array_push(&__filter_969, &__filter_it_971);
+					__v_int __filter_idx_971 = 0;
+					for (; __filter_idx_971 < tcc_args.len; __filter_idx_971++) {
+						string __filter_it_972 = *(string*)(array_get(tcc_args, __filter_idx_971));
+						if (string__starts_with(string__trim_space(__filter_it_972), _str_2039)) {
+							array_push(&__filter_970, &__filter_it_972);
 						}
 					}
 				}
-				program_link_inputs = driver__v3_program_link_inputs(tcc_args, tcc_resources.install_dir, driver__v3_default_link_library_dirs(&cache_state->manager, tcc_path, __filter_969, tcc_sdk_root, cc_dir), cc_dir);
+				program_link_inputs = driver__v3_program_link_inputs(tcc_args, tcc_resources.install_dir, driver__v3_default_link_library_dirs(&cache_state->manager, tcc_path, __filter_970, tcc_sdk_root, cc_dir), cc_dir);
 			}
-			os__Result __if_val_972 = {0};
-			__v_option_string __if_guard_973 = os__getenv_opt(_str_2579);
-			if (__if_guard_973.ok) {
-				string injected_failure = __if_guard_973.value;
-				__if_val_972 = (os__Result){.exit_code = 1, .output = injected_failure};
+			os__Result __if_val_973 = {0};
+			__v_option_string __if_guard_974 = os__getenv_opt(_str_2579);
+			if (__if_guard_974.ok) {
+				string injected_failure = __if_guard_974.value;
+				__if_val_973 = (os__Result){.exit_code = 1, .output = injected_failure};
 			} else {
 				if (is_shared || is_o) {
-					__if_val_972 = cmdexec__run_in(tcc_path, tcc_args, cc_dir);
+					__if_val_973 = cmdexec__run_in(tcc_path, tcc_args, cc_dir);
 				} else {
-					__v_option_string __if_guard_974 = os__getenv_opt(_str_2927);
-					if (__if_guard_974.ok) {
-						string keep_unit = __if_guard_974.value;
-						__v_result __or_opt_975 = os__cp(cc_src, keep_unit, (os__CopyParams){0});
-						if (!__or_opt_975.ok) {
+					__v_option_string __if_guard_975 = os__getenv_opt(_str_2927);
+					if (__if_guard_975.ok) {
+						string keep_unit = __if_guard_975.value;
+						__v_result __or_opt_976 = os__cp(cc_src, keep_unit, (os__CopyParams){0});
+						if (!__or_opt_976.ok) {
 						}
 					}
 					Array link_args = array__clone(&tcc_args);
 					if (program_link_inputs.taken && (program_link_inputs.unknown.len == 0)) {
-						Array __push_many_976 = new_array_from_c_array(3, 3, sizeof(string), (string[3]){_str_1391, _str_1394, driver__v3_program_dependency_file});
-						array__push_many(&link_args, __push_many_976.data, __push_many_976.len);
+						Array __push_many_977 = new_array_from_c_array(3, 3, sizeof(string), (string[3]){_str_1391, _str_1394, driver__v3_program_dependency_file});
+						array__push_many(&link_args, __push_many_977.data, __push_many_977.len);
 					}
 					i64 before_tcc = time__Time__unix(time__utc()) - 1;
 					os__Result linked = driver__run_v3_tcc_executable_link(tcc_path, link_args, cc_dir, cc_out);
 					if (program_link_inputs.taken && (linked.exit_code == 0) && driver__V3ProgramLinkInputs__inputs_can_be_told(&program_link_inputs)) {
-						__v_result_string __or_opt_977 = os__read_file(os__join_path_single(cc_dir, tcc_source));
-						string __or_val_978 = {0};
-						if (__or_opt_977.ok) {
-							__or_val_978 = __or_opt_977.value;
+						__v_result_string __or_opt_978 = os__read_file(os__join_path_single(cc_dir, tcc_source));
+						string __or_val_979 = {0};
+						if (__or_opt_978.ok) {
+							__or_val_979 = __or_opt_978.value;
 						} else {
-							IError err = __or_opt_977.err;
-							__or_val_978 = _str_34;
+							IError err = __or_opt_978.err;
+							__or_val_979 = _str_34;
 						}
-						string unit = __or_val_978;
+						string unit = __or_val_979;
 						driver__V3IncludeSearch search = driver__v3_tcc_include_search(&cache_state->manager, tcc_path, driver__v3_tcc_compile_input_args(tcc_args, tcc_source), cc_dir);
 						driver__V3ProgramLinkInputs__add_compiled_headers(&program_link_inputs, &cache_state->manager, cc_dir, unit, search, before_tcc);
 					}
-					__if_val_972 = linked;
+					__if_val_973 = linked;
 				}
 			}
-			result = __if_val_972;
+			result = __if_val_973;
 			driver__show_v3_c_compiler_output(show_c_output, tcc_path, result);
 			used_tcc = result.exit_code == 0;
 			if (!used_tcc) {
@@ -216285,27 +216303,27 @@ void driver__run(Array args) {
 			driver__cleanup_c_build_dir(cc_dir);
 			Array restart_args = new_array_from_c_array(1, 1, sizeof(string), (string[1]){_str_248});
 			if (checker_notices_printed) {
-				string __arr_val_979 = driver__v3_internal_checker_notices_printed_flag;
-				array_push(&restart_args, &__arr_val_979);
+				string __arr_val_980 = driver__v3_internal_checker_notices_printed_flag;
+				array_push(&restart_args, &__arr_val_980);
 			}
 			driver__restart_v3_with_args(restart_args, cc_dir);
 		}
 		if (driver__v3_should_regenerate_after_implicit_tcc(retry_compilation, use_implicit_tcc_semantics, tried_tcc, result.exit_code)) {
-			Array __order_snapshot_980 = args;
-			__v_int __order_snapshot_981 = c_compiler_arg_index;
-			string __order_snapshot_982 = cc_dir;
-			bool __order_snapshot_983 = silent;
-			string __if_val_984 = {0};
+			Array __order_snapshot_981 = args;
+			__v_int __order_snapshot_982 = c_compiler_arg_index;
+			string __order_snapshot_983 = cc_dir;
+			bool __order_snapshot_984 = silent;
+			string __if_val_985 = {0};
 			if (!tried_tcc) {
-				__if_val_984 = _str_34;
+				__if_val_985 = _str_34;
 			} else {
 				if ((string__trim_space(result.output)).len > 0) {
-					__if_val_984 = result.output;
+					__if_val_985 = result.output;
 				} else {
-					__if_val_984 = ({ string __v3_internal_symbol_join_131[2]; __v3_internal_symbol_join_131[0] = _str_2930; u8 __v3_internal_symbol_join_131_number_1[66]; __v3_internal_symbol_join_131[1] = v3_i64_buf((i64)(result.exit_code), 10, __v3_internal_symbol_join_131_number_1); string_plus_many(2, __v3_internal_symbol_join_131); });
+					__if_val_985 = ({ string __v3_internal_symbol_join_131[2]; __v3_internal_symbol_join_131[0] = _str_2930; u8 __v3_internal_symbol_join_131_number_1[66]; __v3_internal_symbol_join_131[1] = v3_i64_buf((i64)(result.exit_code), 10, __v3_internal_symbol_join_131_number_1); string_plus_many(2, __v3_internal_symbol_join_131); });
 				}
 			}
-			driver__v3_regenerate_after_implicit_tcc(__order_snapshot_980, __order_snapshot_981, __order_snapshot_982, __order_snapshot_983, __if_val_984);
+			driver__v3_regenerate_after_implicit_tcc(__order_snapshot_981, __order_snapshot_982, __order_snapshot_983, __order_snapshot_984, __if_val_985);
 			{
 				flat__FlatAst__close_workers(a);
 			}
@@ -216328,52 +216346,52 @@ void driver__run(Array args) {
 		if ((is_prod && !cache_with_tcc) || !tried_tcc || (result.exit_code != 0)) {
 			used_tcc = false;
 			if (!os__is_file(cc_src)) {
-				__v_result __or_opt_985 = os__cp(published_c_source, cc_src, (os__CopyParams){0});
-				if (!__or_opt_985.ok) {
-					IError err = __or_opt_985.err;
+				__v_result __or_opt_986 = os__cp(published_c_source, cc_src, (os__CopyParams){0});
+				if (!__or_opt_986.ok) {
+					IError err = __or_opt_986.err;
 					eprintln(({ string __v3_internal_symbol_join_133[4]; __v3_internal_symbol_join_133[0] = _str_2933; __v3_internal_symbol_join_133[1] = published_c_source; __v3_internal_symbol_join_133[2] = _str_443; __v3_internal_symbol_join_133[3] = IError__msg(&(err)); string_plus_many(4, __v3_internal_symbol_join_133); }));
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
 			}
-			string __if_val_986 = {0};
+			string __if_val_987 = {0};
 			if ((cached_dev_dylib.len > 0) && (tcc_main_file.len > 0)) {
-				__if_val_986 = os__base(tcc_main_file);
+				__if_val_987 = os__base(tcc_main_file);
 			} else {
-				__if_val_986 = _str_2858;
+				__if_val_987 = _str_2858;
 			}
-			string fallback_source = __if_val_986;
+			string fallback_source = __if_val_987;
 			Array compiler_inputs = array_new(			sizeof(string), 0, 0);
 			if (cached_program_main_object.len > 0) {
-				string __arr_val_987 = cached_program_main_object;
-				array_push(&compiler_inputs, &__arr_val_987);
-			} else if (string__eq(fallback_source, os__base(tcc_main_file))) {
-				string __arr_val_988 = _str_2934;
+				string __arr_val_988 = cached_program_main_object;
 				array_push(&compiler_inputs, &__arr_val_988);
-				Array __push_many_989 = driver__v3_c_source_inputs(fallback_source, needs_objective_c);
-				array__push_many(&compiler_inputs, __push_many_989.data, __push_many_989.len);
+			} else if (string__eq(fallback_source, os__base(tcc_main_file))) {
+				string __arr_val_989 = _str_2934;
+				array_push(&compiler_inputs, &__arr_val_989);
+				Array __push_many_990 = driver__v3_c_source_inputs(fallback_source, needs_objective_c);
+				array__push_many(&compiler_inputs, __push_many_990.data, __push_many_990.len);
 			} else {
-				if ((pruned_declarations.count > 0) && ({bool __contains_990 = false;
+				if ((pruned_declarations.count > 0) && ({bool __contains_991 = false;
 				{
-					__v_int __contains_idx_991 = 0;
-					for (; __contains_idx_991 < c_flag_plan.before_inputs.len; __contains_idx_991++) {
-						if (string__eq(*(string*)(array_get(c_flag_plan.before_inputs, __contains_idx_991)), _str_2877)) {
-							__contains_990 = true;
+					__v_int __contains_idx_992 = 0;
+					for (; __contains_idx_992 < c_flag_plan.before_inputs.len; __contains_idx_992++) {
+						if (string__eq(*(string*)(array_get(c_flag_plan.before_inputs, __contains_idx_992)), _str_2877)) {
+							__contains_991 = true;
 						}
 					}
 				}
-				!__contains_990;})) {
-					string __arr_val_992 = _str_2877;
-					array_push(&compiler_inputs, &__arr_val_992);
+				!__contains_991;})) {
+					string __arr_val_993 = _str_2877;
+					array_push(&compiler_inputs, &__arr_val_993);
 				}
-				Array __push_many_993 = driver__v3_c_source_inputs(fallback_source, needs_objective_c);
-				array__push_many(&compiler_inputs, __push_many_993.data, __push_many_993.len);
+				Array __push_many_994 = driver__v3_c_source_inputs(fallback_source, needs_objective_c);
+				array__push_many(&compiler_inputs, __push_many_994.data, __push_many_994.len);
 			}
 			if (!is_o) {
 				array__push_many(&compiler_inputs, native_support_inputs.data, native_support_inputs.len);
 				if (cached_dev_dylib.len > 0) {
-					string __arr_val_994 = cached_dev_dylib;
-					array_push(&compiler_inputs, &__arr_val_994);
+					string __arr_val_995 = cached_dev_dylib;
+					array_push(&compiler_inputs, &__arr_val_995);
 				} else {
 					array__push_many(&compiler_inputs, cached_objects.data, cached_objects.len);
 				}
@@ -216383,8 +216401,8 @@ void driver__run(Array args) {
 			} else if (use_parallel_c_compilation && (cached_program_main_object.len == 0) && string__eq(fallback_source, _str_2858)) {
 				result = driver__compile_v3_parallel_c(cc_src, c_compiler, &c_flag_plan, &large_c_flag_plan, native_support_inputs, cached_objects, cached_dev_dylib, needs_objective_c, cc_dir, cc_output_name, verbose || show_cc, parallel_c_job_count, parallel_c_unit_count, is_shared, building_v && is_bsd_host && is_prod && !no_cache && !is_shared, prefs->target, prefs->vroot, &c_object_cache_stats);
 			} else {
-				Array __arr_lit_995 = array_new(				sizeof(string), 0, 0);
-				Array cc_args = driver__V3CCompilerFlagPlan__compiler_args(&c_flag_plan, cc_output_name, compiler_inputs, __arr_lit_995);
+				Array __arr_lit_996 = array_new(				sizeof(string), 0, 0);
+				Array cc_args = driver__V3CCompilerFlagPlan__compiler_args(&c_flag_plan, cc_output_name, compiler_inputs, __arr_lit_996);
 				if (effective_tcc) {
 					cc_args = driver__v3_tcc_macos_framework_flags(cc_args, pref__Preferences__normalized_target_os(prefs), flag_plan_sdk_root);
 				}
@@ -216393,29 +216411,29 @@ void driver__run(Array args) {
 				}
 				i64 before_cc = time__Time__unix(time__utc()) - 1;
 				if (program_executable_enabled) {
-					Array __order_snapshot_996 = cc_args;
-					modulecache__Manager* __order_snapshot_997 = &cache_state->manager;
-					string __order_snapshot_998 = c_compiler;
-					Array __order_snapshot_999 = driver__v3_link_search_args(cc_args);
-					string __if_val_1000 = {0};
+					Array __order_snapshot_997 = cc_args;
+					modulecache__Manager* __order_snapshot_998 = &cache_state->manager;
+					string __order_snapshot_999 = c_compiler;
+					Array __order_snapshot_1000 = driver__v3_link_search_args(cc_args);
+					string __if_val_1001 = {0};
 					if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-						__if_val_1000 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
+						__if_val_1001 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
 					} else {
-						__if_val_1000 = _str_34;
+						__if_val_1001 = _str_34;
 					}
-					program_link_inputs = driver__v3_program_link_inputs(__order_snapshot_996, _str_34, driver__v3_default_link_library_dirs(__order_snapshot_997, __order_snapshot_998, __order_snapshot_999, __if_val_1000, cc_dir), cc_dir);
+					program_link_inputs = driver__v3_program_link_inputs(__order_snapshot_997, _str_34, driver__v3_default_link_library_dirs(__order_snapshot_998, __order_snapshot_999, __order_snapshot_1000, __if_val_1001, cc_dir), cc_dir);
 				}
 				bool keeps_executable = program_link_inputs.taken && (program_link_inputs.unknown.len == 0);
-				Array __if_val_1001 = {0};
+				Array __if_val_1002 = {0};
 				if (keeps_executable) {
-					__if_val_1001 = driver__v3_compiled_sources(cc_args);
+					__if_val_1002 = driver__v3_compiled_sources(cc_args);
 				} else {
-					__if_val_1001 = array_new(					sizeof(string), 0, 0);
+					__if_val_1002 = array_new(					sizeof(string), 0, 0);
 				}
-				Array cc_sources = __if_val_1001;
+				Array cc_sources = __if_val_1002;
 				if (cc_sources.len == 1) {
-					Array __push_many_1002 = new_array_from_c_array(3, 3, sizeof(string), (string[3]){_str_1391, _str_1394, driver__v3_program_dependency_file});
-					array__push_many(&cc_args, __push_many_1002.data, __push_many_1002.len);
+					Array __push_many_1003 = new_array_from_c_array(3, 3, sizeof(string), (string[3]){_str_1391, _str_1394, driver__v3_program_dependency_file});
+					array__push_many(&cc_args, __push_many_1003.data, __push_many_1003.len);
 				}
 				int linker_report = driver__V3LinkerReport__no_report;
 				Array asked_for_linker_report = array_new(				sizeof(string), 0, 0);
@@ -216429,26 +216447,26 @@ void driver__run(Array args) {
 				}
 				result = cmdexec__run_in(c_compiler, cc_args, cc_dir);
 				if ((result.exit_code != 0) && (asked_for_linker_report.len > 0) && driver__v3_output_names_linker_report(linker_report, result.output)) {
-					Array __filter_1003 = array_new(					sizeof(string), 0, cc_args.len);
+					Array __filter_1004 = array_new(					sizeof(string), 0, cc_args.len);
 					{
-						__v_int __filter_idx_1004 = 0;
-						for (; __filter_idx_1004 < cc_args.len; __filter_idx_1004++) {
-							string __filter_it_1005 = *(string*)(array_get(cc_args, __filter_idx_1004));
-							bool __contains_1006 = false;
+						__v_int __filter_idx_1005 = 0;
+						for (; __filter_idx_1005 < cc_args.len; __filter_idx_1005++) {
+							string __filter_it_1006 = *(string*)(array_get(cc_args, __filter_idx_1005));
+							bool __contains_1007 = false;
 							{
-								__v_int __contains_idx_1007 = 0;
-								for (; __contains_idx_1007 < asked_for_linker_report.len; __contains_idx_1007++) {
-									if (string__eq(*(string*)(array_get(asked_for_linker_report, __contains_idx_1007)), __filter_it_1005)) {
-										__contains_1006 = true;
+								__v_int __contains_idx_1008 = 0;
+								for (; __contains_idx_1008 < asked_for_linker_report.len; __contains_idx_1008++) {
+									if (string__eq(*(string*)(array_get(asked_for_linker_report, __contains_idx_1008)), __filter_it_1006)) {
+										__contains_1007 = true;
 									}
 								}
 							}
-							if (!__contains_1006) {
-								array_push(&__filter_1003, &__filter_it_1005);
+							if (!__contains_1007) {
+								array_push(&__filter_1004, &__filter_it_1006);
 							}
 						}
 					}
-					Array without_report = __filter_1003;
+					Array without_report = __filter_1004;
 					os__Result again = cmdexec__run_in(c_compiler, without_report, cc_dir);
 					if (again.exit_code == 0) {
 						driver__v3_forget_linker_report(&cache_state->manager, c_compiler, driver__v3_link_search_args(cc_args), pref__Preferences__normalized_target_os(prefs));
@@ -216458,46 +216476,46 @@ void driver__run(Array args) {
 					result = again;
 				}
 				if ((result.exit_code == 0) && program_link_inputs.taken) {
-					int __order_snapshot_1008 = linker_report;
-					string __order_snapshot_1009 = os__join_path_single(cc_dir, driver__v3_linker_report_file);
-					string __order_snapshot_1010 = cc_dir;
-					i64 __order_snapshot_1011 = before_cc;
-					Array __if_val_1012 = {0};
+					int __order_snapshot_1009 = linker_report;
+					string __order_snapshot_1010 = os__join_path_single(cc_dir, driver__v3_linker_report_file);
+					string __order_snapshot_1011 = cc_dir;
+					i64 __order_snapshot_1012 = before_cc;
+					Array __if_val_1013 = {0};
 					if (string__eq(pref__Preferences__normalized_target_os(prefs), _str_889)) {
-						Array __arr_lit_1013 = array_new(						sizeof(string), 0, 1);
-						string __arr_val_1014 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
-						array_push(&__arr_lit_1013, &__arr_val_1014);
-						Array __filter_1015 = array_new(						sizeof(string), 0, __arr_lit_1013.len);
+						Array __arr_lit_1014 = array_new(						sizeof(string), 0, 1);
+						string __arr_val_1015 = driver__V3MacosSdkRootCache__get(macos_sdk_root_cache);
+						array_push(&__arr_lit_1014, &__arr_val_1015);
+						Array __filter_1016 = array_new(						sizeof(string), 0, __arr_lit_1014.len);
 						{
-							__v_int __filter_idx_1016 = 0;
-							for (; __filter_idx_1016 < __arr_lit_1013.len; __filter_idx_1016++) {
-								string __filter_it_1017 = *(string*)(array_get(__arr_lit_1013, __filter_idx_1016));
-								if (__filter_it_1017.len > 0) {
-									array_push(&__filter_1015, &__filter_it_1017);
+							__v_int __filter_idx_1017 = 0;
+							for (; __filter_idx_1017 < __arr_lit_1014.len; __filter_idx_1017++) {
+								string __filter_it_1018 = *(string*)(array_get(__arr_lit_1014, __filter_idx_1017));
+								if (__filter_it_1018.len > 0) {
+									array_push(&__filter_1016, &__filter_it_1018);
 								}
 							}
 						}
-						__if_val_1012 = __filter_1015;
+						__if_val_1013 = __filter_1016;
 					} else {
-						__if_val_1012 = array_new(						sizeof(string), 0, 0);
+						__if_val_1013 = array_new(						sizeof(string), 0, 0);
 					}
-					driver__V3ProgramLinkInputs__add_linker_report(&program_link_inputs, __order_snapshot_1008, __order_snapshot_1009, __order_snapshot_1010, __order_snapshot_1011, __if_val_1012);
+					driver__V3ProgramLinkInputs__add_linker_report(&program_link_inputs, __order_snapshot_1009, __order_snapshot_1010, __order_snapshot_1011, __order_snapshot_1012, __if_val_1013);
 				}
 				if ((result.exit_code == 0) && (cc_sources.len > 0) && driver__V3ProgramLinkInputs__compiler_tells_its_headers(&program_link_inputs, cc_sources)) {
-					__v_option_driver__V3IncludeSearch __if_guard_1018 = driver__v3_include_search(&cache_state->manager, c_compiler, cc_args, cc_dir);
-					if (__if_guard_1018.ok) {
-						driver__V3IncludeSearch search = __if_guard_1018.value;
-						modulecache__Manager* __order_snapshot_1019 = &cache_state->manager;
-						string __order_snapshot_1020 = cc_dir;
-						__v_result_string __or_opt_1021 = os__read_file(cc_src);
-						string __or_val_1022 = {0};
-						if (__or_opt_1021.ok) {
-							__or_val_1022 = __or_opt_1021.value;
+					__v_option_driver__V3IncludeSearch __if_guard_1019 = driver__v3_include_search(&cache_state->manager, c_compiler, cc_args, cc_dir);
+					if (__if_guard_1019.ok) {
+						driver__V3IncludeSearch search = __if_guard_1019.value;
+						modulecache__Manager* __order_snapshot_1020 = &cache_state->manager;
+						string __order_snapshot_1021 = cc_dir;
+						__v_result_string __or_opt_1022 = os__read_file(cc_src);
+						string __or_val_1023 = {0};
+						if (__or_opt_1022.ok) {
+							__or_val_1023 = __or_opt_1022.value;
 						} else {
-							IError err = __or_opt_1021.err;
-							__or_val_1022 = _str_34;
+							IError err = __or_opt_1022.err;
+							__or_val_1023 = _str_34;
 						}
-						driver__V3ProgramLinkInputs__add_compiled_headers(&program_link_inputs, __order_snapshot_1019, __order_snapshot_1020, __or_val_1022, search, before_cc);
+						driver__V3ProgramLinkInputs__add_compiled_headers(&program_link_inputs, __order_snapshot_1020, __order_snapshot_1021, __or_val_1023, search, before_cc);
 					} else {
 						program_link_inputs.unknown = _str_2935;
 					}
@@ -216507,12 +216525,12 @@ void driver__run(Array args) {
 				driver__cleanup_c_build_dir(cc_dir);
 				Array regeneration_args = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_249, driver__v3_parallel_cc_monolithic_define});
 				{
-					__v_int __for_idx_1023 = 0;
-					for (; __for_idx_1023 < args.len; __for_idx_1023++) {
-						string arg = *(string*)(array_get(args, __for_idx_1023));
+					__v_int __for_idx_1024 = 0;
+					for (; __for_idx_1024 < args.len; __for_idx_1024++) {
+						string arg = *(string*)(array_get(args, __for_idx_1024));
 						if (!string__eq(arg, driver__macos_v3_compat_c99_flag)) {
-							string __arr_val_1024 = arg;
-							array_push(&regeneration_args, &__arr_val_1024);
+							string __arr_val_1025 = arg;
+							array_push(&regeneration_args, &__arr_val_1025);
 						}
 					}
 				}
@@ -216521,9 +216539,9 @@ void driver__run(Array args) {
 					driver__exit_with_child_build(os__executable(), regeneration_args);
 				}
 				#endif
-				__v_result __or_opt_1025 = os__execvp(os__executable(), regeneration_args);
-				if (!__or_opt_1025.ok) {
-					IError err = __or_opt_1025.err;
+				__v_result __or_opt_1026 = os__execvp(os__executable(), regeneration_args);
+				if (!__or_opt_1026.ok) {
+					IError err = __or_opt_1026.err;
 					eprintln(string__plus(_str_2936, IError__msg(&(err))));
 					v_exit(1);
 				}
@@ -216553,14 +216571,14 @@ void driver__run(Array args) {
 				if (retry_compilation && driver__v3_is_tcc_compilation_failure(c_compiler, result.output)) {
 					string fallback = driver__v3_platform_c_compiler_command(host_os);
 					eprintln(driver__v3_explicit_tcc_fallback_warning(fallback, result.output));
-					__v_option_Array __if_guard_1026 = driver__v3_unrepaired_cache_failure_artifacts(result.output);
-					if (__if_guard_1026.ok) {
-						Array artifacts = __if_guard_1026.value;
+					__v_option_Array __if_guard_1027 = driver__v3_unrepaired_cache_failure_artifacts(result.output);
+					if (__if_guard_1027.ok) {
+						Array artifacts = __if_guard_1027.value;
 						eprintln(_str_2938);
 						{
-							__v_int __for_idx_1027 = 0;
-							for (; __for_idx_1027 < artifacts.len; __for_idx_1027++) {
-								string artifact = *(string*)(array_get(artifacts, __for_idx_1027));
+							__v_int __for_idx_1028 = 0;
+							for (; __for_idx_1028 < artifacts.len; __for_idx_1028++) {
+								string artifact = *(string*)(array_get(artifacts, __for_idx_1028));
 								eprintln(string__plus(_str_449, artifact));
 							}
 						}
@@ -216589,9 +216607,9 @@ void driver__run(Array args) {
 					driver__cleanup_c_build_dir(cc_dir);
 					v_exit(1);
 				}
-				__v_option_string __if_guard_1028 = driver__v3_missing_c_library_name(result.output);
-				if (__if_guard_1028.ok) {
-					string missing_library = __if_guard_1028.value;
+				__v_option_string __if_guard_1029 = driver__v3_missing_c_library_name(result.output);
+				if (__if_guard_1029.ok) {
+					string missing_library = __if_guard_1029.value;
 					eprintln(({ string __v3_internal_symbol_join_134[3]; __v3_internal_symbol_join_134[0] = _str_2940; __v3_internal_symbol_join_134[1] = missing_library; __v3_internal_symbol_join_134[2] = _str_2941; string_plus_many(3, __v3_internal_symbol_join_134); }));
 				} else if (parallel_cc && (string__contains(result.output, _str_2942) || string__contains(result.output, _str_2943) || string__contains(result.output, _str_2944))) {
 					eprintln(_str_370);
@@ -216627,22 +216645,22 @@ void driver__run(Array args) {
 			if (!program_executable_input_ready) {
 				program_executable_input = driver__v3_cgen_cache_input(a, cache_state, user_files, cache_c_flags, prefs->vroot);
 			}
-			modulecache__Manager* __order_snapshot_1029 = &cache_state->manager;
-			driver__V3CgenCacheInput __order_snapshot_1030 = program_executable_input;
-			string __order_snapshot_1031 = program_executable_link;
-			driver__V3ProgramLinkInputs* __order_snapshot_1032 = &program_link_inputs;
-			string __order_snapshot_1033 = staged_binary;
-			Array __if_val_1034 = {0};
+			modulecache__Manager* __order_snapshot_1030 = &cache_state->manager;
+			driver__V3CgenCacheInput __order_snapshot_1031 = program_executable_input;
+			string __order_snapshot_1032 = program_executable_link;
+			driver__V3ProgramLinkInputs* __order_snapshot_1033 = &program_link_inputs;
+			string __order_snapshot_1034 = staged_binary;
+			Array __if_val_1035 = {0};
 			if (cgen_cache_hit) {
-				__if_val_1034 = cgen_cache_metadata.diagnostics;
+				__if_val_1035 = cgen_cache_metadata.diagnostics;
 			} else {
-				__if_val_1034 = cached_checker_diagnostics;
+				__if_val_1035 = cached_checker_diagnostics;
 			}
-			driver__publish_v3_program_executable(__order_snapshot_1029, __order_snapshot_1030, __order_snapshot_1031, __order_snapshot_1032, __order_snapshot_1033, __if_val_1034);
+			driver__publish_v3_program_executable(__order_snapshot_1030, __order_snapshot_1031, __order_snapshot_1032, __order_snapshot_1033, __order_snapshot_1034, __if_val_1035);
 		}
-		__v_result __or_opt_1035 = os__mv(staged_binary, bin_file, (os__MvParams){.overwrite = true});
-		if (!__or_opt_1035.ok) {
-			IError err = __or_opt_1035.err;
+		__v_result __or_opt_1036 = os__mv(staged_binary, bin_file, (os__MvParams){.overwrite = true});
+		if (!__or_opt_1036.ok) {
+			IError err = __or_opt_1036.err;
 			eprintln(({ string __v3_internal_symbol_join_136[4]; __v3_internal_symbol_join_136[0] = _str_2947; __v3_internal_symbol_join_136[1] = bin_file; __v3_internal_symbol_join_136[2] = _str_443; __v3_internal_symbol_join_136[3] = IError__str(err); string_plus_many(4, __v3_internal_symbol_join_136); }));
 			driver__cleanup_c_build_dir(cc_dir);
 			v_exit(1);
@@ -216658,36 +216676,36 @@ void driver__run(Array args) {
 			driver__v3_keep_macos_debug_symbols(staged_binary, bin_file);
 		}
 		{
-			__v_int __for_idx_1036 = 0;
-			for (; __for_idx_1036 < c_object_cache_stats.temporary_objects.len; __for_idx_1036++) {
-				string temporary_object = *(string*)(array_get(c_object_cache_stats.temporary_objects, __for_idx_1036));
-				__v_result __or_opt_1037 = os__rm(temporary_object);
-				if (!__or_opt_1037.ok) {
+			__v_int __for_idx_1037 = 0;
+			for (; __for_idx_1037 < c_object_cache_stats.temporary_objects.len; __for_idx_1037++) {
+				string temporary_object = *(string*)(array_get(c_object_cache_stats.temporary_objects, __for_idx_1037));
+				__v_result __or_opt_1038 = os__rm(temporary_object);
+				if (!__or_opt_1038.ok) {
 				}
 			}
 		}
 		bool c_debug_program_removed = (should_run && remove_binary_after_run) || (!should_run && !skip_running && (test_files.len > 0) && (!explicit_output || is_checker_fixture || show_test_stats));
 		if (!is_c_debug || c_debug_program_removed) {
 			{
-				__v_int __for_idx_1038 = 0;
-				for (; __for_idx_1038 < generated_c_flags.len; __for_idx_1038++) {
-					string source_flag = *(string*)(array_get(generated_c_flags, __for_idx_1038));
+				__v_int __for_idx_1039 = 0;
+				for (; __for_idx_1039 < generated_c_flags.len; __for_idx_1039++) {
+					string source_flag = *(string*)(array_get(generated_c_flags, __for_idx_1039));
 					string clean = string__trim_space(source_flag);
 					if (driver__c_generated_native_source_context(clean, cc_dir)) {
-						__v_result __or_opt_1039 = os__rm(clean);
-						if (!__or_opt_1039.ok) {
+						__v_result __or_opt_1040 = os__rm(clean);
+						if (!__or_opt_1040.ok) {
 						}
 					}
 				}
 			}
-			__v_result __or_opt_1040 = os__rm(tcc_main_file);
-			if (!__or_opt_1040.ok) {
-			}
-			__v_result __or_opt_1041 = os__rm(cache_full_tcc_source);
+			__v_result __or_opt_1041 = os__rm(tcc_main_file);
 			if (!__or_opt_1041.ok) {
 			}
-			__v_result __or_opt_1042 = os__rm(retained_full_c_source);
+			__v_result __or_opt_1042 = os__rm(cache_full_tcc_source);
 			if (!__or_opt_1042.ok) {
+			}
+			__v_result __or_opt_1043 = os__rm(retained_full_c_source);
+			if (!__or_opt_1043.ok) {
 			}
 			driver__cleanup_c_build_dir(cc_dir);
 		}
@@ -216697,23 +216715,23 @@ void driver__run(Array args) {
 			}
 		}
 		driver__wait_release_threads();
-		string __if_val_1043 = {0};
+		string __if_val_1044 = {0};
 		if (tcc_cache_hit) {
-			__if_val_1043 = _str_2712;
+			__if_val_1044 = _str_2712;
 		} else {
 			if (used_tcc) {
-				__if_val_1043 = _str_1270;
+				__if_val_1044 = _str_1270;
 			} else {
-				__if_val_1043 = _str_5;
+				__if_val_1044 = _str_5;
 			}
 		}
-		v__bench__Bench__step(&b, __if_val_1043);
+		v__bench__Bench__step(&b, __if_val_1044);
 		driver__clear_macos_v3_compiler_error_fallback(macos_v3_fallback_file);
 		driver__msvc_restore_environment(msvc_saved_environment);
 		if (should_run) {
 			if ((is_crun || is_direct_vsh) && !explicit_output && !remove_binary_after_run) {
-				__v_result __or_opt_1044 = driver__write_v3_crun_cache_marker(bin_file, crun_build_identity);
-				if (!__or_opt_1044.ok) {
+				__v_result __or_opt_1045 = driver__write_v3_crun_cache_marker(bin_file, crun_build_identity);
+				if (!__or_opt_1045.ok) {
 				}
 			}
 			__v_int run_result = driver__run_binary(bin_file, run_args, remove_binary_after_run);
@@ -216761,9 +216779,9 @@ void driver__run(Array args) {
 			retained_transform_prepare_scope = NULL;
 		}
 		{
-			__v_int __for_idx_1045 = 0;
-			for (; __for_idx_1045 < transform_helper_scopes.len; __for_idx_1045++) {
-				void* scope = *(void**)(array_get(transform_helper_scopes, __for_idx_1045));
+			__v_int __for_idx_1046 = 0;
+			for (; __for_idx_1046 < transform_helper_scopes.len; __for_idx_1046++) {
+				void* scope = *(void**)(array_get(transform_helper_scopes, __for_idx_1046));
 				driver__prealloc_scope_free_for_v3(scope);
 			}
 		}
@@ -250230,8 +250248,8 @@ __v_option_string markused__CallCollector__collection_alias_receiver_method_name
 	string owner = cur_module;
 	Array aliases = __new_array_noscan(0, 0, sizeof(u32));
 	{
-		__v_int __discard_6165468023465583894_379641_379642 = 0;
-		for (; __discard_6165468023465583894_379641_379642 < 16; __discard_6165468023465583894_379641_379642++) {
+		__v_int __discard_6165468023465583894_380301_380302 = 0;
+		for (; __discard_6165468023465583894_380301_380302 < 16; __discard_6165468023465583894_380301_380302++) {
 			u32 __if_val_0 = {0};
 			int __in_lhs_1 = flat__source_type_shape(current);
 			if ((__in_lhs_1 & 1) != 0) {
@@ -252668,8 +252686,8 @@ bool markused__CallCollector__selector_is_enum_value(markused__CallCollector* c,
 			u32 candidate = *(u32*)(array_get(candidates, __for_idx_2));
 			u32 enum_name = candidate;
 			{
-				__v_int __discard_6165468023465583894_359662_359663 = 0;
-				for (; __discard_6165468023465583894_359662_359663 < 16; __discard_6165468023465583894_359662_359663++) {
+				__v_int __discard_6165468023465583894_360322_360323 = 0;
+				for (; __discard_6165468023465583894_360322_360323 < 16; __discard_6165468023465583894_360322_360323++) {
 					u32 __map_key_3 = enum_name;
 					void* __map_ptr_4 = map__get_check(&c->tc->enum_fields, &__map_key_3);
 					if (__map_ptr_4 != NULL) {
@@ -255510,8 +255528,8 @@ void markused__enqueue_implicit_global_container_roots(flat__FlatAst* a, types__
 					}
 					types__Type* typ = types__TypeChecker__parse_type(tc, field->typ);
 					{
-						__v_int __discard_6165468023465583894_86746_86747 = 0;
-						for (; __discard_6165468023465583894_86746_86747 < 32; __discard_6165468023465583894_86746_86747++) {
+						__v_int __discard_6165468023465583894_87406_87407 = 0;
+						for (; __discard_6165468023465583894_87406_87407 < 32; __discard_6165468023465583894_87406_87407++) {
 							if ((typ)->typ == 23) {
 								typ = typ->types__Alias.AliasDataRef->base_type;
 								continue;
@@ -256632,6 +256650,11 @@ multi_return_map_bool markused__mark_all_used_with_generic_usage(flat__FlatAst* 
 multi_return_map_bool markused__mark_used_checking_library_bodies(flat__FlatAst* a, types__TypeChecker* tc, bool parallel) {
 	tc->library_body_convergence_complete = false;
 	return markused__mark_used_with_test_files(a, tc, new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), false, true, false, true, NULL, (void*)(tc), parallel, NULL, false);
+}
+
+multi_return_map_bool markused__mark_used_checking_library_bodies_full_runtime(flat__FlatAst* a, types__TypeChecker* tc, bool parallel) {
+	tc->library_body_convergence_complete = false;
+	return markused__mark_used_with_test_files(a, tc, new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string), false, true, false, false, NULL, (void*)(tc), parallel, NULL, false);
 }
 
 multi_return_map_bool markused__mark_used_for_cache_with_generic_usage(flat__FlatAst* a, types__TypeChecker* tc, Array test_files, map source_modules) {
@@ -260666,8 +260689,8 @@ bool markused__markused_type_is_string_like(types__Type* typ) {
 bool markused__markused_type_lowers_to_map_str(types__Type* typ0) {
 	types__Type typ = (*typ0);
 	{
-		__v_int __discard_6165468023465583894_154494_154495 = 0;
-		for (; __discard_6165468023465583894_154494_154495 < 8; __discard_6165468023465583894_154494_154495++) {
+		__v_int __discard_6165468023465583894_155154_155155 = 0;
+		for (; __discard_6165468023465583894_155154_155155 < 8; __discard_6165468023465583894_155154_155155++) {
 			if ((typ).typ == 23) {
 				typ = *typ.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -261454,8 +261477,8 @@ string markused__test_file_module_name(flat__FlatAst* a, flat__Node file_node) {
 bool markused__type_needs_zero_map(types__Type* typ) {
 	types__Type clean = (*typ);
 	{
-		__v_int __discard_6165468023465583894_197819_197820 = 0;
-		for (; __discard_6165468023465583894_197819_197820 < 8; __discard_6165468023465583894_197819_197820++) {
+		__v_int __discard_6165468023465583894_198479_198480 = 0;
+		for (; __discard_6165468023465583894_198479_198480 < 8; __discard_6165468023465583894_198479_198480++) {
 			if ((clean).typ == 23) {
 				clean = *clean.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -261553,8 +261576,8 @@ u32 markused__value_struct_default_type_name(types__Type* typ) {
 u32 markused__zero_value_struct_type_name(types__Type* typ) {
 	types__Type clean = (*typ);
 	{
-		__v_int __discard_6165468023465583894_395325_395326 = 0;
-		for (; __discard_6165468023465583894_395325_395326 < 8; __discard_6165468023465583894_395325_395326++) {
+		__v_int __discard_6165468023465583894_395985_395986 = 0;
+		for (; __discard_6165468023465583894_395985_395986 < 8; __discard_6165468023465583894_395985_395986++) {
 			if ((clean).typ == 23) {
 				clean = *clean.types__Alias.AliasDataRef->base_type;
 				continue;
