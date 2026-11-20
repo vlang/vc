@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "e0f02b76f519c3f369a379fe5be416f8aae2c4b4"
+#define V_COMMIT_HASH "bd1b0d36bee235e7ee870fb7230a915afb08891c"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -7263,12 +7263,12 @@ typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
 typedef string Array_fixed_string_26[26];
-typedef string Array_fixed_string_15[15];
-typedef Array Array_fixed_Array_3[3];
 typedef u32 Array_fixed_u32_8[8];
-typedef string Array_fixed_string_14[14];
+typedef Array Array_fixed_Array_3[3];
 typedef string Array_fixed_string_13[13];
+typedef string Array_fixed_string_14[14];
 typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_15[15];
 typedef string Array_fixed_string_25[25];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 {
 	__v_int mode;
@@ -22285,6 +22285,8 @@ multi_return_string_string c__unsigned_shift_parts(string ct);
 bool c__uses_manual_stdlib_c_headers(flat__FlatAst* a, types__TypeChecker* tc, pref__Preferences* prefs, Array initial_c_flags, bool object_file_mode);
 bool c__variadic_array_is_native(types__Type* typ);
 bool c__variadic_elem_is_voidptr(types__Type* typ);
+bool c__vlib_relative_path_is_plain(string relative);
+__v_option_string c__vlib_relative_source_path(string root, string source);
 bool c__voidptr_variadic_type_passes_direct(types__Type* typ);
 string c__windows_gui_stdio_setup(bool force_console);
 void c__write_c_units(Array* sb, Array units, __v_int lo, __v_int hi);
@@ -35171,7 +35173,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "e0f02b7", 7);
+_SL(_str_201, "bd1b0d3", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -40185,8 +40187,8 @@ _SL(_str_5210, "too many source type spellings", 30);
 _SL(_str_5211, "could not allocate a source type chunk", 38);
 _SL(_str_5212, "could not allocate a source type spelling", 41);
 _SL(_str_5213, "invalid source type ID", 22);
-_SL(_str_5214, "/vlib/os/", 9);
-_SL(_str_5215, "/vlib/os/os_android_outside_termux.c.v", 38);
+_SL(_str_5214, "os/", 3);
+_SL(_str_5215, "os/os_android_outside_termux.c.v", 32);
 _SL(_str_5216, "Asset", 5);
 _SL(_str_5217, "NativeActivity", 14);
 _SL(_str_5218, "read_apk_asset", 14);
@@ -69851,8 +69853,8 @@ void c__FlatGen__add_native_source_context_wrapper(c__FlatGen* g, string source_
 	array_push(&wrapper_lines, &__arr_val_0);
 	__v_int __in_lhs_1 = c__c_native_source_context_depth(directives);
 	{
-		__v_int __discard_17027569468710905096_376306_376307 = 0;
-		for (; __discard_17027569468710905096_376306_376307 < __in_lhs_1; __discard_17027569468710905096_376306_376307++) {
+		__v_int __discard_17027569468710905096_377631_377632 = 0;
+		for (; __discard_17027569468710905096_377631_377632 < __in_lhs_1; __discard_17027569468710905096_377631_377632++) {
 			string __arr_val_2 = _str_1474;
 			array_push(&wrapper_lines, &__arr_val_2);
 		}
@@ -73864,7 +73866,7 @@ bool c__FlatGen__c_source_file_is_in_vlib(c__FlatGen* g, string source_file) {
 		__if_val_0 = __map_val_5;
 	}
 	string source = __if_val_0;
-	return string__starts_with(string__replace(source, _str_384, _str_385), string__plus(root, _str_3076));
+	return (c__vlib_relative_source_path(root, source)).ok;
 }
 
 bool c__FlatGen__c_string_pointer_arg(c__FlatGen* g, flat__Node arg_node, types__Type* expected) {
@@ -81198,8 +81200,8 @@ Array c__FlatGen__const_emission_order(c__FlatGen* g) {
 		}
 	}
 	{
-		__v_int __discard_17027569468710905096_1015798_1015799 = 0;
-		for (; __discard_17027569468710905096_1015798_1015799 < 20; __discard_17027569468710905096_1015798_1015799++) {
+		__v_int __discard_17027569468710905096_1017123_1017124 = 0;
+		for (; __discard_17027569468710905096_1017123_1017124 < 20; __discard_17027569468710905096_1017123_1017124++) {
 			if (deferred.len == 0) {
 				break;
 			}
@@ -82917,11 +82919,14 @@ bool c__FlatGen__core_native_header_is_redeclared(c__FlatGen* g, string source_f
 }
 
 bool c__FlatGen__core_native_source_header_is_redeclared(c__FlatGen* g, string root, string source, string include_arg) {
-	string path = string__replace(source, _str_384, _str_385);
-	if ((root.len == 0) || !string__starts_with(path, string__plus(root, _str_3076))) {
+	__v_option_string __or_opt_0 = c__vlib_relative_source_path(root, source);
+	string __or_val_1 = {0};
+	if (__or_opt_0.ok) {
+		__or_val_1 = __or_opt_0.value;
+	} else {
 		return false;
 	}
-	string relative = string__substr(	path, 	root.len + 6, (	path).len);
+	string relative = __or_val_1;
 	if (string__starts_with(relative, _str_6030) && string__ends_with(relative, _str_1246)) {
 		return string__eq(include_arg, _str_6031) || string__eq(include_arg, _str_6032);
 	}
@@ -87050,8 +87055,8 @@ bool c__FlatGen__emit_preserved_c_directive_at(c__FlatGen* g, Array directives, 
 	}
 	__v_int __in_lhs_6 = c__c_lifted_include_context_depth(prefix);
 	{
-		__v_int __discard_17027569468710905096_402164_402165 = 0;
-		for (; __discard_17027569468710905096_402164_402165 < __in_lhs_6; __discard_17027569468710905096_402164_402165++) {
+		__v_int __discard_17027569468710905096_403489_403490 = 0;
+		for (; __discard_17027569468710905096_403489_403490 < __in_lhs_6; __discard_17027569468710905096_403489_403490++) {
 			c__FlatGen__writeln(g, _str_1474);
 		}
 	}
@@ -89752,8 +89757,8 @@ __v_option_string c__FlatGen__enum_receiver_method_name(c__FlatGen* g, types__En
 __v_option_u32 c__FlatGen__enum_selector_alias_target(c__FlatGen* g, u32 name_id) {
 	u32 cur = name_id;
 	{
-		__v_int __discard_17027569468710905096_448084_448085 = 0;
-		for (; __discard_17027569468710905096_448084_448085 < 16; __discard_17027569468710905096_448084_448085++) {
+		__v_int __discard_17027569468710905096_449409_449410 = 0;
+		for (; __discard_17027569468710905096_449409_449410 < 16; __discard_17027569468710905096_449409_449410++) {
 			__v_option_u32 __or_opt_0 = flat__SourceTypeBindings__type_id(&g->tc->type_aliases, cur);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -93340,8 +93345,8 @@ Array c__FlatGen__fixed_storage_node_scan_bounds(c__FlatGen* g, __v_int max_jobs
 c__FixedStorageRefFileContext c__FlatGen__fixed_storage_ref_file_context(c__FlatGen* g, __v_int pos_id) {
 	__v_int file_id = pos_id;
 	{
-		__v_int __discard_17027569468710905096_546526_546527 = 0;
-		for (; __discard_17027569468710905096_546526_546527 < 8; __discard_17027569468710905096_546526_546527++) {
+		__v_int __discard_17027569468710905096_547851_547852 = 0;
+		for (; __discard_17027569468710905096_547851_547852 < 8; __discard_17027569468710905096_547851_547852++) {
 			__v_int __map_key_2 = file_id;
 			void* __map_ptr_3 = map__get_check(&g->a->template_call_sites, &__map_key_2);
 			token__Pos __map_val_4 = {0};
@@ -110597,15 +110602,15 @@ void c__FlatGen__gen_interpolation_part_assignments(c__FlatGen* g, Array parts, 
 
 void c__FlatGen__gen_is_expr_subject(c__FlatGen* g, i32 expr_id, __v_int extra_deref) {
 	{
-		__v_int __discard_17027569468710905096_502731_502732 = 0;
-		for (; __discard_17027569468710905096_502731_502732 < extra_deref; __discard_17027569468710905096_502731_502732++) {
+		__v_int __discard_17027569468710905096_504056_504057 = 0;
+		for (; __discard_17027569468710905096_504056_504057 < extra_deref; __discard_17027569468710905096_504056_504057++) {
 			c__FlatGen__write(g, _str_5270);
 		}
 	}
 	c__FlatGen__gen_expr(g, expr_id);
 	{
-		__v_int __discard_17027569468710905096_502800_502801 = 0;
-		for (; __discard_17027569468710905096_502800_502801 < extra_deref; __discard_17027569468710905096_502800_502801++) {
+		__v_int __discard_17027569468710905096_504125_504126 = 0;
+		for (; __discard_17027569468710905096_504125_504126 < extra_deref; __discard_17027569468710905096_504125_504126++) {
 			c__FlatGen__write(g, _str_28);
 		}
 	}
@@ -127877,8 +127882,8 @@ __v_option_string c__FlatGen__global_name_for_ident(c__FlatGen* g, string name) 
 __v_option_string c__FlatGen__global_scalar_static_initializer(c__FlatGen* g, i32 id, types__Type* typ) {
 	i32 value_id = id;
 	{
-		__v_int __discard_17027569468710905096_931207_931208 = 0;
-		for (; __discard_17027569468710905096_931207_931208 < 3; __discard_17027569468710905096_931207_931208++) {
+		__v_int __discard_17027569468710905096_932532_932533 = 0;
+		for (; __discard_17027569468710905096_932532_932533 < 3; __discard_17027569468710905096_932532_932533++) {
 			if (((__v_int)(value_id) < 0) || ((__v_int)(value_id) >= g->a->nodes.len)) {
 				break;
 			}
@@ -134779,9 +134784,25 @@ bool c__FlatGen__is_android_asset_binding(c__FlatGen* g, string source_file) {
 	void* __map_ptr_1 = map__get_check(&g->a->cached_header_sources, &__map_key_0);
 	if (__map_ptr_1 != NULL) {
 		string source = *(string*)(__map_ptr_1);
-		return string__starts_with(string__replace(source, _str_384, _str_385), string__plus(root, _str_5214));
+		__v_option_string __or_opt_2 = c__vlib_relative_source_path(root, source);
+		string __or_val_3 = {0};
+		if (__or_opt_2.ok) {
+			__or_val_3 = __or_opt_2.value;
+		} else {
+			return false;
+		}
+		string relative = __or_val_3;
+		return string__starts_with(relative, _str_5214);
 	}
-	return string__eq(string__replace(source_file, _str_384, _str_385), string__plus(root, _str_5215));
+	__v_option_string __or_opt_4 = c__vlib_relative_source_path(root, source_file);
+	string __or_val_5 = {0};
+	if (__or_opt_4.ok) {
+		__or_val_5 = __or_opt_4.value;
+	} else {
+		return false;
+	}
+	string relative = __or_val_5;
+	return string__eq(relative, _str_5215);
 }
 
 bool c__FlatGen__is_assumed_int_c_const_arg(c__FlatGen* g, i32 arg_id) {
@@ -150898,10 +150919,8 @@ bool c__FlatGen__should_emit_c_extern_decl_from_file(c__FlatGen* g, string cfn, 
 		}
 	}
 	if (string__eq(g->target.os, _str_888)) {
-		string normalized_file = string__replace(source_file, _str_384, _str_385);
 		string normalized_root = string__trim_right(string__replace(g->compiler_vroot, _str_384, _str_385), _str_385);
-		bool is_vlib_file = (normalized_root.len > 0) && string__starts_with(normalized_file, string__plus(normalized_root, _str_3076));
-		if (!is_vlib_file) {
+		if (!(c__vlib_relative_source_path(normalized_root, source_file)).ok) {
 			if (string__starts_with(cfn, _str_4169)) {
 				return false;
 			}
@@ -161977,8 +161996,8 @@ void c__FlatGen__write_implicit_veb_ctx_param(c__FlatGen* g) {
 
 __inline void c__FlatGen__write_indent(c__FlatGen* g) {
 	{
-		__v_int __discard_17027569468710905096_1055222_1055223 = 0;
-		for (; __discard_17027569468710905096_1055222_1055223 < g->indent; __discard_17027569468710905096_1055222_1055223++) {
+		__v_int __discard_17027569468710905096_1056547_1056548 = 0;
+		for (; __discard_17027569468710905096_1056547_1056548 < g->indent; __discard_17027569468710905096_1056547_1056548++) {
 			strings__Builder__write_u8(&g->sb, '\t');
 		}
 	}
@@ -166965,8 +166984,8 @@ multi_return_bool_bool c__c_header_objective_c_macro_value_state(string name, ma
 	string current = name;
 	map seen = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	{
-		__v_int __discard_17027569468710905096_297840_297841 = 0;
-		for (; __discard_17027569468710905096_297840_297841 < 64; __discard_17027569468710905096_297840_297841++) {
+		__v_int __discard_17027569468710905096_299165_299166 = 0;
+		for (; __discard_17027569468710905096_299165_299166 < 64; __discard_17027569468710905096_299165_299166++) {
 			string __map_key_0 = current;
 			bool __map_zero_1 = false;
 			if (*(bool*)(map__get(&seen, &__map_key_0, &__map_zero_1))) {
@@ -167543,8 +167562,8 @@ string c__c_header_text_without_identifier(string text, string name) {
 			__v_int __slice_end_4 = token_start;
 			strings__Builder__write_string_borrowed(__slice_builder_1, string__substr_borrowed(__slice_source_2, __slice_start_3, __slice_end_4));
 			{
-				__v_int __discard_17027569468710905096_305969_305970 = token_start;
-				for (; __discard_17027569468710905096_305969_305970 < i; __discard_17027569468710905096_305969_305970++) {
+				__v_int __discard_17027569468710905096_307294_307295 = token_start;
+				for (; __discard_17027569468710905096_307294_307295 < i; __discard_17027569468710905096_307294_307295++) {
 					strings__Builder__write_u8(result, ' ');
 				}
 			}
@@ -171778,8 +171797,8 @@ __v_int c__cgen_type_pointer_depth(types__Type* t) {
 	types__Type cur = (*t);
 	__v_int depth = 0;
 	{
-		__v_int __discard_17027569468710905096_502076_502077 = 0;
-		for (; __discard_17027569468710905096_502076_502077 < 32; __discard_17027569468710905096_502076_502077++) {
+		__v_int __discard_17027569468710905096_503401_503402 = 0;
+		for (; __discard_17027569468710905096_503401_503402 < 32; __discard_17027569468710905096_503401_503402++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -171870,8 +171889,8 @@ types__Type* c__cgen_unalias_type(types__Type* typ) {
 types__Type c__cgen_unalias_unwrap_all_pointers(types__Type* t) {
 	types__Type cur = (*t);
 	{
-		__v_int __discard_17027569468710905096_502344_502345 = 0;
-		for (; __discard_17027569468710905096_502344_502345 < 32; __discard_17027569468710905096_502344_502345++) {
+		__v_int __discard_17027569468710905096_503669_503670 = 0;
+		for (; __discard_17027569468710905096_503669_503670 < 32; __discard_17027569468710905096_503669_503670++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -180748,6 +180767,45 @@ bool c__variadic_elem_is_voidptr(types__Type* typ) {
 		return (typ->types__Pointer.base_type)->typ == 1;
 	}
 	return false;
+}
+
+bool c__vlib_relative_path_is_plain(string relative) {
+	string __split_src_0 = string__clone(relative);
+	__v_int __split_pos_1 = 0;
+	while (__split_pos_1 <= __split_src_0.len) {
+		string part = string__split_next(__split_src_0, _str_385, &__split_pos_1);
+		if ((part.len == 0) || string__eq(part, _str_2) || string__eq(part, _str_836)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+__v_option_string c__vlib_relative_source_path(string root, string source) {
+	if (root.len == 0) {
+		return (__v_option_string){.ok = false};
+	}
+	string path = string__replace(source, _str_384, _str_385);
+	string prefix = string__plus(root, _str_3076);
+	if (string__starts_with(path, prefix)) {
+		return (__v_option_string){.ok = true, .value = string__substr(		path, 		prefix.len, (		path).len)};
+	}
+	string real_source = _str_34;
+	__v_int idx = string__index_after_(path, _str_3076, 0);
+	while (idx >= 0) {
+		string relative = string__substr(		path, 		idx + 6, (		path).len);
+		if ((relative.len > 0) && c__vlib_relative_path_is_plain(relative)) {
+			if (real_source.len == 0) {
+				real_source = os__real_path(path);
+			}
+			if (string__eq(os__real_path(string__plus(prefix, relative)), real_source)) {
+				return (__v_option_string){.ok = true, .value = relative};
+			}
+		}
+		idx = string__index_after_(path, _str_3076, idx + 1);
+	}
+	return (__v_option_string){.ok = false};
+	return (__v_option_string){.ok = true};
 }
 
 bool c__voidptr_variadic_type_passes_direct(types__Type* typ) {
