@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "74fc2790d03ccdc2e8af254ba1e62a14a92b404e"
+#define V_COMMIT_HASH "d8083d40873efc7689abdb15f4ca21b4f5d59f4a"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -35760,7 +35760,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "74fc279", 7);
+_SL(_str_201, "d8083d4", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
