@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "9621aa02fd7d7788700846e93242d08bd70a8aea"
+#define V_COMMIT_HASH "11ecc52b8aa249eacd57f9c20d1922c858c35a3f"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -39715,7 +39715,7 @@ _SL(_str_201, "at_exit failed", 14);
 _SL(_str_202, "fixed array index out of range (index: ", 39);
 _SL(_str_203, ", len: ", 7);
 _SL(_str_204, "slice index out of range for int: ", 34);
-_SL(_str_205, "9621aa0", 7);
+_SL(_str_205, "11ecc52", 7);
 _SL(_str_206, " unknown", 8);
 _SL(_str_207, "-0.0", 4);
 _SL(_str_208, "0.0", 3);
@@ -522155,8 +522155,8 @@ bool types__TypeChecker__collect_selected_file_called_fns_walk_parallel(types__T
 	sync__Channel__close((sync__Channel*)(queue), array_new(	sizeof(IError), 0, 0));
 	Array args = array_new(	sizeof(types__SelectedFnScanArgs), 0, n_jobs);
 	{
-		__v_int __discard_17082544846825918852_272660_272661 = 0;
-		for (; __discard_17082544846825918852_272660_272661 < n_jobs; __discard_17082544846825918852_272660_272661++) {
+		__v_int __discard_17082544846825918852_272749_272750 = 0;
+		for (; __discard_17082544846825918852_272749_272750 < n_jobs; __discard_17082544846825918852_272749_272750++) {
 			types__TypeChecker* worker = types__TypeChecker__fork_for_parallel_check(master);
 			if (tc->building_v_fast) {
 				worker->errors = master->errors;

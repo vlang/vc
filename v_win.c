@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "9621aa02fd7d7788700846e93242d08bd70a8aea"
+#define V_COMMIT_HASH "11ecc52b8aa249eacd57f9c20d1922c858c35a3f"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -35762,7 +35762,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "9621aa0", 7);
+_SL(_str_201, "11ecc52", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -516488,8 +516488,8 @@ bool types__TypeChecker__collect_selected_file_called_fns_walk_parallel(types__T
 	sync__Channel__close((sync__Channel*)(queue), array_new(	sizeof(IError), 0, 0));
 	Array args = array_new(	sizeof(types__SelectedFnScanArgs), 0, n_jobs);
 	{
-		__v_int __discard_17082544846825918852_272660_272661 = 0;
-		for (; __discard_17082544846825918852_272660_272661 < n_jobs; __discard_17082544846825918852_272660_272661++) {
+		__v_int __discard_17082544846825918852_272749_272750 = 0;
+		for (; __discard_17082544846825918852_272749_272750 < n_jobs; __discard_17082544846825918852_272749_272750++) {
 			types__TypeChecker* worker = types__TypeChecker__fork_for_parallel_check(master);
 			if (tc->building_v_fast) {
 				worker->errors = master->errors;
