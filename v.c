@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "eff5e26ef6ed00d0f5179895293a5d6fd9e529a7"
+#define V_COMMIT_HASH "3b834eac7a01398754d91df28e7efffcdaa16042"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -4679,7 +4679,7 @@ int v3_run_sigaddset(void*, int) __asm__(V3_RUN_LIBC_SYMBOL("sigaddset"));
 #include <wchar.h>
 #endif
 #if defined(_WIN32) && (defined(__TINYC__) || (defined(_MSC_VER) && !defined(__clang__)))
-#include "/home/runner/work/v/v/thirdparty/stdatomic/win/atomic.h"
+#include "thirdparty/stdatomic/win/atomic.h"
 #else
 #if defined(__OBJC__) && defined(__GNUC__) && !defined(__clang__)
 #define _Atomic volatile
@@ -7515,13 +7515,13 @@ static void __v_thread_release_comparable(__v_thread thread) { if (thread.handle
 #error "-d track_heap requires manual memory management; rebuild with -gc none (not -prealloc)"
 #endif
 #if !__V_HEADERLESS_LIBC
-#include "/home/runner/work/v/v/vlib/os/fd_poll.h"
+#include "vlib/os/fd_poll.h"
 #endif
 #define v_signal_with_handler_cast(sig, handler) signal((sig), (void (*)(int))(handler))
 #if !__V_HEADERLESS_LIBC
-#include "/home/runner/work/v/v/vlib/v/cmdexec/cmdexec_poll.h"
-#include "/home/runner/work/v/v/vlib/v/pthread_helper.h"
-#include "/home/runner/work/v/v/vlib/v/driver/native_object_cache.h"
+#include "vlib/v/cmdexec/cmdexec_poll.h"
+#include "vlib/v/pthread_helper.h"
+#include "vlib/v/driver/native_object_cache.h"
 #endif
 
 typedef enum {
@@ -11250,15 +11250,15 @@ typedef string Array_fixed_string_19[19];
 typedef string Array_fixed_string_16[16];
 typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
+typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_2[2];
 typedef u32 Array_fixed_u32_8[8];
 typedef string Array_fixed_string_13[13];
 typedef string Array_fixed_string_14[14];
 typedef Array Array_fixed_Array_2[2];
-typedef string Array_fixed_string_25[25];
-typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_8[8];
 typedef Array Array_fixed_Array_3[3];
+typedef string Array_fixed_string_25[25];
 typedef string Array_fixed_string_15[15];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
@@ -31159,6 +31159,7 @@ void transform__Transformer__apply_ignored_comptime_for_nodes(transform__Transfo
 i32 transform__Transformer__apply_smartcast_contexts(transform__Transformer* t, i32 base, u32 typ_id, Array contexts);
 bool transform__Transformer__array_accessor_call_can_take_address(transform__Transformer* t, flat__Node node);
 __v_option_u32 transform__Transformer__array_alias_stringify_type(transform__Transformer* t, u32 typ_id);
+bool transform__Transformer__array_append_clones_borrowed_value(transform__Transformer* t, i32 source_id, u32 elem_type_id);
 string transform__Transformer__array_append_elem_c_type(transform__Transformer* t, u32 typ_id);
 bool transform__Transformer__array_append_elem_is_interface(transform__Transformer* t, u32 elem_type_id);
 bool transform__Transformer__array_append_elem_is_interface_uncached(transform__Transformer* t, u32 elem_type_id);
@@ -39715,7 +39716,7 @@ _SL(_str_201, "at_exit failed", 14);
 _SL(_str_202, "fixed array index out of range (index: ", 39);
 _SL(_str_203, ", len: ", 7);
 _SL(_str_204, "slice index out of range for int: ", 34);
-_SL(_str_205, "eff5e26", 7);
+_SL(_str_205, "3b834ea", 7);
 _SL(_str_206, " unknown", 8);
 _SL(_str_207, "-0.0", 4);
 _SL(_str_208, "0.0", 3);
@@ -324050,6 +324051,21 @@ __v_option_u32 transform__Transformer__array_alias_stringify_type(transform__Tra
 	return (__v_option_u32){.ok = true};
 }
 
+bool transform__Transformer__array_append_clones_borrowed_value(transform__Transformer* t, i32 source_id, u32 elem_type_id) {
+	if (isnil((void*)(t->tc)) || !transform__Transformer__expr_can_take_address(t, source_id)) {
+		return false;
+	}
+	{
+		if (!types__TypeChecker__autofree_enabled(t->tc)) {
+			return false;
+		}
+	}
+	if (types__TypeChecker__ownership_expr_moves_storage(t->tc, source_id, source_id)) {
+		return false;
+	}
+	return transform__Transformer__compiler_default_clone_type_needs_work(t, elem_type_id);
+}
+
 string transform__Transformer__array_append_elem_c_type(transform__Transformer* t, u32 typ_id) {
 	if (isnil((void*)(t->tc))) {
 		return flat__source_type_name(typ_id);
@@ -336010,8 +336026,8 @@ u32 transform__Transformer__clean_array_append_lhs_type(transform__Transformer* 
 	}
 	u32 clean = trimmed;
 	{
-		__v_int __discard_9019058235052677425_114260_114261 = 0;
-		for (; __discard_9019058235052677425_114260_114261 < 16; __discard_9019058235052677425_114260_114261++) {
+		__v_int __discard_9019058235052677425_114667_114668 = 0;
+		for (; __discard_9019058235052677425_114667_114668 < 16; __discard_9019058235052677425_114667_114668++) {
 			u32 normalized = transform__transform_trimmed_type_id(transform__Transformer__normalize_type_alias_chain(t, clean));
 			u32 next = transform__strip_array_append_lhs_prefixes(normalized);
 			if (next == clean) {
@@ -336431,18 +336447,7 @@ multi_return_i32_bool transform__Transformer__clone_borrowed_array_append_many_v
 }
 
 i32 transform__Transformer__clone_borrowed_array_append_value(transform__Transformer* t, i32 source_id, i32 value, u32 elem_type_id) {
-	if (isnil((void*)(t->tc)) || !transform__Transformer__expr_can_take_address(t, source_id)) {
-		return value;
-	}
-	{
-		if (!types__TypeChecker__autofree_enabled(t->tc)) {
-			return value;
-		}
-	}
-	if (types__TypeChecker__ownership_expr_moves_storage(t->tc, source_id, source_id)) {
-		return value;
-	}
-	if (!transform__Transformer__compiler_default_clone_type_needs_work(t, elem_type_id)) {
+	if (!transform__Transformer__array_append_clones_borrowed_value(t, source_id, elem_type_id)) {
 		return value;
 	}
 	return transform__Transformer__make_compiler_default_borrowed_clone_value(t, value, elem_type_id, true);
@@ -382322,7 +382327,7 @@ bool transform__Transformer__lower_map_index_append_with_info_and_prelude(transf
 		int __in_lhs_15 = flat__source_type_shape(array_type);
 		if ((__in_lhs_15 & 2048) != 0) {
 			u32 elem_type = flat__SourceTypeSyntax__raw_base(flat__source_type_syntax(array_type));
-			staged_scalar_was_cloned = transform__Transformer__expr_can_take_address(t, append_rhs) && !types__TypeChecker__ownership_expr_moves_storage(t->tc, append_rhs, append_rhs) && transform__Transformer__compiler_default_clone_type_needs_work(t, elem_type);
+			staged_scalar_was_cloned = transform__Transformer__array_append_clones_borrowed_value(t, append_rhs, elem_type);
 		}
 	}
 	__v_option_Array __if_guard_16 = transform__Transformer__try_lower_array_append_stmt(t, append);
