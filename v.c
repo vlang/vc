@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "11ecc52b8aa249eacd57f9c20d1922c858c35a3f"
+#define V_COMMIT_HASH "4d924f389f2aa0105f610126b8df4743b33fc0a3"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -11252,14 +11252,14 @@ typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef u32 Array_fixed_u32_8[8];
-typedef string Array_fixed_string_15[15];
-typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_13[13];
 typedef string Array_fixed_string_14[14];
 typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_25[25];
+typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_8[8];
 typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_25[25];
+typedef string Array_fixed_string_15[15];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -39715,7 +39715,7 @@ _SL(_str_201, "at_exit failed", 14);
 _SL(_str_202, "fixed array index out of range (index: ", 39);
 _SL(_str_203, ", len: ", 7);
 _SL(_str_204, "slice index out of range for int: ", 34);
-_SL(_str_205, "11ecc52", 7);
+_SL(_str_205, "4d924f3", 7);
 _SL(_str_206, " unknown", 8);
 _SL(_str_207, "-0.0", 4);
 _SL(_str_208, "0.0", 3);
@@ -136861,6 +136861,10 @@ string c__FlatGen__interface_storage_c_name(c__FlatGen* g, u32 iface_name_id) {
 }
 
 string c__FlatGen__interface_storage_c_type(c__FlatGen* g, types__Type* typ) {
+	types__Type* clean = c__cgen_unalias_type(typ);
+	if ((clean)->typ == 21) {
+		return c__FlatGen__enum_value_c_type(g, clean->types__Enum);
+	}
 	string ct = types__TypeChecker__c_type(g->tc, typ);
 	if (string__starts_with(ct, _str_4881)) {
 		return naming__fn_ptr_type_name(ct);
@@ -137100,8 +137104,8 @@ map c__FlatGen__interface_type_ids_for_dispatch(c__FlatGen* g, u32 iface_id) {
 types__Type c__FlatGen__interface_unaliased_type(c__FlatGen* g, types__Type* typ) {
 	types__Type clean = (*typ);
 	{
-		__v_int __discard_9518173361618020379_90184_90185 = 0;
-		for (; __discard_9518173361618020379_90184_90185 < 100; __discard_9518173361618020379_90184_90185++) {
+		__v_int __discard_9518173361618020379_90523_90524 = 0;
+		for (; __discard_9518173361618020379_90523_90524 < 100; __discard_9518173361618020379_90523_90524++) {
 			if ((clean).typ == 23) {
 				clean = *clean.types__Alias.AliasDataRef->base_type;
 				continue;

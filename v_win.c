@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "11ecc52b8aa249eacd57f9c20d1922c858c35a3f"
+#define V_COMMIT_HASH "4d924f389f2aa0105f610126b8df4743b33fc0a3"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -35762,7 +35762,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "11ecc52", 7);
+_SL(_str_201, "4d924f3", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -135036,6 +135036,10 @@ string c__FlatGen__interface_storage_c_name(c__FlatGen* g, u32 iface_name_id) {
 }
 
 string c__FlatGen__interface_storage_c_type(c__FlatGen* g, types__Type* typ) {
+	types__Type* clean = c__cgen_unalias_type(typ);
+	if ((clean)->typ == 21) {
+		return c__FlatGen__enum_value_c_type(g, clean->types__Enum);
+	}
 	string ct = types__TypeChecker__c_type(g->tc, typ);
 	if (string__starts_with(ct, _str_5116)) {
 		return naming__fn_ptr_type_name(ct);
@@ -135275,8 +135279,8 @@ map c__FlatGen__interface_type_ids_for_dispatch(c__FlatGen* g, u32 iface_id) {
 types__Type c__FlatGen__interface_unaliased_type(c__FlatGen* g, types__Type* typ) {
 	types__Type clean = (*typ);
 	{
-		__v_int __discard_9518173361618020379_90184_90185 = 0;
-		for (; __discard_9518173361618020379_90184_90185 < 100; __discard_9518173361618020379_90184_90185++) {
+		__v_int __discard_9518173361618020379_90523_90524 = 0;
+		for (; __discard_9518173361618020379_90523_90524 < 100; __discard_9518173361618020379_90523_90524++) {
 			if ((clean).typ == 23) {
 				clean = *clean.types__Alias.AliasDataRef->base_type;
 				continue;
