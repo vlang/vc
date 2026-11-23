@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "827f160f069e5272a36a57a4f5ff5ae0e45cceb6"
+#define V_COMMIT_HASH "961cef5e9b842c49a7e2037e6bb244a027fbf4dc"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -9392,6 +9392,7 @@ typedef struct types__ComptimeConds types__ComptimeConds;
 typedef struct types__ComptimeDeferredDeclSource types__ComptimeDeferredDeclSource;
 typedef struct types__ComptimeInTerm types__ComptimeInTerm;
 typedef struct types__ComptimeMethodCallInstance types__ComptimeMethodCallInstance;
+typedef struct types__ComptimeMethodNameIndex types__ComptimeMethodNameIndex;
 typedef struct types__ComptimeParamGroups types__ComptimeParamGroups;
 typedef struct types__ComptimeStaticAttributeCondNarrowing types__ComptimeStaticAttributeCondNarrowing;
 typedef struct types__ComptimeStaticFieldCase types__ComptimeStaticFieldCase;
@@ -10796,6 +10797,7 @@ typedef struct types__ComptimeConds types__ComptimeConds;
 typedef struct types__ComptimeDeferredDeclSource types__ComptimeDeferredDeclSource;
 typedef struct types__ComptimeInTerm types__ComptimeInTerm;
 typedef struct types__ComptimeMethodCallInstance types__ComptimeMethodCallInstance;
+typedef struct types__ComptimeMethodNameIndex types__ComptimeMethodNameIndex;
 typedef struct types__ComptimeParamGroups types__ComptimeParamGroups;
 typedef struct types__ComptimeStaticAttributeCondNarrowing types__ComptimeStaticAttributeCondNarrowing;
 typedef struct types__ComptimeStaticFieldCase types__ComptimeStaticFieldCase;
@@ -11241,14 +11243,14 @@ typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_14[14];
 typedef string Array_fixed_string_13[13];
-typedef Array Array_fixed_Array_2[2];
-typedef u32 Array_fixed_u32_8[8];
-typedef string Array_fixed_string_26[26];
-typedef Array Array_fixed_Array_3[3];
-typedef string Array_fixed_string_25[25];
 typedef string Array_fixed_string_15[15];
+typedef string Array_fixed_string_26[26];
+typedef u32 Array_fixed_u32_8[8];
+typedef Array Array_fixed_Array_3[3];
+typedef string Array_fixed_string_14[14];
+typedef Array Array_fixed_Array_2[2];
+typedef string Array_fixed_string_25[25];
 struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_unix_x2e_c_x2e_v_1 {
 	__v_int mode;
 };
@@ -17664,6 +17666,11 @@ struct types__ComptimeInTerm {
 struct types__ComptimeMethodCallInstance {
 	i32 decl_id;
 	Array args;
+};
+
+struct types__ComptimeMethodNameIndex {
+	bool built;
+	map names;
 };
 
 struct types__ComptimeParamGroups {
@@ -34896,6 +34903,7 @@ __v_option___v_int types__ComptimeConds__parse_or(types__ComptimeConds* c);
 __v_option___v_int types__ComptimeConds__parse_test(types__ComptimeConds* c);
 __v_option___v_int types__ComptimeConds__parse_unary(types__ComptimeConds* c);
 void types__ComptimeConds__skip_blanks(types__ComptimeConds* c);
+Array types__ComptimeMethodNameIndex__functions_named(types__ComptimeMethodNameIndex* v_index, types__TypeChecker* tc, string method);
 string types__ComptimeStaticFieldCase__typ_text(types__ComptimeStaticFieldCase* value);
 string types__ComptimeStaticFieldCase__unaliased_typ_text(types__ComptimeStaticFieldCase* value);
 string types__ComptimeStaticValueCase__typ_text(types__ComptimeStaticValueCase* value);
@@ -35688,7 +35696,7 @@ void types__TypeChecker__collect_anon_fn_comptime_method_uses(types__TypeChecker
 void types__TypeChecker__collect_asm_goto_lock_scopes(types__TypeChecker* tc, i32 id, Array scopes, types__AsmGotoLockScan* scan);
 void types__TypeChecker__collect_attribute_schemas(types__TypeChecker* tc);
 void types__TypeChecker__collect_comptime_generic_forwarder(types__TypeChecker* tc, string name, Array* pending);
-void types__TypeChecker__collect_comptime_method_calls(types__TypeChecker* tc, i32 id, string method_var, map* calls, Array* pending);
+void types__TypeChecker__collect_comptime_method_calls(types__TypeChecker* tc, i32 id, string method_var, map* calls, Array* pending, types__ComptimeMethodNameIndex* methods);
 bool types__TypeChecker__collect_continue(types__TypeChecker* tc, flat__FlatAst* a);
 bool types__TypeChecker__collect_declaration_indexes_in_parallel(types__TypeChecker* tc, flat__FlatAst* a);
 void types__TypeChecker__collect_declaration_visibility(types__TypeChecker* tc);
@@ -39680,7 +39688,7 @@ _SL(_str_201, "at_exit failed", 14);
 _SL(_str_202, "fixed array index out of range (index: ", 39);
 _SL(_str_203, ", len: ", 7);
 _SL(_str_204, "slice index out of range for int: ", 34);
-_SL(_str_205, "827f160", 7);
+_SL(_str_205, "961cef5", 7);
 _SL(_str_206, " unknown", 8);
 _SL(_str_207, "-0.0", 4);
 _SL(_str_208, "0.0", 3);
@@ -188030,8 +188038,8 @@ __v_int diagserver__exit_code_of(__v_int status) {
 __v_option___v_int diagserver__exit_code_within(__v_int pid, __v_int ms) {
 	__v_int __in_lhs_0 = ms * 4;
 	{
-		__v_int __discard_4196658403130545660_19235_19236 = 0;
-		for (; __discard_4196658403130545660_19235_19236 < __in_lhs_0; __discard_4196658403130545660_19235_19236++) {
+		__v_int __discard_4196658403130545660_19220_19221 = 0;
+		for (; __discard_4196658403130545660_19220_19221 < __in_lhs_0; __discard_4196658403130545660_19220_19221++) {
 			__v_int status = 0;
 			__v_int got = ({ __v_int* _cabi_out_addr_0 = &status; int _cabi_out_val_0 = (int)(*_cabi_out_addr_0); __v_int _cabi_out_ret_1 = waitpid(pid, &_cabi_out_val_0, WNOHANG); *_cabi_out_addr_0 = _cabi_out_val_0; _cabi_out_ret_1; });
 			if (got == pid) {
@@ -188271,32 +188279,23 @@ __v_option___v_int diagserver__read_into(string path, Array* buffer) {
 __v_option_i64 diagserver__read_resident_kb(void) {
 	#if (defined(__APPLE__) && !defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__))
 	{
-		__v_result_u64 __or_opt_0 = runtime__used_memory();
-		u64 __or_val_1 = {0};
-		if (__or_opt_0.ok) {
-			__or_val_1 = __or_opt_0.value;
-		} else {
-			IError err = __or_opt_0.err;
-			return (__v_option_i64){.ok = false};
-		}
-		u64 bytes = __or_val_1;
-		return (__v_option_i64){.ok = true, .value = (i64)(({ u64 _t1 = (u64)(bytes); u64 _t2 = (u64)(1024); if (_t2 == 0) v_panic(_S("division by zero")); (u64)(_t1 / _t2); }))};
+		return (__v_option_i64){.ok = true, .value = macos_resident_kb()};
 	}
 	#endif
-	__v_result_string __or_opt_2 = os__read_file(_str_14220);
-	string __or_val_3 = {0};
-	if (__or_opt_2.ok) {
-		__or_val_3 = __or_opt_2.value;
+	__v_result_string __or_opt_0 = os__read_file(_str_14220);
+	string __or_val_1 = {0};
+	if (__or_opt_0.ok) {
+		__or_val_1 = __or_opt_0.value;
 	} else {
-		IError err = __or_opt_2.err;
+		IError err = __or_opt_0.err;
 		return (__v_option_i64){.ok = false};
 	}
-	string statm = __or_val_3;
+	string statm = __or_val_1;
 	Array fields = string__fields(statm);
 	if (fields.len < 2) {
 		return (__v_option_i64){.ok = true, .value = 0};
 	}
-	return (__v_option_i64){.ok = true, .value = string__i64((*(string*)array_get(fields, 1))) * (({ i64 _t3 = (i64)((i64)(os__page_size())); i64 _t4 = (i64)(1024); if (_t4 == 0) v_panic(_S("division by zero")); (i64)(_t3 / _t4); }))};
+	return (__v_option_i64){.ok = true, .value = string__i64((*(string*)array_get(fields, 1))) * (({ i64 _t1 = (i64)((i64)(os__page_size())); i64 _t2 = (i64)(1024); if (_t2 == 0) v_panic(_S("division by zero")); (i64)(_t1 / _t2); }))};
 	return (__v_option_i64){.ok = true};
 }
 
@@ -469721,6 +469720,44 @@ void types__ComptimeConds__skip_blanks(types__ComptimeConds* c) {
 	}
 }
 
+Array types__ComptimeMethodNameIndex__functions_named(types__ComptimeMethodNameIndex* v_index, types__TypeChecker* tc, string method) {
+	if (!v_index->built) {
+		v_index->built = true;
+		map seen = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
+		for (int __mi_1 = 0; __mi_1 < (		tc->receiver_method_suffix_index).data->key_values.len; __mi_1++) {
+			if ((		tc->receiver_method_suffix_index).data->key_values.all_deleted && (		tc->receiver_method_suffix_index).data->key_values.all_deleted[__mi_1]) continue;
+			string __for_idx_0 = *(string*)((		tc->receiver_method_suffix_index).data->key_values.keys + __mi_1 * (		tc->receiver_method_suffix_index).data->key_values.key_bytes);
+			string name = *(string*)((		tc->receiver_method_suffix_index).data->key_values.values + __mi_1 * (		tc->receiver_method_suffix_index).data->key_values.value_bytes);
+			if (string__eq(name, types__receiver_method_suffix_ambiguous) || ({string __map_key_0 = name;
+			bool __map_zero_1 = false;
+			*(bool*)(map__get(&seen, &__map_key_0, &__map_zero_1));})) {
+				continue;
+			}
+			string __map_key_2 = name;
+			bool __map_val_3 = true;
+			map__set(&seen, &__map_key_2, &__map_val_3);
+			__v_int dot = string__last_index_u8(name, '.');
+			if (dot >= 0) {
+				string __map_key_4 = string__substr(				name, 				dot + 1, (				name).len);
+				Array __map_zero_6 = array_new(sizeof(string), 0, 0);
+				Array __map_val_5 = *(Array*)(map__get(&v_index->names, &__map_key_4, &__map_zero_6));
+				string __arr_val_7 = name;
+				array_push(&__map_val_5, &__arr_val_7);
+				map__set(&v_index->names, &__map_key_4, &__map_val_5);
+			}
+		}
+	}
+	string __map_key_10 = method;
+	void* __map_ptr_11 = map__get_check(&v_index->names, &__map_key_10);
+	Array __map_val_12 = {0};
+	if (__map_ptr_11 != NULL) {
+		__map_val_12 = *(Array*)(__map_ptr_11);
+	} else {
+		__map_val_12 = array_new(		sizeof(string), 0, 0);
+	}
+	return __map_val_12;
+}
+
 inline string types__ComptimeStaticFieldCase__typ_text(types__ComptimeStaticFieldCase* value) {
 	return flat__source_type_name(value->typ);
 }
@@ -517877,7 +517914,7 @@ void types__TypeChecker__collect_comptime_generic_forwarder(types__TypeChecker* 
 	}
 }
 
-void types__TypeChecker__collect_comptime_method_calls(types__TypeChecker* tc, i32 id, string method_var, map* calls, Array* pending) {
+void types__TypeChecker__collect_comptime_method_calls(types__TypeChecker* tc, i32 id, string method_var, map* calls, Array* pending, types__ComptimeMethodNameIndex* methods) {
 	flat__Node* node = flat__FlatAst__node(tc->a, id);
 	if ((node->kind == flat__NodeKind__fn_literal) || (node->kind == flat__NodeKind__lambda_expr)) {
 		return;
@@ -517915,23 +517952,23 @@ void types__TypeChecker__collect_comptime_method_calls(types__TypeChecker* tc, i
 					callee = flat__FlatAst__child_node(tc->a, callee, 0);
 				}
 				if ((callee->kind == flat__NodeKind__selector) && !string__eq(callee->value, _str_1707)) {
-					for (int __mi_1 = 0; __mi_1 < (					tc->receiver_method_suffix_index).data->key_values.len; __mi_1++) {
-						if ((					tc->receiver_method_suffix_index).data->key_values.all_deleted && (					tc->receiver_method_suffix_index).data->key_values.all_deleted[__mi_1]) continue;
-						string __for_idx_0 = *(string*)((					tc->receiver_method_suffix_index).data->key_values.keys + __mi_1 * (					tc->receiver_method_suffix_index).data->key_values.key_bytes);
-						string name = *(string*)((					tc->receiver_method_suffix_index).data->key_values.values + __mi_1 * (					tc->receiver_method_suffix_index).data->key_values.value_bytes);
-						if (!string__eq(name, types__receiver_method_suffix_ambiguous) && string__ends_with(name, string__plus(_str_2, callee->value))) {
-							string __map_key_5 = name;
-							void* __map_ptr_6 = map__get_check(&tc->fn_type_modules, &__map_key_5);
-							string __map_val_7 = {0};
-							if (__map_ptr_6 != NULL) {
-								__map_val_7 = *(string*)(__map_ptr_6);
+					Array __in_lhs_3 = types__ComptimeMethodNameIndex__functions_named(methods, tc, callee->value);
+					{
+						__v_int __for_idx_4 = 0;
+						for (; __for_idx_4 < __in_lhs_3.len; __for_idx_4++) {
+							string name = *(string*)(array_get(__in_lhs_3, __for_idx_4));
+							string __map_key_7 = name;
+							void* __map_ptr_8 = map__get_check(&tc->fn_type_modules, &__map_key_7);
+							string __map_val_9 = {0};
+							if (__map_ptr_8 != NULL) {
+								__map_val_9 = *(string*)(__map_ptr_8);
 							} else {
-								__map_val_7 = tc->cur_module;
+								__map_val_9 = tc->cur_module;
 							}
-							string module_name = __map_val_7;
-							__v_option_types__VisibleMutationFnDecl __if_guard_8 = types__TypeChecker__visible_mutation_fn_decl(tc, name, module_name);
-							if (__if_guard_8.ok) {
-								types__VisibleMutationFnDecl decl = __if_guard_8.value;
+							string module_name = __map_val_9;
+							__v_option_types__VisibleMutationFnDecl __if_guard_10 = types__TypeChecker__visible_mutation_fn_decl(tc, name, module_name);
+							if (__if_guard_10.ok) {
+								types__VisibleMutationFnDecl decl = __if_guard_10.value;
 								if (types__TypeChecker__fn_has_receiver_param(tc, *flat__FlatAst__node(tc->a, (i32)(decl.idx)))) {
 									types__TypeChecker__collect_comptime_generic_forwarder(tc, name, pending);
 								}
@@ -517945,15 +517982,15 @@ void types__TypeChecker__collect_comptime_method_calls(types__TypeChecker* tc, i
 	{
 		__v_int i = 0;
 		for (; i < node->children_count; i++) {
-			types__TypeChecker__collect_comptime_method_calls(tc, flat__FlatAst__child(tc->a, node, i), var_name, calls, pending);
+			types__TypeChecker__collect_comptime_method_calls(tc, flat__FlatAst__child(tc->a, node, i), var_name, calls, pending, methods);
 		}
 	}
 	if (node->kind == flat__NodeKind__decl_assign) {
-		Array __in_lhs_9 = types__TypeChecker__multi_assign_lhs_ids(tc, *node);
+		Array __in_lhs_11 = types__TypeChecker__multi_assign_lhs_ids(tc, *node);
 		{
-			__v_int __for_idx_10 = 0;
-			for (; __for_idx_10 < __in_lhs_9.len; __for_idx_10++) {
-				i32 lhs = *(i32*)(array_get(__in_lhs_9, __for_idx_10));
+			__v_int __for_idx_12 = 0;
+			for (; __for_idx_12 < __in_lhs_11.len; __for_idx_12++) {
+				i32 lhs = *(i32*)(array_get(__in_lhs_11, __for_idx_12));
 				flat__Node* binding = flat__FlatAst__node(tc->a, lhs);
 				if ((binding->kind == flat__NodeKind__ident) && !string__eq(binding->value, _str_108)) {
 					types__Scope__insert(tc->cur_scope, binding->value, &(types__Type[]){types__unknown_type(_str_12866)}[0]);
@@ -570719,6 +570756,7 @@ map types__TypeChecker__reachable_comptime_method_calls(types__TypeChecker* tc, 
 	map calls = new_map(sizeof(__v_int), sizeof(bool), map_hash_int_w, map_eq_int_w, map_clone_int_w, map_free_nop);
 	map seen = new_map(sizeof(__v_int), sizeof(bool), map_hash_int_w, map_eq_int_w, map_clone_int_w, map_free_nop);
 	Array pending = new_array_from_c_array_noscan(1, 1, sizeof(i32), (i32[1]){root});
+	types__ComptimeMethodNameIndex methods = (types__ComptimeMethodNameIndex){.names = new_map(sizeof(string), sizeof(Array), map_hash_string, map_eq_string, map_clone_string, map_free_string)};
 	while (pending.len > 0) {
 		i32 id = *(i32*)array__pop(&pending);
 		__v_int __map_key_2 = (__v_int)(id);
@@ -570749,7 +570787,7 @@ map types__TypeChecker__reachable_comptime_method_calls(types__TypeChecker* tc, 
 		w->type_param_texts = new_map(sizeof(u32), sizeof(u32), map_hash_int_4, map_eq_int_4, map_clone_int_4, map_free_nop);
 		w->fn_context.generic_params = types__TypeChecker__infer_decl_generic_param_ids(tc, *node);
 		types__TypeChecker__push_scope(w);
-		types__TypeChecker__collect_comptime_method_calls(w, id, _str_34, &calls, &pending);
+		types__TypeChecker__collect_comptime_method_calls(w, id, _str_34, &calls, &pending, &methods);
 		types__TypeChecker__pop_scope(w);
 	}
 	__v_int __map_key_13 = (__v_int)(root);
