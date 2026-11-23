@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "228c37bf1884bc0f096b3981787bade50d9b1cce"
+#define V_COMMIT_HASH "dbc256469725e5d7753103b0dd99fe5b12eeb15a"
 // The libc declarations that V writes itself have the layouts of 64-bit targets.
 // On 32-bit targets, the C libraries disagree on them, so use the system headers.
 #ifndef __V_HEADERLESS_LIBC
@@ -11243,9 +11243,9 @@ typedef char Array_fixed_char_1024[1024];
 typedef i32 Array_fixed_i32_16[16];
 typedef string Array_fixed_string_2[2];
 typedef string Array_fixed_string_8[8];
-typedef string Array_fixed_string_13[13];
 typedef string Array_fixed_string_26[26];
 typedef string Array_fixed_string_15[15];
+typedef string Array_fixed_string_13[13];
 typedef u32 Array_fixed_u32_8[8];
 typedef Array Array_fixed_Array_3[3];
 typedef string Array_fixed_string_14[14];
@@ -39690,7 +39690,7 @@ _SL(_str_201, "at_exit failed", 14);
 _SL(_str_202, "fixed array index out of range (index: ", 39);
 _SL(_str_203, ", len: ", 7);
 _SL(_str_204, "slice index out of range for int: ", 34);
-_SL(_str_205, "228c37b", 7);
+_SL(_str_205, "dbc2564", 7);
 _SL(_str_206, " unknown", 8);
 _SL(_str_207, "-0.0", 4);
 _SL(_str_208, "0.0", 3);
@@ -71829,8 +71829,8 @@ void c__FlatGen__add_native_source_context_wrapper(c__FlatGen* g, string source_
 	array_push(&wrapper_lines, &__arr_val_0);
 	__v_int __in_lhs_1 = c__c_native_source_context_depth(directives);
 	{
-		__v_int __discard_17027569468710905096_381921_381922 = 0;
-		for (; __discard_17027569468710905096_381921_381922 < __in_lhs_1; __discard_17027569468710905096_381921_381922++) {
+		__v_int __discard_17027569468710905096_382700_382701 = 0;
+		for (; __discard_17027569468710905096_382700_382701 < __in_lhs_1; __discard_17027569468710905096_382700_382701++) {
 			string __arr_val_2 = _str_1078;
 			array_push(&wrapper_lines, &__arr_val_2);
 		}
@@ -83363,8 +83363,8 @@ Array c__FlatGen__const_emission_order(c__FlatGen* g) {
 		}
 	}
 	{
-		__v_int __discard_17027569468710905096_1022788_1022789 = 0;
-		for (; __discard_17027569468710905096_1022788_1022789 < 20; __discard_17027569468710905096_1022788_1022789++) {
+		__v_int __discard_17027569468710905096_1023567_1023568 = 0;
+		for (; __discard_17027569468710905096_1023567_1023568 < 20; __discard_17027569468710905096_1023567_1023568++) {
 			if (deferred.len == 0) {
 				break;
 			}
@@ -89302,8 +89302,8 @@ bool c__FlatGen__emit_preserved_c_directive_at(c__FlatGen* g, Array directives, 
 	}
 	__v_int __in_lhs_6 = c__c_lifted_include_context_depth(prefix);
 	{
-		__v_int __discard_17027569468710905096_407779_407780 = 0;
-		for (; __discard_17027569468710905096_407779_407780 < __in_lhs_6; __discard_17027569468710905096_407779_407780++) {
+		__v_int __discard_17027569468710905096_408558_408559 = 0;
+		for (; __discard_17027569468710905096_408558_408559 < __in_lhs_6; __discard_17027569468710905096_408558_408559++) {
 			c__FlatGen__writeln(g, _str_1078);
 		}
 	}
@@ -92013,8 +92013,8 @@ __v_option_string c__FlatGen__enum_receiver_method_name(c__FlatGen* g, types__En
 __v_option_u32 c__FlatGen__enum_selector_alias_target(c__FlatGen* g, u32 name_id) {
 	u32 cur = name_id;
 	{
-		__v_int __discard_17027569468710905096_453699_453700 = 0;
-		for (; __discard_17027569468710905096_453699_453700 < 16; __discard_17027569468710905096_453699_453700++) {
+		__v_int __discard_17027569468710905096_454478_454479 = 0;
+		for (; __discard_17027569468710905096_454478_454479 < 16; __discard_17027569468710905096_454478_454479++) {
 			__v_option_u32 __or_opt_0 = flat__SourceTypeBindings__type_id(&g->tc->type_aliases, cur);
 			u32 __or_val_1 = {0};
 			if (__or_opt_0.ok) {
@@ -95664,8 +95664,8 @@ Array c__FlatGen__fixed_storage_node_scan_bounds(c__FlatGen* g, __v_int max_jobs
 c__FixedStorageRefFileContext c__FlatGen__fixed_storage_ref_file_context(c__FlatGen* g, __v_int pos_id) {
 	__v_int file_id = pos_id;
 	{
-		__v_int __discard_17027569468710905096_553207_553208 = 0;
-		for (; __discard_17027569468710905096_553207_553208 < 8; __discard_17027569468710905096_553207_553208++) {
+		__v_int __discard_17027569468710905096_553986_553987 = 0;
+		for (; __discard_17027569468710905096_553986_553987 < 8; __discard_17027569468710905096_553986_553987++) {
 			__v_int __map_key_2 = file_id;
 			void* __map_ptr_3 = map__get_check(&g->a->template_call_sites, &__map_key_2);
 			token__Pos __map_val_4 = {0};
@@ -113143,15 +113143,15 @@ void c__FlatGen__gen_interpolation_part_assignments(c__FlatGen* g, Array parts, 
 
 void c__FlatGen__gen_is_expr_subject(c__FlatGen* g, i32 expr_id, __v_int extra_deref) {
 	{
-		__v_int __discard_17027569468710905096_508346_508347 = 0;
-		for (; __discard_17027569468710905096_508346_508347 < extra_deref; __discard_17027569468710905096_508346_508347++) {
+		__v_int __discard_17027569468710905096_509125_509126 = 0;
+		for (; __discard_17027569468710905096_509125_509126 < extra_deref; __discard_17027569468710905096_509125_509126++) {
 			c__FlatGen__write(g, _str_4920);
 		}
 	}
 	c__FlatGen__gen_expr(g, expr_id);
 	{
-		__v_int __discard_17027569468710905096_508415_508416 = 0;
-		for (; __discard_17027569468710905096_508415_508416 < extra_deref; __discard_17027569468710905096_508415_508416++) {
+		__v_int __discard_17027569468710905096_509194_509195 = 0;
+		for (; __discard_17027569468710905096_509194_509195 < extra_deref; __discard_17027569468710905096_509194_509195++) {
 			c__FlatGen__write(g, _str_28);
 		}
 	}
@@ -130487,8 +130487,8 @@ __v_option_string c__FlatGen__global_name_for_ident(c__FlatGen* g, string name) 
 __v_option_string c__FlatGen__global_scalar_static_initializer(c__FlatGen* g, i32 id, types__Type* typ) {
 	i32 value_id = id;
 	{
-		__v_int __discard_17027569468710905096_937888_937889 = 0;
-		for (; __discard_17027569468710905096_937888_937889 < 3; __discard_17027569468710905096_937888_937889++) {
+		__v_int __discard_17027569468710905096_938667_938668 = 0;
+		for (; __discard_17027569468710905096_938667_938668 < 3; __discard_17027569468710905096_938667_938668++) {
 			if (((__v_int)(value_id) < 0) || ((__v_int)(value_id) >= g->a->nodes.len)) {
 				break;
 			}
@@ -151097,6 +151097,9 @@ bool c__FlatGen__return_stmt_is_explicit_optional_failure(c__FlatGen* g, flat__N
 }
 
 string c__FlatGen__rewrite_cache_string_symbols(c__FlatGen* g, string source) {
+	if (!string__contains(source, _str_1637)) {
+		return string__clone(source);
+	}
 	Array __arr_init_0 = array_new(	sizeof(string), g->str_lits.len, 0);
 	{
 		__v_int __arr_idx_1 = 0;
@@ -151106,49 +151109,38 @@ string c__FlatGen__rewrite_cache_string_symbols(c__FlatGen* g, string source) {
 		}
 	}
 	Array symbols = __arr_init_0;
-	map user_c_symbols = c__FlatGen__cache_user_c_string_symbols(g);
-	Array __esc_2 = strings__new_builder(source.len + (g->str_lits.len * 8));
+	map user_c_symbols = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
+	bool user_c_symbols_ready = false;
+	Array __esc_2 = strings__new_builder(0);
 	Array* out = (Array*)(memdup(&__esc_2, sizeof(Array)));
+	__v_int copied = 0;
 	__v_int i = 0;
 	while (i < source.len) {
-		if ((string__at(source, i) == '"') || (string__at(source, i) == '\'')) {
-			u8 quote = string__at(source, i);
-			__v_int start = i;
+		if (((source).str[i] == '"') || ((source).str[i] == '\'')) {
+			u8 quote = (source).str[i];
 			i++;
 			while (i < source.len) {
-				if ((string__at(source, i) == '\\') && ((i + 1) < source.len)) {
+				if (((source).str[i] == '\\') && ((i + 1) < source.len)) {
 					i += 2;
 					continue;
 				}
 				i++;
-				if (string__at(source, i - 1) == quote) {
+				if ((source).str[i - 1] == quote) {
 					break;
 				}
 			}
-			Array* __slice_builder_3 = out;
-			string __slice_source_4 = source;
-			__v_int __slice_start_5 = start;
-			__v_int __slice_end_6 = i;
-			strings__Builder__write_string_borrowed(__slice_builder_3, string__substr_borrowed(__slice_source_4, __slice_start_5, __slice_end_6));
 			continue;
 		}
-		if (((i + 1) < source.len) && (string__at(source, i) == '/') && (string__at(source, i + 1) == '/')) {
-			__v_int start = i;
+		if (((i + 1) < source.len) && ((source).str[i] == '/') && ((source).str[i + 1] == '/')) {
 			i += 2;
-			while ((i < source.len) && (string__at(source, i) != '\n')) {
+			while ((i < source.len) && ((source).str[i] != '\n')) {
 				i++;
 			}
-			Array* __slice_builder_7 = out;
-			string __slice_source_8 = source;
-			__v_int __slice_start_9 = start;
-			__v_int __slice_end_10 = i;
-			strings__Builder__write_string_borrowed(__slice_builder_7, string__substr_borrowed(__slice_source_8, __slice_start_9, __slice_end_10));
 			continue;
 		}
-		if (((i + 1) < source.len) && (string__at(source, i) == '/') && (string__at(source, i + 1) == '*')) {
-			__v_int start = i;
+		if (((i + 1) < source.len) && ((source).str[i] == '/') && ((source).str[i + 1] == '*')) {
 			i += 2;
-			while (((i + 1) < source.len) && !((string__at(source, i) == '*') && (string__at(source, i + 1) == '/'))) {
+			while (((i + 1) < source.len) && !(((source).str[i] == '*') && ((source).str[i + 1] == '/'))) {
 				i++;
 			}
 			if ((i + 1) < source.len) {
@@ -151156,46 +151148,71 @@ string c__FlatGen__rewrite_cache_string_symbols(c__FlatGen* g, string source) {
 			} else {
 				i = source.len;
 			}
-			Array* __slice_builder_11 = out;
-			string __slice_source_12 = source;
-			__v_int __slice_start_13 = start;
-			__v_int __slice_end_14 = i;
-			strings__Builder__write_string_borrowed(__slice_builder_11, string__substr_borrowed(__slice_source_12, __slice_start_13, __slice_end_14));
 			continue;
 		}
-		if (c__c_identifier_start(string__at(source, i))) {
+		u8 c = (source).str[i];
+		if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_')) {
 			__v_int start = i;
 			i++;
-			while ((i < source.len) && c__c_identifier_continue(string__at(source, i))) {
-				i++;
-			}
-			string identifier = string__substr(			source, 			start, 			i);
-			if (c__cache_numbered_string_symbol(identifier) && ({string __map_key_15 = identifier;
-			bool __map_zero_16 = false;
-			!*(bool*)(map__get(&user_c_symbols, &__map_key_15, &__map_zero_16));})) {
-				__v_int id = 0;
-				Array __in_lhs_17 = string__bytes(string__substr(				identifier, 				5, (				identifier).len));
-				{
-					__v_int __for_idx_18 = 0;
-					for (; __for_idx_18 < __in_lhs_17.len; __for_idx_18++) {
-						u8 digit = *(u8*)(array_get(__in_lhs_17, __for_idx_18));
-						id = (id * 10) + (__v_int)(digit - '0');
-					}
-				}
-				if ((id >= 0) && (id < symbols.len)) {
-					if (((*(string*)array_get(symbols, id))).len == 0) {
-						{ Array* _a1 = &symbols; int _i1 = id; array__set(_a1, _i1, &(string[]){c__cache_string_symbol((*(string*)array_get(g->str_lits, id)))}); }
-					}
-					strings__Builder__write_string(out, (*(string*)array_get(symbols, id)));
-					continue;
+			while (i < source.len) {
+				u8 d = (source).str[i];
+				if (((d >= 'a') && (d <= 'z')) || ((d >= 'A') && (d <= 'Z')) || (d == '_') || ((d >= '0') && (d <= '9'))) {
+					i++;
+				} else {
+					break;
 				}
 			}
-			strings__Builder__write_string(out, identifier);
+			if (((i - start) <= 5) || (c != '_') || ((source).str[start + 1] != 's')) {
+				continue;
+			}
+			string identifier = tos(source.str + start, i - start);
+			if (!c__cache_numbered_string_symbol(identifier)) {
+				continue;
+			}
+			if (!user_c_symbols_ready) {
+				user_c_symbols = c__FlatGen__cache_user_c_string_symbols(g);
+				user_c_symbols_ready = true;
+			}
+			string __map_key_3 = identifier;
+			bool __map_zero_4 = false;
+			if (*(bool*)(map__get(&user_c_symbols, &__map_key_3, &__map_zero_4))) {
+				continue;
+			}
+			__v_int id = 0;
+			Array __in_lhs_5 = string__bytes(string__substr(			identifier, 			5, (			identifier).len));
+			{
+				__v_int __for_idx_6 = 0;
+				for (; __for_idx_6 < __in_lhs_5.len; __for_idx_6++) {
+					u8 digit = *(u8*)(array_get(__in_lhs_5, __for_idx_6));
+					id = (id * 10) + (__v_int)(digit - '0');
+				}
+			}
+			if ((id >= 0) && (id < symbols.len)) {
+				if (((*((string*)((symbols).data) + (id)))).len == 0) {
+					{ Array* _a1 = &symbols; int _i1 = id; array__set(_a1, _i1, &(string[]){c__cache_string_symbol((*((string*)((g->str_lits).data) + (id))))}); }
+				}
+				if (copied == 0) {
+					*out = strings__new_builder(source.len + 256);
+				}
+				Array* __slice_builder_7 = out;
+				string __slice_source_8 = source;
+				__v_int __slice_start_9 = copied;
+				__v_int __slice_end_10 = start;
+				strings__Builder__write_string_borrowed(__slice_builder_7, string__substr_borrowed(__slice_source_8, __slice_start_9, __slice_end_10));
+				strings__Builder__write_string(out, (*((string*)((symbols).data) + (id))));
+				copied = i;
+			}
 			continue;
 		}
-		strings__Builder__write_u8(out, string__at(source, i));
 		i++;
 	}
+	if (copied == 0) {
+		return string__clone(source);
+	}
+	Array* __slice_builder_11 = out;
+	string __slice_source_12 = source;
+	__v_int __slice_start_13 = copied;
+	strings__Builder__write_string_borrowed(__slice_builder_11, string__substr_borrowed(__slice_source_12, __slice_start_13, __slice_source_12.len));
 	return strings__Builder__str(out);
 }
 
@@ -165066,8 +165083,8 @@ void c__FlatGen__write_implicit_veb_ctx_param(c__FlatGen* g) {
 
 inline void c__FlatGen__write_indent(c__FlatGen* g) {
 	{
-		__v_int __discard_17027569468710905096_1062711_1062712 = 0;
-		for (; __discard_17027569468710905096_1062711_1062712 < g->indent; __discard_17027569468710905096_1062711_1062712++) {
+		__v_int __discard_17027569468710905096_1063490_1063491 = 0;
+		for (; __discard_17027569468710905096_1063490_1063491 < g->indent; __discard_17027569468710905096_1063490_1063491++) {
 			strings__Builder__write_u8(&g->sb, '\t');
 		}
 	}
@@ -170079,8 +170096,8 @@ multi_return_bool_bool c__c_header_objective_c_macro_value_state(string name, ma
 	string current = name;
 	map seen = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	{
-		__v_int __discard_17027569468710905096_303455_303456 = 0;
-		for (; __discard_17027569468710905096_303455_303456 < 64; __discard_17027569468710905096_303455_303456++) {
+		__v_int __discard_17027569468710905096_304234_304235 = 0;
+		for (; __discard_17027569468710905096_304234_304235 < 64; __discard_17027569468710905096_304234_304235++) {
 			string __map_key_0 = current;
 			bool __map_zero_1 = false;
 			if (*(bool*)(map__get(&seen, &__map_key_0, &__map_zero_1))) {
@@ -170659,8 +170676,8 @@ string c__c_header_text_without_identifier(string text, string name) {
 			__v_int __slice_end_4 = token_start;
 			strings__Builder__write_string_borrowed(__slice_builder_1, string__substr_borrowed(__slice_source_2, __slice_start_3, __slice_end_4));
 			{
-				__v_int __discard_17027569468710905096_311584_311585 = token_start;
-				for (; __discard_17027569468710905096_311584_311585 < i; __discard_17027569468710905096_311584_311585++) {
+				__v_int __discard_17027569468710905096_312363_312364 = token_start;
+				for (; __discard_17027569468710905096_312363_312364 < i; __discard_17027569468710905096_312363_312364++) {
 					strings__Builder__write_u8(result, ' ');
 				}
 			}
@@ -173482,20 +173499,32 @@ map c__cache_c_identifier_refs(string source) {
 	map refs = new_map(sizeof(string), sizeof(bool), map_hash_string, map_eq_string, map_clone_string, map_free_string);
 	__v_int i = 0;
 	while (i < source.len) {
-		__v_int next = c__cache_c_skip_literal_or_comment(source, i);
-		if (next > i) {
-			i = next;
-		} else if (c__c_identifier_start(string__at(source, i))) {
-			__v_int start = i;
+		u8 c = (source).str[i];
+		if ((c == '"') || (c == '\'') || (c == '/')) {
+			__v_int next = c__cache_c_skip_literal_or_comment(source, i);
+			i = (__v_int)((next > i ? next : i + 1));
+			continue;
+		}
+		if (!(((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_'))) {
 			i++;
-			while ((i < source.len) && c__c_identifier_continue(string__at(source, i))) {
+			continue;
+		}
+		__v_int start = i;
+		i++;
+		while (i < source.len) {
+			u8 d = (source).str[i];
+			if (((d >= 'a') && (d <= 'z')) || ((d >= 'A') && (d <= 'Z')) || (d == '_') || ((d >= '0') && (d <= '9'))) {
 				i++;
+			} else {
+				break;
 			}
-			string __map_key_0 = string__substr(			source, 			start, 			i);
-			bool __map_val_1 = true;
-			map__set(&refs, &__map_key_0, &__map_val_1);
-		} else {
-			i++;
+		}
+		string name = tos(source.str + start, i - start);
+		string __map_key_0 = name;
+		if (!map__exists(&refs, &__map_key_0)) {
+			string __map_key_1 = string__clone(name);
+			bool __map_val_2 = true;
+			map__set(&refs, &__map_key_1, &__map_val_2);
 		}
 	}
 	return refs;
@@ -173503,11 +173532,11 @@ map c__cache_c_identifier_refs(string source) {
 
 __v_int c__cache_c_skip_literal_or_comment(string source, __v_int start) {
 	__v_int i = start;
-	if ((string__at(source, i) == '"') || (string__at(source, i) == '\'')) {
-		u8 quote = string__at(source, i);
+	if (((source).str[i] == '"') || ((source).str[i] == '\'')) {
+		u8 quote = (source).str[i];
 		i++;
-		while ((i < source.len) && (string__at(source, i) != quote)) {
-			if (string__at(source, i) == '\\') {
+		while ((i < source.len) && ((source).str[i] != quote)) {
+			if ((source).str[i] == '\\') {
 				i++;
 			}
 			i++;
@@ -173518,16 +173547,16 @@ __v_int c__cache_c_skip_literal_or_comment(string source, __v_int start) {
 			return source.len;
 		}
 	}
-	if (((i + 1) < source.len) && (string__at(source, i) == '/') && (string__at(source, i + 1) == '/')) {
+	if (((i + 1) < source.len) && ((source).str[i] == '/') && ((source).str[i + 1] == '/')) {
 		i += 2;
-		while ((i < source.len) && (string__at(source, i) != '\n')) {
+		while ((i < source.len) && ((source).str[i] != '\n')) {
 			i++;
 		}
 		return i;
 	}
-	if (((i + 1) < source.len) && (string__at(source, i) == '/') && (string__at(source, i + 1) == '*')) {
+	if (((i + 1) < source.len) && ((source).str[i] == '/') && ((source).str[i + 1] == '*')) {
 		i += 2;
-		while (((i + 1) < source.len) && !((string__at(source, i) == '*') && (string__at(source, i + 1) == '/'))) {
+		while (((i + 1) < source.len) && !(((source).str[i] == '*') && ((source).str[i + 1] == '/'))) {
 			i++;
 		}
 		if ((i + 1) < source.len) {
@@ -173542,21 +173571,27 @@ __v_int c__cache_c_skip_literal_or_comment(string source, __v_int start) {
 void c__cache_collect_support_refs(string source, __v_int start, __v_int end, map definitions, map* refs, Array* pending) {
 	__v_int i = start;
 	while (i < end) {
-		if ((string__at(source, i) == '"') || (string__at(source, i) == '\'') || (string__at(source, i) == '/')) {
+		if (((source).str[i] == '"') || ((source).str[i] == '\'') || ((source).str[i] == '/')) {
 			__v_int next = c__cache_c_skip_literal_or_comment(source, i);
 			if (next > i) {
 				i = next;
 				continue;
 			}
 		}
-		if (!c__c_identifier_start(string__at(source, i))) {
+		u8 c = (source).str[i];
+		if (!(((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_'))) {
 			i++;
 			continue;
 		}
 		__v_int word_start = i;
 		i++;
-		while ((i < end) && c__c_identifier_continue(string__at(source, i))) {
-			i++;
+		while (i < end) {
+			u8 d = (source).str[i];
+			if (((d >= 'a') && (d <= 'z')) || ((d >= 'A') && (d <= 'Z')) || (d == '_') || ((d >= '0') && (d <= '9'))) {
+				i++;
+			} else {
+				break;
+			}
 		}
 		string name = string__substr_unsafe(source, word_start, i);
 		string __map_key_0 = name;
@@ -174271,16 +174306,16 @@ string c__cache_prune_generated_support(string source) {
 	__v_int i = 0;
 	__v_int depth = 0;
 	while (i < source.len) {
-		if ((string__at(source, i) == '"') || (string__at(source, i) == '\'') || (string__at(source, i) == '/')) {
+		if (((source).str[i] == '"') || ((source).str[i] == '\'') || ((source).str[i] == '/')) {
 			__v_int next = c__cache_c_skip_literal_or_comment(source, i);
 			if (next > i) {
 				i = next;
 				continue;
 			}
 		}
-		if ((depth == 0) && (string__at(source, i) == 's') && ((i == 0) || (string__at(source, i - 1) == '\n'))) {
+		if ((depth == 0) && ((source).str[i] == 's') && ((i == 0) || ((source).str[i - 1] == '\n'))) {
 			__v_int end = i;
-			while ((end < source.len) && (string__at(source, end) != '\n')) {
+			while ((end < source.len) && ((source).str[end] != '\n')) {
 				end++;
 			}
 			string line = string__substr_unsafe(source, i, end);
@@ -174297,14 +174332,14 @@ string c__cache_prune_generated_support(string source) {
 			string literal_prefix = __if_val_0;
 			if ((literal_prefix.len > 0) && string__ends_with(line, _str_1077)) {
 				__v_int name_end = literal_prefix.len;
-				while ((name_end < line.len) && c__c_identifier_continue(string__at(line, name_end))) {
+				while ((name_end < line.len) && c__c_identifier_continue((line).str[name_end])) {
 					name_end++;
 				}
 				__v_int value_start = name_end;
-				while ((value_start < line.len) && ((string__at(line, value_start) == ' ') || (string__at(line, value_start) == '\t'))) {
+				while ((value_start < line.len) && (((line).str[value_start] == ' ') || ((line).str[value_start] == '\t'))) {
 					value_start++;
 				}
-				if ((value_start < line.len) && (string__at(line, value_start) == '=')) {
+				if ((value_start < line.len) && ((line).str[value_start] == '=')) {
 					string name = string__substr_unsafe(line, literal_prefix.len, name_end);
 					string __map_key_1 = name;
 					Array __map_zero_3 = __new_array_noscan(0, 0, sizeof(__v_int));
@@ -174322,7 +174357,7 @@ string c__cache_prune_generated_support(string source) {
 			__v_int brace = string__index_u8(line, '{');
 			if (string__starts_with(line, inline_prefix) && (v_open > 0) && (brace > v_open)) {
 				__v_int name_start = v_open;
-				while ((name_start > 0) && c__c_identifier_continue(string__at(line, name_start - 1))) {
+				while ((name_start > 0) && c__c_identifier_continue((line).str[name_start - 1])) {
 					name_start--;
 				}
 				if (name_start < v_open) {
@@ -174330,17 +174365,17 @@ string c__cache_prune_generated_support(string source) {
 					__v_int pos = (i + brace) + 1;
 					__v_int body_depth = 1;
 					while ((pos < source.len) && (body_depth > 0)) {
-						if ((string__at(source, pos) == '"') || (string__at(source, pos) == '\'') || (string__at(source, pos) == '/')) {
+						if (((source).str[pos] == '"') || ((source).str[pos] == '\'') || ((source).str[pos] == '/')) {
 							__v_int after = c__cache_c_skip_literal_or_comment(source, pos);
 							if (after > pos) {
 								pos = after;
 								continue;
 							}
 						}
-						if (string__at(source, pos) == '{') {
+						if ((source).str[pos] == '{') {
 							body_depth++;
 						}
-						if (string__at(source, pos) == '}') {
+						if ((source).str[pos] == '}') {
 							body_depth--;
 						}
 						pos++;
@@ -174361,10 +174396,10 @@ string c__cache_prune_generated_support(string source) {
 				}
 			}
 		}
-		if (string__at(source, i) == '{') {
+		if ((source).str[i] == '{') {
 			depth++;
 		}
-		if (string__at(source, i) == '}') {
+		if ((source).str[i] == '}') {
 			depth--;
 		}
 		i++;
@@ -174390,7 +174425,7 @@ string c__cache_prune_generated_support(string source) {
 			__v_int __for_idx_12 = 0;
 			for (; __for_idx_12 < ((*(Array*)map__get(&((map[]){definitions}[0]), &(string[]){name}, &(Array[]){__new_array_noscan(0, 0, sizeof(__v_int))}))).len; __for_idx_12++) {
 				__v_int v_index = *(__v_int*)(array_get((*(Array*)map__get(&((map[]){definitions}[0]), &(string[]){name}, &(Array[]){__new_array_noscan(0, 0, sizeof(__v_int))})), __for_idx_12));
-				c__CacheSupportDefinition definition = (*(c__CacheSupportDefinition*)array_get(support, v_index));
+				c__CacheSupportDefinition definition = (*((c__CacheSupportDefinition*)((support).data) + (v_index)));
 				c__cache_collect_support_refs(source, definition.start, definition.end, definitions, &refs, &pending);
 			}
 		}
@@ -174956,8 +174991,8 @@ __v_int c__cgen_type_pointer_depth(types__Type* t) {
 	types__Type cur = (*t);
 	__v_int depth = 0;
 	{
-		__v_int __discard_17027569468710905096_507691_507692 = 0;
-		for (; __discard_17027569468710905096_507691_507692 < 32; __discard_17027569468710905096_507691_507692++) {
+		__v_int __discard_17027569468710905096_508470_508471 = 0;
+		for (; __discard_17027569468710905096_508470_508471 < 32; __discard_17027569468710905096_508470_508471++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -175102,8 +175137,8 @@ types__Type* c__cgen_unalias_type(types__Type* typ) {
 types__Type c__cgen_unalias_unwrap_all_pointers(types__Type* t) {
 	types__Type cur = (*t);
 	{
-		__v_int __discard_17027569468710905096_507959_507960 = 0;
-		for (; __discard_17027569468710905096_507959_507960 < 32; __discard_17027569468710905096_507959_507960++) {
+		__v_int __discard_17027569468710905096_508738_508739 = 0;
+		for (; __discard_17027569468710905096_508738_508739 < 32; __discard_17027569468710905096_508738_508739++) {
 			if ((cur).typ == 23) {
 				cur = *cur.types__Alias.AliasDataRef->base_type;
 				continue;
@@ -194308,17 +194343,19 @@ map driver__cache_function_reference_counts(string source, map candidates) {
 	{
 		__v_int i = 0;
 		for (; i <= source.len; i++) {
-			bool is_identifier = (i < source.len) && (u8__is_alnum(string__at(source, i)) || (string__at(source, i) == '_'));
-			if (is_identifier) {
-				if (start < 0) {
-					start = i;
+			if (i < source.len) {
+				u8 c = (source).str[i];
+				if (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || ((c >= '0') && (c <= '9')) || (c == '_')) {
+					if (start < 0) {
+						start = i;
+					}
+					continue;
 				}
-				continue;
 			}
 			if (start < 0) {
 				continue;
 			}
-			string token = string__substr(			source, 			start, 			i);
+			string token = tos(source.str + start, i - start);
 			string __map_key_0 = token;
 			bool __map_zero_1 = false;
 			if (*(bool*)(map__get(&candidates, &__map_key_0, &__map_zero_1)) && ({string __map_key_2 = token;
@@ -200033,8 +200070,8 @@ map driver__implicit_known_field_selectors(flat__FlatAst* a, __v_int start, __v_
 				bool dropped = false;
 				__v_int __in_lhs_16 = declared + 1;
 				{
-					__v_int __discard_15215236722831141574_878341_878342 = 0;
-					for (; __discard_15215236722831141574_878341_878342 < __in_lhs_16; __discard_15215236722831141574_878341_878342++) {
+					__v_int __discard_15215236722831141574_878650_878651 = 0;
+					for (; __discard_15215236722831141574_878650_878651 < __in_lhs_16; __discard_15215236722831141574_878650_878651++) {
 						bool changed = false;
 						array__clear(&untyped);
 						{
@@ -200253,8 +200290,8 @@ Array driver__implicit_multi_value_types(u32 raw_id, driver__ImplicitFieldScanIn
 u32 driver__implicit_normalize_type(u32 raw_id, driver__ImplicitFieldScanIndex v_index) {
 	u32 typ_id = driver__implicit_trimmed_type_id(raw_id);
 	{
-		__v_int __discard_15215236722831141574_896916_896917 = 0;
-		for (; __discard_15215236722831141574_896916_896917 < 12; __discard_15215236722831141574_896916_896917++) {
+		__v_int __discard_15215236722831141574_897225_897226 = 0;
+		for (; __discard_15215236722831141574_897225_897226 < 12; __discard_15215236722831141574_897225_897226++) {
 			bool changed = false;
 			{
 				__v_int __for_idx_0 = 0;
@@ -204861,8 +204898,8 @@ __v_option_string driver__nearest_vroot_for_path(string path) {
 		dir = os__dir(dir);
 	}
 	{
-		__v_int __discard_15215236722831141574_784867_784868 = 0;
-		for (; __discard_15215236722831141574_784867_784868 < 8; __discard_15215236722831141574_784867_784868++) {
+		__v_int __discard_15215236722831141574_785176_785177 = 0;
+		for (; __discard_15215236722831141574_785176_785177 < 8; __discard_15215236722831141574_785176_785177++) {
 			if (driver__is_valid_vroot(dir)) {
 				return (__v_option_string){.ok = true, .value = dir};
 			}
