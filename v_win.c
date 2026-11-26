@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "c0bb94990c4c2cd080b27b4e2cbc88a347c6bb4c"
+#define V_COMMIT_HASH "9dcdf79e85060b07491f951581bcd2a9db15a72e"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -4537,6 +4537,7 @@ typedef struct AnonStruct__x2f_home_x2f_runner_x2f_work_x2f_v_x2f_v_x2f_vlib_x2f
 typedef struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1;
 typedef struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_x2e_v_1 main__AnonStruct_cmd_x2f_v_x2f_toolcache_x2e_v_1;
 typedef struct main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_1 main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_1;
+typedef struct main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_2 main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_2;
 typedef struct ArrayDataHeader ArrayDataHeader;
 typedef struct AutostrAddrStackState AutostrAddrStackState;
 typedef struct ContextRecord ContextRecord;
@@ -4573,6 +4574,7 @@ typedef union StrIntpMem StrIntpMem;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
 typedef struct ToWideConfig ToWideConfig;
+typedef struct main__ToolCacheBuildOptions main__ToolCacheBuildOptions;
 typedef struct main__ToolCacheEntry main__ToolCacheEntry;
 typedef struct main__ToolCacheEntryDir main__ToolCacheEntryDir;
 typedef struct main__ToolCacheRejection main__ToolCacheRejection;
@@ -5968,6 +5970,7 @@ typedef struct AnonStruct__x2f_home_x2f_runner_x2f_work_x2f_v_x2f_v_x2f_vlib_x2f
 typedef struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1 main__AnonStruct_cmd_x2f_v_x2f_toolcache_uwindows_x2e_c_x2e_v_1;
 typedef struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_x2e_v_1 main__AnonStruct_cmd_x2f_v_x2f_toolcache_x2e_v_1;
 typedef struct main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_1 main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_1;
+typedef struct main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_2 main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_2;
 typedef struct ArrayDataHeader ArrayDataHeader;
 typedef struct AutostrAddrStackState AutostrAddrStackState;
 typedef struct ContextRecord ContextRecord;
@@ -6004,6 +6007,7 @@ typedef union StrIntpMem StrIntpMem;
 typedef struct SymbolInfo SymbolInfo;
 typedef struct SymbolInfoContainer SymbolInfoContainer;
 typedef struct ToWideConfig ToWideConfig;
+typedef struct main__ToolCacheBuildOptions main__ToolCacheBuildOptions;
 typedef struct main__ToolCacheEntry main__ToolCacheEntry;
 typedef struct main__ToolCacheEntryDir main__ToolCacheEntryDir;
 typedef struct main__ToolCacheRejection main__ToolCacheRejection;
@@ -7322,6 +7326,10 @@ struct main__AnonStruct_cmd_x2f_v_x2f_toolcache_x2e_v_1 {
 };
 
 struct main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_1 {
+	bool optional_compiler;
+};
+
+struct main__AnonStruct_cmd_x2f_v_x2f_v_x2e_v_2 {
 	__v_int exit_code;
 };
 
@@ -7591,6 +7599,10 @@ struct ToWideConfig {
 	bool from_ansi;
 };
 
+struct main__ToolCacheBuildOptions {
+	bool optional_compiler;
+};
+
 struct main__ToolCacheEntry {
 	string name;
 	string source;
@@ -7601,6 +7613,7 @@ struct main__ToolCacheEntry {
 	string unbuildable;
 	string unbuildable_manifest;
 	Array build_args;
+	bool optional_compiler;
 };
 
 struct main__ToolCacheEntryDir {
@@ -26872,15 +26885,16 @@ token__Pos token__new_span(__v_int file_id, __v_int start, __v_int end);
 __v_result_multi_return___v_int_string token__parse_line_directive(string args);
 u64 token__quick_sum(u8* data, __v_int len);
 string tool_application_manifest_identity(string path);
+map tool_build_environment(bool optional_compiler);
 Array tool_cache_candidate_problems(string candidate, bool is_default);
 Array tool_cache_default_candidates(void);
 __v_result_string tool_cache_dir(void);
-__v_result_main__ToolCacheEntry tool_cache_entry(string vexe, string vroot, string tool_name, string tool_source, Array build_args);
+__v_result_main__ToolCacheEntry tool_cache_entry(string vexe, string vroot, string tool_name, string tool_source, Array build_args, main__ToolCacheBuildOptions options);
 string tool_cache_entry_dir_for_uid(string directory, string tool_name, string key, __v_int uid);
 string tool_cache_home_candidate(void);
 bool tool_cache_is_disabled(void);
 bool tool_cache_is_verbose(void);
-string tool_cache_key(string vexe, string tool_name, Array tool_sources, Array build_args);
+string tool_cache_key(string vexe, string tool_name, Array tool_sources, Array build_args, main__ToolCacheBuildOptions options);
 __v_result_filelock__FileLock tool_cache_lock(main__ToolCacheEntry entry);
 string tool_cache_lock_path(main__ToolCacheEntry entry);
 string tool_cache_lock_path_for_uid(main__ToolCacheEntry entry, __v_int uid);
@@ -35593,7 +35607,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "c0bb949", 7);
+_SL(_str_201, "9dcdf79", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
@@ -58803,6 +58817,7 @@ string main__tool_cache_replaced_marker;
 string main__tool_cache_stage_prefix;
 string main__file_stamp_missing;
 const string main__ambient_build_variables[7] = {{(u8*)"CFLAGS", 6, 1}, {(u8*)"LDFLAGS", 7, 1}, {(u8*)"VCOVDIR", 7, 1}, {(u8*)"PKG_CONFIG_PATH", 15, 1}, {(u8*)"PKG_CONFIG_LIBDIR", 17, 1}, {(u8*)"PKG_CONFIG_SYSROOT_DIR", 22, 1}, {(u8*)"VMODULES", 8, 1}};
+Array main__optional_compiler_target_flags;
 const string main__c_stage_failure_markers[5] = {{(u8*)"C compilation failed:", 21, 1}, {(u8*)"C compilation error (from ", 26, 1}, {(u8*)"failed parallel C compilation", 29, 1}, {(u8*)"failed to link after parallel C compilation", 43, 1}, {(u8*)"was not found while linking the generated program", 49, 1}};
 #define main__tool_cache_build_lock_wait ((30) * (((i64)((60) * (((i64)((1000) * (((i64)((1000) * (((i64)((1000) * (((i64)(1))))))))))))))))
 string main__wipe_cache_help_text;
@@ -63738,6 +63753,7 @@ void _vinit() {
 	main__tool_cache_replaced_marker = _S(".replaced.");
 	main__tool_cache_stage_prefix = _S(".v-toolcache-stage-");
 	main__file_stamp_missing = _S("missing");
+	main__optional_compiler_target_flags = new_array_from_c_array(2, 2, sizeof(string), (string[2]){_str_324, _str_325});
 	main__wipe_cache_help_text = _S("Remove V cache folders (VCACHE, VTMP, V3CACHE, and compiled tool caches).\nStop and return a nonzero status if a cache folder cannot be removed or recreated.\n\nUsage:\n  v wipe-cache [options]\n\nOptions:\n  -n, --dry-run   Show what would be wiped without deleting any files.\n  -v, --verbose   Show detailed output, skipped paths, and tool cache diagnostics.\n      --tools     Wipe only compiled tool caches (VTOOLS_CACHE_DIR, ~/.cache/v/tools,\n                  <VTMP>/tools, ~/.vtools, ~/.v/tools, and moved-aside ."
 "untrusted-* folders).\n      --vcache    Wipe only the V module/object cache (VCACHE or ~/.vmodules/.cache).\n      --vtmp      Wipe only the V temporary folder (VTMP).\n      --v3cache   Wipe only the V3 module and object caches (V3CACHE).\n  -h, --help      Display this help message.");
 	main__v_version = _S("0.5.2");
@@ -67649,13 +67665,9 @@ __v_result_string build_tool_binary(string vexe, main__ToolCacheEntry entry) {
 	string __arr_val_16 = entry.source;
 	array_push(&__arr_lit_11, &__arr_val_16);
 	array__push_many(&build_args, __arr_lit_11.data, __arr_lit_11.len);
-	map environment = os__environ();
-	string __map_key_17 = _str_245;
-	string __map_val_18 = _str_34;
-	map__set(&environment, &__map_key_17, &__map_val_18);
 	os__Process* process = os__new_process(vexe);
 	os__Process__set_args(process, build_args);
-	os__Process__set_environment(process, environment);
+	os__Process__set_environment(process, tool_build_environment(entry.optional_compiler));
 	os__Process__set_redirect_stdio_merged(process);
 	os__Process__run(process);
 	string output = os__Process__stdout_slurp(process);
@@ -67664,16 +67676,16 @@ __v_result_string build_tool_binary(string vexe, main__ToolCacheEntry entry) {
 	string failure = process->err;
 	os__Process__close(process);
 	if ((code != 0) || !os__is_file(staged)) {
-		__v_result __or_opt_19 = os__rm(staged);
-		if (!__or_opt_19.ok) {
+		__v_result __or_opt_17 = os__rm(staged);
+		if (!__or_opt_17.ok) {
 		}
-		string __if_val_20 = {0};
+		string __if_val_18 = {0};
 		if (!string__trim_space_eq(output, _str_34)) {
-			__if_val_20 = output;
+			__if_val_18 = output;
 		} else {
-			__if_val_20 = failure;
+			__if_val_18 = failure;
 		}
-		string details = __if_val_20;
+		string details = __if_val_18;
 		if (string__trim_space_eq(details, _str_34) && (code == 0)) {
 			string __v3_internal_symbol_join_7__vmsvc118[3]; __v3_internal_symbol_join_7__vmsvc118[0] = _str_384; __v3_internal_symbol_join_7__vmsvc118[1] = staged; __v3_internal_symbol_join_7__vmsvc118[2] = _str_41; details = (string_plus_many(3, __v3_internal_symbol_join_7__vmsvc118));
 		}
@@ -67681,11 +67693,11 @@ __v_result_string build_tool_binary(string vexe, main__ToolCacheEntry entry) {
 			string unbuildable_manifest = os__join_path_single(stage_dir, _str_341);
 			string unbuildable_details = os__join_path_single(stage_dir, _str_340);
 			string manifest = encode_unbuildable_tool_manifest(entry, dumped, started, details);
-			__v_result __or_opt_21 = os__write_file(unbuildable_manifest, manifest);
-			if (!__or_opt_21.ok) {
+			__v_result __or_opt_19 = os__write_file(unbuildable_manifest, manifest);
+			if (!__or_opt_19.ok) {
 			}
-			__v_result __or_opt_22 = os__write_file(unbuildable_details, details);
-			if (!__or_opt_22.ok) {
+			__v_result __or_opt_20 = os__write_file(unbuildable_details, details);
+			if (!__or_opt_20.ok) {
 			}
 			if (ToolCacheEntryDir__publish(cache_entry, unbuildable_details, os__file_name(entry.unbuildable))) {
 				ToolCacheEntryDir__publish(cache_entry, unbuildable_manifest, os__file_name(entry.unbuildable_manifest));
@@ -67704,15 +67716,15 @@ __v_result_string build_tool_binary(string vexe, main__ToolCacheEntry entry) {
 		}
 		return _t9;
 	}
-	__v_result_string __or_opt_23 = os__read_file(dumped);
-	string __or_val_24 = {0};
-	if (__or_opt_23.ok) {
-		__or_val_24 = __or_opt_23.value;
+	__v_result_string __or_opt_21 = os__read_file(dumped);
+	string __or_val_22 = {0};
+	if (__or_opt_21.ok) {
+		__or_val_22 = __or_opt_21.value;
 	} else {
-		IError err = __or_opt_23.err;
-		__or_val_24 = _str_34;
+		IError err = __or_opt_21.err;
+		__or_val_22 = _str_34;
 	}
-	Array source_files = string__split_into_lines(__or_val_24);
+	Array source_files = string__split_into_lines(__or_val_22);
 	string staged_sidecar = string__plus(staged, _str_385);
 	string sidecar = string__plus(entry.binary, _str_385);
 	string __v3_internal_symbol_join_9__vmsvc119[3]; __v3_internal_symbol_join_9__vmsvc119[0] = encode_tool_cache_manifest(source_files, started); string __v3_internal_symbol_join_10__vmsvc120[6]; __v3_internal_symbol_join_10__vmsvc120[0] = _str_350; __v3_internal_symbol_join_10__vmsvc120[1] = main__tool_cache_field_separator; __v3_internal_symbol_join_10__vmsvc120[2] = entry.binary; __v3_internal_symbol_join_10__vmsvc120[3] = main__tool_cache_field_separator; __v3_internal_symbol_join_10__vmsvc120[4] = binary_identity(staged); __v3_internal_symbol_join_10__vmsvc120[5] = _str_0; __v3_internal_symbol_join_9__vmsvc119[1] = (string_plus_many(6, __v3_internal_symbol_join_10__vmsvc120)); string __v3_internal_symbol_join_11__vmsvc121[6]; __v3_internal_symbol_join_11__vmsvc121[0] = _str_351; __v3_internal_symbol_join_11__vmsvc121[1] = main__tool_cache_field_separator; __v3_internal_symbol_join_11__vmsvc121[2] = sidecar; __v3_internal_symbol_join_11__vmsvc121[3] = main__tool_cache_field_separator; __v3_internal_symbol_join_11__vmsvc121[4] = tool_application_manifest_identity(staged_sidecar); __v3_internal_symbol_join_11__vmsvc121[5] = _str_0; __v3_internal_symbol_join_9__vmsvc119[2] = (string_plus_many(6, __v3_internal_symbol_join_11__vmsvc121)); string manifest = (string_plus_many(3, __v3_internal_symbol_join_9__vmsvc119));
@@ -67749,9 +67761,9 @@ __v_result_string build_tool_binary(string vexe, main__ToolCacheEntry entry) {
 		return _t16;
 	}
 	string staged_manifest = os__join_path_single(stage_dir, _str_339);
-	__v_result __or_opt_25 = os__write_file(staged_manifest, manifest);
-	if (!__or_opt_25.ok) {
-		IError err = __or_opt_25.err;
+	__v_result __or_opt_23 = os__write_file(staged_manifest, manifest);
+	if (!__or_opt_23.ok) {
+		IError err = __or_opt_23.err;
 		string __v3_internal_symbol_join_16__vmsvc124[4]; __v3_internal_symbol_join_16__vmsvc124[0] = _str_389; __v3_internal_symbol_join_16__vmsvc124[1] = entry.name; __v3_internal_symbol_join_16__vmsvc124[2] = _str_283; __v3_internal_symbol_join_16__vmsvc124[3] = IError__str(err); __v_result_string _t18 = (__v_result_string){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_16__vmsvc124)), .code = 0}, sizeof(MessageError)), ._object_is_boxed = true}};
 		{
 			ToolCacheEntryDir__close(stage_entry);
@@ -230787,8 +230799,8 @@ __v_option_string find_vroot(string executable) {
 	}
 	string current = __if_val_0;
 	{
-		__v_int __discard_1805594780280649851_29840_29841 = 0;
-		for (; __discard_1805594780280649851_29840_29841 < 32; __discard_1805594780280649851_29840_29841++) {
+		__v_int __discard_1805594780280649851_29754_29755 = 0;
+		for (; __discard_1805594780280649851_29754_29755 < 32; __discard_1805594780280649851_29754_29755++) {
 			if (os__is_file(os__join_path_single(current, _str_612)) && os__is_dir(os__join_path_single(os__join_path_single(current, _str_367), _str_279))) {
 				return (__v_option_string){.ok = true, .value = current};
 			}
@@ -241789,7 +241801,7 @@ void launch_external_tool(string vroot, string tool_name, string tool_source, Ar
 	Array build_args = external_tool_build_args(tool_name, prefix_args);
 	if (!tool_cache_is_disabled()) {
 		string vexe = os__real_path(os__executable());
-		__v_result_main__ToolCacheEntry __if_guard_0 = tool_cache_entry(vexe, vroot, tool_name, tool_source, build_args);
+		__v_result_main__ToolCacheEntry __if_guard_0 = tool_cache_entry(vexe, vroot, tool_name, tool_source, build_args, (main__ToolCacheBuildOptions){0});
 		if (__if_guard_0.ok) {
 			main__ToolCacheEntry entry = __if_guard_0.value;
 			string reason = tool_cache_stale_reason(entry);
@@ -241858,7 +241870,7 @@ VNORETURN void launch_optional_compiler(string vexe, string vroot, string name, 
 	if (tool_cache_is_disabled()) {
 		run_uncached_optional_compiler(vexe, compiler_source, name, description, build_args, args);
 	}
-	__v_result_main__ToolCacheEntry __or_opt_0 = tool_cache_entry(vexe, vroot, name, compiler_source, build_args);
+	__v_result_main__ToolCacheEntry __or_opt_0 = tool_cache_entry(vexe, vroot, name, compiler_source, build_args, (main__ToolCacheBuildOptions){.optional_compiler = true});
 	main__ToolCacheEntry __or_val_1 = {0};
 	if (__or_opt_0.ok) {
 		__or_val_1 = __or_opt_0.value;
@@ -271486,8 +271498,8 @@ void os__create_folder_when_it_does_not_exist(string path) {
 	}
 	string error_msg = _str_34;
 	{
-		__v_int __discard_1029850161164949411_35298_35299 = 0;
-		for (; __discard_1029850161164949411_35298_35299 < 10; __discard_1029850161164949411_35298_35299++) {
+		__v_int __discard_1029850161164949411_35357_35358 = 0;
+		for (; __discard_1029850161164949411_35357_35358 < 10; __discard_1029850161164949411_35357_35358++) {
 			__v_result __or_opt_0 = os__mkdir_all(path, (os__MkdirParams){.mode = 0700});
 			if (!__or_opt_0.ok) {
 				IError err = __or_opt_0.err;
@@ -273061,6 +273073,9 @@ __v_result os__mkdir_all(string opath, os__MkdirParams params) {
 			__v_result __or_opt_2 = os__mkdir(p, params);
 			if (!__or_opt_2.ok) {
 				IError err = __or_opt_2.err;
+				if (os__is_dir(p)) {
+					continue;
+				}
 				string __v3_internal_symbol_join_2__vmsvc7364[4]; __v3_internal_symbol_join_2__vmsvc7364[0] = _str_758; __v3_internal_symbol_join_2__vmsvc7364[1] = p; __v3_internal_symbol_join_2__vmsvc7364[2] = _str_759; __v3_internal_symbol_join_2__vmsvc7364[3] = IError__msg(&(err)); return (__v_result){.ok = false, .err = (IError){._typ = 71273906, ._object = (MessageError*)memdup(&(MessageError){.msg = (string_plus_many(4, __v3_internal_symbol_join_2__vmsvc7364)), .code = IError__code(&(err))}, sizeof(MessageError)), ._object_is_boxed = true}};
 			}
 		}
@@ -274369,7 +274384,7 @@ __v_result_os__Stat os__stat(string path) {
 			}
 		}
 		os__Stat st = (os__Stat){.dev = s.st_dev, .inode = s.st_ino, .nlink = s.st_nlink, .mode = s.st_mode, .uid = s.st_uid, .gid = s.st_gid, .rdev = s.st_rdev, .size = s.st_size, .atime = s.st_atime, .mtime = s.st_mtime, .ctime = s.st_ctime};
-		bool needs_file_information = (st.atime < 0) || (st.mtime < 0) || (st.ctime < 0);
+		bool needs_file_information = (st.atime < 0) || (st.mtime < 0) || (st.ctime < 0) || ((st.mode & (u32)(os__s_ifmt)) == (u32)(os__s_ifdir));
 		if (!needs_file_information) {
 			u32 attributes = GetFileAttributesW(w_path);
 			needs_file_information = (attributes != (u32)(INVALID_FILE_ATTRIBUTES)) && ((attributes & os__windows_file_attribute_reparse_point) != 0);
@@ -304641,8 +304656,8 @@ Array remove_obsolete_skip_unused_flag(Array args) {
 
 void remove_tool_stage_dir(string path) {
 	{
-		__v_int __discard_17317141065384241355_50808_50809 = 0;
-		for (; __discard_17317141065384241355_50808_50809 < 20; __discard_17317141065384241355_50808_50809++) {
+		__v_int __discard_17317141065384241355_51181_51182 = 0;
+		for (; __discard_17317141065384241355_51181_51182 < 20; __discard_17317141065384241355_51181_51182++) {
 			__v_result __or_opt_0 = os__rmdir_all(path);
 			if (!__or_opt_0.ok) {
 			}
@@ -304914,13 +304929,9 @@ VNORETURN void run_uncached_optional_compiler(string vexe, string compiler_sourc
 	Array build_args = array__clone(&compiler_build_args);
 	Array __push_many_2 = new_array_from_c_array(3, 3, sizeof(string), (string[3]){_str_265, binary, compiler_source});
 	array__push_many(&build_args, __push_many_2.data, __push_many_2.len);
-	map environment = os__environ();
-	string __map_key_3 = _str_245;
-	string __map_val_4 = _str_34;
-	map__set(&environment, &__map_key_3, &__map_val_4);
 	os__Process* build = os__new_process(vexe);
 	os__Process__set_args(build, build_args);
-	os__Process__set_environment(build, environment);
+	os__Process__set_environment(build, tool_build_environment(true));
 	os__Process__wait(build);
 	__v_int build_code = build->code;
 	os__Process__close(build);
@@ -313645,6 +313656,42 @@ string tool_application_manifest_identity(string path) {
 	return string__plus(_str_323, Array_u8__hex(sha256__sum256(contents)));
 }
 
+map tool_build_environment(bool optional_compiler) {
+	map environment = os__environ();
+	string __map_key_0 = _str_245;
+	string __map_val_1 = _str_34;
+	map__set(&environment, &__map_key_0, &__map_val_1);
+	if (optional_compiler) {
+		#if defined(_WIN32)
+		{
+			Array __in_lhs_2 = map__keys(&environment);
+			{
+				__v_int __for_idx_3 = 0;
+				for (; __for_idx_3 < __in_lhs_2.len; __for_idx_3++) {
+					string name = *(string*)(array_get(__in_lhs_2, __for_idx_3));
+					if (__v3_fixed_array_contains_string((string*)(main__optional_compiler_target_flags.data), 2, string__to_upper_ascii(name))) {
+						string __map_key_4 = name;
+						map__delete(&environment, &__map_key_4);
+					}
+				}
+			}
+		}
+		#else
+		{
+			{
+				__v_int __for_idx_5 = 0;
+				for (; __for_idx_5 < main__optional_compiler_target_flags.len; __for_idx_5++) {
+					string name = *(string*)(array_get(main__optional_compiler_target_flags, __for_idx_5));
+					string __map_key_6 = name;
+					map__delete(&environment, &__map_key_6);
+				}
+			}
+		}
+		#endif
+	}
+	return environment;
+}
+
 Array tool_cache_candidate_problems(string candidate, bool is_default) {
 	if (is_default) {
 		Array problems = prepare_default_tool_cache_root(candidate);
@@ -313793,7 +313840,7 @@ __v_result_string tool_cache_dir(void) {
 	return (__v_result_string){.ok = true};
 }
 
-__v_result_main__ToolCacheEntry tool_cache_entry(string vexe, string vroot, string tool_name, string tool_source, Array build_args) {
+__v_result_main__ToolCacheEntry tool_cache_entry(string vexe, string vroot, string tool_name, string tool_source, Array build_args, main__ToolCacheBuildOptions options) {
 	__v_result_string __or_opt_0 = tool_cache_dir();
 	string __or_val_1 = {0};
 	if (__or_opt_0.ok) {
@@ -313802,10 +313849,10 @@ __v_result_main__ToolCacheEntry tool_cache_entry(string vexe, string vroot, stri
 		return (__v_result_main__ToolCacheEntry){.ok = false, .err = __or_opt_0.err};
 	}
 	string directory = __or_val_1;
-	string key = tool_cache_key(vexe, tool_name, tool_key_sources(tool_source), build_args);
+	string key = tool_cache_key(vexe, tool_name, tool_key_sources(tool_source), build_args, options);
 	string entry_dir = tool_cache_entry_dir_for_uid(directory, tool_name, key, os__getuid());
 	string binary = os__join_path_single(entry_dir, string__plus(tool_name, tool_exe_suffix()));
-	return (__v_result_main__ToolCacheEntry){.ok = true, .value = (main__ToolCacheEntry){.name = tool_name, .source = tool_source, .vroot = vroot, .dir = entry_dir, .binary = binary, .manifest = os__join_path_single(entry_dir, _str_339), .unbuildable = os__join_path_single(entry_dir, _str_340), .unbuildable_manifest = os__join_path_single(entry_dir, _str_341), .build_args = array__clone(&build_args)}};
+	return (__v_result_main__ToolCacheEntry){.ok = true, .value = (main__ToolCacheEntry){.name = tool_name, .source = tool_source, .vroot = vroot, .dir = entry_dir, .binary = binary, .manifest = os__join_path_single(entry_dir, _str_339), .unbuildable = os__join_path_single(entry_dir, _str_340), .unbuildable_manifest = os__join_path_single(entry_dir, _str_341), .build_args = array__clone(&build_args), .optional_compiler = options.optional_compiler}};
 	return (__v_result_main__ToolCacheEntry){.ok = true};
 }
 
@@ -313831,7 +313878,7 @@ bool tool_cache_is_verbose(void) {
 	return string__eq(__in_lhs_0, _str_244) || string__eq(__in_lhs_0, _str_59) || string__eq(__in_lhs_0, _str_277) || string__eq(__in_lhs_0, _str_278);
 }
 
-string tool_cache_key(string vexe, string tool_name, Array tool_sources, Array build_args) {
+string tool_cache_key(string vexe, string tool_name, Array tool_sources, Array build_args, main__ToolCacheBuildOptions options) {
 	Array parts = array_new(	sizeof(string), 0, 0);
 	string __arr_val_0 = main__tool_cache_manifest_version;
 	array_push(&parts, &__arr_val_0);
@@ -313847,6 +313894,9 @@ string tool_cache_key(string vexe, string tool_name, Array tool_sources, Array b
 		__v_int __for_idx_5 = 0;
 		for (; __for_idx_5 < 7; __for_idx_5++) {
 			string name = main__ambient_build_variables[v_fixed_index(__for_idx_5, 7)];
+			if (options.optional_compiler && __v3_fixed_array_contains_string((string*)(main__optional_compiler_target_flags.data), 2, name)) {
+				continue;
+			}
 			string __v3_internal_symbol_join_4__vmsvc8492[5]; __v3_internal_symbol_join_4__vmsvc8492[0] = _str_335; __v3_internal_symbol_join_4__vmsvc8492[1] = main__tool_cache_field_separator; __v3_internal_symbol_join_4__vmsvc8492[2] = name; __v3_internal_symbol_join_4__vmsvc8492[3] = main__tool_cache_field_separator; __v3_internal_symbol_join_4__vmsvc8492[4] = os__getenv(name); string __arr_val_6 = (string_plus_many(5, __v3_internal_symbol_join_4__vmsvc8492));
 			array_push(&parts, &__arr_val_6);
 		}
