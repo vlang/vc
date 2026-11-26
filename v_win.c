@@ -1,4 +1,4 @@
-#define V_COMMIT_HASH "ba488bfc93a5d554815504fe496f39ded6e1b10c"
+#define V_COMMIT_HASH "c0bb94990c4c2cd080b27b4e2cbc88a347c6bb4c"
 #if defined(__arm__)
 #undef arm
 #undef arm_elf
@@ -121,6 +121,7 @@
 #endif
 #include <winerror.h>
 #define v_signal_with_handler_cast(sig, handler) signal((sig), (void (*)(int))(handler))
+#define v_os_walk_file_info(address, handle, info_class, buffer, size) (((BOOL (WINAPI *)(HANDLE, int, LPVOID, DWORD))(address))((handle), (info_class), (buffer), (size)))
 #if defined(__TINYC__) && defined(__linux__) && !defined(__ANDROID__)
 #include <features.h>
 #if defined(__GLIBC__)
@@ -3521,6 +3522,7 @@ static void __v_thread_release_comparable(__v_thread thread) { if (thread.handle
 #endif
 #include "vlib/builtin/core_windows.h"
 #define v_signal_with_handler_cast(sig, handler) signal((sig), (void (*)(int))(handler))
+#define v_os_walk_file_info(address, handle, info_class, buffer, size) (((BOOL (WINAPI *)(HANDLE, int, LPVOID, DWORD))(address))((handle), (info_class), (buffer), (size)))
 #include "vlib/time/ticks_windows_api.h"
 #if defined(__TINYC__)
 #include "vlib/sync/sync_windows_tcc.h"
@@ -35591,7 +35593,7 @@ _SL(_str_197, "at_exit failed", 14);
 _SL(_str_198, "fixed array index out of range (index: ", 39);
 _SL(_str_199, ", len: ", 7);
 _SL(_str_200, "slice index out of range for int: ", 34);
-_SL(_str_201, "ba488bf", 7);
+_SL(_str_201, "c0bb949", 7);
 _SL(_str_202, "Unhandled Exception 0x", 22);
 _SL(_str_203, " at ", 4);
 _SL(_str_204, "insufficient memory", 19);
